@@ -1,0 +1,216 @@
+
+%<<setup-child, include = FALSE>>=
+%library(knitr)
+%library(microbenchmark)
+%library(snow)
+%library(colorspace)
+%library(grid)
+%library(gridExtra)
+%library(dplyr)
+%library(ggplot2)
+%library(latex2exp)
+
+%set_parent("../style/preamble.Rnw")
+
+%pi = base::pi
+
+%theme_set(theme_bw())
+
+%source("rsrc/functions.R")
+%@
+
+\input{../../2021/style/preamble4tex}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\begin{document}
+
+\lecturechapter{6}{Quadratic Forms I}
+\lecture{Optimization}
+
+\begin{vbframe}{Univariate Quadratic Functions}
+
+  Consider a quadratic function $q: \R \to \R$
+  
+  $$
+    q(x) = a \cdot x^2 + b \cdot x + c, \qquad a \ne 0.
+  $$
+  
+  % We will set $b, c = 0$ to keep things simple. 
+  
+  % Include a pic of a quadratic form 
+  \begin{figure}
+    \includegraphics[height=0.3\textwidth, keepaspectratio]{figure_man/quadratic_functions_1D.png} \\
+    \begin{footnotesize} 
+    A quadratic function $q_1(x) = x^2$ (left) and $q_2(x) = - x^2$ (right). 
+    \end{footnotesize}
+  \end{figure}
+  
+  \framebreak 
+  
+  Basic properties can be read off easily: 
+  
+  \begin{itemize}
+    \item The \textbf{slope} of a tangent at a point $(\tilde x, q(\tilde x))$ is given by the first derivative $q'(\tilde x) = 2 \cdot a \cdot \tilde x + b$
+    \begin{figure}
+    \includegraphics[height=0.2\textwidth, keepaspectratio]{figure_man/quadratic_functions_1D_derivative.png} \\
+    \begin{footnotesize} 
+    % todo
+    \end{footnotesize}
+    \end{figure}
+     \item The \textbf{curvature} of $q$ is given by $q''(x) = 2\cdot a$. 
+    \begin{figure}
+    \includegraphics[height=0.2\textwidth, keepaspectratio]{figure_man/quadratic_functions_1D_curvature.png} \\
+    \begin{footnotesize} 
+     $q_1 = x^2$ (orange) $q_2 = 2 x^2$ (green), $q_3 (x) = - x^2$ (blue), $q_4 = - 3 x^2$ (magenta)
+    \end{footnotesize}
+    \end{figure}
+  
+    \item \textbf{Convexity / Concavity}: 
+  
+    \begin{itemize}
+      \item If $a > 0$: $q$ is convex, bounded from below and has a unique global \textbf{minimum}
+      \item If $a < 0$: $q$ is concave, bounded from above and has a unique global \textbf{maximum}
+    \end{itemize}
+  
+    \item The optimum $x^\ast$ is 
+    \begin{eqnarray*}
+      q'(x) &=& 0 \quad\Leftrightarrow \quad 2ax + b = 0 \quad \Leftrightarrow \quad x^\ast = \frac{-b}{2a}  	
+    \end{eqnarray*}
+  \end{itemize}
+  
+  \begin{figure}
+    \includegraphics[height=0.2\textwidth, keepaspectratio]{figure_man/quadratic_functions_1D.png} \\
+    \begin{footnotesize} 
+    Left: $q_1(x) = x^2$ (convex). Right: $q_2(x) = - x^2$ (concave). 
+    \end{footnotesize}
+  \end{figure}
+  
+  \end{vbframe}
+  
+  \begin{vbframe}{Multivariate Quadratic Functions}
+  
+  A quadratic function $q: \R^d \to \R$ has the following form: 
+  
+  $$
+    q(\xv) = \xv^\top \bm{A} \xv + \bm{b}^\top \xv + c,
+  $$
+  
+  with $\bm{A} \in \R^{d \times d}$ being a full-rank matrix, $\bm{b} \in \R^d$, and $c \in \R$. % To also keep things simple here, we will set $\bm{b}$ and $c$ to zero. 
+  
+  \begin{figure}
+    \includegraphics[height=0.4\textwidth, width = 0.4\textwidth]{figure_man/quadratic_functions_2D_example_1_1.png} ~~ \includegraphics[height=0.4\textwidth, width = 0.4\textwidth]{figure_man/quadratic_functions_2D_example_1_2.png}\\
+    \begin{footnotesize} 
+    % todo - also add this as a 2d plot
+    \end{footnotesize}
+  \end{figure}
+  
+  \framebreak 
+  
+  
+  W.l.o.g. we can assume that $\bm{A}$ is a \textbf{symmetric} matrix, i.e. $\bm{A}^\top = \bm{A}$, because there always exists a symmetric matrix $\tilde \Amat$ such that 
+  
+  \vspace*{-0.3cm}
+  
+  \begin{eqnarray*}
+    q(\xv) = \xv^\top \Amat \xv = \xv^\top \tilde \Amat \xv = \tilde q(\xv) \quad \forall \xv.
+  \end{eqnarray*}
+  
+  
+  \textbf{Justification}: We can write $q(\xv)$ as
+  
+  \vspace*{-0.3cm}
+  
+  \begin{eqnarray*}
+    q(\xv) = \xv^\top \Amat \xv &=& \frac{1}{2} \xv^\top \underbrace{(\Amat + \Amat^\top)}_{\tilde \Amat_1} \xv + \frac{1}{2} \xv^\top \underbrace{(\Amat - \Amat^\top)}_{\tilde \Amat_2} \xv
+  \end{eqnarray*}
+  
+  with $\tilde \Amat_1$ symmetric, and $\tilde \Amat_2$ anti-symmetric (i.e., $\tilde \Amat_2^\top = - \tilde \Amat_2$). Since $\xv^\top \Amat^\top \xv$ is a scalar, it is equal to its transposed and we get: 
+  
+  \vspace*{-0.3cm}
+  
+  \begin{eqnarray*}
+     \xv^\top (\Amat - \Amat^\top) \xv &=&  \xv^\top \Amat \xv - \xv^\top \Amat^\top \xv =  \xv^\top \Amat \xv - \left(\xv^\top \Amat^\top \xv\right)^\top \\
+     &=& \xv^\top \Amat \xv - \xv^\top \Amat \xv  = 0.
+  \end{eqnarray*}
+  
+  Therefore, $q(\xv) = \tilde q(\xv)$ with $\tilde q(\xv) = \xv^\top \tilde \Amat \xv$ with $\tilde \Amat = \tilde \Amat_1$. 
+  
+  \framebreak 
+  
+  \begin{itemize}
+    \item The gradient of $q$ is given by 
+  
+    \begin{eqnarray*}
+      \nabla q(\xv) = \left(\bm{A}^\top + \bm{A}\right) \xv + \bm{b} = \nabla q(\xv) = 2 \cdot \bm{A} \xv + \bm{b} \in \R^d
+    \end{eqnarray*}
+  
+    (the last step follows from assuming $\Amat$ to be symmetric). 
+  
+    \vspace*{0.2cm}
+  
+    The directional derivative in the direction of $\bm{v}\in \R^d, \|\bm{v}\| = 1$, is
+  
+    \begin{eqnarray*}
+      \frac{\partial q(\xv + h \cdot \bm{v})}{\partial h}~\bigg\rvert_{h = 0} &=& \nabla q(\xv + h \bm{v})^\top \bm{v}~\bigg\rvert_{h = 0} = \nabla q(\xv)^\top \bm{v}
+    \end{eqnarray*}
+  
+    by using the chain rule.
+  
+    \item The Hessian is given by 
+  
+    \begin{eqnarray*}
+      \nabla^2 q(\xv) = \left(\bm{A}^\top + \bm{A}\right) = 2 \Amat := \bm{H} \in \R^{d \times d},
+    \end{eqnarray*}
+  
+    (again assuming that $\Amat$ is symmetric). 
+  
+    \vspace*{0.2cm}
+  
+    The curvature in the direction of $\bm{v}\in \R^d, \|\bm{v}\| = 1$, is
+  
+    \begin{eqnarray*}
+      \frac{\partial^2 q(\xv + h \cdot \bm{v})}{\partial h^2}~\bigg\rvert_{h = 0} &=& \frac{\partial \left[\nabla q(\xv + h \bm{v})^\top\bm{v}\right]}{\partial h}~\bigg\rvert_{h = 0} \\ &=& \bm{v}^\top \nabla^2 q(\xv + h \bm{v}) \bm{v}~\bigg\rvert_{h = 0} = \bm{v}^\top \bm{H} \bm{v}.
+    \end{eqnarray*}
+  
+  
+    \item If $\Amat$ has full rank, there exists one unique stationary point (which may be a minimum, maximum, or a saddle point) 
+  
+    \begin{eqnarray*}
+      \nabla q(\xv) &=& 0 \\
+      2 \cdot \Amat \xv + \bm{b} &=& 0 \\
+      \xv^\ast &=& - \frac{1}{2} \Amat^{-1} \bm{b}.
+    \end{eqnarray*}  
+  
+  
+  \begin{figure}
+    \includegraphics{figure_man/minmaxsaddle.png}\\
+    \begin{footnotesize} 
+    % todo - also add this as a 2d plot
+    \end{footnotesize}
+  \end{figure}
+  
+  
+  \end{itemize}
+  
+  %\begin{footnote}
+  % We get the above by applying the \enquote{product rule}: Let us write $q(\xv, v(\xv)) = 
+  
+  % \xv^\top v(\xv)$ with $v(\xv) = \Amat \xv$. The derivative of  
+  % \end{footnote}
+  
+  
+  % which equals to $\nabla$
+  
+  % \begin{eqnarray*}
+  
+  % \end{eqnarray*}
+  
+  \end{vbframe}
+
+
+
+  \endlecture
+\end{document}

@@ -1,0 +1,194 @@
+%<<setup-child, include = FALSE>>=
+%library(knitr)
+%library(microbenchmark)
+%library(snow)
+%library(colorspace)
+%library(grid)
+%library(gridExtra)
+%library(dplyr)
+%library(ggplot2)
+%library(latex2exp)
+
+%set_parent("../style/preamble.Rnw")
+
+%pi = base::pi
+
+%theme_set(theme_bw())
+
+%source("rsrc/functions.R")
+%@
+
+\input{../../2021/style/preamble4tex}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\begin{document}
+
+\lecturechapter{1}{Differentiability}
+\lecture{Optimization}
+
+\section{Smooth vs. Non-Smooth Functions}
+
+\begin{vbframe}{Smooth vs. non-smooth}
+
+\begin{itemize}
+\item The \textbf{smoothness} of a function is a property that is measured by the number of its continuous derivatives. 
+\item We will call a function $f: \mathcal{S} \to \R$ \enquote{smooth}, if it is at least differentiable for every $\xv \in \mathcal{S}$. 
+\item We call a function $k$-times continuously differentiable, if the $k$-th derivative exists and is continuous. $\mathcal{C}^k$ denotes the class of $k$-times continuously differentiable functions. 
+\end{itemize}
+
+
+\begin{center}
+\includegraphics[width = 0.4\textwidth]{figure_man/hinge_vs_l2.pdf} \\ 
+\begin{footnotesize}
+$f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-continuous. 
+\end{footnotesize}
+\end{center}
+
+
+\end{vbframe}
+
+\begin{vbframe}{Differentiability (univariate)}
+
+\textbf{Definition 1:} A function $f: \mathcal{S} \subseteq \R \to \R$ is said to be differentiable in $x \in \mathcal{S}$ if the following limit exists:
+
+$$
+f'(x) := \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
+$$
+
+A function $f: \mathcal{S} \subseteq \R \to \R$ is said to be differentiable in $x \in \mathcal{S}$, if $f$ can be locally approximated by a linear function in $x$.
+
+\begin{center}
+\includegraphics[width = 0.6\textwidth]{figure_man/tangent.png} \\
+\begin{footnotesize}
+Geometrically: A tangent can be placed on the graph of $f$ through the point $(x, f(x))$. $m = f'(x)$ then indicates the slope of this tangent. The function on the left is differentiable everywhere; the function on the right is not differentiable at the red point. 
+\end{footnotesize}
+\end{center}
+
+% \framebreak
+
+% \textbf{Äquivalente Definition}:
+
+% $f$ ist genau dann differenzierbar bei $\tilde x \in I$, wenn sich $f$ lokal durch eine \textbf{lineare Funktion} (Tangente) approximieren lässt. Das heißt, es existieren
+
+% \begin{itemize}
+% \item $m_{\tilde x} \in \R$ (Steigung)
+% \item eine Funktion $r(\cdot)$ (Fehler der Approximation),
+% \end{itemize}
+
+% sodass
+
+% \begin{eqnarray*}
+% % f(x) &=& f(\tilde x) + f'(\tilde x)(x - \tilde x) + r(x - \tilde x) \quad \text{bzw.}\\
+% f(\tilde x + h) &=& f(\tilde x) + m_{\tilde x} \cdot h + r(h)\\
+% \text{mit } && \lim_{h \to 0}\frac{|r(h)|}{|h|} = 0
+% \end{eqnarray*}
+
+% Ist $f$ differenzierbar, dann entspricht $m_{\tilde x} = f'(\tilde x)$ (aus 1. Definition).
+
+\end{vbframe}
+
+\begin{vbframe}{Differentiation (multivariate)}
+
+A similar definition of differentiability holds for multivariate functions. 
+
+\lz 
+
+\textbf{Definition: } A function $f: \mathcal{S}\subseteq \R^d \to \R$ is differentiable in $\xv \in \mathcal{S}$ if there exists a (continuous) linear map $\nabla f(\xv): \mathcal{S}\subseteq \R^d \to \R$ with %it can be locally approximated by a linear function in $\xv$. 
+
+$$
+\lim_{\bm{h} \to 0} \frac{f(\xv + \bm{h}) - f(\xv) - \nabla f(\xv) \cdot \bm{h}}{||\bm{h}||} = 0
+$$
+
+\begin{center}
+\includegraphics[width = 0.3\textwidth]{figure_man/differentiability_multivariate.png} \\
+\begin{footnotesize}
+Geometrically: The function can be locally approximated by a tangent hyperplane. \\
+Source: \url{https://github.com/jermwatt/machine_learning_refined}.
+\end{footnotesize}
+\end{center}
+
+\framebreak 
+
+
+This local linear approximation is described by the \textbf{gradient}: If $f$ is differentiable in $\xv$, the \textbf{gradient} is defined by
+
+\vspace*{-0.3cm}
+
+$$
+\nabla f = \frac{\partial f}{\partial x_1} \bm e_1 + \cdots + \frac{\partial f}{\partial x_n} \bm e_n =
+  \biggl(\frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, ..., \frac{\partial f}{\partial x_n}\biggr)^{\top}.
+$$
+
+The elements of the gradient are called \textbf{partial derivatives}. 
+
+\begin{center}
+	\includegraphics[width = 0.5\textwidth]{figure_man/grad_unit_vectors.png} \\
+\end{center}
+
+
+\framebreak
+
+Consider $\fx = 0.5 x_1^2 + x_2^2 + x_1 x_2$. The gradient is $\nabla \fx = (x_1 + x_2, 2x_2 + x_1)^{\top}$.
+
+\begin{center}
+	\includegraphics[width = 0.5\textwidth]{figure_man/grad_unit_vectors.png} ~~~ \includegraphics[width = 0.4\textwidth]{figure_man/gradient2.png}
+\end{center}
+
+
+\framebreak
+
+\textbf{Properties of the gradient:}
+\begin{itemize}
+	\item The gradient is orthogonal to level curves and level surfaces of a function
+	\item The gradient points in the direction of greatest increase of $f$
+	\begin{center}
+		\includegraphics[width = 0.4\textwidth]{figure_man/gradient3.png} ~~~ \includegraphics[width = 0.4\textwidth]{figure_man/gradient.png}
+	\end{center}
+	\item The normal vector describing the tangent plane has $n + 1$ components, the first $n$ correspond to $\nabla f$ and the $(n + 1)-$th has the value $-1$
+\end{itemize}
+
+
+\framebreak 
+
+We can also compute the instantaneous rate of change of $f$ at $\xv$ along an arbitrary direction $\bm{v}$: 
+
+$$
+D_v \fx = \nabla \fx \cdot \bm v.
+$$
+
+
+$D_v \fx$ is called \textbf{directional derivative}. 
+
+\textbf{Definition:} The directional derivative for direction $\bm{v}$ for $f: \mathcal{S} \to \R, \mathcal{S} \subseteq \R^d$ is defined as
+ $$
+   D_v \fx = \lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h}.
+ $$
+
+\lz 
+
+For example, the slope in the direction $\bm{v} = (1, 1)$ is the sum of the first and the second partial derivative: 
+
+$$
+D_v \fx = \nabla \fx^\top \cdot \begin{pmatrix} 1 \\1\end{pmatrix} = \frac{\partial f}{\partial x_1} + \frac{\partial f}{\partial x_2}
+$$
+
+
+\framebreak
+
+\textbf{Definition (Hessian)}: The \textbf{Hessian matrix} is analogous to the second derivative in a multivariate setting. The Hessian matrix consists of the second partial derivatives:
+ \[ H(\boldsymbol{x}) =\nabla^2 \fx =
+\Bigl(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\Bigr)_{i,j=1\ldots d}\]
+\begin{itemize}
+\item The Hessian indicates the local curvature (2nd derivative) at a point $\xv$ of the function $f$.
+\item The eigenvector corresponding to the largest absolute eigenvalue indicates the direction of the strongest curvature.
+\item The eigenvector corresponding to the smallest absolute eigenvalue indicates the direction of the lowest curvature.
+\item The corresponding eigenvalues specify the strength of the curvature.
+\end{itemize}
+\end{vbframe}
+
+
+\endlecture
+\end{document}

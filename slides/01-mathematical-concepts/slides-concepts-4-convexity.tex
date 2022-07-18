@@ -1,0 +1,179 @@
+
+%<<setup-child, include = FALSE>>=
+%library(knitr)
+%library(microbenchmark)
+%library(snow)
+%library(colorspace)
+%library(grid)
+%library(gridExtra)
+%library(dplyr)
+%library(ggplot2)
+%library(latex2exp)
+
+%set_parent("../style/preamble.Rnw")
+
+%pi = base::pi
+
+%theme_set(theme_bw())
+
+%source("rsrc/functions.R")
+%@
+
+\input{../../2021/style/preamble4tex}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\begin{document}
+
+\lecturechapter{4}{Convexity}
+\lecture{Optimization}
+
+\section{Convex vs. Non-convex Functions}
+
+
+\begin{vbframe}{Convex vs. non-convex}
+
+\vspace*{2cm}
+
+\begin{center}
+\Large{\enquote{...in fact, the great watershed in optimization isn't between linearity and nonlinearity, but convexity and nonconvexity.}}\\
+\normalsize - R. Tyrrell Rockafellar, in SIAM Review, 1993
+\end{center}
+
+	
+\end{vbframe}
+
+\begin{vbframe}{Convex sets}
+
+A set of $\mathcal{S}$ is \textbf{convex}, if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$ the following applies:
+
+$$
+\xv + t (\mathbf{y} - \xv) \in \mathcal{S}
+$$
+
+Intuitively: If $\xv, \mathbf{y}$ are in $\mathcal{S}$, then the connecting line is also in $\mathcal{S}$.
+
+\begin{center}
+\includegraphics[width = 0.2\textwidth]{figure_man/convex.png}~~~\includegraphics[width = 0.2\textwidth]{figure_man/concave.png} \\
+\footnotesize{The set in the left image is convex, the set in the right image is not convex (concave). \\
+Source: Wikipedia. 
+}
+\end{center}
+
+\end{vbframe}
+
+\begin{vbframe}{Convex functions}
+
+Consider $f: \mathcal{S} \to \R$, where $\mathcal{S}$ convex. The function is \textbf{convex} if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$
+
+$$
+f(\xv + t(\mathbf{y} - \xv)) \le \fx + t(f(\mathbf{y}) - \fx).
+$$
+
+It is called \textbf{strictly convex}, if this is valid for \enquote{$<$} instead of \enquote{$\le$}.
+
+\begin{center}
+\includegraphics[width = 0.45\textwidth, keepaspectratio]{figure_man/convexity_1.pdf}~~~\includegraphics[width = 0.45\textwidth, keepaspectratio]{figure_man/convexity_2.pdf} \\
+\footnotesize{Left: A differentiable and strictly convex function. Right: A convex function that is non-differentiable in $x = 0$, which is not strictly convex. }
+\end{center}
+
+
+\framebreak
+
+For a twice differentiable function $f$, convexity can determined from the \textbf{Hessian matrix}.
+
+\lz
+
+The function $f: \mathcal{S} \to \R$ is \textbf{convex iff} the Hessian matrix $\nabla^2\fx$ is positive semidefinite for all $\xv \in \mathcal{S}$, i.e. if for all points $\xv$ and all vectors $\mathbf{d} \ne 0$ it applies:
+
+$$
+\mathbf{d}^{\top} \nabla^2\fx\mathbf{d} \ge 0.
+$$
+
+If the Hessian matrix is positive definite (strict \enquote{$>$}), the function $f$ is strictly convex.
+
+\lz
+
+\textbf{Equivalent definition:} A matrix is positive semidefinite if all eigenvalues are non-negative.
+
+\framebreak
+
+Convex functions play a special role in optimization.
+
+\lz
+
+Let $f:\mathcal{S} \to \R$ be convex on the convex set $\mathcal{S}$. Then the following applies:
+
+\begin{itemize}
+\item Any local minimum of $f$ is also a global minimum (see chapter \emph{Conditions for Optimality}).
+\item If $f$ is strictly convex, $f$ has exactly one local minimum on $\mathcal{S}$ and it is also the unique global minimum of $f$ on $\mathcal{S}$ (see chapter \emph{Conditions for Optimality}). 
+\item Sublevel sets $S_1 = \{\xv~|~\fx < a\}$ and $S_2 = \{\xv~|~\fx \leq a \}$, $a\in \R$, form convex sets.
+\end{itemize}
+
+\framebreak
+
+
+\textbf{Example:}
+\footnotesize
+\begin{enumerate}
+\item Local min: If [$f$ convex $\Leftrightarrow$ All eigenvalues positive], then global min\\
+\item Local max: If [$f$ concave $\Leftrightarrow$ All eigenvalues negative], then global max\\
+\item Some eigenvalues positive and some negative $\Leftrightarrow$ saddle point
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\begin{center}
+\includegraphics[scale= 0.5]{figure_man/convex.jpg}
+\end{center}
+
+
+\framebreak
+
+% Weiterhin können folgende Implikationen für convexe Funktionen festgestellt werden:
+% \medskip
+% \begin{itemize}
+% \item $f$ convex $\Rightarrow$ Subniveaumenge $S_1 = \{x|f(x) < a\}$ und $S_2 = \{x|f(x) \leq a \}$ bilden convexe Mengen, $a\in \R$.
+% \item umgekehrte Implikation \textbf{nicht} notwendigerweise erfüllt.
+
+% \end{itemize}
+% \framebreak
+
+\textbf{Example:} Consider the function $f(x_1, x_2) = x_1^2 + x_2^2 - 2x_1x_2$.
+
+\begin{center}
+	\includegraphics[width = 0.5\textwidth]{figure_man/convex-example.png}
+\end{center}
+
+%<<echo=FALSE, size = "footnotesize">>=
+%foo = function(x, y) {
+%  x^2 + y^2 - 2 * x * y
+%}
+%x = seq(-4, 6, length = 40); y = x
+%z = outer(x, y, FUN = foo)
+%persp2(x, y, z, theta = 30, phi = 30)
+%@
+
+
+The gradient of the function is $\nabla f(x) = (2x_1 - 2x_2, 2x_2 - 2x_1)$ and the Hessian is
+
+$$
+\nabla^2 f(x) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}
+$$
+
+\lz
+
+The matrix is positive semidefinite, since
+
+\begin{eqnarray*}
+\mathbf{d}^{\top}\begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}\mathbf{d} &=& \mathbf{d}^{\top} \begin{pmatrix} 2d_1 - 2d_2 \\ -2d_1 + 2d_2\end{pmatrix} \\ &=& 2d_1^2 - 2d_1d_2 -2d_1d_2 + 2d_2^2 \\ &=& 2d_1^2 - 4d_1d_2 + 2d_2^2 = 2 (d_1 - d_2)^2 \ge 0.
+\end{eqnarray*}
+
+So the function $f$ is convex and every local minimum is also a global minimum.
+
+\end{vbframe}
+
+\endlecture
+\end{document}

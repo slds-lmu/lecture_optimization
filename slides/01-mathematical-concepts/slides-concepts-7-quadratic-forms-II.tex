@@ -1,0 +1,372 @@
+
+%<<setup-child, include = FALSE>>=
+%library(knitr)
+%library(microbenchmark)
+%library(snow)
+%library(colorspace)
+%library(grid)
+%library(gridExtra)
+%library(dplyr)
+%library(ggplot2)
+%library(latex2exp)
+
+%set_parent("../style/preamble.Rnw")
+
+%pi = base::pi
+
+%theme_set(theme_bw())
+
+%source("rsrc/functions.R")
+%@
+
+\input{../../2021/style/preamble4tex}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\begin{document}
+
+\lecturechapter{7}{Quadratic Forms II}
+\lecture{Optimization}
+
+\begin{vbframe}{Properties of quadratic functions}
+
+  \textbf{Univariate case} \vspace*{0.2cm}
+  
+  In 1-variable calculus, the second derivative ist just a single value $q''(x) = 2 \cdot a$. Basic properties of $q$ can easily be read off: 
+  
+  \begin{itemize}
+    \item $q''(x) > 0$ implies convex, $q''(x) < 0$  implies concave.
+    \item High absolute values mean high curvature, low absolute values mean a low curvature. 
+  \end{itemize}
+  
+  \vspace*{0.2cm}
+  
+  \textbf{Now: Multivariate case}\vspace*{0.2cm}
+  
+  For a multivariate quadratic function, the second derivative is a symmetric matrix of values $\bf{H}$ (called the Hessian). 
+  
+  \lz 
+  
+  We will see how $\bf{H}$ encodes the basic properties of the function $q$. 
+  
+  \end{vbframe}
+  
+  \begin{frame}{Properties of quadratic functions (diag)}
+  
+  \textbf{Example 1}: A function composed of two univariate quadratic terms
+  
+  \vspace*{-0.3cm}
+  
+  \only<1>{
+  \begin{eqnarray*}
+    q(\xv) &=& \xv^\top \Amat \xv = \xv^\top\begin{pmatrix} 2 & 0 \\ 0 & 1\end{pmatrix} \xv = 2 \cdot x_1^2 + x_2^2 \\
+    \text{with } \nabla q(\xv) &=& 2 \cdot \Amat \cdot \xv = 4 \cdot x_1 + 2 \cdot x_2, \quad \bm{H} = 2 \cdot \Amat = \begin{pmatrix} \textcolor{orange}{4} & 0 \\ 0 & 2 \end{pmatrix} 
+  \end{eqnarray*}
+  }
+  
+  \only<2>{
+  \begin{eqnarray*}
+    q(\xv) &=& \xv^\top \Amat \xv = \xv^\top\begin{pmatrix} 2 & 0 \\ 0 & 1\end{pmatrix} \xv = 2 \cdot x_1^2 + x_2^2 \\
+    \text{with } \nabla q(\xv) &=& 2 \cdot \Amat \cdot \xv = 4 \cdot x_1 + 2 \cdot x_2, \quad \bm{H} = 2 \cdot \Amat = \begin{pmatrix} \textcolor{orange}{4} & 0 \\ 0 & \textcolor{magenta}{2} \end{pmatrix} 
+  \end{eqnarray*}
+  }
+  
+  \begin{figure}
+    \only<1>{\includegraphics[height=0.4\textwidth, keepaspectratio]{figure_man/quadratic_functions_2D_example_diag_2.png} \\
+    \begin{footnotesize} 
+    $q$ has a high positive curvature of $\textcolor{orange}{4}$ in the direction of $\textcolor{orange}{x_1}$, \phantom{mand a lower (positive) curvature off $\textcolor{magenta}{2}$ in direction of $\textcolor{magenta}{x_2}$.}
+    \end{footnotesize}
+    }
+    \only<2>{\includegraphics[height=0.4\textwidth, keepaspectratio]{figure_man/quadratic_functions_2D_example_diag_3.png} \\
+    \begin{footnotesize} 
+    $q$ has a high positive curvature of $\textcolor{orange}{4}$ in the direction of $\textcolor{orange}{x_1}$, and a lower (positive) curvature of $\textcolor{magenta}{2}$ in direction of $\textcolor{magenta}{x_2}$.
+    \end{footnotesize}
+    }
+  \end{figure}
+  
+  \end{frame}
+  
+  \begin{frame}{Properties of quadratic functions (diag)}
+  
+  \textbf{Takeaway I}: 
+  
+  \begin{itemize}
+    \item The Hessian encodes the curvature of the function 
+    \item If the Hessian $\mathbf{H}$ is diagonal, the diagonal elements encode the curvature of the function: 
+  
+    \begin{itemize}
+      \item The $i$-th diagonal element gives us the curvature in the direction of $\bm{v} = \bm{e}_i$ because 
+      $$
+      \bm{v}^\top \bm{H} \bm{v} = \bm{e}_i^\top \bm{H} \bm{e}_i = h_{ii}.
+      $$
+      \item The curvature in an arbitrary direction $\bm{v}
+      \in \R^d$, $\|\bm{v}\| = 1$, is 
+      $$
+      \bm{v}^\top\mathbf{H}\bm{v} = h_{11} v_1^2 + h_{22}v_2^2 + ... + h_{dd}v_d^2. 
+      $$
+    \end{itemize}
+  
+    \item<2-> In the general case we look at the \textbf{eigenspectrum} of $\mathbf{H}$ 
+    \vspace*{0.2cm}
+    \item<2->[] \begin{footnotesize}
+    \textbf{Note: } 	For diagonal matrices it is very easy to determine the eigenspectrum: The diagonal elements are the \textbf{eigenvalues}, and unit vectors are the \textbf{eigenvectors}. 
+    \begin{eqnarray*}
+      \mathbf{H} \bm{e}_1 &=& \begin{pmatrix} \textcolor{orange}{4} & 0 \\ 0 & \textcolor{magenta}{2} \end{pmatrix} = \textcolor{orange}{4} \cdot \bm{e}_1; \qquad \mathbf{H} \bm{e}_2 = \begin{pmatrix} \textcolor{orange}{4} & 0 \\ 0 & \textcolor{magenta}{2} \end{pmatrix} = \textcolor{magenta}{2} \cdot \bm{e}_2 \\		
+    \end{eqnarray*}	
+    \end{footnotesize}
+  
+  \end{itemize}
+  
+  
+  \end{frame}
+  
+  
+  \begin{frame}{Properties of quadratic functions}
+  
+  \textbf{Example 2}:
+  
+  \vspace*{-0.3cm}
+  
+  \begin{eqnarray*}
+    q(\xv) &=& \xv^\top \Amat \xv = \xv^\top\begin{pmatrix} 2 & -1 \\ -1 & 2\end{pmatrix} \xv, \\
+    \text{with } \nabla q(\xv) &=& 2 \cdot \Amat \cdot \xv, \qquad
+    \nabla^2 q(\xv) = \bm{H} = 2 \cdot \Amat = \begin{pmatrix} 4 & -2 \\ -2 & 4\end{pmatrix} 
+  \end{eqnarray*}
+  
+  % \only<1>{
+  % 	\begin{figure}
+  % 		\includegraphics[height=0.4\textwidth, keepaspectratio]{figure_man/quadratic_functions_2D_example_1_3.png} \\
+  % 		\begin{footnotesize} 
+  % 			We can again look at the (directional) curvature along the $x_1$ axis, \phantom{ or $x_2$ axis. However, there is a direction of maximum and minimum curvature. } 
+  % 		\end{footnotesize}
+  % 	\end{figure}
+  % }
+  
+  % \only<2>{
+  % 	\begin{figure}
+  % 		\includegraphics[height=0.4\textwidth, keepaspectratio]{figure_man/quadratic_functions_2D_example_1_4.png} \\
+  % 		\begin{footnotesize} 
+  % 			We can again look at the (directional) curvature along the $x_1$ axis, or $x_2$ axis. \phantom{The directions of maximum and minimum curvature are along the eigenvectors of $\bm{H}$. } 
+  % 		\end{footnotesize}
+  % 	\end{figure}
+  % }
+  
+  \only<1> {
+    \begin{figure}
+      \includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/quadratic_functions_2D_example_1_7.png} \\
+      \begin{footnotesize} 
+        In the general case, the curvature is determined by the Eigenspectrum of $\bm{H}$. 
+      \end{footnotesize}
+    \end{figure}
+  
+  }
+  
+  \end{frame}
+  
+  
+  \begin{frame}{Properties of quadratic functions}
+  
+  \textbf{Takeaway II}:
+  
+  \begin{itemize}
+    \item Geometrically, directions of highest / lowest curvature are along the main axes of the ellipses representing the contour lines of $q$. 
+    \item Mathematically, the direction with the highest (lowest) curvature is the direction of the eigenvector $\bm{v}_\text{max}$ ($\bm{v}_\text{min}$) that belongs to the largest (smallest) eigenvalue $\lambda_\text{max}$ ($\lambda_\text{min}$) of $\bm{H}$. 
+  \end{itemize}
+  
+  \begin{columns}
+  
+  \begin{column}{0.5\textwidth}  
+      \begin{center}
+        \includegraphics{figure_man/quadratic_functions_2D_example_1_7.png}      
+       \end{center}
+  \end{column}
+  
+  \begin{column}{0.5\textwidth}
+  
+  \begin{footnotesize}
+   The eigenvectors and eigenvalues of $\bm{H} = \begin{pmatrix} 4 & -2 \\ -2 & 4\end{pmatrix}$ are: 
+  
+  \begin{eqnarray*}
+    \textcolor{orange}{\bm{v}_\text{min}} &=& \frac{1}{\sqrt{2}}\begin{pmatrix} 1 \\ 1 \end{pmatrix}, \qquad \textcolor{orange}{\lambda_\text{min} = 2} \\
+    \textcolor{magenta}{\bm{v}_\text{max}} &=& \frac{1}{\sqrt{2}}\begin{pmatrix} - 1 \\ 1 \end{pmatrix}, \qquad \textcolor{magenta}{\lambda_\text{max} = 3}
+  \end{eqnarray*}  
+  
+  \end{footnotesize}
+  \end{column}
+  
+  \end{columns}
+  
+  
+  
+  \end{frame}
+  
+  
+  \begin{vbframe}{Properties of quadratic functions}
+  
+  The direction $\bm{v}_\text{max}$ is also the direction in which the function increases fastest. 
+  
+  \begin{figure}
+    \includegraphics[width=0.6\textwidth]{figure_man/quadratic_functions_2D_example_1_7.png} \\
+    \begin{footnotesize}
+    \enquote{Walking} the same distance along $\bm{v}_\text{max}$ (magenta) makes us pass more level curves than walking along any other direction.
+    \end{footnotesize} 
+  \end{figure}
+  
+  
+  \framebreak 
+  
+  If we know the eigenspectrum of $\Amat$, i.e. the set of its eigenvalues $\left\{\lambda_1, \lambda_2, ..., \lambda_d\right\}$, we also know the eigenspectrum of $\bm{H} = 2\cdot \Amat$. The following basic properties of $q$ can be read off from this eigenspectrum: 
+  
+  \begin{itemize}
+    \item If \textbf{all} eigenvalues of the $\bm{H}$ are $>0$ (we call $\bm{H}$ positive definite): 
+    \begin{itemize} 
+      \item the function $q$ is convex,
+      \item there is a unique global minimum. 
+    \end{itemize}
+    \item If \textbf{all} eigenvalues of the $\bm{H}$ are $<0$ (we call $\bm{H}$ negative definite): 
+    \begin{itemize} 
+      \item the function $q$ is concave,
+      \item there is a unique global maximum. 
+    \end{itemize}
+  
+  \begin{figure}
+    \includegraphics[width = 0.6\textwidth, keepaspectratio]{figure_man/minmaxsaddle_1.png} \\
+  \end{figure}
+  
+  \framebreak 
+  
+    \item If there are both positive and negative eigenvalues (we call $\bm{H}$ indefinite):
+    \begin{itemize}
+      \item the function $q$ is neither concave nor convex,
+      \item there is a saddle point. 
+    \end{itemize}
+    \begin{figure}
+      \includegraphics[width = 0.3\textwidth, keepaspectratio]{figure_man/minmaxsaddle_2.png} \\
+    \end{figure}
+  \end{itemize}
+  
+  \end{vbframe}
+  
+  
+  \begin{frame}{Properties of quadratic functions}
+  
+  \textbf{Example}: Sketch the following function
+  
+  \begin{eqnarray*}
+    q(\xv) &=& \xv^\top \begin{pmatrix} -1 & -1 \\ -1 & 1\end{pmatrix} \xv % + \begin{pmatrix} 0 & 1 \end{pmatrix} \xv
+  \end{eqnarray*}
+  
+  \begin{columns}
+  
+  \begin{column}{0.5\textwidth}
+  
+  \begin{footnotesize}
+  
+    \only<1>{
+      \textbf{Step 1: } Compute the Hessian 
+  
+      \begin{eqnarray*}
+        \bm{H} &=& 2 \cdot \Amat = \begin{pmatrix} -2 & -2 \\ -2 & 2 \end{pmatrix}
+      \end{eqnarray*}
+    }
+  
+    \only<2->{
+      \textbf{Step 2: } Compute eigenvectors / -values:  
+  
+      \begin{eqnarray*}
+        \textcolor{orange}{\bm{v}_1} &=& \begin{pmatrix} 1 - \sqrt{2} \\ 1 \end{pmatrix}, \qquad \textcolor{orange}{\lambda_1 = 2\sqrt{2}} \\
+        \textcolor{magenta}{\bm{v}_2} &=& \begin{pmatrix} 1+ \sqrt{2} \\ 1 \end{pmatrix}, \qquad \textcolor{magenta}{\lambda_2 = - 2\sqrt{2}}.
+      \end{eqnarray*}  
+  
+    }
+  
+  
+  \end{footnotesize}
+  \end{column}
+  
+  \begin{column}{0.5\textwidth}  %%<--- here
+      \begin{center}
+        \only<2>{\includegraphics{figure_man/quadratic_functions_2D_example_2_3.png}}
+        \only<3>{\includegraphics{figure_man/quadratic_functions_2D_example_2_4.png}}
+       \end{center}
+  \end{column}
+  
+  \end{columns}
+  
+  
+  \end{frame}
+  
+  \begin{vbframe}{Properties of quadratic functions}
+  
+  \textbf{Example}: Sketch the following function
+  
+  \begin{eqnarray*}
+    q(\xv) &=& \xv^\top \begin{pmatrix} -1 & -1 \\ -1 & 1\end{pmatrix} \xv % + \begin{pmatrix} 0 & 1 \end{pmatrix} \xv
+  \end{eqnarray*}
+  
+    \vspace*{-1cm}
+  
+  \begin{figure}
+    \includegraphics[width = 0.48\textwidth]{figure_man/quadratic_functions_2D_example_2_1.png} ~~ \includegraphics[width = 0.48\textwidth, keepaspectratio]{figure_man/quadratic_functions_2D_example_2_4.png}
+  \end{figure}
+  
+  \end{vbframe}
+  
+  
+  
+  
+  
+  \begin{vbframe}{Eigenspectrum and Condition}
+  
+  The condition of squared full-rank matrix can be read off from its eigenspectrum: it is $\kappa(\Amat) = \frac{|\lambda_\text{max}|}{|\lambda_\text{min}|}$, with $\lambda_\text{max}$ being the largest eigenvalue and $\lambda_\text{min}$ being the lowest eigenvalue (in absolute terms). A high condition means: 
+  
+  \begin{itemize}
+    \item The absolute value of the biggest eigenvalue $\lambda_\text{max}$ is much larger than the absolute value of the lowest eigenvalue $\lambda_\text{min}$. 
+    \item The curvature in the direction of minimum curvature ($\textbf{v}_\text{max}$) is much lower than the one in the direction of maximum curvature ($\textbf{v}_\text{min}$).
+    \item We will see later, that optimization algorithms like gradient descent will have difficulties optimizing such functions. 
+  \end{itemize}
+  
+  \vspace*{-0.3cm}
+  
+  \begin{figure}
+    \includegraphics[height=0.25\textwidth, width = 0.25\textwidth]{figure_man/quadratic_functions_2D_bad_cond_1.png} ~~ \includegraphics[height=0.25\textwidth, width = 0.25\textwidth]{figure_man/quadratic_functions_2D_bad_cond_2.png}\\
+    \begin{footnotesize} 
+    % todo - also add this as a 2d plot
+    \end{footnotesize}
+  \end{figure}
+  
+  
+  \end{vbframe}
+  
+  \begin{vbframe}{Interpretation of general functions}
+  Every function can be locally approximated by a quadratic function via Taylor approximation: 
+  
+  \vspace*{-0.3cm}
+  
+  $$
+  f(x) \approx f(\bm{\tilde{x}}) + \nabla f(\bm{\tilde{x}})^\top(\xv-\bm{\tilde{x}}) +
+  \frac 12(\xv-\bm{\tilde{x}})^\top\nabla^2 f(\bm{\tilde{x}})(\xv-\bm{\tilde{x}})
+  $$
+  
+  \begin{figure}
+    \includegraphics[width=0.3\textwidth]{figure_man/taylor_2D_quadratic.png} \\
+    \begin{footnotesize} 
+    $f$ is shown as the hollow grid and its second-order approximation at $(0, 0)$ as a continuous surface. Source: \url{daniloroccatano.blog}. 
+    \end{footnotesize}
+  \end{figure}
+  
+  
+  
+  By a basic geometric understanding of quadratic functions, we are able to understand a function's local geometry by looking at the Hessian $\nabla^2 f(\bm{\tilde{x}})$.
+  
+  
+  \end{vbframe}
+  
+  
+  
+  \endlecture
+\end{document}
+  
+  

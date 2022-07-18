@@ -1,0 +1,193 @@
+%<<setup-child, include = FALSE>>=
+%library(knitr)
+%library(microbenchmark)
+%library(snow)
+%library(colorspace)
+%library(grid)
+%library(gridExtra)
+%library(dplyr)
+%library(ggplot2)
+%library(latex2exp)
+
+%set_parent("../style/preamble.Rnw")
+
+%pi = base::pi
+
+%theme_set(theme_bw())
+
+%source("rsrc/functions.R")
+%@
+
+\input{../../2021/style/preamble4tex}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\begin{document}
+
+\lecturechapter{3}{Conditions for Optimality}
+\lecture{Optimization}
+
+\begin{vbframe}{Definition local and global minimum}
+  Given $\mathcal{S} \subseteq \R^d$, $f: \mathcal{S} \to \R$:
+  \begin{itemize}
+  \item $f$ has a \textbf{global minimum} in $\xv^\ast \in \mathcal{S}$, if $f(\xv^\ast) \leq \fx$ for all $\xv \in \mathcal{S}$
+  \item $f$ has a \textbf{local minimum} in $\xv^\ast$, if $f(\xv^\ast) \leq \fx$ for all $\xv \in B_\eps(\xv^\ast)$, with $B_\eps(\xv^\ast) := \{\xv \in \mathcal{S} ~|~\|\xv - \xv^\ast\| < \eps\}$ denoting all points that have a maximum distance of $\eps$ to $\xv^\ast$ (\enquote{$\eps$-neighboorhood}).  
+  \end{itemize}
+  
+  \vspace*{-0.3cm}
+  
+  \begin{center}
+  \includegraphics[width = 0.48\textwidth]{figure_man/local_global_min.png} \quad \includegraphics[width = 0.48\textwidth]{figure_man/local_global_min_2D.png} \\
+  \vspace*{0.3cm}
+  \begin{tiny}
+    Source (left): \url{https://en.wikipedia.org/wiki/Maxima_and_minima}. \\ Source (right): \url{https://wngaw.github.io/linear-regression/}. 
+  \end{tiny}
+  \end{center}
+  
+  \end{vbframe}
+  
+  \begin{vbframe}{Convex Optimization Problems}
+  
+  Why do convex optimization problems play a big role in optimization? 
+  
+  \begin{itemize}
+    \item In a convex optimization problem, every local optimum is a global one.  
+    \item If the objective function is strictly convex, then the problem has at most one optimal point. 
+  \end{itemize}
+  
+  \begin{center}
+  \includegraphics[width = 0.9\textwidth]{figure_man/convexity_3.pdf} \\
+  \begin{footnotesize}
+  Left: Example for a function that is strictly convex. It has one local minimum. Middle: A function that is convex, but not strictly convex. All local optima are global ones, but the optimum is not unique. Right: A function that is not convex. 
+  \end{footnotesize} 
+  \end{center}
+  
+  \end{vbframe}
+  
+  
+  \begin{vbframe}{Existence of Optima}
+  
+  $$
+  f: \; \mathcal{S} \subseteq \R^d \to \R
+  $$
+  
+  \begin{itemize}
+  \item $f$ continous:
+  \begin{itemize}
+  \item A real-valued function f, which is defined on a \textbf{compact set}, must attain a minimum and a maximum according to the Extreme Value Theorem.
+  \end{itemize}
+  \item $f$ not continous:
+  \begin{itemize}
+  \item In general no statement possible about existence of maximum/minimum, except on continuous intervals of the function.
+  \end{itemize}
+  \end{itemize}
+  
+  % \textbf{Note}: From now on, we assume silently that the functions considered are sufficiently smooth (i.e., when we consider a second derivative of a function, we assume that the second derivative exists and is continuous). 
+  
+  \end{vbframe}
+  
+  \section{Conditions for Optimality}
+  
+  \begin{vbframe}{First Order Condition}
+  
+  There is one specific property that holds for both the univariate and multivariate case at a (local) optimum: The Taylor series approximation (i.e., the tangent hyperplane) at a local minimum is perfectly flat. 
+  
+  \vspace*{0.2cm}
+  
+  This means that at every local minima the first order derivatives are $0$. This condition is also called the \textbf{first-order condition}. 
+  
+  
+  \begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/first_order.png} \\
+  \begin{footnotesize}
+  Examples for a univariate (left) and multivariate (right) function. Both functions are strictly convex, and have a unique local optimum, which is also the global one. The tangent (hyperplane) is perfectly flat at the optimum. \end{footnotesize}\\
+  \begin{tiny}
+  Source: Watt, 2020, Machine Learning Refined. 
+  \end{tiny}
+  \end{center}
+  
+  \framebreak 
+  
+  Because at every local minimum $\xv^\ast$ the first order derivative is necessarily always zero, we call this the \textbf{first-order} or \textbf{necessary} condition. 
+  
+  \begin{itemize}
+    \item \textbf{First-order condition (univariate): } Let $\xv^\ast \in \R$ be a local minimum of $f$. Then:
+    $$
+    f'(\xv^\ast) = 0
+    $$
+    \item \textbf{First-order condition (multivariate): } Let $\xv^\ast \in \R^d$ be a local minimum of $f$. Then:
+    $$
+    \nabla f(\xv^\ast) = (0, 0, ..., 0)^\top
+    $$
+  
+  \end{itemize}
+  
+  The points at which the first order derivative is zero are called \textbf{stationary points}. 
+  
+  \framebreak 
+  
+  However, this is only a \textbf{necessary} condition. It is not valid the other way around, i.e. not every point at which the first order derivative is $0$ (stationary point) is also a local minimum. 
+  
+  \begin{center}
+  \includegraphics[width = 0.7\textwidth]{figure_man/saddle_points_2.png} \\
+  \begin{footnotesize}
+  Left: There are for points which fulfill the necessary condition, two of them are in fact local (and also global) minima, and two are local (and also global) maxima (which is not what we are looking for!). Middle: The function has one point that fulfills the necessary condition, but it is neither a local minimum nor a local maximum; such points are called \enquote{saddle points}. Right: A function that has multiple local minima and maxima. 
+  \end{footnotesize}\\
+  \begin{tiny}
+  Source: Watt, 2020, Machine Learning Refined. 
+  \end{tiny}
+  \end{center}
+  
+  \end{vbframe}
+  
+  \begin{vbframe}{Second Order Condition}
+  
+  However, the function's second order derivative helps us identifying whether a stationary point $\xv^\ast$ is a local optimum or not. In cases where the second derivative $f''(\xv^\ast)> 0$ (i.e. the function is convex in the neighborhood of $\xv^\ast$), $\xv^\ast$ is a local minimum. 
+  
+  \begin{center}
+  \includegraphics[width = 0.7\textwidth]{figure_man/saddle_points_2.png} \\
+  \begin{footnotesize}
+  Left: Around the two minima, the function is convex; around the two maxima the function is concave. Middle: The function is neither convex nor concave around the stationary point. Right: Again, concave behavior around the maxima, and convex behavior around the minima of the function. 
+  \end{footnotesize}\\
+  \begin{tiny}
+  Source: Watt, 2020, Machine Learning Refined. 
+  \end{tiny}
+  \end{center}
+  
+  
+  \framebreak 
+  
+  
+  We introduce the second order conditions. 
+  
+  \begin{itemize}
+    \item \textbf{Second-order condition (univariate)}: A \textbf{stationary} point $x^\ast \in \mathcal{S}\subseteq \R$ fulfills
+    $$f''(x^\ast) > 0.$$ 
+    \item \textbf{Second-order condition (multivariate): } A \textbf{stationary} point $\xv^\ast \in \mathcal{S}\subseteq \R^d$ fulfills $$\nabla^2 f(\xv^\ast) \text{ is positive semi-definitie}$$  (all eigenvalues are positive). This means the curvature is positive in all directions. 
+  
+  \end{itemize}
+  
+  \lz 
+  
+  If the second-order conditions are fulfilled, then the point is a \textbf{local} minimum. The second-order condition is \textbf{sufficient} to prove that a point is a local minimum. 
+  
+  
+  % \framebreak 
+  
+  % \begin{itemize}
+  % \item The necessary condition says that at every local minimum the derivative is \textbf{always} $0$. It is non-exclusive: Also at a saddle point (right plot), the derivative can be zero. 
+  % \item In order to make sure that a stationary point also corresponds to a local minimum, we have to require that the curvature at this point is positive. 
+  % \end{itemize}
+  % \begin{center}
+  % 	\includegraphics[width=1\textwidth, keepaspectratio]{figure_man/minmaxsaddle.png}
+  % \end{center}
+  
+  \end{vbframe}
+  
+  \endlecture
+  \end{document}
+  
+  
+  

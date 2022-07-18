@@ -1,0 +1,111 @@
+
+%<<setup-child, include = FALSE>>=
+%library(knitr)
+%library(microbenchmark)
+%library(snow)
+%library(colorspace)
+%library(grid)
+%library(gridExtra)
+%library(dplyr)
+%library(ggplot2)
+%library(latex2exp)
+
+%set_parent("../style/preamble.Rnw")
+
+%pi = base::pi
+
+%theme_set(theme_bw())
+
+%source("rsrc/functions.R")
+%@
+
+\input{../../2021/style/preamble4tex}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\begin{document}
+
+\lecturechapter{5}{Taylor Series}
+\lecture{Optimization}
+
+\begin{vbframe}{Taylor series (multivariate)}
+
+  The Taylor series at point $\bm{\tilde x}$ is
+  
+  \begin{itemize}
+    \item first order: 
+    $$
+    f(\bm{x}) = f(\bm{\tilde{x}}) + \nabla f(\bm{\tilde{x}})^\top(\xv-\bm{\tilde{x}}) + \order(\|\xv - \bm{\tilde{x}}\|^2) 
+    $$
+    \item second order: 
+    $$
+    f(\bm{x}) = f(\bm{\tilde{x}}) + \nabla f(\bm{\tilde{x}})^\top(\xv-\bm{\tilde{x}}) +
+    \frac 12(\xv-\bm{\tilde{x}})^\top\nabla^2 f(\bm{\tilde{x}})(\xv-\bm{\tilde{x}}) + \order(\|\xv - \bm{\tilde{x}}\|^3)
+    $$
+  \end{itemize}
+  
+  \textbf{Note}: The order of the error of the taylor approximation is 
+  \begin{itemize}
+    \item smaller at points $\xv$ close to $\bm{\tilde x}$
+    \item smaller for the higher the order of the taylor approximation (because higher order approximations give us more flexibility)
+  \end{itemize}
+  
+  The $n^{th}$ order taylor series is the best $n^{th}$ order approximation to $\fx$ near $\bm{\tilde{x}}$.  
+  \framebreak 
+  
+  \textbf{Example: } We consider the function $\fx = \text{sin}(2x_1) + \text{cos}(x_2)$.
+  
+  \vspace*{0.2cm}
+  
+  The gradient is $\nabla \fx = (2\text{cos}(2x_1), -\text{sin}(x_2))^\top$. With this, the resulting first order Taylor approximation in $\bm{\tilde x} = (1.0, 1.0)$ is
+  \vspace*{-0.5cm}
+  
+  \begin{eqnarray*}
+  f(\bm{x}) &\approx& T_1(\bm{x}) = f(1.0, 1.0) + (2\text{cos}(2.0), -\text{sin}(1.0))^T\biggl(\xv- \begin{pmatrix}1.0 \\ 1.0 \end{pmatrix}\biggr) 
+  \end{eqnarray*}
+  
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+  %		\animategraphics[loop,controls,width=\linewidth]{7}{figure_man/Taylor2D/Taylor2D_1st}{0}{359}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st100.png}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st301.png}
+    \end{column}
+  \end{columns}
+  \framebreak
+  \begin{footnotesize}
+  To determine the second order Taylor approximation in $\bm{\tilde x} = (1.0, 1.0)$, we need the corresponding Hessian: 
+  \vspace*{-0.2cm}
+  $$
+  \nabla^2 \fx = \begin{pmatrix} -4 \text{sin}(2x_1) & 0 \\ 0 & -\text{cos}(x_2) \end{pmatrix}
+  $$
+  
+  and get (together with the linear approximation $T_1(\bm{x})$):
+  \vspace*{-0.2cm}
+  
+  
+  \begin{eqnarray*}
+    f(\bm{x}) &\approx& T_1(\bm{x}) + \frac{1}{2}\biggl(\xv- \begin{pmatrix}1.0 \\ 1.0 \end{pmatrix}\biggr)^\top \begin{pmatrix} -4 \text{sin}(2.0) & 0 \\ 0 & -\text{cos}(1.0) \end{pmatrix} \biggl(\xv- \begin{pmatrix}1.0 \\ 1.0 \end{pmatrix}\biggr)
+  \end{eqnarray*}
+  \vspace*{-0.2cm}
+  \end{footnotesize}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+  %		\animategraphics[loop,controls,width=\linewidth]{7}{figure_man/Taylor2D/Taylor2D_2nd-}{0}{359}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-100.png}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-301.png}
+    \end{column}
+  \end{columns}
+  
+  
+  \end{vbframe}
+
+
+
+  \endlecture
+\end{document}

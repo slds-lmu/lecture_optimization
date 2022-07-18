@@ -1,0 +1,320 @@
+%<<setup-child, include = FALSE>>=
+%library(knitr)
+%library(microbenchmark)
+%library(snow)
+%library(colorspace)
+%library(grid)
+%library(gridExtra)
+%library(dplyr)
+%library(ggplot2)
+%library(latex2exp)
+
+%set_parent("../style/preamble.Rnw")
+
+%pi = base::pi
+
+%theme_set(theme_bw())
+
+%source("rsrc/functions.R")
+%@
+
+\input{../../2021/style/preamble4tex}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\begin{document}
+
+\lecturechapter{2}{Numerical Differentiation}
+\lecture{Optimization}
+
+\begin{vbframe}{Differentiation}
+
+  We consider a function $f: \R^d \rightarrow \R$. We have seen that for proving necessary and sufficient conditions for optima, we need to compute a function's derivatives. 
+  
+  \lz 
+  
+  We distinguish between: 
+  
+  \begin{itemize}
+  \item Symbolic differentiation: Exact handling of mathematical expressions
+  \item Numerical differentiation: Approximative calculation of the derivative
+  \end{itemize}
+  
+  Numerical differentiation is often necessary if the derivative is not given, cannot be calculated or if the function itself is only indirectly available (e.g. via measured values).
+  
+  \end{vbframe}
+  
+  \begin{vbframe}{Numerical differentiation}
+  \begin{itemize}
+  \item Approximation of differentiation $\frac{\partial f}{\partial
+  x_{i}}$:
+  \begin{itemize}
+    \item Newton's difference quotient for $\eps > 0$: 
+    $$
+    D_\xb(\epsilon) = \frac{f(\xb + \epsilon\cdot \bm{e}_i) -
+    f(\xb)}{\epsilon}, 
+    $$
+    \item Symmetric difference quotient for $\eps > 0$: 
+    $$
+    D_\xb(\epsilon) = \frac{f(\xb + \epsilon\cdot \bm{e}_i) - f(\xb - \epsilon
+    \cdot \bm{e}_{i})}{2\epsilon}
+    $$
+  \end{itemize}
+  \item Symmetric approximation is more accurate, but $f$ must be evaluated twice.
+  % , da $f(x)$ in der Regel ja schon bekannt ist.
+  \item \textbf{Essential question:} How should $\epsilon$ be chosen? In any case we require $\epsilon > \epsilon_{m}$ ($\eps$ should be larger than the machine epsilon).
+  \end{itemize}
+  
+  \framebreak
+  
+  From now on, let us consider univariate functions $f: \R \to \R$ only. We calculate the Taylor series at the location $\epsilon = 0$ with
+  
+  $$
+    f(x + \epsilon) = \sum_{k=0}^\infty \frac{\epsilon^k}{k!} \nabla^{(k)} f(x):
+  $$
+  
+  \begin{eqnarray*}
+  \text{(A)} \qquad f(x + \epsilon) &=& f(x) + f'(x) \cdot \epsilon + \frac{1}{2 !}f''(x)\cdot\epsilon^2 + \frac{1}{3 !}f^{(3)}(x)\cdot\epsilon^3 \\ &+& \frac{1}{4 !}f^{(4)}(x)\cdot\epsilon^4 + ... \\
+  \text{(B)} \qquad  f(x - \epsilon) &=& f(x) - f'(x) \cdot \epsilon + \frac{1}{2 !}f''(x)\cdot\epsilon^2 - \frac{1}{3 !}f^{(3)}(x)\cdot\epsilon^3 \\ &+& \frac{1}{4 !}f^{(4)}(x)\cdot\epsilon^4 - ...
+  \end{eqnarray*}
+  
+  \framebreak
+  
+  Thus the following applies for Newton's difference quotient
+  
+  \begin{footnotesize}
+  \begin{eqnarray*}
+  \frac{f(x + \epsilon) - f(x)}{\epsilon} &\approx&
+  f\!\,'(x) +
+  \underbrace{f\!\,''(x)\frac{\epsilon}{2} + \frac{1}{3 !}f^{(3)}(x)\cdot\epsilon^2 + ... }_{\text{Error } \in \order(\epsilon)}
+  \end{eqnarray*}
+  \end{footnotesize}
+  
+  and for the symmetric difference quotient
+  
+  \begin{footnotesize}
+  \begin{eqnarray*}
+  \frac{f(x + \epsilon) - f(x - \epsilon)}{2 \epsilon} &\approx& \frac{\text{(A)} - \text{(B)} }{2 \epsilon} = \frac{1}{2 \epsilon} \left(2\cdot f\!\,'(x) \epsilon + 2 \frac{1}{3 !}f^{(3)}(x)\cdot\epsilon^3 + 2  \frac{1}{5 !}f^{(5)}(x)\epsilon^5  \right) \\ &=&
+  f\!\,'(x) +
+  \underbrace{c_1\epsilon^2 + c_2 \epsilon^4 + ... }_{\text{Error } \in \order(\epsilon^2)} \\
+  \end{eqnarray*}
+  \end{footnotesize}
+  
+  with $c_1 = \frac{1}{3 !}f^{(3)}(x)$ and $c_2 = \frac{1}{5 !}f^{(5)}(x)$.
+  
+  \framebreak
+  
+  We observe a \textbf{trade off} between the mathematical and a numerical error:
+  \begin{itemize}
+  \item The \textbf{mathematical error} is smaller for smaller $\epsilon$:
+  \begin{itemize}
+  \item The error is in $\order(\epsilon)$ for Newton's difference quotient
+  \item The error is in $\order(\epsilon^2)$ for the Symmetric difference quotient (so symmetrical is much more accurate)
+  \end{itemize}
+  \item The \textbf{numerical error} error may explode for small $\eps$: The problem is extremely bad conditioned for small $\epsilon$ (loss of significance and then division by $\epsilon$).
+  \end{itemize}
+  
+  \lz
+  
+  \textbf{Aim}: When choosing $\epsilon$, we have to find a compromise between mathematical and numerical error!
+  
+  \framebreak
+  
+  Let $\delta$ be a bound for the relative error in the calculation of
+  $f(x)$ and $f(x+\epsilon)$ (that is, we only have access to $\tilde f(x), \tilde f(x + \epsilon)$ with relative error $\delta$).
+  
+  \lz
+  
+  We estimate the error of the numerical differentiation:
+  \begin{footnotesize}
+  \begin{eqnarray*}
+  \Bigl|\underbrace{\frac{\tilde f(x+\epsilon) - \tilde f(x)}{\epsilon}}_{\text{our approach}} - \underbrace{f\!\,'(x)}_{\text{true value}} \Bigr| &\overset{(*)}{\le}& \left| f\!\,''(\zeta)\right|\frac{\epsilon}{2} + 2 \delta\left| f(x) \right|\frac 1\epsilon
+  =: \frac{a\cdot\epsilon}2 + \frac{2b}\epsilon, \\
+  \end{eqnarray*}
+  \end{footnotesize}
+  
+  and minimize it by differentiation with respect to $\epsilon$:
+  
+  \vspace*{-0.5cm}
+  
+  \begin{footnotesize}
+  \begin{eqnarray*}
+  &\frac{a\cdot\epsilon}2 + \frac{2b}\epsilon \rightarrow
+  \underset\epsilon {\min} \ \Leftrightarrow \ \frac a2 - \frac
+  {2b}{\epsilon^2} = 0 \ \Leftrightarrow \ \frac a2 = \frac
+  {2b}{\epsilon^2} \ \Leftrightarrow \ \epsilon^2=\frac{4b}a\\
+  \\
+  &\epsilon = 2 \sqrt{\frac ba} = 2
+  \sqrt{\frac{\delta\left|f(x)\right|}{\left| f\!\,''(\zeta)\right|}}
+  \end{eqnarray*}
+  \end{footnotesize}
+  
+  
+  \framebreak
+  
+  \begin{footnotesize}
+  
+  $^{(*)}$ Proof: Since we only have access to approximate values $\tilde f(x + \epsilon)$, $\tilde f(x)$ with relative error $\delta$, the following applies by definition (relative error):
+  
+  $$\underbrace{\left|\frac{\tilde f(x + \epsilon) - f(x + \epsilon)}{f(x + \epsilon)}\right| \le \delta}_{(1)},
+  \qquad \underbrace{\left|\frac{\tilde f(x) - f(x)}{f(x)}\right| \le \delta}_{(2)}
+  $$
+  
+  Further, by using a Taylor expansion with an exact formulation of the remainder term $R_n(x; x_0)$ (\enquote{Lagrange form}) 
+  
+  $$
+    f(x) = \sum_{k = 0}^n \frac{f^{(k)}(x_0)}{k!} \cdot \left(x - x_0\right)^k + \underbrace{\frac{f^{(n + 1)} (\zeta)}{(n + 1)!} (x - x_0)^{n + 1}}_{R_n(x;x_0)}, \quad \zeta \in [x_0; x]
+  $$
+  
+  we get 
+  
+  \vspace*{-0.5cm}
+  
+  \begin{eqnarray*}
+    && f(x + \epsilon) = f(x) + f'(x) \cdot \epsilon + \frac{f''(\zeta)}{2} \epsilon^2, \qquad \zeta \in [0, \epsilon] \\
+    &\Leftrightarrow& \underbrace{\frac{f(x + \epsilon) - f(x)}{\epsilon} - f'(x) = f''(\zeta) \frac{\epsilon}{2}}_{(3)} 
+  \end{eqnarray*}
+  
+  \framebreak 
+  
+  Thus we estimate the total error as follows:
+  
+  \begin{eqnarray*}
+  && \Bigl|\frac{\tilde f(x+\epsilon) - \tilde f(x)}{\epsilon} - f\!\,'(x) \Bigr| \\ &=&  \Bigl|\frac{f(x+\epsilon) - f(x)}{\epsilon} - f'(x) + \frac{\tilde f(x+\epsilon) - f(x + \epsilon)}{\epsilon} + \frac{f(x) - \tilde f(x)}{\epsilon}\Bigr| \\
+  &\le&  \underbrace{\Bigl|\frac{f(x+\epsilon) - f(x)}{\epsilon} - f'(x)\Bigr|}_{(3)} + \underbrace{\Bigl|\frac{\tilde f(x+\epsilon) - f(x + \epsilon)}{f(x + \epsilon)\epsilon} f(x + \epsilon)\Bigr|}_{(1)} + \underbrace{\Bigl|\frac{f(x) - \tilde f(x)}{f(x)\epsilon} f(x)\Bigr|}_{(2)} \\
+  &\le& \left| f\!\,''(\zeta)\right|\frac{\epsilon}{2} + \delta\left| f(x + \epsilon) \right|\frac 1\epsilon + \delta\left| f(x) \right|\frac 1\epsilon \\
+  &\approx& \left| f\!\,''(\zeta)\right|\frac{\epsilon}{2} + 2 \delta\left| f(x)
+  \right|\frac 1\epsilon \\
+  \end{eqnarray*}
+  
+  \end{footnotesize}
+  
+  \framebreak
+  
+  Popular choice of $\epsilon$:
+  
+  \begin{itemize}
+  \item $\epsilon \approx \sqrt{\delta}$ (if $\left|f(x)\right| \approx \left|
+  f\!\,''(\zeta)\right|$ can be assumed) or
+  \item $\epsilon = \left|x\right|\sqrt{\delta}$ \\
+  (For partial deriviatives $\frac{\partial f}{\partial x_i}$ we choose 
+  $\left|x_i\right|\sqrt{\delta}$ analogously.)
+  \end{itemize}
+  
+  
+  Without further knowledge it is often assumed:
+  
+  $$
+  \delta \approx \epsilon_m
+  $$
+  
+  \lz
+  
+  \begin{footnotesize}
+  More on the choice of $\epsilon$ and numerical differentiation: W. Press et al., \emph{Numerical Recipes}, Chapter 5.7
+  \end{footnotesize}
+  
+  % \framebreak
+  %
+  % Hesse-Matrix durch:
+  % \begin{itemize}
+  % \item $f$ 2 mal numerisch ableiten.
+  % \item $\nabla f$ 1 mal numerisch ableiten (falls $\nabla f$ bekannt).
+  % \item bei Quasi-Newton aus Näherung im Algorithmus (siehe später).
+  % \end{itemize}
+  
+  % \framebreak
+  
+  % <<size = "scriptsize">>=
+  % grad(x = 3, y = 1.5, FUN = foo, type = "centered")
+  % x = seq(0, 6, length = 100)
+  % g1 = grad(x = x, y = 1.5, FUN = foo)[, "x"]
+  % g2 = grad(x = x, y = 4, FUN = foo)[, "x"]
+  % plot(g1 ~ x, type = "l", ylab = "f'(x, y)")
+  % lines(g2 ~ x, col = "blue")
+  % @
+  
+  \end{vbframe}
+  
+  \begin{vbframe}{Derivative-based vs. Derivative-free Optimization }
+  
+  \begin{itemize}
+    \item If an objective function is assumed to be smooth and (good approximations to) derivatives are easy to compute, derivative-based optimization methods (i.e., methods requiring gradient-information) may be useful and usually yield fast convergence. 
+    \item However, if for example
+    \begin{itemize}
+      \item smoothness cannot be assumed
+      \item the problem of computing derivatives is extremely bad conditionned
+      \item $f$ is time-consuming to evaluate, or 
+      \item $f$ is in some way noisy
+    \end{itemize}
+    optimization methods that do not require any derivative information have advantages. 
+  \footnotesize	
+    \item Those methods are referred to as \textbf{derivative-free algorithms}, and will be covered in later chapters. 
+  \end{itemize}
+  
+  \end{vbframe}
+  
+  
+  % \begin{vbframe}{Richardson extrapolation}
+  
+  % \textbf{Idea}: Calculate \textbf{symmetric} formula $D_x(\epsilon)$ for two values of $\epsilon$ and combine both results.
+  
+  % \begin{itemize}
+  % \item We have shown that
+  
+  % \begin{footnotesize}
+  % \begin{eqnarray*}
+  % D_x(\epsilon) &=& \frac{f(x + \epsilon) - f(x - \epsilon)}{2 \epsilon} \\ &=&
+  % f\!\,'(x) + c_1\epsilon^2 + \order(\epsilon^4)
+  % \end{eqnarray*}
+  % \end{footnotesize}
+  
+  % \item We calculate the expression for $2\epsilon$
+  
+  % \begin{footnotesize}
+  % \begin{eqnarray*}
+  % D_x(2\epsilon) &=& \frac{f(x + 2\epsilon) - f(x - 2\epsilon)}{4 \epsilon} \\ &=&
+  % f\!\,'(x) + c_1 4 \epsilon^2 + \order(\epsilon^4)
+  % \end{eqnarray*}
+  % \end{footnotesize}
+  
+  % \end{itemize}
+  
+  % We subtract the expressions and divide by $3$:
+  
+  % \begin{eqnarray*}
+  % \frac{D_x(2\epsilon) - D_x(\epsilon)}{3} &=& c_1 \epsilon^2 + \order(\epsilon^4) \\
+  % \end{eqnarray*}
+  
+  % Since $c_1 \epsilon^2 = D_x(\epsilon) - f'(x) + \order(\epsilon^4)$, we plug it in and obtain
+  
+  % \begin{eqnarray*}
+  % \frac{D_x(2\epsilon) - D_x(\epsilon)}{3} &=& D_x(\epsilon) - f'(x) + \order(\epsilon^4).
+  % \end{eqnarray*}
+  
+  % Rearranging yields
+  
+  % \begin{eqnarray*}
+  % f'(x) &=& D_x(\epsilon) + \frac{ D_x(\epsilon) - D_x(2\epsilon)}{3} + \order(\epsilon^4) \\
+  % &=& \frac{4 D_x(\epsilon) - D_x(2\epsilon)}{3} + \order(\epsilon^4)
+  % \end{eqnarray*}
+  
+  % The last formula for calculating the derivative is known as \textbf{Richardson extrapolation}. For fixed $\epsilon$, the expression has
+  
+  % \begin{itemize}
+  % \item Approximately the same numerical properties as the symmetric formula,
+  % \item But a mathematical one of only $\order(\epsilon^4)$ (instead of $\order(\epsilon^2)$)
+  % \item However, more function evaluations are required since $D_x(\epsilon)$ and $D_x(2\epsilon)$ must be calculated.
+  % \end{itemize}
+  
+  
+  % \end{vbframe}
+  
+  \endlecture
+  \end{document}
+  
+  
+  
+  
