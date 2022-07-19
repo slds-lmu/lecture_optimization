@@ -1,33 +1,26 @@
-%<<setup-child, include = FALSE>>=
-%library(knitr)
-%library(microbenchmark)
-%library(snow)
-%library(colorspace)
-%library(grid)
-%library(gridExtra)
-%library(dplyr)
-%library(ggplot2)
-%library(latex2exp)
 
-%set_parent("../style/preamble.Rnw")
-
-%pi = base::pi
-
-%theme_set(theme_bw())
-
-%source("rsrc/functions.R")
-%@
-
-\input{../../2021/style/preamble4tex}
+\input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
+
+\newcommand{\titlefigure}{figure_man/hinge_vs_l2.pdf}
+\newcommand{\learninggoals}{
+\item TODO
+\item TODO}
+
+
 %\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization}
+\author{Bernd Bischl}
+\date{}
 
 \begin{document}
 
-\lecturechapter{2}{Numerical Differentiation}
+\lecturechapter{Numerical differentiation}
 \lecture{Optimization}
+\sloppy
 
 \begin{vbframe}{Differentiation}
 
@@ -53,12 +46,12 @@
   \begin{itemize}
     \item Newton's difference quotient for $\eps > 0$: 
     $$
-    D_\xb(\epsilon) = \frac{f(\xb + \epsilon\cdot \bm{e}_i) -
-    f(\xb)}{\epsilon}, 
+    D_\xv(\epsilon) = \frac{f(\xv + \epsilon\cdot \bm{e}_i) -
+    f(\xv)}{\epsilon}, 
     $$
     \item Symmetric difference quotient for $\eps > 0$: 
     $$
-    D_\xb(\epsilon) = \frac{f(\xb + \epsilon\cdot \bm{e}_i) - f(\xb - \epsilon
+    D_\xv(\epsilon) = \frac{f(\xv + \epsilon\cdot \bm{e}_i) - f(\xv - \epsilon
     \cdot \bm{e}_{i})}{2\epsilon}
     $$
   \end{itemize}
