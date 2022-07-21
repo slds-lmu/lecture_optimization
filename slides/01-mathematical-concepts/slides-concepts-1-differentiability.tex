@@ -4,10 +4,10 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/hinge_vs_l2.pdf}
+\newcommand{\titlefigure}{figure_man/differentiability_multivariate.png}
 \newcommand{\learninggoals}{
-\item TODO
-\item TODO}
+\item Definition of Smoothness
+\item Uni- \& Multivariate Differentiation}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
@@ -18,7 +18,7 @@
 
 \begin{document}
 
-\lecturechapter{Quadratic forms II}
+\lecturechapter{Smoothness \& Gradients}
 \lecture{Optimization}
 \sloppy
 
@@ -28,8 +28,9 @@
 
 \begin{itemize}
 \item The \textbf{smoothness} of a function is a property that is measured by the number of its continuous derivatives. 
-\item We will call a function $f: \mathcal{S} \to \R$ \enquote{smooth}, if it is at least differentiable for every $\xv \in \mathcal{S}$. 
-\item We call a function $k$-times continuously differentiable, if the $k$-th derivative exists and is continuous. $\mathcal{C}^k$ denotes the class of $k$-times continuously differentiable functions. 
+\item We call a function $k$-times continuously differentiable, if the $k$-th derivative exists and is continuous. $\mathcal{C}^k$ denotes the class of $k$-times continuously differentiable functions.
+\item In this lecture, we will call a function $f: \mathcal{S} \to \R$ \enquote{smooth}, if it is at least one time differentiable, i.e. $f \in \mathcal{C}^k$ with $k \geq$ 1. 
+ 
 \end{itemize}
 
 
@@ -168,18 +169,6 @@ $$
 D_v \fx = \nabla \fx^\top \cdot \begin{pmatrix} 1 \\1\end{pmatrix} = \frac{\partial f}{\partial x_1} + \frac{\partial f}{\partial x_2}
 $$
 
-
-\framebreak
-
-\textbf{Definition (Hessian)}: The \textbf{Hessian matrix} is analogous to the second derivative in a multivariate setting. The Hessian matrix consists of the second partial derivatives:
- \[ H(\boldsymbol{x}) =\nabla^2 \fx =
-\Bigl(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\Bigr)_{i,j=1\ldots d}\]
-\begin{itemize}
-\item The Hessian indicates the local curvature (2nd derivative) at a point $\xv$ of the function $f$.
-\item The eigenvector corresponding to the largest absolute eigenvalue indicates the direction of the strongest curvature.
-\item The eigenvector corresponding to the smallest absolute eigenvalue indicates the direction of the lowest curvature.
-\item The corresponding eigenvalues specify the strength of the curvature.
-\end{itemize}
 \end{vbframe}
 
 

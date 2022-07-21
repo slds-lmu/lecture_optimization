@@ -1,0 +1,173 @@
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/hinge_vs_l2.pdf}
+\newcommand{\learninggoals}{
+\item Taylor series (Univariate)
+\item Hessian Matrix
+\item Taylor series (Multivariate)}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization}
+\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Hessian Matrix \& Taylor Series}
+\lecture{Optimization}
+\sloppy
+   
+\begin{vbframe}{Taylor series (univariate)}
+
+    \textbf{Definition (Taylor's Theorem)}: Let $I \subseteq \R$ an open Interval and $a, x \in I$. If $m \in \mathbb{N}_0$ and $f \in \mathcal{C}^{m+1}(I,\R)$, then
+    $$f(x) = T_{m}(x,a) + R_{m}(x,a).$$
+    We call
+    $$T_{m}(x,a) = \sum_{k=}^{m} \frac{f^{k}(a)}{k!}(x-a)^{k} = $$
+    $$f(a) + f'(a)(x-a) + \frac{f''(a)}{2!}(x-a)^{2} + ... + \frac{f^{(m)}(a)}{m!}(x-a)^{m}$$ the $m$-th Taylor polynomial.
+    $$R_{m}(x,a)$$ is called \textbf{Remainder Term}. We will cover this term later.    
+\end{vbframe}
+
+\begin{vbframe}{Differentiation (Multivariate)}
+  \textbf{Definition (Hessian)}: The \textbf{Hessian matrix} is analogous to the second derivative in a multivariate setting. The Hessian matrix consists of the second partial derivatives:
+  \[ H(\boldsymbol{x}) =\nabla^2 \fx =
+  \Bigl(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\Bigr)_{i,j=1\ldots d}\]
+  \begin{itemize}
+  \item The Hessian indicates the local curvature (2nd derivative) at a point $\xv$ of the function $f$.
+  \item The eigenvector corresponding to the largest absolute eigenvalue indicates the direction of the strongest curvature.
+  \item The eigenvector corresponding to the smallest absolute eigenvalue indicates the direction of the lowest curvature.
+  \item The corresponding eigenvalues specify the strength of the curvature.
+  \end{itemize}
+
+
+  \framebreak 
+
+    \textbf{Insert visualizaiton of Hessian}
+  \end{vbframe}
+  \framebreak 
+
+\begin{vbframe}{Taylor series (multivariate)}
+
+  The Taylor series at point $\bm{\tilde x}$ is
+  
+  \begin{itemize}
+    \item first order: 
+    $$
+    f(\bm{x}) = f(\bm{\tilde{x}}) + \nabla f(\bm{\tilde{x}})^\top(\xv-\bm{\tilde{x}}) + \order(\|\xv - \bm{\tilde{x}}\|^2) 
+    $$
+    \item second order: 
+    $$
+    f(\bm{x}) = f(\bm{\tilde{x}}) + \nabla f(\bm{\tilde{x}})^\top(\xv-\bm{\tilde{x}}) +
+    \frac 12(\xv-\bm{\tilde{x}})^\top\nabla^2 f(\bm{\tilde{x}})(\xv-\bm{\tilde{x}}) + \order(\|\xv - \bm{\tilde{x}}\|^3)
+    $$
+  \end{itemize}
+  
+  \textbf{Note}: The order of the error of the taylor approximation is 
+  \begin{itemize}
+    \item smaller at points $\xv$ close to $\bm{\tilde x}$
+    \item smaller for the higher the order of the taylor approximation (because higher order approximations give us more flexibility)
+  \end{itemize}
+  
+  The $n^{th}$ order taylor series is the best $n^{th}$ order approximation to $\fx$ near $\bm{\tilde{x}}$. 
+  
+  \framebreak
+
+    \textbf{Definition (Mutlivariate Directional derivative)}: $\bm{h} = (h_{1}, ..., h_{n})$ $\in \R^{n}$, $G \subseteq \R^{n}$ open, $f : G \rightarrow \R^{n}$ differentiable, $a \in G$.
+    $$(\bm{h}\nabla(f)(\bm{a}) := \frac{\partial f}{\partial h}(\bm{a}) = \sum_{j=1}^{n} h_{j}\partial_{j}f(\bm(a)) = h_{1}\partial_{j}f(\bm(a)) + ... + h_{n}\partial_{n}f(\bm(a))$$
+    with ($\bm{h}\nabla$) called \textbf{Differential operator}.
+    
+    \vspace*{0.2cm}
+    
+    If $f \in \mathcal{C}^{2}(G,\R)$, we can apply ($\bm{h}\nabla$) again:
+    $$(\bm{h}\nabla)(f)^{2}(\bm{a}) := (\bm{h}\nabla)(\bm{h}\nabla)(f)(\bm{a}) = $$
+    $$ = \sum_{j=1}^{n}(\bm{h}\nabla)(\bm{h}_{j}\partial_{j}(f)(\bm{a}) = \sum_{k,j=1}^{n}h_{k}h_{j}\partial_{k}\partial_{j}f(\bm{a})$$
+
+  \framebreak
+
+    Together with the Multivariate Directional derivative we can now extend Taylor's theorem to multiple dimensions.
+    
+    \vspace*{0.2cm}
+    
+    \textbf{Definition (Taylor's Theorem)}: Let $G \subseteq \R^{n}$ open, $f \in \mathcal{C}^{m+1}(G,\R)$ for $m \in \mathbb{N}_0$.
+    If $a \in G, h \in \R^{n}$ so that the line segment $S_{a, a+h}$ between $a$ and $a+h \in G$, then
+    $$f(\bm{a+h}) = \sum_{k=0}^{m} \frac{(\bm{h}\nabla^{k}(f)(\bm{a})}{k!} + R_{m}(\bm{a}) = $$
+    $$f(\bm{a}) + \frac{(\bm{h}\nabla)(f)(\bm{a})}{1!} + \frac{(\bm{h}\nabla)^{2}(f)(\bm{a})}{2!} + ... + \frac{(\bm{h}\nabla)^{m}(f)(\bm{a})}{m!} + R_{m}(\bm{a})$$
+    
+  
+
+  \framebreak
+
+  
+  \textbf{Example: } We consider the function $\fx = \text{sin}(2x_1) + \text{cos}(x_2)$.
+  
+  \vspace*{0.2cm}
+  
+  The gradient is $\nabla \fx = (2\text{cos}(2x_1), -\text{sin}(x_2))^\top$. With this, the resulting first order Taylor approximation in $\bm{\tilde x} = (1.0, 1.0)$ is
+  \vspace*{-0.5cm}
+  
+  \begin{eqnarray*}
+  f(\bm{x}) &\approx& T_1(\bm{x}) = f(1.0, 1.0) + (2\text{cos}(2.0), -\text{sin}(1.0))^T\biggl(\xv- \begin{pmatrix}1.0 \\ 1.0 \end{pmatrix}\biggr) 
+  \end{eqnarray*}
+  
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+  %		\animategraphics[loop,controls,width=\linewidth]{7}{figure_man/Taylor2D/Taylor2D_1st}{0}{359}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st100.png}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st301.png}
+    \end{column}
+  \end{columns}
+  \framebreak
+  \begin{footnotesize}
+  To determine the second order Taylor approximation in $\bm{\tilde x} = (1.0, 1.0)$, we need the corresponding Hessian: 
+  \vspace*{-0.2cm}
+  $$
+  \nabla^2 \fx = \begin{pmatrix} -4 \text{sin}(2x_1) & 0 \\ 0 & -\text{cos}(x_2) \end{pmatrix}
+  $$
+  
+  and get (together with the linear approximation $T_1(\bm{x})$):
+  \vspace*{-0.2cm}
+  
+  
+  \begin{eqnarray*}
+    f(\bm{x}) &\approx& T_1(\bm{x}) + \frac{1}{2}\biggl(\xv- \begin{pmatrix}1.0 \\ 1.0 \end{pmatrix}\biggr)^\top \begin{pmatrix} -4 \text{sin}(2.0) & 0 \\ 0 & -\text{cos}(1.0) \end{pmatrix} \biggl(\xv- \begin{pmatrix}1.0 \\ 1.0 \end{pmatrix}\biggr)
+  \end{eqnarray*}
+  \vspace*{-0.2cm}
+  \end{footnotesize}
+  \begin{columns}
+    \begin{column}{0.48\textwidth}
+  %		\animategraphics[loop,controls,width=\linewidth]{7}{figure_man/Taylor2D/Taylor2D_2nd-}{0}{359}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-100.png}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-301.png}
+    \end{column}
+  \end{columns}  
+
+  \framebreak
+
+  Notice how we use the notation '$f(\bm{x}) \approx$' on the last two slides. This is because of the \textbf{Remainder term} $R_{m}(\bm{a})$.\\
+  $R_{m}(\bm{a})$ can be defined in the \textbf{integral form}
+  $$R_{m}(\bm{a}) := \int_{0}^{1}\frac{(1-t)^{m}}{m!}(\bm{h}\nabla^{m+1})(f)(\bm{a}+t\bm{h}) dt$$
+  or in the \textbf{Lagrange form}
+  $$\exists_{\theta \in ]0,1[} \hspace{0.1cm} R_{m}(\bm{a}) = \frac{(\bm{h}\nabla^{m+1})(f)(\bm{a}+t\bm{h})}{(m+1)!}$$
+  The higher the degree $m$ of the Taylor polynomial, the smaller $R_{m}(\bm{a})$
+
+   \framebreak
+   -O-Notation statt Remainder Term:
+   1. Nähe zum Entwicklungspunkt
+   2. bessere Annäherung durch m
+
+
+\end{vbframe}
+
+
+
+  \endlecture
+\end{document}

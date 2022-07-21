@@ -6,8 +6,8 @@
 
 \newcommand{\titlefigure}{figure_man/hinge_vs_l2.pdf}
 \newcommand{\learninggoals}{
-\item TODO
-\item TODO}
+\item Convex vs. Non-Convex
+\item Convex set \& functions}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
@@ -33,6 +33,24 @@
 \end{center}
 
 	
+\end{vbframe}
+
+\begin{vbframe}{Convex Optimization Problems}
+  
+  Why do convex optimization problems play a big role in optimization? 
+  
+  \begin{itemize}
+    \item In a convex optimization problem, every local optimum is a global one.  
+    \item If the objective function is strictly convex, then the problem has at most one optimal point. 
+  \end{itemize}
+  
+  \begin{center}
+  \includegraphics[width = 0.9\textwidth]{figure_man/convexity_3.pdf} \\
+  \begin{footnotesize}
+  Left: Example for a function that is strictly convex. It has one local minimum. Middle: A function that is convex, but not strictly convex. All local optima are global ones, but the optimum is not unique. Right: A function that is not convex. 
+  \end{footnotesize} 
+  \end{center}
+  
 \end{vbframe}
 
 \begin{vbframe}{Convex sets}
