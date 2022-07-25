@@ -6,14 +6,14 @@
 
 \newcommand{\titlefigure}{figure_man/differentiability_multivariate.png}
 \newcommand{\learninggoals}{
-\item Definition of Smoothness
-\item Uni- \& Multivariate Differentiation}
+\item Definition of smoothness
+\item Uni- \& multivariate differentiation}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
 
 \title{Optimization}
-\author{Bernd Bischl}
+\author{}
 \date{}
 
 \begin{document}
@@ -27,15 +27,15 @@
 \begin{vbframe}{Smooth vs. non-smooth}
 
 \begin{itemize}
-\item The \textbf{smoothness} of a function is a property that is measured by the number of its continuous derivatives. 
-\item We call a function $k$-times continuously differentiable, if the $k$-th derivative exists and is continuous. $\mathcal{C}^k$ denotes the class of $k$-times continuously differentiable functions.
-\item In this lecture, we will call a function $f: \mathcal{S} \to \R$ \enquote{smooth}, if it is at least one time differentiable, i.e. $f \in \mathcal{C}^k$ with $k \geq$ 1. 
- 
+\item \textbf{Smoothness} of a function  $f: \mathcal{S} \to \R$ is measured by the number of its continuous derivatives
+\item If $k$-th derivative of $f$ exists and is continuous on $\mathcal{S}$: $f$ is $
+k$-times continuously differentiable; $f \in \mathcal{C}^k$ (class of $k$-times continuous differentiable functions)
+\item In this lecture, we call $f$ \enquote{smooth}, if at least $f \in \mathcal{C}^1$
 \end{itemize}
 
 
 \begin{center}
-\includegraphics[width = 0.4\textwidth]{figure_man/hinge_vs_l2.pdf} \\ 
+\includegraphics[width = 0.5\textwidth]{figure_man/hinge_vs_l2.pdf} \\ 
 \begin{footnotesize}
 $f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-continuous. 
 \end{footnotesize}
@@ -52,12 +52,12 @@ $$
 f'(x) := \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
 $$
 
-A function $f: \mathcal{S} \subseteq \R \to \R$ is said to be differentiable in $x \in \mathcal{S}$, if $f$ can be locally approximated by a linear function in $x$.
+Intuitively: $f$ can be approximated locally by a linear function with slope $m = f'(x)$. 
 
 \begin{center}
-\includegraphics[width = 0.6\textwidth]{figure_man/tangent.png} \\
+\includegraphics[width = 0.8\textwidth]{figure_man/tangent.png} \\
 \begin{footnotesize}
-Geometrically: A tangent can be placed on the graph of $f$ through the point $(x, f(x))$. $m = f'(x)$ then indicates the slope of this tangent. The function on the left is differentiable everywhere; the function on the right is not differentiable at the red point. 
+Left: Function is differentiable everywhere. Right: Not differentiable at the red point. 
 \end{footnotesize}
 \end{center}
 
@@ -107,7 +107,7 @@ Source: \url{https://github.com/jermwatt/machine_learning_refined}.
 \framebreak 
 
 
-This local linear approximation is described by the \textbf{gradient}: If $f$ is differentiable in $\xv$, the \textbf{gradient} is defined by
+This linear approximation is given by the \textbf{gradient}: % If $f$ is differentiable in $\xv$, the \textbf{gradient} is defined by
 
 \vspace*{-0.3cm}
 
@@ -125,49 +125,47 @@ The elements of the gradient are called \textbf{partial derivatives}.
 
 \framebreak
 
-Consider $\fx = 0.5 x_1^2 + x_2^2 + x_1 x_2$. The gradient is $\nabla \fx = (x_1 + x_2, 2x_2 + x_1)^{\top}$.
+Consider $\fx = 0.5 x_1^2 + x_2^2 + x_1 x_2$. The gradient is $$\nabla \fx = (x_1 + x_2, 2x_2 + x_1)^{\top}.$$
 
 \begin{center}
-	\includegraphics[width = 0.5\textwidth]{figure_man/grad_unit_vectors.png} ~~~ \includegraphics[width = 0.4\textwidth]{figure_man/gradient2.png}
+	\includegraphics[width = 0.5\textwidth]{figure_man/grad_unit_vectors.png} ~~~ \includegraphics[width = 0.45\textwidth]{figure_man/gradient2.png}
 \end{center}
 
+
+\framebreak 
+
+The directional derivative tells how fast $f: \mathcal{S} \to \R$ is changing w.r.t. an arbitrary direction $\bm{v}$: 
+
+ $$
+   D_v \fx := \lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h} = \nabla \fx \cdot \bm v. 
+ $$
+
+ 
+\textbf{Example: } The instantaneous rate of change in direction $\bm{v} = (1, 1)$ is:
+
+$$
+D_v \fx = \nabla \fx^\top \cdot \begin{pmatrix} 1 \\1\end{pmatrix} = \frac{\partial f}{\partial x_1} + \frac{\partial f}{\partial x_2}
+$$
 
 \framebreak
 
 \textbf{Properties of the gradient:}
 \begin{itemize}
-	\item The gradient is orthogonal to level curves and level surfaces of a function
+	\item Gradient is orthogonal to level curves / surfaces of a function
+	% \item The normal vector describing the tangent plane is has $n + 1$ components, the first $n$ correspond to $\nabla f$ and the $(n + 1)-$th has the value $-1$
 	\item The gradient points in the direction of greatest increase of $f$
 	\begin{center}
-		\includegraphics[width = 0.4\textwidth]{figure_man/gradient3.png} ~~~ \includegraphics[width = 0.4\textwidth]{figure_man/gradient.png}
+		\includegraphics[width = 0.4\textwidth]{figure_man/gradient3.png} \includegraphics[width = 0.4\textwidth]{figure_man/gradient.png}
 	\end{center}
-	\item The normal vector describing the tangent plane has $n + 1$ components, the first $n$ correspond to $\nabla f$ and the $(n + 1)-$th has the value $-1$
+	\begin{footnotesize}
+	\textbf{Proof}: Let $\bm{v}$ be a vector of length $1$. Let $\theta$ the angle between $\bm{v}$ and $\nabla \fx$. 
+ 
+	$$
+		D_{\bm{v}}\fx = \nabla \fx^\top \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
+	$$
+	using the cosine formula for dot products and	 because $\|v\| = 1$ by assumption. $\cos(\theta)$ is maximal if $\theta = 0$, which is if $\bm{v}$ and $\nabla \fx$ point in the same direction. 
+	\end{footnotesize}
 \end{itemize}
-
-
-\framebreak 
-
-We can also compute the instantaneous rate of change of $f$ at $\xv$ along an arbitrary direction $\bm{v}$: 
-
-$$
-D_v \fx = \nabla \fx \cdot \bm v.
-$$
-
-
-$D_v \fx$ is called \textbf{directional derivative}. 
-
-\textbf{Definition:} The directional derivative for direction $\bm{v}$ for $f: \mathcal{S} \to \R, \mathcal{S} \subseteq \R^d$ is defined as
- $$
-   D_v \fx = \lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h}.
- $$
-
-\lz 
-
-For example, the slope in the direction $\bm{v} = (1, 1)$ is the sum of the first and the second partial derivative: 
-
-$$
-D_v \fx = \nabla \fx^\top \cdot \begin{pmatrix} 1 \\1\end{pmatrix} = \frac{\partial f}{\partial x_1} + \frac{\partial f}{\partial x_2}
-$$
 
 \end{vbframe}
 
