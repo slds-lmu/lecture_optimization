@@ -4,7 +4,7 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/hinge_vs_l2.pdf}
+\newcommand{\titlefigure}{figure_man/local_global_min_2D.png}
 \newcommand{\learninggoals}{
 \item Optima
 \item First \& Second Order Conditions}
@@ -159,9 +159,39 @@
   % \begin{center}
   % 	\includegraphics[width=1\textwidth, keepaspectratio]{figure_man/minmaxsaddle.png}
   % \end{center}
+
+  \framebreak
+
+\textbf{Example:}
+\footnotesize
+\begin{enumerate}
+\item Local min: If [$f$ convex $\Leftrightarrow$ All eigenvalues positive], then global min\\
+\item Local max: If [$f$ concave $\Leftrightarrow$ All eigenvalues negative], then global max\\
+\item Some eigenvalues positive and some negative $\Leftrightarrow$ saddle point
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\begin{center}
+\includegraphics[scale= 0.5]{figure_man/convex.jpg}
+\end{center}
+
   
   \end{vbframe}
-  
+
+\begin{vbframe}
+
+Let $f:\mathcal{S} \to \R$ be convex on the convex set $\mathcal{S}$. Then the following applies:
+
+\begin{itemize}
+\item Any local minimum of $f$ is also a global minimum (see chapter \emph{Conditions for Optimality}).
+\item If $f$ is strictly convex, $f$ has exactly one local minimum on $\mathcal{S}$ and it is also the unique global minimum of $f$ on $\mathcal{S}$ (see chapter \emph{Conditions for Optimality}). 
+\item Sublevel sets $S_1 = \{\xv~|~\fx < a\}$ and $S_2 = \{\xv~|~\fx \leq a \}$, $a\in \R$, form convex sets.
+\end{itemize}
+
+\end{vbframe}
+
+
   \endlecture
   \end{document}
   
