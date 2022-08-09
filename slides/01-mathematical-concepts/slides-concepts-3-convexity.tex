@@ -23,35 +23,7 @@
 \sloppy
 
 
-\begin{vbframe}{Convex vs. non-convex}
 
-\vspace*{2cm}
-
-\begin{center}
-\Large{\enquote{...in fact, the great watershed in optimization isn't between linearity and nonlinearity, but convexity and nonconvexity.}}\\
-\normalsize - R. Tyrrell Rockafellar, in SIAM Review, 1993
-\end{center}
-
-	
-\end{vbframe}
-
-\begin{vbframe}{Convex Optimization Problems}
-  
-  Why do convex optimization problems play a big role in optimization? 
-  
-  \begin{itemize}
-    \item In a convex optimization problem, every local optimum is a global one.  
-    \item If the objective function is strictly convex, then the problem has at most one optimal point. 
-  \end{itemize}
-  
-  \begin{center}
-  \includegraphics[width = 0.9\textwidth]{figure_man/convexity_3.pdf} \\
-  \begin{footnotesize}
-  Left: Example for a function that is strictly convex. It has one local minimum. Middle: A function that is convex, but not strictly convex. All local optima are global ones, but the optimum is not unique. Right: A function that is not convex. 
-  \end{footnotesize} 
-  \end{center}
-  
-\end{vbframe}
 
 \begin{vbframe}{Convex sets}
 
@@ -107,11 +79,6 @@ If the Hessian matrix is positive definite (strict \enquote{$>$}), the function 
 \textbf{Equivalent definition:} A matrix is positive semidefinite if all eigenvalues are non-negative.
 
 \framebreak
-
-Convex functions play a special role in optimization.
-
-\lz
-
 Let $f:\mathcal{S} \to \R$ be convex on the convex set $\mathcal{S}$. Then the following applies:
 
 \begin{itemize}
@@ -181,6 +148,38 @@ The matrix is positive semidefinite, since
 
 So the function $f$ is convex and every local minimum is also a global minimum.
 
+\end{vbframe}
+
+
+\begin{vbframe}{Convex Optimization Problems}
+  
+  Why do convex optimization problems play a big role in optimization? 
+  
+  \begin{itemize}
+    \item In a convex optimization problem, every local optimum is a global one.  
+    \item If the objective function is strictly convex, then the problem has at most one optimal point. 
+  \end{itemize}
+  
+  \begin{center}
+  \includegraphics[width = 0.9\textwidth]{figure_man/convexity_3.pdf} \\
+  \begin{footnotesize}
+  Left: Example for a function that is strictly convex. It has one local minimum. Middle: A function that is convex, but not strictly convex. All local optima are global ones, but the optimum is not unique. Right: A function that is not convex. 
+  \end{footnotesize} 
+  \end{center}
+  
+\end{vbframe}
+
+
+\begin{vbframe}{Convex vs. non-convex}
+
+\vspace*{2cm}
+
+\begin{center}
+\Large{\enquote{...in fact, the great watershed in optimization isn't between linearity and nonlinearity, but convexity and nonconvexity.}}\\
+\normalsize - R. Tyrrell Rockafellar, in SIAM Review, 1993
+\end{center}
+
+	
 \end{vbframe}
 
 \endlecture

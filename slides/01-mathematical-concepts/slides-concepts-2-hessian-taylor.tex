@@ -63,7 +63,28 @@ $$
 
   \framebreak 
 
-    \textcolor{red}{Insert visualizaiton of Hessian}
+    Let $f(x,y) = sin(x) * cos(y)$.
+    The corresponding Hessian is: 
+    \vspace*{-0.2cm}
+    $$
+    \nabla^2 f(x,y) = \begin{pmatrix}
+    \text{-cos}(y)*\text{sin}(x) & \text{-cos}(x)*\text{cos}(y) 
+    \\ \text{-cos}(x)*\text{sin}(y) & \text{-cos}(y)*\text{sin}(x) 
+    \end{pmatrix}
+    $$
+    \newline
+    The Eigenvalues at $a=(\frac{-\pi}{2},0)$, $b=(0,\frac{-\pi}{2})$ and $c=(\frac{-\pi}{2},0)$ are $[-1, -1], [1, -1]$ and $[1, 1]$, respectively.
+    The signs of the Eigenvalues can each be retraced in the following plot:
+      
+    %\begin{columns}%
+    %\begin{column}{0.48\textwidth}%
+      \includegraphics[width = 0.5\textwidth]{figure_man/hessian_3d.png}
+    %\end{column}%
+    %\begin{column}{0.48\textwidth}%
+      %\includegraphics[width = \textwidth]{figure_man/hessian_contour.png}%
+    %\end{column}%
+  %\end{columns}%
+  
   \end{vbframe}
   \framebreak 
 
@@ -177,15 +198,42 @@ $$
   $R_{m}(\bm{a})$ can be defined in the \textbf{integral form}
   $$R_{m}(\bm{a}) := \int_{0}^{1}\frac{(1-t)^{m}}{m!}(\bm{h}\nabla^{m+1})(f)(\bm{a}+t\bm{h}) dt$$
   or in the \textbf{Lagrange form}
-  $$\exists_{\theta \in ]0,1[} \hspace{0.1cm} R_{m}(\bm{a}) = \frac{(\bm{h}\nabla^{m+1})(f)(\bm{a}+t\bm{h})}{(m+1)!}$$
+  $$\exists_{\theta \in ]0,1[} \hspace{0.1cm} R_{m}(\bm{a}) = \frac{(\bm{h}\nabla^{m+1})(f)(\bm{a}+\theta\bm{h})}{(m+1)!}$$
   The higher the degree $m$ of the Taylor polynomial, the smaller $R_{m}(\bm{a})$
 
    \framebreak
-   -O-Notation statt Remainder Term:
-   1. Nähe zum Entwicklungspunkt
-   2. bessere Annäherung durch m
+   The higher m, the better is the fit of our approximative Taylor polynomial to our true function $f$, even if we move further away from our point $a$.
 
+    \begin{columns}
+    \begin{column}{0.48\textwidth}
+  %		\animategraphics[loop,controls,width=\linewidth]{7}{figure_man/Taylor2D/Taylor2D_1st}{0}{359}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st100.png}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st301.png}
+    \end{column}
+  \end{columns}
 
+    The constant term $f(\bm{\tilde{x}})$ ensures that the value of $T_{m}$ matches the value of $f$. \newline
+    The first order term  $\nabla f(\bm{\tilde{x}})^\top(\xv-\bm{\tilde{x}})$ ensures that the slopes of $T_{m}$ and $f$ in $a$ are equal.
+    
+    \framebreak
+
+      \begin{columns}
+    \begin{column}{0.48\textwidth}
+  %		\animategraphics[loop,controls,width=\linewidth]{7}{figure_man/Taylor2D/Taylor2D_2nd-}{0}{359}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-100.png}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-301.png}
+    \end{column}
+  \end{columns} 
+
+    The second order term $\frac 12(\xv-\bm{\tilde{x}})^\top\nabla^2 f(\bm{\tilde{x}})(\xv-\bm{\tilde{x}})$ ensures that the rate of change of the slope in $T_{m}$ and $f$ are the same and so on.
+    
+    \lz
+    
+    Therefore, the higher $m$, the lower the $R_{m}$ will be.
 \end{vbframe}
 
 
