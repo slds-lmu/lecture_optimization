@@ -4,7 +4,7 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/differentiability_multivariate.png}
+\newcommand{\titlefigure}{figure_man/hinge_vs_l2.pdf}
 \newcommand{\learninggoals}{
 \item Definition of smoothness
 \item Uni- \& multivariate differentiation}
@@ -44,9 +44,9 @@ $f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-co
 
 \end{vbframe}
 
-\begin{vbframe}{Differentiability (univariate)}
+\begin{vbframe}{Univariate differentiability}
 
-\textbf{Definition 1:} A function $f: \mathcal{S} \subseteq \R \to \R$ is said to be differentiable in $x \in \mathcal{S}$ if the following limit exists:
+\textbf{Definition:} A function $f: \mathcal{S} \subseteq \R \to \R$ is said to be differentiable in $x \in \mathcal{S}$ if the following limit exists:
 
 $$
 f'(x) := \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
@@ -84,7 +84,7 @@ Left: Function is differentiable everywhere. Right: Not differentiable at the re
 
 \end{vbframe}
 
-\begin{vbframe}{Differentiation (multivariate)}
+\begin{vbframe}{Multivariate differentiability}
 
 A similar definition of differentiability holds for multivariate functions. 
 
@@ -104,8 +104,9 @@ Source: \url{https://github.com/jermwatt/machine_learning_refined}.
 \end{footnotesize}
 \end{center}
 
-\framebreak 
+\end{vbframe}
 
+\begin{vbframe}{Gradient}
 
 This linear approximation is given by the \textbf{gradient}: % If $f$ is differentiable in $\xv$, the \textbf{gradient} is defined by
 
@@ -132,7 +133,9 @@ Consider $\fx = 0.5 x_1^2 + x_2^2 + x_1 x_2$. The gradient is $$\nabla \fx = (x_
 \end{center}
 
 
-\framebreak 
+\end{vbframe}
+
+\begin{vbframe}{Directional derivative}
 
 The directional derivative tells how fast $f: \mathcal{S} \to \R$ is changing w.r.t. an arbitrary direction $\bm{v}$: 
 
@@ -147,9 +150,10 @@ $$
 D_v \fx = \nabla \fx^\top \cdot \begin{pmatrix} 1 \\1\end{pmatrix} = \frac{\partial f}{\partial x_1} + \frac{\partial f}{\partial x_2}
 $$
 
-\framebreak
+\end{vbframe}
 
-\textbf{Properties of the gradient:}
+\begin{vbframe}{Properties of the gradient}
+
 \begin{itemize}
 	\item Gradient is orthogonal to level curves / surfaces of a function
 	% \item The normal vector describing the tangent plane is has $n + 1$ components, the first $n$ correspond to $\nabla f$ and the $(n + 1)-$th has the value $-1$
@@ -163,12 +167,34 @@ $$
 	$$
 		D_{\bm{v}}\fx = \nabla \fx^\top \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
 	$$
-	using the cosine formula for dot products and	 because $\|v\| = 1$ by assumption. $\cos(\theta)$ is maximal if $\theta = 0$, which is if $\bm{v}$ and $\nabla \fx$ point in the same direction. 
+	using the cosine formula for dot products and	 because $\|v\| = 1$ by assumption. $\cos(\theta)$ is maximal if $\theta = 0$, which is if $\bm{v}$ and $\nabla \fx$ point in the same direction. \\
+	(Alternative proof: Apply Cauchy-Schwarz to $\nabla \fx^\top \bm{v}$ and show for which $\bm{v}$ the inequality holds with equality.)  
 	\end{footnotesize}
 \end{itemize}
 
 \end{vbframe}
 
+\begin{vbframe}{Jacobi Matrix}
+
+Let $f: \mathcal{S} \to \R^m$ be a vector-valued function with components $f_1, f_2, ..., f_m$. \textbf{Jacobian} matrix as generalization of gradient:  
+
+\begin{eqnarray*}
+	J_f = \begin{pmatrix} \frac{\partial f_1}{\partial x_1} & \hdots & \frac{\partial f_1}{\partial x_n} \\
+	\vdots & \ddots & \vdots \\
+	\frac{\partial f_m}{\partial x_1} & \hdots & \frac{\partial f_m}{\partial x_n}
+	\end{pmatrix}
+\end{eqnarray*}
+
+\begin{center}
+	\includegraphics[width = 0.5\textwidth]{figure_man/Jacobian.png} \\
+	\begin{footnotesize}
+	$f: \R^2 \to \R^2$ sends  a small square (left, red) to a distored parallelogram (right, red). Jacobian gives best linear aproximation of di
+	storted parallelogram near that point. Source: Wikipedia.
+	\end{footnotesize}
+\end{center}
+
+
+\end{vbframe}
 
 \endlecture
 \end{document}
