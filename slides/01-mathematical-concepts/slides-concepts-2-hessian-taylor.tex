@@ -2,6 +2,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\usepackage{graphicx}
 
 
 \newcommand{\titlefigure}{figure_man/Taylor2D/Taylor2D_1st100.png}
@@ -33,9 +34,12 @@
     $$R_{m}(x,a)$$ is called \textbf{remainder term}. We will cover this term later.    
 
     \framebreak 
-
-    \textcolor{red}{Add 1D visualization for Taylor series (m=1, 2, 3) for logarithm function. }
-
+    
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[height=0.9\textheight]{figure_man/taylor_univariate.png}
+    \end{figure}
+    
 \end{vbframe}
 
 \begin{vbframe}{Differentiation (Multivariate)}
@@ -70,10 +74,16 @@ Local curvature can be analyzed via Eigenspecturm of $H(\xv)$:
 
 \begin{itemize}
   \item The Eigenvector $\bm{v}_\text{max}$ belonging to the largest Eigenvalue $\lambda_\text{max}$ (in absolute terms) points into the the direction of largest curvature. 
-  \item Respectively: $\bm{v}_\text{min}$ points into direction of smallest curvature. 
+  \item Respectively: $\bm{v}_\text{min}$ points into direction of smallest curvature.
+  \item Eigenvalues tell us about the definiteness and therefore the curvature of the matrix at a given point. \begin{description}
+    \item[positive-definite:] all eigenvalues positive -> concave up
+    \item[positive-definite:] all eigenvalues positive -> concave down
+    \item[saddle point:] if eigenvalues are positive \& negative.
+    \item[no statement possible:] if either eigenvalue is $=0$.
+    \end{description}
 \end{itemize}
 
-\lz 
+\framebreak
 
 \textbf{Example (continued):} $f(x_1,x_2) = sin(x_1) \cdot cos(x_2)$ and 
 \begin{footnotesize}
@@ -83,21 +93,25 @@ H(\xv) = \begin{pmatrix}
 \\ \text{-cos}(x_1)\cdot\text{sin}(x_2) & \text{-cos}(x_2)\cdot\text{sin}(x_1) 
 \end{pmatrix}
 $$
-The Eigenvalues at $a=(\frac{-\pi}{2},0)$, $b=(0,\frac{-\pi}{2})$ and $c=(\frac{-\pi}{2},0)$ are $[-1, -1], [1, -1]$ and $[1, 1]$, respectively. The signs of the Eigenvalues can each be retraced in the following plot:
+The Eigenvalues at $a=(\frac{-\pi}{2},0)$, $b=(0,\frac{-\pi}{2})$ and $c=(\frac{-\pi}{2},0)$ are $-1$ \& $-1$, $1$ \& $-1$ and $1$ \& $1$, respectively. The signs can each be retraced in the following plots:
 \end{footnotesize}
 
-      
-    %\begin{columns}%
-    %\begin{column}{0.48\textwidth}%
-      \includegraphics[width = 0.5\textwidth]{figure_man/hessian_3d.png}
-    %\end{column}%
-    %\begin{column}{0.48\textwidth}%
-      %\includegraphics[width = \textwidth]{figure_man/hessian_contour.png}%
-    %\end{column}%
-  %\end{columns}%
+\begin{figure}[!tbp]
+  \centering
+  \begin{minipage}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{figure_man/hessian_3d.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{figure_man/hessian_contour.png}
+  \end{minipage}
+\end{figure} 
+\begin{footnotesize}
+Therefore, the hessian at $a$ is negative-definite, has a saddle point at $b$ and is positive-definite at $c$.
+\end{footnotesize}
 
-  \end{vbframe}
-  \framebreak 
+\end{vbframe}
+\framebreak 
 
 \begin{vbframe}{Multivariate Taylor series}
 
