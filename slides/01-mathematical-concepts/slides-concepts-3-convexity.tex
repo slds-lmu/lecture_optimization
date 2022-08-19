@@ -2,6 +2,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\usepackage[export]{adjustbox}
 
 
 \newcommand{\titlefigure}{figure_man/convex.png}
@@ -64,16 +65,21 @@ It is called \textbf{strictly convex}, if this is valid for \enquote{$<$} instea
 
 \begin{vbframe}{Concave functions}
 
+    Inversely, a function $f: \mathcal{S} \to \R$, $\mathcal{S} concave$, is \textbf{concave} if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$
 
+    $$
+    f(\xv + t(\mathbf{y} - \xv)) \ge \fx + t(f(\mathbf{y}) - \fx).
+    $$
+
+    It is called \textbf{strictly convex}, if this is valid for \enquote{$>$} instead of \enquote{$\ge$}.
+    It holds that
+    $f$ (strictly) concave $\Leftrightarrow$ $-f$ (strictly) convex.
 
 \end{vbframe}
 
 \begin{vbframe}{Examples}
 
 \textbf{Convex function:}: $f(x) = |x|$. 
-
-\lz 
-
 \textbf{Proof: }
 % https://sboyles.github.io/teaching/ce377k/convexity.pdf
 
@@ -84,13 +90,16 @@ It is called \textbf{strictly convex}, if this is valid for \enquote{$<$} instea
 \lz 
 
 \textbf{Non-convex, non-concave}: $f(x) = \exp(-x^2)$
-
 \textbf{Proof: } (plug in respective values to show that it is not convex and not concave)
 
-
-\textcolor{red}{add pictures of all these functions}
-
+\begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth, right]{figure_man/conv_conc_functions.png}
+\end{figure}
 \end{vbframe}
+
+
+
 
 \begin{vbframe}{Convexity and Hessian matrix}
 
@@ -155,10 +164,6 @@ The matrix is positive semidefinite, since
 So the function $f$ is convex and every local minimum is also a global minimum.
 
 \end{vbframe}
-
-
-
-
 
 
 \begin{vbframe}{Convex functions in optimization}
