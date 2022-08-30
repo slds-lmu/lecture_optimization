@@ -1,0 +1,346 @@
+%<<setup-child, include = FALSE>>=
+%library(knitr)
+%library(microbenchmark)
+%library(snow)
+%library(colorspace)
+%library(ggplot2)
+%library(zoo)
+%library(gridExtra)
+%source("rsrc/functions.R")
+
+%# mutate = ecr::mutate
+
+%set_parent("../style/preamble.Rnw")
+%@
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-nn}
+
+%\newcommand{\titlefigure}{figure_man/}
+\newcommand{\learninggoals}{
+\item LEARNING GOAL 1
+\item LEARNING GOAL 2}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization}
+%\author{}
+%\date{}
+
+\begin{document}
+	
+	\lecturechapter{First order methods: Step size and Optimality}
+	\lecture{Optimization}
+	
+
+	\begin{vbframe}{Controlling step size}
+		
+		In every iteration $t$, we need to choose not only a descent direction $\mathbf{d}^{[t]}$, but also a step size $\alpha^{[t]}$:
+		\begin{itemize}
+			\item If $\alpha^{[t]}$ is too small, the procedure may converge very slowly (left). 
+			\item If $\alpha^{[t]}$ is too large, the procedure may not converge, because we \enquote{jump} around the optimum (right).
+
+		\end{itemize}
+
+		
+		\begin{center}
+			\includegraphics[width = 0.3\textwidth]{figure_man/stepsize_small.png}~~
+			\includegraphics[width = 0.3\textwidth]{figure_man/stepsize_large.png}
+		\end{center}
+	\end{vbframe}
+	
+	
+	%\begin{vbframe}{Example: GD with too small step size}
+	%	\begin{center}
+	%		$f(x, y) = \left(-1 \cdot \left(x^2 + \frac{y^2}{2}\right) + 16 \right) / 10$
+	%		
+	%		\begin{center}
+	%			\includegraphics[width = 0.8\textwidth]{figure_man/example02.png}
+	%		\end{center}
+	%		{\scriptsize Step size  $\alpha = 1$ \\
+	%			procedure is very slowly converging in this case.}
+	%	\end{center}
+	%\end{vbframe}
+	%
+	%
+	%\begin{vbframe}{Example: GD with too large step size}
+	%	\begin{center}
+	%		$f(x, y) = -1 \cdot \left(x^2 + \frac{y^2}{2}\right)$
+	%		
+	%		\begin{center}
+	%			\includegraphics[width = 0.8\textwidth]{figure_man/example03.png}
+	%		\end{center}
+	%		{\scriptsize Step size  $\alpha = 1$,\\
+	%			procedure is not converging/jumping around the optimum in this case.}
+	%	\end{center}
+	%\end{vbframe}
+	
+	
+	\begin{vbframe}{Step size control: Fixed step size}
+		Use fixed step size $\alpha$ in each iteration:
+		
+		\vspace*{-0.2cm}
+		$$\alpha^{[t]} = \alpha$$
+		
+		\vspace*{-0.1cm}
+		\begin{center}
+			\includegraphics[width = 0.3\textwidth]{figure_man/stepsize_small.png} ~~~ \includegraphics[width = 0.3\textwidth]{figure_man/stepsize_adaptive.png} \\
+			\begin{footnotesize}
+				Steps of a line search for $f(\bm{x}) = 10 x_1^2 + 0.5 x_2^2$, left $100$ steps with fixed step size, right only $40$ steps with adaptively selected step size.
+			\end{footnotesize}
+		\end{center}
+		
+		\textbf{Problem}: Difficult to determine the optimal step size and depending on the problem the optimal step size has different values at different times. 
+		
+		
+		
+	\end{vbframe}
+	
+	\begin{vbframe}{Step size control: Diminishing step size}
+		\begin{itemize}
+			\item A natural way of selecting $\alpha$ is to decrease its value over time
+			% \item This involves a time-varying step size, resulting in an algorithm with update step
+			%\item These kind of methods are called \textbf{diminishing $\alpha$ rate}
+			% where the denominator contains the $t$-th run of the GD and consequently decreases $\alpha$ within each step
+			% \item Diminishing step size has to meet the following conditions:
+			% \item[] $\sum_{t=1}^{\infty} \bigl(\alpha^{[t]}\bigl)^2 < \infty, \quad \sum_{t=1}^{\infty} \alpha^{[t]} = \infty$,
+			% \item[] square summable but not summable
+			% \item Aim in both instances: $\lambda$ should be chosen to induce the most rapid minimization possible $\rightarrow$ within fixed step length this often means choosing the largest possible $\lambda$-value for proper convergence
+			% \item \textit{Note}: the diminishing step size rule does not guarantee cost function descent at each iteration, although it reduces the cost function value
+			% once the step size becomes sufficiently small.
+		\end{itemize}
+
+		\begin{center}
+			\includegraphics[width = 0.7\textwidth]{figure_man/example-GD.png} \\
+			\begin{footnotesize} Example: GD on $f(x) = |x|$ with diminishing step size $\alpha^{[t]} = \frac{1}{t}$, with $t$ being the iteration of GD. In this case a diminishing step length is absolutely necessary in order to reach a point close to the minimum.
+			\end{footnotesize}
+		\end{center}
+		
+	\end{vbframe}	
+	
+	\begin{vbframe}{Step size control: Exact Line-Search}
+		Use the \textbf{optimal} step size in each iteration:
+		\vspace*{-0.1cm}
+		$$ \alpha^{[t]} = \argmin_{\alpha \in \R_{\ge 0}} g(\alpha) = \argmin_{\alpha \in \R_{\ge 0}} f(\bm{x}^{[t]} + \alpha \mathbf{d}^{[t]})$$
+		\begin{columns}
+			\begin{column}{0.48\textwidth}
+				
+				\vspace*{-0.2cm}
+				% This is also called \textbf{exact} procedure, since the step size is chosen optimally.
+				In each iteration an \textbf{univariate optimization problem} $\argmin g(\alpha)$ must be solved with methods of univariate optimization (e.g. golden ratio). However, exact line-search is often too expensive for practical purposes and prone to poorly conditioned problems.
+			\end{column}
+			\begin{column}{0.48\textwidth}
+				\vspace*{-1cm}
+				\begin{center}
+					\includegraphics[width = 0.8\textwidth]{figure_man/line_search_rosenbrock.png} \\
+					\includegraphics[width = 0.8\textwidth]{figure_man/line_search_rosenbrock_alpha.png}
+				\end{center}
+			\end{column}
+		\end{columns}
+	\end{vbframe}
+	
+	
+	\begin{frame}{Armijo rule}
+		\begin{center}
+			\includegraphics[width = 0.7\textwidth]{figure_man/armijo.png}
+		\end{center}
+		
+
+		\onslide<1>{Inexact line search are efficient procedures of computing a step size that minimizes the objective \enquote{sufficiently}, without computing the optimal step size exactly. A common condition that ensures that the objective decreases \enquote{sufficiently} is the \textbf{Armijo rule}.}
+		
+		\onslide<2>{
+			\vspace*{-2cm}
+			A step size $\alpha$ is said to satisfy the \textbf{Armijo rule} in $\bm{x}$ for the descent direction $\bm{d}$ if for a fixed $\gamma \in (0, 1)$ the following applies:		
+		$$
+		f(\xv + \alpha \bm{d}) \le \fx + \gamma \alpha \nabla \fx^\top \bm{d}.
+		$$
+		}
+		
+		\onslide<3>{
+			\vspace*{-2.3cm}
+			If $\bm{d}$ is a descent direction, then for each $\gamma \in (0, 1)$ there exists a step size $\alpha$, which fulfills the Armijo rule (feasibility).
+			
+		In many cases, the Armijo rule guarantees local convergence of line searches and is therefore frequently used.}
+				
+%		\onslide<8>{
+%		\begin{footnotesize}
+%			\textbf{Intuitively: } The Armijo rule is satisfied for the increments $\alpha$, for which the \enquote{tapered} tangent in $\bm{x}$ in the direction of $\bm{d}$
+%			
+%			$$
+%			f(\bm{x}) + \textcolor{blue}{\gamma} \alpha \nabla f(\bm{x})^\top \bm{d}
+%			$$
+%			
+%			lies above $f(\bm{x} + \alpha \bm{d})$.
+%		\end{footnotesize}}
+		
+	\end{frame}
+	
+	\begin{vbframe}{Backtracking line search}
+		
+		Backtracking line search is based on the Armijo rule.
+		
+		\lz
+		
+		\textbf{Idea: } Decrease $\alpha$ until the Armijo rule is met.
+		
+		\begin{algorithm}[H]
+			\caption{Backtracking line search}
+			\begin{algorithmic}[1]
+				\State Choose initial step size $\alpha = \alpha^{[0]}$, $0 < \gamma < 1$ and $0 < \tau < 1$
+				\While{$f(\bm{x} + \alpha \bm{d}) > f(\bm{x}) + \gamma \alpha \nabla f(\bm{x})^\top \bm{d}$}
+				\State Decrease $\alpha$: $\alpha \leftarrow \tau \cdot \alpha$
+				\EndWhile
+			\end{algorithmic}
+		\end{algorithm}
+		
+		The procedure is simple and shows good performance in practice.
+		
+	\end{vbframe}
+	
+%	\begin{vbframe}{Wolfe conditions}
+%		The Armijo rule is often complemented by the curvature condition to rule out unacceptably short steps:  
+%		
+%		$$
+%		\nabla f(x_k + \alpha_t \mathbf{d}^{[t]}) \mathbf{d}^{[t]} \geq c_2 \nabla f \mathbf{d}^{[t]}
+%		$$
+%		
+%		Both conditions together form the \textit{Wolfe conditions}. 
+%		
+%		\begin{center}
+%			\includegraphics[width = 0.5\textwidth]{figure_man/wolfe_conditions.jpg}\\
+%			\begin{footnotesize}
+%				Step lengths satisfying the Wolfe conditions. \\
+%				Source: Nocedal/Wright, Numerical Optimization (2006)
+%			\end{footnotesize}
+%		\end{center}
+%	\end{vbframe}
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{vbframe}{Gradient Descent and Optimality}
+		
+		\begin{minipage}{0.45\textwidth}
+			\begin{small}
+				\begin{itemize}
+					\item GD is a greedy algorithm: In every iteration, it makes locally optimal moves.
+					\vspace*{0.5mm}
+					\item If $\riskt$ is \textbf{convex} and \textbf{differentiable}, and its gradient is Lipschitz continuous, GD is guaranteed to converge to the global minimum (for small enough step-size).  
+					\vspace*{0.5mm}
+					\item However, if $\riskt$ has multiple local optima and/or saddle points, GD might only converge to a stationary point (other than the global optimum), depending on the starting point. 
+				\end{itemize}
+			\end{small}
+		\end{minipage}\hfill
+		\begin{minipage}{0.5\textwidth}
+			\begin{figure}
+				\centering
+				\scalebox{1}{\includegraphics{figure_man/gdes3.png}}
+			\end{figure}
+		\end{minipage}  
+		\framebreak
+		
+			We assume that the gradient of the convex and differentiable function $f: \R^n \rightarrow \R$ is Lipschitz continuous with $L > 0$: 
+		
+			\begin{equation*}
+			|| \nabla f(\bm{x}) - \nabla f(\bm{y}) || \le L ||\bm{x} - \bm{y} || \quad \text{ for all } x, y
+			\end{equation*}
+			
+			This means that the gradient can't change arbitrarily fast. 
+			
+			\lz 
+			
+			Now we have a look at the convergence of gradient descent with a fixed step size $\alpha \leq 1/L$. \\
+			\textbf{Convergence:} Let $f:\R^n \to \R$ be convex and have $L$-Lipschitz continuous gradients and assuming that the global minimum ${x}^\ast$ exists. Then gradient descent with $k$ iterations with a fixed step-size $\alpha \leq 1/L$ will yield a solution $f(x^k)$, which satisfies
+			$$
+				f({x}^k) - f({x}^\ast) \leq \frac{|| {x}^0 - {x}^\ast ||^2}{2\alpha k}
+			$$
+			
+			This means, that GD converges with rate $\mathcal{O}(1/k)$.
+			\framebreak 
+		\end{vbframe}
+		\begin{frame}{Gradient Descent and Optimality}
+			\textbf{Proof: }
+			The assumption that $\nabla f$ is Lipschitz continuous implies that $\nabla^2 f(x) \preccurlyeq L I$ for all $x$. The generalized inequality $\nabla^2 f(x) \preccurlyeq L I$ means that $L I - \nabla^2 f(x)$ is positive semidefinite. This means that $v^\top \nabla^2 f(u) v \leq L ||v||^2$ for any $u$ and $v$. 
+			
+			Therefore, we can perform a quadratic expansion of f around $\tilde{x}$ obtaining the following inequality: 
+
+			\begin{eqnarray*}
+				f(x) &\approx& f(\tilde{x}) + \nabla f(\tilde{x})^\top (x - \tilde{x}) + \textcolor{blue}{0.5  (x - \tilde{x})^\top \nabla^2 f(\tilde{x}) (x - \tilde{x})} \\
+				& \leq & f(\tilde{x}) + \nabla f(\tilde{x})^\top (\tilde{x}) + 0.5 L ||x - \tilde{x}||^2,
+			\end{eqnarray*}		
+			as the blue term is at most $0.5 L ||x - \tilde{x}||^2$. This is called the descent lemma. 
+			
+			Now, we are doing one update via gradient descent with a step size $\alpha \leq 1/L$: 
+
+			$$
+			\tilde{x} = x^{t+1} = x^{t} - \alpha \nabla f(x^{t})
+			$$ 
+			and plug this in the descent lemma.
+			
+
+		\end{frame}
+		\begin{vbframe}{Gradient Descent and Optimality}
+			\begin{footnotesize}
+			
+			We get
+			\vspace*{-0.3cm}
+			\begin{eqnarray*}
+			f(x^{t+1}) &\leq& f(x^t) - \nabla f(x^t)^\top(x^{t+1} - x^t) + \frac{1}{2}L ||x^{t+1} - x^t||^2 \\
+			&=& f(x^t) + \nabla f(x^t)^\top(x^t - \alpha \nabla f(x^t) - x^t) + \frac{1}{2}L ||x^{t} - \alpha \nabla f(x^t) - x^t||^2 \\
+			& = & f(x^t) - \nabla f(x^t)^\top \alpha  \nabla f(x^t) + \frac{1}{2}L ||\alpha \nabla f(x^t)||^2 \\
+			&=& f(x^t) - \alpha ||\nabla f(x^t)||^2 + \frac{1}{2}L\alpha^2 ||\nabla f(x^t)||^2 \\
+			&=& f(x^t) - (1 - \frac{1}{2} L \alpha)\alpha  ||\nabla f(x^t)||^2 \\
+			&\le& f(x^t) - \frac{1}{2}\alpha ||\nabla f(x^t)||^2, 
+			\end{eqnarray*}
+		
+			where we used $\alpha \leq 1/L$ and therefore $- (1 - \frac{1}{2} L \alpha) \leq \frac{1}{2} L \frac{1}{L} -1 = -\frac{1}{2}$.
+						
+			Since $\frac{1}{2} \alpha ||\nabla f(x^t)||^2$ is always positive unless $\nabla f(x) = 0$, it implies that $f$ strictly decreases with each iteration of GD until the optimal value is reached. So, it is a bound on guaranteed progress, when $\alpha \leq 1/L$. 
+			\end{footnotesize}
+			
+			\framebreak
+			
+			Now, we bound $f(x)$ in terms of $f(x^*)$ and use that $f$ is convex: 
+			
+			$$
+			f(x) \leq f(x^*) + \nabla f(x)^T (x - x^*)
+			$$ 
+			
+			When we combine this and the bound derived before, we get
+			
+			\begin{eqnarray*}
+				f(x^{t+1}) - f(x^*) &\leq& \nabla f(x)^\top (x-x^*) - \frac{\alpha}{2}||\nabla f(x)||^2 \\
+				&=& \frac{1}{2 \alpha} \left( ||x-x^*||^2 - || x - x^* - \alpha \nabla f(x)||^2 \right) \\
+				&=& \frac{1}{2 \alpha} \left( ||x-x^*||^2 - || x^{t+1} - x^* ||^2 \right)
+			\end{eqnarray*}
+		
+		This holds for every iteration of GD. 
+		
+		\framebreak 
+		
+		Summing over iterations, we get: 
+		
+		\begin{eqnarray*}
+			\sum_{t = 0}^{k} f(x^{t+1}) - f(x^*) &\leq& \sum_{t= 0}^{k} \frac{1}{2 \alpha} \left( ||x^{t}-x^*||^2 - || x^{t+1} - x^* ||^2 \right) \\
+			&=& \frac{1}{2 \alpha}  \left( ||x^{0}-x^*||^2 - || x^{k} - x^* ||^2 \right) \\
+			& \leq & \frac{1}{2 \alpha} \left( ||x^{0}-x^*||^2 \right),
+		\end{eqnarray*}
+	
+		where we used that the LHS is a telescoping sum. In addition, we know that $f$ decreases on every iteration, so we can conclude that
+		$$
+		f({x}^k) - f({x}^\ast) \leq \frac{|| {x}^0 - {x}^\ast ||^2}{2\alpha k}
+		$$
+%		\textbf{Note: } It might not be that bad if we do not find the global optimum:  
+%		
+%		\begin{itemize}
+%			\item We do not optimize the actual quantity of interest, i.e. the (theoretical) risk, but only an approximate version, i.e. the empirical risk. 
+%			\item If the model class is very flexible, it might be disadvantageous to optimize too aggressively and increase the risk of overfitting. 
+%			\item Early-stopping the optimization might even increase generalization performance. 
+%		\end{itemize}
+		
+	\end{vbframe}
+	
+	
+	\endlecture
+\end{document}
+
