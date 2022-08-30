@@ -22,16 +22,17 @@
 \lecture{Optimization}
 \sloppy
 
-\begin{vbframe}{General Definition}
+\begin{vbframe}{Definition: Optimization Problem}
 
-Consider the \textbf{optimization problem}
 $$
-\min_{\xv \in \mathcal{S}\subseteq \R^d} \fx
+\min_{\xv \in \mathcal{S}} \fx
 $$
 with objective function
 $$
 f: \; \mathcal{S} \to \R.
 $$
+
+\lz 
 
 The problem is called
 
@@ -40,7 +41,7 @@ The problem is called
 	$$
 		\mathcal{S} = \R^d
 	$$
-	\item \textbf{smooth} if $f$ is smooth.
+	\item \textbf{smooth} if $f$ is at least $\in \mathcal{C}^1$
 	\item \textbf{univariate} if $d = 1$, and \textbf{multivariate} if $d > 1$.  
 \end{itemize}
 
@@ -78,7 +79,7 @@ Maximization results from minimizing $-f$.
 
 \begin{vbframe}{Example 1: Maximum Likelihood Estimation}
 	
-Assume an i.i.d. sample $\D = \left(x^{(1)}, ..., x^{(n)}\right)$ from a distribution with density $f(x ~|~ \thetab)$. We want to find $\lambda$ which makes the observed data most likely.
+$\D = \left(x^{(1)}, ..., x^{(n)}\right)$ is sampled i.i.d. from density $f(x ~|~ \thetab)$. We want to find $\lambda$ which makes the observed data most likely.
 
 \begin{center}
 	\includegraphics[width=0.4\textwidth, height=0.4\textwidth]{figure_man/ml_poisson_example_1.pdf} \\
@@ -150,6 +151,71 @@ $$
 \end{itemize}
 
 \end{vbframe}
+
+\begin{frame}{Example 3: Risk Min. in Machine Learning}
+	
+	
+\begin{itemize}
+	\item $\D = \Dset$ denotes a dataset 
+	where $\fxit$ is a model, parameterized by $\thetab$ (e.g. linear model).
+	\item Let $\Lxy$ be the point-wise loss function which measures the error of a prediction $\fx$ compared to the true output $y$.
+	\item We want to find the model which minimizes the \textbf{empirical risk}
+	
+	$$
+	\risket = \frac{1}{n} \sumin L\left(\yi, \fxit\right).
+	$$
+\end{itemize}
+
+\textcolor{red}{Formulate without $\theta$ and then explain why we usually parameterize the hypothesis space. }
+
+\end{frame}	
+
+\begin{vbframe}{Risk Minimization in Machine Learning}
+		
+Machine learning consists of three components: 
+
+\begin{center}
+
+  \textbf{Machine Learning} = $\underbrace{\textbf{Hypothesis Space + Risk}}_{\text{Formulating the optimization problem}}$ + $\underbrace{\textbf{Optimization}}_{\text{Solving it}}$
+  
+\end{center}
+
+\lz
+
+\begin{itemize}
+
+  \item \textbf{Hypothesis Space:} Define (and restrict!) what kind of model 
+  $f$ can be learned from the data.
+  
+  \item \textbf{Risk:} Define the risk function $\risket$ that quantifies how well a specific model performs on a given 
+  data set via a suitable loss function $L$.
+  
+  \item \textbf{Optimization:} Solve the resulting optimization problem through optimizing the risk $\risket$ over the hypothesis space.
+  
+\end{itemize}
+
+\framebreak 
+
+The (computational) complexity of the optimization problem 
+
+$$
+\text{arg} \min_{\thetab} \risket
+$$
+
+and hence the choice of the numerical optimization algorithm is influenced by the model structure and the choice of the loss function:, i.e., smoothness, convexity. 		
+\vspace*{-0.5cm}
+\begin{center}
+		\includegraphics[width=0.3\textwidth]{figure_man/ml_landscape.jpg} ~~~ \includegraphics[width=0.3\textwidth]{figure_man/log_reg.png}
+	\begin{footnotesize}
+		\newline
+		Loss landscapes of ML problems. \\ Left: ResNet-56, right: Logistic regression with cross-entropy loss
+		\newline
+		Source: \url{https://arxiv.org/pdf/1712.09913.pdf}
+	\end{footnotesize}
+\end{center}	
+
+\end{vbframe}
+
 
 
 
