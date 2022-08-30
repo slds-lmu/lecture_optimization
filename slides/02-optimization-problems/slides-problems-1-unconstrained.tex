@@ -77,7 +77,7 @@ Maximization results from minimizing $-f$.
 
 \end{vbframe}
 
-\begin{vbframe}{Example 1: Maximum Likelihood Estimation}
+\begin{vbframe}{Example 1.1: Maximum Likelihood Estimation: Poisson Distribution}
 	
 $\D = \left(x^{(1)}, ..., x^{(n)}\right)$ is sampled i.i.d. from density $f(x ~|~ \thetab)$. We want to find $\lambda$ which makes the observed data most likely.
 
@@ -107,6 +107,52 @@ $\D = \left(x^{(1)}, ..., x^{(n)}\right)$ is sampled i.i.d. from density $f(x ~|
 
 
 \end{vbframe}
+
+
+
+\begin{vbframe}{Example 1.2: Maximum Likelihood Estimation: Normal distribution}
+
+\begin{footnotesize}
+$\textbf{Density:}~~f(\textbf{x} ~|~ \mu, \sigma) = \frac{1}{\sqrt{2 \mu \sigma^{2}}}~exp(\frac{-(\textbf{x}-\mu)^{2}}{2\sigma^{2}})$\\
+\vspace{0.2cm}
+Since we want to have an univariate, unconstrained optimization problem, we set $\sigma=1$ and estimate only $\mu$, which is $\in \R$ and therefore unconstrained.\\
+\vspace{0.2cm}
+
+\textbf{Likelihood}:~$\mathcal{L}(\mu, \sigma^{2}~|~\xi)= \sum_{i=1}^{n} f(\xi) = (2\pi \sigma^{2})^{-n/2}exp^{(-\frac{1}{2\sigma^{2}})} \sum_{i=1}^{n} (\xi-\mu)^{2} $\\
+\vspace{0.2cm}
+
+\textbf{MLE}$_{\mu}$: 
+$\hat \mu = \text{arg min}_\mu -\ell(\mu, \sigma, \mathcal{D}) = \text{arg min}_\mu -\log \mathcal{L}(\mu, \sigma, \mathcal{D}) =$\\
+\vspace{0.2cm}
+$\text{arg min} -\log \left( \prod_{i=1}^{n} f(\xi ~|~ \mu, \sigma) \right) ~=~ \text{arg min} \sum_{i=1}^{n} f(\xi ~|~ \mu, \sigma) ~=~$\\
+\vspace{0.2cm}
+$\text{arg min} ~ \frac {n \log(2\pi\sigma^{2})}{2} + \frac{1}{2\sigma^{2}} \sum_{i=1}^{n} (\xi - \mu)^{2}$ \\
+\vspace{0.2cm}
+$\implies \partial \mu ~ f(\mu, \sigma^{2}) = \frac{1}{\sigma^{2}} \sum_{i=1}^{n} (\xi-\mu) = 0 \implies \hat \mu = \frac{1}{n} \sum_{i=1}^{n} \xi$
+
+
+
+\end{footnotesize}
+
+
+
+
+
+\framebreak
+\begin{center}
+	\begin{footnotesize}
+	\includegraphics[width=0.5\textwidth, keepaspectratio]{figure_man/ml_normal_example_dnorm.pdf} \includegraphics[width=0.5\textwidth, keepaspectratio]{figure_man/ml_normal_example_negloglike.pdf} 
+	\end{footnotesize}
+\end{center}
+
+
+\vspace{0.2cm}
+\begin{footnotesize}
+If we wanted to estimate $\sigma$ as well, we would now have a multi- (/bi-) variate constrained optimization problem, since $\sigma > 0$. We will cover this problem type later in this lecture.
+\end{footnotesize}
+
+\end{vbframe}
+
 
 
 \begin{vbframe}{Example 2: Normal regression}
