@@ -36,20 +36,27 @@
 	\lecture{Optimization}
 	
 
-	\begin{vbframe}{Controlling step size}
+	\begin{vbframe}{Controlling step size: Fixed \& adaptive}
 		
 		In every iteration $t$, we need to choose not only a descent direction $\mathbf{d}^{[t]}$, but also a step size $\alpha^{[t]}$:
 		\begin{itemize}
+		\begin{footnotesize}
 			\item If $\alpha^{[t]}$ is too small, the procedure may converge very slowly (left). 
 			\item If $\alpha^{[t]}$ is too large, the procedure may not converge, because we \enquote{jump} around the optimum (right).
-
+					Use fixed step size $\alpha$ in each iteration: $\alpha^{[t]} = \alpha$
+		\end{footnotesize}
 		\end{itemize}
 
 		
 		\begin{center}
 			\includegraphics[width = 0.3\textwidth]{figure_man/stepsize_small.png}~~
-			\includegraphics[width = 0.3\textwidth]{figure_man/stepsize_large.png}
-		\end{center}
+			\includegraphics[width = 0.3\textwidth]{figure_man/stepsize_large.png}~~
+			\includegraphics[width = 0.3\textwidth]{figure_man/stepsize_adaptive.png}
+			\begin{footnotesize}
+				Steps of a line search for $f(\bm{x}) = 10 x_1^2 + 0.5 x_2^2$, left $100$ steps with fixed step size, right only $40$ steps with adaptively selected step size.
+			\end{footnotesize}
+		\end{center} 		
+		
 	\end{vbframe}
 	
 	
@@ -78,28 +85,13 @@
 	%	\end{center}
 	%\end{vbframe}
 	
-	
-	\begin{vbframe}{Step size control: Fixed step size}
-		Use fixed step size $\alpha$ in each iteration:
-		
-		\vspace*{-0.2cm}
-		$$\alpha^{[t]} = \alpha$$
-		
-		\vspace*{-0.1cm}
-		\begin{center}
-			\includegraphics[width = 0.3\textwidth]{figure_man/stepsize_small.png} ~~~ \includegraphics[width = 0.3\textwidth]{figure_man/stepsize_adaptive.png} \\
-			\begin{footnotesize}
-				Steps of a line search for $f(\bm{x}) = 10 x_1^2 + 0.5 x_2^2$, left $100$ steps with fixed step size, right only $40$ steps with adaptively selected step size.
-			\end{footnotesize}
-		\end{center}
-		
-		\textbf{Problem}: Difficult to determine the optimal step size and depending on the problem the optimal step size has different values at different times. 
-		
-		
-		
-	\end{vbframe}
+
 	
 	\begin{vbframe}{Step size control: Diminishing step size}
+	\begin{footnotesize}
+	\textbf{Problem of fixed \& adaptive}: Difficult to determine the optimal step size and depending on the problem the optimal step size has different values at different times.
+	\end{footnotesize}
+	
 		\begin{itemize}
 			\item A natural way of selecting $\alpha$ is to decrease its value over time
 			% \item This involves a time-varying step size, resulting in an algorithm with update step
@@ -236,109 +228,9 @@
 				\centering
 				\scalebox{1}{\includegraphics{figure_man/gdes3.png}}
 			\end{figure}
-		\end{minipage}  
-		\framebreak
-		
-			We assume that the gradient of the convex and differentiable function $f: \R^n \rightarrow \R$ is Lipschitz continuous with $L > 0$: 
-		
-			\begin{equation*}
-			|| \nabla f(\bm{x}) - \nabla f(\bm{y}) || \le L ||\bm{x} - \bm{y} || \quad \text{ for all } x, y
-			\end{equation*}
-			
-			This means that the gradient can't change arbitrarily fast. 
-			
-			\lz 
-			
-			Now we have a look at the convergence of gradient descent with a fixed step size $\alpha \leq 1/L$. \\
-			\textbf{Convergence:} Let $f:\R^n \to \R$ be convex and have $L$-Lipschitz continuous gradients and assuming that the global minimum ${x}^\ast$ exists. Then gradient descent with $k$ iterations with a fixed step-size $\alpha \leq 1/L$ will yield a solution $f(x^k)$, which satisfies
-			$$
-				f({x}^k) - f({x}^\ast) \leq \frac{|| {x}^0 - {x}^\ast ||^2}{2\alpha k}
-			$$
-			
-			This means, that GD converges with rate $\mathcal{O}(1/k)$.
-			\framebreak 
-		\end{vbframe}
-		\begin{frame}{Gradient Descent and Optimality}
-			\textbf{Proof: }
-			The assumption that $\nabla f$ is Lipschitz continuous implies that $\nabla^2 f(x) \preccurlyeq L I$ for all $x$. The generalized inequality $\nabla^2 f(x) \preccurlyeq L I$ means that $L I - \nabla^2 f(x)$ is positive semidefinite. This means that $v^\top \nabla^2 f(u) v \leq L ||v||^2$ for any $u$ and $v$. 
-			
-			Therefore, we can perform a quadratic expansion of f around $\tilde{x}$ obtaining the following inequality: 
-
-			\begin{eqnarray*}
-				f(x) &\approx& f(\tilde{x}) + \nabla f(\tilde{x})^\top (x - \tilde{x}) + \textcolor{blue}{0.5  (x - \tilde{x})^\top \nabla^2 f(\tilde{x}) (x - \tilde{x})} \\
-				& \leq & f(\tilde{x}) + \nabla f(\tilde{x})^\top (\tilde{x}) + 0.5 L ||x - \tilde{x}||^2,
-			\end{eqnarray*}		
-			as the blue term is at most $0.5 L ||x - \tilde{x}||^2$. This is called the descent lemma. 
-			
-			Now, we are doing one update via gradient descent with a step size $\alpha \leq 1/L$: 
-
-			$$
-			\tilde{x} = x^{t+1} = x^{t} - \alpha \nabla f(x^{t})
-			$$ 
-			and plug this in the descent lemma.
-			
-
-		\end{frame}
-		\begin{vbframe}{Gradient Descent and Optimality}
-			\begin{footnotesize}
-			
-			We get
-			\vspace*{-0.3cm}
-			\begin{eqnarray*}
-			f(x^{t+1}) &\leq& f(x^t) - \nabla f(x^t)^\top(x^{t+1} - x^t) + \frac{1}{2}L ||x^{t+1} - x^t||^2 \\
-			&=& f(x^t) + \nabla f(x^t)^\top(x^t - \alpha \nabla f(x^t) - x^t) + \frac{1}{2}L ||x^{t} - \alpha \nabla f(x^t) - x^t||^2 \\
-			& = & f(x^t) - \nabla f(x^t)^\top \alpha  \nabla f(x^t) + \frac{1}{2}L ||\alpha \nabla f(x^t)||^2 \\
-			&=& f(x^t) - \alpha ||\nabla f(x^t)||^2 + \frac{1}{2}L\alpha^2 ||\nabla f(x^t)||^2 \\
-			&=& f(x^t) - (1 - \frac{1}{2} L \alpha)\alpha  ||\nabla f(x^t)||^2 \\
-			&\le& f(x^t) - \frac{1}{2}\alpha ||\nabla f(x^t)||^2, 
-			\end{eqnarray*}
-		
-			where we used $\alpha \leq 1/L$ and therefore $- (1 - \frac{1}{2} L \alpha) \leq \frac{1}{2} L \frac{1}{L} -1 = -\frac{1}{2}$.
-						
-			Since $\frac{1}{2} \alpha ||\nabla f(x^t)||^2$ is always positive unless $\nabla f(x) = 0$, it implies that $f$ strictly decreases with each iteration of GD until the optimal value is reached. So, it is a bound on guaranteed progress, when $\alpha \leq 1/L$. 
-			\end{footnotesize}
-			
-			\framebreak
-			
-			Now, we bound $f(x)$ in terms of $f(x^*)$ and use that $f$ is convex: 
-			
-			$$
-			f(x) \leq f(x^*) + \nabla f(x)^T (x - x^*)
-			$$ 
-			
-			When we combine this and the bound derived before, we get
-			
-			\begin{eqnarray*}
-				f(x^{t+1}) - f(x^*) &\leq& \nabla f(x)^\top (x-x^*) - \frac{\alpha}{2}||\nabla f(x)||^2 \\
-				&=& \frac{1}{2 \alpha} \left( ||x-x^*||^2 - || x - x^* - \alpha \nabla f(x)||^2 \right) \\
-				&=& \frac{1}{2 \alpha} \left( ||x-x^*||^2 - || x^{t+1} - x^* ||^2 \right)
-			\end{eqnarray*}
-		
-		This holds for every iteration of GD. 
-		
-		\framebreak 
-		
-		Summing over iterations, we get: 
-		
-		\begin{eqnarray*}
-			\sum_{t = 0}^{k} f(x^{t+1}) - f(x^*) &\leq& \sum_{t= 0}^{k} \frac{1}{2 \alpha} \left( ||x^{t}-x^*||^2 - || x^{t+1} - x^* ||^2 \right) \\
-			&=& \frac{1}{2 \alpha}  \left( ||x^{0}-x^*||^2 - || x^{k} - x^* ||^2 \right) \\
-			& \leq & \frac{1}{2 \alpha} \left( ||x^{0}-x^*||^2 \right),
-		\end{eqnarray*}
-	
-		where we used that the LHS is a telescoping sum. In addition, we know that $f$ decreases on every iteration, so we can conclude that
-		$$
-		f({x}^k) - f({x}^\ast) \leq \frac{|| {x}^0 - {x}^\ast ||^2}{2\alpha k}
-		$$
-%		\textbf{Note: } It might not be that bad if we do not find the global optimum:  
-%		
-%		\begin{itemize}
-%			\item We do not optimize the actual quantity of interest, i.e. the (theoretical) risk, but only an approximate version, i.e. the empirical risk. 
-%			\item If the model class is very flexible, it might be disadvantageous to optimize too aggressively and increase the risk of overfitting. 
-%			\item Early-stopping the optimization might even increase generalization performance. 
-%		\end{itemize}
-		
+		\end{minipage}	
 	\end{vbframe}
+			
 	
 	
 	\endlecture

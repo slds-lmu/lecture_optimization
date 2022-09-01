@@ -1,4 +1,11 @@
-*.pdf
+slides/01-mathematical-concepts/*.pdf
+!slides/01-mathematical-concepts/figure_man/*.pdf
+slides/02-optimization-problems/*.pdf
+!slides/02-optimization-problems/figure_man/*.pdf
+slides/03-univariate-optimization/*.pdf
+!slides/03-univariate-optimization/figure_man/*.pdf
+slides/04-multivariate-first-order/*.pdf
+!slides/04-multivariate-first-order/figure_man/*.pdf
 *.aux
 *.log
 *.nav
