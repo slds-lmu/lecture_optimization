@@ -24,32 +24,39 @@
 \lecture{Optimization}
 \sloppy
    
-\begin{vbframe}{Taylor series (univariate)}
+\begin{vbframe}{Definition Taylor's Theorem (univariate)}
 
-    \textbf{Definition (Taylor's Theorem)}: Let $I \subseteq \R$ an open interval and $a, x \in I$. Further, let $f \in \mathcal{C}^{m+1}(I,\R)$ for $m \in \N$. Then
-    $$f(x) = T_{m}(x,a) + R_{m}(x,a).$$
-    We call
-    $$T_{m}(x,a) = \sum_{k=}^{m} \frac{f^{k}(a)}{k!}(x-a)^{k} = $$
-    $$f(a) + f'(a)(x-a) + \frac{f''(a)}{2!}(x-a)^{2} + ... + \frac{f^{(m)}(a)}{m!}(x-a)^{m}$$ the $m$-th Taylor polynomial.
-    $$R_{m}(x,a)$$ is called \textbf{remainder term}. We will cover this term later.    
+\vspace*{-0.1cm}
 
-    \framebreak 
-    
+Let $I \subseteq \R$ an open interval and $a, x \in I$ and $f \in \mathcal{C}^{m+1}(I,\R)$. Then 
+
+\vspace*{-0.1cm}
+
+$$f(x) = T_{m}(x,a) + R_{m}(x,a), \text{with}$$ 
+
+
+    \begin{itemize}
+      \item $m$-th \textbf{Taylor polynomial}: $T_{m}(x,a) \overset{(*)}{=} \sum_{k=0}^{m} \frac{f^{(k)}(a)}{k!}(x-a)^{k}$ 
+      \item \textbf{Remainder term}: $R_m(x, a)$ (we will cover this term later)
+    \end{itemize}
+
+\vspace*{-0.3cm}
+
     \begin{figure}[htp]
         \centering
-        \includegraphics[height=0.9\textheight]{figure_man/taylor_univariate.png}
+        \includegraphics[width=0.45\textwidth]{figure_man/taylor_univariate.png}
     \end{figure}
+
+    \begin{footnotesize}
+      $^{(*)}$ $T_{m}(x,a) = f(a) + f'(a)(x-a) + \frac{f''(a)}{2!}(x-a)^{2} + ... + \frac{f^{(m)}(a)}{m!} (x - a)^m$
+    \end{footnotesize}
+
     
 \end{vbframe}
 
-\begin{vbframe}{Differentiation (Multivariate)}
+\begin{vbframe}{Definition Hessian Matrix}
 
-The second derivative of a multivariate function is defined by its Hessian (if it exists). 
-
-\lz 
-
-
-  \textbf{Definition (Hessian)}: Let $f \in \mathcal{C}^2(\mathcal{S}, \R)$, $\mathcal{S}\subseteq \R^d$. The \textbf{Hessian matrix} is defined as
+The 2nd derivative of a multivariate function $f \in \mathcal{C}^2(\mathcal{S}, \R)$, $\mathcal{S}\subseteq \R^d$ (if it exists) is defined by the \textbf{Hessian} matrix
 
   \[ H(\xv) =\nabla^2 \fx =
   \Bigl(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\Bigr)_{i,j=1\ldots d}\]
@@ -70,45 +77,37 @@ $$
 
 \begin{vbframe}{Hessian describes local curvature} 
 
-Local curvature can be analyzed via Eigenspecturm of $H(\xv)$:
+Let w.l.o.g. $A = \{\lambda_1, ..., \lambda_d\}$ be Eigenspectrum with $\lambda_1 \le \lambda_2 \le ... \le \lambda_d$ of $H(\xv)$; let $\bm{v}_i$ define the respective Eigenvectors. We can read from it: 
 
 \begin{itemize}
-  \item The Eigenvector $\bm{v}_\text{max}$ belonging to the largest Eigenvalue $\lambda_\text{max}$ (in absolute terms) points into the the direction of largest curvature. 
-  \item Respectively: $\bm{v}_\text{min}$ points into direction of smallest curvature.
-  \item Eigenvalues tell us about the definiteness and therefore the curvature of the matrix at a given point. \begin{description}
-    \item[positive-definite:] all eigenvalues positive -> concave up
-    \item[positive-definite:] all eigenvalues positive -> concave down
-    \item[saddle point:] if eigenvalues are positive \& negative.
-    \item[no statement possible:] if either eigenvalue is $=0$.
-    \end{description}
+  \item $\bm{v}_d$ points into the direction of largest curvature 
+  \item $\bm{v}_1$ points into the direction of smallest curvature 
 \end{itemize}
 
-\framebreak
+\vspace*{0.2cm}
 
-\textbf{Example (continued):} $f(x_1,x_2) = sin(x_1) \cdot cos(x_2)$ and 
 \begin{footnotesize}
-$$
-H(\xv) = \begin{pmatrix}
-\text{-cos}(x_2)\cdot\text{sin}(x_1) & \text{-cos}(x_1)\cdot\text{cos}(x_2) 
+
+\textbf{Example (continued):} $H(\xv) = \begin{pmatrix}
+\text{-cos}(x_2)\cdot\text{sin}(x_1) & \text{-cos}(x_1)\cdot\text{sin}(x_2) 
 \\ \text{-cos}(x_1)\cdot\text{sin}(x_2) & \text{-cos}(x_2)\cdot\text{sin}(x_1) 
-\end{pmatrix}
-$$
-The Eigenvalues at $a=(\frac{-\pi}{2},0)$, $b=(0,\frac{-\pi}{2})$ and $c=(\frac{-\pi}{2},0)$ are $-1$ \& $-1$, $1$ \& $-1$ and $1$ \& $1$, respectively. The signs can each be retraced in the following plots:
+\end{pmatrix}.
+$
+
+\begin{itemize}
+  \item $H(a)$, $a=(\frac{-\pi}{2},0)$: $\lambda_1 = \lambda_2 = 1$; $v_1 = (1, 0)^\top$, $v_2 = (0, 1)^\top$
+  \item $H(b)$, $b=(0,\frac{-\pi}{2})$: $\lambda_1 = -1, \lambda_2 = 1$; $v_1 = (-1, 1)^\top$, $v_2 = (1, 1)^\top$
+  \item \textcolor{blue}{$H(c), c=(\frac{-\pi}{2},0)$, : $\lambda_1 = \lambda_2 = 1$; $v_1 = (1, 0)^\top$, $v_2 = (0, 1)^\top$}
+\end{itemize}
+
 \end{footnotesize}
+
+\vspace*{-0.5cm}
 
 \begin{figure}[!tbp]
-  \centering
-  \begin{minipage}[b]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{figure_man/hessian_3d.png}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[b]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{figure_man/hessian_contour.png}
-  \end{minipage}
+    \includegraphics[width=0.35\textwidth]{figure_man/hessian_3d.png}
+    \includegraphics[width=0.35\textwidth]{figure_man/hessian_contour.png}
 \end{figure} 
-\begin{footnotesize}
-Therefore, the hessian at $a$ is negative-definite, has a saddle point at $b$ and is positive-definite at $c$.
-\end{footnotesize}
 
 \end{vbframe}
 \framebreak 
@@ -180,7 +179,9 @@ we get
   \end{columns}  
 
 
-\framebreak  
+\end{vbframe}
+
+\begin{vbframe}{Definition Taylor's Theorem (Multivar.)}  
 
 \textcolor{red}{@Julia: Update notation}
 
