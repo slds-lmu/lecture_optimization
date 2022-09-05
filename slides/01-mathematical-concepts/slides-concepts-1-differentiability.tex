@@ -7,7 +7,9 @@
 \newcommand{\titlefigure}{figure_man/hinge_vs_l2.pdf}
 \newcommand{\learninggoals}{
 \item Definition of smoothness
-\item Uni- \& multivariate differentiation}
+\item Uni- \& multivariate differentiation
+\item Gradient, partial derivatives, gradient 
+\item Jacobi-Matrix}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
@@ -24,25 +26,6 @@
 
 % ------------------------------------------------------------------------------
 
-\begin{vbframe}{Smooth vs. non-smooth}
-
-\begin{itemize}
-\item \textbf{Smoothness} of a function  $f: \mathcal{S} \to \R$ is measured by the number of its continuous derivatives
-\item If $k$-th derivative of $f$ exists and is continuous on $\mathcal{S}$: $f$ is $
-k$-times continuously differentiable; $f \in \mathcal{C}^k$ (class of $k$-times continuous differentiable functions)
-\item In this lecture, we call $f$ \enquote{smooth}, if at least $f \in \mathcal{C}^1$
-\end{itemize}
-
-
-\begin{center}
-\includegraphics[width = 0.5\textwidth]{figure_man/hinge_vs_l2.pdf} \\ 
-\begin{footnotesize}
-$f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-continuous. 
-\end{footnotesize}
-\end{center}
-
-
-\end{vbframe}
 
 \begin{vbframe}{Univariate differentiability}
 
@@ -84,13 +67,30 @@ Left: Function is differentiable everywhere. Right: Not differentiable at the re
 
 \end{vbframe}
 
+
+\begin{vbframe}{Smooth vs. non-smooth}
+
+\begin{itemize}
+\item \textbf{Smoothness} of a function  $f: \mathcal{S} \to \R$ is measured by the number of its continuous derivatives
+\item $k$-times continuously diff. means: $f^{(k)}$ exists + is continuous on $\mathcal{S}$\\
+($f \in \mathcal{C}^k$ class of continuously differentiable functions) 
+\item In this lecture, we call $f$ \enquote{smooth}, if at least $f \in \mathcal{C}^1$
+\end{itemize}
+
+
+\begin{center}
+\includegraphics[width = 0.5\textwidth]{figure_man/hinge_vs_l2.pdf} \\ 
+\begin{footnotesize}
+$f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-continuous. 
+\end{footnotesize}
+\end{center}
+
+
+\end{vbframe}
+
 \begin{vbframe}{Multivariate differentiability}
 
-A similar definition of differentiability holds for multivariate functions. 
-
-\lz 
-
-\textbf{Definition: } A function $f: \mathcal{S}\subseteq \R^d \to \R$ is differentiable in $\xv \in \mathcal{S}$ if there exists a (continuous) linear map $\nabla f(\xv): \mathcal{S}\subseteq \R^d \to \R$ with %it can be locally approximated by a linear function in $\xv$. 
+\textbf{Definition: }$f: \mathcal{S}\subseteq \R^d \to \R$ is differentiable in $\xv \in \mathcal{S}$ if there exists a (continuous) linear map $\nabla f(\xv): \mathcal{S}\subseteq \R^d \to \R$ with %it can be locally approximated by a linear function in $\xv$. 
 
 $$
 \lim_{\bm{h} \to 0} \frac{f(\xv + \bm{h}) - f(\xv) - \nabla f(\xv) \cdot \bm{h}}{||\bm{h}||} = 0
@@ -155,9 +155,9 @@ $$
 \begin{vbframe}{Properties of the gradient}
 
 \begin{itemize}
-	\item Gradient is orthogonal to level curves / surfaces of a function
+	\item Orthogonal to level curves / surfaces of a function
 	% \item The normal vector describing the tangent plane is has $n + 1$ components, the first $n$ correspond to $\nabla f$ and the $(n + 1)-$th has the value $-1$
-	\item The gradient points in the direction of greatest increase of $f$
+	\item Points in direction of greatest increase of $f$
 	\begin{center}
 		\includegraphics[width = 0.4\textwidth]{figure_man/gradient3.png} \includegraphics[width = 0.4\textwidth]{figure_man/gradient.png}
 	\end{center}
@@ -174,10 +174,12 @@ $$
 
 
 \framebreak
+
+\begin{itemize}
+	\item Negative gradient $- \nabla \fx$ points in direction of greatest decrease
+\end{itemize}
+
 \begin{center}
-\begin{footnotesize}
-negative gradients\\
-\end{footnotesize}
 \includegraphics[width=0.85\textwidth]{figure_man/negative_gradients.png}\\
 \end{center}
 
@@ -190,7 +192,9 @@ negative gradients\\
 
 \begin{vbframe}{Jacobi Matrix}
 
-Let $f: \mathcal{S} \to \R^m$ be a vector-valued function with components $f_1, f_2, ..., f_m$. \textbf{Jacobian} matrix as generalization of gradient:  
+Let $f: \mathcal{S} \to \R^m$ be vector-valued with components $f_1, f_2, ..., f_m$. 
+
+\textbf{Jacobian} matrix as generalization of gradient:  
 
 \begin{eqnarray*}
 	J_f = \begin{pmatrix} \frac{\partial f_1}{\partial x_1} & \hdots & \frac{\partial f_1}{\partial x_n} \\
