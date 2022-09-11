@@ -110,7 +110,56 @@ $
 \end{figure} 
 
 \end{vbframe}
+
+
+\begin{vbframe}{Remainder term}
+
+$$
+  f(x) = T_m(x, a) + R_m(x, a)
+$$
+
+How close is $T_m(x,a)$ to $f(x)$?
+
+\begin{itemize}
+  \item Exact representation of $R_m(x,a)$:
+
+  $$
+    R_{m}(x, a) := \int_{a}^{x} \frac{f^{(k + 1)}(t)}{k!}(x - t)^k~\text{d}t
+  $$
+  \begin{footnotesize}
+  (integral form of remainder; alternative formulas exist, but are not covered here.)
+  \end{footnotesize}
+
+  \item In order of magnitude: 
+  $$
+    R_{m}(\bm{a}) \in \order(\|\xv - \bm{a}\|^m) \text{ for } \xv \to \bm{a}
+  $$
+\end{itemize}
+
 \framebreak 
+
+\begin{itemize}
+  \item Higher $m$ gives a better approximation
+  \item The $m^{th}$ order taylor series is the best $m^{th}$ order approximation to $\fx$ near $\bm{a}$
+\end{itemize}
+
+
+\begin{columns}
+\begin{column}{0.48\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st100.png}
+\end{column}
+\begin{column}{0.48\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-100.png}
+\end{column}
+\end{columns}
+
+\begin{footnotesize}
+Consider $T_2(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^\top\bm{H}(\bm{a})(\xv - \bm{a})$. The first term ensures the \textbf{value} of $T_2$ and $f$ match at $\bm{a}$. The second term ensures the \textbf{slopes} of $T_2$ and $f$ match at $\bm{a}$. The third term ensures the \textbf{curvature} of $T_2$ and $f$ match at $\bm{a}$. 
+\end{footnotesize}
+
+
+\end{vbframe}
+
 
 \begin{vbframe}{Multivariate Taylor series}
 
@@ -181,86 +230,47 @@ we get
 
 \end{vbframe}
 
-\begin{vbframe}{Definition Taylor's Theorem (Multivar.)}  
 
-\textcolor{red}{@Julia: Update notation}
+\begin{vbframe}{Multivariate Taylor Series}  
 
-Formally, Taylor's theorem states: 
-    
-\textbf{Definition (Taylor's Theorem)}: Let $G \subseteq \R^{n}$ open, $f \in \mathcal{C}^{m+1}(G,\R)$ for $m \in \mathbb{N}_0$.
-If $a \in G, h \in \R^{n}$ so that the line segment $S_{a, a+h}$ between $a$ and $a+h \in G$, then
-$$f(\bm{a+h}) = \sum_{k=0}^{m} \frac{(\bm{h}\nabla^{k}(f)(\bm{a})}{k!} + R_{m}(\bm{a}) = $$
-$$f(\bm{a}) + \frac{(\bm{h}\nabla)(f)(\bm{a})}{1!} + \frac{(\bm{h}\nabla)^{2}(f)(\bm{a})}{2!} + ... + \frac{(\bm{h}\nabla)^{m}(f)(\bm{a})}{m!} + R_{m}(\bm{a})$$
-
-\framebreak 
-
-\textcolor{red}{@Julia: Update notation}
-
-\textbf{Definition (Mutlivariate Directional derivative)}: $\bm{h} = (h_{1}, ..., h_{n})$ $\in \R^{n}$, $G \subseteq \R^{n}$ open, $f : G \rightarrow \R^{n}$ differentiable, $a \in G$.
-$$(\bm{h}\nabla(f)(\bm{a}) := \frac{\partial f}{\partial h}(\bm{a}) = \sum_{j=1}^{n} h_{j}\partial_{j}f(\bm(a)) = h_{1}\partial_{j}f(\bm(a)) + ... + h_{n}\partial_{n}f(\bm(a))$$
-with ($\bm{h}\nabla$) called \textbf{Differential operator}.
-
-\vspace*{0.2cm}
-
-If $f \in \mathcal{C}^{2}(G,\R)$, we can apply ($\bm{h}\nabla$) again:
-$$(\bm{h}\nabla)(f)^{2}(\bm{a}) := (\bm{h}\nabla)(\bm{h}\nabla)(f)(\bm{a}) = $$
-$$ = \sum_{j=1}^{n}(\bm{h}\nabla)(\bm{h}_{j}\partial_{j}(f)(\bm{a}) = \sum_{k,j=1}^{n}h_{k}h_{j}\partial_{k}\partial_{j}f(\bm{a})$$
-
-
-\end{vbframe}
-
-
-\begin{vbframe}{Taylor approximation}
-
-\textcolor{red}{@Julia: Update notation}
-
-The remainder term $R_m(\bm{a})$ can be written down quantitatively
-
-$$
-R_{m}(\bm{a}) := \int_{0}^{1}\frac{(1-t)^{m}}{m!}(\bm{h}\nabla^{m+1})(f)(\bm{a}+t\bm{h}) \text{d}t
-$$
-
-\begin{footnotesize}
-(this is called the integral form; alternative formulas for the remainder term exist as well, but are not covered here.)
-\end{footnotesize}
+What can be written down nicely for first and second order Taylor Series is (notationally) a bit more cumbersome for general $k$.
 
 \lz 
 
-or qualitatively
+Let $f: \R^n \to \R$, $f \in \mathcal{C}^k$ at $\bm{a} \in \R^n$. Then 
 
 $$
-R_{m}(\bm{a}) \in \order(\|\xv - \bm{a}\|^m) \text{ for } \xv \to \bm{a}
+  f(x) = T_m(\xv, \bm{a}) + R_m(\xv, \bm{a}), \text{ with}
 $$
 
-\lz 
-
-If we don't care too much about the approximation error, we just write: 
-
 $$
-  \fx \approx T_m(\xv, \bm{a}). 
+  T_m(\xv,\bm{a}) = \sum_{|\bm{\alpha}| \le k} \frac{D^{\bm{\alpha}} f(\bm{a})}{{\bm{\alpha}}!} (\xv - \bm{a})^{\bm{\alpha}} \text{ and } \lim_{\xv \to \bm{a}} R_m(\xv,\bm{a}) = 0
 $$
 
-\framebreak 
-
-\textbf{Note}: 
+with $\bm{\alpha} \in \N^n$ and the multi-index notation
 \begin{itemize}
-  \item Higher $m$ gives a better approximation
-  \item The $m^{th}$ order taylor series is the best $m^{th}$ order approximation to $\fx$ near $\bm{a}$
+  \item $|\bm{\alpha}| = \alpha_1 + \cdots + \alpha_n$
+  \item $\bm{\alpha}! = \alpha_1! \cdots \alpha_n!$
+  \item $\xv^{\bm{\alpha}} = x_1^{\alpha_1} \cdots x_n^{\alpha_n}$
+  \item $D^{\bm{\alpha}} f = \frac{\partial^{|\bm{\alpha}|} f}{\partial x_1^{\alpha_1} \cdots \partial x_n^{\alpha_n}}$ 
 \end{itemize}
 
+\framebreak 
 
-\begin{columns}
-\begin{column}{0.48\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st100.png}
-\end{column}
-\begin{column}{0.48\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-100.png}
-\end{column}
-\end{columns}
+Let's check for $f: \R^2 \to \R$ and $k = 1$. We have for $|\alpha| \le 1$: 
 
-\begin{footnotesize}
-Consider $T_2(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^\top\bm{H}(\bm{a})(\xv - \bm{a})$. The first term ensures the \textbf{value} of $T_2$ and $f$ match at $\bm{a}$. The second term ensures the \textbf{slopes} of $T_2$ and $f$ match at $\bm{a}$. The third term ensures the \textbf{curvature} of $T_2$ and $f$ match at $\bm{a}$. 
-\end{footnotesize}
+\begin{itemize}
+  \item $\alpha_1 = 0, \alpha_2 = 0$: $|\bm{\alpha}| = 0, \bm{\alpha}! = 1, \xv^{\bm{\alpha}} = 1, D^{\bm{\alpha}} f = 1$
+  \item $\alpha_1 = 1, \alpha_2 = 0$: $|\bm{\alpha}| = 1, \bm{\alpha}! = 1, \xv^{\bm{\alpha}} = x_1, D^{\bm{\alpha}} f = \frac{\partial f}{\partial x_1}$
+  \item $\alpha_1 = 0, \alpha_2 = 1$: $|\bm{\alpha}| = 1, \bm{\alpha}! = 1, \xv^{\bm{\alpha}} = x_2, D^{\bm{\alpha}} f = \frac{\partial f}{\partial x_2}$
+\end{itemize}
+
+and therefore: 
+
+\begin{eqnarray*}
+  T_m(\xv,\bm{a}) &=& \sum_{|\bm{\alpha|} \le k} \frac{D^{\bm\alpha} f(\bm{a})}{\bm{\alpha}!} (\xv - \bm{a})^{\bm{\alpha}} \\ &=& \frac{1 \cdot f(\bm{a})}{1} \cdot 1 + \frac{\partial f}{\partial x_1}(\bm{a}) (x_1 - a_1) + \frac{\partial f}{\partial x_2}(\bm{a}) (x_2 - a_2) \\
+  &=& f(a) + \begin{pmatrix} \frac{\partial f}{\partial x_1} (\bm{a})\\ \frac{\partial f}{\partial x_2}(\bm{a})\end{pmatrix}^\top \begin{pmatrix} x_1 - a_1 \\ x_2 - a_2\end{pmatrix} = f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a}). 
+\end{eqnarray*}
 
 
 \end{vbframe}
