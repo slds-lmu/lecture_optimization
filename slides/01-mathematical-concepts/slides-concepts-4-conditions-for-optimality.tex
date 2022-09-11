@@ -6,8 +6,8 @@
 
 \newcommand{\titlefigure}{figure_man/local_global_min_2D.png}
 \newcommand{\learninggoals}{
-\item Optima
-\item First \& Second Order Conditions}
+\item Local and global
+\item First \& second order conditions}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
@@ -26,8 +26,8 @@
 \begin{vbframe}{Definition local and global minimum}
   Given $\mathcal{S} \subseteq \R^d$, $f: \mathcal{S} \to \R$:
   \begin{itemize}
-  \item $f$ has a \textbf{global minimum} in $\xv^\ast \in \mathcal{S}$, if $f(\xv^\ast) \leq \fx$ for all $\xv \in \mathcal{S}$
-  \item $f$ has a \textbf{local minimum} in $\xv^\ast$, if $f(\xv^\ast) \leq \fx$ for all $\xv \in B_\eps(\xv^\ast)$, with $B_\eps(\xv^\ast) := \{\xv \in \mathcal{S} ~|~\|\xv - \xv^\ast\| < \eps\}$ denoting all points that have a maximum distance of $\eps$ to $\xv^\ast$ (\enquote{$\eps$-neighboorhood}).  
+  \item $f$ has \textbf{global minimum} in $\xv^\ast \in \mathcal{S}$, if $f(\xv^\ast) \leq \fx$ for all $\xv \in \mathcal{S}$
+  \item $f$ has a \textbf{local minimum} in $\xv^\ast$, if $f(\xv^\ast) \leq \fx$ for all $\xv \in B_\eps(\xv^\ast)$, with $B_\eps(\xv^\ast) := \{\xv \in \mathcal{S} ~|~\|\xv - \xv^\ast\| < \eps\}$ (\enquote{$\epsilon$}-ball round $\xv^\ast$).  
   \end{itemize}
   
   \vspace*{-0.3cm}
@@ -46,13 +46,13 @@
   \begin{vbframe}{Existence of Optima}
   
   $$
-  f: \; \mathcal{S} \subseteq \R^d \to \R
+  f: \; \mathcal{S} \to \R
   $$
   
   \begin{itemize}
   \item $f$ continous:
   \begin{itemize}
-  \item A real-valued function f, which is defined on a \textbf{compact set}, must attain a minimum and a maximum according to the Extreme Value Theorem.
+  \item A real-valued function $f$ defined on a \textbf{compact set} must attain a minimum and a maximum (Extreme Value Theorem).
   \end{itemize}
   \item $f$ not continous:
   \begin{itemize}
@@ -63,22 +63,17 @@
   % \textbf{Note}: From now on, we assume silently that the functions considered are sufficiently smooth (i.e., when we consider a second derivative of a function, we assume that the second derivative exists and is continuous). 
   
   \end{vbframe}
+    
+  \begin{vbframe}{First Order Condition for optimality}
   
-  \section{Conditions for Optimality}
-  
-  \begin{vbframe}{First Order Condition}
-  
-  There is one specific property that holds for both the univariate and multivariate case at a (local) optimum: The Taylor series approximation (i.e., the tangent hyperplane) at a local minimum is perfectly flat. 
-  
-  \vspace*{0.2cm}
-  
-  This means that at every local minima the first order derivatives are $0$. This condition is also called the \textbf{first-order condition}. 
-  
+  Let $f \in \mathcal{C}^1$. \textbf{Observation: } At a local minimum 1st order Taylor series approximation is perfectly flat; 1st order derivatives are $0$.
+
+  \lz 
   
   \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/first_order.png} \\
   \begin{footnotesize}
-  Examples for a univariate (left) and multivariate (right) function. Both functions are strictly convex, and have a unique local optimum, which is also the global one. The tangent (hyperplane) is perfectly flat at the optimum. \end{footnotesize}\\
+  (Strictly) convex functions (left: univariate; right: multivariate) with unique local minimum, which is the global one. Tangent (hyperplane) is perfectly flat at the optimum. \end{footnotesize}\\
   \begin{tiny}
   Source: Watt, 2020, Machine Learning Refined. 
   \end{tiny}
@@ -86,8 +81,10 @@
   
   \framebreak 
   
-  Because at every local minimum $\xv^\ast$ the first order derivative is necessarily always zero, we call this the \textbf{first-order} or \textbf{necessary} condition. 
+  At every local minimum $\xv^\ast$ the first derivative is necessarily always zero; it is therefore called \textbf{first-order} or \textbf{necessary} condition. 
   
+  \lz 
+
   \begin{itemize}
     \item \textbf{First-order condition (univariate): } Let $\xv^\ast \in \R$ be a local minimum of $f$. Then:
     $$
@@ -104,12 +101,12 @@
   
   \framebreak 
   
-  However, this is only a \textbf{necessary} condition. It is not valid the other way around, i.e. not every point at which the first order derivative is $0$ (stationary point) is also a local minimum. 
+  The condition is \textbf{not sufficient}: Not every stationary point ($\nabla f(\xv) = 0$) is a local minimum. 
   
   \begin{center}
   \includegraphics[width = 0.7\textwidth]{figure_man/saddle_points_2.png} \\
   \begin{footnotesize}
-  Left: There are for points which fulfill the necessary condition, two of them are in fact local (and also global) minima, and two are local (and also global) maxima (which is not what we are looking for!). Middle: The function has one point that fulfills the necessary condition, but it is neither a local minimum nor a local maximum; such points are called \enquote{saddle points}. Right: A function that has multiple local minima and maxima. 
+  Left: Four points fulfill the necessary conditions; but two of the points are local maxima (not minima). Middle: One point fulfills the necessary condition, but is not a local optimum. Right: Multiple local minima and maxima. 
   \end{footnotesize}\\
   \begin{tiny}
   Source: Watt, 2020, Machine Learning Refined. 
@@ -118,14 +115,14 @@
   
   \end{vbframe}
   
-  \begin{vbframe}{Second Order Condition}
+  \begin{vbframe}{Second Order Condition for Optimality}
   
-  However, the function's second order derivative helps us identifying whether a stationary point $\xv^\ast$ is a local optimum or not. In cases where the second derivative $f''(\xv^\ast)> 0$ (i.e. the function is convex in the neighborhood of $\xv^\ast$), $\xv^\ast$ is a local minimum. 
-  
+  Let $f \in \mathcal{C}^2$. A stationary point $\xv$ (i.e., $\fx = 0$) is a local minimum if $f''(\xv) > 0$ (i.e., the function is locally convex). 
+
   \begin{center}
   \includegraphics[width = 0.7\textwidth]{figure_man/saddle_points_2.png} \\
   \begin{footnotesize}
-  Left: Around the two minima, the function is convex; around the two maxima the function is concave. Middle: The function is neither convex nor concave around the stationary point. Right: Again, concave behavior around the maxima, and convex behavior around the minima of the function. 
+  Left / Right: Function has positive curvature in all directions at the minima, and negative curvature around the maxima. Middle: Curvature is positive in one, and negative in the other direction. 
   \end{footnotesize}\\
   \begin{tiny}
   Source: Watt, 2020, Machine Learning Refined. 
@@ -135,9 +132,8 @@
   
   \framebreak 
   
-  
-  We introduce the second order conditions. 
-  
+  Let $f \in \mathcal{C}^2$.  
+
   \begin{itemize}
     \item \textbf{Second-order condition (univariate)}: A \textbf{stationary} point $x^\ast \in \mathcal{S}\subseteq \R$ fulfills
     $$f''(x^\ast) > 0.$$ 
@@ -145,10 +141,14 @@
   
   \end{itemize}
   
-  \lz 
+ Second-order condition is \textbf{sufficient} to prove a local minimum. 
+
+ \lz 
+
+ \textbf{Note:} For a convex function, $\nabla^2 f(\xv)$ is always p.s.d.; therefore, any stationary point is the local (also global) minimum. 
   
-  If the second-order conditions are fulfilled, then the point is a \textbf{local} minimum. The second-order condition is \textbf{sufficient} to prove that a point is a local minimum. 
-  
+
+
   
   % \framebreak 
   
@@ -160,34 +160,39 @@
   % 	\includegraphics[width=1\textwidth, keepaspectratio]{figure_man/minmaxsaddle.png}
   % \end{center}
 
-  \framebreak
+%   \framebreak
 
-\textbf{Example:}
-\footnotesize
-\begin{enumerate}
-\item Local min: If [$f$ convex $\Leftrightarrow$ All eigenvalues positive], then global min\\
-\item Local max: If [$f$ concave $\Leftrightarrow$ All eigenvalues negative], then global max\\
-\item Some eigenvalues positive and some negative $\Leftrightarrow$ saddle point
-\end{enumerate}
+% \textbf{Example:}
+% \footnotesize
+% \begin{enumerate}
+% \item If [$f$ convex $\Leftrightarrow$ all eigenvalues of $H(\xv)$ positive], then local minimum\\
+% \item If [$f$ concave $\Leftrightarrow$ all eigenvalues of $H(\xv)$ negative], then local maximum\\
+% \item Some eigenvalues positive and some negative $\Leftrightarrow$ saddle point
+% \end{enumerate}
 
-\vspace{0.5cm}
+% \vspace{0.5cm}
+
+% \begin{center}
+% \includegraphics[scale= 0.5]{figure_man/convex.jpg}
+% \end{center}
+
+  
+  \end{vbframe}
+
+\begin{vbframe}{Conditions for optimality and convexity}
+
+Let $f:\mathcal{S} \to \R$ be convex on convex set $\mathcal{S}$. Then the following applies:
+
+\begin{itemize}
+\item Any local minimum is also global minimum 
+\item If $f$ strictly convex, $f$ has exactly one local minimum which is also unique global minimum on $\mathcal{S}$
+% \item Sublevel sets $S_1 = \{\xv~|~\fx < a\}$ and $S_2 = \{\xv~|~\fx \leq a \}$, $a\in \R$, form convex sets.
+\end{itemize}
 
 \begin{center}
 \includegraphics[scale= 0.5]{figure_man/convex.jpg}
 \end{center}
 
-  
-  \end{vbframe}
-
-\begin{vbframe}
-
-Let $f:\mathcal{S} \to \R$ be convex on the convex set $\mathcal{S}$. Then the following applies:
-
-\begin{itemize}
-\item Any local minimum of $f$ is also a global minimum (see chapter \emph{Conditions for Optimality}).
-\item If $f$ is strictly convex, $f$ has exactly one local minimum on $\mathcal{S}$ and it is also the unique global minimum of $f$ on $\mathcal{S}$ (see chapter \emph{Conditions for Optimality}). 
-\item Sublevel sets $S_1 = \{\xv~|~\fx < a\}$ and $S_2 = \{\xv~|~\fx \leq a \}$, $a\in \R$, form convex sets.
-\end{itemize}
 
 \end{vbframe}
 

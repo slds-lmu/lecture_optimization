@@ -35,12 +35,11 @@ $$
 \xv + t (\mathbf{y} - \xv) \in \mathcal{S}
 $$
 
-Intuitively: If $\xv, \mathbf{y}$ are in $\mathcal{S}$, then the connecting line is also in $\mathcal{S}$.
+Intuitively: Connecting line between any $\xv, \bm{y} \in \mathcal{S}$ lies completely in $\mathcal{S}$.
 
 \begin{center}
 \includegraphics[width = 0.2\textwidth]{figure_man/convex.png}~~~\includegraphics[width = 0.2\textwidth]{figure_man/concave.png} \\
-\footnotesize{The set in the left image is convex, the set in the right image is not convex (concave). \\
-Source: Wikipedia. 
+\footnotesize{Left: convex set; right: not convex. Source: Wikipedia. 
 }
 \end{center}
 
@@ -48,76 +47,76 @@ Source: Wikipedia.
 
 \begin{vbframe}{Convex functions}
 
-Consider $f: \mathcal{S} \to \R$, where $\mathcal{S}$ convex. The function is \textbf{convex} if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$
+Consider $f: \mathcal{S} \to \R$, $\mathcal{S}$ convex. The function is \textbf{convex} if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$
+
+\vspace*{-0.2cm}
 
 $$
 f(\xv + t(\mathbf{y} - \xv)) \le \fx + t(f(\mathbf{y}) - \fx).
 $$
 
-It is called \textbf{strictly convex}, if this is valid for \enquote{$<$} instead of \enquote{$\le$}.
+\textbf{Strictly convex} if \enquote{$<$} instead of \enquote{$\le$}. \textbf{Concave} (strictly) if the equation holds with \enquote{$\ge$} (\enquote{$>$}), respectively. 
+
+\vspace*{0.2cm}
+
+\textbf{Note:} $f$ (strictly) concave $\Leftrightarrow$ $-f$ (strictly) convex.
+
 
 \begin{center}
 \includegraphics[width = 0.45\textwidth, keepaspectratio]{figure_man/convexity_1.pdf}~~~\includegraphics[width = 0.45\textwidth, keepaspectratio]{figure_man/convexity_2.pdf} \\
-\footnotesize{Left: A differentiable and strictly convex function. Right: A convex function that is non-differentiable in $x = 0$, which is not strictly convex. }
+\footnotesize{Left: Strictly convex function. Right: Convex, but not strictly. }
 \end{center}
-
-\end{vbframe}
-
-\begin{vbframe}{Concave functions}
-
-    Inversely, a function $f: \mathcal{S} \to \R$, $\mathcal{S} concave$, is \textbf{concave} if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$
-
-    $$
-    f(\xv + t(\mathbf{y} - \xv)) \ge \fx + t(f(\mathbf{y}) - \fx).
-    $$
-
-    It is called \textbf{strictly convex}, if this is valid for \enquote{$>$} instead of \enquote{$\ge$}.
-    It holds that
-    $f$ (strictly) concave $\Leftrightarrow$ $-f$ (strictly) convex.
 
 \end{vbframe}
 
 \begin{vbframe}{Examples}
 
-\textbf{Convex function:}: $f(x) = |x|$. 
-\textbf{Proof: }
-% https://sboyles.github.io/teaching/ce377k/convexity.pdf
+\textbf{Convex function:} $f(x) = |x|$. \\
+\begin{footnotesize}
 
-\lz 
+\vspace*{-0.5cm}
+
+\begin{eqnarray*}
+\textbf{Proof: } f\left(\xv + t(\mathbf{y} - \xv)\right) &=& |\xv + t(\mathbf{y} - \xv)| = |(1 - t) \xv + t\cdot\mathbf{y}| \le |(1 - t) \xv| + |t\cdot\mathbf{y}| \\ &=& (1 - t) |\xv| + t |\mathbf{y}| = |\xv| + t \cdot (|\mathbf{y}| - |\xv|) \\ &=& f(\xv) + t \cdot (f(\mathbf{y}) - f(\xv))
+\end{eqnarray*}
+% https://sboyles.github.io/teaching/ce377k/convexity.pdf
+\end{footnotesize}
+
+\vspace*{-0.5cm}
 
 \textbf{Concave function}: $f(x) = \log(x)$. 
 
-\lz 
+\vspace*{0.2cm}
 
-\textbf{Non-convex, non-concave}: $f(x) = \exp(-x^2)$
-\textbf{Proof: } (plug in respective values to show that it is not convex and not concave)
+\textbf{Neither nor}: $f(x) = \exp(-x^2)$
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.45\textwidth, right]{figure_man/conv_conc_functions.png}
+    \includegraphics[width=0.45\textwidth]{figure_man/conv_conc_functions.png}
 \end{figure}
+
 \end{vbframe}
 
 
 
 
-\begin{vbframe}{Convexity and Hessian matrix}
+\begin{vbframe}{Prove convexity via Hessian}
 
-For a twice differentiable function $f$, convexity can determined from the \textbf{Hessian matrix}.
+Let $f \in \mathcal{C}^2$ and $H(\xv)$ its Hessian.
 
-\lz
+\lz 
 
-The function $f: \mathcal{S} \to \R$ is \textbf{convex iff} the Hessian matrix $\nabla^2\fx$ is positive semidefinite for all $\xv \in \mathcal{S}$, i.e. if for all points $\xv$ and all vectors $\mathbf{d} \ne 0$ it applies:
+$f$ is \textbf{convex iff} $H(\xv)$ is positive semidefinite (p.s.d.) for all $\xv \in \mathcal{S}$, i.e. if for all points $\xv$ and all vectors $\mathbf{d} \ne 0$:
 
 $$
 \mathbf{d}^{\top} \nabla^2\fx\mathbf{d} \ge 0.
 $$
 
-If the Hessian matrix is positive definite (strict \enquote{$>$}), the function $f$ is strictly convex.
+If $H(\xv)$ positive definite (strict \enquote{$>$}), $f$ is strictly convex.
 
 \lz
 
-\textbf{Equivalent definition:} A matrix is positive semidefinite if all eigenvalues are non-negative.
+\textbf{Alternatively:} Matrix p.s.d. $\Leftrightarrow$ all eigenvalues $\ge 0$. 
 
 
 \framebreak
@@ -131,10 +130,12 @@ If the Hessian matrix is positive definite (strict \enquote{$>$}), the function 
 % \end{itemize}
 % \framebreak
 
-\textbf{Example:} Consider the function $f(x_1, x_2) = x_1^2 + x_2^2 - 2x_1x_2$.
+\begin{footnotesize}
+\textbf{Example:} $f(\xv) = x_1^2 + x_2^2 - 2x_1x_2$, $\nabla f(\xv) = \begin{pmatrix}2x_1 - 2x_2 \\ 2x_2 - 2x_1\end{pmatrix}$, $H(\xv) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}. 
+$
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/convex-example.png}
+  \includegraphics[width = 0.4\textwidth]{figure_man/convex-example.png}
 \end{center}
 
 %<<echo=FALSE, size = "footnotesize">>=
@@ -146,22 +147,15 @@ If the Hessian matrix is positive definite (strict \enquote{$>$}), the function 
 %persp2(x, y, z, theta = 30, phi = 30)
 %@
 
-
-The gradient of the function is $\nabla f(x) = (2x_1 - 2x_2, 2x_2 - 2x_1)$ and the Hessian is
-
-$$
-\nabla^2 f(x) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}
-$$
-
-\lz
-
-The matrix is positive semidefinite, since
+$f$ is convex since $H(\xv)$ is p.s.d. for all $\xv$:
 
 \begin{eqnarray*}
-\mathbf{d}^{\top}\begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}\mathbf{d} &=& \mathbf{d}^{\top} \begin{pmatrix} 2d_1 - 2d_2 \\ -2d_1 + 2d_2\end{pmatrix} \\ &=& 2d_1^2 - 2d_1d_2 -2d_1d_2 + 2d_2^2 \\ &=& 2d_1^2 - 4d_1d_2 + 2d_2^2 = 2 (d_1 - d_2)^2 \ge 0.
+\mathbf{d}^{\top}\begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}\mathbf{d} &=& \mathbf{d}^{\top} \begin{pmatrix} 2d_1 - 2d_2 \\ -2d_1 + 2d_2\end{pmatrix} = 2d_1^2 - 2d_1d_2 -2d_1d_2 + 2d_2^2 \\ &=& 2d_1^2 - 4d_1d_2 + 2d_2^2 = 2 (d_1 - d_2)^2 \ge 0.
 \end{eqnarray*}
 
-So the function $f$ is convex and every local minimum is also a global minimum.
+% So the function $f$ is convex and every local minimum is also a global minimum.
+
+\end{footnotesize}
 
 \end{vbframe}
 
@@ -177,7 +171,7 @@ So the function $f$ is convex and every local minimum is also a global minimum.
   \begin{center}
   \includegraphics[width = 0.9\textwidth]{figure_man/convexity_3.pdf} \\
   \begin{footnotesize}
-  Left: Example for a function that is strictly convex. It has one local minimum. Middle: A function that is convex, but not strictly convex. All local optima are global ones, but the optimum is not unique. Right: A function that is not convex. 
+  Left: Strictly convex; exactly one local minimum, which is also global. Middle: Convex, but not strictly; all local optima are global ones, but not unique. Right: Not convex.
   \end{footnotesize} 
   \end{center}
   

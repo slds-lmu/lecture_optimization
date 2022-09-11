@@ -237,7 +237,7 @@ What can be written down nicely for first and second order Taylor Series is (not
 
 \lz 
 
-Let $f: \R^n \to \R$, $f \in \mathcal{C}^k$ at $\bm{a} \in \R^n$. Then 
+Let $f: \R^d \to \R$, $f \in \mathcal{C}^k$ at $\bm{a} \in \R^d$. Then 
 
 $$
   f(x) = T_m(\xv, \bm{a}) + R_m(\xv, \bm{a}), \text{ with}
@@ -247,12 +247,12 @@ $$
   T_m(\xv,\bm{a}) = \sum_{|\bm{\alpha}| \le k} \frac{D^{\bm{\alpha}} f(\bm{a})}{{\bm{\alpha}}!} (\xv - \bm{a})^{\bm{\alpha}} \text{ and } \lim_{\xv \to \bm{a}} R_m(\xv,\bm{a}) = 0
 $$
 
-with $\bm{\alpha} \in \N^n$ and the multi-index notation
+with $\bm{\alpha} \in \N^d$ and the multi-index notation
 \begin{itemize}
-  \item $|\bm{\alpha}| = \alpha_1 + \cdots + \alpha_n$
-  \item $\bm{\alpha}! = \alpha_1! \cdots \alpha_n!$
-  \item $\xv^{\bm{\alpha}} = x_1^{\alpha_1} \cdots x_n^{\alpha_n}$
-  \item $D^{\bm{\alpha}} f = \frac{\partial^{|\bm{\alpha}|} f}{\partial x_1^{\alpha_1} \cdots \partial x_n^{\alpha_n}}$ 
+  \item $|\bm{\alpha}| = \alpha_1 + \cdots + \alpha_d$
+  \item $\bm{\alpha}! = \alpha_1! \cdots \alpha_d!$
+  \item $\xv^{\bm{\alpha}} = x_1^{\alpha_1} \cdots x_d^{\alpha_d}$
+  \item $D^{\bm{\alpha}} f = \frac{\partial^{|\bm{\alpha}|} f}{\partial x_1^{\alpha_1} \cdots \partial x_d^{\alpha_d}}$ 
 \end{itemize}
 
 \framebreak 
