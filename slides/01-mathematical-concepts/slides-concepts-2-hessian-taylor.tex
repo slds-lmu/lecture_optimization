@@ -77,16 +77,17 @@ $$
 
 \begin{vbframe}{Hessian describes local curvature} 
 
+\begin{footnotesize}
+
 Let w.l.o.g. $A(\xv) = \{\lambda_{1, \xv}, ..., \lambda_{d, \xv}\}$ be Eigenspectrum with $\lambda_{1, \xv} \le \lambda_{2, \xv} \le ... \le \lambda_{d, \xv}$ of $H(\xv)$; let $\bm{v}_{i, \xv}$ define the respective Eigenvectors. We can read from it: 
 
 \begin{itemize}
-  \item $\bm{v}_d$ points into the direction of largest curvature 
-  \item $\bm{v}_1$ points into the direction of smallest curvature 
+  \item $\bm{v}_d$/$\bm{v}_1$ points in the direction of largest/smallest curvature
 \end{itemize}
 
-\vspace*{0.2cm}
+\vspace*{0.1cm}
 
-\begin{footnotesize}
+
 
 \textbf{Example (continued):} $H(\xv) = \begin{pmatrix}
 \text{-cos}(x_2)\cdot\text{sin}(x_1) & \text{-cos}(x_1)\cdot\text{sin}(x_2) 
@@ -95,18 +96,19 @@ Let w.l.o.g. $A(\xv) = \{\lambda_{1, \xv}, ..., \lambda_{d, \xv}\}$ be Eigenspec
 $
 
 \begin{itemize}
-  \item $H(a)$, $a=(\frac{-\pi}{2},0)$: $\lambda_1 = \lambda_2 = 1$; $v_1 = (1, 0)^\top$, $v_2 = (0, 1)^\top$
-  \item $H(b)$, $b=(0,\frac{-\pi}{2})$: $\lambda_1 = -1, \lambda_2 = 1$; $v_1 = (-1, 1)^\top$, $v_2 = (1, 1)^\top$
-  \item \textcolor{blue}{$H(c), c=(\frac{-\pi}{2},0)$, : $\lambda_1 = \lambda_2 = 1$; $v_1 = (1, 0)^\top$, $v_2 = (0, 1)^\top$}
+  \item \textcolor{green}{$H(a)$, $a=(\frac{\pi}{2},0)$: $\lambda_{1,a} = \lambda_{2,a} = -1$; $v_{1,a} = (0, 1)^\top$, $v_{2,a} = (1, 0)^\top$}
+  \item \textcolor{purple}{$H(b)$, $b=(0,\frac{-\pi}{2})$: $\lambda_{1,b} = -1, \lambda_{2,b} = 1$; $v_{1,b} = (-1, 1)^\top$, $v_{2,b} = (1, 1)^\top$}
+  \item \textcolor{orange}{$H(c), c=(\frac{-\pi}{2},0)$, : $\lambda_{1,c} = \lambda_{2,c} = 1$; $v_{1,c} = (0, 1)^\top$, $v_{2,c} = (1, 0)^\top$}
 \end{itemize}
 
 \end{footnotesize}
 
-\vspace*{-0.5cm}
+\vspace*{0.1cm}
 
 \begin{figure}[!tbp]
-    \includegraphics[width=0.35\textwidth]{figure_man/hessian_3d.png}
-    \includegraphics[width=0.35\textwidth]{figure_man/hessian_contour.png}
+    \includegraphics[width=0.38\textwidth]{figure_man/hessian_3d.png}
+    \hspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figure_man/hessian_contour.png}
 \end{figure} 
 
 \end{vbframe}
