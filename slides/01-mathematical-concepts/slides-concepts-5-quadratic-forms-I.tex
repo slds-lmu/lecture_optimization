@@ -4,10 +4,12 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/hinge_vs_l2.pdf}
+\newcommand{\titlefigure}{figure_man/quadratic_functions_2D_example_1_1.png}
 \newcommand{\learninggoals}{
-\item Univariate Quadratic functions
-\item Multivariate Quadratic functions}
+\item Definition of quadratic forms
+\item Gradient, Hessian
+\item Convexity, concavity
+}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
@@ -42,10 +44,10 @@
   
   \framebreak 
   
-  Basic properties can be read off easily: 
+  Basic properties: 
   
   \begin{itemize}
-    \item The \textbf{slope} of a tangent at a point $(\tilde x, q(\tilde x))$ is given by the first derivative $q'(\tilde x) = 2 \cdot a \cdot \tilde x + b$
+    \item \textbf{Slope} of tangent at point $(\tilde x, q(\tilde x))$ is given by the first derivative $q'(\tilde x) = 2 \cdot a \cdot \tilde x + b$
     \begin{figure}
     \includegraphics[height=0.2\textwidth, keepaspectratio]{figure_man/quadratic_functions_1D_derivative.png} \\
     \begin{footnotesize} 
@@ -90,7 +92,7 @@
     q(\xv) = \xv^\top \bm{A} \xv + \bm{b}^\top \xv + c,
   $$
   
-  with $\bm{A} \in \R^{d \times d}$ being a full-rank matrix, $\bm{b} \in \R^d$, and $c \in \R$. % To also keep things simple here, we will set $\bm{b}$ and $c$ to zero. 
+  with $\bm{A} \in \R^{d \times d}$ full-rank matrix, $\bm{b} \in \R^d$, $c \in \R$. % To also keep things simple here, we will set $\bm{b}$ and $c$ to zero. 
   
   \begin{figure}
     \includegraphics[height=0.4\textwidth, width = 0.4\textwidth]{figure_man/quadratic_functions_2D_example_1_1.png} ~~ \includegraphics[height=0.4\textwidth, width = 0.4\textwidth]{figure_man/quadratic_functions_2D_example_1_2.png}\\
@@ -102,7 +104,7 @@
   \framebreak 
   
   
-  W.l.o.g. we can assume that $\bm{A}$ is a \textbf{symmetric} matrix, i.e. $\bm{A}^\top = \bm{A}$, because there always exists a symmetric matrix $\tilde \Amat$ such that 
+  W.l.o.g. we can always assume $\bm{A}$ \textbf{symmetric} matrix, i.e. $\bm{A}^\top = \bm{A}$, because: there is always a symmetric matrix $\tilde \Amat$ s.t. 
   
   \vspace*{-0.3cm}
   
@@ -111,7 +113,7 @@
   \end{eqnarray*}
   
   
-  \textbf{Justification}: We can write $q(\xv)$ as
+  \textbf{Justification}: We write $q(\xv)$ as
   
   \vspace*{-0.3cm}
   
@@ -119,7 +121,7 @@
     q(\xv) = \xv^\top \Amat \xv &=& \frac{1}{2} \xv^\top \underbrace{(\Amat + \Amat^\top)}_{\tilde \Amat_1} \xv + \frac{1}{2} \xv^\top \underbrace{(\Amat - \Amat^\top)}_{\tilde \Amat_2} \xv
   \end{eqnarray*}
   
-  with $\tilde \Amat_1$ symmetric, and $\tilde \Amat_2$ anti-symmetric (i.e., $\tilde \Amat_2^\top = - \tilde \Amat_2$). Since $\xv^\top \Amat^\top \xv$ is a scalar, it is equal to its transposed and we get: 
+  with $\tilde \Amat_1$ symmetric, $\tilde \Amat_2$ anti-symmetric (i.e., $\tilde \Amat_2^\top = - \tilde \Amat_2$). Since $\xv^\top \Amat^\top \xv$ is a scalar, it is equal to its transposed: 
   
   \vspace*{-0.3cm}
   
@@ -133,35 +135,34 @@
   \framebreak 
   
   \begin{itemize}
-    \item The gradient of $q$ is given by 
+    \item The gradient of $q$ is 
   
     \begin{eqnarray*}
-      \nabla q(\xv) = \left(\bm{A}^\top + \bm{A}\right) \xv + \bm{b} = \nabla q(\xv) = 2 \cdot \bm{A} \xv + \bm{b} \in \R^d
+      \nabla q(\xv) = \left(\bm{A}^\top + \bm{A}\right) \xv + \bm{b} = 2 \cdot \bm{A} \xv + \bm{b} \in \R^d
     \end{eqnarray*}
   
-    (the last step follows from assuming $\Amat$ to be symmetric). 
+    (using $\Amat$ symmetric). 
   
     \vspace*{0.2cm}
   
-    The directional derivative in the direction of $\bm{v}\in \R^d, \|\bm{v}\| = 1$, is
+    Derivative in direction $\bm{v}\in \R^d$ is by chain rule
   
     \begin{eqnarray*}
-      \frac{\partial q(\xv + h \cdot \bm{v})}{\partial h}~\bigg\rvert_{h = 0} &=& \nabla q(\xv + h \bm{v})^\top \bm{v}~\bigg\rvert_{h = 0} = \nabla q(\xv)^\top \bm{v}
+      \frac{\partial q(\xv + h \cdot \bm{v})}{\partial h}~\bigg\rvert_{h = 0} &=& \nabla q(\xv + h \bm{v})^\top \bm{v}~\bigg\rvert_{h = 0} = \nabla q(\xv)^\top \bm{v}.
     \end{eqnarray*}
   
-    by using the chain rule.
   
-    \item The Hessian is given by 
+    \item The Hessian is 
   
     \begin{eqnarray*}
       \nabla^2 q(\xv) = \left(\bm{A}^\top + \bm{A}\right) = 2 \Amat := \bm{H} \in \R^{d \times d},
     \end{eqnarray*}
   
-    (again assuming that $\Amat$ is symmetric). 
+    (using $\Amat$ symmetric). 
   
     \vspace*{0.2cm}
   
-    The curvature in the direction of $\bm{v}\in \R^d, \|\bm{v}\| = 1$, is
+    The curvature in the direction of $\bm{v}\in \R^d$ is 
   
     \begin{eqnarray*}
       \frac{\partial^2 q(\xv + h \cdot \bm{v})}{\partial h^2}~\bigg\rvert_{h = 0} &=& \frac{\partial \left[\nabla q(\xv + h \bm{v})^\top\bm{v}\right]}{\partial h}~\bigg\rvert_{h = 0} \\ &=& \bm{v}^\top \nabla^2 q(\xv + h \bm{v}) \bm{v}~\bigg\rvert_{h = 0} = \bm{v}^\top \bm{H} \bm{v}.

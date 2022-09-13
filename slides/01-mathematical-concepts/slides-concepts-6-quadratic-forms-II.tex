@@ -3,10 +3,10 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/hinge_vs_l2.pdf}
+\newcommand{\titlefigure}{figure_man/quadratic_functions_2D_example_2_4.png}
 \newcommand{\learninggoals}{
-\item Properites of Quadratic functions
-\item }
+\item Geometry of quadratic forms
+\item Eigenspectrum}
 
 
 \title{Optimization}
@@ -23,30 +23,30 @@
 
 \begin{vbframe}{Properties of quadratic functions}
 
-  \textbf{Univariate case} \vspace*{0.2cm}
+  \textbf{Univariate function} \vspace*{0.2cm}
   
-  In 1-variable calculus, the second derivative ist just a single value $q''(x) = 2 \cdot a$. Basic properties of $q$ can easily be read off: 
+  2nd derivative is a $q''(x) = 2 \cdot a$. Basic properties of $q$ can be read-off: 
   
   \begin{itemize}
-    \item $q''(x) > 0$ implies convex, $q''(x) < 0$  implies concave.
-    \item High absolute values mean high curvature, low absolute values mean a low curvature. 
+    \item $q''(x) > 0$: $q$ convex; $q''(x) < 0$: $q$ concave
+    \item High (lows) absolute values of $q''(x)$: high (low) curvature
   \end{itemize}
   
   \vspace*{0.2cm}
   
-  \textbf{Now: Multivariate case}\vspace*{0.2cm}
+  \textbf{Multivariate function}\vspace*{0.2cm}
   
-  For a multivariate quadratic function, the second derivative is a symmetric matrix of values $\bf{H}$ (called the Hessian). 
+  2nd derivative is a symmetric matrix of values $\bf{H}$ (called Hessian). 
   
   \lz 
   
-  We will see how $\bf{H}$ encodes the basic properties of the function $q$. 
+  Now: See how Eigenspectrum of $\bf{H}$ encodes the basic properties of $q$. 
   
   \end{vbframe}
   
   \begin{frame}{Properties of quadratic functions (diag)}
   
-  \textbf{Example 1}: A function composed of two univariate quadratic terms
+  \textbf{Example 1}: Function composed of two univariate quadratic terms
   
   \vspace*{-0.3cm}
   
@@ -67,12 +67,12 @@
   \begin{figure}
     \only<1>{\includegraphics[height=0.4\textwidth, keepaspectratio]{figure_man/quadratic_functions_2D_example_diag_2.png} \\
     \begin{footnotesize} 
-    $q$ has a high positive curvature of $\textcolor{orange}{4}$ in the direction of $\textcolor{orange}{x_1}$, \phantom{mand a lower (positive) curvature off $\textcolor{magenta}{2}$ in direction of $\textcolor{magenta}{x_2}$.}
+    $q$ has a high positive curvature of $\textcolor{orange}{4}$ in the direction of $\textcolor{orange}{v = (1, 0)^\top}$, \phantom{mand a lower (positive) curvature off $\textcolor{magenta}{2}$ in direction of $\textcolor{magenta}{v = (0, 1)^\top}$.}
     \end{footnotesize}
     }
     \only<2>{\includegraphics[height=0.4\textwidth, keepaspectratio]{figure_man/quadratic_functions_2D_example_diag_3.png} \\
     \begin{footnotesize} 
-    $q$ has a high positive curvature of $\textcolor{orange}{4}$ in the direction of $\textcolor{orange}{x_1}$, and a lower (positive) curvature of $\textcolor{magenta}{2}$ in direction of $\textcolor{magenta}{x_2}$.
+    $q$ has a high positive curvature of $\textcolor{orange}{4}$ in the direction of $\textcolor{orange}{v = (1, 0)^\top}$, and a lower (positive) curvature of $\textcolor{magenta}{2}$ in direction of $\textcolor{magenta}{v = (0, 1)^\top}$.
     \end{footnotesize}
     }
   \end{figure}
@@ -84,11 +84,11 @@
   \textbf{Takeaway I}: 
   
   \begin{itemize}
-    \item The Hessian encodes the curvature of the function 
+    \item Hessian encodes curvature 
     \item If the Hessian $\mathbf{H}$ is diagonal, the diagonal elements encode the curvature of the function: 
   
     \begin{itemize}
-      \item The $i$-th diagonal element gives us the curvature in the direction of $\bm{v} = \bm{e}_i$ because 
+      \item $i$-th diagonal element gives us the curvature in the direction of $\bm{v} = \bm{e}_i$ because 
       $$
       \bm{v}^\top \bm{H} \bm{v} = \bm{e}_i^\top \bm{H} \bm{e}_i = h_{ii}.
       $$
@@ -99,10 +99,10 @@
       $$
     \end{itemize}
   
-    \item<2-> In the general case we look at the \textbf{eigenspectrum} of $\mathbf{H}$ 
+    \item<2-> For general (non-diagonal) matrices we analyze the \textbf{eigenspectrum} of $\mathbf{H}$ 
     \vspace*{0.2cm}
     \item<2->[] \begin{footnotesize}
-    \textbf{Note: } 	For diagonal matrices it is very easy to determine the eigenspectrum: The diagonal elements are the \textbf{eigenvalues}, and unit vectors are the \textbf{eigenvectors}. 
+    \textbf{Note: } For diagonal matrices the eigenspectrum is is to read-off: Diagonal elements of $\mathbf{H}$ \textbf{eigenvalues}, unit vectors \textbf{eigenvectors}
     \begin{eqnarray*}
       \mathbf{H} \bm{e}_1 &=& \begin{pmatrix} \textcolor{orange}{4} & 0 \\ 0 & \textcolor{magenta}{2} \end{pmatrix} = \textcolor{orange}{4} \cdot \bm{e}_1; \qquad \mathbf{H} \bm{e}_2 = \begin{pmatrix} \textcolor{orange}{4} & 0 \\ 0 & \textcolor{magenta}{2} \end{pmatrix} = \textcolor{magenta}{2} \cdot \bm{e}_2 \\		
     \end{eqnarray*}	
@@ -162,8 +162,8 @@
   \textbf{Takeaway II}:
   
   \begin{itemize}
-    \item Geometrically, directions of highest / lowest curvature are along the main axes of the ellipses representing the contour lines of $q$. 
-    \item Mathematically, the direction with the highest (lowest) curvature is the direction of the eigenvector $\bm{v}_\text{max}$ ($\bm{v}_\text{min}$) that belongs to the largest (smallest) eigenvalue $\lambda_\text{max}$ ($\lambda_\text{min}$) of $\bm{H}$. 
+    \item Geometrically, directions of highest / lowest curvature along main axes of ellipses representing the contour lines of $q$. 
+    \item Mathematically, the direction with the highest (lowest) curvature is the direction of the eigenvector $\bm{v}_\text{max}$ ($\bm{v}_\text{min}$) belonging to largest (smallest) eigenvalue $\lambda_\text{max}$ ($\lambda_\text{min}$) of $\bm{H}$. 
   \end{itemize}
   
   \begin{columns}
@@ -196,7 +196,7 @@
   
   \begin{vbframe}{Properties of quadratic functions}
   
-  The direction $\bm{v}_\text{max}$ is also the direction in which the function increases fastest. 
+  Direction $\textcolor{magenta}{\bm{v}_\text{max}}$ is also direction in which the function increases fastest. 
   
   \begin{figure}
     \includegraphics[width=0.6\textwidth]{figure_man/quadratic_functions_2D_example_1_7.png} \\
@@ -208,7 +208,7 @@
   
   \framebreak 
   
-  If we know the eigenspectrum of $\Amat$, i.e. the set of its eigenvalues $\left\{\lambda_1, \lambda_2, ..., \lambda_d\right\}$, we also know the eigenspectrum of $\bm{H} = 2\cdot \Amat$. The following basic properties of $q$ can be read off from this eigenspectrum: 
+  If eigenspectrum of $\Amat$ is known, i.e. the set of its eigenvalues $\left\{\lambda_1, \lambda_2, ..., \lambda_d\right\}$, also eigenspectrum of $\bm{H} = 2\cdot \Amat$ is known and we can read off:
   
   \begin{itemize}
     \item If \textbf{all} eigenvalues of the $\bm{H}$ are $>0$ (we call $\bm{H}$ positive definite): 
@@ -311,12 +311,12 @@
   
   \begin{vbframe}{Eigenspectrum and Condition}
   
-  The condition of squared full-rank matrix can be read off from its eigenspectrum: it is $\kappa(\Amat) = \frac{|\lambda_\text{max}|}{|\lambda_\text{min}|}$, with $\lambda_\text{max}$ being the largest eigenvalue and $\lambda_\text{min}$ being the lowest eigenvalue (in absolute terms). A high condition means: 
+  Also the condition can be read off from Eigenspectrum: $\kappa(\Amat) = \frac{|\lambda_\text{max}|}{|\lambda_\text{min}|}$. A high condition means: 
   
   \begin{itemize}
     \item The absolute value of the biggest eigenvalue $\lambda_\text{max}$ is much larger than the absolute value of the lowest eigenvalue $\lambda_\text{min}$. 
     \item The curvature in the direction of minimum curvature ($\textbf{v}_\text{max}$) is much lower than the one in the direction of maximum curvature ($\textbf{v}_\text{min}$).
-    \item We will see later, that optimization algorithms like gradient descent will have difficulties optimizing such functions. 
+    \item We will see later: optimization algorithms like gradient descent will have difficulties optimizing such functions. 
   \end{itemize}
   
   \vspace*{-0.3cm}
@@ -332,7 +332,7 @@
   \end{vbframe}
   
   \begin{vbframe}{Interpretation of general functions}
-  Every function can be locally approximated by a quadratic function via Taylor approximation: 
+  Every function can be locally approximated by a quadratic function via 2nd order Taylor approximation: 
   
   \vspace*{-0.3cm}
   
@@ -348,10 +348,7 @@
     \end{footnotesize}
   \end{figure}
   
-  
-  
-  By a basic geometric understanding of quadratic functions, we are able to understand a function's local geometry by looking at the Hessian $\nabla^2 f(\bm{\tilde{x}})$.
-  
+  By analyzing $\nabla^2 f(\bm{\tilde{x}})$ we can gain a local understanding of a function's geometry. 
   
   \end{vbframe}
   
