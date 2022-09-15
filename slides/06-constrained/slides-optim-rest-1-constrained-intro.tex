@@ -1,0 +1,236 @@
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+%\newcommand{\titlefigure}{figure_man/}
+\newcommand{\learninggoals}{
+\item \textcolor{red}{LEARNING GOAL 1}
+\item \textcolor{red}{LEARNING GOAL 1}}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization}
+%\author{}
+%\date{}
+
+\begin{document}
+
+\lecturechapter{Constrained Optimization}
+\lecture{Optimization}
+\sloppy
+
+% --------------------------------------------------------------------------------------------
+
+\begin{vbframe}{Constrained Optimization in Statistics}
+
+\textbf{Example}: Maximum Likelihood Estimation
+
+\lz
+
+For data $\left(\xv^{(1)}, ..., \xv^{(n)}\right)$, we want to find the maximum likelihood estimate
+
+$$
+\max_\theta L(\theta) = \prod_{i = 1}^n f(^{(i)}, \theta)
+$$
+
+In some cases, $\theta$ can only take \textbf{certain values}. 
+
+\lz 
+
+\begin{itemize}
+\item If $f$ is a Poisson distribution, we require the rate $\lambda$ to be non-negative, i.e. $\lambda \ge 0$
+
+  \item If $f$ is a multinomial distribution
+
+\begin{footnotesize}
+  $$
+  f(x_1, ..., x_p; n; \theta_1, ..., \theta_p) = \begin{cases} \binom{n!}{x_1! \cdot x_2! ... x_p!} \theta_1^{x_1} \cdot ... \cdot \theta_p^{x_p} & \text{if } x_1 + ... + x_p = n \\ 0 & \text{else}
+  \end{cases}
+  $$
+\end{footnotesize}
+
+  The probabilities $\theta_i$ must lie between $0$ and $1$ and add up to $1$, i.e. we require 
+  \begin{eqnarray*}
+  	0 \le \theta_i \le 1 && \text{ for all } i \\
+  	 \theta_1 + ... + \theta_p = 1. &&
+  \end{eqnarray*}
+
+\end{itemize}
+
+\end{vbframe}
+
+
+\begin{vbframe}{Constrained Optimization in ML}
+
+\begin{itemize}
+\item \textbf{Lasso regression}:
+
+\begin{eqnarray*}
+\min_{\bm{\beta}} && \frac{1}{n}\sum_{i = 1}^n\left(\bm{y}^{(i)} - \bm{\theta}^T\xv^{(i)}\right)^2 \\
+\text{s.t. } && \|\bm{\theta}\|_1 \le t
+\end{eqnarray*}
+
+\item \textbf{Ridge regression}:
+
+\begin{eqnarray*}
+\min_{\bm{\theta}} && \frac{1}{n}\sum_{i = 1}^n\left(\bm{y}^{(i)} - \bm{\theta}^T\xv^{(i)}\right)^2 \\
+\text{s.t. } &&\|\bm{\theta}\|_2 \le t
+\end{eqnarray*}
+\end{itemize}
+
+\begin{center}
+	\includegraphics{figure_man/lasso-ridge.png}
+\end{center}
+
+\framebreak
+
+Remember the dual formulation of the SVM, which is a convex quadratic program with box constraints plus one linear constraint: 
+
+\begin{eqnarray*}
+	& \max\limits_{\boldsymbol{\alpha}] \in \R^n} & \sum_{i=1}^n \alpha_i - \frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\yi y^{(j)} \scp{\xi}{\xv^{(j)}} \\
+	& \text{s.t. } & 0 \le \alpha_i \le C, \\
+	& \quad & \sum_{i=1}^n \alpha_i \yi = 0,
+\end{eqnarray*}
+
+% Der Manager eines Aktienportfolios möchte einen Betrag für ein Jahr so in $n$ Aktien investieren, dass
+%
+% \begin{enumerate}
+% \item die erwartete Rendite mindestens $r_0 \%$ beträgt und
+% \item gleichzeitig das Risiko minimiert wird.
+% \end{enumerate}
+%
+% Es sei $r_i$ die \textbf{erwartete Rendite} von Aktie $i$ am Jahresende. Die $r_i$ sind als (möglicherweise korrelierte) Zufallsvariablen zu verstehen und wir nehmen an
+%
+% \vspace*{-0.2cm}
+%
+% $$
+% \bm{r} = (r_1, ..., r_n) \sim \mathcal{N}(\mu, \Sigma).
+% $$
+%
+% Wie viel Prozent seines Kapitals in Aktie $i$ investiert wird, wird durch
+%
+% $$
+% x = (x_1, ..., x_n), ~~ \sum_i x_i = 1
+% $$
+%
+% zusammengefasst.
+%
+%
+% \framebreak
+%
+% Die Rendite am Jahresende ist dann $R(\xv) = \bm{r}^T \xv$.
+%
+% \lz
+%
+% Da die erwartete Mindestrendite mindestens $r_0$ sein soll, fordern wir als Nebenbedingung
+%
+% $$
+% E(\bm{r}^T \xv) = E(\bm{r}^T) \xv = \mu^T \xv \ge r_0.
+% $$
+%
+% Das Risiko, also die Varianz, wollen wir minimieren
+%
+% $$
+% \min \text{Var}(\bm{r}^T\xv) = \xv^T \Sigma \xv.
+% $$
+%
+% \framebreak
+%
+% Das Portfolio-Optimierungsproblem lautet dann
+%
+% \begin{eqnarray*}
+% \min && \xv^T \Sigma \xv \\
+% \text{u. d. N.} && \sum_i x_i = 1 \\
+% && x_i \ge 0 \text{ für alle } i \\
+% && \mu^T x \ge r_0
+% \end{eqnarray*}
+
+\end{vbframe}
+
+
+% \begin{vbframe}{Allgemeines restringiertes Optimierungsproblem}
+%
+% Wir betrachten ein allgemeine restringierte Optimierungsprobleme der Form
+%
+% \begin{eqnarray*}
+% &&\min_{\xv \in \R^n}  f(\xv) \\
+% \text{u. d. N. } && g_i(\xv) \le 0 \text{ für alle } i, \\
+% && h_j(\xv) = 0 \text{ für alle } j,
+% \end{eqnarray*}
+%
+% wobei
+%
+% \begin{itemize}
+% \item $f: \R^n \to \R$ Zielfunktion, die optimiert werden soll,
+% \item $g_i: \R^n \to \R$, $i \in \{1, 2, ..., m\}$ Ungleichungsnebenbedingungen,
+% \item $h_j: \R^n \to \R$, $j \in \{1, 2, ..., p\}$ Gleichungsnebenbedingungen.
+% \end{itemize}
+%
+% Der zulässige Bereich enthält dann die Punkte, für die die (Un-)Gleichungen erfüllt sind
+%
+% $$
+% \mathcal{S} := \{\xv \in \R^n: g_i(\xv) \le 0, h_j(\xv) = 0 \}
+% $$
+%
+% \end{vbframe}
+
+\begin{vbframe}{Constrained Optimization}
+
+\textbf{General definition} of a \textbf{Constrained Optimization problem}:
+
+\begin{eqnarray*}
+\min && f(\mathbf{x})  \\
+\text{such that} && g_i(\mathbf{x}) \le 0 \qquad \text{for } i=1,\ldots,k  \\
+ && h_j(\mathbf{x}) = 0 \qquad \text{for } j=1,\ldots,l,
+\end{eqnarray*}
+
+\vspace*{-0.5cm}
+
+where
+
+\begin{itemize}
+\item $g_i: \R^d \to \R, i = 1, ..., k$ are inequality constraints,
+\item $h_j: \R^d \to \R, j = 1, ..., l$ are equality constraints.
+\end{itemize}
+
+\lz 
+
+The set of inputs $\xv$ that fulfill the constraints, i.e.  
+$$\mathcal{S}:= \{\xv \in \R^d ~|~ g_i(\xv) \le 0, h_j(\xv) = 0 ~\forall~ i, j\}
+$$ 
+
+is known as the feasible set.
+
+\framebreak
+
+Special cases of constrained optimization problems are \textbf{convex programs}, with convex objective function $f$, convex inequality constraints $g_i$, and affine equality constraints $h_j$ (i.e. $h_j(\xv) = \bm{a}_j^\top \xv - \bm{b}_j$). 
+
+\lz 
+
+Convex programs can be categorized into 
+
+\begin{center}
+\includegraphics[width=0.4\textwidth]{figure_man/convex_programs.png}
+\end{center}
+
+\lz 
+
+\begin{itemize}
+	\item Linear program (LP): objective function $f$ and all constraints $g_i, h_j$ are linear functions
+	\item Quadratic program (QP): objective function $f$ is a quadratic form, i.e. $$
+	\fx = \frac{1}{2}\xv^\top \bm{Q} \xv + \bm{c}^\top \xv + \bm{d} 
+$$
+for $\bm{Q} \in \R^{d \times d}, \bm{c} \in \R^d, d \in \R$, and constraints are linear.
+\end{itemize}
+
+as well as second-order cone programs (SOCP), semidefinite programs (SDP), cone programs (CP), and graph form programs (GFP). 
+
+\end{vbframe}
+
+\endlecture
+\end{document}
+
+
+
