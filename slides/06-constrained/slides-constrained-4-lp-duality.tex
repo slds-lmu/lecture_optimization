@@ -1,0 +1,342 @@
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+%\newcommand{\titlefigure}{figure_man/}
+\newcommand{\learninggoals}{
+\item \textcolor{red}{LEARNING GOAL 1}
+\item \textcolor{red}{LEARNING GOAL 1}}
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization}
+%\author{}
+%\date{}
+
+\begin{document}
+
+\lecturechapter{LP Duality}
+\lecture{Optimization}
+\sloppy
+
+% --------------------------------------------------------------------------------------------
+
+\begin{vbframe}{Duality: introductory example}
+
+\textbf{Example:}
+
+A bakery sells brownies for $50$ ct and mini cheesecakes for $80$ ct each. The two products contain the following ingredients
+
+\begin{center}
+\begin{tabular}{ r c c c}
+    & \text{Chocolate} & \text{Sugar} & \text{Creamcheese} \\
+    \hline
+  \text{Brownie} & 3 & 2 & 2 \\
+  \text{Cheesecake} & 0 & 4 & 5
+\end{tabular}
+\end{center}
+
+A student wants to minimize his expenses, but at the same time eat at least $6$ units of chocolate, $10$ units of sugar and $8$ units of creamcheese.
+
+\framebreak
+
+He is therefore confronted with the following optimization problem:
+
+\begin{eqnarray*}
+\min_{\bm{x}\in \R^2} && 50x_1 + 80x_2 \\
+\text{s.t. } && 3x_1 \ge 6 \\
+&& 2x_1 + 4x_2 \ge 10 \\
+&& 2x_1 + 5x_2 \ge 8 \\
+&& \bm{x} \ge 0
+\end{eqnarray*}
+
+\framebreak
+
+The solution of the Simplex algorithm:
+\vspace{0.3cm}
+
+\footnotesize
+\begin{verbatim}
+res = solveLP(cvec = c, bvec = b, Amat = A)
+summary(res)
+##
+##
+## Results of Linear Programming / Linear Optimization
+##
+## Objective function (Minimum): 220
+##
+## Solution
+## opt
+## 1 2.0
+## 2 1.5
+\end{verbatim}
+% \col
+
+%<<echo = F>>=
+%A = - matrix(c(3, 2, 2, 0, 4, 5), ncol = 2)
+%b = - c(6, 10, 8)
+%c = c(50, 80)
+%@
+
+%<<>>=
+%res = solveLP(cvec = c, bvec = b, Amat = A)
+%summary(res)
+%@
+
+\framebreak
+\normalsize
+The baker informs the supplier that he needs at least $6$ units of chocolate, $10$ units of sugar and $8$ units of creamcheese to meet the student's requirements.
+
+\lz
+
+The supplier asks himself how he must set the prices for chocolate, sugar and creamcheese ($\alpha_1, \alpha_2, \alpha_3$) such that he can
+
+\begin{itemize}
+\item maximize his revenue
+$$
+\max_{\bm{\alpha} \in \R^3}6 \alpha_1 + 10 \alpha_2 + 8 \alpha_3
+$$
+\item and at the same time ensure that the baker buys from him (purchase cost $\le$ selling price)
+\begin{eqnarray*}
+3\alpha_1 + 2\alpha_2 + 2\alpha_3 &\le& 50 \qquad \text{Brownie} \\
+4\alpha_2 + 5\alpha_3 &\le& 80 \qquad \text{Cheesecake}
+\end{eqnarray*}
+
+\end{itemize}
+
+\framebreak
+
+The presented example is known as a \textbf{dual problem}. The variables $\alpha_i$ are called \textbf{dual variables}.
+
+\lz
+
+In an economic context, dual variables can often be interpreted as \textbf{shadow prices} for certain goods.
+
+\lz
+
+If we solve the dual problem, we see that the dual problem has the same objective function value as the primal problem. This is later referred to as \textbf{strong duality}.
+
+% \lz
+%
+% Der Lieferant sollte eine Einheit Schokolade für mindestens $\alpha_1$ verkaufen, der Bäcker aber höchstens zu $\alpha_1$ einkaufen.
+\framebreak
+\footnotesize
+\begin{verbatim}
+res = solveLP(cvec = c, bvec = b, Amat = A, maximum = T)
+summary(res)
+##
+##
+## Results of Linear Programming / Linear Optimization
+##
+## Objective function (Maximum): 220
+##
+## Solution
+## opt
+## 1 3.333333
+## 2 20.000000
+## 3 0.000000
+\end{verbatim}
+% \col
+
+%<<echo = F>>=
+%A = matrix(c(3, 0, 2, 4, 2, 5), ncol = 3)
+%b = c(50, 80)
+%c = c(6, 10, 8)
+%@
+
+%<<>>=
+%res = solveLP(cvec = c, bvec = b, Amat = A, maximum = T)
+%summary(res)
+%@
+
+
+% \textbf{Beispiel:} Eine Firma stellt Tische und Stühle her und verkauft diese für $30$ Euro (Tisch),  $20$ Euro (Stuhl). Hierfür gibt es $3$ Maschinen, die jeweils nur eine gewisse Zeit zur Verfügung stehen.
+%
+% \lz
+%
+% In der Tabelle ist aufgelistet, wie viel Stunden die jeweilige Maschine für Stuhl bzw. Tisch benötigt.
+%
+% \begin{center}
+% \begin{tabular}{ r | c c | c}
+%   \text{Maschine}  & \text{Stuhl} & \text{Tisch} & \text{Verfügbarkeit (in h)} \\
+%     \hline
+%   M_1 & 3 & 2 & 2 \\
+%   M_2 & 0 & 4 & 5 \\
+%   M_3 & 0 & 4 & 5
+%
+% \end{tabular}
+% \end{center}
+
+\end{vbframe}
+
+\normalsize
+\begin{vbframe}{Mathematical intuition}
+
+The example explained duality from an economic point of view. But what is the mathematical intuition behind duality?
+
+\lz
+
+\textbf{Idea: } In minimization problems one is often interested in \textbf{lower bounds} of the objective function. How could we derive a lower bound for the problem above?
+
+\lz
+
+If we \enquote{skilfully} multiply the three inequalities by factors and add factors (similar to a linear system), we can find a lower bound.
+
+\framebreak
+\vspace*{-1.6cm}
+
+\begin{eqnarray*}
+\min_{\bm{x}\in \R^2} && 50x_1 + 80x_2  \\
+\text{s.t. } && 3x_1 \ge 6 \quad \vert\textcolor{green}{\cdot 5}\\
+&& 2x_1 + 4x_2 \ge 10 \quad \vert \textcolor{green}{\cdot 5} \\
+&& 2x_1 + 5x_2 \ge 8 \quad \vert \textcolor{green}{\cdot 12} \\
+&& \bm{x} \ge 0
+\end{eqnarray*}
+
+\vspace*{-0.2cm}
+
+If we add up the constraints we obtain
+
+\vspace*{-0.5cm}
+\begin{eqnarray*}
+& & \textcolor{green}{5} \cdot (3x_1) + \textcolor{green}{5} \cdot (2x_1 + 4x_2) + \textcolor{green}{12} \cdot (2x_1 + 5x_2)
+\\ &=& 15x_1 + 10x_1 + 24x_1 + 20x_2 + 60x_2 = 49 x_1 + 80 x_2 \\
+&\ge& 30 + 50 + 96 = 176
+\end{eqnarray*}
+
+Since $x_1 \ge 0$ we found a lower bound because
+
+$$
+50x_1 + 80 x_2 \ge 49 x_1 + 80 x_2 \ge 176.
+$$
+
+\framebreak
+
+Maybe we could have transformed the equations more cleverly and then found a \textbf{better} lower bound. We replace the multipliers $5, 5, 12$ with $\alpha_1, \alpha_2, \alpha_3$ and demand (as a condition for a lower bound).
+
+% \begin{eqnarray*}
+% \min_{\bm{x}\in \R^2} && 50x_1 + 80x_2  \\
+% \text{u. d. N. } && 3x_1 \ge 6 \quad \vert \textcolor{green}{\cdot \alpha_1}\\
+% && 2x_1 + 4x_2 \ge 10 \quad \vert \textcolor{green}{\cdot \alpha_2} \\
+% && 2x_1 + 5x_2 \ge 8 \quad \vert \textcolor{green}{\cdot \alpha_3} \\
+% && \bm{x} \ge 0
+% \end{eqnarray*}
+%
+% \framebreak
+
+\vspace*{-0.5cm}
+
+\begin{eqnarray*}
+&& 50x_1 + 80x_2 \ge \textcolor{green}{\alpha_1} (3x_1) + \textcolor{green}{\alpha_2} (2x_1 + 4x_2) + \textcolor{green}{\alpha_3} (2x_1 + 5x_2) \\ &=& (3 \textcolor{green}{\alpha_1} + 2  \textcolor{green}{\alpha_2} + 2 \textcolor{green}{\alpha_3}) x_1 + (4  \textcolor{green}{\alpha_2} + 5 \textcolor{green}{\alpha_3}) x_2
+\end{eqnarray*}
+
+or equivalently
+
+\vspace*{-0.5cm}
+\begin{eqnarray*}
+3 \textcolor{green}{\alpha_1} + 2  \textcolor{green}{\alpha_2} + 2 \textcolor{green}{\alpha_3} \le 50, \\
+4  \textcolor{green}{\alpha_2} + 5 \textcolor{green}{\alpha_3} \le 80.
+\end{eqnarray*}
+
+The lower bound (right-hand side of the inequality) is given by
+
+$$
+\textcolor{green}{\alpha_1} \cdot 6 + \textcolor{green}{\alpha_2} \cdot 10 + \textcolor{green}{\alpha_3} \cdot 8.
+$$
+
+\framebreak
+
+We are interested in a \textbf{largest possible} lower bound, because it gives us the most information. As an optimization problem
+
+\begin{eqnarray*}
+\max_{\bm{\alpha} \in \R^3} && 6 \alpha_1 + 10 \alpha_2 + 8 \alpha_3 \\
+\text{s.t. } && 3\alpha_1 + 2\alpha_2 + 2\alpha_3 \le 50 \\
+&& 4\alpha_2 + 5\alpha_3 \le 80\\
+&& \bm{\alpha} \ge 0.
+\end{eqnarray*}
+
+
+\end{vbframe}
+
+
+
+\begin{vbframe}{Duality}
+
+We denote
+
+\vspace*{-0.2cm}
+\begin{eqnarray*}
+\max_{\bm{\alpha} \in \R^m} && g(\bm{\alpha}) := \bm{\alpha}^T\bm{b}\\
+\text{s.t. } && \bm{\alpha}^T\bm{A} \le \bm{c}^T \\
+&& \bm{\alpha} \ge 0
+\end{eqnarray*}
+
+as the \textbf{dual problem} of
+
+\begin{eqnarray*}
+\min_{\bm{x} \in \R^n} && f(\bm{x}) := \bm{c}^T\bm{x}\\
+\text{s.t. } && \bm{A}\bm{x} \ge \bm{b} \\
+&& \bm{x} \ge 0
+\end{eqnarray*}
+
+(\textbf{primal problem}).
+
+\framebreak
+
+Duality overview:
+
+\begin{footnotesize}
+\begin{center}
+    \begin{tabular}{c | c | c | c}
+    & $\begin{array}{c} \text{Primal} \\ \text{(minimize)} \end{array}$ & $\begin{array}{c} \text{Dual} \\ \text{(maximize)} \end{array}$ \\
+    \hline
+    \multirow{3}{*}{$\begin{array}{c} \text{condition} \end{array}$} & $\le$ & $\le 0$ & \multirow{3}{*}{variable} \\
+  & $\ge$ & $\ge 0$ & \\
+    & $=$ & unconstrained & \\
+    \hline
+    \multirow{3}{*}{variable} & $\ge 0 $ & $\le$ & \multirow{3}{*}{$\begin{array}{c} \text{condition} \end{array}$}\\
+    & $\le 0$ &  $\ge$ & \\
+    & unconstrained & $=$ & \\
+\hline
+    \end{tabular}
+\end{center}
+\end{footnotesize}
+\end{vbframe}
+
+\begin{vbframe}{Duality theorem}
+
+In general, the \textbf{weak duality theorem}$^{(*)}$ applies to all feasible $\bm{x}, \bm{\alpha}$
+
+$$
+g(\bm{\alpha}) = \bm{\alpha}^T\bm{b} \le \bm{c}^T\bm{x}  = f(\bm{x})
+$$
+
+The value of the dual function is therefore \textbf{always} a lower bound for the objective function value of the primal problem.
+
+\lz
+
+\textbf{Proof:}
+$\bm{\alpha}^T\bm{b} \overset{\bm{Ax} \ge b}{\le}\bm{\alpha}^T\bm{Ax} \overset{\bm{\alpha}^T\bm{A} \le \bm{c}^T}{\le}\bm{c}^T\bm{x}$
+
+\framebreak
+
+The \textbf{strong duality theorem} states that if one of the two problems has a constrained solution, then the other also has a constrained solution. The objective function values are the same in this case.
+
+$$
+g(\bm{\alpha}^*) = (\bm{\alpha}^*)^T\bm{b} = \bm{c}^T\bm{x}^* = f(\bm{x}^*).
+$$
+
+In this case, the dual problem can be solved instead of the primal problem, which can lead to enormous runtime advantages, especially with many constraints and few variables.
+
+\lz
+
+The \textbf{dual simplex algorithm}, which has emerged as a standard procedure for Linear programming, is based on this idea.
+
+
+\end{vbframe}
+
+\endlecture
+\end{document}
+
+
