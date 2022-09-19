@@ -170,7 +170,7 @@ $$
 \begin{vbframe}{Example 2: Normal linear regression} 
 
 
-In normal linear regression the goal is to find a vector $\thetab$ which minimizes the sum of squared errors (SSE): 
+In normal linear regression the goal is to find a vector $\thetab$ which minimizes the sum of squared errors (SSE; also: L2-loss): 
 
 $$
 \min_{\thetab \in \R^d} \sum_{i = 1}^n \left(\thetab^\top \xi - \yi\right)^2
@@ -196,26 +196,27 @@ $$
 
 \end{vbframe}
 
-\begin{frame}{Example 3: Risk Min. in Machine Learning}
+\begin{vbframe}{Risk Minimization in Machine Learning}
 	
-	
+In the above example, we can replace 
+
 \begin{itemize}
-	\item $\D = \Dset$ denotes a dataset 
-	where $\fxit$ is a model, parameterized by $\thetab$ (e.g. linear model).
-	\item Let $\Lxy$ be the point-wise loss function which measures the error of a prediction $\fx$ compared to the true output $y$.
-	\item We want to find the model which minimizes the \textbf{empirical risk}
-	
-	$$
-	\risket = \frac{1}{n} \sumin L\left(\yi, \fxit\right).
-	$$
+	\item the linear model $\fxt = \thetab^\top \xv$ by any model $\fxt$ (e.g., something more complex and nonlinear)
+	\item the L2-loss $\Lxy = \left(\fxt - y\right)^2$ by any loss $\Lxy$
 \end{itemize}
 
-\textcolor{red}{Formulate without $\theta$ and then explain why we usually parameterize the hypothesis space. }
+\lz 
 
-\end{frame}	
+This leads us to \textbf{empirical risk minimization}
 
-\begin{vbframe}{Risk Minimization in Machine Learning}
-		
+	$$
+	\min \risket = \frac{1}{n} \sumin L\left(\yi, \fxit\right),
+	$$
+
+a core concept in machine learning. 
+
+\framebreak 
+
 Machine learning consists of three components: 
 
 \begin{center}
@@ -260,8 +261,22 @@ and hence the choice of the numerical optimization algorithm is influenced by th
 
 \end{vbframe}
 
+\begin{vbframe}{Example 3: Linear model with Hinge loss}
 
+
+\end{vbframe}
+
+\begin{vbframe}{Example 4: Regularized linear model}
+
+
+\end{vbframe}
+
+\begin{vbframe}{Example 5: Neural network}
+
+
+\end{vbframe}
 
 
 \endlecture
+
 \end{document}
