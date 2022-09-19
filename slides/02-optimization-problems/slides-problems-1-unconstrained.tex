@@ -7,7 +7,10 @@
 \newcommand{\titlefigure}{figure_man/ml_linreg_example_2.pdf}
 \newcommand{\learninggoals}{
 \item Definition
-\item Practical examples}
+\item Max. Likelihood 
+\item Normal regression
+\item Risk Minimization
+}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
@@ -80,7 +83,7 @@ Maximization results from minimizing $-f$.
 
 \begin{vbframe}{Example 1: Maximum Likelihood}
 
-Let $\D = \left(\xi[1], ..., \xi[n]\right)$ sampled i.i.d. from density $f(\xv ~|~ \mu, \sigma)$, with $\sigma = 1$: 
+$\D = \left(\xi[1], ..., \xi[n]\right) \overset{\text{i.i.d.}}{\sim} f(\xv ~|~ \mu, \sigma)$ with $\sigma = 1$: 
 
 $$
 	f(\xv ~|~ \mu, \sigma) = \frac{1}{\sqrt{2 \mu \sigma^{2}}}~\exp\left(\frac{-(\xv-\mu)^{2}}{2\sigma^{2}}\right)
@@ -141,12 +144,23 @@ can be solved analytically (setting the first deriv. to $0$):
 
 \lz 
 
-If we had optimized for $\sigma$ as well (instead of assuming it is known) the problem would have been: 
+If we had optimized for $\sigma$ as well 
+
+$$
+	\min_{\mu \in \R, \sigma \in \R^+} - \ell(\mu, \D).
+$$
+
+
+(instead of assuming it is known) the problem would have been: 
 
 \begin{itemize}
 	\item bivariate (optimize over $(\mu, \sigma)$)
 	\item constrained ($\sigma > 0$)
 \end{itemize}
+
+$$
+	\min_{\mu \in \R, \sigma \in \R^+} - \ell(\mu, \D).
+$$
 
 \end{vbframe}
 
@@ -198,11 +212,15 @@ $$
 
 \begin{vbframe}{Risk Minimization in Machine Learning}
 	
-In the above example, we can replace 
+In the above example
+
+$$
+\min_{\thetab \in \R^d} \sum_{i = 1}^n \textcolor{violet}{\left(\textcolor{cyan}{\thetab^\top \xi} - \yi\right)^2}
+$$
 
 \begin{itemize}
-	\item the linear model $\fxt = \thetab^\top \xv$ by any model $\fxt$ (e.g., something more complex and nonlinear)
-	\item the L2-loss $\Lxy = \left(\fxt - y\right)^2$ by any loss $\Lxy$
+	\item the linear model $\textcolor{cyan}{\thetab^\top \xv}$ by an arbitrary model $\textcolor{cyan}{\fxt}$ % (e.g., something more complex and nonlinear)
+	\item the L2-loss $\textcolor{violet}{\left(\fxt - y\right)^2}$ by any loss $\textcolor{violet}{\Lxy}$
 \end{itemize}
 
 \lz 
@@ -239,40 +257,121 @@ Machine learning consists of three components:
   
 \end{itemize}
 
+\end{vbframe}
+
+\begin{vbframe}{Example 3: Regularized linear model}
+
+ERM with L2-loss, linear model, and quadratic (L2) regularization term: 
+
+\begin{footnotesize}
+$$
+	\min \risket = \frac{1}{n}\sumin \left(\thetab^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetab\|_2^2 \quad \text{(Ridge regr.)}
+$$
+\end{footnotesize}
+\vspace*{-0.2cm}
+
+
+The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{smooth}. 
+
+\vspace*{0.2cm}
+
+ERM with L2-loss, linear model, and L1 regularization term: 
+
+\begin{footnotesize}
+$$
+	\min \risket = \frac{1}{n}\sumin \left(\thetab^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetab\|_1 \quad \text{(Lasso regr.)}
+$$
+\end{footnotesize}
+
+\vspace*{-0.2cm}
+
+The problem is still \textbf{multivariate}, \textbf{unconstrained}, but \textcolor{violet}{\textbf{not smooth}}. % The L1 penality is not differentiable if $\exists i$ s.t. $\theta_i = 0$.  
+
+\vspace*{-0.2cm}
+
+\begin{figure}
+\begin{center}
+	\includegraphics[width=0.8\textwidth]{figure_man/lasso-ridge_medium.jpg}
+\end{center}
+\end{figure}
+
+\end{vbframe}
+
+
+\begin{vbframe}{Example 4: Linear model with Hinge loss}
+
+\begin{footnotesize}
+\begin{itemize}
+	\item $\D = \left(\left(\xi, \yi\right)\right)_{i = 1, ..., n}$ with $\yi \in \{-1, 1\}$ (classification)
+	\item $\fxt \in \R$ scoring classifier: Predict $1$ if $\fxt > 0$ and $-1$ otherwise. 
+\end{itemize}
+\end{footnotesize}
+
+ERM with linear model, Hinge loss, and L2 regularization: 
+
+$$
+	\sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \|\thetab\|_2^2, \quad f^{(i)} := \fxit
+$$
+
+\vspace*{-0.2cm}
+
+This one formulation of the \textbf{linear support vector machine}. The problem is still \textbf{multivariate}, \textbf{unconstrained}, but \textcolor{violet}{\textbf{not smooth}}. 
+
+\vspace*{-0.3cm}
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{figure_man/svm-example.pdf}
+	\end{center}
+\end{figure}
+
 \framebreak 
+
+Understanding Hinge loss $\Lxy = \max\left(1 - y\cdot f, 0\right)$
+
+\begin{footnotesize}
+\begin{center}
+\begin{tabular}{ c | c | c | c | c }
+$\mathbf{y}$ & $\fx$ &  \textbf{Correct pred.?}  & $\Lxy$ & \textbf{Reason for costs}  \\ \hline
+ $1$ & $(- \infty, 0)$  & N & $(1, \infty)$ & Misclassification \\
+ $- 1$ & $(0, \infty)$ & N  & $(1, \infty)$ &  Misclassification \\
+ $1$ & $(0, 1)$ & Y & $(0, 1)$ & Low confidence \\
+ $- 1$ & $(-1, 0)$  & Y  & $(0, 1)$& Low confidence\\
+ $1$ & $(1, \infty)$ &  Y & $0$ & -- \\
+ $- 1$ & $(- \infty, -1)$ &  Y & $0$ & -- \\
+\end{tabular}
+\end{center}
+\end{footnotesize}
+
+\vspace*{-0.3cm}
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.5\textwidth]{figure_man/hinge_vs_l2.pdf}
+	\end{center}
+\end{figure}
+
+
+\end{vbframe}
+
+
+\begin{vbframe}{Example 5: Neural network}
 
 The (computational) complexity of the optimization problem 
 
 $$
-\text{arg} \min_{\thetab} \risket
+\text{arg} \min_{\thetab} \risket,
 $$
 
-and hence the choice of the numerical optimization algorithm is influenced by the model structure and the choice of the loss function:, i.e., smoothness, convexity. 		
-\vspace*{-0.5cm}
+(i.e. smoothness, convexity) is influenced by model structure and loss. 		
+\vspace*{-0.3cm}
 \begin{center}
 		\includegraphics[width=0.3\textwidth]{figure_man/ml_landscape.jpg} ~~~ \includegraphics[width=0.3\textwidth]{figure_man/log_reg.png}
 	\begin{footnotesize}
 		\newline
-		Loss landscapes of ML problems. \\ Left: ResNet-56, right: Logistic regression with cross-entropy loss
+		Loss landscapes of ML problems. \\ Left: Deep learning model ResNet-56, right: Logistic regression with cross-entropy loss
 		\newline
 		Source: \url{https://arxiv.org/pdf/1712.09913.pdf}
 	\end{footnotesize}
 \end{center}	
-
-\end{vbframe}
-
-\begin{vbframe}{Example 3: Linear model with Hinge loss}
-
-
-\end{vbframe}
-
-\begin{vbframe}{Example 4: Regularized linear model}
-
-
-\end{vbframe}
-
-\begin{vbframe}{Example 5: Neural network}
-
 
 \end{vbframe}
 
