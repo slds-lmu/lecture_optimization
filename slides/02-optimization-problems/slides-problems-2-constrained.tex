@@ -102,6 +102,36 @@ We also write the general constrained optimization problem as:
 
 \end{vbframe}
 
+\begin{vbframe}{Example 1.1: Maximum Likelihood Estimation: Poisson Distribution}
+	
+$\D = \left(x^{(1)}, ..., x^{(n)}\right)$ is sampled i.i.d. from density $f(x ~|~ \thetab)$. We want to find $\lambda$ which makes the observed data most likely.
+
+\begin{center}
+	\includegraphics[width=0.4\textwidth, height=0.4\textwidth]{figure_man/ml_poisson_example_1.pdf} \\
+	\begin{footnotesize}
+		Example: Histogram of a sample drawn from a Poisson distribution $f(k ~|~ \lambda) := \P(x = k) = \frac{\lambda^k \cdot \exp(-\lambda)}{k!}$. 
+	\end{footnotesize}
+\end{center}
+
+\framebreak 
+
+ We operationalize this as \textbf{maximizing} the log-likelihood function (or equivalently: minimizing the negative log-likelihood) with respect to $\lambda$:
+
+\begin{footnotesize}
+\begin{eqnarray*}
+	\hat \lambda  &=& \text{arg min}_\lambda ~ - \ell(\lambda, \mathcal{D}) =\text{arg min}_\lambda  - \log \mathcal{L}(\lambda, \mathcal{D}) = \text{arg min}_\lambda - \log \prod_{i = 1}^n  f\left(\xi ~|~ \lambda\right) \\ &=& \text{arg min}_\lambda - \sumin f\left(x^{(i)} ~|~ \lambda\right) = \text{arg min}_\lambda \sumin \frac{- \lambda^{\xi} \cdot \exp(- \lambda)}{\xi!} 
+\end{eqnarray*}
+\end{footnotesize}
+
+\begin{center}
+	\includegraphics[height=0.3\textwidth, keepaspectratio]{figure_man/ml_poisson_example_2.pdf} \\
+	\begin{footnotesize}
+		Example: The log-likelihood of a Poisson distribution for data example above. The objective function is univariate and differentiable, and the domain is \textcolor{red}{unconstrained}.
+	\end{footnotesize}
+\end{center}
+
+
+\end{vbframe}
 
 \begin{vbframe}{Example 2: Maximum Likelihood Estimation}
 
