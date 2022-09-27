@@ -11,12 +11,19 @@ f3 = function(x) {
 }
 
 df = data.frame(x = seq(-2, 2, by = 0.01))
-df$f1 = f1(df$x)
-df$f2 = f2(df$x)
-df$f3 = f3(df$x)
+df$L2 = f1(df$x)
+df$Hinge = f2(df$x)
+df$ZeroOne = f3(df$x)
 
 df = reshape::melt(df, id.vars = "x")
-names(df) = c("x", "fun", "y")
-p = ggplot(data = df, aes(x = x, y = y, colour = fun)) + geom_line()
+names(df) = c("x", "Loss", "y")
+p = ggplot(data = df, aes(x = x, y = y, colour = Loss)) + geom_line()
 
 ggsave("figure_man/hinge_vs_l2.pdf", p, width = 3, height = 2)
+
+
+p = ggplot(data = df[df$Loss == "Hinge", ], aes(x = x, y = y, colour = Loss)) + geom_line()
+p = p + xlab("yf(x)") + ylab("L(y, f(x))")
+
+ggsave("figure_man/hinge.pdf", p, width = 3, height = 2)
+

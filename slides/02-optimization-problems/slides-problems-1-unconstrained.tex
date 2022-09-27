@@ -25,7 +25,7 @@
 \lecture{Optimization}
 \sloppy
 
-\begin{vbframe}{Definition: Optimization Problem}
+\begin{vbframe}{Unconstrained optimization problem}
 
 $$
 \min_{\xv \in \mathcal{S}} \fx
@@ -46,6 +46,7 @@ The problem is called
 	$$
 	\item \textbf{smooth} if $f$ is at least $\in \mathcal{C}^1$
 	\item \textbf{univariate} if $d = 1$, and \textbf{multivariate} if $d > 1$.  
+	\item \textbf{convex} if $f$ convex function and $\mathcal{S}$ convex set
 \end{itemize}
 
 \end{vbframe}
@@ -74,7 +75,7 @@ Maximization results from minimizing $-f$.
 \begin{center}
 	\begin{footnotesize}
 	\includegraphics[height=0.3\textwidth, keepaspectratio]{figure_man/ml_poisson_example_2.pdf} \includegraphics[height=0.3\textwidth, keepaspectratio]{figure_man/ml_poisson_example_3.pdf} \\
-	Poisson example: Maximizing the log-likelihood (left) is equivalent to minimizing the negative log-likelihood (right). 
+	Maximizing the log-likelihood (left) is equivalent to minimizing the negative log-likelihood (right). 
 	\end{footnotesize}
 \end{center}
 
@@ -124,7 +125,7 @@ can be solved analytically (setting the first deriv. to $0$):
 
 \begin{footnotesize}
 \begin{eqnarray*}
-	-\frac{\partial}{\ell(\mu, \D)}{\partial \mu} = \sumin \left(\xi - \mu\right) &=& 0 \quad \Leftrightarrow \quad \hat \mu = \frac{1}{n} \sumin \xi 
+	-\frac{\partial \ell(\mu, \D)}{\partial \mu} = \sumin \left(\xi - \mu\right) &=& 0 \quad \Leftrightarrow \quad \hat \mu = \frac{1}{n} \sumin \xi 
 	% \sumin \xi &=& \sumin \mu = n \cdot \mu \\
 	% \sumin \xi &=& n \cdot \mu \\
 \end{eqnarray*}
@@ -140,7 +141,7 @@ can be solved analytically (setting the first deriv. to $0$):
 
 \framebreak 
 
-\textbf{Note: } The problem was \textbf{smooth}, \textbf{univariate}, \textbf{unconstrained}. 
+\textbf{Note: } The problem was \textbf{smooth}, \textbf{univariate}, \textbf{unconstrained}, \textbf{convex}. 
 
 \lz 
 
@@ -203,14 +204,14 @@ $$
 \end{center}
 
 \begin{itemize}
-	\item \textbf{Smooth}, \textbf{multivariate}, \textbf{unconstrained} problem
+	\item \textbf{Smooth}, \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex} problem
 	\item Quadratic form: Obtain a geometric interpretation via Eigenspectrum
 	\item The problem has a closed-form solution, which is given by $\thetab = (\Xmat^\top \Xmat)^{-1}\Xmat^\top \bm{y}$, where $\Xmat$ is the design matrix
 \end{itemize}
 
 \end{vbframe}
 
-\begin{vbframe}{Risk Minimization in Machine Learning}
+\begin{vbframe}{Risk Minimization in ML}
 	
 In the above example
 
@@ -225,21 +226,21 @@ $$
 
 \lz 
 
-This leads us to \textbf{empirical risk minimization}
+This leads us to \textbf{empirical risk minimization} (ERM)
 
 	$$
 	\min \risket = \frac{1}{n} \sumin L\left(\yi, \fxit\right),
 	$$
 
-a core concept in machine learning. 
+a core concept in machine learning (ML). 
 
 \framebreak 
 
-Machine learning consists of three components: 
+ML consists of three components: 
 
 \begin{center}
 
-  \textbf{Machine Learning} = $\underbrace{\textbf{Hypothesis Space + Risk}}_{\text{Formulating the optimization problem}}$ + $\underbrace{\textbf{Optimization}}_{\text{Solving it}}$
+  \textbf{ML} = $\underbrace{\textbf{Hypothesis Space + Risk}}_{\text{Formulating the optimization problem}}$ + $\underbrace{\textbf{Optimization}}_{\text{Solving it}}$ + \textbf{Regularization}
   
 \end{center}
 
@@ -254,51 +255,60 @@ Machine learning consists of three components:
   data set via a suitable loss function $L$.
   
   \item \textbf{Optimization:} Solve the resulting optimization problem through optimizing the risk $\risket$ over the hypothesis space.
+
+  \item \textbf{Regularization:} Penalize model complexity 
   
 \end{itemize}
 
 \end{vbframe}
 
-\begin{vbframe}{Example 3: Regularized linear model}
-
-ERM with L2-loss, linear model, and quadratic (L2) regularization term: 
+\begin{vbframe}{Example 3: Regularized LM}
 
 \begin{footnotesize}
+
+ERM with L2-loss, LM, and quadratic (L2) regularization term: 
+
+\vspace*{-0.2cm}
+
 $$
 	\min \risket = \frac{1}{n}\sumin \left(\thetab^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetab\|_2^2 \quad \text{(Ridge regr.)}
 $$
-\end{footnotesize}
+
+\vspace*{-0.1cm}
+
+
+The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{smooth}, \textbf{convex}.
+
+\vspace*{0.1cm}
+
+ERM with L2-loss, LM, and L1 regularization: 
+
 \vspace*{-0.2cm}
 
-
-The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{smooth}. 
-
-\vspace*{0.2cm}
-
-ERM with L2-loss, linear model, and L1 regularization term: 
-
-\begin{footnotesize}
 $$
 	\min \risket = \frac{1}{n}\sumin \left(\thetab^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetab\|_1 \quad \text{(Lasso regr.)}
 $$
-\end{footnotesize}
 
-\vspace*{-0.2cm}
+\vspace*{-0.1cm}
 
-The problem is still \textbf{multivariate}, \textbf{unconstrained}, but \textcolor{violet}{\textbf{not smooth}}. % The L1 penality is not differentiable if $\exists i$ s.t. $\theta_i = 0$.  
+The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex}, but \textcolor{violet}{\textbf{not smooth}}. % The L1 penality is not differentiable if $\exists i$ s.t. $\theta_i = 0$.  
 
-\vspace*{-0.2cm}
+\vspace*{-0.3cm}
 
 \begin{figure}
 \begin{center}
 	\includegraphics[width=0.8\textwidth]{figure_man/lasso-ridge_medium.jpg}
 \end{center}
+	\caption{Source: Medium, 2022, Visualize the Loss with Regularization}
+	% https://medium.com/@jingwang.physics/visualize-the-loss-with-regularization-2f82666dc0f7
 \end{figure}
+
+\end{footnotesize}
 
 \end{vbframe}
 
 
-\begin{vbframe}{Example 4: Linear model with Hinge loss}
+\begin{vbframe}{Example 4: LM with Hinge loss}
 
 \begin{footnotesize}
 \begin{itemize}
@@ -307,7 +317,7 @@ The problem is still \textbf{multivariate}, \textbf{unconstrained}, but \textcol
 \end{itemize}
 \end{footnotesize}
 
-ERM with linear model, Hinge loss, and L2 regularization: 
+ERM with LM, Hinge loss, and L2 regularization: 
 
 $$
 	\sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \|\thetab\|_2^2, \quad f^{(i)} := \fxit
@@ -315,7 +325,7 @@ $$
 
 \vspace*{-0.2cm}
 
-This one formulation of the \textbf{linear support vector machine}. The problem is still \textbf{multivariate}, \textbf{unconstrained}, but \textcolor{violet}{\textbf{not smooth}}. 
+This one formulation of the \textbf{linear support vector machine}. The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex}, but \textcolor{violet}{\textbf{not smooth}}. 
 
 \vspace*{-0.3cm}
 \begin{figure}
@@ -345,8 +355,9 @@ $\mathbf{y}$ & $\fx$ &  \textbf{Correct pred.?}  & $\Lxy$ & \textbf{Reason for c
 \vspace*{-0.3cm}
 \begin{figure}
 	\begin{center}
-		\includegraphics[width=0.5\textwidth]{figure_man/hinge_vs_l2.pdf}
+		\includegraphics[width=0.5\textwidth]{figure_man/hinge.pdf}
 	\end{center}
+	% See hinge_vs_l2.R
 \end{figure}
 
 
