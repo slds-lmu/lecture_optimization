@@ -1,0 +1,356 @@
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/bisection2.png}
+\newcommand{\learninggoals}{
+\item TODO
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization}
+\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Unconstrained problems}
+\lecture{Optimization}
+\sloppy
+
+% \begin{vbframe}{Quadratic interpolation}
+% \begin{itemize}
+% \item If we can assume that the objective function is sufficiently smooth (in addition to unimodality), this can be exploited for optimization.
+
+% \lz
+
+% \item \textbf{Approach}: Iteratively, approximate the target function by smooth curves and determine their minimum, which is new evaluation point.
+
+% \lz
+
+% \item \textbf{Idea:} Given the three points $x^{[t, \text{left}]}$, $x^{[t, \text{right}]}$ and $x^{[t, \text{best}]}$, find minimum of the parabola running through the points and use it as $x^{[t, \text{new}]}$, then proceed analogously to the golden ratio search.
+% \lz
+% \item Minimum of a parabola:
+% \begin{eqnarray*}
+%   \frac{\partial}{\partial x} \left( ax^2 + bx + c \right) &=& 2ax+b \; \stackrel{!}{=}\; 0 \\
+% \Rightarrow x^* &=& - \frac{b}{2a}
+% \end{eqnarray*}
+% \item For the parabola through $x^{[t, \text{left}]}$, $x^{[t, \text{right}]}$ and $x^{[t, \text{best}]}$ this minimum can be written in closed form as $x^{[t, \text{new}]}$:
+% $$
+% {\scriptstyle x^{[t, \text{new}]} \,:=\, x^{[t, \text{best}]} - \frac{1}{2} \frac{(x^{[t, \text{best}]}-x^{[t, \text{left}]})^2(f(x^{[t, \text{best}]}-x^{[t, \text{right}]}))-(x^{[t, \text{best}]}-x^{[t, \text{right}]})^2(f(x^{[t, \text{best}]}-x^{[t, \text{left}]}))}{(x^{[t, \text{best}]}-x^{[t, \text{left}]})(f(x^{[t, \text{best}]}-x^{[t, \text{right}]})-(x^{[t, \text{best}]}-x^{[t, \text{right}]})(f(x^{[t, \text{best}]}-x^{[t, \text{left}]}))}}
+% $$
+% \end{itemize}
+
+
+% \end{vbframe}
+
+\begin{frame}{Quadratic Interpolation}
+
+\foreach \i in {0, 1, 2, 3, 4}{
+  \only<\i>{
+  \vspace*{1cm}
+  \begin{center}
+  \includegraphics{figure_man/quadratic\i.pdf} 
+  \end{center}
+  }
+}
+
+\end{frame}
+
+
+%Code für Erzeugung der Bilder in Ordner figure_man/quadr_int für animation
+% <<echo = FALSE>>=
+% min_func = function(x) cos(x) + 3 *  x^2 + 3*exp(x)
+%
+% plot_quad = function(minfunc, left = -2.5, right = 2.5, best = -1, max_it = 3, ...) {
+%   l = left
+%   r = right
+%
+%   parab = function(x) A * x^2 + B * x + C
+%
+%   iter = 1
+%   curve(minfunc, from = l-0.5, to = r+0.5, ylab = "f(x)", ...)
+%   abline(v = c(left, best, right), lty = 2)
+%   points(c(left, best, right), minfunc(c(left, best, right)), pch = 15)
+%   axis(3, at = c(left, best, right),
+%          labels = c(expression("x"[left]), expression("x"[best]),expression("x"[right])), las = 3, cex.axis = 1.5)
+%   while (iter <= max_it + 1) {
+%     curve(minfunc, from = l-0.5, to = r+0.5, ylab = "f(x)", ...)
+%     fl = min_func(left)
+%     fr = min_func(right)
+%     fb = min_func(best)
+%
+%     denom = (left - best) * (left - right) * (best - right)
+%     A = (right * (fb - fl) + best * (fl - fr) + left * (fr - fb)) / denom
+%     B = (right^2 * (fl - fb) + best^2 * (fr - fl) + left^2 * (fb - fr)) / denom
+%     C = (best * right * (best - right) * fl + right * left * (right - left) * fb +
+%            left * best * (left - best) * fr) / denom
+%     xnew = - B / (2 * A)
+%
+%     points(seq(l - 0.5, r + 0.5, length.out=100),
+%            parab(seq(l - 0.5, r + 0.5, length.out=100)), type = "l", lty = 2)
+%     abline(v = c(left, best, xnew, right), lty = 2)
+%     points(c(left, best, xnew, right), minfunc(c(left, best, xnew, right)),
+%            pch = 15)
+%     axis(3, at = c(left, best, xnew, right),
+%          labels=c(expression("x"[left]), expression("x"[best]),
+%                   expression("x"[new]), expression("x"[right])), las = 3, cex.axis = 1.5)
+%
+%     if (minfunc(xnew) < minfunc(best)) {
+%       store = xnew
+%       xnew = best
+%       best = store
+%     }
+%     if (best < xnew) {right = xnew}
+%     if (best > xnew) {left = xnew}
+%
+%     curve(minfunc, from = l-0.5, to = r+0.5, ylab = "f(x)", ...)
+%     abline(v = c(left, best, right), lty = 2)
+%     points(c(left, best, right), minfunc(c(left, best, right)),
+%            pch = 15)
+%     axis(3, at = c(left, best, right),
+%          labels=c(expression("x'"[left]), expression("x'"[best]),
+%                   expression("x'"[right])), las = 3, cex.axis = 1.5)
+%     iter = iter + 1
+%   }
+% }
+% plot_quad(min_func, l = -2.5, r = 2.5, best = 0, max_it = 3, ylim = c(-10, 90))
+% @
+
+% \begin{frame}[t,fragile]{Quadratische Interpolation Beispiel}
+% \begin{center}
+%   \only<1>{\includegraphics[width=0.8\textwidth]{figure_man/quadr_int/pic-1.png}}
+%   \only<2>{\includegraphics[width=0.8\textwidth]{figure_man/quadr_int/pic-2.png}}
+%   \only<3>{\includegraphics[width=0.8\textwidth]{figure_man/quadr_int/pic-3.png}}
+%   \only<4>{\includegraphics[width=0.8\textwidth]{figure_man/quadr_int/pic-4.png}}
+%   \only<5>{\includegraphics[width=0.8\textwidth]{figure_man/quadr_int/pic-5.png}}
+% \end{center}
+%
+%   % \animategraphics[poster=first,autoplay,loop,width=0.65\textwidth]{1}{figure_man/quadr_int/pic-}{1}{9}
+% \end{frame}
+
+
+\begin{vbframe}{Quadratic interpolation comments}
+\begin{itemize}
+\item Quadratic interpolation \textbf{not robust}, for example it may happen that:
+\begin{itemize}
+\item Algorithm suggests the same $x^{[t, \text{new}]}$ in each step,
+\item $x^{[t, \text{new}]}$ outside of search interval,
+\item Parabola degenerates to line and no real minimum exists (if 3 points are collinear).
+\end{itemize}
+\item Algorithm must then abort, finding a global minimum is not guaranteed.
+\item In practice, extensively tested numerical libraries should be used.
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Brent's method}
+
+In practice a combination of golden ratio and quadratic interpolation is often used, as in the R-function \texttt{optimize()}.
+
+\lz
+
+The fast convergence of the quadratic interpolation is exploited, unstable calculation steps (e.g. parabola degenerated) are stabilized by golden ratio search.
+
+\lz
+
+If the function $f$ has a local minimum, then convergence is guaranteed and the rate of convergence of Newton's method is exploited.
+
+% \begin{itemize}
+% \item Zunächst wird Suchintervall durch Goldenen Schnitt solange verkleinert, bis Zielfunktion durch Parabel an den letzten 3 Evaluationspunkten gut approximiert wird.
+% \item Dann weitere Suche durch Quadratische Interpolation, Ausnutzen der schnelleren Konvergenz.
+% \item Bei frühzeitiger Terminierung, erneut Goldener Schnitt.
+% \end{itemize}
+% Dieses Verfahren wird \textbf{Brent'sche Methode} genannt. Funktioniert sehr gut, da sich alle (zweimal stetig diff'baren) Funktionen in einer $\epsilon$ Umgebung um das globale Minimum gut durch eine quadratische Funktion approximieren lassen (vgl. Taylorreihe).
+\end{vbframe}
+
+
+\begin{vbframe}{Example: ML Cauchy}
+\begin{itemize}
+\item Density Poisson distribution:
+$$
+f(k ~|~ \lambda) := \P(x = k) = \frac{\lambda^k \cdot \exp(-\lambda)}{k!}
+$$
+\item Negative log-Likelihood for $n$ observations:
+\begin{eqnarray*}
+- \ell(\lambda, \mathcal{D}) &=& - \log L(\lambda, \mathcal{D}) \\ &=& - \log \prod_{i = 1}^n  f\left(x^{(i)} ~|~ \lambda\right) \\ &=&  - \sum_{i = 1}^n \frac{\lambda^{x^{(i)} } \cdot \exp(-\lambda)}{x^{(i)} !} 
+\end{eqnarray*}
+
+\end{itemize}
+
+\framebreak 
+
+\begin{center}
+	\includegraphics[width = 0.6\textwidth]{figure_man/poisson.pdf}
+\end{center}
+
+\framebreak 
+
+Both Golden ratio and Brent's method converge against the global optimum at $x^\ast = 0.75$. While the Golden ratio method needs $\approx 93$ iteration, Brent's method only needs $\approx 18$ for the same level of precision. 
+
+\lz
+\footnotesize
+\begin{verbatim}
+library("Rmpfr")
+set.seed(1234)
+\end{verbatim}
+
+\vspace{0.2cm}
+
+\begin{verbatim}
+x = rpois(200, lambda = 0.75)
+
+neg_log_lik = function(lambda)- sum(log(dpois(x, lambda)))
+\end{verbatim}
+
+\vspace{0.2cm}
+
+\begin{verbatim}
+optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
+	method = "Brent")
+
+optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
+	method = "GoldenRatio")
+
+\end{verbatim}
+
+
+%<<warning = FALSE, eval = TRUE, echo = FALSE, message = FALSE, size = "tiny">>=
+%library("Rmpfr")
+%set.seed(1234)
+
+%x = rpois(200, lambda = 0.75)
+
+%neg_log_lik = function(lambda)- sum(log(dpois(x, lambda)))
+
+%optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
+%	method = "Brent")
+
+%@
+
+\framebreak 
+
+%<<warning = FALSE, eval = TRUE, echo = FALSE, message = FALSE, size = "tiny">>=
+%library("Rmpfr")
+%set.seed(1234)
+
+%x = rpois(200, lambda = 0.75)
+
+%neg_log_lik = function(lambda)- sum(log(dpois(x, lambda)))
+
+%optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
+%	method = "GoldenRatio")
+
+%@
+\begin{verbatim}
+## $minimum
+## 1 'mpfr' number of precision 132 bits
+## [1] 0.73999999999999999995826058999834279020219
+##
+## $objective
+## 1 'mpfr' number of precision 132 bits
+## [1] 228.79065719131130788950898504582093404577
+##
+## $iter
+## [1] 18
+##
+## $convergence
+## [1] TRUE
+##
+## $estim.prec
+## 1 'mpfr' number of precision 132 bits
+## [1] 1.336469988199522593390843736470812993265e-20
+##
+## $method
+## [1] "Brent"
+\end{verbatim}
+
+\framebreak
+
+\begin{verbatim}
+## $minimum
+## 1 'mpfr' number of precision 132 bits
+## [1] 0.74000000000000000006766164468351954364332
+##
+## $objective
+## 1 'mpfr' number of precision 132 bits
+## [1] 228.79065719131130788950898504582093404755
+##
+## $iter
+## [1] 93
+##
+## $convergence
+## [1] TRUE
+##
+## $estim.prec
+## 1 'mpfr' number of precision 132 bits
+## [1] 8.653395152839838611457066694127631372854e-21
+##
+## $method
+## [1] "GoldenRatio"
+\end{verbatim}
+
+\end{vbframe}
+
+\normalsize
+
+% \begin{vbframe}{Example: ML Cauchy}
+% \begin{itemize}
+% \item Density Cauchy distribution (Scale = 1):
+% $$
+% f(x,\theta) = \frac{1}{\pi} \cdot \frac{1}{1+(x-\theta)^2}
+% $$
+% \item $\theta$ is \textit{shape} parameter and corresponds to median
+% \item Log-Likelihood for $n$ observations:
+% $$
+% \ell(\theta) \propto - \sum\limits_{i=1}^n \log(1 + (x_i - \theta)^2)
+% $$
+% \item Score function:
+% $$
+% \frac{\partial \ell(\theta)}{\partial \theta} \propto \sum\limits_{i=1}^n \frac{2(x_i -\theta)}{1+(x_i-\theta)^2}
+% $$
+% \end{itemize}
+% <<echo = F>>=
+% set.seed(25)
+% x = rcauchy(25, location = 2, scale = 1)
+
+% neg_log_lik = function(theta) {
+%   sum(log(1 + (x - theta)^2))
+% }
+
+% score_fkt = function(theta) {
+%   sum(2 * (x - theta)/(1 + (x - theta)^2))
+% }
+
+% theta_grid = seq(-5, 5, length.out = 1000)
+% y = sapply(theta_grid, neg_log_lik)
+% s = sapply(theta_grid, score_fkt)
+% df = data.frame(theta = theta_grid, y = y, s = s)
+
+% p1 = ggplot(data = df, aes(x = theta_grid, y = y)) + geom_line() + xlab(TeX('$\\theta$')) + ylab("Negative log-likelihood") + theme_bw()
+% p2 = ggplot(data = df, aes(x = theta_grid, y = s)) + geom_line() + xlab(TeX('$\\theta$')) + ylab("Score") + geom_abline(intercept = 0, slope = 0, lty = 2) + theme_bw()
+
+% grid.arrange(p1, p2, ncol = 2)
+% @
+
+% <<>>=
+% # Optimize neg_log_lik via optimize, or via roots of score function
+% (est = c(optimize(neg_log_lik, lower = -5, upper = 5)$minimum,
+% uniroot(score_fkt, lower = -5, upper = 5)$root)) # Brent's Method
+% @
+
+% <<echo = F>>=
+% p1 = p1 + geom_vline(aes(xintercept = est[1]), color = "red") + theme_bw()
+% p2 = p2 + geom_vline(aes(xintercept = est[2]), color = "red")  + theme_bw()
+
+% grid.arrange(p1, p2, ncol = 2)
+% @
+
+
+% \end{vbframe}
+
+\end{document}
+
+
