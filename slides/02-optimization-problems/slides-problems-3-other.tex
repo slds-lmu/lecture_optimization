@@ -1,0 +1,281 @@
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/GE.pdf}
+\newcommand{\learninggoals}{
+\item Discrete
+\item Black-box
+\item Noisy
+\item Multi-objective
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization}
+\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Other optimization problems}
+\lecture{Optimization}
+\sloppy
+
+\begin{vbframe}{Other classes of optimization problems}
+
+\textbf{So far} we considered \enquote{nice} constrained and unconstrained optimization problems: 
+
+\begin{itemize}
+	\item Problem defined on continuous domain $\mathcal{S}$
+	\item Objectives (and constraints) available in analytical form
+\end{itemize}
+
+\lz 
+
+\textbf{Other characteristics}: 
+\begin{itemize}
+	\item Discrete domain $\mathcal{S}$
+	\item $f$ \textbf{black-box}: Objective not available in analytical form
+	\item $f$ \textbf{noisy}: Objective can be queried but evaluations are noisy $\fx = f_{\text{true}}(\xv) + \eps, \quad \eps \sim F$
+	\item $f$ \textbf{expensive}: Single query takes time / resources
+	\item $f$ multi-objective: $\fx: \mathcal{S} \to \R^m$, $\fx = \left(f_1(\xv), ..., f_m(\xv)\right)$
+\end{itemize}
+
+\lz 
+
+These make the problem typically much harder to solve!
+
+\end{vbframe}
+
+
+\begin{vbframe}{Example 1: Best subset selection}
+
+Let $\D = \left(\left(\xi, \yi\right)\right)_{i = 1, ..., n}$ where $\xi = \left(\xi_1, ..., \xi_d\right) \in \Xspace$. Fit LM based on the best subset of the $d$ features. 
+
+\vspace*{-0.5cm}
+\begin{eqnarray*}
+	\min_{\bm{s} \in \{0, 1\}^d, \thetab \in \Theta} \left(\yi - \thetab^\top ~\text{diag}(\bm{s})~\xi\right)^2 \\
+\end{eqnarray*}
+
+\vspace*{-0.5cm}
+
+$\bm{s}_j \in \{0, 1\}$ indicates whether feature $j$ is used in the model.
+
+\lz 
+
+\begin{footnotesize}
+\textbf{Example:} $d = 3$, $\bm{s} = (1, 1, 0)$ results in LM only using features 1 and 2:
+
+\begin{eqnarray*}
+	\thetab^\top \begin{pmatrix} 1 & 0 & 0 \\
+	0 & 1 & 0 \\
+	0 & 0 & 0 
+	\end{pmatrix} \xi = (\thetab_1, \thetab_2, 0) \xi = \thetab_1 \xi_1 + \thetab_2 \xi_2
+\end{eqnarray*}
+
+$\bm{s}$ can take $2^d$ possible values: 
+
+\begin{itemize}
+	\item $d = 3$: 8 possible values
+	\item $d = 10$: 1024 possible values
+	\item $d = 100$: $1.3 \times 10^{30}$ possible values	
+\end{itemize}
+
+\end{footnotesize}
+
+
+\framebreak 
+
+\vspace*{-1cm}
+
+\begin{eqnarray*}
+	\min_{\bm{s} \in \{0, 1\}^d, \thetab \in \Theta} \left(\yi - \thetab^\top ~\text{diag}(\bm{s})~\xi\right)^2 \\
+\end{eqnarray*}
+
+\vspace*{-0.5cm}
+
+\textbf{Problem characteristics}:
+\begin{itemize}
+	\item White-box: Objective available in analytical form
+	\item Discrete: $\mathcal{S}$ is mixed continuous and discrete
+	\item Unconstrained
+\end{itemize}
+
+Problem is even \textbf{NP-hard}!
+
+\begin{figure}
+	\includegraphics[width=0.5\textwidth]{figure_man/subset_selection.png} \\
+	\begin{footnotesize}
+		Source: RPubs, Subset Selection Methods
+	\end{footnotesize}
+\end{figure}
+
+\end{vbframe}
+
+
+	
+\begin{vbframe}{Example 2: Feature sel. (unconstrained)}
+
+Best subset selection can be generalized to any ML learner $\ind$:
+
+\begin{eqnarray*}
+	\min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}),
+\end{eqnarray*}
+
+where $\widehat{\text{GE}}$ is the generalization error of learner $\ind$ based on measure $\rho$ and estimated via a resampling split $\mathcal{J}$. 
+
+\lz 
+
+\textbf{Problem characteristics}:
+\begin{itemize}
+	\item Black-box: Objective not available in analytical form
+	\item Discrete: $\mathcal{S}$ is discrete
+	\item Unconstrained
+	\item Noisy: Function evaluations depend on resampling
+	\item Expensive (depending on training time of learner $\ind$)
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Example 3: Feature sel. (constrained)}
+
+With prior knowledge / preferences on max. number of features $k$:
+
+\begin{eqnarray*}
+\min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \lamv), \quad \sum\nolimits_{i = 1}^p s_i \le k, 
+\end{eqnarray*}
+
+\lz 
+
+\textbf{Problem characteristics}:
+\begin{itemize}
+	\item Black-box: Objective not available in analytical form
+	\item Discrete: $\mathcal{S}$ is discrete
+	\item Constrained 
+	\item Noisy: Function evaluations depend on resampling	
+	\item Expensive (depending on training time of learner $\ind$)
+\end{itemize}
+
+\lz 
+
+Complexity of the problem is reduced with $k$: Lower $k$ $\to$ less possible values for $\bm{s}$. 
+
+\end{vbframe}
+
+\begin{vbframe}{Example 4: Feature sel. (multiobjective)}
+
+If model sparsity is also an objective we can formulate the problem as multi-objective problem: 
+
+  \begin{eqnarray*}
+    \min_{\textbf{s} \in \{0, 1\}^p} \left(\widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \lamv), \sum\nolimits_{i = 1}^p s_i\right). 
+  \end{eqnarray*}
+
+\lz 
+
+\textbf{Problem characteristics}:
+\begin{itemize}
+	\item Black-box: Objective not available in analytical form
+	\item Discrete: $\mathcal{S}$ is discrete
+	\item Noisy: Function evaluations depend on resampling	
+	\item Multiobjective
+	\item Expensive (depending on training time of learner $\ind$)	
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Example 5: HPO}
+\vspace*{-0.2cm}
+\begin{itemize}
+	\item ML learning algorithm is also called \textbf{inducer} $\ind$.
+	\item $\ind$ usually configurable by hyperparameters (HP) $\lamv \in \Lambda$. 
+	\item Finding best HP configuration $\lamv^\ast$ referred to as \textbf{hyperparameter optimization (HPO)} problem: 
+	$$
+	\lamv^\ast \in \argmin\nolimits_{\lamv \in \Lambda} c(\lamv) = \argmin \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \lamv)
+	$$
+	$\widehat{\text{GE}}$ generalization error based on measure $\rho$ and estimated via a resampling split $\mathcal{J}$. 
+\end{itemize}
+
+\vspace*{-0.2cm}
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width = 0.7\textwidth]{figure_man/hpo_loop_1.png}
+\end{figure}
+
+\framebreak 
+		
+Solving 
+\vspace*{-0.2cm}
+$$
+\lamv^\ast \in \argmin_{\lamv \in \Lambda} c(\lamv)
+$$
+
+is very challenging:  
+\vspace*{-0.2cm} 
+\begin{columns}
+	\begin{column}{0.6\textwidth}
+	\begin{itemize}
+		\item $c$ black box \\
+		\begin{footnotesize}(no analytical information available)\end{footnotesize}
+		\item $c$ expensive \\
+		\begin{footnotesize}
+		(one evaluation of $c$: performing ERM!)
+		\end{footnotesize}
+		\item evaluations of $c$ are usually noisy \\
+		\begin{footnotesize}
+		(estimates are based on resampling)
+		\end{footnotesize}
+  		\item the search space $\Lambda$ might be mixed 
+		\begin{footnotesize}
+		(continuous, integer, categorical or even hierarchical)
+		\end{footnotesize}
+	\end{itemize}
+	\end{column}
+	\begin{column}{0.39\textwidth}
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width = 1.0\textwidth]{figure_man/GE.pdf}
+		\end{figure}
+	\end{column}
+\end{columns}
+% \vspace*{0.2cm}
+% The problem is an \textbf{expensive black-box optimization} problem. 
+\end{vbframe}
+
+
+
+\begin{vbframe}{More black-box problems}
+
+Black-box problems from engineering: \textbf{oil well placement}
+\vspace*{-0.1cm}
+\begin{columns}
+	\begin{column}{0.65\textwidth}
+		\begin{itemize}
+			\item The goal is to determine the optimal locations and operation parameters for wells in oil reservoirs
+			\item Basic premise: achieving maximum revenue from oil while minimizing operating costs
+			\item In addition, the objective function is subject to complex combinations of geological, economical, petrophysical and fluiddynamical constraints 
+			\item Each function evaluation requires several computationally expensive reservoir simulations while taking uncertainty in the reservoir description into account 
+		\end{itemize}
+	\end{column}
+	\begin{column}{0.35\textwidth}
+		\begin{center}
+			\includegraphics{figure_man/oil_well_problem.jpg}
+			\begin{footnotesize}
+				Oil saturation at various depths with possible location of wells.
+				\newline
+				\tiny{Source: \url{https://doi.org/10.1007/s13202-019-0710-1}}
+			\end{footnotesize}
+		\end{center}
+	\end{column}
+\end{columns}
+
+\end{vbframe}
+	
+
+
+\endlecture
+\end{document}
