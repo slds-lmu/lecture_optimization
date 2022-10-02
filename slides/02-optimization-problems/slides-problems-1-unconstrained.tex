@@ -308,7 +308,7 @@ The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{conv
 \end{vbframe}
 
 
-\begin{vbframe}{Example 4: LM with Hinge loss}
+\begin{vbframe}{Example 4: SVM}
 
 \begin{footnotesize}
 \begin{itemize}
@@ -320,19 +320,23 @@ The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{conv
 ERM with LM, Hinge loss, and L2 regularization: 
 
 $$
-	\sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \|\thetab\|_2^2, \quad f^{(i)} := \fxit
+	\min_{\thetab} ~\sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \thetab^\top \thetab, \quad f^{(i)} := \thetab^\top \xi
 $$
 
 \vspace*{-0.2cm}
 
-This one formulation of the \textbf{linear support vector machine}. The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex}, but \textcolor{violet}{\textbf{not smooth}}. 
-
-\vspace*{-0.3cm}
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=0.3\textwidth]{figure_man/svm_geometry.png}
-	\end{center}
-\end{figure}
+\begin{columns}[T] % align columns
+	\begin{column}{.58\textwidth}
+		\begin{center}
+			\includegraphics[width=0.6\textwidth]{figure_man/svm_geometry.png} 
+		\end{center}
+	\end{column}
+	\begin{column}{.38\textwidth} \vspace*{1.5cm}
+		\begin{footnotesize}
+		This is one formulation of the \textbf{linear support vector machine}. The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex}, but \textcolor{violet}{\textbf{not smooth}}.  
+		\end{footnotesize}
+	\end{column}
+\end{columns}
 
 \framebreak 
 
@@ -359,6 +363,25 @@ $\mathbf{y}$ & $\fx$ &  \textbf{Correct pred.?}  & $\Lxy$ & \textbf{Reason for c
 	\end{center}
 	% See hinge_vs_l2.R
 \end{figure}
+
+\framebreak 
+
+\textbf{Kernelized} formulation of the SVM for nonlinear $f$: 
+
+\begin{eqnarray*}
+	\min_{\thetab}\sumin L\left(\yi, k(\xi, \xi[j]) ~\thetab_j\right) + \lambda \thetab^\top \bm{K} \thetab 
+\end{eqnarray*}
+
+with $k(\xi, \xi[j])$ positive definite kernel function, and $\bm{K}_{ij} := k(\xi, \xi[j])$, $i, j = 1, ..., n$ kernel matrix. 
+
+\lz 
+
+Kernelization 
+
+\begin{itemize}
+	\item allows introducing nonlinearity
+	\item without changing characteristics of the optimization problem (convexity!)
+\end{itemize}
 
 
 \end{vbframe}
