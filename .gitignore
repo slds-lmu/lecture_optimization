@@ -13,4 +13,5 @@ slides/04-multivariate-first-order/*.pdf
 *.snm
 *.gz
 *.toc
+*.vrb
 *.Rhistory
