@@ -29,7 +29,7 @@
 
 \begin{vbframe}{Convex sets}
 
-A set of $\mathcal{S}$ is \textbf{convex}, if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$ the following applies:
+A set of $\mathcal{S}$ is \textbf{convex}, if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$ the following holds:
 
 $$
 \xv + t (\mathbf{y} - \xv) \in \mathcal{S}
@@ -47,13 +47,21 @@ Intuitively: Connecting line between any $\xv, \bm{y} \in \mathcal{S}$ lies comp
 
 \begin{vbframe}{Convex functions}
 
-Consider $f: \mathcal{S} \to \R$, $\mathcal{S}$ convex. The function is \textbf{convex} if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$
+Consider $f: \mathcal{S} \to \R$, $\mathcal{S}$ convex.\\
+$f$ is \textbf{convex} if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$
 
 \vspace*{-0.2cm}
 
 $$
 f(\xv + t(\mathbf{y} - \xv)) \le \fx + t(f(\mathbf{y}) - \fx).
 $$
+
+Intuitively: Connecting line lies above function.
+
+\begin{center}
+\includegraphics[width = 0.4\textwidth, keepaspectratio]{figure_man/convexity_1.pdf}~~~\includegraphics[width = 0.40\textwidth, keepaspectratio]{figure_man/convexity_2.pdf} \\
+\footnotesize{Left: Strictly convex function. Right: Convex, but not strictly. }
+\end{center}
 
 \textbf{Strictly convex} if \enquote{$<$} instead of \enquote{$\le$}. \textbf{Concave} (strictly) if the equation holds with \enquote{$\ge$} (\enquote{$>$}), respectively. 
 
@@ -62,10 +70,6 @@ $$
 \textbf{Note:} $f$ (strictly) concave $\Leftrightarrow$ $-f$ (strictly) convex.
 
 
-\begin{center}
-\includegraphics[width = 0.45\textwidth, keepaspectratio]{figure_man/convexity_1.pdf}~~~\includegraphics[width = 0.45\textwidth, keepaspectratio]{figure_man/convexity_2.pdf} \\
-\footnotesize{Left: Strictly convex function. Right: Convex, but not strictly. }
-\end{center}
 
 \end{vbframe}
 
@@ -82,13 +86,11 @@ $$
 % https://sboyles.github.io/teaching/ce377k/convexity.pdf
 \end{footnotesize}
 
-\vspace*{-0.5cm}
-
 \textbf{Concave function}: $f(x) = \log(x)$. 
 
 \vspace*{0.2cm}
 
-\textbf{Neither nor}: $f(x) = \exp(-x^2)$
+\textbf{Neither nor}: $f(x) = \exp(-x^2)$ (but log-concave)
 
 \begin{figure}
     \centering

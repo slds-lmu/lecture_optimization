@@ -109,19 +109,28 @@ Source: \url{https://github.com/jermwatt/machine_learning_refined}.
 \begin{vbframe}{Gradient}
 
 This linear approximation is given by the \textbf{gradient}: % If $f$ is differentiable in $\xv$, the \textbf{gradient} is defined by
-
 \vspace*{-0.3cm}
-
 $$
 \nabla f = \frac{\partial f}{\partial x_1} \bm e_1 + \cdots + \frac{\partial f}{\partial x_n} \bm e_n =
   \biggl(\frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, ..., \frac{\partial f}{\partial x_n}\biggr)^{\top}.
 $$
-
 The elements of the gradient are called \textbf{partial derivatives}. 
 
-\begin{center}
-	\includegraphics[width = 0.5\textwidth]{figure_man/grad_unit_vectors.png} \\
-\end{center}
+\vspace*{0.3cm}
+
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\vspace{1cm} \quad 
+
+To compute a partial derivative in $x_j$, we treat the function as univariate in $x_j$ (and everything else as constant), then compute the derivative in $x_j$.
+\end{column}
+\begin{column}{0.4\textwidth}
+%\begin{center}
+\vspace{\topsep}
+\includegraphics[width=\columnwidth,trim={2.5cm 0cm 2.0cm 0cm},clip]{figure_man/grad_unit_vectors.png} \\
+%\end{center}
+\end{column}
+\end{columns}
 
 
 \framebreak
@@ -155,7 +164,7 @@ $$
 \begin{vbframe}{Properties of the gradient}
 
 \begin{itemize}
-	\item Orthogonal to level curves / surfaces of a function
+	\item Orthogonal to level curves/surfaces of a function
 	% \item The normal vector describing the tangent plane is has $n + 1$ components, the first $n$ correspond to $\nabla f$ and the $(n + 1)-$th has the value $-1$
 	\item Points in direction of greatest increase of $f$
 	\begin{center}
@@ -167,7 +176,7 @@ $$
 	$$
 		D_{\bm{v}}\fx = \nabla \fx^\top \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
 	$$
-	using the cosine formula for dot products and	 because $\|v\| = 1$ by assumption. $\cos(\theta)$ is maximal if $\theta = 0$, which is if $\bm{v}$ and $\nabla \fx$ point in the same direction. \\
+	using the cosine formula for dot products and because $\|v\| = 1$ by assumption. $\cos(\theta)$ is maximal if $\theta = 0$, which is if $\bm{v}$ and $\nabla \fx$ point in the same direction. \\
 	(Alternative proof: Apply Cauchy-Schwarz to $\nabla \fx^\top \bm{v}$ and show for which $\bm{v}$ the inequality holds with equality.)  
 	\end{footnotesize}
 \end{itemize}
@@ -194,7 +203,7 @@ $$
 
 Let $f: \mathcal{S} \to \R^m$ be vector-valued with components $f_1, f_2, ..., f_m$. 
 
-\textbf{Jacobian} matrix as generalization of gradient:  
+\textbf{Jacobian} generalizes the gradient by placing the $\nabla f_j$ in its rows:
 
 \begin{eqnarray*}
 	J_f = \begin{pmatrix} \frac{\partial f_1}{\partial x_1} & \hdots & \frac{\partial f_1}{\partial x_n} \\
@@ -206,8 +215,7 @@ Let $f: \mathcal{S} \to \R^m$ be vector-valued with components $f_1, f_2, ..., f
 \begin{center}
 	\includegraphics[width = 0.5\textwidth]{figure_man/Jacobian.png} \\
 	\begin{footnotesize}
-	$f: \R^2 \to \R^2$ sends  a small square (left, red) to a distored parallelogram (right, red). Jacobian gives best linear aproximation of di
-	storted parallelogram near that point. Source: Wikipedia.
+	$f: \R^2 \to \R^2$ sends  a small square (left, red) to a distorted parallelogram (right, red). Jacobian gives best linear approximation of distorted parallelogram near that point. Source: Wikipedia.
 	\end{footnotesize}
 \end{center}
 
