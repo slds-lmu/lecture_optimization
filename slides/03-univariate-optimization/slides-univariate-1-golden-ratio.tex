@@ -1,5 +1,6 @@
-\input{../../style/preamble}
-\input{../../latex-math/basic-math}
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}\input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
 
@@ -132,35 +133,59 @@ Let $f: \R \to \R$.
 
 \begin{vbframe}{Simple nesting procedure}
 
-  \begin{algorithmic}
-  \State \textbf{Initialization}: $x^{\text{left}}$, $x^{\text{right}}$, $x^{\text{left}} < x^{\text{right}}$
-  \State Choose $x^{\text{best}}$ randomly.
-  \For{$t = 0, 1, 2, ...$}
-    \State Choose $x^{\text{new}}$ randomly in $[x^{\text{left}}, x^{\text{right}}]$
-    \If {$f(x^{\text{new}}) < f(x^{\text{new}})$}
-      \State $x^{\text{best}} \leftarrow x^{\text{new}}$
-    \EndIf 
-    \State New boundaries: points around $x^{\text{best}}$
-  \EndFor
-  \end{algorithmic}
+\begin{itemize}
+\item\textbf{Initialization}: Search interval  $(x^{\text{left}}, x^{\text{right}})$, $x^{\text{left}} < x^{\text{right}}$
+\item Choose $x^{\text{best}}$ randomly.
+\item For $t = 0, 1, 2, ...$
+\begin{itemize}
+    \item Choose $x^{\text{new}}$ randomly in $[x^{\text{left}}, x^{\text{right}}]$
+    \item If $f(x^{\text{new}}) < f(x^{\text{new}})$:
+    \begin{itemize}
+        \item $x^{\text{best}} \leftarrow x^{\text{new}}$
+    \end{itemize}
+    \item New interval: Points around $x^{\text{best}}$
+\end{itemize}
+\end{itemize}
+
+\lz 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.24\textwidth]{figure_man/golden-ratio-2.png}     \includegraphics[width=0.24\textwidth]{figure_man/golden-ratio-3.png}
+    \includegraphics[width=0.24\textwidth]{figure_man/golden-ratio-4.png}
+    \includegraphics[width=0.24\textwidth]{figure_man/golden-ratio-5.png}
+\end{figure}
 
 \end{vbframe}
 
 
 \begin{vbframe}{Golden ratio}
 
-\textbf{Key question:} How to best choose $x^{\text{new}}$? 
+\textbf{Key question:} How choose $x^{\text{new}}$ most efficiently in every iteration? 
 
 \begin{itemize}
-  \item Randomly is okay. 
-  \item \textbf{Better}: always in the bigger interval (b). 
+    \item \textbf{Insight 1: } It should always be in the bigger interval. 
 \end{itemize}
 
+\lz 
 
 \begin{figure}
 \includegraphics[width=0.4\textwidth]{figure_man/goldensec.png}\\
 \end{figure}
 
+W.l.o.g. consider two hypothetical outcomes $x^{\text{new}}$: $f_{new, a}$ and $f_{new, b}$. 
+
+\framebreak 
+
+If $f_{new, a}$ is the outcome, $x_{best}$ will stay our best observed point and we would search in the interval around $x_{best}$ : 
+
+$$
+    (x_{left}, x_{new}) 
+$$
+
+\begin{figure}
+\includegraphics[width=0.4\textwidth]{figure_man/goldensec-1.png}\\
+\end{figure}
 
 \framebreak 
 

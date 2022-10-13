@@ -1,3 +1,4 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
@@ -95,7 +96,7 @@ $\bm{s}$ can take $2^d$ possible values:
 
 \begin{eqnarray*}
 	\min_{\bm{s} \in \{0, 1\}^d, \thetab \in \Theta} \left(\yi - \thetab^\top ~\text{diag}(\bm{s})~\xi\right)^2\\
-	\min_{\thetab \in \Theta} \left(\yi - \thetab^\top\xi\right)^2, ||\thetab||_{0} \leq k\\
+	\min_{\thetab \in \Theta, 1 \le k \le d} \left(\yi - \thetab^\top\xi\right)^2, ||\thetab||_{0} \leq k\\
 \end{eqnarray*}
 
 \vspace*{-0.5cm}
@@ -115,7 +116,7 @@ $\bm{s}$ can take $2^d$ possible values:
 
 \vspace{0.5cm}
 
-Problem is even \textbf{NP-hard}!
+It can be shown that the problem is even \textbf{NP-hard} (Bin et al., 1997, The Minimum Feature Subset Selection Problem)!
 
 
 \end{vbframe}
@@ -130,7 +131,7 @@ Best subset selection can be generalized to any ML learner $\ind$:
 	\min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}),
 \end{eqnarray*}
 
-where $\widehat{\text{GE}}$ is the generalization error of learner $\ind$ based on measure $\rho$ and estimated via a resampling split $\mathcal{J}$. 
+where $\widehat{\text{GE}}$ is the generalization error of learner $\ind$ based on measure $\rho$ using features $\bm{s}$, estimated via a resampling split $\mathcal{J}$. 
 
 \lz 
 
@@ -150,7 +151,7 @@ where $\widehat{\text{GE}}$ is the generalization error of learner $\ind$ based 
 With prior knowledge / preferences on max. number of features $k$:
 
 \begin{eqnarray*}
-\min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \lamv), \quad \sum\nolimits_{i = 1}^p s_i \le k, 
+\min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}), \quad \sum\nolimits_{i = 1}^p s_i \le k, 
 \end{eqnarray*}
 
 
@@ -192,7 +193,7 @@ Complexity of the problem is reduced with $k$: Lower $k$ $\to$ less possible val
 If model sparsity is also an objective we can formulate the problem as multi-objective problem:
 
   \begin{eqnarray*}
-    \min_{\textbf{s} \in \{0, 1\}^p} \left(\widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \lamv), \sum\nolimits_{i = 1}^p s_i\right). 
+    \min_{\textbf{s} \in \{0, 1\}^p} \left(\widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}), \sum\nolimits_{i = 1}^p s_i\right). 
   \end{eqnarray*}
 
     \begin{center}
