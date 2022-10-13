@@ -2,7 +2,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
-
+\usepackage{wrapfig}
 
 \newcommand{\titlefigure}{figure_man/GE.pdf}
 \newcommand{\learninggoals}{
@@ -93,10 +93,17 @@ $\bm{s}$ can take $2^d$ possible values:
 \vspace*{-1cm}
 
 \begin{eqnarray*}
-	\min_{\bm{s} \in \{0, 1\}^d, \thetab \in \Theta} \left(\yi - \thetab^\top ~\text{diag}(\bm{s})~\xi\right)^2 \\
+	\min_{\bm{s} \in \{0, 1\}^d, \thetab \in \Theta} \left(\yi - \thetab^\top ~\text{diag}(\bm{s})~\xi\right)^2\\
+	\min_{\thetab \in \Theta} \left(\yi - \thetab^\top\xi\right)^2, ||\thetab||_{0} \leq k\\
 \end{eqnarray*}
 
 \vspace*{-0.5cm}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+	\includegraphics[width=0.5\textwidth]{figure_man/subset_selection.png}
+    \caption{\begin{footnotesize}Source: RPubs, Subset Selection Methods\end{footnotesize}}
+    \label{fig:wrapfig}
+\end{wrapfigure}
 
 \textbf{Problem characteristics}:
 \begin{itemize}
@@ -105,14 +112,10 @@ $\bm{s}$ can take $2^d$ possible values:
 	\item Unconstrained
 \end{itemize}
 
+\vspace{0.5cm}
+
 Problem is even \textbf{NP-hard}!
 
-\begin{figure}
-	\includegraphics[width=0.5\textwidth]{figure_man/subset_selection.png} \\
-	\begin{footnotesize}
-		Source: RPubs, Subset Selection Methods
-	\end{footnotesize}
-\end{figure}
 
 \end{vbframe}
 

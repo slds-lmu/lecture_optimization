@@ -236,11 +236,11 @@ a core concept in machine learning (ML).
 
 \framebreak 
 
-ML consists of three components: 
+ML models usually consists of the following components: 
 
 \begin{center}
 
-  \textbf{ML} = $\underbrace{\textbf{Hypothesis Space + Risk}}_{\text{Formulating the optimization problem}}$ + $\underbrace{\textbf{Optimization}}_{\text{Solving it}}$ + \textbf{Regularization}
+  \textbf{ML} = $\underbrace{\textbf{Hypothesis Space + Risk + Regularization}}_{\text{Formulating the optimization problem}}$ + $\underbrace{\textbf{Optimization}}_{\text{Solving it}}$ 
   
 \end{center}
 
@@ -348,8 +348,8 @@ Understanding Hinge loss $\Lxy = \max\left(1 - y\cdot f, 0\right)$
 $\mathbf{y}$ & $\fx$ &  \textbf{Correct pred.?}  & $\Lxy$ & \textbf{Reason for costs}  \\ \hline
  $1$ & $(- \infty, 0)$  & N & $(1, \infty)$ & Misclassification \\
  $- 1$ & $(0, \infty)$ & N  & $(1, \infty)$ &  Misclassification \\
- $1$ & $(0, 1)$ & Y & $(0, 1)$ & Low confidence \\
- $- 1$ & $(-1, 0)$  & Y  & $(0, 1)$& Low confidence\\
+ $1$ & $(0, 1)$ & Y & $(0, 1)$ & Low confidence / margin \\
+ $- 1$ & $(-1, 0)$  & Y  & $(0, 1)$& Low confidence / margin\\
  $1$ & $(1, \infty)$ &  Y & $0$ & -- \\
  $- 1$ & $(- \infty, -1)$ &  Y & $0$ & -- \\
 \end{tabular}
@@ -369,19 +369,33 @@ $\mathbf{y}$ & $\fx$ &  \textbf{Correct pred.?}  & $\Lxy$ & \textbf{Reason for c
 \textbf{Kernelized} formulation of the SVM for nonlinear $f$: 
 
 \begin{eqnarray*}
-	\min_{\thetab}\sumin L\left(\yi, k(\xi, \xi[j]) ~\thetab_j\right) + \lambda \thetab^\top \bm{K} \thetab 
+	\min_{\thetab}\sumin L\left(\yi, \bm{K}_i ~\thetab\right) + \lambda \thetab^\top \bm{K} \thetab 
 \end{eqnarray*}
 
-with $k(\xi, \xi[j])$ positive definite kernel function, and $\bm{K}_{ij} := k(\xi, \xi[j])$, $i, j = 1, ..., n$ kernel matrix. 
+with $k(\xi, \xi[j])$ positive definite kernel function, and $\bm{K}_{ij} := k(\xi, \xi[j])$, $i, j = 1, ..., n$ kernel matrix, $\bm{K}_i$ is the $i$-th column of the kernel matrix. 
 
-\lz 
+\vspace*{0.2cm}
 
-Kernelization 
+\begin{columns}[T] % align columns
+	\begin{column}{.38\textwidth} 
+        Kernelization 
+        
+        \begin{itemize}
+        	\item allows introducing nonlinearity
+        	\item without changing characteristics of the optimization problem (convexity!)
+        \end{itemize}
+	\end{column}
+	\begin{column}{.58\textwidth}
+		\begin{center}
+		    \includegraphics[width=0.4\textwidth]{slides/02-optimization-problems/figure_man/nonlinear-svm-c.pdf}
+		    % https://github.com/slds-lmu/lecture_i2ml/blob/master/slides/nonlinear-svm/figure_man/kernels/nonlinear-svm-c.pdf
+		\end{center}
+	\end{column}
 
-\begin{itemize}
-	\item allows introducing nonlinearity
-	\item without changing characteristics of the optimization problem (convexity!)
-\end{itemize}
+\end{columns}
+
+
+
 
 
 \end{vbframe}

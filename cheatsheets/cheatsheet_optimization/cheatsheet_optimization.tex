@@ -1,0 +1,502 @@
+\documentclass{beamer}
+
+\usepackage[orientation=landscape,size=a0,scale=1.4,debug]{beamerposter}
+\mode<presentation>{\usetheme{mlr}}
+
+\usepackage[utf8]{inputenc} % UTF-8
+\usepackage[english]{babel} % Language
+\usepackage{hyperref} % Hyperlinks
+\usepackage{ragged2e} % Text position
+\usepackage[export]{adjustbox} % Image position
+\usepackage[most]{tcolorbox}
+%\usepackage{nomencl}
+%\makenomenclature
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{dsfont}
+\usepackage{verbatim}
+\usepackage{amsfonts}
+\usepackage{csquotes}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{enumerate}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{eqnarray}
+\usepackage{arydshln}
+\usepackage{tabularx}
+\usepackage{placeins}
+\usepackage{tikz}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+
+
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+{}
+
+\title{Optimization :\,: CHEAT SHEET} % Package title in header, \, adds thin space between ::
+\newcommand{\packagedescription}{ % Package description in header
+	The \textbf{I2ML}: Introduction to ML course offers an introductory and applied overview of "supervised" ML. It is organized as a digital lecture.
+}
+
+\newlength{\columnheight} % Adjust depending on header height
+\setlength{\columnheight}{84cm}
+
+\newtcolorbox{codebox}{%
+	sharp corners,
+	leftrule=0pt,
+	rightrule=0pt,
+	toprule=0pt,
+	bottomrule=0pt,
+	hbox}
+
+\newtcolorbox{codeboxmultiline}[1][]{%
+	sharp corners,
+	leftrule=0pt,
+	rightrule=0pt,
+	toprule=0pt,
+	bottomrule=0pt,
+	#1}
+
+\begin{document}
+\begin{frame}[fragile]{}
+\begin{columns}
+	\begin{column}{.31\textwidth}
+		\begin{beamercolorbox}[center]{postercolumn}
+			\begin{minipage}{.98\textwidth}
+				\parbox[t][\columnheight]{\textwidth}{
+					\vspace{1cm}
+					\textbf{Note: } The lecture uses many examples from maths, statistics and machine learning. Therefore notation may overlap, but the context should make clear how to uncerstand the notation. 
+					If notation is unclear nevertheless, please contact the instructors.
+					\begin{myblock}{General Mathematical Notation (I)}
+						\begin{codebox}
+							$\N, ~\Z, ~\R$ : natural, integer, and real numbers
+						\end{codebox}
+						\hspace*{1ex}% $\Z = \{..., -3, -2, -1, 0, 1, 2, 3, ...\}$.
+						% \begin{codebox}
+						%     $a \in \{\N, \Z, \R\}$ :  a (natural, integer, real) scalar value % $\pdfxyt$
+						% \end{codebox}
+						% \hspace*{1ex} Lowercase letters denote scalar values.
+						% \\
+						\begin{codebox}
+						    $|a|$ : absolute value of a scalar $a \in \R$
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+							 $\mathcal{I} = [a, b] \subseteq \R$ : interval ranging from $a \in \R$ to $b \in \R$, $a < b$
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+						    $\xv = (x_1, x_2, ..., x_n) \in \R^n$ :  real vector in $\R^n$ % $\pdfxyt$
+						\end{codebox}
+						\hspace*{1ex} vectors in \textbf{lowercase bold}; refer to $i$-th element by \textbf{sub}script $i$.
+						\\
+						\begin{codebox}
+							$\mathbf{e}_k$ : $k$-th unit vector
+						\end{codebox}
+						\hspace*{1ex} vector which is zero at all positions $\neq k$, and one at position $k$ \\
+						\begin{codebox}
+						    $\xv^{[t]}$ :  $t$-th iteration of a sequence $\left(\xv^{[1]}, \xv^{[2]}, \xv^{[3]}, ...\right)$
+						\end{codebox}
+						\hspace*{1ex} $t \in \{1, ..., T\}$ (finite sequence) or $t \in \N$ (infinite sequence)
+						\\
+						\begin{codebox}
+						    $\xv^{(i)}$ :  $i$-th element of an indexed family $\left\{\xv^{(1)}, \xv^{(2)}, ..., \xv^{(n)}\right\}$
+						\end{codebox}
+						\hspace*{1ex} collection of vectors, indexed by indices $i$ of an index set\\
+						\begin{codebox}
+						    $\bm{A} = \left(A_{i,j}\right)_{1\le i \le n, 1 \le j \le m}$ :  matrix in $\R^{n \times m} $
+						\end{codebox}
+						\hspace*{1ex} matrices in \textbf{uppercase bold}, \textbf{sub}script $(i,j)$ denotes row $i$, column $j$
+						\\
+						\begin{codebox}
+							$\mathbf{I}_n$ : $n \times n$ identity matrix
+						\end{codebox}
+						\hspace*{1ex} %Matrix that has $1$'s on the diagonal, and $0$'s on non diagnoal elements. \\
+						\begin{codebox}
+						    $\xv^\top \in \R^{1 \times n}, \bm{A}^\top \in \R^{m \times n}$ :  Transpose of a vector / matrix
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+						    $\bm{A}^{-1} \in \R^{n \times n}$ :  Inverse of a quadratic matrix $\bm{A} \in \R^{n \times n}$ (if it exists)
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+						    $\|\xv\|, \|\bm{A}\|$ : vector norm, (induced) matrix norm
+						\end{codebox}
+						\hspace*{1ex} %$\|.\|_1$ denotes Manhattan norm, $\|.\|_2$ Euclidean norm, $\|.\|_\infty$ maximum norm, 
+						$\|.\|_p$ denotes a $p$-norm, $\|\bm{A}\|_F$ denotes the Frobenius matrix norm
+						\\
+						\begin{codebox}
+						    $\text{det}\left(\bm{A}\right), |\bm{A}|$ : determinant of $\bm{A}$
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+							$x \text{ mod } m$ : modulo operation (remainder after division by $m$)
+						\end{codebox}
+					\end{myblock}
+				}
+			\end{minipage}
+		\end{beamercolorbox}
+	\end{column}
+	\begin{column}{.31\textwidth}
+		\begin{beamercolorbox}[center]{postercolumn}
+			\begin{minipage}{.98\textwidth}
+				\parbox[t][\columnheight]{\textwidth}{
+
+
+						\begin{myblock}{General Mathematical Notation (II)}
+						\begin{codebox}
+							 $f: \mathcal{S} \to \R^m$ : function with domain $\mathcal{S}$ and codomain $\R^m$
+						\end{codebox}
+						\hspace*{1ex}  % usually $\mathcal{S} \subseteq \R^d$\\% $\mathcal{S} \subseteq \R^d$ is called domain, $\R^m$ is called the codomain; \\
+						\begin{codebox}
+							 $f~(T)$ : image of $T \subseteq \mathcal{S}$ under $f$
+						\end{codebox}
+						\hspace*{1ex} range of values $y$ for which there is an $\xv \in \mathcal{S}$ such that $f(\xv) = y$. \\
+						\begin{codebox}
+							 $\mathcal{C}^k$ : class of $k$-times continuously differentiable functions
+						\end{codebox}
+						\hspace*{1ex} if $f \in \mathcal{C}^k$, the $k$-th derivative of $f$ exists and it is continuous; $\mathcal{C}^\infty$ means that the function is infinitely often continuously differentiable \\
+						\begin{codebox}
+							 $f^\prime, f'', f^{(3)}, ...$ : derivatives for a function $f$ (if it exists)
+						\end{codebox}
+						\hspace*{1ex} this notation is only valid for univariate functions $f: \mathcal{S} \to \R$, $\mathcal{S} \subseteq \R$ \\
+						\begin{codebox}
+							 $\nabla f(\xv) = \left(\frac{\partial f(\xv)}{\partial x_1}, \frac{\partial f(\xv)}{\partial x_2}, ..., \frac{\partial f(\xv)}{\partial x_d}\right)^\top \in \R^d$ : gradient of $f$
+						\end{codebox}
+						\hspace*{1ex} % this notation is used for multivariate functions \\
+						\begin{codebox}
+							 $D_v f(\xv)$ : directional derivative for $f$ in the direction of $v \in \R^d$
+						\end{codebox}
+						\hspace*{1ex} % this notation is used for multivariate functions \\
+						\begin{codebox}
+							 $\nabla^2 f(\xv) = \left(\frac{\partial f(\xv)}{\partial x_i \partial x_j}\right)_{i, j=1, ..., d}$ : Hessian of $f$ (if it exists)
+						\end{codebox}
+						\hspace*{1ex} often also denoted by $\mathbf{H}(\xv)$ \\
+					\end{myblock}
+						\vspace*{-2cm}
+						\begin{myblock}{Probability Theory and Statistics}
+						\begin{codebox}
+							 $X$ : (discrete or continuous) random variable
+						\end{codebox}
+ 						\hspace*{1ex} % random variables (RV) are denoted in uppercase letters \\
+ 						\hspace*{1ex}
+						\begin{codebox}
+							 $\thetab, \thetah \in \Theta$ : parameter $\thetab$ of a distribution and its estimate $\thetah$
+						\end{codebox}
+ 						\hspace*{1ex}
+						\begin{codebox}
+							 $F_X, f_X$ : distribution/density function of a continuous RV $X$
+						\end{codebox}
+ 						\hspace*{1ex} % A $F_x$ denotes the distribution function of a random variable $x$, $f_x$ denotes the density.
+						\begin{codebox}
+							 $\P(X = k)$ : density of a discrete random variable $X$
+						\end{codebox}
+ 						\hspace*{1ex} % A $F_x$ denotes the distribution function of a random variable $x$, $f_x$ denotes the density.
+						\begin{codebox}
+							 $\phi$, $\Phi$ : density, distribution function of a standard normal random variable
+						\end{codebox}
+						\hspace*{1ex} % Subscripts $(\mu, \sigma^2)$ indicate the mean and the variance. \\
+						\begin{codebox}
+							 $X \sim U(a, b)$ : $X$ is sampled uniformly from the intervall $[a, b]$
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+							 $X \sim \mathcal{N}(\mu, \sigma^2)$ : $X$ is a Gaussian RV with mean $\mu$ and variance $\sigma^2$
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+							 $\bm{X} \sim \mathcal{N}(\bm{\mu}, \bm{\Sigma})$ : $\bm{X}$ is a Gaussian random vector
+						\end{codebox}
+						\hspace*{1ex} usually, $\bm{\mu}$ denotes the mean and $\Sigma$ the covariance matrix; the mean and covariance might also be denoted by $\bm{m}$ and $\bm{C}$\\
+						\begin{codebox}
+							 $\mathcal{L}(\thetab), \ell(\thetab): \Theta \to \R$ : likelihood function / log-likelihood function
+						\end{codebox}
+						\hspace*{1ex} the log likelihood is defined as $\ell(\thetab) := \log \mathcal{L}(\thetab)$		
+
+					\end{myblock}					
+					\vfill
+					}
+			\end{minipage}
+		\end{beamercolorbox}
+	\end{column}
+	\begin{column}{.31\textwidth}
+		\begin{beamercolorbox}[center]{postercolumn}
+			\begin{minipage}{.98\textwidth}
+				\parbox[t][\columnheight]{\textwidth}{
+		
+					\begin{myblock}{Machine Learning}
+						\begin{codebox}
+							$\Xspace, \Yspace$ : input space, and label / output space 
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+							 $\D = \Dset$ : dataset
+						\end{codebox}
+						\hspace*{1ex} $\xi \in \Xspace$ is called input and $\yi \in \Yspace$ is called output \\
+						\begin{codebox}
+							 $f: \Xspace \to \R^g$ : model
+						\end{codebox}
+						\hspace*{1ex} usually, $f$ is parameterized by a parameter $\thetab \in \Theta$; we write $f = f(\cdot ~|~ \thetab)$ (e.g. $\fxt = \thetab^\top \xv$)\\
+						\begin{codebox}
+							 $\thetab, \thetah \in \Theta$ : model parameter and its estimate
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+							 $L: \Yspace \times \R^g \to \R^+_0$ : loss function
+						\end{codebox}
+						\hspace*{1ex} measures the \enquote{goodness} of a prediction $\hat y$; for example, the squared loss $L(y, \fx) = (y - \fx)^2$ \\
+						\begin{codebox}
+							 $\risk: \Theta \to \R$ : empirical risk function
+						\end{codebox}
+						\hspace*{1ex} the (empirical) risk maps a parameter $\thetab$, which parameterizes the model $f(\cdot ~|~ \thetab)$, to the sum of losses
+						$\risket = \sumin L(\yi, \fxit)$
+					\end{myblock}
+					\begin{myblock}{Encoding}
+						\begin{codebox}
+							$u_i$ : $i$-th bit in a machine number
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+						$\mathcal{M}$ : Machine numbers
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+						$x = S \cdot b^e \cdot \left(1 + \sum_{i = 1}^m u_ib^{-i}\right)$ : representation of a machine number
+						\end{codebox}
+						\hspace*{1ex} with sign $S \in \{-1, 1\}$, base $b > 1$, mantissa length $m$, exponent $e$  \\
+						\hspace*{1ex}
+						\begin{codebox}
+							 $\eps_m$ : machine epsilon
+						\end{codebox}
+						\hspace*{1ex} upper bound on the relative error %due to rounding in floating point arithmetic.
+					\end{myblock}					
+				}
+			\end{minipage}
+		\end{beamercolorbox}
+	\end{column}
+\end{columns}
+\end{frame}
+
+\newpage
+
+\begin{frame}[fragile]{}
+\begin{columns}
+	\begin{column}{.31\textwidth}
+		\begin{beamercolorbox}[center]{postercolumn}
+			\begin{minipage}{.98\textwidth}
+				\parbox[t][\columnheight]{\textwidth}{
+					\vspace{1cm}
+					\begin{myblock}{Numerical Analysis}
+						\begin{codebox}
+							$\xv, \tilde \xv \in \R^n$ : in-disturbed / disturbed input
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+							$\Delta \xv, \delta \xv$ : absolute / relative error in the computation of $\xv$
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+						$\kappa$ : smallest $\kappa \geq 0$, so that
+						$\frac{|f(x+\Delta x)-y|}{|y|} \leq \kappa \ \frac{|\Delta x|}{|x|} \text{ for } \Delta x \to 0.$
+						\end{codebox}
+						\hspace*{1ex} $\kappa$ is called condition number\\
+						\begin{codebox}
+							$f, \tilde f: \R^n \to \R^m$ : a problem $f$ and an algorithm $\tilde f$ to solve $f$
+						\end{codebox}
+					\end{myblock}
+					\begin{myblock}{Big-O}
+						\textbf{Note}: in this chapter, all functions are real-valued 
+						\vspace*{3ex}
+						\begin{codebox}
+							$f \in \order(g) \text{ for } x \to \infty$ : $\lim\limits_{x \to \infty} \sup \frac{f(x)}{g(x)} < \infty$
+						\end{codebox}
+						\hspace*{1ex} \enquote{Big-O} notation: say \enquote{$f$ runs in the order of $g$} \\
+						% \begin{codebox}
+						% 	$f \in o(g) \text{ for } x \to \infty$ : $\lim\limits_{x \to \infty} \frac{f(x)}{g(x)} = 0$
+						% \end{codebox}
+						% \hspace*{1ex} \enquote{Little-O-Notation}. $g$ grows much faster than $f$. \\
+						\begin{codebox}
+						$f \in \order(1)\}$ : $f$ has constant runtime complexity
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+						$f \in \order(\log(n)) $ : $f$ has logarithmic runtime complexity
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+						$f \in \order(n^c) $ : $f$ has polynomial runtime complexity
+						\end{codebox}
+						\hspace*{1ex} linear for $c = 1$, quadratic for $c = 2$ and cubic for $c = 3$. \\
+						\begin{codebox}
+						$f \in \order(c^n) $ : $f$ has exponential runtime complexity
+						\end{codebox}
+					\end{myblock}
+					\begin{myblock}{Quadrature}
+						\textbf{Note}: in this chapter, all functions are real-valued functions.
+						\vspace*{3ex}
+						\begin{codebox}
+							$I(f) = \int_a^b f(x)~dx$ : (Riemann) integral of $f$
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+							$Q(f)$ : numerical approximation of $I(f)$ based on a quadrature rule $Q$
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+							$|\Delta I(f)| = |Q(f) - I(f)|$ : error of the numerical approximation
+						\end{codebox}
+					\end{myblock}		
+					% \begin{myblock}{Matrix Decomposition}
+					% 	\begin{codebox}
+					% 		$\sum_{k = 1}^n k = \frac{n(n+1)}{2}$ : Sum of natural numbers by Carl Friedrich Gauss
+					% 	\end{codebox}
+					% 	\hspace*{1ex}
+					% 	\begin{codebox}
+					% 		$\sum_{k = 1}^n k^2 = \frac{n(n+1)(2n + 1)}{6}$ : Sum of squares of first n numbers
+					% 	\end{codebox}
+					% \end{myblock}													
+					\vfill
+				}
+			\end{minipage}
+		\end{beamercolorbox}
+	\end{column}
+	\begin{column}{.31\textwidth}
+		\begin{beamercolorbox}[center]{postercolumn}
+			\begin{minipage}{.98\textwidth}
+				\parbox[t][\columnheight]{\textwidth}{
+					\vspace*{0.75cm}
+					\begin{myblock}{Optimization (General)}
+						\begin{codebox}
+							$\min\limits_{\xv \in \mathcal{S}} f(\xv), f: \mathcal{S}\subseteq \R^d \to \R^m$ :
+							 optimization problem
+						\end{codebox}
+						\hspace*{1ex} w.l.o.g. we only consider minimization \\
+						\begin{codebox}
+							$\xv \in \mathcal{S}$: decision variable $\xv$ in the decision space $\mathcal{S}$
+						\end{codebox}
+						\hspace*{1ex}
+						\begin{codebox}
+							 $f: \mathcal{S} \to \R^m$ : objective function with domain $\mathcal{S} \subseteq \R^d$ and codomain $\R^m$
+						\end{codebox}
+						\hspace*{1ex} 
+						\begin{codebox}
+							$\min\limits_{\thetab \in \Theta} \risket$ : empirical risk minimization (ERM) problem
+						\end{codebox}
+						\hspace*{1ex} \textbf{Note:} We often consider the ERM problem in ML as an example of an optimization problem. In this case, we switch from the general optimization notation to the ML notation: 
+						\begin{itemize}
+							\item We optimize the function $\risket$ (instead of $f$); $f$ instead denotes the ML model
+							\item We optimize over $\thetab \in \Theta$ (instead over $\xv \in \mathcal{S}$) 
+						\end{itemize}
+						% All further notation changes accordingly. \\
+						\hspace*{1ex}			
+						\begin{codebox}
+							 $\xv^\ast \in \argmin\limits_{\xv \in \mathcal{S}} f(x)$, $y^\ast = \min\limits_{\xv \in \mathcal{S}} f(x)$
+						\end{codebox}
+						\hspace*{1ex} theoretical optimum $\xv^\ast$ and optimal value $y^\ast = f(\xv^\ast)$ \\
+						\begin{codebox}
+							 $\hat\xv \in \mathcal{S}, \hat y \in \R$ : estimated optimum and optimal value
+						\end{codebox}
+						\hspace*{1ex} typically $(\hat\xv, \hat y) = \mathcal{A}(f,\mathcal{S})$ is returned by an optimization algorithm $\mathcal{A}$ \\
+						\begin{codebox}
+							 $\xv^{[t]} \in \mathcal{S}$ : $t$-th step of an optimizer in the decision space
+						\end{codebox}
+						\vspace*{2ex} \textbf{Multivariate Optimization}\\
+							\begin{codebox}
+								 $\alpha \in \R_+$ : step-size / learning rate
+							\end{codebox}
+							\hspace*{1ex}
+							\begin{codebox}
+								 $\bm{d} \in \R^d$ : descent direction in $\xv$
+							\end{codebox}
+							\hspace*{1ex}
+							% \begin{codebox}
+							% 	 $\bm{\nu} \in \R^d$ : Velocity
+							% \end{codebox}
+							% \hspace*{1ex}
+							\begin{codebox}
+								 $\varphi \in [0, 1]$ : momentum
+							\end{codebox}
+						\end{myblock}	
+					\begin{myblock}{Optimization (Constrained Optimization)}
+					\begin{codebox}
+							$\min\limits_{\xv \in \mathcal{S}} f(\xv)$ s.t. $h(\xv) = 0, g(\xv) \le 0$ : constrained optimization problem
+						\end{codebox}
+						\begin{itemize}
+							\item \quad $f: \mathcal{S} \to \R^m$: objective function
+							\item \quad $h: \mathcal{S} \to \R^k$ : equality constraints; $k$: number of constraints\\
+							\item \quad $g: \mathcal{S} \to \R^l$ : inequality constraints; $l$: number of constraints
+						\end{itemize} \hspace{1ex} 
+						\begin{codebox}
+							 $\mathcal{L}: \mathcal{S} \times \R^k \times \R^l$ : Lagrangian
+						\end{codebox}
+						\hspace*{1ex} $(\xv, \bm{\alpha}, \bm{\beta}) \mapsto \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})$; $\bm{\alpha}, \bm{\beta}$ are called Lagrange multiplier \\
+						\hspace*{1ex} (in constrained optimization context, but likelihood in stats context!)
+					\end{myblock}											
+					}
+			\end{minipage}
+		\end{beamercolorbox}
+	\end{column}
+	\begin{column}{.31\textwidth}
+		\begin{beamercolorbox}[center]{postercolumn}
+			\begin{minipage}{.98\textwidth}
+				\parbox[t][\columnheight]{\textwidth}{
+					\begin{myblock}{Optimization (Evolutionary Algorithms)}
+						\begin{codebox}
+							 $P$ : population (of solution candidates)
+						\end{codebox}
+						\hspace*{1ex} 
+						\begin{codebox}
+							 $\mu \in \N$ : size of a population
+						\end{codebox}
+						\hspace*{1ex} 
+						\begin{codebox}
+							 $\lambda \in \N$ : offspring size
+						\end{codebox}
+						\hspace*{1ex} 
+						\begin{codebox}
+							 $(\mu, \lambda)$-selection : survival selection strategy
+						\end{codebox}
+						\hspace*{1ex} the best $\mu$ individuals from $\lambda$ candidates are chosen ($\lambda \ge \mu$ required) \\
+						\begin{codebox}
+							 $(\mu + \lambda)$-selection : survival selection strategy
+						\end{codebox}
+						\hspace*{1ex} the best $\mu$ individuals are chosen from the pool of the current population of size $\mu$ and the offspring of size $\lambda$. \\
+						\begin{codebox}
+							 $\xv_{i:\lambda}$ : $i$-th ranked candidate
+						\end{codebox}
+						\hspace*{1ex} $\lambda$ solution candidates are ranked according to some criterion (e.g. by a fitness function); $\xv_{i:\lambda}$ means that this candidate has rank $i$. \\
+						\begin{codebox}
+							 $\bm{m}^{[g]}, \bm{C}^{[g]}, \sigma^{[g]}$ : configurations in generation $g$
+						\end{codebox}
+						\hspace*{1ex} superscript $[g]$ denotes the $g$-th generation \\
+						\begin{codebox}
+							 $\xv^{[g](k)}$ : $k$-th individual in the population in generation $g$
+						\end{codebox}
+						\end{myblock}
+						\begin{myblock}{Optimization (Multi-Objective)}
+						\begin{codebox}
+							 $\mathcal{P}$ : Pareto set
+						\end{codebox}
+						\hspace*{1ex} Set of nondominated solutions (in the decision space $\mathcal{S}$) \\
+						\begin{codebox}
+							 $\mathcal{F}$ : Pareto front
+						\end{codebox}
+						\hspace*{1ex} image of the Pareto set $\mathcal{P}$ under a multi-objective function $f$ \\
+					\end{myblock}
+
+				}
+			\end{minipage}
+		\end{beamercolorbox}
+	\end{column}
+\end{columns}
+\end{frame}
+
+\end{document}
