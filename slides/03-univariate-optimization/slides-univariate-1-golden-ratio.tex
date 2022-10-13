@@ -164,7 +164,8 @@ Let $f: \R \to \R$.
 \textbf{Key question:} How choose $x^{\text{new}}$ most efficiently in every iteration? 
 
 \begin{itemize}
-    \item \textbf{Insight 1: } It should always be in the bigger interval. 
+    \item \textbf{Insight 1: } It should always be in the bigger interval.
+    \item \textbf{Insight 2: } $x^{new}$ must be chosen symmetrically to $x^{best}$ so that potential new intervals $(x^{left}, x^{new}]$, $[x^{best}, x^{right}]$  are of the same length.
 \end{itemize}
 
 \lz 
@@ -184,33 +185,46 @@ $$
 $$
 
 \begin{figure}
-\includegraphics[width=0.4\textwidth]{figure_man/goldensec-1.png}\\
+\includegraphics[width=0.8\textwidth]{figure_man/goldensec-1.png}\\
 \end{figure}
 
 \framebreak 
 
-Two possible outcomes: 
+If $f_{new, b}$ is the outcome, $x_{new}$ will stay our best observed point and we would search in the interval around $x_{new}$ : 
 
-\begin{itemize}
-  \item $f_{new, a}$: Minimum between $x^{\text{left}}$ and $x^{\text{new}}$ \\
-  $\Rightarrow$ \textbf{Continue search in } $(x^{\text{left}}, x^{\text{new}})$
-  \item $f_{new, b}$: Minimum between $x^{\text{best}}$ and $x^{\text{right}}$ \\
-  $\Rightarrow$ \textbf{Continue search in } $(x^{\text{best}}, x^{\text{right}})$
-\end{itemize}
+$$
+    (x_{best}, x_{right}) 
+$$
 
 \begin{figure}
-\includegraphics[width=0.4\textwidth]{figure_man/goldensec.png}\\
+\includegraphics[width=0.8\textwidth]{figure_man/goldensec-2.png}\\
 \end{figure}
 
 \framebreak 
 
-We want the two intervals
+We require those two potential intervals to be of equal size: 
+
 \begin{eqnarray*}
-  && \textbf{Outcome 1: } (x^{\text{left}}, x^{\text{new}})\\
-  && \textbf{Outcome 2: } (x^{\text{best}}, x^{\text{right}})
+    b := x_{right} - x_{best} = x_{new} - x_{left}
 \end{eqnarray*}
 
-to have approximately same size. 
+\begin{figure}
+\includegraphics[width=0.8\textwidth]{figure_man/goldensec-3.png}\\
+\end{figure}
+
+\framebreak 
+
+Thinking one iteration further, we also want the intervals be of same size. We want 
+
+\begin{eqnarray*}
+    c := x_{best} - x_{left} = x_{right} - x_{new}
+\end{eqnarray*}
+
+\begin{figure}
+\includegraphics[width=0.8\textwidth]{figure_man/goldensec-4.png}\\
+\end{figure}
+
+\framebreak 
 
 \begin{figure}
 \includegraphics[width=0.4\textwidth]{figure_man/goldensec.png}\\
