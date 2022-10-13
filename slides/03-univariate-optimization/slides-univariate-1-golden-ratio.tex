@@ -214,7 +214,7 @@ We require those two potential intervals to be of equal size:
 
 \framebreak 
 
-Thinking one iteration further, we also want the intervals be of same size. We want 
+Thinking one iteration further, we also want those intervals of same size: 
 
 \begin{eqnarray*}
     c := x_{best} - x_{left} = x_{right} - x_{new}
@@ -226,100 +226,22 @@ Thinking one iteration further, we also want the intervals be of same size. We w
 
 \framebreak 
 
+To summarize, we want: 
+
+\begin{eqnarray*}
+    a &=& x^{right}-x^{left}, \\
+    b &=& x_{right} - x_{best} = x_{new} - x_{left} \\
+    c &=& x_{best} - x_{left} = x_{right} - x_{new}
+\end{eqnarray*}
+
+\vspace*{-0.3cm}
+
 \begin{figure}
-\includegraphics[width=0.4\textwidth]{figure_man/goldensec.png}\\
+\includegraphics[width=0.3\textwidth]{figure_man/goldensec.png}\\
 \end{figure}
 
-\end{vbframe}
-
-\begin{vbframe}{Golden ratio idea}
-
-The golden ratio ensures that these two potential intervals are of equal size. Thus it is prevented that intervals are chosen \enquote{unluckily}.
-
-\lz
-
-\textbf{Aim} is to arrange $x^{[t, left]}$, $x^{[t, new]}$, $x^{[t, best]}$ and $x^{[t, right]}$ such that the ratio of the length of two consecutive intervals is constant.
-
-\framebreak
-
-Without loss of generality $x^{[t, left]}< x^{[t, best]}<x^{[t, new]}<x^{[t, right]}$. \\
-
-\vspace*{-0.3cm}
-
-\begin{center}
-\includegraphics[width = 0.3\textwidth]{figure_man/goldensec.png}
-\end{center}
-
-\vspace*{-0.5cm}
-
 \begin{itemize}
-
-% \framebreak
-% Sei $f$ eine unimodale Funktion, $a<x<y<b$.
-% \medskip
-
-
-% \textbf{Ziel:} Finde Algorithmus zur Eingrenzung das Intervall von $[a, b]$, in dem das Minimum liegt.
-% \medskip
-
-% \textbf{Forderungen an den Algorithmus:}
-
-% \begin{itemize}
-% \item $x$ und $y$ sind symmetrisch im Restintervall zu wählen
-% \item Der Reduktionsfaktor $\sigma$ für die Intervallänge sei konstant, $\sigma \in (0.5, 1)$ d.h.Der Quotient aus der neuen und alten Intervallänge ist konstant gleich $\sigma = \frac{l_{neu}}{l_{alt}}$.
-% \end{itemize}
-
-% \medskip
-% \textbf{Ziel:} Bestimme den von der Funktion $f$ unabhängigen Reduktionsfaktor $\sigma$ mit Hilfe des Goldenen Schnitts.
-
-% \framebreak
-
-% Sei $f:[0,1]\rightarrow \R$ streng monoton wachsend.
-% \medskip
-
-% O.B.d.A. sei $0<x<y<1$, $ \Rightarrow y = \sigma$ und $x = 1-\sigma$.
-% \medskip
-
-% \scriptsize
-% \textbf{Schritte zur Bestimmung des Reduktionsfaktors:} $\mathbf{\sigma}$
-% \medskip
-
-% 1. Intervall $[0, 1]$ wird auf Restintervall $[0, y]$ reduziert.\\
-% 2. Wähle im Restintervall einen Punkt $z$ der symmetrisch zu $x$ ist. In Abhängigkeit der Wahl von $y$ gilt (i) $z<x$ oder (ii) $z \geq x$
-% \textbf{Fallunterscheidung:}
-% \medskip
-
-% (i) $\sigma < \frac{2}{3}$: Es gilt $x=1-\sigma >\frac{1}{3}$ und somit: \\
-
-% $$
-% z = y-x = \sigma - (1- \sigma) < \frac{1}{3} < x
-% $$
-% $\sigma = const.$ fordert dann:
-% $$
-% \frac{x}{y} = \frac{y}{1} \Rightarrow 0 = y^{2}-x = \sigma^{2} + \sigma -1.
-% $$
-% Lösen der quadratischen Gleichung liefert:
-% $$
-% \sigma = \frac{1}{2}(\sqrt{5}-1) \approx 0.618 < \frac{2}{3}.
-% $$
-
-% \medskip
-% (ii) $\sigma \geq \frac{2}{3}$: Analog zu (i), jedoch keine Lösung.
-% \normalsize
-% \framebreak
-
-\item $x^{[t, new]}$ must be chosen symmetrically to $x^{[t, best]}$ so that potential new intervals $[x^{[t, left]}, x^{[t, new]}]$, $[x^{[t, best]}, x^{[t, right]}]$  are of the same length.
-\item Define
-\vspace*{-0.3cm}
-\begin{footnotesize}
-\begin{eqnarray*}
-a &:=& x^{[t, right]}-x^{[t, left]}, \\
-b &:=& x^{[t, right]}-x^{[t, best]} = x^{[t, new]}-x^{[t, left]},\\
-c &:=& x^{[t, best]}-x^{[t, left]} = x^{[t, right]}-x^{[t, new]}.\\
-\end{eqnarray*}
-\end{footnotesize}
-\item $a$ is the length of the current search interval, $b$ is the length of the next search interval, $c$ is the length of the search interval after $b$, such that $a = b + c$.
-\item According to definition it applies:
+\item Based on the definition we get: 
 $$
 \varphi := \frac{b}{a} = \frac{c}{b}
 $$
@@ -337,96 +259,37 @@ $$
 
 \framebreak
 
-\item Given $x^{[t, left]}$ and $x^{[t, right]}$ it follows
+\item Given $x^{left}$ and $x^{right}$ it follows
 \begin{eqnarray*}
-x^{[t, best]}&=&x^{[t, right]}-\varphi(x^{[t, right]}-x^{[t, left]})\\
-&=&x^{[t, left]}+(1-\varphi)(x^{[t, right]}-x^{[t, left]})
+x^{best}&=&x^{right}-\varphi(x^{right}-x^{left})\\
+&=&x^{left}+(1-\varphi)(x^{right}-x^{left})
 \end{eqnarray*}
 and due to symmetry
 \begin{eqnarray*}
-x^{[t, new]}&=& x^{[t, left]}+\varphi(x^{[t, right]}-x^{[t, left]})\\ &=& x^{[t, right]}-(1-\varphi)(x^{[t, right]}-x^{[t, left]}).
+x^{new}&=& x^{left}+\varphi(x^{right}-x^{left})\\ &=& x^{right}-(1-\varphi)(x^{right}-x^{left}).
 \end{eqnarray*}
 \end{itemize}
 
-\framebreak
-
-\textbf{Iteration-step cut} \\
-\begin{enumerate}
-\item If $f(x^{[t, new]}) < f(x^{[t, best]})$, swap $x^{[t, new]}$ and $x^{[t, best]}$
-\item Then choose
-$$x^{[t + 1, left]} = \begin{cases}
-x^{[t, left]} & \text{if } x^{[t, best]}<x^{[t, new]} \\
-x^{[t, new]} & \text{otherwise}
-\end{cases}$$
-and
-$$x^{[t + 1, right]} = \begin{cases}
-x^{[t, new]} & \text{if } x^{[t, best]}<x^{[t, new]} \\
-x^{[t, right]} & \text{otherwise}
-\end{cases}$$
-and set $x^{[t + 1, best]}=x^{[t, best]}$.
-\item $x^{[t + 1, new]}$ due to symmetry
-$$
-x^{[t + 1, new]}=x^{[t + 1, left]}-(x^{[t + 1, right]}-x^{[t + 1, best]}).
-$$
-\end{enumerate}
-%
-% \begin{algorithm}[H]
-%   \caption{Goldener Schnitt}
-%   \begin{algorithmic}[1]
-%   \For {$j = 1 \text{ to } n$}
-%     \State $l_{jj} = \left(a_{jj} - \sum_{k = 1}^{j - 1}l_{jk}^2\right)^{\frac{1}{2}}$
-%     \For {$i=j+1 \text{ to } n$}
-%       \State $l_{ij} =
-%   \frac{1}{l_{jj}}\left(a_{ij} - \sum_{k = 1}^{j - 1}l_{ik}l_{jk}\right)$
-%     \EndFor
-%   \EndFor
-%   \end{algorithmic}
-% \end{algorithm}
-
-\end{vbframe}
-
-\begin{frame}{Golden Ratio}
-
-\foreach \i in {0, 1, 2, 3}{
-  \only<\i>{
-  \vspace*{1cm}
-  \begin{center}
-  \includegraphics{figure_man/golden_ratio\i.pdf} 
-  \end{center}
-  }
-}
-
-\end{frame}
-
-
-\begin{vbframe}{Golden Ratio}
-
-Note that in every iteration, 3/4 of the values from the previous iteration can be reused: \\
-
-\begin{center}
-  \includegraphics[width=0.65\textwidth]{figure_man/Diagram_of_a_golden_section_search.jpg}
-\end{center}
-
-\framebreak
+\framebreak 
 
 Termination criterion:
 
   \begin{itemize}
     \item A reasonable choice is the absolute error, i.e. the width of the last interval:
     $$
-    |x^{[t, best]}-x^{[t, new]}| < \tau
+    |x^{best}-x^{new}| < \tau
     $$
     \item In practice, more complicated termination criteria are usually applied, for example in \emph{Numerical Recipes in C, 2017}
 
     $$
-    |x^{[t, right]}-x^{[t, left]}| \le \tau (|x^{[t, best]}| + |x^{[t, new]}|)
+    |x^{right}-x^{left}| \le \tau (|x^{best}| + |x^{new}|)
     $$
 
     is proposed as a termination criterion.
 
 % (Schranke für Breite des Suchintervalls in Abhängigkeit der Größenordnung des Minimums):
 % $$
-% |x^{[t, right]}-x^{[t, left]}| < \tau(1+|x^{[t, best]}|)
+% |x^{right}-x^{left}| < \tau(1+|x^{best}|)
 % $$
 \end{itemize}
 
