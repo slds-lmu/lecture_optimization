@@ -3,6 +3,7 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 \usepackage{wrapfig}
+\usepackage{graphicx}
 
 \newcommand{\titlefigure}{figure_man/GE.pdf}
 \newcommand{\learninggoals}{
@@ -16,7 +17,7 @@
 %\usepackage{animate} % only use if you want the animation for Taylor2D
 
 \title{Optimization}
-\author{Bernd Bischl}
+%\author{Bernd Bischl}
 \date{}
 
 \begin{document}
@@ -152,6 +153,23 @@ With prior knowledge / preferences on max. number of features $k$:
 \min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \lamv), \quad \sum\nolimits_{i = 1}^p s_i \le k, 
 \end{eqnarray*}
 
+
+\begin{figure}[!tbp]
+  \centering
+  \begin{minipage}[b]{0.5\textwidth}
+    \includegraphics[width =\textwidth]{figure_man/pipeline.png}
+    \caption{}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[b]{0.4\textwidth}
+    \includegraphics[width =\textwidth]{figure_man/subsetsize.png}
+    \caption{}
+  \end{minipage}
+\end{figure}
+
+
+\framebreak
+
 \lz 
 
 \textbf{Problem characteristics}:
@@ -171,13 +189,19 @@ Complexity of the problem is reduced with $k$: Lower $k$ $\to$ less possible val
 
 \begin{vbframe}{Example 4: Feature sel. (multiobjective)}
 
-If model sparsity is also an objective we can formulate the problem as multi-objective problem: 
+If model sparsity is also an objective we can formulate the problem as multi-objective problem:
 
   \begin{eqnarray*}
     \min_{\textbf{s} \in \{0, 1\}^p} \left(\widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \lamv), \sum\nolimits_{i = 1}^p s_i\right). 
   \end{eqnarray*}
 
-\lz 
+    \begin{center}
+            \includegraphics[width= 0.5\textwidth]{figure_man/pareto.png}
+    \end{center}
+
+
+
+\framebreak
 
 \textbf{Problem characteristics}:
 \begin{itemize}
@@ -238,12 +262,16 @@ is very challenging:
 		\end{footnotesize}
 	\end{itemize}
 	\end{column}
-	\begin{column}{0.39\textwidth}
-		\begin{figure}[h]
-			\centering
-			\includegraphics[width = 1.0\textwidth]{figure_man/GE.pdf}
-		\end{figure}
-	\end{column}
+ 	\begin{column}{0.35\textwidth}
+		\begin{center}
+			\includegraphics[width = 1.0\textwidth]{figure_man/landscapes.png}
+			\begin{footnotesize}
+				{Exploring the Hyperparameters of XGBoost Through 3D Visualizations ({\O}reb{\ae}k \& Geitle, AAAI-MAKE 2021)}
+				\newline
+				\tiny{Source: \url{ceur-ws.org/Vol-2846/paper22.pdf}}
+			\end{footnotesize}
+		\end{center}
+  \end{column}
 \end{columns}
 % \vspace*{0.2cm}
 % The problem is an \textbf{expensive black-box optimization} problem. 
