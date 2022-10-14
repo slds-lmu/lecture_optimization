@@ -159,12 +159,10 @@ With prior knowledge / preferences on max. number of features $k$:
   \centering
   \begin{minipage}[b]{0.5\textwidth}
     \includegraphics[width =\textwidth]{figure_man/pipeline.png}
-    \caption{}
   \end{minipage}
   \hfill
   \begin{minipage}[b]{0.4\textwidth}
     \includegraphics[width =\textwidth]{figure_man/subsetsize.png}
-    \caption{}
   \end{minipage}
 \end{figure}
 
@@ -188,7 +186,33 @@ Complexity of the problem is reduced with $k$: Lower $k$ $\to$ less possible val
 
 \end{vbframe}
 
-\begin{vbframe}{Example 4: Feature sel. (multiobjective)}
+
+\begin{vbframe}{Example 4: Log. Regr. with \& without Regularization}
+Regularization reduces the risk of overfitting by using a "worse" model.
+
+\begin{eqnarray*}
+	\min_{\thetab \in \Theta} \left(\yi - \thetab^\top\xi\right)^2 + \lambda[(1-\alpha)/2||\beta||^{2}_{2} + \alpha||\beta||_{1}],~\lambda \geq 0, \alpha \in [0,1]
+\end{eqnarray*}
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/logreg_regul.png}
+\end{center}
+
+\framebreak
+\textbf{Problem characteristics}:
+\begin{itemize}
+	\item Black-box: Solution not available in analytical form
+	\item Multivariate
+	\item Unconstrained
+	\item Smooth
+	\item Convex
+\end{itemize}
+
+\end{vbframe}
+
+
+
+\begin{vbframe}{Example 5: Feature sel. (multiobjective)}
 
 If model sparsity is also an objective we can formulate the problem as multi-objective problem:
 
@@ -215,7 +239,7 @@ If model sparsity is also an objective we can formulate the problem as multi-obj
 
 \end{vbframe}
 
-\begin{vbframe}{Example 5: HPO}
+\begin{vbframe}{Example 6: HPO}
 \vspace*{-0.2cm}
 \begin{itemize}
 	\item ML learning algorithm is also called \textbf{inducer} $\ind$.
