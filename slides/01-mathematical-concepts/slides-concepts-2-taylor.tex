@@ -10,20 +10,19 @@
 \newcommand{\learninggoals}{
 \item Taylor Polynomials (Univariate)
 \item Taylor Series
-\item Hessian Matrix
 \item Taylor Polynomials (Multivariate)}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
 
-\title{Optimization}
+\title{Optimization in Machine Learning}
 %\author{Bernd Bischl}
 \date{}
 
 \begin{document}
 
-\lecturechapter{Hessian Matrix \& Taylor Approximations}
-\lecture{Optimization}
+\lecturechapter{Mathematical Concepts: \\Taylor Approximations}
+\lecture{Optimization in Machine Learning}
 \sloppy
 
 
@@ -99,49 +98,28 @@ $$f(x) = \sum_{k=0}^{\infty} \frac{f^{(k)}(a)}{k!}(x-a)^{k} $$
 
 
 
-\begin{vbframe}{Remainder estimation}
+% \begin{vbframe}{Remainder estimation}
 
-$$
-  f(x) = T_m(x, a) + R_m(x, a)
-$$
-\vspace*{0.3cm}
+% $$
+%   f(x) = T_m(x, a) + R_m(x, a)
+% $$
+% \vspace*{0.3cm}
 
-If there is a positive constant $M$ such that $|f^{(m+1)}(t)∣ \leq M$\\
-for all $t$ between $x$ and $a$, inclusive, 
+% If there is a positive constant $M$ such that $|f^{(m+1)}(t)∣ \leq M$\\
+% for all $t$ between $x$ and $a$, inclusive, 
 
-\vspace*{0.3cm}
+% \vspace*{0.3cm}
 
-then the remainder term $R_m(x,a)$ satisfies the inequality:
-
-
+% then the remainder term $R_m(x,a)$ satisfies the inequality:
 
 
-   %\item If the Taylor series converges (does not have to) and it converges to $f$ (does not  have to), we call f an \emph{analytic function}.
+
+
+%    %\item If the Taylor series converges (does not have to) and it converges to $f$ (does not  have to), we call f an \emph{analytic function}.
   
-%\end{itemize}
+% %\end{itemize}
 
-\framebreak 
-
-\begin{itemize}
-  \item Higher $m$ gives a better approximation
-  \item The $m^{th}$ order Taylor term is the best $m^{th}$ order approximation to $\fx$ near $\bm{a}$
-\end{itemize}
-
-
-\begin{columns}
-\begin{column}{0.48\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st100.png}
-\end{column}
-\begin{column}{0.48\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-100.png}
-\end{column}
-\end{columns}
-
-\begin{footnotesize}
-Consider $T_2(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^\top\bm{H}(\bm{a})(\xv - \bm{a})$. The first term ensures the \textbf{value} of $T_2$ and $f$ match at $\bm{a}$. The second term ensures the \textbf{slopes} of $T_2$ and $f$ match at $\bm{a}$. The third term ensures the \textbf{curvature} of $T_2$ and $f$ match at $\bm{a}$. 
-\end{footnotesize}
-
-\end{vbframe}
+%\framebreak 
 
 
 \begin{vbframe}{Multivariate Taylor polynomials}
@@ -159,7 +137,7 @@ $$
 \vspace*{-0.3cm}
 
 \begin{eqnarray*}
-  \fx &=& T_1(\xv) + R_1(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a}) + R_1(\xv, \bm{a})\\ &=& \sin(2) + \cos(2) + (2 \cdot \cos(2), - \sin(1))\begin{pmatrix} x_1 - 1 \\ x_2 - 1\end{pmatrix} + R_1(\xv, \bm{a})
+  \fx &=& T_1(\xv) + R_1(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a}) + R_1(\xv, \bm{a})\\ &=& \sin(2) + \cos(1) + (2 \cdot \cos(2), - \sin(1))^\top\begin{pmatrix} x_1 - 1 \\ x_2 - 1\end{pmatrix} + R_1(\xv, \bm{a})
 \end{eqnarray*}
 
 \end{footnotesize}
@@ -210,6 +188,29 @@ we get
     \end{column}
   \end{columns}  
 
+
+\end{vbframe}
+
+\begin{vbframe}{Multivariate Taylor Approximation}
+
+\begin{itemize}
+  \item Higher $m$ gives a better approximation
+  \item The $m^{th}$ order Taylor term is the best $m^{th}$ order approximation to $\fx$ near $\bm{a}$
+\end{itemize}
+
+
+\begin{columns}
+\begin{column}{0.48\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st100.png}
+\end{column}
+\begin{column}{0.48\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-100.png}
+\end{column}
+\end{columns}
+
+\begin{footnotesize}
+Consider $T_2(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^\top\bm{H}(\bm{a})(\xv - \bm{a})$. The first term ensures the \textbf{value} of $T_2$ and $f$ match at $\bm{a}$. The second term ensures the \textbf{slopes} of $T_2$ and $f$ match at $\bm{a}$. The third term ensures the \textbf{curvature} of $T_2$ and $f$ match at $\bm{a}$. 
+\end{footnotesize}
 
 \end{vbframe}
 
