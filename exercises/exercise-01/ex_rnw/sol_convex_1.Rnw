@@ -1,0 +1,17 @@
+\begin{enumerate}
+\item Let $x,y \in \R$ and $t \in [0, 1]$ then it holds that
+\begin{align*}
+(f + g)(x + t(y-x)) &= f(x + t(y-x)) + g(x + t(y-x)) \\
+&\leq f(x) + t(f(y)-f(x)) + g(x) + t(g(y)-g(x)) & \text{($f,g$ are convex)} \\
+& = f(x) + g(x) + t(f(y) + g(y) -(f(x) + g(x))) \\
+& = (f + g)(x) + t((f + g)(y) - (f + g)(x)).
+\end{align*}
+\item Let $x,y \in \R$ and $t \in [0, 1]$ then it holds that
+\begin{align*}
+(g \circ f)(x + t(y-x)) &= g(f(x + t(y-x))) \\
+&\leq g(f(x) + t(f(y)-f(x))) &\text{($g$ is non-decreasing, $f$ is convex)}\\
+&\leq g(f(x)) + t(g(f(y)) - g(f(x)))) & \text{($g$ is convex)} \\
+&= (g\circ f)(x) + t((g \circ f)(y) - (g \circ f)(x)).
+\end{align*}
+
+\end{enumerate}

@@ -6,7 +6,7 @@
 \usepackage{a4wide,paralist}
 \usepackage{amsmath, amssymb, xfrac, amsthm}
 \usepackage{dsfont}
-\usepackage[usenames,dvipsnames]{xcolor}
+%\usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{amsfonts}
 \usepackage{graphicx}
 \usepackage{caption}
@@ -91,8 +91,8 @@
 \vspace{.15cm}
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
-	{\sf\bf Introduction to Machine Learning \hfill Exercise sheet #1\\
-	 \url{https://slds-lmu.github.io/i2ml/} \hfill WS 2021/2022}
+	{\sf\bf Optimization \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
 \end{minipage}
 \vspace{.05cm}
 \hrule
@@ -103,8 +103,8 @@
 \vspace{.15cm}
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
-	{\sf\bf Introduction to Machine Learning \hfill Live Session #1\\
-	 \url{https://slds-lmu.github.io/i2ml/} \hfill WS 2021/2022}
+	{\sf\bf Optimization \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
 \end{minipage}
 \vspace{.05cm}
 \hrule
@@ -115,8 +115,8 @@
 \vspace{.15cm}
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
-	{\sf\bf Supervised Learning \hfill Exercise sheet #1\\
-	 \url{https://slds-lmu.github.io/i2ml/} \hfill WS 2021/2022}
+	{\sf\bf Optimization \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
 \end{minipage}
 \vspace{.05cm}
 \hrule

@@ -1,0 +1,6 @@
+Consider two convex functions $f, g: \R \to \R.$ 
+
+\begin{enumerate}
+\item Show that $f+g:\R \to \R, x \mapsto f(x) + g(x)$ is convex.
+\item Now, assume that g is additionally non-decreasing, i.e., $g(y) \geq g(x) \; \forall x \in \R, \forall y \in \R$ with $y > x.$ Show that $g \circ f$ is convex.
+\end{enumerate}

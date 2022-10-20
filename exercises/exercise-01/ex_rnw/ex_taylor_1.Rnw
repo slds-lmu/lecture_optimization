@@ -1,0 +1,12 @@
+Consider the bivariate function $f: \R^2 \to \R, (x_1, x_2) \mapsto \exp(\pi \cdot x_1) - \sin(\pi \cdot x_2) + \pi \cdot x_1 \cdot x_2$
+
+%
+\begin{enumerate}
+	%
+	\item Compute the gradient of $f$ for an arbitrary $\mathbf{x}$.
+	\item Compute the Hessian of $f$ for an arbitrary $\mathbf{x}$.	
+	\item State the first order taylor polynomial $T_{1, \mathbf{a}}(\mathbf{x})$ expanded around the point $\mathbf{a} = (0,1)$.	
+	\item State the second order taylor polynomial $T_{2,\mathbf{a}}(\mathbf{x})$ expanded around the point $\mathbf{a} = (0,1)$.
+	\item Determine if $T_{2,\mathbf{a}}$ is a convex function.
+	% \item Let $\tilde{\mathbf{x}} = (0.1, 1.1).$ Compute $f(\tilde{\mathbf{x}}), T_{1,\mathbf{a}}(\tilde{\mathbf{x}}), T_{2,\mathbf{a}}(\tilde{\mathbf{x}})$. What do you observe? \item How can you explain your observation in (e)?
+\end{enumerate}

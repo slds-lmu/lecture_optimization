@@ -1,0 +1,29 @@
+Consider the bivariate function $f: \R^2 \to \R, (x_1, x_2) \mapsto \exp(\pi \cdot x_1) - \sin(\pi \cdot x_2) + \pi \cdot x_1 \cdot x_2$
+
+\begin{enumerate}
+\item	$\nabla f(\mathbf{x}) = \pi \cdot (\exp(\pi x_1) +   x_2,  -\cos(\pi x_2) +  x_1)^\top$
+	\item $\nabla^2 f(\mathbf{x}) = \pi \cdot \begin{pmatrix}\pi \exp(\pi x_1) &  1 \\
+	 1 & \pi \sin(\pi x_2)  \end{pmatrix}$
+	\item  $T_{1,\mathbf{a}}(\mathbf{x}) = f(\mathbf{a}) + \nabla f(\mathbf{a})^\top(\mathbf{x}-\mathbf{a}) = 1 + \pi \cdot (2, 1) \cdot (x_1, x_2 - 1)^\top = 1 - \pi + 2\pi x_1 + \pi x_2$
+	\item \begin{align*}T_{2,\mathbf{a}}(\mathbf{x}) &= T_{1,\mathbf{a}}(\mathbf{x}) + \frac{1}{2} (\mathbf{x} - \mathbf{a})^\top\nabla^2 f(\mathbf{a})(\mathbf{x} - \mathbf{a}) \\
+	&= T_{1,\mathbf{a}}(\mathbf{x}) + \frac{1}{2} \mathbf{x}^\top\nabla^2 f(\mathbf{a})\mathbf{x} + \mathbf{x}^\top\nabla^2 f(\mathbf{a})\mathbf{a} + \frac{1}{2}\mathbf{a}^\top\nabla^2 f(\mathbf{a})\mathbf{a}\end{align*}
+	With $\nabla^2 f(\mathbf{a}) = \begin{pmatrix}\pi^2  &  \pi \\
+	\pi & 0 \end{pmatrix}$ we get that 
+	\begin{align*}
+	T_{2,\mathbf{a}}(\mathbf{x}) = T_{1,\mathbf{a}}(\mathbf{x}) &+ 0.5\pi^2x_1^2 + \pi x_1 x_2 \\
+	&+ \pi x_1 \\
+	&+ 0.
+	\end{align*}.
+	\item $T_{2,\mathbf{a}}(\mathbf{x})$ is multivariate polynomial of degree 2 which means its Hessian is constant and we can directly see that $\mathbf{H}:= \nabla^2 T_{2,\mathbf{a}}(\mathbf{x}) = \nabla^2 f(\mathbf{a}).$
+	For the eigenvalues of the Hessian it must hold that
+	\begin{align*}
+	&\det (\mathbf{H} - \lambda\mathbf{I}) &= 0 \\
+	\iff& \det \begin{pmatrix}\pi^2 - \lambda & \pi \\ 
+	\pi & -\lambda\end{pmatrix} &= 0 
+ \\
+		\iff& (\pi^2 - \lambda) \cdot (-\lambda) - \pi^2 &= 0 \\
+		\iff& \lambda^2 -\pi^2\lambda - \pi^2 &= 0.
+		\end{align*}
+	From which it follows that
+	$\lambda_{1,2} = \frac{\pi^2 \pm \sqrt{\pi^4 + 4\pi^2}}{2} \Rightarrow \lambda_1 \approx 10.785, \lambda_2 \approx -0.915.$ Since $\lambda_2 < 0\;T_{2,\mathbf{a}}$  is not convex.
+\end{enumerate}

@@ -1,0 +1,26 @@
+% !Rnw weave = knitr
+
+<<setup-child, include = FALSE>>=
+library('knitr')
+knitr::set_parent("../../style/preamble_ueb.Rnw")
+@
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{1}{Mathematical Concepts 1}
+
+\loesung{Gradient}{
+<<child="ex_rnw/sol_grad_1.Rnw">>=
+@
+}
+
+\loesung{Convexity}{
+<<child="ex_rnw/sol_convex_1.Rnw">>=
+@
+}
+
+\loesung{Convexity}{
+<<child="ex_rnw/sol_taylor_1.Rnw">>=
+@
+}
