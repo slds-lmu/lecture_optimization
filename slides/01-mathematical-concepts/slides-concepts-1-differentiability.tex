@@ -5,13 +5,15 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/hinge_vs_l2.pdf}
+\newcommand{\titlefigure}%{figure_man/hinge_vs_l2.pdf}
+{figure_man/tangent.png} 
 \newcommand{\learninggoals}{
 \item Definition of smoothness
 \item Uni- \& multivariate differentiation
 \item Gradient, partial derivatives 
 \item Jacobi-Matrix
-\item Hessian Matrix}
+\item Hessian Matrix
+}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
@@ -22,7 +24,7 @@
 
 \begin{document}
 
-\lecturechapter{Smoothness \& Gradients}
+\lecturechapter{Differentiation and Derivatives}
 \lecture{Optimization}
 \sloppy
 
@@ -292,8 +294,6 @@ $
     \hspace{0.5cm}
     \includegraphics[width=0.38\textwidth]{figure_man/hessian_contour.png}
 \end{figure} 
-
-Eigenvalues will be covered in more detail in the sections on quadratic forms.
 
 \end{vbframe}
 
