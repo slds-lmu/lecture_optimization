@@ -52,9 +52,9 @@
   \begin{itemize}
   \item $f$ continous:
   \begin{itemize}
-  \item A real-valued function $f$ defined on a \textbf{compact set} must attain a minimum and a maximum (Extreme Value Theorem).
+  \item A real-valued function $f$ defined on a \textbf{compact set} must attain a minimum and a maximum (extreme value theorem).
   \end{itemize}
-  \item $f$ not continous:
+  \item $f$ not continuous:
   \begin{itemize}
   \item In general no statement possible about existence of maximum/minimum.
   \end{itemize}
@@ -66,7 +66,7 @@
     
   \begin{vbframe}{First Order Condition for optimality}
   
-  Let $f \in \mathcal{C}^1$. \textbf{Observation: } At a local minimum 1st order Taylor series approximation is perfectly flat; 1st order derivatives are $0$.
+  Let $f \in \mathcal{C}^1$. \textbf{Observation: } At a local minimum (for an interior point) 1st order Taylor series approx is perfectly flat; 1st order derivs are $0$.
 
   \lz 
   
@@ -81,7 +81,7 @@
   
   \framebreak 
   
-  At every local minimum $\xv^\ast$ the first derivative is necessarily always zero; it is therefore called \textbf{first-order} or \textbf{necessary} condition. 
+  At every (interior) local minimum $\xv^\ast$ the first derivative is necessarily always zero; it is therefore called \textbf{first-order} or \textbf{necessary} condition. 
   
   \lz 
 
@@ -132,16 +132,16 @@
   
   \framebreak 
   
-  Let $f \in \mathcal{C}^2$.  
+  Let $f \in \mathcal{C}^2$.  If the following holds:
 
   \begin{itemize}
     \item \textbf{Second-order condition (univariate)}: A \textbf{stationary} point $x^\ast \in \mathcal{S}\subseteq \R$ fulfills
     $$f''(x^\ast) > 0.$$ 
-    \item \textbf{Second-order condition (multivariate): } A \textbf{stationary} point $\xv^\ast \in \mathcal{S}\subseteq \R^d$ fulfills $$\nabla^2 f(\xv^\ast) \text{ is positive semi-definitie}$$  (all eigenvalues are positive). This means the curvature is positive in all directions. 
+    \item \textbf{Second-order condition (multivariate): } A \textbf{stationary} point $\xv^\ast \in \mathcal{S}\subseteq \R^d$ fulfills $$\nabla^2 f(\xv^\ast) \text{ is positive semi-definite}$$  (all eigenvalues are positive). This means the curvature is positive in all directions. 
   
   \end{itemize}
   
- Second-order condition is \textbf{sufficient} to prove a local minimum. 
+ Then second-order condition is \textbf{sufficient} to prove a local minimum. 
 
  \lz 
 
@@ -181,7 +181,7 @@
 
 \begin{vbframe}{Conditions for optimality and convexity}
 
-Let $f:\mathcal{S} \to \R$ be convex on convex set $\mathcal{S}$. Then the following applies:
+Let $f:\mathcal{S} \to \R$ be convex on convex set $\mathcal{S}$. Then the following holds:
 
 \begin{itemize}
 \item Any local minimum is also global minimum 
@@ -189,9 +189,19 @@ Let $f:\mathcal{S} \to \R$ be convex on convex set $\mathcal{S}$. Then the follo
 % \item Sublevel sets $S_1 = \{\xv~|~\fx < a\}$ and $S_2 = \{\xv~|~\fx \leq a \}$, $a\in \R$, form convex sets.
 \end{itemize}
 
+\framebreak
+
+Def.: \textbf{Saddle point}
+\begin{itemize}
+    \item all gradients of $x$ are zero but still, $x$ is no optimum
+    \item Hessian is indefinite
+\end{itemize}
+
 \begin{center}
 \includegraphics[scale= 0.5]{figure_man/convex.jpg}
 \end{center}
+
+
 
 
 \end{vbframe}
