@@ -1,0 +1,79 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}%{figure_man/hinge_vs_l2.pdf}
+{figure_man/tangent.png} 
+\newcommand{\learninggoals}{
+\item Definition of smoothness
+\item Uni- \& multivariate differentiation
+\item Gradient, partial derivatives 
+\item Jacobi-Matrix
+\item Hessian Matrix
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in machine learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Matrix calculus}
+\lecture{Optimization}
+\sloppy
+
+% ------------------------------------------------------------------------------
+
+
+\begin{vbframe}{Univariate differentiability}
+
+\textbf{Definition:} A function $f: \mathcal{S} \subseteq \R \to \R$ is said to be differentiable for each inner point $x \in \mathcal{S}$ if the following limit exists:
+
+$$
+f'(x) := \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
+$$
+
+Intuitively: $f$ can be approxed locally by a lin. fun. with slope $m = f'(x)$. 
+
+\begin{center}
+\includegraphics[width = 0.8\textwidth]{figure_man/tangent.png} \\
+\begin{footnotesize}
+Left: Function is differentiable everywhere. Right: Not differentiable at the red point. 
+\end{footnotesize}
+\end{center}
+
+% \framebreak
+
+% \textbf{Äquivalente Definition}:
+
+% $f$ ist genau dann differenzierbar bei $\tilde x \in I$, wenn sich $f$ lokal durch eine \textbf{lineare Funktion} (Tangente) approximieren lässt. Das heißt, es existieren
+
+% \begin{itemize}
+% \item $m_{\tilde x} \in \R$ (Steigung)
+% \item eine Funktion $r(\cdot)$ (Fehler der Approximation),
+% \end{itemize}
+
+% sodass
+
+% \begin{eqnarray*}
+% % f(x) &=& f(\tilde x) + f'(\tilde x)(x - \tilde x) + r(x - \tilde x) \quad \text{bzw.}\\
+% f(\tilde x + h) &=& f(\tilde x) + m_{\tilde x} \cdot h + r(h)\\
+% \text{mit } && \lim_{h \to 0}\frac{|r(h)|}{|h|} = 0
+% \end{eqnarray*}
+
+% Ist $f$ differenzierbar, dann entspricht $m_{\tilde x} = f'(\tilde x)$ (aus 1. Definition).
+
+\end{vbframe}
+
+
+
+
+
+\endlecture
+\end{document}

@@ -18,14 +18,14 @@
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
 
-\title{Optimization}
+\title{Optimization in Machine Learning}
 %\author{Bernd Bischl}
 \date{}
 
 \begin{document}
 
-\lecturechapter{Differentiation and Derivatives}
-\lecture{Optimization}
+\lecturechapter{Mathematical Concepts: \\Differentiation and Derivatives}
+\lecture{Optimization in Machine Learning}
 \sloppy
 
 % ------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ Consider $\fx = 0.5 x_1^2 + x_2^2 + x_1 x_2$. The gradient is $$\nabla \fx = (x_
 The directional derivative tells how fast $f: \mathcal{S} \to \R$ is changing w.r.t. an arbitrary direction $\bm{v}$: 
 
  $$
-   D_v \fx := \lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h} = \nabla \fx \cdot \bm v. 
+   D_v \fx := \lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h} = \nabla \fx^\top \cdot \bm v. 
  $$
 
  
