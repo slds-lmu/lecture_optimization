@@ -10,7 +10,8 @@
 \item Definition of smoothness
 \item Uni- \& multivariate differentiation
 \item Gradient, partial derivatives 
-\item Jacobi-Matrix}
+\item Jacobi-Matrix
+\item Hessian Matrix}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
@@ -36,7 +37,7 @@ $$
 f'(x) := \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
 $$
 
-Intuitively: $f$ can be approximated locally by a linear function with slope $m = f'(x)$. 
+Intuitively: $f$ can be approxed locally by a lin. fun. with slope $m = f'(x)$. 
 
 \begin{center}
 \includegraphics[width = 0.8\textwidth]{figure_man/tangent.png} \\
@@ -73,7 +74,7 @@ Left: Function is differentiable everywhere. Right: Not differentiable at the re
 
 \begin{itemize}
 \item \textbf{Smoothness} of a function  $f: \mathcal{S} \to \R$ is measured by the number of its continuous derivatives
-\item $k$-times continuously diff. means: $f^{(k)}$ exists + is continuous on $\mathcal{S}$\\
+\item $k$-times continuously diff. means: $f^{(k)}$ exists + is continuous for every $\xv \in \mathcal{S}$\\
 ($f \in \mathcal{C}^k$ class of continuously differentiable functions) 
 \item In this lecture, we call $f$ \enquote{smooth}, if at least $f \in \mathcal{C}^1$
 \end{itemize}
@@ -91,7 +92,7 @@ $f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-co
 
 \begin{vbframe}{Multivariate differentiability}
 
-\textbf{Definition: }$f: \mathcal{S}\subseteq \R^d \to \R$ is differentiable in $\xv \in \mathcal{S}$ if there exists a (continuous) linear map $\nabla f(\xv): \mathcal{S}\subseteq \R^d \to \R$ with %it can be locally approximated by a linear function in $\xv$. 
+\textbf{Definition: }$f: \mathcal{S}\subseteq \R^d \to \R$ is differentiable in $\xv \in \mathcal{S}$ if there exists a (continuous) linear map $\nabla f(\xv): \mathcal{S}\subseteq \R^d \to \R^d$ with %it can be locally approximated by a linear function in $\xv$. 
 
 $$
 \lim_{\bm{h} \to 0} \frac{f(\xv + \bm{h}) - f(\xv) - \nabla f(\xv) \cdot \bm{h}}{||\bm{h}||} = 0
@@ -154,11 +155,13 @@ The directional derivative tells how fast $f: \mathcal{S} \to \R$ is changing w.
  $$
 
  
-\textbf{Example: } The instantaneous rate of change in direction $\bm{v} = (1, 1)$ is:
+\textbf{Example: } The directional derivative for $\bm{v} = (1, 1)$ is:
 
 $$
 D_v \fx = \nabla \fx^\top \cdot \begin{pmatrix} 1 \\1\end{pmatrix} = \frac{\partial f}{\partial x_1} + \frac{\partial f}{\partial x_2}
 $$
+
+NB: Some people require that $||\bm{v}|| = 1$. Then, we can identify $D_v \fx$ with the instantaneous rate of change in direction $\bm{v}$ -- and in our example we would have to divide by \sqrt{2}.
 
 \end{vbframe}
 
@@ -190,7 +193,11 @@ $$
 \end{itemize}
 
 \begin{center}
-\includegraphics[width=0.85\textwidth]{figure_man/negative_gradients.png}\\
+\includegraphics[width=0.8\textwidth]{figure_man/branin.jpg}
+\\
+
+(Length of arrow is scaled norm of gradient)
+
 \end{center}
 
 
@@ -216,12 +223,82 @@ Let $f: \mathcal{S} \to \R^m$ be vector-valued with components $f_1, f_2, ..., f
 \begin{center}
 	\includegraphics[width = 0.5\textwidth]{figure_man/Jacobian.png} \\
 	\begin{footnotesize}
-	$f: \R^2 \to \R^2$ sends  a small square (left, red) to a distorted parallelogram (right, red). Jacobian gives best linear approximation of distorted parallelogram near that point. Source: Wikipedia.
+	$f: \R^2 \to \R^2$ sends  a small square (left, red) originating from a given input point to a distorted parallelogram (right, red) . Jacobian gives best linear approximation of distorted parallelogram near that point. Source: Wikipedia.
 	\end{footnotesize}
 \end{center}
 
 
 \end{vbframe}
+
+
+
+\begin{vbframe}{Definition Hessian Matrix}
+
+The 2nd derivative of a multivariate function $f \in \mathcal{C}^2(\mathcal{S}, \R)$, $\mathcal{S}\subseteq \R^d$ (if it exists) is defined by the \textbf{Hessian} matrix
+
+  \[ H(\xv) =\nabla^2 \fx =
+  \Bigl(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\Bigr)_{i,j=1\ldots d}\]
+  
+\lz 
+
+\textbf{Example}: Let $f(x_1,x_2) = sin(x_1) \cdot cos(2x_2)$. Then:
+
+$$
+H(\xv) = \begin{pmatrix}
+\text{-cos}(2x_2)\cdot\text{sin}(x_1) & \text{-2cos}(x_1)\cdot\text{sin}(2x_2) 
+\\ \text{-2cos}(x_1)\cdot\text{sin}(2x_2) & \text{-4cos}(2x_2)\cdot\text{sin}(x_1) 
+\end{pmatrix}
+$$
+
+\begin{itemize}
+    \item If all 2nd partial derivatives are continuous, $H$ will be symmetric
+    \item Many local properties, w.r.t. geometry, convexity, critical points, 
+    are encoded by the Hessian and its Eigenspectrum ($\rightarrow$ later).
+\end{itemize}
+
+\end{vbframe}
+
+
+\begin{vbframe}{Hessian describes local curvature} 
+
+\begin{footnotesize}
+
+Let w.l.o.g. $A(\xv) = \{\lambda_{1, \xv}, ..., \lambda_{d, \xv}\}$ be Eigenspectrum with $\lambda_{1, \xv} \le \lambda_{2, \xv} \le ... \le \lambda_{d, \xv}$ of $H(\xv)$; let $\bm{v}_{i, \xv}$ define the respective Eigenvectors. We can read off it: 
+
+\begin{itemize}
+  \item $\bm{v}_d$/$\bm{v}_1$ points in the direction of largest/smallest curvature
+\end{itemize}
+
+\vspace*{0.1cm}
+
+
+
+\textbf{Example (continued):} $H(\xv) = \begin{pmatrix}
+\text{-cos}(2x_2)\cdot\text{sin}(x_1) & \text{-2cos}(x_1)\cdot\text{sin}(2x_2) 
+\\ \text{-2cos}(x_1)\cdot\text{sin}(2x_2) & \text{-4cos}(2x_2)\cdot\text{sin}(x_1) 
+\end{pmatrix}.
+$
+
+\begin{itemize}
+  \item \textcolor{orange}{$H(a),~ a=(\frac{-\pi}{2},0)$: $\lambda_{1,a}=1, \lambda_{2,a}=4$; $v_{1,a} = (1, 0)^\top$, $v_{2,a} = (0, 1)^\top$}
+\end{itemize}
+
+\end{footnotesize}
+
+\vspace*{0.05cm}
+
+\begin{figure}[!tbp]
+    \includegraphics[width=0.38\textwidth]{figure_man/hessian_3d.png}
+    \hspace{0.5cm}
+    \includegraphics[width=0.38\textwidth]{figure_man/hessian_contour.png}
+\end{figure} 
+
+Eigenvalues will be covered in more detail in the sections on quadratic forms.
+
+\end{vbframe}
+
+
+
 
 \endlecture
 \end{document}
