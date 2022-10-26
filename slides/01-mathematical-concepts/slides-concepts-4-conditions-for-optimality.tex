@@ -117,35 +117,33 @@
   
   \begin{vbframe}{Second Order Condition for Optimality}
   
-  Let $f \in \mathcal{C}^2$. A stationary point $\xv$ (i.e., $\fx = 0$) is a local minimum if $f''(\xv) > 0$ (i.e., the function is locally convex). 
+  % Let $f \in \mathcal{C}^2$. A stationary point $\xv$ (i.e., $\fx = 0$) is a local minimum if $f''(\xv) > 0$ (i.e., the function is locally convex). 
 
-  \begin{center}
-  \includegraphics[width = 0.7\textwidth]{figure_man/saddle_points_2.png} \\
-  \begin{footnotesize}
-  Left / Right: Function has positive curvature in all directions at the minima, and negative curvature around the maxima. Middle: Curvature is positive in one, and negative in the other direction. 
-  \end{footnotesize}\\
-  \begin{tiny}
-  Source: Watt, 2020, Machine Learning Refined. 
-  \end{tiny}
-  \end{center}
+  % \begin{center}
+  % \includegraphics[width = 0.7\textwidth]{figure_man/saddle_points_2.png} \\
+  % \begin{footnotesize}
+  % Left / Right: Function has positive curvature in all directions at the minima, and negative curvature around the maxima. Middle: Curvature is positive in one, and negative in the other direction. 
+  % \end{footnotesize}\\
+  % \begin{tiny}
+  % Source: Watt, 2020, Machine Learning Refined. 
+  % \end{tiny}
+  % \end{center}
+  %\framebreak 
   
-  
-  \framebreak 
-  
-  Let $f \in \mathcal{C}^2$.  If the following holds:
+  Let $f \in \mathcal{C}^2$.  If the function is locally convex, so:
 
   \begin{itemize}
     \item \textbf{Second-order condition (univariate)}: A \textbf{stationary} point $x^\ast \in \mathcal{S}\subseteq \R$ fulfills
     $$f''(x^\ast) > 0.$$ 
-    \item \textbf{Second-order condition (multivariate): } A \textbf{stationary} point $\xv^\ast \in \mathcal{S}\subseteq \R^d$ fulfills $$\nabla^2 f(\xv^\ast) \text{ is positive semi-definite}$$  (all eigenvalues are positive). This means the curvature is positive in all directions. 
+    \item \textbf{Second-order condition (multivariate): } A \textbf{stationary} point $\xv^\ast \in \mathcal{S}\subseteq \R^d$ fulfills $$\nabla^2 f(\xv^\ast) \text{ is positive definite}$$  (all EVs positive), hence curvature is positive in all directions. 
   
   \end{itemize}
   
- Then second-order condition is \textbf{sufficient} to prove a local minimum. 
+ Then the second-order condition is \textbf{sufficient} to prove a local minimum. 
 
  \lz 
 
- \textbf{Note:} For a convex function, $\nabla^2 f(\xv)$ is always p.s.d.; therefore, any stationary point is the local (also global) minimum. 
+ %\textbf{Note:} For a convex function, $\nabla^2 f(\xv)$ is always p.s.d.; therefore, any stationary point is the local (also global) minimum. 
   
 
 
