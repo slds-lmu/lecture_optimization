@@ -133,16 +133,25 @@
   Let $f \in \mathcal{C}^2$.  If the function is locally convex, so:
 
   \begin{itemize}
-    \item \textbf{Second-order condition (univariate)}: A \textbf{stationary} point $x^\ast \in \mathcal{S}\subseteq \R$ fulfills
-    $$f''(x^\ast) > 0.$$ 
-    \item \textbf{Second-order condition (multivariate): } A \textbf{stationary} point $\xv^\ast \in \mathcal{S}\subseteq \R^d$ fulfills $$\nabla^2 f(\xv^\ast) \text{ is positive definite}$$  (all EVs positive), hence curvature is positive in all directions. 
-  
+    \item \textbf{Second-order condition}: A \textbf{stationary} point $\xv^\ast \in \mathcal{S}\subseteq \R$ fulfills
+    $$f''(x^\ast) > 0 \quad (d = 1) $$ 
+    $$\nabla^2 f(\xv^\ast) \text{ is positive definite} \quad (d > 1) $$
+    \begin{footnotesize}
+    (all EVs positive), hence curvature is positive in all directions. 
+    \end{footnotesize}
+    % \item \textbf{Second-order condition (multivariate): } A \textbf{stationary} point $\xv^\ast \in \mathcal{S}\subseteq \R^d$ fulfills $$\nabla^2 f(\xv^\ast) \text{ is positive definite}$$  
   \end{itemize}
   
  Then the second-order condition is \textbf{sufficient} to prove a local minimum. 
 
- \lz 
-
+  \begin{center}
+  \includegraphics[width = 0.3\textwidth]{figure_man/local_global_min.png} \quad \includegraphics[width = 0.3\textwidth]{figure_man/local_global_min_2D.png} \\
+  \vspace*{0.3cm}
+  \begin{tiny}
+    Two functions that are locally convex, but not globally convex. % Source (left): \url{https://en.wikipedia.org/wiki/Maxima_and_minima}. Source (right): \url{https://wngaw.github.io/linear-regression/}. 
+  \end{tiny}
+  \end{center}
+  
  %\textbf{Note:} For a convex function, $\nabla^2 f(\xv)$ is always p.s.d.; therefore, any stationary point is the local (also global) minimum. 
   
 
@@ -187,7 +196,42 @@ Let $f:\mathcal{S} \to \R$ be convex on convex set $\mathcal{S}$. Then the follo
 % \item Sublevel sets $S_1 = \{\xv~|~\fx < a\}$ and $S_2 = \{\xv~|~\fx \leq a \}$, $a\in \R$, form convex sets.
 \end{itemize}
 
-\framebreak
+\begin{center}
+\includegraphics[width = 1\textwidth]{figure_man/hessian-eigenvalues.pdf} \\
+% hessian-eigenvalues.R
+\vspace*{0.3cm}
+\begin{tiny}
+  Three different quadratic forms. Left: Hessian has a two positive Eigenvalues ($\lambda_1 = 2, \lambda_2 = 5$). Middle: Hessian has positive and negative Eigenvalue ($\lambda_1 = 2, \lambda_2 = - 5$). Right: Hessian has positive and a zero Eigenvalue ($\lambda_1 = 2, \lambda_2 = 0$).% Source (left): \url{https://en.wikipedia.org/wiki/Maxima_and_minima}. Source (right): \url{https://wngaw.github.io/linear-regression/}. 
+\end{tiny}
+\end{center}
+
+
+\framebreak 
+
+\textbf{Example: } Branin function 
+
+\vspace*{-0.5cm}
+
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\includegraphics[width = 0.8\textwidth]{figure_man/branin3d/branin2D.pdf} \\  \vspace*{-1cm}
+\includegraphics[width = 0.8\textwidth]{figure_man/branin3d/branin3D.pdf} 
+\end{column}
+\hspace*{-2cm}
+\begin{column}{0.55\textwidth} 
+\includegraphics[width=0.4\columnwidth]{figure_man/branin3d/branin3D-optim-1.pdf}\\ \vspace*{-1.5cm}
+\includegraphics[width=0.4\columnwidth]{figure_man/branin3d/branin3D-optim-2.pdf}\\\vspace*{-1.5cm}
+\includegraphics[width=0.4\columnwidth]{figure_man/branin3d/branin3D-optim-3.pdf}
+\end{column}
+\hspace*{-4cm}
+\begin{column}{0.3\textwidth}
+\begin{tiny}
+The function is locally convex around the minima. The Eigenvalues are: $\lambda_1 = 22.29, \lambda_2 = 0.96$ (Opt. 1),\\ $\lambda_1 = 11.07, \lambda_2 = 1.73$ (Opt. 2),\\ $\lambda_1 = 11.33, \lambda_2 = 1.69$ (Opt. 3). 
+\end{tiny}\end{column}
+\end{columns}
+
+
+\framebreak 
 
 Def.: \textbf{Saddle point}
 \begin{itemize}
@@ -199,7 +243,9 @@ Def.: \textbf{Saddle point}
 \includegraphics[scale= 0.5]{figure_man/convex.jpg}
 \end{center}
 
+% \framebreak 
 
+% \textbf{Example: } Consider $\fx = 2 \cdot $
 
 
 \end{vbframe}
