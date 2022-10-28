@@ -1,0 +1,22 @@
+% !Rnw weave = knitr
+
+<<setup-child, include = FALSE>>=
+library('knitr')
+knitr::set_parent("../../style/preamble_ueb.Rnw")
+@
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{2}{Mathematical Concepts 2}
+
+
+\loesung{Matrix Calculus}{
+  <<child="ex_rnw/sol_matrix_calc_1.Rnw">>=
+  @
+}
+
+\loesung{Optimality in 1d}{
+  <<child="ex_rnw/sol_opt_1d_1.Rnw">>=
+  @
+}

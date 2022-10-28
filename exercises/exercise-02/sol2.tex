@@ -210,77 +210,44 @@
 \input{../../latex-math/basic-math.tex}
 \input{../../latex-math/basic-ml.tex}
 
-\kopfsl{1}{Mathematical Concepts 1}
+\kopfsl{2}{Mathematical Concepts 2}
 
-\loesung{Gradient}{
 
-%
+\loesung{Matrix Calculus}{
+
 \begin{enumerate}
 	%
-  \item The gradient $\nabla f(\mathbf{x}) = (2x_1 + x_2, x_2 + x_1)^\top$ is continuous $\Rightarrow f \in \mathcal{C}^1$.
-	\item The direction of greatest increase is given by the gradient, i.e., $\nabla f(1,1) = (3,2)^\top.$
-	\item Let $\mathbf{v} \in \R^2$ be a direction with fixed length $\Vert \mathbf{v}\Vert_2 = r > 0$. \newline The directional derivative $D_{\mathbf{v}}f(\mathbf{x}) = \nabla f(\mathbf{x})^\top \mathbf{v} = \left\Vert \nabla f(\mathbf{x}) \right\Vert_2 \left\Vert \mathbf{v} \right\Vert_2 \cos (\theta) = \left\Vert \nabla f(\mathbf{x}) \right\Vert_2 r \cos (\theta).$ This becomes minimal if $\theta = \pi$, i.e., if $\mathbf{v}$ points in the opposite direction of $\nabla f \Rightarrow \mathbf{v} = -\nabla f(\mathbf{x})$ if $r = \left\Vert \nabla f (\mathbf{x}) \right\Vert_2.$ 
-	Here, the direction of greatest decrease is given by $-\nabla f(1,1) = (-3, -2)^\top$.
-	\item $D_{\mathbf{v}}f(\mathbf{x}) = \nabla f(1, 1)^\top \mathbf{v} \overset{!}{=} 0 \Rightarrow (3,2) \cdot \mathbf{v} = 0 \iff \mathbf{v} = \alpha \cdot (-2, 3)^\top$ with $\alpha \in \R$ and $\alpha \neq 0.$
+	\item $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}} = 
+	\frac{\partial \Vert \mathbf{u}  \Vert^2_2}{\partial \mathbf{u}} \frac{\partial \mathbf{u}}{\partial \mathbf{x}} = 
+	\frac{\partial  \mathbf{u}^\top\mathbf{u}}{\partial \mathbf{u}} \frac{\partial \mathbf{x} - \mathbf{c}}{\partial \mathbf{x}} = 
+	\frac{\partial  \mathbf{u}^\top\mathbf{I}\mathbf{u}}{\partial \mathbf{u}}(\mathbf{I} - \mathbf{0}) = \mathbf{u}^\top(\mathbf{I} + \mathbf{I}^\top) = 2(\mathbf{x} - \mathbf{c})
+	$
+	\item $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert_2}{\partial
+	\mathbf{x}} = \frac{\partial \sqrt{\Vert \mathbf{x} - \mathbf{c}  \Vert_2^2}}{\partial
+	\mathbf{x}} = \frac{0.5}{ \sqrt{\Vert \mathbf{x} - \mathbf{c}  \Vert_2^2}}\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}} \overset{(a)}{=} \frac{\mathbf{x} - \mathbf{c}}{\Vert \mathbf{x} - \mathbf{c}  \Vert_2}$
+	\item $\frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}} = \frac{\partial \mathbf{u}^\top \mathbf{I} \mathbf{v}}{\partial \mathbf{x}} = \mathbf{u}^\top \mathbf{I} \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \mathbf{I} \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} = 
+	\mathbf{u}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}}$
+	\item $\frac{\partial \mathbf{u}^\top \mathbf{Y}}{\partial\mathbf{x}} = \frac{\partial\begin{pmatrix}\mathbf{u}^\top \mathbf{y}_1} \\ \vdots \\ \mathbf{u}^\top \mathbf{y}_d\end{pmatrix}}{\partial \mathbf{x}}$ 
 	
-	\item When we differentiate both sides of the equation $f(\tilde{\mathbf{x}}(t)) = f(1,1)$  w.r.t. $t$ we arrive at $\frac{\partial f(\tilde{\mathbf{x}}(t))}{\partial t}  = 0$.
-	Via the chain rule it follows that $\underbrace{\frac{\partial f}{\partial \tilde{\mathbf{x}}}}_{=\nabla f(\tilde{\mathbf{x}})^\top} \frac{\partial\tilde{\mathbf{x}}}{\partial t} = 0.$
-	\item The gradient is orthogonal to the tangent line of the level curves.
-	  
+	where $\mathbf{y}_i:\R^d\rightarrow\R^d, i= 1,\dots,d$ are the column vectors of  $\mathbf{Y}.$
+	\item Compute $\frac{\partial^2 \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}\partial\mathbf{x}^\top}$ \\
+	\textit{Hint:} use c), d)
+	
 \end{enumerate}
 }
 
-\loesung{Convexity}{
+\loesung{Optimality in 1d}{
 
+Let $f: [-1,2] \rightarrow \R, x \mapsto \exp(x^3 - 2x^2)$
 \begin{enumerate}
-\item Let $x,y \in \R$ and $t \in [0, 1]$ then it holds that
-\begin{align*}
-(f + g)(x + t(y-x)) &= f(x + t(y-x)) + g(x + t(y-x)) \\
-&\leq f(x) + t(f(y)-f(x)) + g(x) + t(g(y)-g(x)) & \text{($f,g$ are convex)} \\
-& = f(x) + g(x) + t(f(y) + g(y) -(f(x) + g(x))) \\
-& = (f + g)(x) + t((f + g)(y) - (f + g)(x)).
-\end{align*}
-\item Let $x,y \in \R$ and $t \in [0, 1]$ then it holds that
-\begin{align*}
-(g \circ f)(x + t(y-x)) &= g(f(x + t(y-x))) \\
-&\leq g(f(x) + t(f(y)-f(x))) &\text{($g$ is non-decreasing, $f$ is convex)}\\
-&\leq g(f(x)) + t(g(f(y)) - g(f(x)))) & \text{($g$ is convex)} \\
-&= (g\circ f)(x) + t((g \circ f)(y) - (g \circ f)(x)).
-\end{align*}
-
-\end{enumerate}
-}
-
-\loesung{Convexity}{
-
-Consider the bivariate function $f: \R^2 \to \R, (x_1, x_2) \mapsto \exp(\pi \cdot x_1) - \sin(\pi \cdot x_2) + \pi \cdot x_1 \cdot x_2$
-
-\begin{enumerate}
-\item	$\nabla f(\mathbf{x}) = \pi \cdot (\exp(\pi x_1) +   x_2,  -\cos(\pi x_2) +  x_1)^\top$
-	\item $\nabla^2 f(\mathbf{x}) = \pi \cdot \begin{pmatrix}\pi \exp(\pi x_1) &  1 \\
-	 1 & \pi \sin(\pi x_2)  \end{pmatrix}$
-	\item  $T_{1,\mathbf{a}}(\mathbf{x}) = f(\mathbf{a}) + \nabla f(\mathbf{a})^\top(\mathbf{x}-\mathbf{a}) = 1 + \pi \cdot (2, 1) \cdot (x_1, x_2 - 1)^\top = 1 - \pi + 2\pi x_1 + \pi x_2$
-	\item \begin{align*}T_{2,\mathbf{a}}(\mathbf{x}) &= T_{1,\mathbf{a}}(\mathbf{x}) + \frac{1}{2} (\mathbf{x} - \mathbf{a})^\top\nabla^2 f(\mathbf{a})(\mathbf{x} - \mathbf{a}) \\
-	&= T_{1,\mathbf{a}}(\mathbf{x}) + \frac{1}{2} \mathbf{x}^\top\nabla^2 f(\mathbf{a})\mathbf{x} + \mathbf{x}^\top\nabla^2 f(\mathbf{a})\mathbf{a} + \frac{1}{2}\mathbf{a}^\top\nabla^2 f(\mathbf{a})\mathbf{a}\end{align*}
-	With $\nabla^2 f(\mathbf{a}) = \begin{pmatrix}\pi^2  &  \pi \\
-	\pi & 0 \end{pmatrix}$ we get that 
-	\begin{align*}
-	T_{2,\mathbf{a}}(\mathbf{x}) = T_{1,\mathbf{a}}(\mathbf{x}) &+ 0.5\pi^2x_1^2 + \pi x_1 x_2 \\
-	&+ \pi x_1 \\
-	&+ 0.
-	\end{align*}.
-	\item $T_{2,\mathbf{a}}(\mathbf{x})$ is multivariate polynomial of degree 2 which means its Hessian is constant and we can directly see that $\mathbf{H}:= \nabla^2 T_{2,\mathbf{a}}(\mathbf{x}) = \nabla^2 f(\mathbf{a}).$
-	For the eigenvalues of the Hessian it must hold that
-	\begin{align*}
-	&\det (\mathbf{H} - \lambda\mathbf{I}) &= 0 \\
-	\iff& \det \begin{pmatrix}\pi^2 - \lambda & \pi \\ 
-	\pi & -\lambda\end{pmatrix} &= 0 
- \\
-		\iff& (\pi^2 - \lambda) \cdot (-\lambda) - \pi^2 &= 0 \\
-		\iff& \lambda^2 -\pi^2\lambda - \pi^2 &= 0.
-		\end{align*}
-	From which it follows that
-	$\lambda_{1,2} = \frac{\pi^2 \pm \sqrt{\pi^4 + 4\pi^2}}{2} \Rightarrow \lambda_1 \approx 10.785, \lambda_2 \approx -0.915.$ Since $\lambda_2 < 0\;T_{2,\mathbf{a}}$  is not convex.
+	%
+	\item Compute $f'$
+	\item Find all possible candidates $x^*$ for local maxima and minima. \\
+	\textit{Hint:} $\exp$ is a strictly monotone function.
+	\item Compute $f''$
+	\item Determine if the candidates are local maxima, minima or neither.
+	\item Find the global maximum and global minimum of $f$
+	
 \end{enumerate}
 }
 \end{document}
