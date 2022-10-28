@@ -1,0 +1,122 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}
+{figure_man/1920px-Greek_lc_delta.svg.png} 
+\newcommand{\learninggoals}{
+\item Rules of matrix calculus 
+\item Connection to the gradient, Jacobian and Hessian
+}
+
+\title{Optimization in Machine Learning}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Mathematical Concepts: \\Matrix Calculus}
+\lecture{Optimization in Machine Learning}
+\sloppy
+
+% ------------------------------------------------------------------------------
+
+
+\begin{vbframe}{Scope}
+\begin{itemize}
+    \item Let $\mathcal{X}$ be the space of independent variables and $\mathcal{Y}$ be the output space of dependent variables.
+    \item A dependent variable can be identified with a function $y: \mathcal{X} \to \mathcal{Y}, x\mapsto y(x)$ \item In matrix calculus, $\mathcal{X}$ and $\mathcal{Y}$ can each be a space of scalars, vectors or matrices:
+    \begin{table}[]
+        \centering
+        \begin{tabular}{cccc}
+             Types& Scalar $y$ &Vector $\mathbf{y}$&Matrix $\mathbf{Y}$ \\
+             Scalar $x$& $\frac{\partial y}{\partial x}$ & $\frac{\partial \mathbf{y}}{\partial x}$ & $\frac{\partial \mathbf{Y}}{\partial x}$ \\
+             Vector $\mathbf{x}$& $\frac{\partial y}{\partial \mathbf{x}}$ & $\frac{\partial \mathbf{y}}{\partial \mathbf{x}}$ & / \\
+             Matrix $\mathbf{X}$& $\frac{\partial y}{\partial \mathbf{X}}$ & / & / 
+        \end{tabular}
+        %\caption{Types of matrix derivative}
+    \end{table}
+    \item Here, we denote vectors and matrices in bold lowercase and bold uppercase, respectively
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Numerator layout}
+\begin{itemize}
+ 
+    \item Matrix calculus describes how we collect the derivative of each component of the dependent variable with respect to each component of the independent variable
+    \item Here, we use the so-called numerator layout convention:
+    $\frac{\partial y}{\partial \mathbf{x}} = \begin{pmatrix}\frac{\partial y}{\partial x_1} & \cdots & \frac{\partial y}{\partial x_d}\end{pmatrix} = \nabla y^\top \in \R^{1\times d}$ (transpose of the gradient)\\
+    $\frac{\partial \mathbf{y}}{\partial \mathbf{x}} = \begin{pmatrix}\frac{\partial y_1}{\partial x_1} & \cdots & \frac{\partial y_1}{\partial x_d} \\
+    \vdots & \ddots & \vdots \\ 
+    \frac{\partial y_m}{\partial x_1} & \cdots & \frac{\partial y_m}{\partial x_d}
+    \end{pmatrix} = J_\mathbf{y} \in \R^{m \times d}$ (the Jacobian)\\
+    $\frac{\partial \mathbf{y}}{\partial x} = \begin{pmatrix}\frac{\partial y_1}{\partial x} \\
+    \vdots\\ 
+    \frac{\partial y_m}{\partial x}
+    \end{pmatrix} \in \R^{m}$ 
+    \item In the following we assume that all partial derivatives exist
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Dependent: Scalar, Independent: Vector}
+Let $x \in \R^d, y,u,v: \R^d \rightarrow \R, a \in \R, g:\R\rightarrow\R.$ \\
+\medskip
+Some useful rules:
+\begin{itemize}
+    \item If $y$ is a constant function: $\frac{\partial y}{\partial \mathbf{x}} = \mathbf{0}^\top \in \R^{1\times d}$
+    \item Linearity: $\frac{\partial (a\cdot u + v)}{\partial \mathbf{x}} = a\frac{\partial u}{\partial \mathbf{x}} + \frac{\partial v}{\partial \mathbf{x}}$
+    \item Product rule: $\frac{\partial (u  v)}{\partial \mathbf{x}} = v\frac{\partial u}{\partial \mathbf{x}} + u\frac{\partial v}{\partial \mathbf{x}}$
+    \item Chain rule: $\frac{\partial g(y)}{\partial \mathbf{x}} = \frac{\partial g(y)}{\partial y}\frac{\partial y}{\partial \mathbf{x}} $
+    \item Second derivative: $\frac{\partial^2 y}{\partial \mathbf{x}\partial\mathbf{x}^\top} = \nabla^2 y^\top$ (transpose of the Hessian)
+    \item Second derivative: $\frac{\partial^2 y}{\partial \mathbf{x}\partial\mathbf{x}^\top} = \nabla^2 y$ (Hessian, if PDs are continuous)
+       \item $\frac{\partial \mathbf{x}^\top\mathbf{A}\mathbf{x}}{\partial\mathbf{x}} =  \mathbf{x}^\top(\mathbf{A} + \mathbf{A}^\top)$ with constant $\mathbf{A} \in \R^{d\times d}$
+        \item $\frac{\partial \mathbf{x}^\top\mathbf{A}\mathbf{x}}{\partial\mathbf{x}} =  2 \mathbf{x}^\top\mathbf{A}$ with constant, symmetric $\mathbf{A} \in \R^{d\times d}$ 
+      \item $ \frac{\partial(\mathbf{z}^\top \mathbf{C} \mathbf{v})}{\partial\mathbf{x}} = \mathbf{z}^\top \mathbf{C}\frac{\partial\mathbf{v}}{\partial\mathbf{x}} + \mathbf{v}^\top\mathbf{C}^\top\frac{\partial \mathbf{z}}{\partial \mathbf{x}}$ with constant $\mathbf{C} \in \R^{p\times m}$
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Dependent: Vector, Independent: Vector}
+Let $\mathbf{x} \in \R^d, \mathbf{y},  \mathbf{u}, \mathbf{v}: \R^d \rightarrow \R^m,\mathbf{z}:\R^d\rightarrow\R^p, a \in \R, \mathbf{g}:\R^m\rightarrow  \R^m.$ \\
+\medskip
+Some useful rules:
+\begin{itemize}
+    \item If $\mathbf{y}$ is a constant function: $\frac{\partial \mathbf{y}}{\partial \mathbf{x}} = \mathbf{0} \in \R^{m \times d}$
+    \item $\frac{\partial \mathbf{x}}{\partial \mathbf{x}} = \mathbf{I} \in \R^{d \times d}$
+    \item Linearity: $\frac{\partial (a\cdot \mathbf{u} + \mathbf{v})}{\partial \mathbf{x}} = a\frac{\partial \mathbf{u}}{\partial \mathbf{x}} + \frac{\partial \mathbf{v}}{\partial \mathbf{x}}, a \in \R $
+    \item Chain rule: $\frac{\partial \mathbf{g}(\mathbf{y})}{\partial \mathbf{x}} = \frac{\partial \mathbf{g}(\mathbf{y})}{\partial \mathbf{y}}\frac{\partial \mathbf{y}}{\partial \mathbf{x}}$
+    \item $\frac{\partial \mathbf{A}\mathbf{x}}{\partial\mathbf{x}} =  \mathbf{A}, \frac{\partial \mathbf{x}^\top\mathbf{B}}{\partial\mathbf{x}} = \mathbf{B}^\top$ with constant $\mathbf{A} \in \R^{m\times d}, \mathbf{B} \in \R^{d \times m}$
+ 
+  
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Dependent: Vector, Independent: Scalar}
+Let  $x \in \R, \mathbf{y},  \mathbf{u}, \mathbf{v}: \R^m \rightarrow \R^m, a \in \R, \mathbf{g}:\R\rightarrow  \R^m$. \\
+\medskip
+Some useful rules:
+\begin{itemize}
+    \item If $\mathbf{y}$ is a constant function: $\frac{\partial \mathbf{y}}{\partial x} = \mathbf{0} \in \R^{m}$
+    \item Linearity: $\frac{\partial (a\cdot \mathbf{u} + \mathbf{v})}{\partial x} = a\frac{\partial \mathbf{u}}{\partial x} + \frac{\partial \mathbf{v}}{\partial x} $
+    \item Chain rule: $\frac{\partial \mathbf{g}(\mathbf{y})}{\partial x} = \frac{\partial \mathbf{g}(\mathbf{y})}{\partial \mathbf{y}}\frac{\partial \mathbf{y}}{\partial x}$
+    \item $\frac{\partial\mathbf{A}\mathbf{y}}{\partial x} = \mathbf{A}\frac{\partial\mathbf{y}}{\partial x}$ with constant $\mathbf{A} \in \R^{m\times d}$
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Example}
+Let  $f:\R^2 \rightarrow \R, \mathbf{x} \mapsto \exp\left(-(\mathbf{x} - \mathbf{c})^\top \mathbf{A} (\mathbf{x} - \mathbf{c})\right)$ with $\mathbf{c} = (1, 1)^\top, \mathbf{A} = \begin{pmatrix}1 & 0.5 \\ 0.5 & 1\end{pmatrix}$\\
+We want to compute the gradient of $f$ at $\mathbf{x} = \mathbf{0}:$\\
+\medskip
+\begin{enumerate}
+    \item We can write $f = \exp(g(\mathbf{u}))$ with $u:\R^2\rightarrow\R^2, \mathbf{x}\mapsto \mathbf{x} - \mathbf{c}, g:\R^2\rightarrow\R, \mathbf{u} \mapsto -\mathbf{u}^\top\mathbf{A}\mathbf{u}$
+    \item Via the chain rule it follows that $\frac{\partial f}{\partial{\mathbf{x}}} = \exp(g(\mathbf{u}))\frac{\partial g}{\partial\mathbf{u}}\frac{\partial\mathbf{u}}{\partial\mathbf{x}}$
+    \item $\frac{\partial g}{\partial\mathbf{u}} = -2\mathbf{u}^\top\mathbf{A} = -(-1 -1)\begin{pmatrix}2 & 1 \\ 1 & 2\end{pmatrix} = (3, 3)$
+    \item From linearity it follows that $\frac{\partial\mathbf{u}}{\partial\mathbf{x}} = \frac{\partial(\mathbf{x} - \mathbf{c})}{\partial\mathbf{x}} = \frac{\partial\mathbf{x}}{\partial\mathbf{x}} - \frac{\partial\mathbf{c}}{\partial\mathbf{x}} = \mathbf{I} - \mathbf{0}$
+    \item $\nabla f (0, 0) = \frac{\partial f}{\partial{\mathbf{x}}}(0, 0)^\top = f(0,0) \cdot (3, 3)^\top = \exp(-3) \cdot (3, 3)^\top$
+\end{enumerate}
+
+\end{vbframe}
+
+\endlecture
+\end{document}

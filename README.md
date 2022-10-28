@@ -1,3 +1,9 @@
+
+
+Link to course website: https://slds-lmu.github.io/website_optimization/
+
+
+
 ## How to create a new website repository?
 
 1. Create a new repository with the name `lecture_xyz` and select `slds-lmu/lecture_template` as template repository.
