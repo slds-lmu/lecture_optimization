@@ -6,7 +6,8 @@
 
 \newcommand{\titlefigure}{figure_man/golden-ratio-6.png}
 \newcommand{\learninggoals}{
-\item TODO
+\item Simple nesting procedure
+\item Golden ratio
 }
 
 
@@ -161,27 +162,27 @@ Let $f: \R \to \R$.
 
 \begin{vbframe}{Golden ratio}
 
-\textbf{Key question:} How choose $x^{\text{new}}$ most efficiently in every iteration? 
+\textbf{Key question:} How can $x^{\text{new}}$ be chosen better than randomly? 
 
 \begin{itemize}
     \item \textbf{Insight 1: } It should always be in the bigger interval.
-    \item \textbf{Insight 2: } $x^{new}$ must be chosen symmetrically to $x^{best}$ so that potential new intervals $(x^{left}, x^{new}]$, $[x^{best}, x^{right}]$  are of the same length.
+    \item \textbf{Insight 2: } $x^{new}$ must be chosen symmetrically to $x^{best}$ s.t. potential new intervals $[x^{left}, x^{new}]$, $[x^{best}, x^{right}]$  have same length.
 \end{itemize}
 
-\lz 
-
 \begin{figure}
-\includegraphics[width=0.4\textwidth]{figure_man/goldensec.png}\\
+\includegraphics[width=0.8\textwidth]{figure_man/goldensec-0.png}
 \end{figure}
+
+\vspace*{-0.5cm}
 
 W.l.o.g. consider two hypothetical outcomes $x^{\text{new}}$: $f_{new, a}$ and $f_{new, b}$. 
 
-\framebreak 
+\framebreak
 
 If $f_{new, a}$ is the outcome, $x_{best}$ will stay our best observed point and we would search in the interval around $x_{best}$ : 
 
 $$
-    (x_{left}, x_{new}) 
+    [x_{left}, x_{new}]
 $$
 
 \begin{figure}
@@ -193,7 +194,7 @@ $$
 If $f_{new, b}$ is the outcome, $x_{new}$ will stay our best observed point and we would search in the interval around $x_{new}$ : 
 
 $$
-    (x_{best}, x_{right}) 
+    [x_{best}, x_{right}] 
 $$
 
 \begin{figure}
@@ -226,7 +227,7 @@ Thinking one iteration further, we also want those intervals of same size:
 
 \framebreak 
 
-To summarize, we want: 
+To summarize, we require: 
 
 \begin{eqnarray*}
     a &=& x^{right}-x^{left}, \\
@@ -246,7 +247,7 @@ $$
 \varphi := \frac{b}{a} = \frac{c}{b}
 $$
 $$
-\varphi^2 = \frac{c}{a}
+\varphi^2 = \frac{b}{a} \cdot \frac{c}{b} = \frac{c}{a}
 $$
 
 \item Divide $a = b + c$ by $a$:
