@@ -1,0 +1,50 @@
+\documentclass[a4paper]{article}
+
+
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+\usepackage{a4wide,paralist}
+\usepackage{amsmath, amssymb, xfrac, amsthm}
+\usepackage{dsfont}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{framed}
+\usepackage{multirow}
+\usepackage{bytefield}
+\usepackage{csquotes}
+\usepackage[breakable, theorems, skins]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{cancel}
+\usepackage{bm}
+
+\begin{document}
+% !Rnw weave = knitr
+
+
+
+\input{latex-math/basic-math.tex}
+\input{latex-math/basic-ml.tex}
+
+\section{Lecture 1}
+Let X be a random vector. Define $f(w) = var(w^T X)$. What properties does the function f have?
+\begin{itemize}
+    \item f(w) = $var(w^T X) = w^T \Sigma w$ with $\Sigma = covar(X)$. 
+    \item f is quadratic form, hence in $C\infty$
+    \item Obviously, $f \geq 0$
+    \item f is also convex. Possible ways to see this:
+\begin{enumerate}
+    \item $\Sigma$ is the Hessian, as it is a covar matrix it is psd (if one knows this from stats)
+    \item $f \geq 0$. If that is the case, the quadratic form MUST be convex -- saddle points and concave must result in neg values somewhere
+    \item We can also directly try to show this. We want the Hessian to be psd. So we want $w^T \Sigma w \geq 0$ for all $w$. Actually, this is completely the same question in a sense as the above, not even a really different way. Now
+    $$w^T \Sigma w = w^T E[ (X - E(X)) (X - E(X))^T] w = 
+    E[ w^T (X - E(X)) (X - E(X))^T w] = E[z^2] \geq 
+    $$
+    with $z =  w^T (X - E(X))$
+\end{enumerate}
+    
+\end{itemize}
+
+\end{document}

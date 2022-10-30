@@ -187,15 +187,18 @@ Complexity of the problem is reduced with $k$: Lower $k$ $\to$ less possible val
 \end{vbframe}
 
 
-\begin{vbframe}{Example 4: Log. Regr. with \& without Regularization}
+\begin{vbframe}{Example 4: Regularized Log. Regression}
 Regularization reduces the risk of overfitting by using a "worse" model.
 
+\setlength{\abovedisplayskip}{1pt}
+\setlength{\belowdisplayskip}{1pt}
+
 \begin{eqnarray*}
-	\min_{\thetab \in \Theta} \left(\yi - \thetab^\top\xi\right)^2 + \lambda[(1-\alpha)/2||\beta||^{2}_{2} + \alpha||\beta||_{1}],~\lambda \geq 0, \alpha \in [0,1]
+	\min_{\thetab \in \Theta} \left(-\yi \cdot \thetab^\top\xi + log(1 + e^{\thetab^\top\xi}\right) + \lambda[(1-\alpha)/2||\beta||^{2}_{2} + \alpha||\beta||_{1}],\\ \lambda \geq 0, \alpha \in [0,1]
 \end{eqnarray*}
 
 \begin{center}
-\includegraphics[width=0.7\textwidth]{figure_man/logreg_regul.png}
+\includegraphics[width=0.65\textwidth]{figure_man/logreg_regul.png}
 \end{center}
 
 \framebreak
