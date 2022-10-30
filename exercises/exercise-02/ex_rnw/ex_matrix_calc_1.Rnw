@@ -1,0 +1,12 @@
+Let $\mathbf{x}, \mathbf{c} \in \R^d, \mathbf{u},\mathbf{v}: \R^d \rightarrow \R^d,  \mathbf{u},\mathbf{v} \in \mathcal{C}^2, \mathbf{Y}: \R^d \rightarrow \R^{d\times d}$
+\begin{enumerate}
+	%
+	\item Compute $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}}$
+	\item Compute $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert_2}{\partial
+	\mathbf{x}}$
+	\item Compute $\frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}}$
+	\item Show that $\frac{\partial \mathbf{u}^\top \mathbf{Y}}{\partial\mathbf{x}} = \begin{pmatrix}\mathbf{u}^\top\frac{\partial  \mathbf{y}_1}{\partial\mathbf{x}} + \mathbf{y}_1^\top\frac{\partial  \mathbf{u}}{\partial\mathbf{x}} \\ \vdots \\ \mathbf{u}^\top\frac{\partial  \mathbf{y}_d}{\partial\mathbf{x}} + \mathbf{y}_d^\top\frac{\partial  \mathbf{u}}{\partial\mathbf{x}}\end{pmatrix}$ where $\mathbf{y}_i:\R^d\rightarrow\R^d, i= 1,\dots,d$ are the column vectors of  $\mathbf{Y}.$
+	\item Compute $\frac{\partial^2 \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}\partial\mathbf{x}^\top}$ \\
+	\textit{Hint:} use c), d)
+	
+\end{enumerate}

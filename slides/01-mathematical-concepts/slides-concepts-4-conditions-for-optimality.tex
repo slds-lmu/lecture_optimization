@@ -226,7 +226,8 @@ Let $f:\mathcal{S} \to \R$ be convex on convex set $\mathcal{S}$. Then the follo
 \hspace*{-4cm}
 \begin{column}{0.3\textwidth}
 \begin{tiny}
-The function is locally convex around the minima. The Eigenvalues are: $\lambda_1 = 22.29, \lambda_2 = 0.96$ (Opt. 1),\\ $\lambda_1 = 11.07, \lambda_2 = 1.73$ (Opt. 2),\\ $\lambda_1 = 11.33, \lambda_2 = 1.69$ (Opt. 3). 
+Gradient and Hessian have been computed numerically at the minima / red points (R package numDeriv). Gradients are 0, function is locally convex. Eigenspectra: 
+$\lambda_1 = 22.29, \lambda_2 = 0.96$ (Opt. 1)\\ $\lambda_1 = 11.07, \lambda_2 = 1.73$ (Opt. 2) $\lambda_1 = 11.33, \lambda_2 = 1.69$ (Opt. 3)
 \end{tiny}\end{column}
 \end{columns}
 
@@ -235,8 +236,9 @@ The function is locally convex around the minima. The Eigenvalues are: $\lambda_
 
 Def.: \textbf{Saddle point}
 \begin{itemize}
-    \item all gradients of $x$ are zero but still, $x$ is no optimum
-    \item Hessian is indefinite
+    \item Gradient of 0
+    \item If H is indefinite at stationary point, so pos and neg Eigenvalues occur in H, we have a saddle point 
+    \item The latter is only a sufficient condition, but not a necessary one
 \end{itemize}
 
 \begin{center}

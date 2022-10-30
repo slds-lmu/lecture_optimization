@@ -1,0 +1,19 @@
+\begin{enumerate}
+	%
+	\item $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}} = 
+	\frac{\partial \Vert \mathbf{u}  \Vert^2_2}{\partial \mathbf{u}} \frac{\partial \mathbf{u}}{\partial \mathbf{x}} = 
+	\frac{\partial  \mathbf{u}^\top\mathbf{u}}{\partial \mathbf{u}} \frac{\partial \mathbf{x} - \mathbf{c}}{\partial \mathbf{x}} = 
+	\frac{\partial  \mathbf{u}^\top\mathbf{I}\mathbf{u}}{\partial \mathbf{u}}(\mathbf{I} - \mathbf{0}) = \mathbf{u}^\top(\mathbf{I} + \mathbf{I}^\top) = 2(\mathbf{x} - \mathbf{c})
+	$
+	\item $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert_2}{\partial
+	\mathbf{x}} = \frac{\partial \sqrt{\Vert \mathbf{x} - \mathbf{c}  \Vert_2^2}}{\partial
+	\mathbf{x}} = \frac{0.5}{ \sqrt{\Vert \mathbf{x} - \mathbf{c}  \Vert_2^2}}\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}} \overset{(a)}{=} \frac{\mathbf{x} - \mathbf{c}}{\Vert \mathbf{x} - \mathbf{c}  \Vert_2}$
+	\item $\frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}} = \frac{\partial \mathbf{u}^\top \mathbf{I} \mathbf{v}}{\partial \mathbf{x}} = \mathbf{u}^\top \mathbf{I} \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \mathbf{I} \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} = 
+	\mathbf{u}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}}$
+	\item $\frac{\partial \mathbf{u}^\top \mathbf{Y}}{\partial\mathbf{x}} = \frac{\partial\begin{pmatrix}\mathbf{u}^\top \mathbf{y}_1} \\ \vdots \\ \mathbf{u}^\top \mathbf{y}_d\end{pmatrix}}{\partial \mathbf{x}}$ 
+	
+	where $\mathbf{y}_i:\R^d\rightarrow\R^d, i= 1,\dots,d$ are the column vectors of  $\mathbf{Y}.$
+	\item Compute $\frac{\partial^2 \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}\partial\mathbf{x}^\top}$ \\
+	\textit{Hint:} use c), d)
+	
+\end{enumerate}
