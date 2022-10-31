@@ -25,7 +25,7 @@ p = ggplot() + geom_line(data = df, aes(x = lambda, y = f)) + geom_point(data = 
 ggsave("figure_man/ml_poisson_example_2.pdf", p, width = 3, height = 2)
 
 
-p = ggplot() + geom_line(data = df, aes(x = lambda, y = - f)) + geom_point(data = data.frame(x = optimum$maximum, y = - optimum$objective), aes(x = x, y = y), colour = "blue") + xlab(x)
+p = ggplot() + geom_line(data = df, aes(x = lambda, y = - f)) + geom_point(data = data.frame(x = optimum$maximum, y = - optimum$objective), aes(x = x, y = y), colour = "blue") + xlab("x")
 
 ggsave("figure_man/ml_poisson_example_3.pdf", p, width = 3, height = 2)
 

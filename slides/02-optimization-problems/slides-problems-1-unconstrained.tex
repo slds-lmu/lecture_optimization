@@ -308,33 +308,55 @@ The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{conv
 \end{vbframe}
 
 
-\begin{vbframe}{Example 4: Regularized Log. Regression}
+\begin{vbframe}{Example 4: (Regularized) Log. Regression}
+
+\vspace*{-0.5cm}
+
 Regularization reduces the risk of overfitting by using a "worse" model.
 
-\setlength{\abovedisplayskip}{1pt}
-\setlength{\belowdisplayskip}{1pt}
+\vspace*{-0.3cm}
 
+\begin{footnotesize}
 \begin{eqnarray*}
-	\min_{\thetab \in \Theta} \left(-\yi \cdot \thetab^\top\xi + log(1 + e^{\thetab^\top\xi}\right) + \lambda[(1-\alpha)/2||\beta||^{2}_{2} + \alpha||\beta||_{1}],\\ \lambda \geq 0, \alpha \in [0,1]
+	\min_{\thetab \in \Theta} \sumin \left(-\yi \cdot \thetab^\top\xi + \log(1 + \exp\left(\thetab^\top\xi\right)\right) + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \\ \lambda \geq 0, \alpha \in [0,1]
 \end{eqnarray*}
+\end{footnotesize}
 
-\begin{center}
-\includegraphics[width=0.65\textwidth]{figure_man/logreg_regul.png}
-\end{center}
+\vspace*{-1.2cm}
+
+\begin{columns}
+\begin{column}{.5\textwidth}
+\vspace*{0.5cm}
+\begin{figure}
+	\includegraphics{figure_man/logreg-0.pdf}
+\end{figure}
+\end{column}
+\begin{column}{.3\textwidth}
+\begin{figure}
+	\includegraphics{figure_man/logreg-0.5-1.pdf}\\
+	\includegraphics{figure_man/logreg-1-1.pdf} 
+\end{figure}
+\end{column}
+\begin{column}{.3\textwidth}
+\begin{figure}
+	\includegraphics{figure_man/logreg-5-1.pdf}	
+\end{figure}
+\end{column}
+\end{columns}
 
 \framebreak
+
 \textbf{Problem characteristics}:
 \begin{itemize}
-	\item Black-box: Solution not available in analytical form
 	\item Multivariate
 	\item Unconstrained
-	\item Smooth
+	\item Smooth for $\alpha = 0$, not smooth for $\alpha > 0$
 	\item Convex
 \end{itemize}
 
 \end{vbframe}
 
-\begin{vbframe}{Example 4: Linear SVM}
+\begin{vbframe}{Example 5: Linear SVM}
 
 \begin{footnotesize}
 \begin{itemize}
@@ -414,7 +436,7 @@ $\mathbf{y}$ & $\fx$ &  \textbf{Correct pred.?}  & $\Lxy$ & \textbf{Reason for c
 \end{vbframe}
 
 
-\begin{vbframe}{Kernelized SVM} 
+\begin{vbframe}{Example 6: Kernelized SVM} 
 
 \textbf{Kernelized} formulation of the primal$^{(*)}$ SVM problem: 
 
