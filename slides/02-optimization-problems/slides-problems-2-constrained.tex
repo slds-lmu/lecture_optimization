@@ -77,6 +77,15 @@ Equivalent formulation:
 	&& \xv \ge 0
 	\end{eqnarray*}
 	for $\bm{c}\in \R^d, \bm{A} \in \R^{k \times d}$ and $\bm{b} \in \R^k$. 
+
+	\begin{figure}
+		\includegraphics[width=0.25\textwidth]{figure_man/simplex_iter1.png} ~~~ \includegraphics[width=0.25\textwidth]{figure_man/simplex.png} \\
+		\begin{footnotesize}
+		Visualization of constraints of 2D and 3D linear program (Source right figure: Wikipedia). 
+		\end{footnotesize}
+	\end{figure}
+
+	\framebreak
 	\item \textbf{Quadratic program (QP)}: $f$ (multivariate) quadratic function subject to only linear constraints $g_i, h_j$. Standard form: 
 	\vspace*{-0.3cm}
 	\begin{eqnarray*}
@@ -87,7 +96,15 @@ Equivalent formulation:
 	\end{eqnarray*}
 	for $\bm{A} \in \R^{d \times d}, \bm{b} \in \R^d, c \in \R$, $\bm{E} \in \R^{k \times d}, \bm{f} \in \R^k$, $\bm{G} \in \R^{l \times d}$, $\bm{f} \in \R^l$. 
 \end{itemize}
- 
+
+\vspace*{-0.8cm}
+	\begin{figure}
+		\includegraphics[width=0.3\textwidth]{figure_man/quadratic-programm.jpeg} \\
+		\begin{footnotesize}
+		Visualization of quadratic objective (dashed) over linear constraints (grey). Source: Ma, Signa Processing Optimization Techniques, 2015. 
+		\end{footnotesize}
+	\end{figure}
+
 % \begin{footnotesize}
 % $\leq$ and $\geq$ to be understood component-wise. 
 
@@ -106,20 +123,14 @@ Equivalent formulation:
 	for $\bm{A} \in \R^{l \times d}$ and $\bm{b} \in \R^l$. 
 \end{itemize}
 
+\begin{figure}
+	\includegraphics[width=0.8\textwidth]{figure_man/cp_example.jpg} \\
+	\begin{footnotesize}
+	Convex program (left) vs. nonconvex program (right). Source: Mathworks.
+	\end{footnotesize}
+\end{figure}
 \vspace*{-0.6cm}
 
-\begin{columns}[T] % align columns
-	\begin{column}{.58\textwidth}
-		\begin{center}
-			\includegraphics[width=0.6\textwidth]{figure_man/classes_optimization_problems.png} 
-		\end{center}
-	\end{column}
-	\begin{column}{.38\textwidth} \vspace*{1.5cm}
-		\begin{footnotesize}
-		Further special types: quadratically constrained linear program (QCLP) and quadratically constrained quadratic program (QCQP). 
-		\end{footnotesize}
-	\end{column}
-\end{columns}
 
 % \begin{itemize}
 % \item \textbf{Box-constrained}:
@@ -135,6 +146,20 @@ Equivalent formulation:
 % We call $g(\xv)\le 0$ an inequality constraint, and $h(\xv) = 0 $ an equality constraint. 
 
 % \end{itemize}
+
+\framebreak 
+
+\begin{columns}[T] % align columns
+	\begin{column}{.58\textwidth}
+		\begin{center}
+			\includegraphics[width=0.8\textwidth]{figure_man/classes_optimization_problems.png} 
+		\end{center}
+	\end{column}
+	\begin{column}{.38\textwidth} \vspace*{1.5cm}
+		Further special types: quadratically constrained linear program (QCLP) and quadratically constrained quadratic program (QCQP). 
+	\end{column}
+\end{columns}
+
 
 
 \end{vbframe}
@@ -335,7 +360,7 @@ $f$ smooth, $g$ \textbf{not smooth}. Still \textbf{convex program}.
 
 \begin{vbframe}{Example 5: Support Vector Machines} 
 
-The SVM problem can be formulated in $3$ different ways: two primal, and one dual one (we will see later what "dual" means). 
+The SVM problem can be formulated in $3$ equivalent ways: two primal, and one dual one (we will see later what "dual" means). 
 
 \begin{footnotesize}
 	Here, we only discuss the nature of the optimization problems. A more thorough statistical derivation of SVMs is given in ``Supervised learning''. 

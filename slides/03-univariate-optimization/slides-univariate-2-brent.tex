@@ -4,52 +4,29 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-
-\newcommand{\titlefigure}{figure_man/bisection2.png}
+\newcommand{\titlefigure}{figure_man/quadratic-title.png}
 \newcommand{\learninggoals}{
-\item TODO
+\item Quadratic interpolation
+\item Brent's procedure
 }
-
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
 
-\title{Optimization}
-\author{Bernd Bischl}
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
 \date{}
 
 \begin{document}
 
-\lecturechapter{Unconstrained problems}
-\lecture{Optimization}
+\lecturechapter{Univariate optimization: Brent's method}
+\lecture{Optimization in Machine Learning}
 \sloppy
 
-% \begin{vbframe}{Quadratic interpolation}
-% \begin{itemize}
-% \item If we can assume that the objective function is sufficiently smooth (in addition to unimodality), this can be exploited for optimization.
 
-% \lz
-
-% \item \textbf{Approach}: Iteratively, approximate the target function by smooth curves and determine their minimum, which is new evaluation point.
-
-% \lz
-
-% \item \textbf{Idea:} Given the three points $x^{[t, \text{left}]}$, $x^{[t, \text{right}]}$ and $x^{[t, \text{best}]}$, find minimum of the parabola running through the points and use it as $x^{[t, \text{new}]}$, then proceed analogously to the golden ratio search.
-% \lz
-% \item Minimum of a parabola:
-% \begin{eqnarray*}
-%   \frac{\partial}{\partial x} \left( ax^2 + bx + c \right) &=& 2ax+b \; \stackrel{!}{=}\; 0 \\
-% \Rightarrow x^* &=& - \frac{b}{2a}
-% \end{eqnarray*}
-% \item For the parabola through $x^{[t, \text{left}]}$, $x^{[t, \text{right}]}$ and $x^{[t, \text{best}]}$ this minimum can be written in closed form as $x^{[t, \text{new}]}$:
-% $$
-% {\scriptstyle x^{[t, \text{new}]} \,:=\, x^{[t, \text{best}]} - \frac{1}{2} \frac{(x^{[t, \text{best}]}-x^{[t, \text{left}]})^2(f(x^{[t, \text{best}]}-x^{[t, \text{right}]}))-(x^{[t, \text{best}]}-x^{[t, \text{right}]})^2(f(x^{[t, \text{best}]}-x^{[t, \text{left}]}))}{(x^{[t, \text{best}]}-x^{[t, \text{left}]})(f(x^{[t, \text{best}]}-x^{[t, \text{right}]})-(x^{[t, \text{best}]}-x^{[t, \text{right}]})(f(x^{[t, \text{best}]}-x^{[t, \text{left}]}))}}
-% $$
-% \end{itemize}
-
-
-% \end{vbframe}
 
 \begin{frame}{Quadratic Interpolation}
+
+Similar to golden ratio procedure. Define $x^{\text{new}}$ as minimum of a parabola fitted through $(x^{\text{left}}, f^{\text{left}})$, $(x^{\text{best}}, f^{\text{best}})$, $(x^{\text{right}}, f^{\text{right}})$. 
 
 \foreach \i in {0, 1, 2, 3, 4}{
   \only<\i>{
@@ -137,10 +114,10 @@
 
 \begin{vbframe}{Quadratic interpolation comments}
 \begin{itemize}
-\item Quadratic interpolation \textbf{not robust}, for example it may happen that:
+\item Quadratic interpolation \textbf{not robust}. The following may happen:
 \begin{itemize}
-\item Algorithm suggests the same $x^{[t, \text{new}]}$ in each step,
-\item $x^{[t, \text{new}]}$ outside of search interval,
+\item Algorithm suggests the same $x^{\text{new}}$ in each step,
+\item $x^{\text{new}}$ outside of search interval,
 \item Parabola degenerates to line and no real minimum exists (if 3 points are collinear).
 \end{itemize}
 \item Algorithm must then abort, finding a global minimum is not guaranteed.
@@ -158,7 +135,7 @@ The fast convergence of the quadratic interpolation is exploited, unstable calcu
 
 \lz
 
-If the function $f$ has a local minimum, then convergence is guaranteed and the rate of convergence of Newton's method is exploited.
+If the function $f$ has a local minimum, then convergence is guaranteed. 
 
 % \begin{itemize}
 % \item Zunächst wird Suchintervall durch Goldenen Schnitt solange verkleinert, bis Zielfunktion durch Parabel an den letzten 3 Evaluationspunkten gut approximiert wird.
@@ -170,51 +147,54 @@ If the function $f$ has a local minimum, then convergence is guaranteed and the 
 
 
 \begin{vbframe}{Example: ML Cauchy}
+
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
 \begin{itemize}
 \item Density Poisson distribution:
+\begin{footnotesize}
 $$
 f(k ~|~ \lambda) := \P(x = k) = \frac{\lambda^k \cdot \exp(-\lambda)}{k!}
 $$
+\end{footnotesize}
 \item Negative log-Likelihood for $n$ observations:
+\begin{footnotesize}
 \begin{eqnarray*}
 - \ell(\lambda, \mathcal{D}) &=& - \log L(\lambda, \mathcal{D}) \\ &=& - \log \prod_{i = 1}^n  f\left(x^{(i)} ~|~ \lambda\right) \\ &=&  - \sum_{i = 1}^n \frac{\lambda^{x^{(i)} } \cdot \exp(-\lambda)}{x^{(i)} !} 
 \end{eqnarray*}
+\end{footnotesize}
 
 \end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{figure}
+  \includegraphics[width = 1\textwidth]{figure_man/poisson.pdf}
+\end{figure}
+\end{column}
+\end{columns}
+
+
 
 \framebreak 
 
-\begin{center}
-	\includegraphics[width = 0.6\textwidth]{figure_man/poisson.pdf}
-\end{center}
-
-\framebreak 
-
-Both Golden ratio and Brent's method converge against the global optimum at $x^\ast = 0.75$. While the Golden ratio method needs $\approx 93$ iteration, Brent's method only needs $\approx 18$ for the same level of precision. 
+Both Golden ratio and Brent's method converge against the global optimum at $x^\ast = 0.75$. While the Golden ratio method needs $\approx 93$ iterations, Brent's method only needs $\approx 18$ for the same level of precision. 
 
 \lz
 \footnotesize
 \begin{verbatim}
 library("Rmpfr")
 set.seed(1234)
-\end{verbatim}
 
-\vspace{0.2cm}
-
-\begin{verbatim}
 x = rpois(200, lambda = 0.75)
 
 neg_log_lik = function(lambda)- sum(log(dpois(x, lambda)))
-\end{verbatim}
 
-\vspace{0.2cm}
+optimize(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
+  method = "Brent")
 
-\begin{verbatim}
-optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
-	method = "Brent")
-
-optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
-	method = "GoldenRatio")
+optimize(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
+  method = "GoldenRatio")
 
 \end{verbatim}
 
@@ -228,7 +208,7 @@ optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE,
 %neg_log_lik = function(lambda)- sum(log(dpois(x, lambda)))
 
 %optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
-%	method = "Brent")
+% method = "Brent")
 
 %@
 
@@ -243,9 +223,14 @@ optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE,
 %neg_log_lik = function(lambda)- sum(log(dpois(x, lambda)))
 
 %optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
-%	method = "GoldenRatio")
+% method = "GoldenRatio")
 
 %@
+
+\vspace*{-1cm}
+
+\begin{columns}
+\begin{column}{1\textwidth}
 \begin{verbatim}
 ## $minimum
 ## 1 'mpfr' number of precision 132 bits
@@ -268,9 +253,15 @@ optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE,
 ## $method
 ## [1] "Brent"
 \end{verbatim}
+\end{column}
+\end{columns}
 
 \framebreak
 
+\vspace*{-1cm}
+
+\begin{columns}
+\begin{column}{1\textwidth}
 \begin{verbatim}
 ## $minimum
 ## 1 'mpfr' number of precision 132 bits
@@ -294,64 +285,11 @@ optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE,
 ## [1] "GoldenRatio"
 \end{verbatim}
 
+\end{column}
+\end{columns}
+
 \end{vbframe}
-
-\normalsize
-
-% \begin{vbframe}{Example: ML Cauchy}
-% \begin{itemize}
-% \item Density Cauchy distribution (Scale = 1):
-% $$
-% f(x,\theta) = \frac{1}{\pi} \cdot \frac{1}{1+(x-\theta)^2}
-% $$
-% \item $\theta$ is \textit{shape} parameter and corresponds to median
-% \item Log-Likelihood for $n$ observations:
-% $$
-% \ell(\theta) \propto - \sum\limits_{i=1}^n \log(1 + (x_i - \theta)^2)
-% $$
-% \item Score function:
-% $$
-% \frac{\partial \ell(\theta)}{\partial \theta} \propto \sum\limits_{i=1}^n \frac{2(x_i -\theta)}{1+(x_i-\theta)^2}
-% $$
-% \end{itemize}
-% <<echo = F>>=
-% set.seed(25)
-% x = rcauchy(25, location = 2, scale = 1)
-
-% neg_log_lik = function(theta) {
-%   sum(log(1 + (x - theta)^2))
-% }
-
-% score_fkt = function(theta) {
-%   sum(2 * (x - theta)/(1 + (x - theta)^2))
-% }
-
-% theta_grid = seq(-5, 5, length.out = 1000)
-% y = sapply(theta_grid, neg_log_lik)
-% s = sapply(theta_grid, score_fkt)
-% df = data.frame(theta = theta_grid, y = y, s = s)
-
-% p1 = ggplot(data = df, aes(x = theta_grid, y = y)) + geom_line() + xlab(TeX('$\\theta$')) + ylab("Negative log-likelihood") + theme_bw()
-% p2 = ggplot(data = df, aes(x = theta_grid, y = s)) + geom_line() + xlab(TeX('$\\theta$')) + ylab("Score") + geom_abline(intercept = 0, slope = 0, lty = 2) + theme_bw()
-
-% grid.arrange(p1, p2, ncol = 2)
-% @
-
-% <<>>=
-% # Optimize neg_log_lik via optimize, or via roots of score function
-% (est = c(optimize(neg_log_lik, lower = -5, upper = 5)$minimum,
-% uniroot(score_fkt, lower = -5, upper = 5)$root)) # Brent's Method
-% @
-
-% <<echo = F>>=
-% p1 = p1 + geom_vline(aes(xintercept = est[1]), color = "red") + theme_bw()
-% p2 = p2 + geom_vline(aes(xintercept = est[2]), color = "red")  + theme_bw()
-
-% grid.arrange(p1, p2, ncol = 2)
-% @
-
-
-% \end{vbframe}
+\endlecture
 
 \end{document}
 
