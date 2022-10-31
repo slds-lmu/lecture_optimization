@@ -39,7 +39,7 @@ $$
 \lz 
 
 The problem is called
-
+ 
 \begin{itemize}
 	\item \textbf{unconstrained}, if the domain $\mathcal{S}$ is not restricted: 
 	$$
@@ -309,7 +309,41 @@ The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{conv
 \end{vbframe}
 
 
-\begin{vbframe}{Example 4: SVM}
+
+
+\begin{vbframe}{Example 4: Regularized Log. Regression}
+Regularization reduces the risk of overfitting by using a "worse" model.
+
+\setlength{\abovedisplayskip}{1pt}
+\setlength{\belowdisplayskip}{1pt}
+
+\begin{eqnarray*}
+	\min_{\thetab \in \Theta} \left(-\yi \cdot \thetab^\top\xi + log(1 + e^{\thetab^\top\xi}\right) + \lambda[(1-\alpha)/2||\beta||^{2}_{2} + \alpha||\beta||_{1}],\\ \lambda \geq 0, \alpha \in [0,1]
+\end{eqnarray*}
+
+\begin{center}
+\includegraphics[width=0.65\textwidth]{figure_man/logreg_regul.png}
+\end{center}
+
+\framebreak
+\textbf{Problem characteristics}:
+\begin{itemize}
+	\item Black-box: Solution not available in analytical form
+	\item Multivariate
+	\item Unconstrained
+	\item Smooth
+	\item Convex
+\end{itemize}
+
+\end{vbframe}
+
+
+
+
+
+
+
+\begin{vbframe}{Example 5: SVM}
 
 \begin{footnotesize}
 \begin{itemize}
@@ -402,7 +436,7 @@ with $k(\xi, \xi[j])$ positive definite kernel function, and $\bm{K}_{ij} := k(\
 \end{vbframe}
 
 
-\begin{vbframe}{Example 5: Neural network}
+\begin{vbframe}{Example 6: Neural network}
 
 The (computational) complexity of the optimization problem 
 
