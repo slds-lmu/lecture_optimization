@@ -277,7 +277,7 @@ $$
 \vspace*{-0.1cm}
 
 
-The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{smooth}, \textbf{convex}.
+Problem \textbf{multivariate}, \textbf{unconstrained}, \textbf{smooth}, \textbf{convex} and has analytical solution. 
 
 \vspace*{0.1cm}
 
@@ -312,46 +312,73 @@ The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{conv
 
 \vspace*{-0.5cm}
 
-Regularization reduces the risk of overfitting by using a "worse" model.
+For $y \in \{0, 1\}$ (classification), logistic regression minimizes 
+
+\vspace*{-0.5cm}
+
+\begin{eqnarray*}
+	\min_{\thetab \in \Theta} \risket = \min_{\thetab \in \Theta} \sumin \left(-\yi \cdot \thetab^\top\xi + \log(1 + \exp\left(\thetab^\top\xi\right)\right) 
+\end{eqnarray*}
+
+Problem is multivariate, unconstrained, smooth, convex, but not analytically solvable. 
+
+\vspace*{-0.3cm}
+
+\begin{figure}
+	\includegraphics[width=0.55\textwidth]{figure_man/logreg-0.pdf}
+\end{figure}
+
+\framebreak 
+
+\vspace*{-0.8cm}
+
+Regularization reduces the risk of overfitting. Elastic net regularization is a combination of L1 and L2 regularization: 
 
 \vspace*{-0.3cm}
 
 \begin{footnotesize}
 \begin{eqnarray*}
-	\min_{\thetab \in \Theta} \sumin \left(-\yi \cdot \thetab^\top\xi + \log(1 + \exp\left(\thetab^\top\xi\right)\right) + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \\ \lambda \geq 0, \alpha \in [0,1]
+	\min_{\thetab \in \Theta} \sumin \Lxyi + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \lambda \geq 0, \alpha \in [0,1]
 \end{eqnarray*}
 \end{footnotesize}
 
 \vspace*{-1.2cm}
 
 \begin{columns}
-\begin{column}{.5\textwidth}
-\vspace*{0.5cm}
+\begin{column}{.3\textwidth}
 \begin{figure}
-	\includegraphics{figure_man/logreg-0.pdf}
+	\includegraphics{figure_man/logreg-0-0.1.pdf}\\
+	\includegraphics{figure_man/logreg-0-1.pdf} 
 \end{figure}
 \end{column}
 \begin{column}{.3\textwidth}
 \begin{figure}
-	\includegraphics{figure_man/logreg-0.5-1.pdf}\\
+	\includegraphics{figure_man/logreg-0.5-0.1.pdf}\\
+	\includegraphics{figure_man/logreg-0.5-1.pdf} 
+\end{figure}
+\end{column}
+\begin{column}{.3\textwidth}
+\begin{figure}
+	\includegraphics{figure_man/logreg-1-0.1.pdf}\\
 	\includegraphics{figure_man/logreg-1-1.pdf} 
-\end{figure}
-\end{column}
-\begin{column}{.3\textwidth}
-\begin{figure}
-	\includegraphics{figure_man/logreg-5-1.pdf}	
 \end{figure}
 \end{column}
 \end{columns}
 
 \framebreak
 
+\begin{footnotesize}
+\begin{eqnarray*}
+	\min_{\thetab \in \Theta} \sumin \Lxyi + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \lambda \geq 0, \alpha \in [0,1]
+\end{eqnarray*}
+\end{footnotesize}
+
 \textbf{Problem characteristics}:
 \begin{itemize}
 	\item Multivariate
 	\item Unconstrained
-	\item Smooth for $\alpha = 0$, not smooth for $\alpha > 0$
-	\item Convex
+	\item Smooth if $L$ is smooth and $\alpha = 0$; not smooth otherwise
+	\item Convex if $L$ convex
 \end{itemize}
 
 \end{vbframe}
