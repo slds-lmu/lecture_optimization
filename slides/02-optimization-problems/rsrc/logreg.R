@@ -82,7 +82,7 @@ for (alpha in c(0, 0.5, 1)) {
     p = p + ggtitle(bquote("Reg. risk with  " ~ lambda ~ " = " ~ .(lambda) ~ ", " ~ alpha ~ " = " ~ .(alpha))) 
     p = p + theme(legend.position="none")
 
-    ggsave(paste0("figure_man/logreg-", alpha, "-", lambda, ".pdf"), p, width = 3, height = 3)
+    ggsave(paste0("figure_man/logreg-", alpha, "-", lambda, ".pdf"), p, width = 4, height = 4)
 
   } 
 }
