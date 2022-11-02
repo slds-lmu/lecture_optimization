@@ -24,8 +24,8 @@ calc_log_loss <- function(theta, X, y, lambda=0, alpha = 1){
 }
 
 ### Helper grid for Loss calculation
-b1 <- seq(-0.25,0.5,length.out = 100)
-b2 <- seq(-0.25,0.5,length.out = 100)
+b1 <- seq(-1,3,length.out = 100)
+b2 <- seq(-1,4,length.out = 100)
 grid <- expand.grid(b1, b2)
 
 
@@ -74,6 +74,12 @@ p = plot_elasticnet(df, grid, 1, 0)
 p = p + ggtitle(expression(paste("Unregularized ", R[emp]))) 
 
 ggsave(paste0("figure_man/logreg-0.pdf"), p, width = 4, height = 3)
+
+### Helper grid for Loss calculation
+b1 <- seq(-0.25,0.5,length.out = 100)
+b2 <- seq(-0.25,0.5,length.out = 100)
+grid <- expand.grid(b1, b2)
+
 
 for (alpha in c(0, 0.5, 1)) {
   for (lambda in c(0.1, 1, 5)) {
