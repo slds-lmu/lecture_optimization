@@ -277,7 +277,7 @@ $$
 \vspace*{-0.1cm}
 
 
-Problem \textbf{multivariate}, \textbf{unconstrained}, \textbf{smooth}, \textbf{convex} and has analytical solution. 
+Problem \textbf{multivariate}, \textbf{unconstrained}, \textbf{smooth}, \textbf{convex} and has analytical solution $\thetab = (\Xmat^\top \Xmat + \lambda \bm{I})^{-1}\Xmat^\top \bm{y}$. 
 
 \vspace*{0.1cm}
 
@@ -297,7 +297,7 @@ The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{conv
 
 \begin{figure}
 \begin{center}
-	\includegraphics[width=0.8\textwidth]{figure_man/lasso-ridge_medium.jpg}
+	\includegraphics[width=0.7\textwidth]{figure_man/lasso-ridge_medium.jpg}
 \end{center}
 	\caption{Source: Medium, 2022, Visualize the Loss with Regularization}
 	% https://medium.com/@jingwang.physics/visualize-the-loss-with-regularization-2f82666dc0f7
@@ -332,7 +332,7 @@ Problem is multivariate, unconstrained, smooth, convex, but not analytically sol
 
 \vspace*{-0.8cm}
 
-Regularization reduces the risk of overfitting. Elastic net regularization is a combination of L1 and L2 regularization: 
+Elastic net regularization is a combination of L1 and L2 regularization that can be combined with any loss (here: logistic loss): 
 
 \vspace*{-0.3cm}
 
@@ -377,8 +377,8 @@ Regularization reduces the risk of overfitting. Elastic net regularization is a 
 \begin{itemize}
 	\item Multivariate
 	\item Unconstrained
-	\item Smooth if $L$ is smooth and $\alpha = 0$; not smooth otherwise
-	\item Convex if $L$ convex
+	\item Smooth since $L$ is smooth and $\alpha = 0$; not smooth otherwise
+	\item Convex since $L$ convex
 \end{itemize}
 
 \end{vbframe}

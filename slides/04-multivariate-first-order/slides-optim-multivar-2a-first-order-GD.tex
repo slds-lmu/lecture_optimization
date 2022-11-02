@@ -1,40 +1,30 @@
-%<<setup-child, include = FALSE>>=
-%library(knitr)
-%library(microbenchmark)
-%library(snow)
-%library(colorspace)
-%library(ggplot2)
-%library(zoo)
-%library(gridExtra)
-%source("rsrc/functions.R")
-
-%# mutate = ecr::mutate
-
-%set_parent("../style/preamble.Rnw")
-%@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
-\input{../../latex-math/ml-nn}
 
 
-%\newcommand{\titlefigure}{figure_man/}
+\newcommand{\titlefigure}{figure_man/ml_linreg_example_2.pdf}
 \newcommand{\learninggoals}{
-\item LEARNING GOAL 1
-\item LEARNING GOAL 2}
+\item Definition
+\item Max. Likelihood 
+\item Normal regression
+\item Risk Minimization
+}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
 
-\title{Optimization}
-%\author{}
-%\date{}
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
 
 \begin{document}
 
 \lecturechapter{First order methods: Gradient descent}
-\lecture{Optimization}
+\lecture{Optimization in Machine Learning}
+\sloppy
 
 \begin{vbframe}{Introduction}
 
@@ -120,7 +110,7 @@ $ $ \\
 	\end{tiny}
 \end{vbframe}
 
-
+%%%
 
 \begin{vbframe}{Gradient Descent}
 
@@ -138,6 +128,7 @@ $ $ \\
 \end{vbframe}
 
 
+%%%
 
 
 \begin{vbframe}{Optimizing the linear model with GD}
@@ -217,3 +208,8 @@ $ $ \\
 \endlecture
 \end{document}
 
+%%% 
+
+
+
+%% 
