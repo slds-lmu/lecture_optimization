@@ -79,4 +79,4 @@ p3 = p3 + ggtitle(expression(paste("Ridge")))
 
 p = ggarrange(p1, p2, p3, ncol=3, nrow=1, common.legend = TRUE, legend="right")
 
-ggsave(paste0("figure_man/linreg.pdf"), p, width = 15, height = 4)
+ggsave(paste0("figure_man/linreg.pdf"), p, width = 8, height = 3)
