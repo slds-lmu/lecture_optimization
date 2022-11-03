@@ -5,12 +5,15 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/ml_linreg_example_2.pdf}
+\newcommand{\titlefigure}%{figure_man/ml_linreg_example_2.pdf}
+{figure_man/logreg-0.5-1.pdf}
 \newcommand{\learninggoals}{
 \item Definition
-\item Max. Likelihood 
-\item Normal regression
-\item Risk Minimization
+\item Max. likelihood 
+\item Linear regression
+\item Regularized risk minimization
+\item SVM
+\item Neural network
 }
 
 
@@ -169,10 +172,11 @@ $$
 
 \begin{vbframe}{Example 2: Normal regression}
 
-Assume a dataset $\D = \Dset$ generated according to
+Assume (multivariate) data $\D = \Dset$ \\
+and we want to fit a linear function to it
 
 $$
-\yi = \bm{\theta}^\top \xi + \epsi, \qquad \epsi \overset{iid}{\sim} \mathcal{N}\left(0, 1\right).
+y = \fx = \thetab^\top \xv 
 $$
 
 \begin{center}
@@ -183,20 +187,13 @@ $$
 
 \end{vbframe}
 
-\begin{vbframe}{Example 2: LS linear regression} 
+\begin{vbframe}{Example 2: Least Squares linear regr.} 
 
-
-In least squares (LS) linear regression the goal is to find a vector $\thetab$ which minimizes the sum of squared errors (SSE; also: L2-loss): 
-
+Find param vector $\thetab$ that minimizes SSE / risk with L2 loss
 $$
-\min_{\thetab \in \R^d} \sum_{i = 1}^n \left(\thetab^\top \xi - \yi\right)^2
+\min_{\thetab \in \R^d} \sumin \left(\thetab^\top \xi - \yi\right)^2
 $$
 
-\begin{center}
-	\includegraphics[height=0.30\textwidth, keepaspectratio]{figure_man/ml_linreg_example_2.pdf}
-\end{center}
-
-\framebreak 
 
 \begin{center}
 	\includegraphics[height=0.30\textwidth, keepaspectratio]{figure_man/ml_linreg_example_1.pdf} ~~ \includegraphics[height=0.30\textwidth, keepaspectratio]{figure_man/ml_linreg_example_2.pdf}
@@ -204,15 +201,15 @@ $$
 
 \begin{itemize}
 	\item \textbf{Smooth}, \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex} problem
-	\item Quadratic form: Obtain a geometric interpretation via Eigenspectrum
-	\item The problem has a closed-form solution, which is given by $\thetab = (\Xmat^\top \Xmat)^{-1}\Xmat^\top \bm{y}$, where $\Xmat$ is the design matrix
+	\item Quadratic form
+	\item Analytic solution: $\thetab = (\Xmat^\top \Xmat)^{-1}\Xmat^\top \bm{y}$, where $\Xmat$ is design matrix
 \end{itemize}
 
 \end{vbframe}
 
 \begin{vbframe}{Risk Minimization in ML}
 	
-In the above example
+In the above example, if we exchange
 
 $$
 \min_{\thetab \in \R^d} \sum_{i = 1}^n \textcolor{violet}{\left(\textcolor{cyan}{\thetab^\top \xi} - \yi\right)^2}
@@ -225,17 +222,23 @@ $$
 
 \lz 
 
-This leads us to \textbf{empirical risk minimization} (ERM)
+we arrive at general \textbf{empirical risk minimization} (ERM)
 
 	$$
-	\min \risket =  \sumin L\left(\yi, \fxit\right),
+ \risket \sumin L\left(\yi, \fxit\right) = \textrm{min}!
 	$$
 
-a core concept in machine learning (ML). 
+Usually, we add a regularizer to counteract overfitting:
+
+	$$
+	\riskrt =  \sumin L\left(\yi, \fxit\right) + \lambda J(\thetab) = \textrm{min}!
+	$$
+
+
 
 \framebreak 
 
-ML models usually consists of the following components: 
+ML models usually consist of the following components: 
 
 \begin{center}
 
@@ -247,15 +250,12 @@ ML models usually consists of the following components:
 
 \begin{itemize}
 
-  \item \textbf{Hypothesis Space:} Define (and restrict!) what kind of model 
-  $f$ can be learned from the data.
-  
-  \item \textbf{Risk:} Define the risk function $\risket$ that quantifies how well a specific model performs on a given 
-  data set via a suitable loss function $L$.
+  \item \textbf{Hypothesis Space:} Parametrized function space 
+  \item \textbf{Risk:} Measure prediction errors on data with loss $L$
   
   \item \textbf{Regularization:} Penalize model complexity 
 
-  \item \textbf{Optimization:} Solve the resulting optimization problem through optimizing the risk $\risket$ over the hypothesis space.
+  \item \textbf{Optimization:} Practically minimize risk over parameter space
 
   
 \end{itemize}
@@ -266,12 +266,12 @@ ML models usually consists of the following components:
 
 \begin{footnotesize}
 
-ERM with L2-loss, LM, and quadratic (L2) regularization term: 
+ERM with L2 loss, LM, and L2 regularization term: 
 
 \vspace*{-0.2cm}
 
 $$
-	\min \risket = \sumin \left(\thetab^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetab\|_2^2 \quad \text{(Ridge regr.)}
+	 \riskrt = \sumin \left(\thetab^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetab\|_2^2 \quad \text{(Ridge regr.)}
 $$
 
 \vspace*{-0.1cm}
@@ -286,7 +286,7 @@ ERM with L2-loss, LM, and L1 regularization:
 \vspace*{-0.2cm}
 
 $$
-	\min \risket = \sumin \left(\thetab^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetab\|_1 \quad \text{(Lasso regr.)}
+	\riskrt = \sumin \left(\thetab^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetab\|_1 \quad \text{(Lasso regr.)}
 $$
 
 \vspace*{-0.1cm}
@@ -308,15 +308,16 @@ The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{conv
 
 \vspace*{-0.5cm}
 
-For $y \in \{0, 1\}$ (classification), logistic regression minimizes 
+For $y \in \{0, 1\}$ (classification), logistic regression minimizes \\
+log / Bernoulli / cross-entropy loss over data
 
 \vspace*{-0.5cm}
 
 \begin{eqnarray*}
-	\min_{\thetab \in \Theta} \risket = \min_{\thetab \in \Theta} \sumin \left(-\yi \cdot \thetab^\top\xi + \log(1 + \exp\left(\thetab^\top\xi\right)\right) 
+	\risket = \sumin \left(-\yi \cdot \thetab^\top\xi + \log(1 + \exp\left(\thetab^\top\xi\right)\right) 
 \end{eqnarray*}
 
-Problem is multivariate, unconstrained, smooth, convex, but not analytically solvable. 
+Multivariate, unconstrained, smooth, convex, not analytically solvable. 
 
 \vspace*{-0.3cm}
 
@@ -326,34 +327,34 @@ Problem is multivariate, unconstrained, smooth, convex, but not analytically sol
 
 \framebreak 
 
-\vspace*{-0.8cm}
+\vspace*{-0.9cm}
 
-Elastic net regularization is a combination of L1 and L2 regularization that can be combined with any loss (here: logistic loss): 
+Elastic net regularization is a combination of L1 and L2 regularization %that can be combined with any loss (here: logistic loss): 
 
-\vspace*{-0.3cm}
+\vspace*{-0.4cm}
 
 \begin{footnotesize}
 \begin{eqnarray*}
-	\min_{\thetab \in \Theta} \sumin \Lxyi + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \lambda \geq 0, \alpha \in [0,1]
+	\frac{1}{2n} \sumin \Lxyit + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \lambda \geq 0, \alpha \in [0,1]
 \end{eqnarray*}
 \end{footnotesize}
 
 \vspace*{-0.6cm}
 
 \begin{columns}
-\begin{column}{.3\textwidth}
+\begin{column}{.28\textwidth}
 \begin{figure}
 	\includegraphics{figure_man/logreg-0-0.1.pdf}\\
 	\includegraphics{figure_man/logreg-0-1.pdf} 
 \end{figure}
 \end{column}
-\begin{column}{.3\textwidth}
+\begin{column}{.28\textwidth}
 \begin{figure}
 	\includegraphics{figure_man/logreg-0.5-0.1.pdf}\\
 	\includegraphics{figure_man/logreg-0.5-1.pdf} 
 \end{figure}
 \end{column}
-\begin{column}{.3\textwidth}
+\begin{column}{.28\textwidth}
 \begin{figure}
 	\includegraphics{figure_man/logreg-1-0.1.pdf}\\
 	\includegraphics{figure_man/logreg-1-1.pdf} 
@@ -361,13 +362,14 @@ Elastic net regularization is a combination of L1 and L2 regularization that can
 \end{column}
 \end{columns}
 
+The higher $\lambda$, the closer to the origin, L1 shrinks coeffs exactly to 0.
+
+
 \framebreak
 
-\begin{footnotesize}
 \begin{eqnarray*}
-	\min_{\thetab \in \Theta} \sumin \Lxyi + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \lambda \geq 0, \alpha \in [0,1]
+	\frac{1}{2n} \sumin \Lxyit + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \lambda \geq 0, \alpha \in [0,1]
 \end{eqnarray*}
-\end{footnotesize}
 
 \textbf{Problem characteristics}:
 \begin{itemize}
@@ -381,17 +383,16 @@ Elastic net regularization is a combination of L1 and L2 regularization that can
 
 \begin{vbframe}{Example 5: Linear SVM}
 
-\begin{footnotesize}
 \begin{itemize}
 	\item $\D = \left(\left(\xi, \yi\right)\right)_{i = 1, ..., n}$ with $\yi \in \{-1, 1\}$ (classification)
-	\item $\fxt = \thetab^\top \xi \in \R$ scoring classifier: Predict $1$ if $\fxt > 0$ and $-1$ otherwise. 
+	\item $\fxt = \thetab^\top \xv \in \R$ scoring classifier:\\
+ Predict $1$ if $\fxt > 0$ and $-1$ otherwise. 
 \end{itemize}
-\end{footnotesize}
-
-ERM with LM, Hinge loss, and L2 regularization: 
+\vspace*{0.2cm}
+ERM with LM, hinge loss, and L2 regularization: 
 
 $$
-	\min_{\thetab} ~\sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \thetab^\top \thetab, \quad f^{(i)} := \thetab^\top \xi
+	\riskrt = \sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \thetab^\top \thetab, \quad f^{(i)} := \thetab^\top \xi
 $$
 
 \vspace*{-0.2cm}
@@ -422,7 +423,7 @@ $$
 
 \framebreak 
 
-Understanding Hinge loss $\Lxy = \max\left(1 - y\cdot f, 0\right)$
+Understanding hinge loss $\Lxy = \max\left(1 - y\cdot f, 0\right)$
 
 \begin{footnotesize}
 \begin{center}
@@ -467,7 +468,7 @@ $\mathbf{y}$ & $\fx$ &  \textbf{Correct pred.?}  & $\Lxy$ & \textbf{Reason for c
 	\min_{\thetab}\sumin L\left(\yi, \bm{K}_i^\top ~\thetab\right) + \lambda \thetab^\top \bm{K} \thetab 
 \end{eqnarray*}
 
-with $k(\xi, \xi[j])$ positive definite kernel function, and $\bm{K}_{ij} := k(\xi, \xi[j])$, $i, j = 1, ..., n$ kernel matrix, $\bm{K}_i$ is the $i$-th column of the kernel matrix. 
+with $k(\cdot, \cdot)$ pos. def. kernel function, and \\$\bm{K}_{ij} := k(\xi, \xi[j])$, $n \times n$ psd kernel matrix, $\bm{K}_i$ $i$-th column of $K$. 
 
 \vspace*{0.2cm}
 
@@ -476,7 +477,7 @@ with $k(\xi, \xi[j])$ positive definite kernel function, and $\bm{K}_{ij} := k(\
         Kernelization 
         
         \begin{itemize}
-        	\item allows introducing nonlinearity through projection into higher-dimensional feature space
+        	\item allows introducing nonlinearity through projection into higher-dim. feature space
         	\item without changing problem characteristics (convexity!)
         \end{itemize}
 	\end{column}
@@ -502,14 +503,15 @@ $^{(*)}$ There is also a dual formulation to the problem (comes later!)
 
 \begin{vbframe}{Example 6: Neural network}
 
-The (computational) complexity of the optimization problem 
+Normal loss, but complex $f$ defined as computational feed-forward graph. Complexity of optimization problem 
 
 $$
 \text{arg} \min_{\thetab} \risket,
 $$
 
-(i.e. smoothness, convexity) is influenced by model structure and loss. 		
-\vspace*{-0.3cm}
+so smoothness (maybe) or convexity (usually no) is influenced by loss, neuron function, depth, regularization, etc.
+
+\vspace*{-0.4cm}
 \begin{center}
 		\includegraphics[width=0.3\textwidth]{figure_man/ml_landscape.jpg} ~~~ \includegraphics[width=0.3\textwidth]{figure_man/newrep_n_f.png} ~~~ \includegraphics[width=0.3\textwidth]{figure_man/log_reg.png} 
 		% Last one taken from Intro to DL, 1.04
