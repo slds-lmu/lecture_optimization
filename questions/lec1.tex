@@ -51,6 +51,9 @@ Let X be a random vector. Define $f(w) = var(w^T X)$. What properties does the f
 Let $\mathbf{X} \in \R^{n \times d}$ be an observed feature matrix and $y \in \R^n$ the observed target vector.
 
 Find the least squares estimator $\bm{\theta}^* =  \argmin_{\bm{\theta}} \Vert \mathbf{X} \bm{\theta} - \mathbf{y}\Vert^2_2$.
-
+\begin{itemize}
+    \item $\frac{\partial}{\partial  \bm{\theta}} \Vert \mathbf{X} \bm{\theta} - \mathbf{y}\Vert^2_2 = \frac{\partial}{\partial  \bm{\theta}} (\mathbf{X} \bm{\theta} - \mathbf{y})^\top (\mathbf{X} \bm{\theta} - \mathbf{y}) = \frac{\partial}{\partial  \bm{\theta}} \bm{\theta}^\top\mathbf{X}^\top \mathbf{X} \bm{\theta} - 2\mathbf{y}^\top\mathbf{X} \bm{\theta} + \mathbf{y}^\top\mathbf{y} =$ \\ $2\bm{\theta}^\top\mathbf{X}^\top \mathbf{X} -2\mathbf{y}^\top\mathbf{X} \overset{!}{=} \mathbf{0}$ 
+    \item $\Rightarrow \bm{\theta}^* = (\mathbf{X}^\top \mathbf{X})^{-1}\mathbf{X}^\top \mathbf{y}$
+\end{itemize}
 
 \end{document}
