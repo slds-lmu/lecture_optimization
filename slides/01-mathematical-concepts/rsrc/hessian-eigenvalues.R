@@ -1,6 +1,5 @@
 library(ggplot2)
 library(ggpubr)
-library(numDeriv)
 
 # Two quadratic functions
 
