@@ -7,7 +7,7 @@ Consider the bivariate function $f: \R^2 \to \R, (x_1, x_2) \mapsto x_1^2 + 0.5x
 	\item Find the direction of greatest increase of $f$ at $\mathbf{x} = (1,1).$
 	\item Find the direction of greatest decrease of $f$ at $\mathbf{x} = (1,1).$	
 	\item Find a direction in which $f$ does not instantly change at $\mathbf{x} = (1,1).$
-	\item Assume there exists a differentiable parametrization of a curve $\tilde{\mathbf{x}}: \R \to \R^2, t \mapsto \tilde{\mathbf{x}}(t)$ such that $\forall t \in \R: f(\tilde{\mathbf{x}}(t)) = f(1,1).$ Show that at each point of the curve $\tilde{\mathbf{x}}$ the tangent line $\frac{d}{dt}\tilde{\mathbf{x}}$ is perpendicular to the gradient $\nabla f(\tilde{\mathbf{x}})$.
+	\item Assume there exists a differentiable parametrization of a curve $\tilde{\mathbf{x}}: \R \to \R^2, t \mapsto \tilde{\mathbf{x}}(t)$ such that $\forall t \in \R: f(\tilde{\mathbf{x}}(t)) = f(1,1).$ Show that at each point of the curve $\tilde{\mathbf{x}}$ the tangent line $\frac{\partial \tilde{\mathbf{x}}}{\partial t}$ is perpendicular to the gradient $\nabla f(\tilde{\mathbf{x}})$.
 	\item Interpret (d), (e) geometrically
 	  
 \end{enumerate}

@@ -7,8 +7,8 @@
 	Here, the direction of greatest decrease is given by $-\nabla f(1,1) = (-3, -2)^\top$.
 	\item $D_{\mathbf{v}}f(\mathbf{x}) = \nabla f(1, 1)^\top \mathbf{v} \overset{!}{=} 0 \Rightarrow (3,2) \cdot \mathbf{v} = 0 \iff \mathbf{v} = \alpha \cdot (-2, 3)^\top$ with $\alpha \in \R$ and $\alpha \neq 0.$
 	
-	\item When we differentiate both sides of the equation $f(\tilde{\mathbf{x}}(t)) = f(1,1)$  w.r.t. $t$ we arrive at $\frac{d}{dt} f(\tilde{\mathbf{x}}(t)) = 0$.
-	Via the chain rule it follows that $\nabla f(\tilde{\mathbf{x}})^\top \frac{d}{dt}\tilde{\mathbf{x}} = 0.$
+	\item When we differentiate both sides of the equation $f(\tilde{\mathbf{x}}(t)) = f(1,1)$  w.r.t. $t$ we arrive at $\frac{\partial f(\tilde{\mathbf{x}}(t))}{\partial t}  = 0$.
+	Via the chain rule it follows that $\underbrace{\frac{\partial f}{\partial \tilde{\mathbf{x}}}}_{=\nabla f(\tilde{\mathbf{x}})^\top} \frac{\partial\tilde{\mathbf{x}}}{\partial t} = 0.$
 	\item The gradient is orthogonal to the tangent line of the level curves.
 	  
 \end{enumerate}
