@@ -257,8 +257,20 @@ Let $f: [-1,2] \rightarrow \R, x \mapsto \exp(x^3 - 2x^2)$
 	\item $f'(x) = \exp(x^3 - 2x^2)\cdot(2x^2 - 4x)$
 	\item 
 \begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=0.5\linewidth]{figure/cars-plot-1} 
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
+
+  \hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{exp}\hlstd{(x}\hlopt{^}\hlnum{3} \hlopt{-} \hlnum{2}\hlopt{*}\hlstd{x}\hlopt{^}\hlnum{2}\hlstd{)}
+  \hlstd{df} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{f}\hlstd{(x)} \hlopt{*} \hlstd{(}\hlnum{3}\hlopt{*}\hlstd{x}\hlopt{^}\hlnum{2} \hlopt{-} \hlnum{4}\hlopt{*}\hlstd{x)}
+
+  \hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{x} \hlstd{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.005}\hlstd{)),} \hlkwd{aes}\hlstd{(x))} \hlopt{+}
+    \hlkwd{geom_function}\hlstd{(}\hlkwc{fun} \hlstd{= f,} \hlkwd{aes}\hlstd{(}\hlkwc{linetype} \hlstd{=} \hlstr{"f"}\hlstd{))} \hlopt{+}
+    \hlkwd{geom_function}\hlstd{(}\hlkwc{fun} \hlstd{= df,} \hlkwd{aes}\hlstd{(}\hlkwc{linetype} \hlstd{=} \hlstr{"f'"}\hlstd{))}    \hlopt{+}
+    \hlkwd{scale_linetype_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{"Function"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/1d-plot-1} 
 \end{knitrout}
 	\item $f$ is continuously differentiable $\Rightarrow$ candidates can only be stationary points and the boundary points. \\
 	Find stationary points, i.e., points where \\ 

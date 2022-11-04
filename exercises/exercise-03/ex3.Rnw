@@ -1,0 +1,23 @@
+% !Rnw weave = knitr
+
+<<setup-child, include = FALSE>>=
+library('knitr')
+knitr::set_parent("../../style/preamble_ueb.Rnw")
+@
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{3}{Mathematical Concepts 3}
+
+\aufgabe{Optimality in 2 dimensions}{
+	<<child="ex_rnw/ex_opt_2d_1.Rnw">>=
+	@
+
+
+\aufgabe{Optimality in d dimensions}{
+	<<child="ex_rnw/ex_opt_nd_1.Rnw">>=
+	@
+}
+
+}

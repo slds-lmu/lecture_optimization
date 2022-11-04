@@ -3,7 +3,7 @@ Let $f: [-1,2] \rightarrow \R, x \mapsto \exp(x^3 - 2x^2)$
 	%
 	\item $f'(x) = \exp(x^3 - 2x^2)\cdot(2x^2 - 4x)$
 	\item 
-	<<cars-plot, echo=FALSE, out.width="50%">>=
+	<<1d-plot, echo=TRUE, out.width="50%">>=
 	library(ggplot2)
 	
   f <- function(x) exp(x^3 - 2*x^2)
