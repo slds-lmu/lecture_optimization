@@ -8,8 +8,8 @@
 
 \newcommand{\titlefigure}{figure_man/GE.pdf}
 \newcommand{\learninggoals}{
-\item Discrete
-\item Black-box
+\item Discrete / feature selection
+\item Black-box / hyperparameter optimization
 \item Noisy
 \item Multi-objective
 }
@@ -29,11 +29,11 @@
 
 \begin{vbframe}{Other classes of optimization problems}
 
-\textbf{So far} we considered \enquote{nice} constrained and unconstrained optimization problems: 
+\textbf{So far}: \enquote{nice} (un)constrained problems: 
 
 \begin{itemize}
 	\item Problem defined on continuous domain $\mathcal{S}$
-	\item Objectives (and constraints) available in analytical form
+	\item Analytical objectives (and constraints)
 \end{itemize}
 
 \lz 
@@ -41,7 +41,7 @@
 \textbf{Other characteristics}: 
 \begin{itemize}
 	\item Discrete domain $\mathcal{S}$
-	\item $f$ \textbf{black-box}: Objective not available in analytical form
+	\item $f$ \textbf{black-box}: Objective not available in analytical form;\\computer program to evaluate
 	\item $f$ \textbf{noisy}: Objective can be queried but evaluations are noisy $\fx = f_{\text{true}}(\xv) + \eps, \quad \eps \sim F$
 	\item $f$ \textbf{expensive}: Single query takes time / resources
 	\item $f$ multi-objective: $\fx: \mathcal{S} \to \R^m$, $\fx = \left(f_1(\xv), ..., f_m(\xv)\right)$
@@ -90,9 +90,12 @@ $\bm{s}$ can take $2^d$ possible values:
 \end{footnotesize}
 
 
+
 \framebreak 
 
-\vspace*{-1cm}
+Let $\D = \left(\left(\xi, \yi\right)\right)_{i = 1, ..., n}$ where $\xi \in \R^p$.\\Fit LM based on the best subset of features. 
+
+%\vspace*{-1cm}
 
 \begin{eqnarray*}
 	\min_{\bm{s} \in \{0, 1\}^d, \thetab \in \Theta} \left(\yi - \thetab^\top ~\text{diag}(\bm{s})~\xi\right)^2\\
@@ -100,6 +103,9 @@ $\bm{s}$ can take $2^d$ possible values:
 \end{eqnarray*}
 
 \vspace*{-0.5cm}
+
+$\bm{s}_j \in \{0, 1\}$ indicates whether feature $j$ is used in the model.
+
 
 \begin{wrapfigure}{r}{0.5\textwidth}
 	\includegraphics[width=0.5\textwidth]{figure_man/subset_selection.png}
@@ -123,7 +129,7 @@ It can be shown that the problem is even \textbf{NP-hard} (Bin et al., 1997, The
 
 
 	
-\begin{vbframe}{Example 2: Feature sel. (unconstrained)}
+\begin{vbframe}{Example 2: Wrapper Feature selection}
 
 Best subset selection can be generalized to any ML learner $\ind$:
 
