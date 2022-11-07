@@ -26,13 +26,18 @@
 
 \begin{frame}{Quadratic Interpolation}
 
-Similar to golden ratio procedure. Define $x^{\text{new}}$ as minimum of a parabola fitted through $(x^{\text{left}}, f^{\text{left}})$, $(x^{\text{best}}, f^{\text{best}})$, $(x^{\text{right}}, f^{\text{right}})$. 
+Similar to golden ratio procedure but select $x^{\text{new}}$ differently: $x^{\text{new}}$ as minimum of a parabola fitted through 
+
+$$(x^{\text{left}}, f^{\text{left}}), (x^{\text{best}}, f^{\text{best}}), (x^{\text{right}}, f^{\text{right}}).$$ 
+
 
 \foreach \i in {0, 1, 2, 3, 4}{
   \only<\i>{
-  \vspace*{1cm}
   \begin{center}
-  \includegraphics{figure_man/quadratic\i.pdf} 
+  \includegraphics{figure_man/quadratic\i.pdf} \\
+  \begin{footnotesize}
+    Left: Fit parabola (dashed) and propose minimum (red) as new point. Middle: Switch / not switch with $x^{\text{best}}$. Right: New interval. 
+  \end{footnotesize}
   \end{center}
   }
 }
@@ -121,21 +126,26 @@ Similar to golden ratio procedure. Define $x^{\text{new}}$ as minimum of a parab
 \item Parabola degenerates to line and no real minimum exists (if 3 points are collinear).
 \end{itemize}
 \item Algorithm must then abort, finding a global minimum is not guaranteed.
-\item In practice, extensively tested numerical libraries should be used.
+% \item In practice, extensively tested numerical libraries should be used.
 \end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Brent's method}
 
-In practice a combination of golden ratio and quadratic interpolation is often used, as in the R-function \texttt{optimize()}.
+\begin{itemize}
+  \item Brent proposed an algorithm (1973) that alternates between golden ratio search and quadratic interpolation as follows: 
+  \begin{itemize}
+    \item Quadratic interpolation step acceptable if: (i) $x^{\text{new}}$ falls within $[x^{\text{left}}, x^{\text{right}}]$ (ii) $x^{\text{new}}$ sufficiently far away from  $x^{\text{best}}$ \\
+    \begin{footnotesize}(Heuristic: Less than half of movement of step before last) 
+    \end{footnotesize}
+    % https://mil.ufl.edu/nechyba/www/__eel6825.f2003/course_materials/t11.neural_networks/papers/nric_ch10.1-2.pdf
+    \item Otherwise: Proposal via golden ratio
+  \end{itemize}
+  \item Benefit: Fast convergence (quadratic interpolation), unstable steps (e.g. parabola degenerated) stabilized by golden ratio search
+  \item Convergence guaranteed if the function $f$ has a local minimum
+  \item Used in R-function \texttt{optimize()}
+\end{itemize}
 
-\lz
-
-The fast convergence of the quadratic interpolation is exploited, unstable calculation steps (e.g. parabola degenerated) are stabilized by golden ratio search.
-
-\lz
-
-If the function $f$ has a local minimum, then convergence is guaranteed. 
 
 % \begin{itemize}
 % \item Zunächst wird Suchintervall durch Goldenen Schnitt solange verkleinert, bis Zielfunktion durch Parabel an den letzten 3 Evaluationspunkten gut approximiert wird.
@@ -149,8 +159,6 @@ If the function $f$ has a local minimum, then convergence is guaranteed.
 \begin{vbframe}{Example: ML Cauchy}
 
 
-\begin{columns}
-\begin{column}{0.5\textwidth}
 \begin{itemize}
 \item Density Poisson distribution:
 \begin{footnotesize}
@@ -161,18 +169,17 @@ $$
 \item Negative log-Likelihood for $n$ observations:
 \begin{footnotesize}
 \begin{eqnarray*}
-- \ell(\lambda, \mathcal{D}) &=& - \log L(\lambda, \mathcal{D}) \\ &=& - \log \prod_{i = 1}^n  f\left(x^{(i)} ~|~ \lambda\right) \\ &=&  - \sum_{i = 1}^n \frac{\lambda^{x^{(i)} } \cdot \exp(-\lambda)}{x^{(i)} !} 
+- \ell(\lambda, \mathcal{D}) &=& - \log L(\lambda, \mathcal{D}) = - \log \prod_{i = 1}^n  f\left(x^{(i)} ~|~ \lambda\right) =  - \sum_{i = 1}^n \frac{\lambda^{x^{(i)} } \cdot \exp(-\lambda)}{x^{(i)} !} 
 \end{eqnarray*}
 \end{footnotesize}
 
 \end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
+
+\vspace*{-0.5cm}
 \begin{figure}
-  \includegraphics[width = 1\textwidth]{figure_man/poisson.pdf}
+  \includegraphics[width = 0.8\textwidth]{figure_man/poisson.pdf}
 \end{figure}
-\end{column}
-\end{columns}
+
 
 
 
