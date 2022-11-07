@@ -6,7 +6,7 @@
 \usepackage{wrapfig}
 \usepackage{graphicx}
 
-\newcommand{\titlefigure}{figure_man/GE.pdf}
+\newcommand{\titlefigure}{figure_man/landscapes2.jpg}
 \newcommand{\learninggoals}{
 \item Discrete / feature selection
 \item Black-box / hyperparameter optimization
@@ -95,17 +95,16 @@ $\bm{s}$ can take $2^d$ possible values:
 
 Let $\D = \left(\left(\xi, \yi\right)\right)_{i = 1, ..., n}$ where $\xi \in \R^p$.\\Fit LM based on the best subset of features. 
 
-%\vspace*{-1cm}
+\vspace*{-0.5cm}
 
 \begin{eqnarray*}
-	\min_{\bm{s} \in \{0, 1\}^d, \thetab \in \Theta} \left(\yi - \thetab^\top ~\text{diag}(\bm{s})~\xi\right)^2\\
-	\min_{\thetab \in \Theta, 1 \le k \le d} \left(\yi - \thetab^\top\xi\right)^2, ||\thetab||_{0} \leq k\\
+	% \min_{\bm{s} \in \{0, 1\}^d, \thetab \in \Theta} \left(\yi - \thetab^\top ~\text{diag}(\bm{s})~\xi\right)^2\\
+	\min_{\thetab \in \Theta} \left(\yi - \thetab^\top\xi\right)^2, ||\thetab||_{0} = k\\
 \end{eqnarray*}
 
 \vspace*{-0.5cm}
 
-$\bm{s}_j \in \{0, 1\}$ indicates whether feature $j$ is used in the model.
-
+% $\bm{s}_j \in \{0, 1\}$ indicates whether feature $j$ is used in the model.
 
 \begin{wrapfigure}{r}{0.5\textwidth}
 	\includegraphics[width=0.5\textwidth]{figure_man/subset_selection.png}
@@ -131,24 +130,31 @@ It can be shown that the problem is even \textbf{NP-hard} (Bin et al., 1997, The
 	
 \begin{vbframe}{Example 2: Wrapper Feature selection}
 
-Best subset selection can be generalized to any ML learner $\ind$:
+Subset sel. can be generalized to any learner $\ind$ using only features \bm{s}:
 
 \begin{eqnarray*}
 	\min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}),
 \end{eqnarray*}
-
-where $\widehat{\text{GE}}$ is the generalization error of learner $\ind$ based on measure $\rho$ using features $\bm{s}$, estimated via a resampling split $\mathcal{J}$. 
-
+$\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resampling splits $\mathcal{J}$
 \lz 
 
 \textbf{Problem characteristics}:
 \begin{itemize}
-	\item Black-box: Objective not available in analytical form
-	\item Discrete: $\mathcal{S}$ is discrete
-	\item Unconstrained
-	\item Noisy: Function evaluations depend on resampling
-	\item Expensive (depending on training time of learner $\ind$)
+%\item Single-Objective
+\item black box \\
+\begin{footnotesize}eval by program\end{footnotesize}
+\item S is discrete / binary
+\item expensive \\
+\begin{footnotesize}
+1 eval: 1 or multiple ERM(s)!
+\end{footnotesize}
+\item noisy \\
+\begin{footnotesize}
+uses data / resampling
+\end{footnotesize}
+\item NB: Less features can be better in prediction (overfitting)
 \end{itemize}
+
 
 \end{vbframe}
 
@@ -196,49 +202,71 @@ Complexity of the problem is reduced with $k$: Lower $k$ $\to$ less possible val
 
 \begin{vbframe}{Example 4: Feature sel. (multiobjective)}
 
-If model sparsity is also an objective we can formulate the problem as multi-objective problem:
+Feature selection is usually inherently multi-objective,
+with model sparsity as a 2nd trade-off target:
 
   \begin{eqnarray*}
     \min_{\textbf{s} \in \{0, 1\}^p} \left(\widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}), \sum\nolimits_{i = 1}^p s_i\right). 
-  \end{eqnarray*}
+\end{eqnarray*}
 
-    \begin{center}
-            \includegraphics[width= 0.5\textwidth]{figure_man/pareto.png}
-    \end{center}
+$\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resampling splits $\mathcal{J}$ 
 
 
-
-\framebreak
-
-\textbf{Problem characteristics}:
+\begin{columns}
+\begin{column}{0.4\textwidth}
 \begin{itemize}
-	\item Black-box: Objective not available in analytical form
-	\item Discrete: $\mathcal{S}$ is discrete
-	\item Noisy: Function evaluations depend on resampling	
-	\item Multiobjective
-	\item Expensive (depending on training time of learner $\ind$)	
+\item Multiobjective
+\item black box \\
+\begin{footnotesize}eval by program\end{footnotesize}
+\item S is discrete / binary
+\item expensive \\
+\begin{footnotesize}
+1 eval: 1 or multiple ERM(s)!
+\end{footnotesize}
+\item noisy \\
+\begin{footnotesize}
+uses data / resampling
+\end{footnotesize}
 \end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics{figure_man/pareto.png}
+\end{center}
+\end{column}
+\end{columns}
 
 \end{vbframe}
 
-\begin{vbframe}{Example 5: HPO}
-\vspace*{-0.2cm}
+\begin{vbframe}{Example 5: Hyperparameter optimization}
+
 \begin{itemize}
-	\item ML learning algorithm is also called \textbf{inducer} $\ind$.
-	\item $\ind$ usually configurable by hyperparameters (HP) $\lamv \in \Lambda$. 
-	\item Finding best HP configuration $\lamv^\ast$ referred to as \textbf{hyperparameter optimization (HPO)} problem: 
+	%\item ML learning algorithm is also called \textbf{inducer} $\ind$.
+	\item Learner $\ind$ usually configurable by hyperparameters $\lamv \in \Lambda$. 
+	\item Find best HP configuration $\lamv^\ast$ 
 	$$
 	\lamv^\ast \in \argmin\nolimits_{\lamv \in \Lambda} c(\lamv) = \argmin \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \lamv)
 	$$
-	$\widehat{\text{GE}}$ generalization error based on measure $\rho$ and estimated via a resampling split $\mathcal{J}$. 
+	$\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resampling splits $\mathcal{J}$ 
 \end{itemize}
 
 \vspace*{-0.2cm}
 
+\begin{columns}
+\begin{column}{0.6\textwidth}
+
 \begin{figure}[h]
 	\centering
-	\includegraphics[width = 0.7\textwidth]{figure_man/hpo_loop_1.png}
+	\includegraphics{figure_man/hpo_loop_1.png}
 \end{figure}
+\end{column}
+\begin{column}{0.4\textwidth}
+		\begin{center}
+\includegraphics{figure_man/landscapes2.jpg}
+\begin{tiny}{XGBoost HP landscape; source: \url{ceur-ws.org/Vol-2846/paper22.pdf}}\end{tiny}
+\end{center}
+\end{column}
+\end{columns}
 
 \framebreak 
 		
@@ -254,29 +282,25 @@ is very challenging:
 	\begin{column}{0.6\textwidth}
 	\begin{itemize}
 		\item $c$ black box \\
-		\begin{footnotesize}(no analytical information available)\end{footnotesize}
-		\item $c$ expensive \\
+		\begin{footnotesize}eval by progrmm\end{footnotesize}
+		\item expensive \\
 		\begin{footnotesize}
-		(one evaluation of $c$: performing ERM!)
+		1 eval: 1 or multiple ERM(s)!
 		\end{footnotesize}
-		\item evaluations of $c$ are usually noisy \\
+		\item noisy \\
 		\begin{footnotesize}
-		(estimates are based on resampling)
+		uses data / resampling
 		\end{footnotesize}
   		\item the search space $\Lambda$ might be mixed 
 		\begin{footnotesize}
-		(continuous, integer, categorical or even hierarchical)
+		continuous, integer, categ. or hierarchical
 		\end{footnotesize}
 	\end{itemize}
 	\end{column}
  	\begin{column}{0.35\textwidth}
 		\begin{center}
-			\includegraphics[width = 1.0\textwidth]{figure_man/landscapes.png}
-			\begin{footnotesize}
-				{Exploring the Hyperparameters of XGBoost Through 3D Visualizations ({\O}reb{\ae}k \& Geitle, AAAI-MAKE 2021)}
-				\newline
-				\tiny{Source: \url{ceur-ws.org/Vol-2846/paper22.pdf}}
-			\end{footnotesize}
+			\includegraphics[width = 1.0\textwidth]{figure_man/landscapes2.jpg}
+\begin{tiny}{XGBoost HP landscape; source: \url{ceur-ws.org/Vol-2846/paper22.pdf}}\end{tiny}
 		\end{center}
   \end{column}
 \end{columns}
