@@ -45,60 +45,77 @@ Let $f: \R \to \R$.
 
 \lz 
 
-\textbf{Goal}: Construct efficient optimization procedure to find optimum. 
-
-\vspace*{0.2cm} 
-
 
 \only<1>{
+  Always maintain three points: left, right, and current best.
+
+  \vspace*{0.2cm} 
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-1.png}
   \end{figure}
 }
 
 \only<2>{
+  Propose a random point. 
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-2.png}
   \end{figure}
+
+  \vfill
+
+  \begin{footnotesize}
+    NB: Later we will define the optimal choice for a new proposal.
+  \end{footnotesize}  
 }
 
 \only<3>{
+  Compare proposal against current best. 
+
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-3.png}
   \end{figure}
 }
 
 \only<4>{
+  If it is better: proposal becomes current best.
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-4.png}
   \end{figure}
 }
 
 \only<5>{
+  New search interval: around current best. 
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-5.png}
   \end{figure}
 }
 
 \only<6>{
+  Propose a random point.   
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-6.png}
   \end{figure}
 }
 
 \only<7>{
+  Compare proposal against current best. 
+
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-7.png}
   \end{figure}
 }
 
 \only<8>{
+  If it is better: proposal becomes current best.
+
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-8.png}
   \end{figure}
 }
 
 \only<9>{
+  New search interval: around current best. 
+
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-9.png}
   \end{figure}
@@ -106,24 +123,32 @@ Let $f: \R \to \R$.
 
 
 \only<10>{
+  Propose a random point.   
+
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-10.png}
   \end{figure}
 }
 
 \only<11>{
+  Compare proposal against current best. 
+
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-11.png}
   \end{figure}
 }
 
 \only<12>{
+  If it is better: proposal becomes current best.
+
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-12.png}
   \end{figure}
 }
 
 \only<13>{
+  New search interval: around current best. 
+
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-13.png}
   \end{figure}
@@ -165,8 +190,8 @@ Let $f: \R \to \R$.
 \textbf{Key question:} How can $x^{\text{new}}$ be chosen better than randomly? 
 
 \begin{itemize}
-    \item \textbf{Insight 1: } It should always be in the bigger interval.
-    \item \textbf{Insight 2: } $x^{new}$ must be chosen symmetrically to $x^{best}$ s.t. potential new intervals $[x^{left}, x^{new}]$, $[x^{best}, x^{right}]$  have same length.
+    \item \textbf{Insight 1: } Always in the bigger interval to maximize reduction.
+    \item \textbf{Insight 2: } $x^{new}$ symetrically to $x^{best}$ for uniform reduction. 
 \end{itemize}
 
 \begin{figure}
@@ -175,11 +200,11 @@ Let $f: \R \to \R$.
 
 \vspace*{-0.5cm}
 
-W.l.o.g. consider two hypothetical outcomes $x^{\text{new}}$: $f_{new, a}$ and $f_{new, b}$. 
+Consider two hypothetical outcomes $x^{\text{new}}$: $f_{new, a}$ and $f_{new, b}$. 
 
 \framebreak
 
-If $f_{new, a}$ is the outcome, $x_{best}$ will stay our best observed point and we would search in the interval around $x_{best}$ : 
+If $f_{new, a}$ is the outcome, $x_{best}$ stays best and we search around $x_{best}$ : 
 
 $$
     [x_{left}, x_{new}]
@@ -191,7 +216,7 @@ $$
 
 \framebreak 
 
-If $f_{new, b}$ is the outcome, $x_{new}$ will stay our best observed point and we would search in the interval around $x_{new}$ : 
+If $f_{new, b}$ is outcome, $x_{new}$ becomes best point and search around $x_{new}$ : 
 
 $$
     [x_{best}, x_{right}] 
@@ -203,7 +228,7 @@ $$
 
 \framebreak 
 
-We require those two potential intervals to be of equal size: 
+For uniform reduction, require the two potential intervals equal sized: 
 
 \begin{eqnarray*}
     b := x_{right} - x_{best} = x_{new} - x_{left}
@@ -215,7 +240,7 @@ We require those two potential intervals to be of equal size:
 
 \framebreak 
 
-Thinking one iteration further, we also want those intervals of same size: 
+One iteration ahead: require again the intervals to be of same size. 
 
 \begin{eqnarray*}
     c := x_{best} - x_{left} = x_{right} - x_{new}
@@ -241,8 +266,12 @@ To summarize, we require:
 \includegraphics[width=0.3\textwidth]{figure_man/goldensec.png}\\
 \end{figure}
 
+\framebreak 
+
 \begin{itemize}
-\item Based on the definition we get: 
+\item We require the same percentage improvement in each iteration
+\item For $\varphi$ reduction factor of interval sizes ($a$ to $b$, and $b$ to $c$)
+
 $$
 \varphi := \frac{b}{a} = \frac{c}{b}
 $$
@@ -260,6 +289,7 @@ $$
 
 \framebreak
 
+\item With $x^{\text{new}}$ we always go $\varphi$ percentage points into the interval. 
 \item Given $x^{left}$ and $x^{right}$ it follows
 \begin{eqnarray*}
 x^{best}&=&x^{right}-\varphi(x^{right}-x^{left})\\
