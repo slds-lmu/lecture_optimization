@@ -1,4 +1,5 @@
-\documentclass{beamer}
+%\documentclass{beamer}
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
 \usepackage[orientation=landscape,size=a0,scale=1.4,debug]{beamerposter}
 \mode<presentation>{\usetheme{mlr}}
@@ -259,25 +260,6 @@
 						\hspace*{1ex} the (empirical) risk maps a parameter $\thetab$, which parameterizes the model $f(\cdot ~|~ \thetab)$, to the sum of losses
 						$\risket = \sumin L(\yi, \fxit)$
 					\end{myblock}
-					\begin{myblock}{Encoding}
-						\begin{codebox}
-							$u_i$ : $i$-th bit in a machine number
-						\end{codebox}
-						\hspace*{1ex}
-						\begin{codebox}
-						$\mathcal{M}$ : Machine numbers
-						\end{codebox}
-						\hspace*{1ex}
-						\begin{codebox}
-						$x = S \cdot b^e \cdot \left(1 + \sum_{i = 1}^m u_ib^{-i}\right)$ : representation of a machine number
-						\end{codebox}
-						\hspace*{1ex} with sign $S \in \{-1, 1\}$, base $b > 1$, mantissa length $m$, exponent $e$  \\
-						\hspace*{1ex}
-						\begin{codebox}
-							 $\eps_m$ : machine epsilon
-						\end{codebox}
-						\hspace*{1ex} upper bound on the relative error %due to rounding in floating point arithmetic.
-					\end{myblock}					
 				}
 			\end{minipage}
 		\end{beamercolorbox}
@@ -289,85 +271,6 @@
 
 \begin{frame}[fragile]{}
 \begin{columns}
-	\begin{column}{.31\textwidth}
-		\begin{beamercolorbox}[center]{postercolumn}
-			\begin{minipage}{.98\textwidth}
-				\parbox[t][\columnheight]{\textwidth}{
-					\vspace{1cm}
-					\begin{myblock}{Numerical Analysis}
-						\begin{codebox}
-							$\xv, \tilde \xv \in \R^n$ : in-disturbed / disturbed input
-						\end{codebox}
-						\hspace*{1ex}
-						\begin{codebox}
-							$\Delta \xv, \delta \xv$ : absolute / relative error in the computation of $\xv$
-						\end{codebox}
-						\hspace*{1ex}
-						\begin{codebox}
-						$\kappa$ : smallest $\kappa \geq 0$, so that
-						$\frac{|f(x+\Delta x)-y|}{|y|} \leq \kappa \ \frac{|\Delta x|}{|x|} \text{ for } \Delta x \to 0.$
-						\end{codebox}
-						\hspace*{1ex} $\kappa$ is called condition number\\
-						\begin{codebox}
-							$f, \tilde f: \R^n \to \R^m$ : a problem $f$ and an algorithm $\tilde f$ to solve $f$
-						\end{codebox}
-					\end{myblock}
-					\begin{myblock}{Big-O}
-						\textbf{Note}: in this chapter, all functions are real-valued 
-						\vspace*{3ex}
-						\begin{codebox}
-							$f \in \order(g) \text{ for } x \to \infty$ : $\lim\limits_{x \to \infty} \sup \frac{f(x)}{g(x)} < \infty$
-						\end{codebox}
-						\hspace*{1ex} \enquote{Big-O} notation: say \enquote{$f$ runs in the order of $g$} \\
-						% \begin{codebox}
-						% 	$f \in o(g) \text{ for } x \to \infty$ : $\lim\limits_{x \to \infty} \frac{f(x)}{g(x)} = 0$
-						% \end{codebox}
-						% \hspace*{1ex} \enquote{Little-O-Notation}. $g$ grows much faster than $f$. \\
-						\begin{codebox}
-						$f \in \order(1)\}$ : $f$ has constant runtime complexity
-						\end{codebox}
-						\hspace*{1ex}
-						\begin{codebox}
-						$f \in \order(\log(n)) $ : $f$ has logarithmic runtime complexity
-						\end{codebox}
-						\hspace*{1ex}
-						\begin{codebox}
-						$f \in \order(n^c) $ : $f$ has polynomial runtime complexity
-						\end{codebox}
-						\hspace*{1ex} linear for $c = 1$, quadratic for $c = 2$ and cubic for $c = 3$. \\
-						\begin{codebox}
-						$f \in \order(c^n) $ : $f$ has exponential runtime complexity
-						\end{codebox}
-					\end{myblock}
-					\begin{myblock}{Quadrature}
-						\textbf{Note}: in this chapter, all functions are real-valued functions.
-						\vspace*{3ex}
-						\begin{codebox}
-							$I(f) = \int_a^b f(x)~dx$ : (Riemann) integral of $f$
-						\end{codebox}
-						\hspace*{1ex}
-						\begin{codebox}
-							$Q(f)$ : numerical approximation of $I(f)$ based on a quadrature rule $Q$
-						\end{codebox}
-						\hspace*{1ex}
-						\begin{codebox}
-							$|\Delta I(f)| = |Q(f) - I(f)|$ : error of the numerical approximation
-						\end{codebox}
-					\end{myblock}		
-					% \begin{myblock}{Matrix Decomposition}
-					% 	\begin{codebox}
-					% 		$\sum_{k = 1}^n k = \frac{n(n+1)}{2}$ : Sum of natural numbers by Carl Friedrich Gauss
-					% 	\end{codebox}
-					% 	\hspace*{1ex}
-					% 	\begin{codebox}
-					% 		$\sum_{k = 1}^n k^2 = \frac{n(n+1)(2n + 1)}{6}$ : Sum of squares of first n numbers
-					% 	\end{codebox}
-					% \end{myblock}													
-					\vfill
-				}
-			\end{minipage}
-		\end{beamercolorbox}
-	\end{column}
 	\begin{column}{.31\textwidth}
 		\begin{beamercolorbox}[center]{postercolumn}
 			\begin{minipage}{.98\textwidth}
@@ -496,7 +399,16 @@
 			\end{minipage}
 		\end{beamercolorbox}
 	\end{column}
+    \begin{column}{.31\textwidth}
+	       	\begin{beamercolorbox}[center]{postercolumn}
+			     \begin{minipage}{.98\textwidth}
+				    \parbox[t][\columnheight]{\textwidth}{
+                    }
+			\end{minipage}
+		\end{beamercolorbox}
+	\end{column}
 \end{columns}
 \end{frame}
+
 
 \end{document}

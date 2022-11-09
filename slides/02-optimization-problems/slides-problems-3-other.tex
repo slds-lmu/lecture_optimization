@@ -99,7 +99,7 @@ Let \begin{footnotesize}$\D = \left(\left(\xi, \yi\right)\right)_{1 \le i \le n}
 
 \begin{eqnarray*}
 	% \min_{\bm{s} \in \{0, 1\}^d, \thetab \in \Theta} \left(\yi - \thetab^\top ~\text{diag}(\bm{s})~\xi\right)^2\\
-	\min_{\thetab \in \Theta} \left(\yi - \thetab^\top\xi\right)^2, ||\thetab||_{0} = k\\
+	\min_{\thetab \in \Theta} \left(\yi - \thetab^\top\xi\right)^2, ||\thetab||_{0} \leq k\\
 \end{eqnarray*}
 
 \vspace*{-0.5cm}
@@ -116,7 +116,7 @@ Let \begin{footnotesize}$\D = \left(\left(\xi, \yi\right)\right)_{1 \le i \le n}
 \begin{itemize}
 	\item White-box: Objective available in analytical form
 	\item Discrete: $\mathcal{S}$ is mixed continuous and discrete
-	\item Unconstrained
+	\item Constrained
 \end{itemize}
 
 The problem is even \textbf{NP-hard} (Bin et al., 1997, The Minimum Feature Subset Selection Problem)!
@@ -145,7 +145,7 @@ $\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resamplin
 \textbf{Problem characteristics}:
 \begin{itemize}
 %\item Single-Objective
-\item blck box \\
+\item black box \\
 \begin{footnotesize}eval by program\end{footnotesize}
 \item $\mathcal{S}$ is discrete / binary
 \item expensive \\
@@ -170,49 +170,49 @@ uses data / resampling
 
 \end{vbframe}
 
-\begin{vbframe}{Example 3: Feature sel. (constrained)}
+% \begin{vbframe}{Example 3: Feature sel. (constrained)}
 
-With prior knowledge / preferences on max. number of features $k$:
+% With prior knowledge / preferences on max. number of features $k$:
 
-\begin{eqnarray*}
-\min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}), \quad \sum\nolimits_{i = 1}^p s_i \le k, 
-\end{eqnarray*}
-
-
-\begin{figure}[!tbp]
-  \centering
-  \begin{minipage}[b]{0.5\textwidth}
-    \includegraphics[width =\textwidth]{figure_man/pipeline.png}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[b]{0.4\textwidth}
-    \includegraphics[width =\textwidth]{figure_man/subsetsize.png}
-  \end{minipage}
-\end{figure}
+% \begin{eqnarray*}
+% \min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}), \quad \sum\nolimits_{i = 1}^p s_i \le k, 
+% \end{eqnarray*}
 
 
-\framebreak
-
-\lz 
-
-\textbf{Problem characteristics}:
-\begin{itemize}
-	\item Black-box: Objective not available in analytical form
-	\item Discrete: $\mathcal{S}$ is discrete
-	\item Constrained 
-	\item Noisy: Function evaluations depend on resampling	
-	\item Expensive (depending on training time of learner $\ind$)
-\end{itemize}
-
-\lz 
-
-Complexity of the problem is reduced with $k$: Lower $k$ $\to$ less possible values for $\bm{s}$. 
-
-\end{vbframe}
+% \begin{figure}[!tbp]
+%   \centering
+%   \begin{minipage}[b]{0.5\textwidth}
+%     \includegraphics[width =\textwidth]{figure_man/pipeline.png}
+%   \end{minipage}
+%   \hfill
+%   \begin{minipage}[b]{0.4\textwidth}
+%     \includegraphics[width =\textwidth]{figure_man/subsetsize.png}
+%   \end{minipage}
+% \end{figure}
 
 
+% \framebreak
 
-\begin{vbframe}{Example 4: Feature sel. (multiobjective)}
+% \lz 
+
+% \textbf{Problem characteristics}:
+% \begin{itemize}
+% 	\item Black-box: Objective not available in analytical form
+% 	\item Discrete: $\mathcal{S}$ is discrete
+% 	\item Constrained 
+% 	\item Noisy: Function evaluations depend on resampling	
+% 	\item Expensive (depending on training time of learner $\ind$)
+% \end{itemize}
+
+% \lz 
+
+% Complexity of the problem is reduced with $k$: Lower $k$ $\to$ less possible values for $\bm{s}$. 
+
+% \end{vbframe}
+
+
+
+\begin{vbframe}{Example 3: Feature sel. (multiobjective)}
 
 Feature selection is usually inherently multi-objective,
 with model sparsity as a 2nd trade-off target:
@@ -250,7 +250,7 @@ uses data / resampling
 
 \end{vbframe}
 
-\begin{vbframe}{Example 5: Hyperparameter optimization}
+\begin{vbframe}{Example 4: Hyperparameter optimization}
 
 \begin{itemize}
 	%\item ML learning algorithm is also called \textbf{inducer} $\ind$.
