@@ -1,0 +1,10 @@
+Let $\mathbf{X}$ be a $d$ dimensional random vector and let $\mathbf{Y}$ be a one dimensional random vector with $\var(\mathbf{X}) = \mathbf{\Sigma}_{\mathbf{X}}$ and $\cov(\mathbf{X}, \mathbf{Y}) = \mathbf{\Sigma}_{\mathbf{X}, \mathbf{Y}} \in \R^{d \times 1}.$ \\
+Further, let $f:\R^d \rightarrow \R, \mathbf{w} \mapsto \var(\mathbf{w}^\top \mathbf{X} - \mathbf{Y}).$
+
+\begin{enumerate}
+	\item Show that $f$ is convex.
+	\item Compute $\nabla f$ and $\nabla^2 f$
+	\item Under which condition exists a unique minimizer $\mathbf{w}^*$ of $f$. Is this a global minimum? (if it exists)
+	\item Given the samples $(\mathbf{x}_i, y_i) \sim \P_{\mathbf{X}, \mathbf{Y}},$ 
+	under which condition is the least squares estimator a consistent estimator of $\mathbf{w}^*$ in general?\footnote{This question is out of the scope of this lecture; however, it gives interesting insights into the entities we have computed.}
+\end{enumerate}

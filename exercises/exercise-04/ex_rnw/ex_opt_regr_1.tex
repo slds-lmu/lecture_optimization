@@ -1,0 +1,11 @@
+\begin{enumerate}
+\item Show that ridge regression is a convex problem and compute its analytical solution (given the feature matrix $\mathbf{X} \in \R^{n\times d}$ and the target vector $\mathbf{y} \in \R^n$).
+\item When doing Bayesian regression we are interested in the posterior density $p_{\bm{\theta}|\;\mathbf{X}, \mathbf{y}}(\bm{\theta}) \propto p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}(\mathbf{y}) p_{\bm{\theta}}(\bm{\theta})$ where $p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}$ is the likelihood and $p_{\bm{\theta}}$ is the prior density. Assume the observations are i.i.d. with $y_i \sim \mathcal{N}(\mathbf{x}^\top_i\bm{\theta}, 1)$ and the parameters are also i.i.d. with $\bm{\theta}_j \sim \mathcal{N}(0, \sigma_w)$.
+Find the maximizer of the posterior density. What do you observe?
+\item Find the prior density that would result in Lasso regression in b).
+\item In the lecture you have learned that Ridge regression with regularization coefficient $\lambda$ can be equivalently stated as solving \\
+$\min_{\bm{\theta}} \Vert(\mathbf{X}\theta - \mathbf{y})\Vert^2_2$ s.t. $\Vert t\Vert_2\leq t.$ \\
+This means we can associate with every $\lambda$ a $t$ and hence we can treat $t$ as a function of $\lambda$, i.e., $t:\R_{+,0} \rightarrow \R_{+,0}.$
+Show that if $\lambda > 0$ then $\Vert\bm{\theta}^*\Vert_2 = t(\lambda).$ \\ \textit{Hint 1}: You do not need to find $t(\lambda)$ \\
+\textit{Hint 2}: For two non-singular matrices $\mathbf{A}, \mathbf{B}$ for which $\mathbf{A} + \mathbf{B}$ is invertible it holds that $(\mathbf{A} + \mathbf{B})^{-1} = \mathbf{A}^{-1}  - \mathbf{A}^{-1}\mathbf{B}(\mathbf{A} + \mathbf{B})^{-1}$
+\end{enumerate}

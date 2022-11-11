@@ -1,0 +1,14 @@
+\begin{enumerate}
+	\item $\var(\mathbf{w}^\top \mathbf{X} - \mathbf{Y}) = \var(\mathbf{w}^\top \mathbf{X}) + \var(\mathbf{Y}) -2\cov(\mathbf{w}^\top \mathbf{X}, \mathbf{Y}) = \mathbf{w}^\top \Sigma_\mathbf{X} \mathbf{w} + \var(\mathbf{Y}) - 2\mathbf{w}^\top \Sigma_{\mathbf{XY}}.$ This is a quadratic form in $\mathbf{w}$ and $\Sigma_{\mathbf{X}}$ is p.s.d. (since it is a covariance matrix) $\Rightarrow f$ is convex.
+	\item $\nabla f =  2\Sigma_{\mathbf{X}}\mathbf{w} - 2\Sigma_{\mathbf{XY}}, \nabla^2f = 2\Sigma_{\mathbf{X}}$
+	\item $\nabla f \overset{!} = \mathbf{0} \iff 2\Sigma_{\mathbf{X}}\mathbf{w} - 2\Sigma_{\mathbf{XY}} = 0 \iff \Sigma_{\mathbf{X}}\mathbf{w} = \Sigma_{\mathbf{XY}}.$
+This system of linear equations has a unique solution if $\Sigma_{\mathbf{X}}$ is non-singular. If 	$\Sigma_{\mathbf{X}}$ is non-singular it follows that $ \mathbf{w} = \Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}}.$ In this case $\Sigma_{\mathbf{X}}$ is p.d. since no eigenvalue can be zero, $f$ is strictly convex and the local minimum is global. 
+\item First condition: Since $\mathbf{w}$ exists $\Sigma_{\mathbf{X}}$ must be non-singular. \\
+Then $\Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}} = \E\left((\mathbf{X} - \E(\mathbf{X})(\mathbf{X} - \E(\mathbf{X}))^\top\right)^{-1}\E\left((\mathbf{X} - \E(\mathbf{X}))(\mathbf{Y} - \E(\mathbf{Y}))^\top\right)$ \\
+Second condition: If $\E(\mathbf{X}) = \mathbf{0}, \E(\mathbf{Y}) = \mathbf{0}$ then \\
+ $\Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}} = \left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}\E(\mathbf{X}\mathbf{Y}^\top).$ \\
+ $n(\mathbf{x}_{1:n}^\top\mathbf{x}_{1:n})^{-1}$ is a consistent estimator of $\left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}$ and \\
+ $\frac{1}{n}\mathbf{x}_{1:n}^\top y_{1:n}$ is a consistent estimator of $\E(\mathbf{X}\mathbf{Y}^\top)$.\\
+ $\Rightarrow$ The least squares estimator $(\mathbf{x}_{1:n}^\top\mathbf{x}_{1:n})^{-1}\mathbf{x}_{1:n}^\top y_{1:n}$ is a consistent estimator of $\left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}\E(\mathbf{X}\mathbf{Y}^\top)$.
+	
+\end{enumerate}
