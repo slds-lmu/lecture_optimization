@@ -29,9 +29,9 @@ Let $f: \R \to \R$.
 
 \lz 
 
-\textbf{Goal}: Construct efficient optimization procedure to find optimum. 
+\textbf{Goal}: Iteratively improve eval points. Assume function is unimodal. Will not rely on gradients, so this also works for black-box problems.
 
-\vspace*{0.2cm} 
+\vspace*{-0.2cm} 
 
 \begin{figure}
   \includegraphics{figure_man/golden-ratio-0.png}
@@ -56,7 +56,7 @@ Let $f: \R \to \R$.
 }
 
 \only<2>{
-  Propose a random point. 
+  Propose random point in interval. 
   \begin{figure}
     \includegraphics{figure_man/golden-ratio-2.png}
   \end{figure}
@@ -165,7 +165,7 @@ Let $f: \R \to \R$.
 \item For $t = 0, 1, 2, ...$
 \begin{itemize}
     \item Choose $x^{\text{new}}$ randomly in $[x^{\text{left}}, x^{\text{right}}]$
-    \item If $f(x^{\text{new}}) < f(x^{\text{new}})$:
+    \item If $f(x^{\text{new}}) < f(x^{\text{best}})$:
     \begin{itemize}
         \item $x^{\text{best}} \leftarrow x^{\text{new}}$
     \end{itemize}
@@ -173,13 +173,9 @@ Let $f: \R \to \R$.
 \end{itemize}
 \end{itemize}
 
-\lz 
-
 \begin{figure}
     \centering
-    \includegraphics[width=0.24\textwidth]{figure_man/golden-ratio-2.png}     \includegraphics[width=0.24\textwidth]{figure_man/golden-ratio-3.png}
-    \includegraphics[width=0.24\textwidth]{figure_man/golden-ratio-4.png}
-    \includegraphics[width=0.24\textwidth]{figure_man/golden-ratio-5.png}
+    \includegraphics[width=1\textwidth]{figure_man/golden-ratio-summary.png}  
 \end{figure}
 
 \end{vbframe}
@@ -190,7 +186,7 @@ Let $f: \R \to \R$.
 \textbf{Key question:} How can $x^{\text{new}}$ be chosen better than randomly? 
 
 \begin{itemize}
-    \item \textbf{Insight 1: } Always in the bigger interval to maximize reduction.
+    \item \textbf{Insight 1: } Always in bigger subinterval to maximize reduction.
     \item \textbf{Insight 2: } $x^{new}$ symetrically to $x^{best}$ for uniform reduction. 
 \end{itemize}
 
