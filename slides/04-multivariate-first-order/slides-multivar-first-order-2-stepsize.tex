@@ -7,10 +7,10 @@
 
 \newcommand{\titlefigure}{figure_man/big_small_stepsize_cropped.png}
 \newcommand{\learninggoals}{
-\item Definition
-\item Max. Likelihood 
-\item Normal regression
-\item Risk Minimization
+\item Impact of step size
+\item Fixed vs. adaptive 
+\item Exact line search
+\item Armijo rule and backtracking 
 }
 
 
@@ -80,9 +80,8 @@
 
 	
 	\begin{vbframe}{Step size control: Diminishing step size}
-	\begin{footnotesize}
-	\textbf{Problem of fixed \& adaptive}: Difficult to determine the optimal step size and depending on the problem the optimal step size has different values at different times.
-	\end{footnotesize}
+
+	How can we adaptively control step size? 
 	
 		\begin{itemize}
 			\item A natural way of selecting $\alpha$ is to decrease its value over time
@@ -98,8 +97,8 @@
 		\end{itemize}
 
 		\begin{center}
-			\includegraphics[width = 0.7\textwidth]{figure_man/example-GD.png} \\
-			\begin{footnotesize} Example: GD on $f(x) = |x|$ with diminishing step size $\alpha^{[t]} = \frac{1}{t}$, with $t$ being the iteration of GD. In this case a diminishing step length is absolutely necessary in order to reach a point close to the minimum.
+			\includegraphics[width = 1\textwidth]{figure_man/fixed_vs_adaptive.pdf} \\
+			\begin{footnotesize} Example: GD on $f(x) = \begin{cases} \frac{1}{2} x^2 & \text{if } |x| \le \delta \\  \delta \cdot (|x|- 1 / 2 \cdot \delta) & \text{ otherwise,}\end{cases}$ \\ with constant (small) step size, constant (large) step size, and diminishing step size $\alpha^{[t]} = \frac{1}{t}$, with $t$ being the iteration of GD. 
 			\end{footnotesize}
 		\end{center}
 		
