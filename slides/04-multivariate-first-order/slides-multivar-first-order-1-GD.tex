@@ -8,10 +8,11 @@
 
 \newcommand{\titlefigure}{figure_man/linesearch.png}
 \newcommand{\learninggoals}{
-\item Definition
-\item Max. Likelihood 
-\item Normal regression
-\item Risk Minimization
+\item Line search
+\item Descent directions
+\item GD
+\item ERM with GD
+\item Pseudoresiduals
 }
 
 
@@ -27,7 +28,7 @@
 \lecture{Optimization in Machine Learning}
 \sloppy
 
-\begin{vbframe}{Introduction}
+\begin{vbframe}{Iterative line search}
 
 	Let $f$ be the height of a mountain depending on the geographic coordinates $(x_1, x_2)$
 	\vspace*{-0.1cm}
@@ -41,13 +42,13 @@
 	\argmin f(\xv)
 	$$
 	
-	\textbf{Central idea}: Iterative line search algorithms
+	\textbf{Central idea}: Repeat
 	\vspace*{-0.15cm}
 	\begin{columns}
 		\begin{column}{0.58\textwidth}
 			\begin{enumerate}
-				\item At $\xv \in \R^d$ we search for a \textbf{descent direction} $\mathbf{d}$ along which $f$ decreases
-			  	\item Along $\mathbf{d}$ we go until $f$ is sufficiently reduced (\textbf{step size control}).
+				\item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d}$ 
+			  	\item Move along $\mathbf{d}$ until $f$ sufficiently reduced (\textbf{step size control}) and update location
 			\end{enumerate}
 		\end{column}
 		\begin{column}{0.4\textwidth}
@@ -58,153 +59,175 @@
 		\end{column}
 	\end{columns}
 	
-\framebreak
-
-\begin{center}
-$ $ \\
-\includegraphics[width=0.8\textwidth]{figure_man/negative_gradients.png}
-\end{center}
-
 \end{vbframe}
 
 \begin{vbframe}{Line search for smooth functions}
 
-	In the following, let $f: \R^d \to \R$ be continuously differentiable.
+	Let $f: \R^d \to \R$ continuously differentiable.
 	
 	\lz
 	
-	\textbf{Definition:} A vector $\mathbf{d}\in \R^d /\ \{\mathbf{0}\}$ is called \textbf{descent direction} in $\xv$ if
+	\textbf{Definition:} $\mathbf{d}\in \R^d /\ \{\mathbf{0}\}$ is a \textbf{descent direction} in $\xv$ if
 	$$
-	\nabla_{\mathbf{d}} f(\xv) = \nabla f(\xv) ^T \mathbf{d} < 0,
+	D_d f(\xv) = \nabla f(\xv) ^T \mathbf{d} < 0 \text{ (neg. directional derivative)}
 	$$
-	
-	i.e., the directional derivative at $\xv$ towards $\mathbf{d}$ is negative.
-	(for the terminology, refer to chapter 1 \textbf{Mathematical concepts}.)
-	\vspace*{-0.2cm}
-	\begin{center}
-		\includegraphics[width = 0.5\textwidth]{figure_man/descent_direction.png}
-	\end{center}
-	
+
+	\begin{figure}
+		\includegraphics[width = 0.4\textwidth]{figure_man/descent_direction.pdf} \\
+		\begin{footnotesize}
+			The angle between $\alpha$ between vectors $- \nabla \fx$ and $d$ must be $\in [90^{\circ}, 270^{\circ}]$. 
+		\end{footnotesize}
+	\end{figure}
+
+	\framebreak 
+
+	\textcolor{red}{ADD BRANIN}
+
 	\framebreak
 	
-	Line search algorithms can be summarized as follows:
-	\vspace*{-0.2cm}
 	\begin{algorithm}[H]
 	  \caption{Line search}
 	  \begin{algorithmic}[1]
-	  \State Choose a starting point $\xv^{[0]} \in \R^d$
-	  \For {$t = 0, 1, 2, ...$}
-	    \State Calculate a descent direction $\mathbf{d}^{[t]}$ for the current $\xv^{[t]}$:
-	$$
-	\nabla_{\mathbf{d}^{[t]}} f(\xv^{[t]}) = (\mathbf{d}^{[t]})^\top\nabla f(\xv^{[t]}) < \mathbf{0}
-	$$
-	    \State Find a $\alpha^{[t]}$ such that with $\xv^{[t + 1]} = \xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}$
-	  the function value becomes smaller, i.e. $f(\xv^{[t + 1]}) < f(\xv^{[t]})$.
-	    \State If no convergence has been achieved and the maximum number of iterations
-	has not been exceeded, continue with step 2.
-	  \EndFor
+	  \State Starting point $\xv^{[0]} \in \R^d$
+	  \While {Stopping criterion not met}
+	    \State Calculate a descent direction $\mathbf{d}^{[t]}$ for current $\xv^{[t]}$
+	    \State Find $\alpha^{[t]}$ s.t. $f(\xv^{[t + 1]}) < f(\xv^{[t]})$ for $\xv^{[t + 1]} = \xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}$
+	   .
+	    \State Update $\xv^{[t + 1]} = \xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}$
+	  \EndWhile
 	  \end{algorithmic}
 	\end{algorithm}
 	\vspace*{-0.2cm}
 	\begin{tiny}
 		Please note that the terminology is misleading as ``line search'' on the one hand refers to Step 4 (selecting the step size that decreases $f(\xv)$) and on the other hand ``line search'' is the umbrella term for iterative algorithms that are based on finding a local minimum using descent methods. \par
 	\end{tiny}
+
+	\lz 
+
+	Key questions: 
+	\begin{itemize}
+		\item How do choose $\mathbf{d}^{[t]}$ (this chapter)
+		\item How do choose $\alpha^{[t]}$ (next chapter)
+	\end{itemize}
+
 \end{vbframe}
 
 %%%
 
 \begin{vbframe}{Gradient Descent}
 
-	Line search with the direction of the steepest descent (the negative gradient) is commonly referred to as \textbf{gradient descent} (GD). 
+	Remember properties of gradient: 
+
+	\begin{itemize}
+		\item Gradient $\nabla \fx$: direction of greatest increase
+		\item Neg. gradient $- \nabla \fx$: direction of greatest decrease
+	\end{itemize}
+
+	\vspace*{0.3cm}
+
+	Line search with $\mathbf{d} = - \nabla \fx$ is called \textbf{gradient descent} (GD). 
 
 	\begin{center}
-		$f(x_1, x_2) = - \sin(x_1) \cdot \frac{1}{2\pi} \exp\left( (x_2 - \pi / 2)^2 \right)$
-
-		\begin{center}
-			\includegraphics[width = 0.9\textwidth]{figure_man/example-descent1.png}
-		\end{center}
-		
+		\includegraphics[width = 0.8\textwidth]{figure_man/example-descent1.png} \\
+		\begin{footnotesize}
+			GD for $f(x_1, x_2) = - \sin(x_1) \cdot \frac{1}{2\pi} \exp\left( (x_2 - \pi / 2)^2 \right)$ with sensibly chosen step size $\alpha^{[t]}$. 
+		\end{footnotesize}
 	\end{center}
+
 
 \end{vbframe}
 
+\begin{vbframe}{Starting points for GD}
+
+The outcome may depend on the chosen starting point. 
+
+\lz 
+
+\textcolor{red}{Branin with GD and different starting points}
+
+\end{vbframe}
 
 %%%
 
 
-\begin{vbframe}{Optimizing the linear model with GD}
+\begin{vbframe}{Optimize LS linear regression with GD}
 
-	Given are $n$ observations $\D = \Dset$. We assume that the unknown connection between $\xv \in \R^p$ and $y\in \R$ can be described as $f(\xv) = y.$
+	\begin{footnotesize}
+
+	Let $\D = \Dset$ and minimize 
+
+	$$
+		\risket = \min_{\thetab\in \R^d} \sumin \left(\thetab^\top \xi - \yi\right)^2
+	$$
+	\textbf{NB: } For illustration, we use GD, even though closed-form solutions exists. 
+	\end{footnotesize}
 	
-	\vspace*{0.2cm}
-
-	\textbf{Aim:} Find a good estimate for $f$ give $\D$. 
-
-	\vspace*{0.2cm}
-
-	\textbf{Approach:} We restrict $f$ to the hypothesis space of linear functions $\Hspace = \fxt = \{\thetab^{\top}\xv, \thetab \in \R^p\}$. We use the quadratic loss as a loss function, and minimize the resulting empirical risk
-	
+	\begin{footnotesize}
 	\begin{eqnarray*}
-	\argmin_{\thetab}\riske(\thetab) &=& \argmin_{\thetab} \sum_{i=1}^n \left(y^{(i)} - \fxit\right)^2 \\ &=& \argmin_{\thetab} \sum_{i=1}^n \left(y^{(i)} - \thetab^{\top} \xv^{(i)}\right)^2 \\
+	\textbf{Gradient: } && \nabla_{\thetab}\riske(\thetab) =  \frac{\partial \riske(\thetab)}{\partial
+	\thetab} = - \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetab^{\top} \xv^{(i)}\right) \xv^{(i)} \\
+	% \textbf{GD Update: } && \thetatn \leftarrow \thetat + \alpha^{[t]} \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetab^{[t]\top} \xv^{(i)}\right) \xv^{(i)}
 	\end{eqnarray*}
-	
-	% \begin{footnotesize}
-	% $^{(*)}$To keep the notation simple, the intercept term is not explicitly written here. For an intercept term we simply define $\thetab \in \R^{p + 1}$ and define our data points $\tilde x^{(i)} = (1, x^{(i)}_1, ..., x^{(i)}_p)$.
-	% \end{footnotesize}
-
-	\framebreak
-	
-	The gradient of $\riskt$ is 	
-	$$
-	\nabla_{\thetab}\riske(\thetab) =  \frac{\partial \riske(\thetab)}{\partial
-	\thetab} = - \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetab^{\top} \xv^{(i)}\right) \xv^{(i)}.
-	$$
-	
-	Therefore, an iteration of gradient descent is
-	
-	$$
-	\thetatn \leftarrow \thetat + \alpha^{[t]} \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetab^{[t]\top} \xv^{(i)}\right) \xv^{(i)}.
-	$$
-	
-	$\alpha$ determines the length of the step and is called \textbf{step size} or, in risk minimization, \textbf{learning rate}.
-
-	\lz 
-
-	\begin{footnotesize}
-	\textbf{Note: } For illustration, we optimize the linear model with quadratic loss with gradient descent, even though a closed-form solutions exists in this case. 
 	\end{footnotesize}
 
-	\framebreak
-	
-	
+	% $\alpha^{[t]}$ also called \textbf{learning rate} in context of ERM.
+
+	\vspace*{-0.5cm}
+
 	\begin{center}
-	$ $ \\
-	\includegraphics[width=\textwidth]{figure_man/iter0.png}\\
-	\begin{footnotesize}
-	\end{footnotesize}
-	\end{center}
-
-
-	
-	\framebreak
-	
-	\begin{center}
-	$ $ \\
-	\includegraphics[width=\textwidth]{figure_man/iter1.png}\\
-	\begin{footnotesize}
-	\end{footnotesize}
-	\end{center}
-	
-	\framebreak
-	
-	\begin{center}
-	$ $ \\
-	\includegraphics[width=\textwidth]{figure_man/iter2.png}\\
-	\begin{footnotesize}
-	\end{footnotesize}
+	\includegraphics[width=0.8\textwidth]{figure_man/gradient_descent_lm.pdf}
 	\end{center}
 
 \end{vbframe}
+
+\begin{vbframe}{ERM for NN with GD}
+
+	\textcolor{red}{Example with NN}
+
+\end{vbframe}
+
+\begin{vbframe}{GD for ERM: Pseudoresiduals}
+
+\begin{footnotesize}
+
+Gradient for ERM problem: 
+
+\vspace*{-0.5cm}
+
+\begin{eqnarray*}
+- \pd{\risket}{\thetab} &=& - \pd{\sumin \Lxyit}{\thetab}= - \sumin \underbrace{\pd{\Lxyi}{\fxi}}_{\text{pseudo residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetab}
+\end{eqnarray*}
+
+\vspace*{-0.5cm}
+
+\begin{itemize}
+	\item \textbf{pseudo residuals} tell us how to distort $\fxi$ to achieve greatest decrease of $\Lxyi$ (best pointwise update)
+	\item $\pd{\fxit}{\thetab}$ tells us how to modify $\thetab$ accordingly
+	\item GD step sums up these modifications across all observations $i$
+\end{itemize}
+
+\begin{minipage}[b]{0.45\textwidth}
+  \textbf{NB:} Pseudo-residuals 
+  $\tilde{r}\left( f \right)$ 
+  match usual residuals for L2 loss:
+  \begin{align*}
+  - \pd{\Lxy}{\fx} & = - \pd{0.5(y - \fx)^2}{\fx}\\ 
+                   & = y - \fx
+  \end{align*}
+\end{minipage}%
+\begin{minipage}[b]{0.05\textwidth}
+   \phantom{foo}
+\end{minipage}
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width=0.9\textwidth]{figure_man/pseudo_residual_1.png}
+  % Taken from lecture_sl, chapter advriskmin
+\end{minipage}
+
+\end{footnotesize}
+
+
+\end{vbframe}
+
 
 \endlecture
 \end{document}
