@@ -142,7 +142,7 @@
 The outcome may depend on the chosen starting point. 
 
 \begin{figure}
-	\includegraphics[width=0.7\textwidth]{figure_man/gradient_descent_branin.pdf} \\
+	\includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_branin.pdf} \includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_branin2.pdf}\\
 	\vspace*{-0.5cm}
 	\begin{footnotesize}
 		$500$ iterations of GD with constant step size $\alpha = 10^{-4}$ for three different starting poitns.  
@@ -186,8 +186,47 @@ The outcome may depend on the chosen starting point.
 
 \begin{vbframe}{ERM for NN with GD}
 
-	\textcolor{red}{Example with NN}
+Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize 
 
+\vspace*{-0.3cm}
+
+$$
+	\risket = \min_{\thetab\in \R^d} \sumin \left(\fxt - \yi\right)^2
+$$
+
+\vspace*{-0.1cm}
+
+where $\fxt$ is a neural network with 2 hidden layers (2 units each). 
+
+\vspace*{-1.5cm}
+
+\begin{figure}
+	\includegraphics[width=0.6\textwidth]{figure_man/gradient_descent_NN_0.pdf}
+\end{figure}
+
+\framebreak 
+
+After $10$ iters of GD: 
+
+\begin{figure}
+	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_10_surface.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history.pdf}
+\end{figure}
+
+\framebreak 
+
+After $100$ iters of GD: 
+
+\begin{figure}
+	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_100_surface.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history.pdf}
+\end{figure}
+
+\framebreak 
+
+After $300$ iters of GD (note the zig-zag-behavior after iter. 200):
+
+\begin{figure}
+	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_300_surface.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history.pdf}
+\end{figure}
 \end{vbframe}
 
 \begin{vbframe}{GD for ERM: Pseudoresiduals}
