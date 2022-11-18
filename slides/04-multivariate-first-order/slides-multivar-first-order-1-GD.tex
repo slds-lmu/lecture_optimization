@@ -8,7 +8,7 @@
 
 \newcommand{\titlefigure}{figure_man/linesearch.png}
 \newcommand{\learninggoals}{
-\item Line search
+\item Iterative Descent / Line Search
 \item Descent directions
 \item GD
 \item ERM with GD
@@ -28,7 +28,7 @@
 \lecture{Optimization in Machine Learning}
 \sloppy
 
-\begin{vbframe}{Iterative line search}
+\begin{vbframe}{Iterative Descent}
 
 	Let $f$ be the height of a mountain depending on the geographic coordinates $(x_1, x_2)$
 	\vspace*{-0.1cm}
@@ -61,7 +61,7 @@
 	
 \end{vbframe}
 
-\begin{vbframe}{Line search for smooth functions}
+\begin{vbframe}{Iterative Descent}
 
 	Let $f: \R^d \to \R$ continuously differentiable.
 	
@@ -75,18 +75,24 @@
 	\begin{figure}
 		\includegraphics[width = 0.4\textwidth]{figure_man/descent_direction.pdf} \\
 		\begin{footnotesize}
-			The angle between $\alpha$ between vectors $- \nabla \fx$ and $d$ must be $\in [90^{\circ}, 270^{\circ}]$. 
+			Angle between $- \nabla \fx$ and $d$ must be $\in (90^{\circ}, 270^{\circ})$. 
 		\end{footnotesize}
 	\end{figure}
 
-	\framebreak 
+	% \framebreak 
 
-	\textcolor{red}{ADD BRANIN}
+	% \begin{figure}
+	% 	\includegraphics[textwidth]{figure_man/branin_dirderiv.jpg} \\
+	% 	\begin{footnotesize}
+ %            Scaled directional derivatives in various directions as well as gradient and negative gradient.
+ %            Colors indicate if ascending or descending.
+	% 	\end{footnotesize}
+	% \end{figure}
 
 	\framebreak
 	
 	\begin{algorithm}[H]
-	  \caption{Line search}
+	  \caption{Iterative Descent / Line search}
 	  \begin{algorithmic}[1]
 	  \State Starting point $\xv^{[0]} \in \R^d$
 	  \While {Stopping criterion not met}
@@ -99,15 +105,15 @@
 	\end{algorithm}
 	\vspace*{-0.2cm}
 	\begin{tiny}
-		Please note that the terminology is misleading as ``line search'' on the one hand refers to Step 4 (selecting the step size that decreases $f(\xv)$) and on the other hand ``line search'' is the umbrella term for iterative algorithms that are based on finding a local minimum using descent methods. \par
+		NB: Terminology is sometimes ambiguous: ``line search'' can refer to Step 4 (selecting the step size that decreases $f(\xv)$) and can mean umbrella term for iterative descent algorithms. \par
 	\end{tiny}
 
 	\lz 
 
 	Key questions: 
 	\begin{itemize}
-		\item How do choose $\mathbf{d}^{[t]}$ (this chapter)
-		\item How do choose $\alpha^{[t]}$ (next chapter)
+		\item How do choose $\mathbf{d}^{[t]}$ (now)
+		\item How do choose $\alpha^{[t]}$ (later)
 	\end{itemize}
 
 \end{vbframe}
@@ -116,16 +122,16 @@
 
 \begin{vbframe}{Gradient Descent}
 
-	Remember properties of gradient: 
+	Properties of gradient: 
 
 	\begin{itemize}
-		\item Gradient $\nabla \fx$: direction of greatest increase
-		\item Neg. gradient $- \nabla \fx$: direction of greatest decrease
+		\item $\nabla \fx$: direction of greatest increase
+		\item $- \nabla \fx$: direction of greatest decrease
 	\end{itemize}
 
 	\vspace*{0.3cm}
 
-	Line search with $\mathbf{d} = - \nabla \fx$ is called \textbf{gradient descent} (GD). 
+	Using $\mathbf{d} = - \nabla \fx$ is called \textbf{gradient descent}. 
 
 	\begin{center}
 		\includegraphics[width = 0.8\textwidth]{figure_man/example-descent1.png} \\
@@ -137,15 +143,15 @@
 
 \end{vbframe}
 
-\begin{vbframe}{Starting points for GD}
+\begin{vbframe}{GD and Multimodal functions}
 
-The outcome may depend on the chosen starting point. 
+Outcome will depend on start point. 
 
 \begin{figure}
 	\includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_branin.pdf} \includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_branin2.pdf}\\
-	\vspace*{-0.5cm}
+	\vspace*{-0.3cm}
 	\begin{footnotesize}
-		$500$ iterations of GD with constant step size $\alpha = 10^{-4}$ for three different starting poitns.  
+		$100$ iters of GD with const $\alpha = 10^{-4}$.
 	\end{footnotesize}
 \end{figure}
 
@@ -161,9 +167,9 @@ The outcome may depend on the chosen starting point.
 	Let $\D = \Dset$ and minimize 
 
 	$$
-		\risket = \min_{\thetab\in \R^d} \sumin \left(\thetab^\top \xi - \yi\right)^2
+		\risket = \sumin \left(\thetab^\top \xi - \yi\right)^2
 	$$
-	\textbf{NB: } For illustration, we use GD, even though closed-form solutions exists. 
+	\textbf{NB: } For illustration, we use GD even though closed-form solution exists. GD-like (more adv.) approaches like this MIGHT make sense for large data, though.
 	\end{footnotesize}
 	
 	\begin{footnotesize}
@@ -191,7 +197,7 @@ Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize
 \vspace*{-0.3cm}
 
 $$
-	\risket = \min_{\thetab\in \R^d} \sumin \left(\fxt - \yi\right)^2
+	\risket = \sumin \left(\fxt - \yi\right)^2
 $$
 
 \vspace*{-0.1cm}
@@ -245,7 +251,7 @@ Gradient for ERM problem:
 
 \begin{itemize}
 	\item \textbf{pseudo residuals} tell us how to distort $\fxi$ to achieve greatest decrease of $\Lxyi$ (best pointwise update)
-	\item $\pd{\fxit}{\thetab}$ tells us how to modify $\thetab$ accordingly
+	\item $\pd{\fxit}{\thetab}$ tells us how to modify $\thetab$ accordingly and wiggle model output
 	\item GD step sums up these modifications across all observations $i$
 \end{itemize}
 
