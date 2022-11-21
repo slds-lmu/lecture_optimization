@@ -1,0 +1,280 @@
+\documentclass[a4paper]{article}
+\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+
+
+
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+\usepackage{a4wide,paralist}
+\usepackage{amsmath, amssymb, xfrac, amsthm}
+\usepackage{dsfont}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{framed}
+\usepackage{multirow}
+\usepackage{bytefield}
+\usepackage{csquotes}
+\usepackage[breakable, theorems, skins]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{cancel}
+\usepackage{bm}
+
+
+\input{../../style/common}
+
+\tcbset{enhanced}
+
+\DeclareRobustCommand{\mybox}[2][gray!20]{%
+	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+	\fi
+}
+
+\DeclareRobustCommand{\myboxshow}[2][gray!20]{%
+%	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+%	\fi
+}
+
+
+%exercise numbering
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{\roman{enumii}}
+\renewcommand\labelenumi{\theenumi}
+
+
+\font \sfbold=cmssbx10
+
+\setlength{\oddsidemargin}{0cm} \setlength{\textwidth}{16cm}
+
+
+\sloppy
+\parindent0em
+\parskip0.5em
+\topmargin-2.3 cm
+\textheight25cm
+\textwidth17.5cm
+\oddsidemargin-0.8cm
+\pagestyle{empty}
+
+\newcommand{\kopf}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfic}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfsl}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newenvironment{allgemein}
+	{\noindent}{\vspace{1cm}}
+
+\newcounter{aufg}
+\newenvironment{aufgabe}[1]
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}: #1}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newcounter{loes}
+\newenvironment{loesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+	{\bigskip}
+	
+\newenvironment{bonusaufgabe}
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}*\footnote{This
+	is a bonus exercise.}:}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newenvironment{bonusloesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}*:}\\\noindent}
+	{\bigskip}
+
+
+
+\begin{document}
+% !Rnw weave = knitr
+
+
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{4}{Optimization Problems 1}
+
+
+\aufgabe{Regression}{
+
+\begin{enumerate}
+\item Let $f:\R^d\rightarrow\R, \bm{\theta} \mapsto 0.5\Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + 0.5\cdot\lambda\Vert\bm{\theta}\Vert^2_2, \lambda > 0$\\
+$\frac{\partial}{\partial \bm{\theta}} f = \bm{\theta}^\top\mathbf{X}^\top\mathbf{X} - \mathbf{y}^\top \mathbf{X} + \lambda \bm{\theta}^\top \overset{!}{=} \mathbf{0} \iff \bm{\theta}^\top(\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I}) = \mathbf{y}^\top\mathbf{X}$ \\
+$\Rightarrow \bm{\theta} = (\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y}.$ \\
+$\frac{\partial^2}{\partial \bm{\theta}\partial\bm{\theta}^\top} f = \underbrace{\mathbf{X}^\top\mathbf{X}}_{\text{p.s.d.}} + \underbrace{\lambda \mathbf{I}}_{\text{p.d. if }\lambda > 0}$ is p.d. if $\lambda > 0 \Rightarrow f$ is (strictly) convex
+\item Since the observations and parameters are assumed to be i.i.d. it follows that \\
+$p_{\bm{\theta}|\;\mathbf{X}, \mathbf{y}}(\bm{\theta}) \propto p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}(\mathbf{y}) p_{\bm{\theta}}(\bm{\theta}) \propto \exp\left(-\frac{(\mathbf{X}\bm{\theta} - \mathbf{y})^\top\mathbf{I}(\mathbf{X}\bm{\theta} - \mathbf{y})}{2}\right)\exp\left(-\frac{\bm{\theta}^\top\mathbf{I}\bm{\theta}}{2\sigma_w^2}\right).$ \\
+The minimizer of the negative $\log$ posterior density is maximizer of posterior density and hence \\
+$\bm{\theta}^* = \argmin_{\theta} - \log \left(\exp\left(-\frac{(\mathbf{X}\bm{\theta} - \mathbf{y})^\top\mathbf{I}(\mathbf{X}\bm{\theta} - \mathbf{y})}{2}\right)\exp\left(-\frac{\bm{\theta}^\top\mathbf{I}\bm{\theta}}{2\sigma_w^2}\right)\right) = \argmin_{\theta} 0.5\Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + 0.5\cdot\frac{1}{2\sigma_w^2}\Vert\bm{\theta}\Vert^2_2.$ \\
+This is ridge regression and the solution follows from a) with $\lambda = \frac{1}{\sigma_w^2}$.
+\item From b) we see that for the density of interest it must hold that \\
+$ -\log p(\theta) = 0.5\cdot\lambda\vert \theta \vert + c$ with $c\in\R \iff p(\theta) \propto \exp(-0.5 \cdot \lambda \vert \theta \vert).$ \\
+$\Rightarrow \theta \overset{\text{i.i.d.}}{\sim} \textrm{Laplace}(0, 2/\lambda).$
+\item Let $f:\R^d\rightarrow\R, \bm{\theta} \mapsto \Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2$. \\
+First consider the difference vector between the ungregularized solution and the regularized one: \\
+$\bm{\theta}^*_{\text{reg}} - \bm{\theta}^* = (\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y} -  \bm{\theta}^* = ( (\mathbf{X}^\top\mathbf{X})^{-1} -  (\mathbf{X}^\top\mathbf{X})^{-1}\lambda\mathbf{I}(\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}) \mathbf{X}^\top\mathbf{y} -  \bm{\theta}^*$ \\
+$ = \bm{\theta}^* - (\mathbf{X}^\top\mathbf{X})^{-1}\lambda\mathbf{I}(\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1} \mathbf{X}^\top\mathbf{y} -  \bm{\theta}^* =  - (\mathbf{X}^\top\mathbf{X})^{-1}\lambda\mathbf{I}(\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1} \mathbf{X}^\top\mathbf{y}$. \\
+This difference is only zero in general if $\lambda = 0 \Rightarrow \bm{\theta}^*_{\text{reg}} \neq \bm{\theta}^*.$ \\
+Now, assume that $ \Vert\bm{\theta}^*\Vert_2 \leq  \Vert\bm{\theta}_{\text{reg}}^*\Vert_2$ then it follows that $ \bm{\theta}_{\text{reg}}^* = \min_{\bm{\theta}} f$ s.t. $\Vert\bm{\theta}^*\Vert_2 \leq \Vert \bm{\theta} \Vert_2\leq t$ and consequently $\bm{\theta}^*_{\text{reg}} = \bm{\theta}^*$ which is a contradiction $\Rightarrow  \Vert\bm{\theta}_{\text{reg}}^*\Vert_2 < \Vert\bm{\theta}^*\Vert_2$. \\
+Now, assume that $\Vert\bm{\theta}_{\text{reg}}^*\Vert_2 < t(\lambda) < \Vert\bm{\theta}^*\Vert_2$: \\
+Since, by assumption $\mathbf{X}^\top\mathbf{X}$ is non-singular, $f$ is strictly convex and $f(\bm{\theta}_{\text{reg}}^*) > f(\bm{\theta}^*)$. \\
+Consider $\tilde{\bm{\theta}} = \bm{\theta}_{\text{reg}}^* + \frac{\bm{\theta}^* - \bm{\theta}_{\text{reg}}^*}{\Vert\bm{\theta}^* - \bm{\theta}_{\text{reg}}^*\Vert_2}\cdot \frac{t(\lambda) - \Vert\bm{\theta}_{\text{reg}}^*\Vert_2}{2}$ then $\tilde{\bm{\theta}}$ is by construction on the line between $\bm{\theta}_{\text{reg}}^*$ and $\bm{\theta}^*$. \\
+Hence $f(\tilde{\bm{\theta}}) < f(\bm{\theta}_{\text{reg}}^*)$ which is a contradiction since $\Vert\tilde{\bm{\theta}}\Vert_2 < t$ by construction. \\
+$\Rightarrow \Vert \bm{\theta}_{\text{reg}}^* \Vert = t(\lambda).$
+
+\end{enumerate}
+}
+\aufgabe{Classification}{
+
+\begin{enumerate}
+\item First observe that $1 - \P(y = y^{(i)}|\mathbf{x}^{(i)}) = \frac{\exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}{1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})} = \frac{1}{1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})} = \P(y = y^{(i)}|-\mathbf{x}^{(i)}).$ \\
+With this we get that
+$\log \left(\P(y = y^{(i)}|\mathbf{x}^{(i)})\right) = \log\left(\P(y = y^{(i)}|\mathbf{x}^{(i)})^{y^{(i)}}(1-\P(y = y^{(i)}|\mathbf{x}^{(i)})^{1-y^{(i)}}\right)$ \\
+$\quad = y^{(i)}\log (\P(y = y^{(i)}|\mathbf{x}^{(i)})) + (1-y^{(i)})\log((1-\P(y = y^{(i)}|\mathbf{x}^{(i)})$ \\
+$\quad = y^{(i)}(\log (\P(y = y^{(i)}|\mathbf{x}^{(i)})) - \log (\P(y = y^{(i)}|-\mathbf{x}^{(i)})) ) + \log(\P(y = y^{(i)}|-\mathbf{x}^{(i)}))$ \\
+$\quad = y^{(i)}\left(\log\left(\frac{ \P(y = y^{(i)}|\mathbf{x}^{(i)})}{ \P(y = y^{(i)}|-\mathbf{x}^{(i)})}\right)\right) + \log(\P(y = y^{(i)}|-\mathbf{x}^{(i)}))$ \\
+$\quad = y^{(i)}\left(\log\left(\frac{ 1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{ 1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}\right)\right) - \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}))$ \\
+$\quad = y^{(i)}\left(\log\left(\exp(\bm{\theta}^\top \mathbf{x}^{(i)})\frac{ 1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}{ 1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}\right)\right) - \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}))$ \\
+$\quad = y^{(i)}\bm{\theta}^\top \mathbf{x}^{(i)} - \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}))$ \\
+With this we find that $\mathcal{R}_\text{emp} = -\log \prod^n_{i=1}\P(y = y^{(i)}|\mathbf{x}^{(i)}) = \sum^n_{i=1}y^{(i)} \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})) - y^{(i)}\bm{\theta}^\top \mathbf{x}^{(i)} $
+
+\item $\frac{\partial}{\partial \bm{\theta}}\mathcal{R}_{\text{emp}} = \sum^n_{i=1}y^{(i)} \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{\mathbf{x}^{(i)}}^\top - y^{(i)}{\mathbf{x}^{(i)}}^\top$ \\
+$\frac{\partial^2}{\partial \bm{\theta}\partial \bm{\theta}^\top}\mathcal{R}_{\text{emp}} = \sum^n_{i=1}y^{(i)} \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}) - \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}{(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}\mathbf{x}^{(i)}{\mathbf{x}^{(i)}}^\top =  \sum^n_{i=1}\underbrace{y^{(i)} \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}}_{\geq 0}\underbrace{\mathbf{x}^{(i)}{\mathbf{x}^{(i)}}^\top}_{\text{p.s.d.}}$ \\
+is p.s.d. $\Rightarrow \mathcal{R}_{\text{emp}}$ is convex.
+
+\item We can transform the inequalities such that \\
+$\zeta^{(i)} \geq 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \quad \forall i \in \{1,\dots,n\}$ and $\zeta^{(i)} \geq 0 \quad \forall i \in \{1, \dots, n\}.$\\
+We can find the smallest $\zeta^{(i)}$ by assuring that always at least one constraint is active:\\
+$\zeta^{(i)} = \begin{cases} 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) & \text{for } 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \geq 0 \\
+0 & \text{for } 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) < 0
+\end{cases} = \max(1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right), 0)$ \\
+Inserting these $\zeta^{(i)}$ into the objective function results in $f(\bm{\theta}) =
+\frac{1}{2}\Vert\bm{\theta}\Vert^2_2 + C\sum^n_{i=1}\max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0).$
+Minimzing $f$ is equivalent to minimizing $\frac{1}{2C}\Vert\bm{\theta}\Vert^2_2 + \sum^n_{i=1}\max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0) \Rightarrow \lambda = \frac{1}{2C}.$
+
+\item First we show that $g:\R \rightarrow \R, x \mapsto \max(x, 0)$ is convex: \\
+$g(x) = 0.5\vert x \vert + 0.5x \Rightarrow \max(x, 0)$ is convex since it is the sum of two convex functions. \\
+Also $g$ is increasing $\Rightarrow \max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0)$ is convex since $1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0$ is convex (linear). \\
+With this we can conclude that $\sum^n_{i=1}\max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0) + \lambda\Vert\bm{\theta}\Vert^2_2$ is convex since it is the sum of convex functions.
+
+\end{enumerate}
+}
+\end{document}

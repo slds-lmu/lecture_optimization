@@ -1,0 +1,26 @@
+\begin{enumerate}
+\item Let $f:\R^d\rightarrow\R, \bm{\theta} \mapsto 0.5\Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + 0.5\cdot\lambda\Vert\bm{\theta}\Vert^2_2, \lambda > 0$\\
+$\frac{\partial}{\partial \bm{\theta}} f = \bm{\theta}^\top\mathbf{X}^\top\mathbf{X} - \mathbf{y}^\top \mathbf{X} + \lambda \bm{\theta}^\top \overset{!}{=} \mathbf{0} \iff \bm{\theta}^\top(\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I}) = \mathbf{y}^\top\mathbf{X}$ \\
+$\Rightarrow \bm{\theta} = (\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y}.$ \\
+$\frac{\partial^2}{\partial \bm{\theta}\partial\bm{\theta}^\top} f = \underbrace{\mathbf{X}^\top\mathbf{X}}_{\text{p.s.d.}} + \underbrace{\lambda \mathbf{I}}_{\text{p.d. if }\lambda > 0}$ is p.d. if $\lambda > 0 \Rightarrow f$ is (strictly) convex
+\item Since the observations and parameters are assumed to be i.i.d. it follows that \\
+$p_{\bm{\theta}|\;\mathbf{X}, \mathbf{y}}(\bm{\theta}) \propto p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}(\mathbf{y}) p_{\bm{\theta}}(\bm{\theta}) \propto \exp\left(-\frac{(\mathbf{X}\bm{\theta} - \mathbf{y})^\top\mathbf{I}(\mathbf{X}\bm{\theta} - \mathbf{y})}{2}\right)\exp\left(-\frac{\bm{\theta}^\top\mathbf{I}\bm{\theta}}{2\sigma_w^2}\right).$ \\
+The minimizer of the negative $\log$ posterior density is maximizer of posterior density and hence \\
+$\bm{\theta}^* = \argmin_{\theta} - \log \left(\exp\left(-\frac{(\mathbf{X}\bm{\theta} - \mathbf{y})^\top\mathbf{I}(\mathbf{X}\bm{\theta} - \mathbf{y})}{2}\right)\exp\left(-\frac{\bm{\theta}^\top\mathbf{I}\bm{\theta}}{2\sigma_w^2}\right)\right) = \argmin_{\theta} 0.5\Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + 0.5\cdot\frac{1}{2\sigma_w^2}\Vert\bm{\theta}\Vert^2_2.$ \\
+This is ridge regression and the solution follows from a) with $\lambda = \frac{1}{\sigma_w^2}$.
+\item From b) we see that for the density of interest it must hold that \\
+$ -\log p(\theta) = 0.5\cdot\lambda\vert \theta \vert + c$ with $c\in\R \iff p(\theta) \propto \exp(-0.5 \cdot \lambda \vert \theta \vert).$ \\
+$\Rightarrow \theta \overset{\text{i.i.d.}}{\sim} \textrm{Laplace}(0, 2/\lambda).$
+\item Let $f:\R^d\rightarrow\R, \bm{\theta} \mapsto \Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2$. \\
+First consider the difference vector between the ungregularized solution and the regularized one: \\
+$\bm{\theta}^*_{\text{reg}} - \bm{\theta}^* = (\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y} -  \bm{\theta}^* = ( (\mathbf{X}^\top\mathbf{X})^{-1} -  (\mathbf{X}^\top\mathbf{X})^{-1}\lambda\mathbf{I}(\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}) \mathbf{X}^\top\mathbf{y} -  \bm{\theta}^*$ \\
+$ = \bm{\theta}^* - (\mathbf{X}^\top\mathbf{X})^{-1}\lambda\mathbf{I}(\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1} \mathbf{X}^\top\mathbf{y} -  \bm{\theta}^* =  - (\mathbf{X}^\top\mathbf{X})^{-1}\lambda\mathbf{I}(\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1} \mathbf{X}^\top\mathbf{y}$. \\
+This difference is only zero in general if $\lambda = 0 \Rightarrow \bm{\theta}^*_{\text{reg}} \neq \bm{\theta}^*.$ \\
+Now, assume that $ \Vert\bm{\theta}^*\Vert_2 \leq  \Vert\bm{\theta}_{\text{reg}}^*\Vert_2$ then it follows that $ \bm{\theta}_{\text{reg}}^* = \min_{\bm{\theta}} f$ s.t. $\Vert\bm{\theta}^*\Vert_2 \leq \Vert \bm{\theta} \Vert_2\leq t$ and consequently $\bm{\theta}^*_{\text{reg}} = \bm{\theta}^*$ which is a contradiction $\Rightarrow  \Vert\bm{\theta}_{\text{reg}}^*\Vert_2 < \Vert\bm{\theta}^*\Vert_2$. \\
+Now, assume that $\Vert\bm{\theta}_{\text{reg}}^*\Vert_2 < t(\lambda) < \Vert\bm{\theta}^*\Vert_2$: \\
+Since, by assumption $\mathbf{X}^\top\mathbf{X}$ is non-singular, $f$ is strictly convex and $f(\bm{\theta}_{\text{reg}}^*) > f(\bm{\theta}^*)$. \\
+Consider $\tilde{\bm{\theta}} = \bm{\theta}_{\text{reg}}^* + \frac{\bm{\theta}^* - \bm{\theta}_{\text{reg}}^*}{\Vert\bm{\theta}^* - \bm{\theta}_{\text{reg}}^*\Vert_2}\cdot \frac{t(\lambda) - \Vert\bm{\theta}_{\text{reg}}^*\Vert_2}{2}$ then $\tilde{\bm{\theta}}$ is by construction on the line between $\bm{\theta}_{\text{reg}}^*$ and $\bm{\theta}^*$. \\
+Hence $f(\tilde{\bm{\theta}}) < f(\bm{\theta}_{\text{reg}}^*)$ which is a contradiction since $\Vert\tilde{\bm{\theta}}\Vert_2 < t$ by construction. \\
+$\Rightarrow \Vert \bm{\theta}_{\text{reg}}^* \Vert = t(\lambda).$
+
+\end{enumerate}

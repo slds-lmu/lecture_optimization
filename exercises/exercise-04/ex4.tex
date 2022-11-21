@@ -216,11 +216,11 @@
 
 \begin{enumerate}
 \item Show that ridge regression is a convex problem and compute its analytical solution (given the feature matrix $\mathbf{X} \in \R^{n\times d}$ and the target vector $\mathbf{y} \in \R^n$).
-\item When doing Bayesian regression we are interested in the posterior density $p_{\bm{\theta}|\;\mathbf{X}, \mathbf{y}}(\bm{\theta}) \propto p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}(\mathbf{y}) p_{\bm{\theta}}(\bm{\theta})$ where $p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}$ is the likelihood and $p_{\bm{\theta}}$ is the prior density. Assume the observations are i.i.d. with $y_i \sim \mathcal{N}(\mathbf{x}^\top_i\bm{\theta}, 1)$ and the parameters are also i.i.d. with $\bm{\theta}_j \sim \mathcal{N}(0, \sigma_w)$.
+\item When doing Bayesian regression we are interested in the posterior density $p_{\bm{\theta}|\;\mathbf{X}, \mathbf{y}}(\bm{\theta}) \propto p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}(\mathbf{y}) p_{\bm{\theta}}(\bm{\theta})$ where $p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}$ is the likelihood and $p_{\bm{\theta}}$ is the prior density. Assume the observations are i.i.d. with $y_i \sim \mathcal{N}(\mathbf{x}^\top_i\bm{\theta}, 1)$ and the parameters are also i.i.d. with $\bm{\theta}_j \sim \mathcal{N}(0, \sigma_w^2)$.
 Find the maximizer of the posterior density. What do you observe?
 \item Find the prior density that would result in Lasso regression in b).
 \item In the lecture you have learned that Ridge regression with regularization coefficient $\lambda$ can be equivalently stated as solving \\
-$\min_{\bm{\theta}} \Vert(\mathbf{X}\theta - \mathbf{y})\Vert^2_2$ s.t. $\Vert t\Vert_2\leq t.$ \\
+$\min_{\bm{\theta}} \Vert(\mathbf{X}\theta - \mathbf{y})\Vert^2_2$ s.t. $\Vert \bm{\theta}\Vert_2\leq t.$ \\
 This means we can associate with every $\lambda$ a $t$ and hence we can treat $t$ as a function of $\lambda$, i.e., $t:\R_{+,0} \rightarrow \R_{+,0}, \lambda \mapsto t(\lambda).$
 Show that if $\lambda > 0$ then $\Vert\bm{\theta}_{\text{reg}}^*\Vert_2 = t(\lambda) < \Vert\bm{\theta}^*\Vert_2$ where $\bm{\theta}^*$ and $\bm{\theta}_{\text{reg}}^*$ are the minimzier of unregularized regression and the ridge regression, respectively. \\ \textit{Hint 1}: You do not need to find $t(\lambda)$ \\
 \textit{Hint 2}: For two non-singular matrices $\mathbf{A}, \mathbf{B}$ for which $\mathbf{A} + \mathbf{B}$ is invertible it holds that $(\mathbf{A} + \mathbf{B})^{-1} = \mathbf{A}^{-1}  - \mathbf{A}^{-1}\mathbf{B}(\mathbf{A} + \mathbf{B})^{-1}$
@@ -233,10 +233,10 @@ Show that if $\lambda > 0$ then $\Vert\bm{\theta}_{\text{reg}}^*\Vert_2 = t(\lam
 From this it follows that $\P(y = y^{(i)}|\mathbf{x}^{(i)}) = \P(y = y^{(i)}|\mathbf{x}^{(i)})^{y^{(i)}}(1-\P(y = y^{(i)}|\mathbf{x}^{(i)})^{1-y^{(i)}}.$ With this derive the empirical risk $\mathcal{R}_{\text{emp}}$ as shown in the lecture following the maximum likelihood principle. (Assume the observations are independent)
 \item Show that $\mathcal{R}_{\text{emp}}$ of a) is convex.
 \item Show that the first primal form of the linear SVM with soft constraints \\
-$\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}} \frac{1}{2}\Vert\bm{\theta}\Vert^2_2 + C\sum^n_{i=1}\zeta^{(i)}$ s.t. 
+$\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}, \zeta^{(i)}} \frac{1}{2}\Vert\bm{\theta}\Vert^2_2 + C\sum^n_{i=1}\zeta^{(i)}$ s.t. 
 $y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \geq 1 - \zeta^{(i)} \quad \forall i \in \{1,\dots,n\}$ and $\zeta^{(i)} \geq 0 \quad \forall i \in \{1, \dots, n\}$
 and its second primal form \\
-$\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}} \sum^n_{i=1}\max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0) + \lambda\Vert\bm{\theta}\Vert^2_2$
+$\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}} \sum^n_{i=1}\max(1-y^{(i)}(\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0), 0) + \lambda\Vert\bm{\theta}\Vert^2_2$
 are equivalent. What is the functional relationship between $C$ and $\lambda$? \\
 \textit{Hint}: Try to insert the combined constraints into their associated objective.
 \item Show that the second primal form of the linear SVM is a convex problem

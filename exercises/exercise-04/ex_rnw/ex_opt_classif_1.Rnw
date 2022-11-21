@@ -3,10 +3,10 @@
 From this it follows that $\P(y = y^{(i)}|\mathbf{x}^{(i)}) = \P(y = y^{(i)}|\mathbf{x}^{(i)})^{y^{(i)}}(1-\P(y = y^{(i)}|\mathbf{x}^{(i)})^{1-y^{(i)}}.$ With this derive the empirical risk $\mathcal{R}_{\text{emp}}$ as shown in the lecture following the maximum likelihood principle. (Assume the observations are independent)
 \item Show that $\mathcal{R}_{\text{emp}}$ of a) is convex.
 \item Show that the first primal form of the linear SVM with soft constraints \\
-$\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}} \frac{1}{2}\Vert\bm{\theta}\Vert^2_2 + C\sum^n_{i=1}\zeta^{(i)}$ s.t. 
+$\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}, \zeta^{(i)}} \frac{1}{2}\Vert\bm{\theta}\Vert^2_2 + C\sum^n_{i=1}\zeta^{(i)}$ s.t. 
 $y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \geq 1 - \zeta^{(i)} \quad \forall i \in \{1,\dots,n\}$ and $\zeta^{(i)} \geq 0 \quad \forall i \in \{1, \dots, n\}$
 and its second primal form \\
-$\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}} \sum^n_{i=1}\max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0) + \lambda\Vert\bm{\theta}\Vert^2_2$
+$\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}} \sum^n_{i=1}\max(1-y^{(i)}(\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0), 0) + \lambda\Vert\bm{\theta}\Vert^2_2$
 are equivalent. What is the functional relationship between $C$ and $\lambda$? \\
 \textit{Hint}: Try to insert the combined constraints into their associated objective.
 \item Show that the second primal form of the linear SVM is a convex problem
