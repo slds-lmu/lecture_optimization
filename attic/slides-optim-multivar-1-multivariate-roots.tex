@@ -1,0 +1,75 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+%\newcommand{\titlefigure}{figure_man/}
+\newcommand{\learninggoals}{
+\item LEARNING GOAL 1
+\item LEARNING GOAL 2}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization}
+%\author{}
+%\date{}
+
+\begin{document}
+
+\lecturechapter{Multivariate Roots}
+\lecture{Optimization}
+\sloppy
+
+% --------------------------------------------------------------------------------------------
+
+\begin{vbframe}{Overdetermined systems of equations}
+
+When solving an overdetermined system of equations, i.e.
+
+\vspace*{-0.3cm}
+$$
+f(\xv) = 0
+$$
+
+with $f: \R^d \to \R^m$ with $m > n$ (more equations than unknowns), there is usually no solution for the corresponding equation.
+
+\lz
+
+However, in order to find an approximate solution, we interpret the problem of root search as an \textbf{optimization problem}:
+$$
+\min_{\xv}\|f(\xv)\|_2^2
+$$
+
+
+To solve this, general optimization techniques or special methods for (nonlinear) \textbf{least squares problems} (see Gauss-Newton algorithm later in this chapter) can be used.
+
+\end{vbframe}
+
+\begin{vbframe}{Convergence of Newton's method}
+
+Under certain conditions, Newton's method converges \textbf{quadratically}. Otherwise, the procedure may converge slowly or not at all.
+
+\vspace*{0.2cm}
+
+\textbf{Possible reasons}:
+
+\begin{itemize}
+\item Stationary point is hit: Method terminates because $\nabla f(\xv)= 0$, although root has not yet been found.
+\item Bad starting point: Starting point must be close enough to root.
+\item \enquote{Overshot}: Function not sufficiently smooth. 
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{figure_man/newtonfail1.png} \\
+\begin{footnotesize} Newton's method for $f(x) = |x|^{1/4}$ and starting point $x = 0.05$. Although the starting point is close to the root, we move further away from it in each step.\end{footnotesize}
+\end{center}
+
+\end{vbframe}
+
+\endlecture
+\end{document}
+
+

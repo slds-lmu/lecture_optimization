@@ -1,0 +1,263 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/momentum_illustration_medium.png}
+\newcommand{\learninggoals}{
+\item Definition
+\item Max. Likelihood 
+\item Normal regression
+\item Risk Minimization
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{First order methods: SGD}
+\lecture{Optimization in Machine Learning}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{vbframe}{SGD with constant step-size}
+
+\textbf{Example (continued)}: Let us look at the optimization progress of SGD with constant step size. 
+
+ 	\begin{figure}
+ 		\vspace{-0.3cm}
+ 		\centering
+ 		\includegraphics[width = 1\textwidth]{figure_man/sgd_example_erratic_behavior.png} \newline
+		SGD makes fast convergence in the beginning, but shows erratic behavior later on (variance too big). 
+ 	\end{figure}
+
+\end{vbframe}
+
+
+\begin{vbframe}{SGD with decreasing step-size}
+
+\begin{itemize}
+	\item To get convergence, we use a \textbf{decreasing step size} 
+	\item Consider: 
+	\begin{itemize}
+		\item if  step size $\alpha^{[t]}$ decreases slowly, the variance of $\nabla_x ~ g_i(\xv)$ decreases slowly too.
+		\item if step size decreases too fast, we reach the optimum slowly.
+	\end{itemize}
+	\item SGD converges to a stationary point if the ratio of sum of squared step-sizes over the sum of step-sizes converges to $0$: 
+	$$
+		\frac{\sum_{t = 1}^\infty \left(\alpha^{[t]}\right)^2}{\sum_{t = 1}^\infty \alpha^{[t]}} = 0
+	$$
+	(``how much noise affects you'' vs. ``how far you can get''). 
+\end{itemize}	
+
+\framebreak 
+
+\begin{itemize}
+	\item A classic solution is using a step size fulfilling $\alpha^{[t]} \in \order(\frac{1}{t})$. 
+\end{itemize}
+
+ 	\begin{figure}
+ 		\vspace{-0.3cm}
+ 		\centering
+ 		\includegraphics[width = 1\textwidth]{figure_man/sgd_example_decreasing_step_size.png} \newline
+		Example continued. Step size $\alpha^{[t]} = \frac{0.2}{t}$. 
+ 	\end{figure}
+
+\begin{itemize}
+ 	\item This often does not work well in practice, since steps get really small really fast. 
+ 	\item Alternative: $\alpha^{[t]} \in \order(\sqrt{t})$
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Advanced step-size control} 
+
+
+	\begin{blocki}{Why not Armijo-based step-size control? }
+		\item Backtracking line search or other rules based on the Armijo-condition are usually not suitable: Checking the Armijo condition 
+		$$
+		f(\xv + \alpha \bm{d}) \le \fx + \gamma \alpha \textcolor{red}{\nabla g(\xv)}^\top \bm{d}
+		$$
+		requires evaluating the full gradient.
+		\item But remember that SGD is particularly used to avoid expensive evaluations of the gradient! 
+		\item Recent research aims at finding approximate line-search methods that provide better convergence methods, e.g., \emph{Vaswani et al., Painless Stochastic Gradient: Interpolation, Line-Search, and Convergence Rates (NeurIPS 2019).}
+	\end{blocki}
+
+\end{vbframe}
+
+
+\begin{vbframe}{Mini-batches} 
+
+\begin{itemize}
+	\item We can also increase batch size $m$ to improve the approximation
+	$$
+		\bm{\hat d} = \frac{1}{m} \sum_{i \in J} \nabla_\xv~ g_i(\xv) \approx \frac{1}{n} \sumin \nabla_\xv~ g_i(\xv) = \bm{d} 
+	$$
+	\item Usually, the batch size is limited by computational resources (e.g., how much data you can load into the memory)
+\end{itemize}
+
+ 	\begin{figure}
+ 		\vspace{-0.3cm}
+ 		\centering
+ 		\includegraphics[width = 1\textwidth]{figure_man/sgd_example_batch_size.png} \newline
+		Example continued. Batch size $m = 1$ vs. $m = 5$. 
+ 	\end{figure}
+
+\end{vbframe}
+
+\begin{vbframe}{Stopping rules for SGD} 
+
+\begin{itemize}
+	\item In GD, we usually stop when the gradient is close to $0$ (i.e., we are close to a stationary point)
+	\item In SGD, individual gradients do not necessarily go to zero, and we do not see the full gradient. 
+	\item In practice for machine learning: 
+	\begin{itemize}
+		\item After $T$ iterations (for some large $T$), measure the validation set error
+		\item Stop, if validation set error is not improving
+	\end{itemize}
+\end{itemize}
+
+
+\end{vbframe}
+
+
+\begin{vbframe}{SGD and ML}
+
+	\begin{blocki}{General remarks:}
+		\item SGD is a simplification of GD 
+		\item It is particularly suitable for large-scale ML when the evaluating the gradient is too expensive or restricted by computational resources
+		\item SGD and variants are the most commonly used methods in modern ML, for example:  
+		\begin{itemize}
+			\item Linear models \\
+			\begin{footnotesize}
+			Note that even for the linear model and quadratic loss, where a closed form solution is available, SGD might be used if the size $n$ of the dataset is too large and the design matrix does not fit into memory. 			\end{footnotesize}
+			\item Neural networks 
+			\item Support vector machines
+			\item ...
+		\end{itemize}
+		% It is worthwhile to test the gradient for robustness.
+	\end{blocki}
+
+\end{vbframe}
+
+	% \begin{vbframe}{Convergence of SGD}
+
+
+% 	\begin{blocki}{Convergence:}
+% 		% \item Das Robbin-Sigmunds-Theorem zeigt, dass das Verfahren unter
+% 		% überraschend milden Vorraussetzungen fast immer sicher
+% 		% konvergiert. Auch in Fällen von nicht stetigen Verlustfunktionen.
+% 		\item The method has worse convergence properties than the exact gradient descent method 
+% 		\item This is due to the approximation of the gradient, which is introduces a source of noise that does not vanish even at the minimum 
+% 		\item A crucial parameter is the step-size: 
+% 		\begin{itemize}
+% 			\item If the step size $\alpha^{[t]}$ decreases too slowly, the variance of $\thetat$ decreases slowly too.
+% 			\item If the step size decreases too fast, the parameter vector $\thetat$ reaches its optimum too slowly.
+% 		\end{itemize}
+% 	\end{blocki}
+	
+
+	
+% \end{vbframe}
+
+
+
+	 \begin{vbframe}{SGD with momentum}
+		
+	 	 SGD is usually used with momentum due to reasons mentioned in previous chapters.
+	 	\begin{algorithm}[H]
+	 		\small
+	 		\caption{Stochastic gradient descent with momentum}
+	 		\begin{algorithmic}[1]
+	 			\State \textbf{require} learning rate $\alpha$ and momentum $\varphi$ \strut
+	 			\State \textbf{require} initial parameter $\bm{x}$ and initial velocity $\bm{\nu}$ \strut
+	 			\While{stopping criterion not met}
+	 			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Sample a minibatch of $m$ examples from the training set $\{\tilde{x}^{(1)},\dots,\tilde{x}^{(m)}\}$}
+	 			\State Compute gradient estimate: $\hat{\nabla f(\bm{x})}$ % \leftarrow  \frac{1}{m} \nabla_{\bm{x}} \sum_{i} \Lxyit$
+	 			\State Compute velocity update: $\bm{\nu} \leftarrow \varphi \bm{\nu} - \alpha \hat{\nabla f(\bm{x})}$
+	 			\State Apply update: $\bm{x} \leftarrow \bm{x} + \bm{\nu}$
+	 			\EndWhile
+	 		\end{algorithmic}
+	 	\end{algorithm}
+	 \end{vbframe}
+
+	% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%  \begin{vbframe}{SGD with and without momentum}
+	%  	\footnotesize The following plot was created by our Shiny App. On the upper left you can explore different predefined examples. \href{https://juliambr.shinyapps.io/shinyapp/}{\beamergotobutton{Click here}}
+	%  	\begin{figure}
+	%  		\vspace{-0.3cm}
+	%  		\centering
+	%  		\includegraphics[width = 8cm]{figure_man/momentum2.png} \newline
+	%  		\footnotesize{Comparison of SGD with and without momentum on the Styblinkski-Tang function.
+	%  			The black dot on the bottom left is the global optimum. We can see that 
+	%  			SGD without momentum (red line/points) cannot escape the local minimum, while SGD with momentum (blue line/dots) is able to escape the local minimum and finds the global minimum.}
+	%  	\end{figure}
+	%  \end{vbframe}
+
+
+
+
+
+% \frame{
+%
+% \frametitle{Momentum - motivation}
+% \only<1>{\textbf{Iteration 1}}
+% \only<2>{\textbf{Iteration 2}}
+% \only<3>{\textbf{...Iteration 10}}
+%   \center
+%   \only<1>{\includegraphics[height = 4.5cm, width=9cm]{figure_man/opt1.png}}%
+%   \only<2>{\includegraphics[height = 4.5cm, width=9cm]{figure_man/opt2.png}}%
+%   \only<3>{\includegraphics[height = 4.5cm, width=9cm]{figure_man/opt3.png}}%
+%   \only<4>{\includegraphics[height = 4.5cm, width=9cm]{figure_man/momentum.png}}%
+%
+%   \medskip
+%   \begin{itemize}
+%     \only<1-3>{\item (Stochastic) Gradient Descent not optimal in areas with significantly stronger curvature in one direction than in the others (for example saddle point)}
+%     \only<1-3>{\item Algorithm terminates in local minimum, global minimum not found}
+%     \only<4>{\item Black line shows the course of the SGD to the minimum.}
+%     \only<4>{\item SGD is influenced by strong curvature of the optimization function and moves slowly towards the minimum.}
+%     % \only<4>{\item Geschwindigkeit des SGD sehr langsam (Algorithmus daher ineffizient).}
+%     \only<4>{\item \textbf{Aim}: More efficient algorithm which quickly reaches the minimum (red line)}
+%   \end{itemize}
+% }
+
+
+
+%
+%\begin{vbframe}{Adaptive Moment Estimation (Adam)}
+%	
+%	\textbf{Adam} combines concept of momentum with adaptive learning rates to converge faster
+%	
+%	\medskip
+%	\textbf{Adaptive learning rates:}
+%	\begin{itemize}
+%		\item Intuition: start with large steps and finish with small ones
+%		\item AdaGrad: change learning rate over time depending on sum of gradients
+%		\item RMSprop: change learning rate by exponentially decaying average
+%		\item Difference: RMSprop more restricted to recent time steps and hence changes slower than AdaGrad
+%		
+%	\end{itemize}
+%	
+%	\framebreak
+%	Comparison of GD, GD with momentum and Adam.
+%	\begin{center}
+%		\includegraphics[width = 0.85\textwidth]{figure_man/momentum/comparison_adam.png}
+%	\end{center}
+%	
+%\end{vbframe}
+
+%\begin{vbframe}{Trust region methods}
+%	Besides line search methods
+%\end{vbframe}
+\endlecture
+\end{document}
+

@@ -1,0 +1,289 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/momentum_illustration_medium.png}
+\newcommand{\learninggoals}{
+\item Definition
+\item Max. Likelihood 
+\item Normal regression
+\item Risk Minimization
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{First order methods: GD on quadratic forms}
+\lecture{Optimization in Machine Learning}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{GD on quadratic forms}
+
+\begin{itemize}
+	\item We consider the quadratic function $q(\xv) = \xv^\top \bm{A} \xv - \bm{b}^\top \xv$. 
+	\item We assume that $A$ is symmetric and invertible 
+	\item The optimal solution is $\xv^\ast = A^{-1} b$ 
+	\item As $\nabla q(\xv) = A \xv - b$, the iterations of gradient descent are
+\end{itemize}
+	$$
+	\xv^{[ t+1 ] } = \xv^{[ t ] } - \alpha (A \xv - b)
+	$$
+
+\begin{figure}
+	\includegraphics[height=0.3\textwidth, keepaspectratio]{figure_man/gd.png} \\
+\end{figure}
+
+\begin{footnotesize}
+The following slides follow the blogpost by Goh, "Why Momentum Really Works", Distill, 2017. \url{http://doi.org/10.23915/distill.00006}
+\end{footnotesize}
+
+\framebreak
+
+For $A$, there exists an eigenvalue decomposition: 
+
+$$
+	A = Q \, \text{diag}(\lambda_1, ..., \lambda_n) Q^\top
+$$
+
+where the columns of $Q$ contain the eigenvectors $\boldsymbol{e}_i$ and the eigenvalues $\lambda_i$ are sorted from smallest to biggest eigenvalue. 
+
+With this, we perform a change of basis $w^{[ t ] } = Q^\top (x^{[ t ] } - x^\ast)$ to its eigenspace, where all dimensions act independently. 
+
+\begin{figure}
+	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/gd_eigenspace.png} \\
+\end{figure}
+\framebreak
+If we now perform GD on $\boldsymbol{w}$, we get
+
+\begin{eqnarray*}
+	w_i^{[ t+1 ] } &=& w_i^{[ t ] } - \alpha \lambda_i w_i^{[ t ] } \\
+	&=& (1- \alpha \lambda_i) w_i^{[ t ] } = (1- \alpha \lambda_i)^{t+1 } w_i^{[ 0 ] }
+\end{eqnarray*}
+
+\begin{figure}
+	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/gd_eigenspace.png} \\
+\end{figure}
+
+\framebreak
+
+Moving now back to the original space, we get
+
+$$
+	\xv^{[ t ] } - \xv^\ast = Q \boldsymbol{w}^{[ t ] } = \sum_{i}^{d} w_i^{[0]} ( 1 - \alpha \lambda_i)^t e_i 
+$$
+
+This allows a very intuitive interpretation: each element of $w^{[0]}$ is the component of the error in the initial guess in the eigenbasis and decays with a rate of $1 - \alpha \lambda_i$. 
+
+For most step sizes, the eigenvectors with the largest eigenvalues converge the fastest. 
+
+\framebreak
+
+We now consider the contribution of each eigenvector to the total loss
+
+$$
+	q(\xv^{[ t ] }) - q(\xv^\ast) = \frac{1}{2} \sum_{i}^{d} (1 - \alpha \lambda_i)^{2t} \lambda_i (w_i^{[0]})^2 
+$$
+
+\begin{figure}
+	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/gd_conv.png} \\
+\end{figure}
+
+%\framebreak
+
+%The considerations above already gave some guidance on how to choose the optimal step size $\alpha$. In order to converge, $| 1 - \alpha \lambda_i| $ must be strictly less than $1$. 
+
+%\begin{itemize}
+%	\item use eigenvectors of $A$
+%	\item GD in closed form 
+%	\item decomposing the error, plot with convergence
+%	\item choosing step size, show dependence on condition number 
+%	\item maybe with example of polynomial regression
+%\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Dynamics of momentum}
+	
+We investigate now the behavior of gradient descent with momentum on quadratic forms. 
+
+Recap: \textbf{Momentum update}
+
+\begin{eqnarray*}
+ \boldsymbol{\nu}^{[ t+1 ] } &=& \varphi \boldsymbol{\nu}^{[ t ] } + \alpha \nabla f(\xv^{[ t ] }) \\
+ \xv^{[ t+1 ] } &=& \xv^{[ t ] } - \boldsymbol{\nu}^{[ t+1 ] }, 
+\end{eqnarray*}
+
+which simplifies to 
+
+\begin{eqnarray*}
+	\boldsymbol{\nu}^{[ t+1 ] } &=& \varphi \boldsymbol{\nu}^{[ t ] } + \alpha (A \xv^{[ t ] } - b)  \\
+	\xv^{[ t+1 ] } &=& \xv^{[ t ] } - \boldsymbol{\nu}^{[ t+1 ] }, 
+\end{eqnarray*}
+
+for the quadratic form. 
+
+\framebreak
+
+Changing the basis as before with $\boldsymbol{w}^{[ t ] } = Q^\top (\xv^{[ t ] } - \xv^\ast)$ and $\boldsymbol{u}^{[ t ] } = Q \boldsymbol{\nu}^{[ t ] }$, we get the following set of equations, where each component acts independently, although $w_i^{[ t ] }$ and $u_i^{[ t ] }$ are coupled: 
+
+\begin{eqnarray*}
+	u_i^{[ t+1 ] } &=& \varphi u_i^{[ t ] } + \alpha \lambda_i w_i^{[ t ] }, \\
+	w_i^{[ t+1 ] } &=& w_i^{[ t ] } - u_i^{[ t+1 ] }
+\end{eqnarray*}
+
+We rewrite this: 
+
+\begin{equation*}
+\begin{pmatrix}
+	1 & 0 \\
+	1 & 1 
+\end{pmatrix}  \begin{pmatrix}
+u_i^{[ t+1 ] } \\
+w_i^{[ t+1 ] }
+\end{pmatrix} = 
+\begin{pmatrix}
+	\varphi & \alpha \lambda_i \\
+	0 & 1 
+\end{pmatrix}  \begin{pmatrix}
+	u_i^{[ t ] } \\
+	w_i^{[ t ] }
+\end{pmatrix}
+\end{equation*}
+
+and invert the matrix on the LHS: 
+
+\begin{equation*}
+\begin{pmatrix}
+		u_i^{[ t+1 ] } \\
+		w_i^{[ t+1 ] }
+	\end{pmatrix} = 
+	\begin{pmatrix}
+		\varphi & \alpha \lambda_i \\
+		-\varphi & 1 - \alpha \lambda_i
+	\end{pmatrix}  \begin{pmatrix}
+		u_i^{[ t ] } \\
+		w_i^{[ t ] }
+	\end{pmatrix} = R^{ t+1 }  \begin{pmatrix}
+	u_i^{0} \\
+	w_i^{0}
+\end{pmatrix}
+\end{equation*}
+
+\framebreak
+
+Taking a $2 \times 2$ matrix to the $t^{th}$ power reduces to a formula involving the eigenvalues of $R$, $\sigma_1$ and $\sigma_2$:
+
+$$
+R^t=\begin{cases}
+\sigma_1^t R_1 - \sigma_2^t R_2, & \text{if} \, \sigma_1 \neq \sigma_2 \\
+\sigma_1^t (t R/\sigma_1 - (t-1) I), & \text{if} \, \sigma_1 = \sigma_2 
+\end{cases}
+$$
+
+where $R_j = \frac{R - \sigma_j I}{\sigma_1 - \sigma_2}$.
+
+
+\vspace*{1.5cm}	
+In contrast to gradient descent, where we got one geometric series, we have two coupled series with real or complex values.
+
+\framebreak
+\begin{figure}
+	\includegraphics[width=0.5\textwidth, keepaspectratio]{figure_man/momentum_convergence.png} \\
+	\begin{footnotesize} 
+		The achieved convergence rate is therefore the slowest of the two, $\text{max} \{|\sigma_1|, |\sigma_2| \}$. Each region shows a different convergence behavior. 
+	\end{footnotesize}
+\end{figure}
+
+\framebreak
+
+%Our convergence criterion is $\text{max} \{|\sigma_1|, |\sigma_2| \} < 1$
+%\begin{figure}
+%	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_convergence.png} \\
+%	\begin{footnotesize} 
+%		Depending on $\text{max} \{|\sigma_1|, |\sigma_2| \}$, each region shows different convergence behavior. 
+%	\end{footnotesize}
+%\end{figure}
+
+\framebreak
+\vspace*{1.0cm}
+\begin{figure}
+	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_conv_ripples.png} ~~ \includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_ripples.png} \\
+	\begin{footnotesize} 
+		The eigenvalues of $R$ are complex and we see low frequency ripples. 
+	\end{footnotesize}
+\end{figure}
+
+\framebreak
+\vspace*{1.0cm}
+\begin{figure}
+	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_conv_mono.png} ~~ \includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_mono.png} \\
+	\begin{footnotesize} 
+		Here, both eigenvalues of $R$ are positive with their norm being less than $1$. This behavior resembles gradient descent. 
+	\end{footnotesize}
+\end{figure}
+
+\framebreak
+\vspace*{1.0cm}
+\begin{figure}
+	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_conv_1step.png} ~~ \includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_1step.png} \\
+	\begin{footnotesize} 
+		The step size is $\alpha = 1/\lambda_i$ and $\varphi = 0$ - we converge in one step.
+	\end{footnotesize}
+\end{figure}
+\framebreak
+\vspace*{1.0cm}
+\begin{figure}
+	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_conv_osc.png} ~~ \includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_osc.png} \\
+	\begin{footnotesize} 
+		When $\alpha > 1/\lambda_i$, the iterates flip sign every iteration. 
+	\end{footnotesize}
+\end{figure}
+\framebreak
+\vspace*{1.0cm}
+\begin{figure}
+	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_conv_div.png} ~~ \includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_div.png} \\
+	\begin{footnotesize} 
+		If  $\text{max} \{|\sigma_1|, |\sigma_2| \} > 1$, the iterates diverge. 
+	\end{footnotesize}
+\end{figure}
+
+\framebreak
+\begin{itemize}
+	\item Finally, we investigate the role of $\varphi$. 
+	\item We can think of gradient descent with momentum as a damped harmonic oscillator: a weight on a spring. We pull the weight down and study the path back to the equilibrium in phase space (looking at the position and the velocity). 
+	\item Depending on the choice of $\varphi$, the rate of return to the equilibrium position is affected. 
+\end{itemize}
+
+\begin{figure}
+	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/phasespace_underdamping.png} 
+\end{figure}
+
+\framebreak
+
+\begin{figure}
+	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_damping.png} 
+	\begin{footnotesize}
+		 
+		Left: If $\varphi$ is too large, we are underdamping. The spring oscillates back and forth and misses the optimum. 
+		
+		Middle: The best value of $\varphi$ lies in the middle. 
+		
+		Right: If $\varphi$ is too small, we are overdamping, meaning that the spring experiences too much friction and stops before reaching the equilibrium. 
+	\end{footnotesize}
+\end{figure}
+
+\end{vbframe}
+
+
+\endlecture
+\end{document}
+
