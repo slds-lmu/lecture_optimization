@@ -44,7 +44,7 @@ persp2 = function(x, y, z, col = terrain_hcl, ...) {
 
 ####################################################################################################
 optim0 = function(..., FUN, tol = 1e-08,
-  maxit = 100, maximum = TRUE) {
+  maxit = 100, maximum = TRUE, alpha = 1) {
   rval = list()
   start = list(...)
   i = 1
@@ -55,7 +55,7 @@ optim0 = function(..., FUN, tol = 1e-08,
         if(maximum) -1 else 1)
     start2 = start
     for(j in seq_along(start))
-      start2[[j]] = start[[j]] + d[j]
+      start2[[j]] = start[[j]] + alpha * d[j]
     f1 = do.call(FUN, start2) * if(maximum) -1 else 1
     start = start2
     do = all.equal(d, rep(0.0, length(d)), tol = tol)
