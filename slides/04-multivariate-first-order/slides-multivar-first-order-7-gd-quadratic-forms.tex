@@ -31,12 +31,12 @@
 
 \begin{itemize}
 	\item We consider the quadratic function $q(\xv) = \xv^\top \bm{A} \xv - \bm{b}^\top \xv$. 
-	\item We assume that $A$ is symmetric and invertible 
-	\item The optimal solution is $\xv^\ast = A^{-1} b$ 
-	\item As $\nabla q(\xv) = A \xv - b$, the iterations of gradient descent are
+	\item We assume that the Hessian $\bm{H} = \Amat$ is symmetric and invertible 
+	\item The optimal solution is $\xv^\ast = \Amat^{-1} b$ 
+	\item As $\nabla q(\xv) = \Amat \xv - \bm{b}$, the iterations of gradient descent are
 \end{itemize}
 	$$
-	\xv^{[ t+1 ] } = \xv^{[ t ] } - \alpha (A \xv - b)
+	\xv^{[ t+1 ] } = \xv^{[ t ] } - \alpha (\Amat \xv^{[ t ] } - \bm{b})
 	$$
 
 \begin{figure}
@@ -49,19 +49,48 @@ The following slides follow the blogpost by Goh, "Why Momentum Really Works", Di
 
 \framebreak
 
-For $A$, there exists an eigenvalue decomposition: 
+For $\Amat$, there exists an eigenvalue decomposition: 
 
 $$
-	A = Q \, \text{diag}(\lambda_1, ..., \lambda_n) Q^\top
+	\Amat = \bm{V} \, \bm{\Lambda} \bm{V}^\top
 $$
 
-where the columns of $Q$ contain the eigenvectors $\boldsymbol{e}_i$ and the eigenvalues $\lambda_i$ are sorted from smallest to biggest eigenvalue. 
-
-With this, we perform a change of basis $w^{[ t ] } = Q^\top (x^{[ t ] } - x^\ast)$ to its eigenspace, where all dimensions act independently. 
+where the columns of $\bm{V}$ contain the eigenvectors $\boldsymbol{v}_i$ and $\bm{\Lambda} = \text{diag}(\lambda_1, ..., \lambda_n)$ contains the eigenvalues $\lambda_i$ sorted from smallest to biggest. We perform a change of basis $\bm{w}^{[ t ] } = \bm{V}^\top (\xv^{[ t ] } - \xv^\ast)$ to its eigenspace, where all dimensions act independently. 
 
 \begin{figure}
 	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/gd_eigenspace.png} \\
 \end{figure}
+
+\framebreak 
+
+We get 
+
+\begin{eqnarray*}
+    \xv^{[t + 1]} &=& \xv^{[t]} - \alpha \left(\Amat \xv^{[t]} - \bm{b} \right) \\
+    \bm{w}^{[ t ] } &=& \bm{V}^\top (\xv^{[ t ] } - \xv^\ast) \\
+    \bm{V} \cdot \bm{w}^{[ t ] } + \xv^\ast &=&  \xv^{[ t ] } \\
+\end{eqnarray*}
+
+and with $\textcolor{blue}{\xv^{[ t ] } = \bm{V} \cdot \bm{w}^{[ t ] } + \xv^\ast}$ we can write a GD step as: 
+
+\begin{footnotesize}
+\begin{alignat*}{2}
+    \textcolor{blue}{\xv^{[t + 1]}} &= \textcolor{blue}{\xv^{[t]}} - \alpha \left(\Amat \textcolor{blue}{\xv^{[t]}} - \bm{b} \right) && \\
+    \textcolor{blue}{\bm{V} \cdot \bm{w}^{[ t + 1] } + \xv^\ast} &= \textcolor{blue}{\bm{V} \cdot \bm{w}^{[ t ] } + \xv^\ast} - \alpha \left(\Amat \cdot \textcolor{blue}{\bm{V} \cdot \bm{w}^{[ t ] }} + \Amat \cdot \textcolor{blue}{\xv^\ast} - \bm{b} \right) ~\qquad && \bigg|~- \xv^\ast\\
+    \bm{V} \cdot \bm{w}^{[ t + 1] } &= \bm{V} \cdot \bm{w}^{[ t ] } - \alpha \left(\Amat \cdot \bm{V} \cdot \bm{w}^{[ t ] } + \Amat \xv^\ast - \bm{b} \right) ~\qquad && \bigg|~\bm{V}^\top (\text{NB: } \bm{V}^\top \bm{V} = \bm{1})\\
+    \bm{w}^{[ t + 1] } &= \bm{w}^{[ t ] } - \alpha \bm{V}^\top\left(\Amat \bm{V} \cdot \bm{w}^{[ t ] } + \Amat \xv^\ast - \bm{b} \right) && \bigg|~\Amat \xv^\ast - \bm{b} = 0 \\
+    \bm{w}^{[ t + 1] } &= \bm{w}^{[ t ] } - \alpha \bm{V}^\top\Amat \bm{V} \cdot \bm{w}^{[ t ] }&& \bigg|~\bm{V}^\top \bm{A} \bm{V} = \bm{\Sigma} \\
+    \bm{w}^{[ t + 1] } &= \bm{w}^{[ t ] } - \alpha \bm{\Sigma} \bm{w}^{[ t ] }&& \\
+\end{alignat*}
+\end{footnotesize}
+
+Which means: 
+
+$$
+w_i^{[ t+1 ] } &=& w_i^{[ t ] } - \alpha \lambda_i w_i^{[ t ] } = (1- \alpha \lambda_i) w_i^{[ t ] } = (1- \alpha \lambda_i)^{t+1 } w_i^{[ 0 ] }
+$$
+
+
 \framebreak
 If we now perform GD on $\boldsymbol{w}$, we get
 
@@ -76,10 +105,10 @@ If we now perform GD on $\boldsymbol{w}$, we get
 
 \framebreak
 
-Moving now back to the original space, we get
+Moving back to the original space, we get
 
 $$
-	\xv^{[ t ] } - \xv^\ast = Q \boldsymbol{w}^{[ t ] } = \sum_{i}^{d} w_i^{[0]} ( 1 - \alpha \lambda_i)^t e_i 
+	\xv^{[ t ] } - \xv^\ast = \bm{V} \cdot \boldsymbol{w}^{[ t ] } = \sum_{i = 1}^{d} w_i^{[0]} ( 1 - \alpha \lambda_i)^t \bm{v}_i 
 $$
 
 This allows a very intuitive interpretation: each element of $w^{[0]}$ is the component of the error in the initial guess in the eigenbasis and decays with a rate of $1 - \alpha \lambda_i$. 
@@ -109,178 +138,6 @@ $$
 %	\item choosing step size, show dependence on condition number 
 %	\item maybe with example of polynomial regression
 %\end{itemize}
-\end{vbframe}
-
-\begin{vbframe}{Dynamics of momentum}
-	
-We investigate now the behavior of gradient descent with momentum on quadratic forms. 
-
-Recap: \textbf{Momentum update}
-
-\begin{eqnarray*}
- \boldsymbol{\nu}^{[ t+1 ] } &=& \varphi \boldsymbol{\nu}^{[ t ] } + \alpha \nabla f(\xv^{[ t ] }) \\
- \xv^{[ t+1 ] } &=& \xv^{[ t ] } - \boldsymbol{\nu}^{[ t+1 ] }, 
-\end{eqnarray*}
-
-which simplifies to 
-
-\begin{eqnarray*}
-	\boldsymbol{\nu}^{[ t+1 ] } &=& \varphi \boldsymbol{\nu}^{[ t ] } + \alpha (A \xv^{[ t ] } - b)  \\
-	\xv^{[ t+1 ] } &=& \xv^{[ t ] } - \boldsymbol{\nu}^{[ t+1 ] }, 
-\end{eqnarray*}
-
-for the quadratic form. 
-
-\framebreak
-
-Changing the basis as before with $\boldsymbol{w}^{[ t ] } = Q^\top (\xv^{[ t ] } - \xv^\ast)$ and $\boldsymbol{u}^{[ t ] } = Q \boldsymbol{\nu}^{[ t ] }$, we get the following set of equations, where each component acts independently, although $w_i^{[ t ] }$ and $u_i^{[ t ] }$ are coupled: 
-
-\begin{eqnarray*}
-	u_i^{[ t+1 ] } &=& \varphi u_i^{[ t ] } + \alpha \lambda_i w_i^{[ t ] }, \\
-	w_i^{[ t+1 ] } &=& w_i^{[ t ] } - u_i^{[ t+1 ] }
-\end{eqnarray*}
-
-We rewrite this: 
-
-\begin{equation*}
-\begin{pmatrix}
-	1 & 0 \\
-	1 & 1 
-\end{pmatrix}  \begin{pmatrix}
-u_i^{[ t+1 ] } \\
-w_i^{[ t+1 ] }
-\end{pmatrix} = 
-\begin{pmatrix}
-	\varphi & \alpha \lambda_i \\
-	0 & 1 
-\end{pmatrix}  \begin{pmatrix}
-	u_i^{[ t ] } \\
-	w_i^{[ t ] }
-\end{pmatrix}
-\end{equation*}
-
-and invert the matrix on the LHS: 
-
-\begin{equation*}
-\begin{pmatrix}
-		u_i^{[ t+1 ] } \\
-		w_i^{[ t+1 ] }
-	\end{pmatrix} = 
-	\begin{pmatrix}
-		\varphi & \alpha \lambda_i \\
-		-\varphi & 1 - \alpha \lambda_i
-	\end{pmatrix}  \begin{pmatrix}
-		u_i^{[ t ] } \\
-		w_i^{[ t ] }
-	\end{pmatrix} = R^{ t+1 }  \begin{pmatrix}
-	u_i^{0} \\
-	w_i^{0}
-\end{pmatrix}
-\end{equation*}
-
-\framebreak
-
-Taking a $2 \times 2$ matrix to the $t^{th}$ power reduces to a formula involving the eigenvalues of $R$, $\sigma_1$ and $\sigma_2$:
-
-$$
-R^t=\begin{cases}
-\sigma_1^t R_1 - \sigma_2^t R_2, & \text{if} \, \sigma_1 \neq \sigma_2 \\
-\sigma_1^t (t R/\sigma_1 - (t-1) I), & \text{if} \, \sigma_1 = \sigma_2 
-\end{cases}
-$$
-
-where $R_j = \frac{R - \sigma_j I}{\sigma_1 - \sigma_2}$.
-
-
-\vspace*{1.5cm}	
-In contrast to gradient descent, where we got one geometric series, we have two coupled series with real or complex values.
-
-\framebreak
-\begin{figure}
-	\includegraphics[width=0.5\textwidth, keepaspectratio]{figure_man/momentum_convergence.png} \\
-	\begin{footnotesize} 
-		The achieved convergence rate is therefore the slowest of the two, $\text{max} \{|\sigma_1|, |\sigma_2| \}$. Each region shows a different convergence behavior. 
-	\end{footnotesize}
-\end{figure}
-
-\framebreak
-
-%Our convergence criterion is $\text{max} \{|\sigma_1|, |\sigma_2| \} < 1$
-%\begin{figure}
-%	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_convergence.png} \\
-%	\begin{footnotesize} 
-%		Depending on $\text{max} \{|\sigma_1|, |\sigma_2| \}$, each region shows different convergence behavior. 
-%	\end{footnotesize}
-%\end{figure}
-
-\framebreak
-\vspace*{1.0cm}
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_conv_ripples.png} ~~ \includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_ripples.png} \\
-	\begin{footnotesize} 
-		The eigenvalues of $R$ are complex and we see low frequency ripples. 
-	\end{footnotesize}
-\end{figure}
-
-\framebreak
-\vspace*{1.0cm}
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_conv_mono.png} ~~ \includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_mono.png} \\
-	\begin{footnotesize} 
-		Here, both eigenvalues of $R$ are positive with their norm being less than $1$. This behavior resembles gradient descent. 
-	\end{footnotesize}
-\end{figure}
-
-\framebreak
-\vspace*{1.0cm}
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_conv_1step.png} ~~ \includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_1step.png} \\
-	\begin{footnotesize} 
-		The step size is $\alpha = 1/\lambda_i$ and $\varphi = 0$ - we converge in one step.
-	\end{footnotesize}
-\end{figure}
-\framebreak
-\vspace*{1.0cm}
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_conv_osc.png} ~~ \includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_osc.png} \\
-	\begin{footnotesize} 
-		When $\alpha > 1/\lambda_i$, the iterates flip sign every iteration. 
-	\end{footnotesize}
-\end{figure}
-\framebreak
-\vspace*{1.0cm}
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_conv_div.png} ~~ \includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_div.png} \\
-	\begin{footnotesize} 
-		If  $\text{max} \{|\sigma_1|, |\sigma_2| \} > 1$, the iterates diverge. 
-	\end{footnotesize}
-\end{figure}
-
-\framebreak
-\begin{itemize}
-	\item Finally, we investigate the role of $\varphi$. 
-	\item We can think of gradient descent with momentum as a damped harmonic oscillator: a weight on a spring. We pull the weight down and study the path back to the equilibrium in phase space (looking at the position and the velocity). 
-	\item Depending on the choice of $\varphi$, the rate of return to the equilibrium position is affected. 
-\end{itemize}
-
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/phasespace_underdamping.png} 
-\end{figure}
-
-\framebreak
-
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_damping.png} 
-	\begin{footnotesize}
-		 
-		Left: If $\varphi$ is too large, we are underdamping. The spring oscillates back and forth and misses the optimum. 
-		
-		Middle: The best value of $\varphi$ lies in the middle. 
-		
-		Right: If $\varphi$ is too small, we are overdamping, meaning that the spring experiences too much friction and stops before reaching the equilibrium. 
-	\end{footnotesize}
-\end{figure}
-
 \end{vbframe}
 
 
