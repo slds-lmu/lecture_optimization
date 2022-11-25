@@ -20,7 +20,7 @@ Now, assume that $ \Vert\bm{\theta}^*\Vert_2 \leq  \Vert\bm{\theta}_{\text{reg}}
 Now, assume that $\Vert\bm{\theta}_{\text{reg}}^*\Vert_2 < t(\lambda) < \Vert\bm{\theta}^*\Vert_2$: \\
 Since, by assumption $\mathbf{X}^\top\mathbf{X}$ is non-singular, $f$ is strictly convex and $f(\bm{\theta}_{\text{reg}}^*) > f(\bm{\theta}^*)$. \\
 Consider $\tilde{\bm{\theta}} = \bm{\theta}_{\text{reg}}^* + \frac{\bm{\theta}^* - \bm{\theta}_{\text{reg}}^*}{\Vert\bm{\theta}^* - \bm{\theta}_{\text{reg}}^*\Vert_2}\cdot \frac{t(\lambda) - \Vert\bm{\theta}_{\text{reg}}^*\Vert_2}{2}$ then $\tilde{\bm{\theta}}$ is by construction on the line between $\bm{\theta}_{\text{reg}}^*$ and $\bm{\theta}^*$. \\
-Hence $f(\tilde{\bm{\theta}}) < f(\bm{\theta}_{\text{reg}}^*)$ which is a contradiction since $\Vert\tilde{\bm{\theta}}\Vert_2 < t$ by construction. \\
+Hence $f(\tilde{\bm{\theta}}) < f(\bm{\theta}_{\text{reg}}^*)$ which is a contradiction ($\bm{\theta}_{\text{reg}}^*$ should be minimal in the constrained region) since $\Vert\tilde{\bm{\theta}}\Vert_2 < t$ by construction. \\
 $\Rightarrow \Vert \bm{\theta}_{\text{reg}}^* \Vert = t(\lambda).$
 
 \end{enumerate}

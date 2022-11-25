@@ -1,0 +1,30 @@
+You are given the following data situation:
+<<univ-plot, echo=TRUE, out.width="50%">>=
+library(ggplot2)
+	
+set.seed(123)
+	
+X = matrix(runif(100), ncol = 2)
+y = -((X %*% c(-1, 1) + rnorm(50, 0, 0.1) < 0) * 2 - 1)
+df = as.data.frame(X)
+df$type = as.character(y)
+  
+ggplot(df) +
+  geom_point(aes(x = V1, y = V2, color=type)) + 
+  xlab(expression(theta[1])) + 
+  ylab(expression(theta[2])) 
+@
+\\In the following we want to estimate a linear SVM without intercept and with $\lambda = 1$. We assume we know that $\bm{\theta}_2 = 2.$
+\begin{enumerate}
+  \item Show that if $f:\R^2 \rightarrow \R$ is convex then $g_c: \R \rightarrow \R, x \mapsto f(x, c)\quad \forall c\in\R$ is convex.
+  \item  Explain why the non-geometric primal linear SVM formulation should be used rather than the geometric one if we want to find $\bm{\theta}_1$ via the golden ratio algorithm\footnote{We choose this algorithm for educational purposes; in practice, we typically use more advanced algorithms.}.
+	\item Find $\bm{\theta}_1$ via the golden ratio algorithm. Implement the algorithm in $\texttt{R}.$ For the termination criterion, use an absolute error of 0.01. Use $[-3, 3]$ as the starting interval.
+	\item Given the three points $(x_1, y_1), (x_2, y_2), (x_3, y_3)$ show that the parameters $a, b, c \in \R$ of the interpolating parabola can be found via 
+	$\begin{pmatrix}a \\ b \\ c \end{pmatrix} = \begin{pmatrix}  x_1^2 & x_1 & 1 \\ x_2^2 & x_2 & 1 \\ x_3^2 & x_3 & 1 \end{pmatrix}^{-1} \begin{pmatrix}y_1 \\ y_2 \\ y_3 \end{pmatrix}$ when the parabola equation is given by $p(x) = ax^2 + bx + c.$ 
+	\item Find $\bm{\theta}_1$ via Brent's method\footnote{We choose this algorithm for educational purposes; in practice, we typically use more advanced algorithms.}. Implement a simplified version\footnote{Only check if the proposed point is in the current interval} of the algorithm in $\texttt{R}.$ For the termination criterion, use an absolute error of 0.01. Use $[-3, 3]$ as the starting interval. For the first step, use a golden ratio step. 
+\item Now, assume we do not know $\bm{\theta}_2.$ Our initial guess is $\bm{\theta}_2 = 0.$ We now alternately minimize w.r.t. either $\bm{\theta}_1$ or $\bm{\theta}_2$ via the golden ratio method (the starting interval is always reset to $[-3, 3]$) while the other parameter is held constant. We switch to minimizing the other parameter when the absolute error is smaller than 0.01. Repeat this procedure 10 times.
+\item How does the optimization trace of f) look in parameter space?
+\item Can we find the optimal parameters of the linear SVM with our procedure in f)? \\
+\textit{Hint}: a)
+
+\end{enumerate}

@@ -210,36 +210,47 @@
 \input{../../latex-math/basic-math.tex}
 \input{../../latex-math/basic-ml.tex}
 
-\kopfsl{4}{Optimization Problems 1}
+\kopfsl{6}{Multivariate Optimization 1}
 
-\aufgabe{Regression}{
+\aufgabe{Gradient Descent}{
 
+You are given the following data situation:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{314}\hlstd{)}
+\hlstd{n} \hlkwb{<-} \hlnum{100}
+\hlstd{X} \hlkwb{=} \hlkwd{cbind}\hlstd{(}\hlkwd{rnorm}\hlstd{(n,} \hlopt{-}\hlnum{5}\hlstd{,} \hlnum{5}\hlstd{),}
+  \hlkwd{rnorm}\hlstd{(n,} \hlopt{-}\hlnum{10}\hlstd{,} \hlnum{10}\hlstd{))}
+\hlstd{X_design} \hlkwb{=} \hlkwd{cbind}\hlstd{(}\hlnum{1}\hlstd{, X)}
+
+\hlstd{z} \hlkwb{<-} \hlnum{2}\hlopt{*}\hlstd{X[,}\hlnum{1}\hlstd{]} \hlopt{+} \hlnum{3}\hlopt{*}\hlstd{X[,}\hlnum{2}\hlstd{]}
+\hlstd{pr} \hlkwb{<-} \hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlkwd{exp}\hlstd{(}\hlopt{-}\hlstd{z))}
+\hlstd{y} \hlkwb{<-} \hlkwd{as.integer}\hlstd{(pr} \hlopt{>} \hlnum{0.5}\hlstd{)}
+\hlstd{df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{X} \hlstd{= X,} \hlkwc{y} \hlstd{= y)}
+
+\hlkwd{ggplot}\hlstd{(df)} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= X.1,} \hlkwc{y} \hlstd{= X.2,} \hlkwc{color}\hlstd{=y))} \hlopt{+}
+  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
+  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/mv-plot-1} 
+\end{knitrout}
+
+In the following we want to estimate a logistic regression without intercept via gradient descent\footnote{We chose this algorithm for educational purposes; in practice, we typically use second order algorithms.}.
 \begin{enumerate}
-\item Show that ridge regression is a convex problem and compute its analytical solution (given the feature matrix $\mathbf{X} \in \R^{n\times d}$ and the target vector $\mathbf{y} \in \R^n$).
-\item When doing Bayesian regression we are interested in the posterior density $p_{\bm{\theta}|\;\mathbf{X}, \mathbf{y}}(\bm{\theta}) \propto p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}(\mathbf{y}) p_{\bm{\theta}}(\bm{\theta})$ where $p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}$ is the likelihood and $p_{\bm{\theta}}$ is the prior density. Assume the observations are i.i.d. with $y_i \sim \mathcal{N}(\mathbf{x}^\top_i\bm{\theta}, 1)$ and the parameters are also i.i.d. with $\bm{\theta}_j \sim \mathcal{N}(0, \sigma_w^2)$.
-Find the maximizer of the posterior density. What do you observe?
-\item Find the prior density that would result in Lasso regression in b).
-\item In the lecture you have learned that Ridge regression with regularization coefficient $\lambda$ can be equivalently stated as solving \\
-$\min_{\bm{\theta}} \Vert(\mathbf{X}\theta - \mathbf{y})\Vert^2_2$ s.t. $\Vert \bm{\theta}\Vert_2\leq t.$ \\
-This means we can associate with every $\lambda$ a $t$ and hence we can treat $t$ as a function of $\lambda$, i.e., $t:\R_{+,0} \rightarrow \R_{+,0}, \lambda \mapsto t(\lambda).$
-Show that if $\lambda > 0$ and $\mathbb{X}^\top\mathbb{X}$ is non-singular then $\Vert\bm{\theta}_{\text{reg}}^*\Vert_2 = t(\lambda) < \Vert\bm{\theta}^*\Vert_2$ where $\bm{\theta}^*$ and $\bm{\theta}_{\text{reg}}^*$ are the minimzier of unregularized regression and the ridge regression, respectively. \\ 
-\textit{Hint 1}: For two non-singular matrices $\mathbf{A}, \mathbf{B}$ for which $\mathbf{A} + \mathbf{B}$ is invertible it holds that $(\mathbf{A} + \mathbf{B})^{-1} = \mathbf{A}^{-1}  - \mathbf{A}^{-1}\mathbf{B}(\mathbf{A} + \mathbf{B})^{-1}$
-\end{enumerate}
-}
-\aufgabe{Classification}{
-
-\begin{enumerate}
-\item In logistic regression, we model the conditional probability $\P(y = 1|\mathbf{x}^{(i)}) = \frac{1}{1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}$ of the target $y \in \{0, 1\}$ given a feature vector $\mathbf{x}^{(i)}.$
-From this it follows that $\P(y = y^{(i)}|\mathbf{x}^{(i)}) = \P(y = 1|\mathbf{x}^{(i)})^{y^{(i)}}(1-\P(y = 1|\mathbf{x}^{(i)})^{1-y^{(i)}}.$ With this derive the empirical risk $\mathcal{R}_{\text{emp}}$ as shown in the lecture following the maximum likelihood principle. (Assume the observations are independent)
-\item Show that $\mathcal{R}_{\text{emp}}$ of a) is convex.
-\item Show that the first primal form of the linear SVM with soft constraints \\
-$\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}, \zeta^{(i)}} \frac{1}{2}\Vert\bm{\theta}\Vert^2_2 + C\sum^n_{i=1}\zeta^{(i)}$ s.t. 
-$y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \geq 1 - \zeta^{(i)} \quad \forall i \in \{1,\dots,n\}$ and $\zeta^{(i)} \geq 0 \quad \forall i \in \{1, \dots, n\}$
-and its second primal form \\
-$\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}} \sum^n_{i=1}\max(1-y^{(i)}(\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0), 0) + \lambda\Vert\bm{\theta}\Vert^2_2$
-are equivalent. What is the functional relationship between $C$ and $\lambda$? \\
-\textit{Hint}: Try to insert the combined constraints into their associated objective.
-\item Show that the second primal form of the linear SVM is a convex problem
+\item The data situation is called complete separation, i.e., the classes can be perfectly classified with a linear classifier. Show that in this situation if $\tilde{\bm{\theta}}$ perfectly classifies the data then:\\
+$\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) \geq \mathcal{R}_\text{emp}(\alpha \tilde{\bm{\theta}})$ with $\alpha > 0.$
+\item Visualize $\mathcal{R}_\text{emp}$ in $[-1,4]\times[-1,4].$
+\item Find the gradient of $\mathcal{R}_\text{emp}$ for arbitrary $\bm{\theta}.$
+\item Solve the logistic regression via gradient descent. Use as step width = 0.5 and train for 50 steps. Explain your observation.\\
+\textit{Hint:} a)
+\item Repeat d) but add an L2 penalization term (with $\lambda = 1$) to the objective. What do you observe now?
+\item Visualize the regularized $\mathcal{R}_\text{emp}$ in $[-1,4]\times[-1,4].$
+\item Repeat e) but with backtracking. Set $\alpha = 3, \gamma = 0.9$ and $\tau = 0.8$
 \end{enumerate}
 }
 \end{document}

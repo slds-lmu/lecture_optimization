@@ -237,7 +237,7 @@ Now, assume that $ \Vert\bm{\theta}^*\Vert_2 \leq  \Vert\bm{\theta}_{\text{reg}}
 Now, assume that $\Vert\bm{\theta}_{\text{reg}}^*\Vert_2 < t(\lambda) < \Vert\bm{\theta}^*\Vert_2$: \\
 Since, by assumption $\mathbf{X}^\top\mathbf{X}$ is non-singular, $f$ is strictly convex and $f(\bm{\theta}_{\text{reg}}^*) > f(\bm{\theta}^*)$. \\
 Consider $\tilde{\bm{\theta}} = \bm{\theta}_{\text{reg}}^* + \frac{\bm{\theta}^* - \bm{\theta}_{\text{reg}}^*}{\Vert\bm{\theta}^* - \bm{\theta}_{\text{reg}}^*\Vert_2}\cdot \frac{t(\lambda) - \Vert\bm{\theta}_{\text{reg}}^*\Vert_2}{2}$ then $\tilde{\bm{\theta}}$ is by construction on the line between $\bm{\theta}_{\text{reg}}^*$ and $\bm{\theta}^*$. \\
-Hence $f(\tilde{\bm{\theta}}) < f(\bm{\theta}_{\text{reg}}^*)$ which is a contradiction since $\Vert\tilde{\bm{\theta}}\Vert_2 < t$ by construction. \\
+Hence $f(\tilde{\bm{\theta}}) < f(\bm{\theta}_{\text{reg}}^*)$ which is a contradiction ($\bm{\theta}_{\text{reg}}^*$ should be minimal in the constrained region) since $\Vert\tilde{\bm{\theta}}\Vert_2 < t$ by construction. \\
 $\Rightarrow \Vert \bm{\theta}_{\text{reg}}^* \Vert = t(\lambda).$
 
 \end{enumerate}
@@ -245,12 +245,13 @@ $\Rightarrow \Vert \bm{\theta}_{\text{reg}}^* \Vert = t(\lambda).$
 \aufgabe{Classification}{
 
 \begin{enumerate}
-\item First observe that $1 - \P(y = y^{(i)}|\mathbf{x}^{(i)}) = \frac{\exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}{1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})} = \frac{1}{1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})} = \P(y = y^{(i)}|-\mathbf{x}^{(i)}).$ \\
+\item First observe that $1 - \P(y = 1|\mathbf{x}^{(i)}) = \frac{\exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}{1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})} = \frac{1}{1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})} = \P(y = 1|-\mathbf{x}^{(i)}).$ \\
+Define $\sigma(\mathbf{x}) := \P(y = 1|\mathbf{x}^{(i)}).$\\
 With this we get that
-$\log \left(\P(y = y^{(i)}|\mathbf{x}^{(i)})\right) = \log\left(\P(y = y^{(i)}|\mathbf{x}^{(i)})^{y^{(i)}}(1-\P(y = y^{(i)}|\mathbf{x}^{(i)})^{1-y^{(i)}}\right)$ \\
-$\quad = y^{(i)}\log (\P(y = y^{(i)}|\mathbf{x}^{(i)})) + (1-y^{(i)})\log((1-\P(y = y^{(i)}|\mathbf{x}^{(i)})$ \\
-$\quad = y^{(i)}(\log (\P(y = y^{(i)}|\mathbf{x}^{(i)})) - \log (\P(y = y^{(i)}|-\mathbf{x}^{(i)})) ) + \log(\P(y = y^{(i)}|-\mathbf{x}^{(i)}))$ \\
-$\quad = y^{(i)}\left(\log\left(\frac{ \P(y = y^{(i)}|\mathbf{x}^{(i)})}{ \P(y = y^{(i)}|-\mathbf{x}^{(i)})}\right)\right) + \log(\P(y = y^{(i)}|-\mathbf{x}^{(i)}))$ \\
+$\log \left(\P(y = y^{(i)}|\mathbf{x}^{(i)})\right) = \log\left(\P(y = 1|\mathbf{x}^{(i)})^{y^{(i)}}(1-\P(y = 1|\mathbf{x}^{(i)})^{1-y^{(i)}}\right)$ \\
+$\quad = y^{(i)}\log (\sigma(\mathbf{x}^{(i)})) + (1-y^{(i)})\log(1-\sigma(\mathbf{x}^{(i)}))$ \\
+$\quad = y^{(i)}(\log (\sigma(\mathbf{x}^{(i)}) - \log (\sigma(-\mathbf{x}^{(i)}))) + \log(\sigma(-\mathbf{x}^{(i)}))$ \\
+$\quad = y^{(i)}\left(\log\left(\frac{ \sigma(\mathbf{x}^{(i)})}{ \sigma(-\mathbf{x}^{(i)})}\right)\right) + \log(\sigma(-\mathbf{x}^{(i)}))$ \\
 $\quad = y^{(i)}\left(\log\left(\frac{ 1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{ 1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}\right)\right) - \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}))$ \\
 $\quad = y^{(i)}\left(\log\left(\exp(\bm{\theta}^\top \mathbf{x}^{(i)})\frac{ 1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}{ 1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}\right)\right) - \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}))$ \\
 $\quad = y^{(i)}\bm{\theta}^\top \mathbf{x}^{(i)} - \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}))$ \\
@@ -262,7 +263,7 @@ is p.s.d. $\Rightarrow \mathcal{R}_{\text{emp}}$ is convex.
 
 \item We can transform the inequalities such that \\
 $\zeta^{(i)} \geq 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \quad \forall i \in \{1,\dots,n\}$ and $\zeta^{(i)} \geq 0 \quad \forall i \in \{1, \dots, n\}.$\\
-We can find the smallest $\zeta^{(i)}$ by assuring that always at least one constraint is active:\\
+We can find the smallest $\zeta^{(i)}$ by assuring that always at least one constraint is active\footnote{the $\geq$ constraint is fulfiled with equality} since this means that the value can not be further reduced:\\
 $\zeta^{(i)} = \begin{cases} 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) & \text{for } 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \geq 0 \\
 0 & \text{for } 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) < 0
 \end{cases} = \max(1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right), 0)$ \\

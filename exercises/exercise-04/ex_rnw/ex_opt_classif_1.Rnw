@@ -1,6 +1,6 @@
 \begin{enumerate}
 \item In logistic regression, we model the conditional probability $\P(y = 1|\mathbf{x}^{(i)}) = \frac{1}{1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}$ of the target $y \in \{0, 1\}$ given a feature vector $\mathbf{x}^{(i)}.$
-From this it follows that $\P(y = y^{(i)}|\mathbf{x}^{(i)}) = \P(y = y^{(i)}|\mathbf{x}^{(i)})^{y^{(i)}}(1-\P(y = y^{(i)}|\mathbf{x}^{(i)})^{1-y^{(i)}}.$ With this derive the empirical risk $\mathcal{R}_{\text{emp}}$ as shown in the lecture following the maximum likelihood principle. (Assume the observations are independent)
+From this it follows that $\P(y = y^{(i)}|\mathbf{x}^{(i)}) = \P(y = 1|\mathbf{x}^{(i)})^{y^{(i)}}(1-\P(y = 1|\mathbf{x}^{(i)})^{1-y^{(i)}}.$ With this derive the empirical risk $\mathcal{R}_{\text{emp}}$ as shown in the lecture following the maximum likelihood principle. (Assume the observations are independent)
 \item Show that $\mathcal{R}_{\text{emp}}$ of a) is convex.
 \item Show that the first primal form of the linear SVM with soft constraints \\
 $\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}, \zeta^{(i)}} \frac{1}{2}\Vert\bm{\theta}\Vert^2_2 + C\sum^n_{i=1}\zeta^{(i)}$ s.t. 

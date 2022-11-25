@@ -1,0 +1,33 @@
+You are given the following data situation:
+<<mv-plot, echo=TRUE, out.width="50%">>=
+library(ggplot2)
+
+set.seed(314)
+n <- 100
+X = cbind(rnorm(n, -5, 5),
+  rnorm(n, -10, 10))
+X_design = cbind(1, X)
+
+z <- 2*X[,1] + 3*X[,2] 
+pr <- 1/(1+exp(-z))
+y <- as.integer(pr > 0.5)
+df <- data.frame(X = X, y = y)
+
+ggplot(df) +
+  geom_point(aes(x = X.1, y = X.2, color=y)) + 
+  xlab(expression(theta[1])) + 
+  ylab(expression(theta[2]))  
+@
+
+In the following we want to estimate a logistic regression without intercept via gradient descent\footnote{We chose this algorithm for educational purposes; in practice, we typically use second order algorithms.}.
+\begin{enumerate}
+\item The data situation is called complete separation, i.e., the classes can be perfectly classified with a linear classifier. Show that in this situation if $\tilde{\bm{\theta}}$ perfectly classifies the data then:\\
+$\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) \geq \mathcal{R}_\text{emp}(\alpha \tilde{\bm{\theta}})$ with $\alpha > 0.$
+\item Visualize $\mathcal{R}_\text{emp}$ in $[-1,4]\times[-1,4].$
+\item Find the gradient of $\mathcal{R}_\text{emp}$ for arbitrary $\bm{\theta}.$
+\item Solve the logistic regression via gradient descent. Use as step width = 0.5 and train for 50 steps. Explain your observation.\\
+\textit{Hint:} a)
+\item Repeat d) but add an L2 penalization term (with $\lambda = 1$) to the objective. What do you observe now?
+\item Visualize the regularized $\mathcal{R}_\text{emp}$ in $[-1,4]\times[-1,4].$
+\item Repeat e) but with backtracking. Set $\alpha = 3, \gamma = 0.9$ and $\tau = 0.8$
+\end{enumerate}
