@@ -25,9 +25,9 @@ In the following we want to estimate a logistic regression without intercept via
 $\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) \geq \mathcal{R}_\text{emp}(\alpha \tilde{\bm{\theta}})$ with $\alpha > 0.$
 \item Visualize $\mathcal{R}_\text{emp}$ in $[-1,4]\times[-1,4].$
 \item Find the gradient of $\mathcal{R}_\text{emp}$ for arbitrary $\bm{\theta}.$
-\item Solve the logistic regression via gradient descent. Use as step width = 0.5 and train for 50 steps. Explain your observation.\\
+\item Solve the logistic regression via gradient descent. Use step width $\alpha = 0.01$, starting point $\bm{\theta}^{[0]} = (0,0)^\top$ and train for 500 steps. Repeat this with $\alpha = 0.02$. Explain your observation.\\
 \textit{Hint:} a)
 \item Repeat d) but add an L2 penalization term (with $\lambda = 1$) to the objective. What do you observe now?
 \item Visualize the regularized $\mathcal{R}_\text{emp}$ in $[-1,4]\times[-1,4].$
-\item Repeat e) but with backtracking. Set $\alpha = 3, \gamma = 0.9$ and $\tau = 0.8$
+\item Repeat e) but with backtracking. Set $\gamma = 0.9$ and $\tau = 0.5$
 \end{enumerate}
