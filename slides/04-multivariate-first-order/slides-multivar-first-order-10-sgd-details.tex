@@ -5,12 +5,11 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/momentum_illustration_medium.png}
+\newcommand{\titlefigure}{figure_man/SGD_cropped.png}
 \newcommand{\learninggoals}{
-\item Definition
-\item Max. Likelihood 
-\item Normal regression
-\item Risk Minimization
+\item Decreasing step size for SGD
+\item Stopping rules 
+\item SGD with momentum
 }
 
 
@@ -30,14 +29,16 @@
 
 \begin{vbframe}{SGD with constant step-size}
 
-\textbf{Example (continued)}: Let us look at the optimization progress of SGD with constant step size. 
+\textbf{Example}: SGD with constant step size. 
 
- 	\begin{figure}
- 		\vspace{-0.3cm}
- 		\centering
- 		\includegraphics[width = 1\textwidth]{figure_man/sgd_example_erratic_behavior.png} \newline
-		SGD makes fast convergence in the beginning, but shows erratic behavior later on (variance too big). 
- 	\end{figure}
+\lz 
+
+\begin{figure}
+    \vspace{-0.3cm}
+    \centering
+    \includegraphics[width = 1\textwidth]{figure_man/sgd_example_erratic_behavior.png} \newline
+    Fast convergence of SGD at beginning, erratic behavior later on (variance too big). 
+\end{figure}
 
 \end{vbframe}
 
@@ -45,13 +46,13 @@
 \begin{vbframe}{SGD with decreasing step-size}
 
 \begin{itemize}
-	\item To get convergence, we use a \textbf{decreasing step size} 
-	\item Consider: 
+	\item \textbf{Idea: } Decrease step size to reduce magnitude of steps of erratic behavior. 
+	\item Consider trade-off: 
 	\begin{itemize}
 		\item if  step size $\alpha^{[t]}$ decreases slowly, the variance of $\nabla_x ~ g_i(\xv)$ decreases slowly too.
-		\item if step size decreases too fast, we reach the optimum slowly.
+		\item if step size decreases too fast, we reach optimum slowly.
 	\end{itemize}
-	\item SGD converges to a stationary point if the ratio of sum of squared step-sizes over the sum of step-sizes converges to $0$: 
+	\item SGD converges to stationary point if ratio of sum of squared step-sizes over the sum of step-sizes converges to $0$: 
 	$$
 		\frac{\sum_{t = 1}^\infty \left(\alpha^{[t]}\right)^2}{\sum_{t = 1}^\infty \alpha^{[t]}} = 0
 	$$
@@ -61,7 +62,7 @@
 \framebreak 
 
 \begin{itemize}
-	\item A classic solution is using a step size fulfilling $\alpha^{[t]} \in \order(\frac{1}{t})$. 
+	\item Popular solution: step size fulfilling $\alpha^{[t]} \in \order(\frac{1}{t})$. 
 \end{itemize}
 
  	\begin{figure}
@@ -72,7 +73,7 @@
  	\end{figure}
 
 \begin{itemize}
- 	\item This often does not work well in practice, since steps get really small really fast. 
+ 	\item Often not working well in practice: Step size really small really fast. 
  	\item Alternative: $\alpha^{[t]} \in \order(\sqrt{t})$
 \end{itemize}
 
@@ -80,14 +81,13 @@
 
 \begin{vbframe}{Advanced step-size control} 
 
-
 	\begin{blocki}{Why not Armijo-based step-size control? }
-		\item Backtracking line search or other rules based on the Armijo-condition are usually not suitable: Checking the Armijo condition 
+		\item Backtracking line search or other rules based on the Armijo-condition are usually not suitable: A check of Armijo condition 
 		$$
 		f(\xv + \alpha \bm{d}) \le \fx + \gamma \alpha \textcolor{red}{\nabla g(\xv)}^\top \bm{d}
 		$$
 		requires evaluating the full gradient.
-		\item But remember that SGD is particularly used to avoid expensive evaluations of the gradient! 
+		\item But: SGD is particularly used to \textbf{avoid} expensive evaluations of gradient! 
 		\item Recent research aims at finding approximate line-search methods that provide better convergence methods, e.g., \emph{Vaswani et al., Painless Stochastic Gradient: Interpolation, Line-Search, and Convergence Rates (NeurIPS 2019).}
 	\end{blocki}
 
@@ -97,7 +97,7 @@
 \begin{vbframe}{Mini-batches} 
 
 \begin{itemize}
-	\item We can also increase batch size $m$ to improve the approximation
+	\item Reduce noise by increasing batch size $m$ for better approximation
 	$$
 		\bm{\hat d} = \frac{1}{m} \sum_{i \in J} \nabla_\xv~ g_i(\xv) \approx \frac{1}{n} \sumin \nabla_\xv~ g_i(\xv) = \bm{d} 
 	$$
@@ -116,11 +116,11 @@
 \begin{vbframe}{Stopping rules for SGD} 
 
 \begin{itemize}
-	\item In GD, we usually stop when the gradient is close to $0$ (i.e., we are close to a stationary point)
-	\item In SGD, individual gradients do not necessarily go to zero, and we do not see the full gradient. 
-	\item In practice for machine learning: 
+	\item \textbf{For GD}: We usually stop when gradient is close to $0$ (i.e., we are close to a stationary point)
+	\item \textbf{For SGD}: individual gradients do not necessarily go to zero, and we cannot access full gradient.
+	\item Practicable solution for ML: 
 	\begin{itemize}
-		\item After $T$ iterations (for some large $T$), measure the validation set error
+		\item Measure the validation set error after $T$ iterations
 		\item Stop, if validation set error is not improving
 	\end{itemize}
 \end{itemize}
@@ -133,7 +133,7 @@
 
 	\begin{blocki}{General remarks:}
 		\item SGD is a simplification of GD 
-		\item It is particularly suitable for large-scale ML when the evaluating the gradient is too expensive or restricted by computational resources
+		\item SGD particularly suitable for large-scale ML when the evaluating the gradient is too expensive / restricted by computational resources
 		\item SGD and variants are the most commonly used methods in modern ML, for example:  
 		\begin{itemize}
 			\item Linear models \\

@@ -5,12 +5,11 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/momentum_illustration_medium.png}
+\newcommand{\titlefigure}{figure_man/SGD_cropped.png}
 \newcommand{\learninggoals}{
-\item Definition
-\item Max. Likelihood 
-\item Normal regression
-\item Risk Minimization
+\item SGD
+\item Erratic behavior  
+\item Convergence
 }
 
 
@@ -107,17 +106,15 @@
 
 \begin{vbframe}{Stochastic gradient descent}
 
-Let the objective $g: \R^d \to \R$ be an \textbf{average over smooth functions}: 
+NB: We use $g$ instead of $f$ as objective, bc. $f$ is used as model in ML. 
+
+\lz 
+
+$g: \R^d \to \R$ objective, $g$ \textbf{average over functions}: 
 
 $$
-	g(\xv) = \frac{1}{n}\sumin g_i(\xv). 
+	g(\xv) = \frac{1}{n}\sumin g_i(\xv), \qquad g \text{ and } g_i \text{ smooth}
 $$
-
-\begin{footnotesize}
-	Here we use $g$ instead of $f$ as objective, as $f$ is also used as model in ML. 
-\end{footnotesize}
-
-\lz
 
 Stochastic gradient descent (SGD) approximates the gradient 
 
@@ -128,7 +125,7 @@ Stochastic gradient descent (SGD) approximates the gradient
 	\frac{1}{\textcolor{blue}{|J|}}\sum_{i \in \textcolor{blue}{J}} \nabla_\xv~g_i(\xv) &:=& \bm{\hat d}, 
 \end{eqnarray*}
 
-with a random subset $J \subset \{1, 2, ..., n\}$ called \textbf{mini-batch}. We do this especially in situations where computing the true gradient is \textbf{expensive}. 
+with random subset $J \subset \{1, 2, ..., n\}$ of gradients called \textbf{mini-batch}. This is done e.g. when computing the true gradient is \textbf{expensive}. 
 
 \framebreak 
 
@@ -150,17 +147,17 @@ with a random subset $J \subset \{1, 2, ..., n\}$ called \textbf{mini-batch}. We
 		\end{algorithmic}
 	\end{algorithm}
 
-\vspace*{-0.5cm}
+\vspace*{0.2cm}
 
 \begin{footnotesize}
 	\begin{itemize}
-		\item Instead of drawing batches randomly it can be sensible to go through the $g_i$ sequentially. Obviously, this does not work if the $g_i$ are sorted in any way.
-		\item The computation of an update is faster, but also more stochastic: 
+		\item Instead of drawing batches randomly we might want to go through the $g_i$ sequentially (unless $g_i$ are sorted in any way)
+		\item Updates are computed faster, but also more stochastic: 
 		\begin{itemize} 
 			\begin{footnotesize}	
 			\item In the simplest case, batch-size $m := |J_k|$ is set to $m = 1$
-			\item If $n$ is a billion, computation of an update is a billion times faster (if computed sequentially)
-			\item \textbf{But} as we will see later: Convergence rates suffer from stochastic behavior!
+			\item If $n$ is a billion, computation of update is a billion times faster
+			\item \textbf{But} (we will see later): Convergence rates suffer from stochasticity!
 			\end{footnotesize}
 		\end{itemize} 
 	\end{itemize}
@@ -168,9 +165,9 @@ with a random subset $J \subset \{1, 2, ..., n\}$ called \textbf{mini-batch}. We
 
 \end{vbframe}
 
-\begin{vbframe}{SGD in Machine Learning}
+\begin{vbframe}{SGD in ML}
 
-	In ML, we minimize the empirical risk 
+	In ML, we perform ERM:  
 
 	$$
 		\riskt = \frac{1}{n}\sumin \underbrace{\Lxyit}_{g_i(\theta)}
@@ -184,23 +181,21 @@ with a random subset $J \subset \{1, 2, ..., n\}$ called \textbf{mini-batch}. We
 		\item and a model class $f$, e.g. the linear model $\fxit = \thetab^\top \xv$. 
 	\end{itemize}
 
-	\lz
-
-	Coming from a statistical point of view, $\riskt$ may correspond to the \textbf{log-likelihood} in maximum likelihood estimation.
-
 	\framebreak 
 
 	For large data sets, computing the exact gradient 
 	$$
-		\bm{d} = \frac{1}{n}\sum_{i=1}^n \nabla_{\thetab} \Lxyit,
+		\bm{d} = \frac{1}{n}\sum_{i=1}^n \nabla_{\thetab} \Lxyit \quad \text{(also: score)}
 	$$ 
-	also referred to as \textbf{score}, may be computationally too expensive. 
+	may be expensive or infeasible to compute and is approximated by 
+	$$
+	\bm{\hat d} = \frac{1}{m}\sum_{i \in J} \nabla_{\thetab} \Lxyit,
+	$$
+        for $J \subset{1, 2, ..., n}$ random subset. 
 
-	Therefore, it is approximated by 
-	$$
-	\bm{\hat d} = \frac{1}{m}\sum_{i \in J} \nabla_{\thetab} \Lxyit. 
-	$$
-	\textbf{Note:} Often, the maximum size of $J$ is technically limited by how much data fits in to the memory. 
+        \lz 
+        
+	\textbf{NB:} Often, the max. size of $J$ technically limited by how much data fits in to the memory. 
 \end{vbframe}
 
 
@@ -215,23 +210,25 @@ with a random subset $J \subset \{1, 2, ..., n\}$ called \textbf{mini-batch}. We
 		\begin{tiny}\\ 
 		Source: Shalev-Shwartz, Ben-David. Understanding machine learning. Cambridge University Press, 2014. 
 		\end{tiny}\\
-		An illustration of the SGD algorithm (to minimize the function $g(x_1, x_2) = 1.25(x_1 + 6)^2 + (x_2 - 8)^2)$. On the left is GD and on the right is SGD. The black line depicts the averaged value of $\xv$.
+        Minimize $g(x_1, x_2) = 1.25(x_1 + 6)^2 + (x_2 - 8)^2)$. \\ Left: GD. Right: SGD, the black line depicts the averaged value of $\xv$.
 	\end{figure}
 
 	\framebreak 
 
+        Assume batch size $m = 1$ (statements also apply for higher batch size).
+
 	\begin{itemize}
 
-		\item The approximated gradient $\bm{\hat d}$ might point in a suboptimal (possibly not even a descent) direction
-		\item However, if $J$ is drawn i.i.d., $\bm{\hat d}$ is an unbiased estimate of $\bm{d}$, and the \textbf{expected} direction is the full gradient. For $m = 1$: 
+		\item \textbf{(Possibly) suboptimal direction: }Approx. gradient $\bm{\hat d} = \nabla_\xv g_i(\xv)$ might point in suboptimal (possibly not even descent!) direction
+		\item \textbf{Unbiased estimate: } If $J$ drawn i.i.d., approx. gradient $\bm{\hat d}$ is an unbiased estimate of gradient $\bm{d} = \nabla_\xv g(\xv) = \sumin \nabla_\xv g_i(\xv)$: 
 
 		\vspace*{-0.5cm}
 
 		\begin{eqnarray*}
 			\mathbb{E}_{i}\left[\nabla_\xv ~g_i(\xv)\right] &=&\sumin \nabla_\xv ~g_i(\xv) \cdot \P(i = i) = \sumin \nabla_\xv ~ g_i(\xv) \cdot \frac{1}{n}\\ &=& \frac{1}{n} \sumin \nabla_\xv~g_i(\xv) = \nabla_\xv~ g(\xv).
 		\end{eqnarray*}
-		\item Therefore, the algorithm might perform single suboptimal moves, but moves in the \enquote{right direction} \textbf{on average}
 	\end{itemize}
+\textbf{Conclusion:} SGD might perform single suboptimal moves, but moves in \enquote{right direction} \textbf{on average}. 
 
 \end{vbframe}
 
@@ -268,20 +265,24 @@ with a random subset $J \subset \{1, 2, ..., n\}$ called \textbf{mini-batch}. We
  		\vspace{-0.3cm}
  		\centering
  		\includegraphics[width = 0.7\textwidth]{figure_man/sgd_example_confusion_areas.png} \newline
-		For any point $\xv$ in the blue area, $- \nabla g_i(\xv)$ will point towards the optimum, no matter which $i$ we sample. The red area is the \enquote{confusion} area: We might sample an $i$ for which $- \nabla g_i(\xv)$ points away from the optimum, resulting in a suboptimal move. 
- 	\end{figure}
+        \begin{footnotesize}
+  $\xv$ in \textbf{blue area}: $- \nabla g_i(\xv)$ will point towards optimum, no matter which $i$ we sample. \\ $\xv$ in \textbf{red area} (confusion area): We might sample $i$ for which $- \nabla g_i(\xv)$ points away from optimum and perform suboptimal moves close to optimum. 
+        \end{footnotesize}
+
+  \end{figure}
+
 
 
  	\framebreak 
 
 	\begin{itemize}
-		\item At a point $\xv$, the \enquote{confusion} is captured by a kind of variance of gradients
+		\item At $\xv$, \enquote{confusion} is captured variance of gradients
 		$$
 			\frac{1}{n}\sumin \|\nabla_\xv~ g_i(\xv) - \nabla_\xv ~ g(\xv)\|^2
 		$$
-		\item If this term is $0$, the next step will be in the right direction (independent of the sampled $i$)
+		\item If this variance is $0$, the next step will be in the right direction (independent of the sampled $i$)
 		\item If the term is small, the next step will likely go in the right direction
-		\item If the term is large, the step will very likely go in the wrong direction (middle of confusion area, where $\xv^\ast$ lives)
+		\item If the term is large, the step will likely go in the wrong direction (middle of confusion area, where $\xv^\ast$ lives)
 	\end{itemize}
 
 \end{vbframe}
