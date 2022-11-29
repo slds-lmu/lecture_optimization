@@ -278,6 +278,67 @@ Consider the 2D quadratic function $f(\bm{x}) = x_{1}^{2} - x_{2}^{2}$with a sad
 \end{vbframe}
 
 
+
+\begin{vbframe}{ERM for NN with GD}
+
+Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize 
+
+\vspace*{-0.3cm}
+
+$$
+	\risket = \sumin \left(\fxt - \yi\right)^2
+$$
+
+\vspace*{-0.1cm}
+
+where $\fxt$ is a neural network with 2 hidden layers (2 units each). 
+
+\vspace*{-1.5cm}
+
+\begin{figure}
+	\includegraphics[width=0.6\textwidth]{figure_man/gradient_descent_NN_0.pdf}
+\end{figure}
+
+\framebreak 
+
+After $10$ iters of GD: 
+
+\begin{figure}
+	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_10_surface_0.5.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history_0.5.pdf} 
+\end{figure}
+
+\framebreak 
+
+After $100$ iters of GD: 
+
+\begin{figure}
+	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_100_surface_0.5.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
+\end{figure}
+
+\framebreak 
+
+After $300$ iters of GD:
+
+\begin{figure}
+	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_300_surface_0.5.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
+\end{figure}
+
+\framebreak
+\begin{center}
+    Gradient Descent with and without momentum
+\end{center}
+
+\begin{figure}
+    \includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_NN_300_history_0.5.pdf} ~~
+	\includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_NN_300_history_0.pdf}
+\end{figure}
+
+\end{vbframe}
+
+
+
+
+
 \begin{vbframe}{Nesterov's accelerated gradient}
 	A slightly modified version is Nesterov momentum with stronger theoretical convergence guarantees for convex functions. Here, the gradient is computed at updated position 
 	$$
@@ -288,6 +349,7 @@ Consider the 2D quadratic function $f(\bm{x}) = x_{1}^{2} - x_{2}^{2}$with a sad
 		\footnotesize{Instead of evaluating the gradient at the current position, with Nesterov momentum we evaluate the gradient at the "looked-ahead" position. \\ Source:https://cs231n.github.io/neural-networks-3/}
 	\end{center}
 \end{vbframe}
+
 
 \begin{vbframe}{Momentum vs. Nesterov Momentum}
 	\begin{figure}

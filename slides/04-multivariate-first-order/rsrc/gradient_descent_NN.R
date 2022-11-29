@@ -47,7 +47,7 @@ dev.off()
 
 # Build model 
 
-build_model = function() {     
+build_model = function(momentum) {     
   model = keras_model_sequential() %>%
       layer_dense(units = 2L, input_shape = 2L) %>%
       layer_dense(units = 2L, activation = "sigmoid") %>%
@@ -56,11 +56,11 @@ build_model = function() {
     
   model %>% compile(
     loss = "mse",
-    optimizer = optimizer_sgd(),
+    optimizer = optimizer_sgd(momentum = momentum),
     metrics = list("mean_absolute_error"))
 }
 
-train_model = function(task, task_predict = NULL, epochs, epochs_max = NULL) {
+train_model = function(task, task_predict = NULL, epochs, epochs_max = NULL, momentum) {
   
   if (is.null(epochs_max)) {
     epochs_max = epochs
@@ -71,7 +71,7 @@ train_model = function(task, task_predict = NULL, epochs, epochs_max = NULL) {
   learner = lrn("regr.keras")  ### statt epochs for-loop -> Plot nach Index
   
   learner$param_set$values$epochs = epochs
-  learner$param_set$values$model = build_model()
+  learner$param_set$values$model = build_model(momentum)
   learner$param_set$values$validation_split = 0
   learner$param_set$values$batch_size = task$nrow
   
@@ -91,7 +91,7 @@ train_model = function(task, task_predict = NULL, epochs, epochs_max = NULL) {
   }
 
 
-  pdf(paste0("figure_man/gradient_descent_NN_", epochs, "_surface.pdf"), 5, 5, colormodel = "cmyk")
+  pdf(paste0("figure_man/gradient_descent_NN_", epochs, "_surface_", momentum,".pdf"), 5, 5, colormodel = "cmyk")
 
   persp3D(x = x1_scale, y = x2_scale, z = z, xlab = "x1", ylab = "x2", zlab = "y",
       expand = 0.5, d = 2, phi = 10, theta = -60, resfac = 2,
@@ -108,13 +108,17 @@ train_model = function(task, task_predict = NULL, epochs, epochs_max = NULL) {
 
 mlr3keras_set_seeds(1111)
 
-train_model(data_task, epochs = 10)
-train_model(data_task, epochs = 100)
-history = train_model(data_task, epochs = 300)
-
-df = data.frame(loss = history$metrics$loss)
-df$epoch = 1:nrow(df)
-p = ggplot(data = df, aes(x = epoch, y = loss)) + geom_line()
-p = p + ylim(c(60, 130))
-p
-ggsave(filename = paste0("figure_man/gradient_descent_NN_300_history.pdf"), p, width = 4, height = 3)
+for (mom in c(0, 0.5)) {
+  print(mom)
+  train_model(data_task, epochs = 10, momentum=mom)
+  train_model(data_task, epochs = 100, momentum=mom)
+  history = train_model(data_task, epochs = 300, momentum=mom)
+  
+  df = data.frame(loss = history$metrics$loss)
+  df$epoch = 1:nrow(df)
+  p = ggplot(data = df, aes(x = epoch, y = loss)) + geom_line()
+  p = p + ylim(c(0, 130)) 
+  p = p + annotate("text",label=paste0("Momentum: ",mom), x=50, y=10)
+  print(p)
+  ggsave(filename = paste0("figure_man/gradient_descent_NN_300_history_",mom,".pdf"), p, width = 4, height = 3)
+}
