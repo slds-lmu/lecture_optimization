@@ -255,10 +255,10 @@ $\quad = y^{(i)}\left(\log\left(\frac{ \sigma(\mathbf{x}^{(i)})}{ \sigma(-\mathb
 $\quad = y^{(i)}\left(\log\left(\frac{ 1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{ 1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}\right)\right) - \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}))$ \\
 $\quad = y^{(i)}\left(\log\left(\exp(\bm{\theta}^\top \mathbf{x}^{(i)})\frac{ 1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}{ 1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}\right)\right) - \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}))$ \\
 $\quad = y^{(i)}\bm{\theta}^\top \mathbf{x}^{(i)} - \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}))$ \\
-With this we find that $\mathcal{R}_\text{emp} = -\log \prod^n_{i=1}\P(y = y^{(i)}|\mathbf{x}^{(i)}) = \sum^n_{i=1}y^{(i)} \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})) - y^{(i)}\bm{\theta}^\top \mathbf{x}^{(i)} $
+With this we find that $\mathcal{R}_\text{emp} = -\log \prod^n_{i=1}\P(y = y^{(i)}|\mathbf{x}^{(i)}) = \sum^n_{i=1} \log(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})) - y^{(i)}\bm{\theta}^\top \mathbf{x}^{(i)} $
 
-\item $\frac{\partial}{\partial \bm{\theta}}\mathcal{R}_{\text{emp}} = \sum^n_{i=1}y^{(i)} \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{\mathbf{x}^{(i)}}^\top - y^{(i)}{\mathbf{x}^{(i)}}^\top$ \\
-$\frac{\partial^2}{\partial \bm{\theta}\partial \bm{\theta}^\top}\mathcal{R}_{\text{emp}} = \sum^n_{i=1}y^{(i)} \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}) - \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}{(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}\mathbf{x}^{(i)}{\mathbf{x}^{(i)}}^\top =  \sum^n_{i=1}\underbrace{y^{(i)} \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}}_{\geq 0}\underbrace{\mathbf{x}^{(i)}{\mathbf{x}^{(i)}}^\top}_{\text{p.s.d.}}$ \\
+\item $\frac{\partial}{\partial \bm{\theta}}\mathcal{R}_{\text{emp}} = \sum^n_{i=1} \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{\mathbf{x}^{(i)}}^\top - y^{(i)}{\mathbf{x}^{(i)}}^\top$ \\
+$\frac{\partial^2}{\partial \bm{\theta}\partial \bm{\theta}^\top}\mathcal{R}_{\text{emp}} = \sum^n_{i=1} \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}) - \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}{(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}\mathbf{x}^{(i)}{\mathbf{x}^{(i)}}^\top =  \sum^n_{i=1}\underbrace{ \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}}_{> 0}\underbrace{\mathbf{x}^{(i)}{\mathbf{x}^{(i)}}^\top}_{\text{p.s.d.}}$ \\
 is p.s.d. $\Rightarrow \mathcal{R}_{\text{emp}}$ is convex.
 
 \item We can transform the inequalities such that \\
@@ -269,12 +269,12 @@ $\zeta^{(i)} = \begin{cases} 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} 
 \end{cases} = \max(1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right), 0)$ \\
 Inserting these $\zeta^{(i)}$ into the objective function results in $f(\bm{\theta}) =
 \frac{1}{2}\Vert\bm{\theta}\Vert^2_2 + C\sum^n_{i=1}\max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0).$
-Minimzing $f$ is equivalent to minimizing $\frac{1}{2C}\Vert\bm{\theta}\Vert^2_2 + \sum^n_{i=1}\max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0) \Rightarrow \lambda = \frac{1}{2C}.$
+Minimzing $f$ is equivalent to minimizing $\frac{1}{2C}\Vert\bm{\theta}\Vert^2_2 + \sum^n_{i=1}\max(1-y^{(i)}(\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0), 0) \Rightarrow \lambda = \frac{1}{2C}.$
 
 \item First we show that $g:\R \rightarrow \R, x \mapsto \max(x, 0)$ is convex: \\
 $g(x) = 0.5\vert x \vert + 0.5x \Rightarrow \max(x, 0)$ is convex since it is the sum of two convex functions. \\
 Also $g$ is increasing $\Rightarrow \max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0)$ is convex since $1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0$ is convex (linear). \\
-With this we can conclude that $\sum^n_{i=1}\max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0) + \lambda\Vert\bm{\theta}\Vert^2_2$ is convex since it is the sum of convex functions.
+With this we can conclude that $\sum^n_{i=1}\max(1-y^{(i)}(\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0), 0) + \lambda\Vert\bm{\theta}\Vert^2_2$ is convex since it is the sum of convex functions.
 
 \end{enumerate}
 }
