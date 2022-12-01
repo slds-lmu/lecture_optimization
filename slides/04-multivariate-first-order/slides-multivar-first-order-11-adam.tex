@@ -5,12 +5,12 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/momentum_illustration_medium.png}
+\newcommand{\titlefigure}{figure_man/sattle_point2-50.png}
 \newcommand{\learninggoals}{
-\item Definition
-\item Max. Likelihood 
-\item Normal regression
-\item Risk Minimization
+\item Adaptive Learning Rates
+\item Adagrad 
+\item RMSProp
+\item ADAM
 }
 
 
@@ -215,13 +215,22 @@
 		\begin{center}
 			\vspace{-1cm}
 			\href{https://giphy.com/embed/SJVFO3IcVC0M0}{\includegraphics[width = .49\textwidth]{figure_man/sattle_point2-50.png}}
-			\href{https://giphy.com/embed/SJVFO3IcVC0M0}{\includegraphics[width = .49\textwidth]{figure_man/sattle_point2-150.png}}
+			\href{https://giphy.com/embed/SJVFO3IcVC0M0}
 			\tiny{\\Credits: Dettmers (2015) and Radford}
 		\end{center}
 		\footnotesize{Excerpts from an animation to compare the behavior of momentum and
 			other methods compared to SGD for a saddle point. Left: After a few seconds; Right: A bit later. The animation shows that all showed methods accelerate optimization compared to the standard SGD. The highest acceleration is obtained using Rmsprop followed by Adagrad as learning rate strategies. You can find the animation \href{https://giphy.com/embed/SJVFO3IcVC0M0}{\textcolor{blue}{here}} or click on the images above.}
 	\end{figure}
 }
+
+\begin{vbframe}{Comparison of Optimizers: Quadratic form}
+
+\begin{figure}
+    \scalebox{0.8}{\includegraphics{slides/04-multivariate-first-order/figure_man/momentum/comparison_adam.png}} \\
+    SGD vs. SGD with Momentum vs. ADAM on a quadratic form. 
+\end{figure} 
+
+\end{vbframe}
 
 \endlecture
 \end{document}

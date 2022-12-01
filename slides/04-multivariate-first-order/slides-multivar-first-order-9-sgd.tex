@@ -307,6 +307,16 @@ As maximum batch size is usually limited by computational resources (memory), ch
 
 \end{vbframe}
 
+\begin{vbframe}{Effect of batch size}
+
+\begin{figure}
+    \scalebox{0.9}{\includegraphics{slides/04-multivariate-first-order/figure_man/gradient_descent_NN_SGD_vs_no_SGD.pdf}} \\
+    SGD to optimize an NN with batch size $\in \{0.5 \%, 10 \%, 50 \%\}$ \\ of the training data. 
+    The higher the batch size, the lower the batch variance. However, with SGD we seem to not get stuck in local optima that easily.
+\end{figure} 
+
+\end{vbframe}
+
 
 \endlecture
 \end{document}
