@@ -68,9 +68,10 @@ for (mom in c(0, 0.5)) {
 mlr3keras_set_seeds(1111)
 
 epochs = 100
+lr = 0.001
 
 out = lapply(c(1, 1 / 200, 0.1, 0.5), function(bsf) {
-  history = train_model(data_task, epochs = epochs, bs_fraction = bsf, lr = 0.001)
+  history = train_model(data_task, epochs = epochs, bs_fraction = bsf, lr = lr)
   cbind(data.frame(loss = history$metrics$loss), bs_fraction = bsf, epoch = 1:epochs)
 })
 
@@ -83,14 +84,18 @@ p = p + theme_bw() + ggtitle("SGD with different batch sizes")
 p
 ggsave(filename = "figure_man/gradient_descent_NN_SGD_vs_no_SGD.pdf", width = 5, height = 3)
 
+ggsave(filename = "figure_man/gradient_descent_NN_SGD_vs_no_SGD_2.pdf", width = 5, height = 3)
+
+
 ## DIFFERENT OPTIMIZERS 
 mlr3keras_set_seeds(1111)
 
 epochs = 50
 bsf = 1 / 200 # batch size 
+lr = 0.005
 
 out = lapply(c("optimizer_sgd", "optimizer_adam", "optimizer_rmsprop"), function(opts) {
-  history = train_model(data_task, epochs = epochs, optimizer = opts, bs_fraction = bsf, lr = 0.005)
+  history = train_model(data_task, epochs = epochs, optimizer = opts, bs_fraction = bsf, lr = lr)
   cbind(data.frame(loss = history$metrics$loss), bs_fraction = bsf, epoch = 1:epochs, optimizer = opts)
 })
 
@@ -100,7 +105,6 @@ df$bs_fraction = as.factor(df$bs_fraction)
 p = ggplot(data = df, aes(x = log(epoch), y = loss, colour = optimizer)) + geom_line()
 # p = p + ylim(c(0, 130)) 
 p = p + theme_bw() + ggtitle("Different optimizers")
-p = p + xlim(c(0, 50)) 
 p
 ggsave(filename = "figure_man/gradient_descent_NN_ADAM_SGD_RMS_ADAGRAD.pdf", width = 5, height = 3)
 
