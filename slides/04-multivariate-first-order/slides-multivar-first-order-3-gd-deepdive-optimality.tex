@@ -99,7 +99,7 @@
 	We get
 	\vspace*{-0.3cm}
 	\begin{eqnarray*}
-	f(\xv^{[t+1]}) &\leq& f(\xv^{[t]}) - \nabla f(\xv^{[t]})^\top(\xv^{[t+1]} - \xv^{[t]}) + \frac{1}{2}L ||\xv^{[t+1]} - \xv^{[t]}||^2 \\
+	f(\xv^{[t+1]}) &\leq& f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top(\xv^{[t+1]} - \xv^{[t]}) + \frac{1}{2}L ||\xv^{[t+1]} - \xv^{[t]}||^2 \\
 	&=& f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top(\xv^{[t]} - \alpha \nabla f(\xv^{[t]}) - \xv^{[t]}) + \frac{1}{2}L ||\xv^{[t]} - \alpha \nabla f(\xv^{[t]}) - \xv^{[t]}||^2 \\
 	& = & f(\xv^{[t]}) - \nabla f(\xv^{[t]})^\top \alpha  \nabla f(\xv^{[t]}) + \frac{1}{2}L ||\alpha \nabla f(\xv^{[t]})||^2 \\
 	&=& f(\xv^{[t]}) - \alpha ||\nabla f(\xv^{[t]})||^2 + \frac{1}{2}L\alpha^2 ||\nabla f(\xv^{[t]})||^2 \\

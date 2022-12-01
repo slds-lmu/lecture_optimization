@@ -7,7 +7,7 @@
 
 \newcommand{\titlefigure}{figure_man/sattle_point2-50.png}
 \newcommand{\learninggoals}{
-\item Adaptive Learning Rates
+\item Adaptive Step Sizes
 \item Adagrad 
 \item RMSProp
 \item ADAM
@@ -22,29 +22,31 @@
 
 \begin{document}
 
-\lecturechapter{First order methods: ADAM}
+\lecturechapter{First order methods: ADAM and friends}
 \lecture{Optimization in Machine Learning}
 \sloppy
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Adaptive learning rates}
+\begin{vbframe}{Adaptive Step Sizes}
 	\begin{itemize}
-		\item The learning rate is reliably one of the hyperparameters that is the most difficult to set because it has a significant impact on the models performance.
-		\item Naturally, it might make sense to use a different learning rate for each parameter, and automatically adapt them throughout the training process.
+		\item Step size is probably the most important control param
+        \item Has strong influence on performance
+		\item Natural to use different SS for each input, 
+            and to automatically adapt them
 	\end{itemize}
 \end{vbframe}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{vbframe}{Adagrad}
 	\begin{itemize}
-		\item Adagrad adapts the learning rate to the parameters.
-		\item In fact, Adagrad scales learning rates inversely proportional to the square root of the sum of the past squared derivatives.
+		\item Adagrad adapts SSs by
+		scaling them inversely proportional to square root of the sum of the past squared derivatives
 		\begin{itemize}
-			\item Parameters with large partial derivatives of the loss obtain a rapid decrease in their learning rate.
-			\item Parameters with small partial derivatives on the other hand obtain a relatively small decrease in their learning rate.
+			\item Inputs with large partial derivatives get rapid decrease in SS
+			\item Inputs with small PDs get small decrease in SS
 		\end{itemize}
-		\item For that reason, Adagrad might be well suited when dealing with sparse data. 
-		\item Goodfellow et al. (2016) say that the accumulation of squared gradients can result in a premature and overly decrease in the learning rate.
+		%\item For that reason, Adagrad might be well suited when dealing with sparse data. 
+		\item Goodfellow et al. (2016) say that the accumulation of squared gradients can result in premature decrease in SS
 	\end{itemize}
 	
 	\framebreak
@@ -55,7 +57,7 @@
 		\caption{Adagrad}
 		\begin{algorithmic}[1]
 			\scriptsize 
-			\State \textbf{require} Global learning rate $\alpha$ \strut
+			\State \textbf{require} Global SS $\alpha$ \strut
 			\State \textbf{require} Initial parameter $\thetab$ \strut
 			\State \textbf{require} Small constant $\beta$, perhaps $10^{-7}$, for numerical stability \strut
 			\State \textbf{Initialize} gradient accumulation variable $\mathbf{r} = \mathbf{0} $
@@ -70,7 +72,7 @@
 	\end{algorithm}
 	\begin{itemize}
 		\small
-		\item \enquote{$\odot$} is called Hadamard or element-wise product.
+		\item $\odot$: element-wise product (Hadamard)
 		% \item Example:
 		% \vspace{0.2cm}
 		% \item[] $A =
@@ -94,11 +96,11 @@
 
 \begin{vbframe}{RMSProp}
 	\begin{itemize}
-		\item RMSprop is a modification of Adagrad.
-		\item It's intention is to resolve Adagrad's radically diminishing learning rates.
-		\item The gradient accumulation is replaced by an exponentially weighted moving average.
-		\item Theoretically, that leads to performance gains in non-convex scenarios.
-		\item Empirically, RMSProp is a very effective optimization algorithm. Particularly, it is employed routinely by deep learning practitioners.
+		\item Modification of Adagrad
+		\item Resolves Adagrad's radically diminishing SSs.
+		\item Gradient accumulation is replaced by exponentially weighted moving average.
+		\item Theoretically, leads to performance gains in non-convex scenarios.
+		\item Empirically, RMSProp is a very effective optimization algorithm. Particularly, it is employed routinely by DL practitioners.
 	\end{itemize}
 	
 	\framebreak
@@ -108,7 +110,7 @@
 		\small
 		\caption{RMSProp}
 		\begin{algorithmic}[1]
-			\State \textbf{require} Global learning rate $\alpha$ and decay rate $\rho \in [0, 1)$ \strut
+			\State \textbf{require} Global SS $\alpha$ and decay rate $\rho \in [0, 1)$ \strut
 			\State \textbf{require} Initial parameter $\mathbf{\thetab}$ \strut
 			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{\textbf{require} Small constant $\beta$, perhaps $10^{-6}$, for numerical stability \strut}
 			\State Initialize gradient accumulation variable $\mathbf{r} = \mathbf{0} $
@@ -126,14 +128,14 @@
 
 \begin{vbframe}{Adam}
 	\begin{itemize}
-		\item Adaptive Moment Estimation (Adam) is another method that computes adaptive learning rates for each parameter.
-		\item Adam uses the first and the second moments of the gradients.
+		\item Adaptive Moment Estimation also has adaptive SSs
+		\item Uses the 1st and 2nd moments of gradients
 		\begin{itemize}
-			\item Adam keeps an exponentially decaying average of past gradients (first moment).
-			\item Like RMSProp it stores an exponentially decaying average of past squared gradients (second moment).
-			\item Thus, it can be seen as a combination of RMSProp and momentum.
+			\item Keeps an exponentially decaying average of past gradients (1st moment)
+			\item Like RMSProp, stores an exp-decaying avg of past squared gradients (2nd moment)
+			\item Can be seen as combo of RMSProp + momentum.
 		\end{itemize}
-		\item Basically Adam uses the combined averages of previous gradients at different moments to give it more \enquote{persuasive power} to adaptively update the parameters.
+		%\item Basically Adam uses the combined averages of previous gradients at different moments to give it more \enquote{persuasive power} to adaptively update the parameters.
 	\end{itemize}
 	
 	
@@ -143,7 +145,7 @@
 		\scriptsize 
 		\caption{Adam}
 		\begin{algorithmic}[1]
-			\State \textbf{require} Step size $\alpha$ (suggested default: 0.001) \strut
+			\State \textbf{require} Global step size $\alpha$ (suggested default: 0.001) \strut
 			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{\textbf{require} Exponential decay rates for moment estimates, $\rho_1$ and $\rho_2$ in $[0,1)$ (suggested defaults: 0.9 and 0.999 respectively)} \strut
 			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{\textbf{require} Small constant $\beta$ (suggested default $10^{-8}$) \strut}
 			\State \textbf{require} Initial parameters $\thetab$ 
@@ -169,10 +171,10 @@
 	
 	
 	\begin{itemize}
-		\item Adam initializes the exponentially weighted moving averages $\mathbf{s}$ and $\mathbf{r}$ as $\mathbf{0}$ (zero) vectors.
-		\item As a result, they are biased towards zero. 
-		\item This means $\E[\mathbf{s}^{[t]}] \neq \E [\hat{\mathbf{g}}^{[t]}]$ and $\E[\mathbf{r}^{[t]}] \neq \E [\hat{\mathbf{g}}^{[t]} \odot \hat{\mathbf{g}}^{[t]}]$ (where the expectations are calculated over minibatches).
-		\item To see this, let us unroll the computation of $\mathbf{s}^{[t]}$ for a few time-steps:
+		\item Inits exp-weighted moving averages $\mathbf{s}$ and $\mathbf{r}$ as $\mathbf{0}$ (zero) vectors
+		\item Hence, they are biased towards zero
+		\item This means $\E[\mathbf{s}^{[t]}] \neq \E [\hat{\mathbf{g}}^{[t]}]$ and $\E[\mathbf{r}^{[t]}] \neq \E [\hat{\mathbf{g}}^{[t]} \odot \hat{\mathbf{g}}^{[t]}]$\\ (where the expectations are calculated over minibatches)
+		\item To see, let's unroll $\mathbf{s}^{[t]}$:
 		\footnotesize
 		\begin{gather*}
 		\mathbf{s}^{[0]} = 0 \\
@@ -182,14 +184,14 @@
 		\end{gather*}
 		\normalsize
 		\item Therefore, $\mathbf{s}^{[t]}  = (1 - \rho_1) \sum_{i=1}^t \rho_1^{t - i} \mathbf{g}^{[i]}$.
-		\item Note that the contribution of the earlier $\hat{\mathbf{g}}^{[i]}$ to the moving average shrinks rapidly.
+		\item NB: contrib of earlier $\hat{\mathbf{g}}^{[i]}$ to moving average shrinks rapidly
 	\end{itemize}
 	
 	\framebreak
 	
 	
 	\begin{itemize}
-		\item The expected value  of $\mathbf{s}^{[t]}$ is:
+		\item Now:
 		\footnotesize
 		\begin{gather*}
 		\E [\mathbf{s}^{[t]}] = \E [ (1 - \rho_1) \sum_{i=1}^t \rho_1^{t - i} \hat{\mathbf{g}}^{[i]}] \\
@@ -199,7 +201,7 @@
 		\normalsize
 		where we approximate $\hat{\mathbf{g}}^{[i]}$ with $\hat{\mathbf{g}}^{[t]}$ which allows us to move it outside the sum. $\zeta$ is the error that results from this approximation.
 		\item Therefore, $\mathbf{s}^{[t]}$ is a biased estimator of $\hat{\mathbf{g}}^{[t]}$ and the effect of the bias vanishes over the time-steps (because $\rho_1^t \rightarrow 0$ for $t \rightarrow \infty$).
-		\item Ignoring $\zeta$ (as it can be kept small), we correct for the bias by setting $\hat{\mathbf{s}}^{[t]} = \frac{\mathbf{s}^{[t]}}{(1 - \rho_1^{t})}$.
+		\item Ignoring $\zeta$ (as it is small), we correct for the bias by setting $\hat{\mathbf{s}}^{[t]} = \frac{\mathbf{s}^{[t]}}{(1 - \rho_1^{t})}$.
 		\item Similarly, we set $\hat{\mathbf{r}}^{[t]} = \frac{\mathbf{r}^{[t]}}{(1 - \rho_2^{t})}$.
 	\end{itemize}
 \end{vbframe}
@@ -218,12 +220,13 @@
 			\href{https://giphy.com/embed/SJVFO3IcVC0M0}{\includegraphics[width = .49\textwidth]{slides/04-multivariate-first-order/figure_man/sattle_point2-100.png}}
 			\tiny{\\Credits: Dettmers (2015) and Radford}
 		\end{center}
-		\footnotesize{Excerpts from an animation to compare the behavior of momentum and
-			other methods compared to SGD for a saddle point. Left: After a few seconds; Right: A bit later. The animation shows that all showed methods accelerate optimization compared to the standard SGD. The highest acceleration is obtained using Rmsprop followed by Adagrad as learning rate strategies. You can find the animation \href{https://giphy.com/embed/SJVFO3IcVC0M0}{\textcolor{blue}{here}} or click on the images above.}
+  
+  \vspace{1cm}
+		\href{https://giphy.com/embed/SJVFO3IcVC0M0}{\textcolor{blue}{Comparison}} of SGD optimizers near saddle point. Left: After few secs; Right: Later. All methods accelerate compared to vanilla SGD. Best is Rmsprop, then Adagrad.
 	\end{figure}
 }
 
-\begin{vbframe}{Comparison of Optimizers: Quadratic form}
+\begin{vbframe}{Comparison on quadratic form}
 
 \begin{figure}
     \scalebox{0.8}{\includegraphics{slides/04-multivariate-first-order/figure_man/momentum/comparison_adam.png}} \\
