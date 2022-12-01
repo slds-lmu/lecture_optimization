@@ -1,0 +1,48 @@
+optimizer_sgd              package:keras               R Documentation
+
+_S_t_o_c_h_a_s_t_i_c _g_r_a_d_i_e_n_t _d_e_s_c_e_n_t _o_p_t_i_m_i_z_e_r
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Stochastic gradient descent optimizer with support for momentum,
+     learning rate decay, and Nesterov momentum.
+
+_U_s_a_g_e:
+
+     optimizer_sgd(
+       lr = 0.01,
+       momentum = 0,
+       decay = 0,
+       nesterov = FALSE,
+       clipnorm = NULL,
+       clipvalue = NULL
+     )
+     
+_A_r_g_u_m_e_n_t_s:
+
+      lr: float >= 0. Learning rate.
+
+momentum: float >= 0. Parameter that accelerates SGD in the relevant
+          direction and dampens oscillations.
+
+   decay: float >= 0. Learning rate decay over each update.
+
+nesterov: boolean. Whether to apply Nesterov momentum.
+
+clipnorm: Gradients will be clipped when their L2 norm exceeds this
+          value.
+
+clipvalue: Gradients will be clipped when their absolute value exceeds
+          this value.
+
+_V_a_l_u_e:
+
+     Optimizer for use with ‘compile.keras.engine.training.Model’.
+
+_S_e_e _A_l_s_o:
+
+     Other optimizers: ‘optimizer_adadelta()’, ‘optimizer_adagrad()’,
+     ‘optimizer_adamax()’, ‘optimizer_adam()’, ‘optimizer_nadam()’,
+     ‘optimizer_rmsprop()’
+
+
