@@ -1,9 +1,8 @@
 library(R6)
-library(rootSolve) # fun: gradient  
+library(rootSolve) # fun: gradient, hessian 
 library(checkmate)
 library(data.table)
 library(colorspace)
-library()
 options(warn = 2)
 
 # question: do we enforce that x is always 2d? 
@@ -37,13 +36,39 @@ OptimizerGD = R6Class("OptimizerGD", inherit = Optimizer,
       assert_r6(obj, "Objective")
       x_old = self$x0
       for (step in 1:self$steps) {
-        x_new = x_old - self$step_size * obj$grad(x_old)
+        d = obj$grad(x_old)
+        dn = norm(d, type = "2")
+        x_new = x_old - self$step_size * d / dn
         y_new = obj$eval_store(x_new)
         x_old = x_new
       }
     }
   )
 )
+
+# Newton raphson
+OptimizerNR = R6Class("OptimizerNR", inherit = Optimizer,
+  public = list(
+    initialize = function(steps, step_size, x0) {
+      super$initialize(steps, step_size, x0)  # assert in super
+    },
+    
+    optimize = function(obj) {
+      assert_r6(obj, "Objective")
+      # implement NR algorithm here
+      x_old = self$x0
+      for (step in 1:self$steps) {
+        d = t(solve(obj$hess(x_old)) %*% obj$grad(x_old))
+        dn = norm(d, type = "2")
+        x_new = x_old - self$step_size * d / dn
+        y_new = obj$eval_store(x_new)
+        x_old = x_new
+      }
+    }
+  )
+)
+
+
 
 Objective = R6Class("Objective",
   public = list(
@@ -74,6 +99,10 @@ Objective = R6Class("Objective",
     
     grad = function(x) {
       rootSolve::gradient(self$fun, x)[1,] 
+    },
+    
+    hess = function(x) {
+      rootSolve::hessian(f=self$fun, x)
     }
   )
 )
@@ -111,7 +140,7 @@ Visualizer = R6Class("Visualizer",
       x1seq = seq(self$x1lim[1], self$x1lim[2], length = self$n_grid)
       x2seq = seq(self$x2lim[1], self$x2lim[2], length = self$n_grid)
       g = expand.grid(x1seq, x2seq) # changes var1 first
-      fmat = apply(g, 1, obj$fun)
+      fmat = apply(g, 1, self$obj$fun)
       # orders by col in result mat; this means: rows = x1, cols = x2
       fmat = matrix(fmat, self$n_grid, self$n_grid) 
       list(x1seq = x1seq, x2seq = x2seq, fmat = fmat)
@@ -174,6 +203,9 @@ Visualizer = R6Class("Visualizer",
     
     # FIXME: y und gradnorm zeigen. nochwas?
     plot_y_trace = function() { 
+      plot(1, type="n", xlab="Steps", ylab="y", 
+           xlim=c(1,length(self$obj$archive$fval)), ylim=c(0,max(self$obj$archive$fval)))
+      lines(self$obj$archive$fval, pch=16, col="blue")
       
     }
     
@@ -195,15 +227,15 @@ Visualizer = R6Class("Visualizer",
 
 
 
-f = function(x) { sum(x * x)}
-obj = Objective$new(fun = f)
-optim = OptimizerGD$new(steps = 5L, step_size = 0.1, x0 = c(10, 10))
-optim$optimize(obj)
-print(obj$archive)
-vis = Visualizer$new(obj, run_archs = list(obj$archive),
-  x1lim = c(-15, 15), x2lim = c(-15, 15))
-#vis$plot_rbase_contour(2)
- vis$plot_rbase_3dsurf()
+# f = function(x) { sum(x * x)}
+# obj = Objective$new(fun = f)
+# optim = OptimizerGD$new(steps = 5L, step_size = 0.1, x0 = c(10, 10))
+# optim$optimize(obj)
+# print(obj$archive)
+# vis = Visualizer$new(obj, run_archs = list(obj$archive),
+#   x1lim = c(-15, 15), x2lim = c(-15, 15))
+# vis$plot_rbase_contour(2)
+# vis$plot_rbase_3dsurf()
 
 
 
