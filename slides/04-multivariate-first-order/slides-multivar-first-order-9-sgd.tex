@@ -8,8 +8,9 @@
 \newcommand{\titlefigure}{figure_man/SGD_cropped.png}
 \newcommand{\learninggoals}{
 \item SGD
-\item Erratic behavior  
+\item Stochasticity
 \item Convergence
+\item Batch size
 }
 
 
@@ -170,7 +171,7 @@ with random subset $J \subset \{1, 2, ..., n\}$ of gradients called \textbf{mini
 	In ML, we perform ERM:  
 
 	$$
-		\riskt = \frac{1}{n}\sumin \underbrace{\Lxyit}_{g_i(\theta)}
+		\bar \risk\left(\thetab\right) = \frac{1}{n}\sumin \underbrace{\Lxyit}_{g_i(\thetav)}
 	$$
 
 	\begin{itemize}
@@ -304,6 +305,16 @@ with random subset $J \subset \{1, 2, ..., n\}$ of gradients called \textbf{mini
 
 
 As maximum batch size is usually limited by computational resources (memory), choosing the step size is crucial. 
+
+\end{vbframe}
+
+\begin{vbframe}{Effect of batch size}
+
+\begin{figure}
+    \scalebox{0.9}{\includegraphics{slides/04-multivariate-first-order/figure_man/gradient_descent_NN_SGD_vs_no_SGD.pdf}} \\
+    SGD to optimize an NN with batch size $\in \{0.5 \%, 10 \%, 50 \%\}$ \\ of the training data. 
+    The higher the batch size, the lower the variance. 
+\end{figure} 
 
 \end{vbframe}
 

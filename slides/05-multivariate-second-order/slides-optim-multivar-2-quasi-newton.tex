@@ -1,0 +1,200 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{}
+\newcommand{\learninggoals}{
+\item Newton-Raphson vs. Quasi-Newton
+\item SR1
+\item BFGS
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Second order methods: Quasi-Newton}
+\lecture{Optimization in Machine Learning}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{Quasi-Newton: Idea}
+
+% \framebreak
+
+% Die Aktualisierungsrichtung $\mathbf{d}_{i}$ ist eine Abstiegsrichtung für $f$ in $\mathbf{x}_{i}$
+% genau dann, wenn
+% $$
+% \mathbf{d}^\top \nabla f(\mathbf{x}_{i}) < 0.
+% $$
+% Sei $\mathbf{A}_{i}$ eine positiv definite Matrix, dann ist
+% $$
+% \mathbf{d}_{i} = - (\mathbf{A}_{i})^{-1} \nabla f(\mathbf{x}_{i})
+% $$
+% eine Abstiegsrichtung:
+% $$
+% (\mathbf{d}_{i})^\top \nabla f(\mathbf{x}_{i}) = - (\nabla f(\mathbf{x}_{i}))^\top (\mathbf{A}_{i})^{-1}
+% \nabla f(\mathbf{x}_{i}) < 0
+% $$
+% $\mathbf{A}_{i} = \nabla^2 f(\mathbf{x}_{i})$ ist für quadratische Probleme optimal, bei allgemeinen
+% Problemen muss die Hessematrix weit weg vom Optimum noch nicht einmal positiv definit sein.
+
+The starting point of the \textbf{Quasi-Newton method} is (as with Newton-Raphson) a Taylor approximation of the gradient, except that the Hessian matrix is replaced by a \textbf{positive definite} matrix $\bm{A}^{[t]}$:
+
+\vspace*{-0.2cm}
+\begin{footnotesize}
+\begin{alignat*}{4}
+\nabla f(\mathbf{x}) &\approx  \nabla f(\mathbf{x}^{[t]}) + \nabla^2 f(\mathbf{x}^{[t]}) & (\mathbf{x} - \mathbf{x}^{[t]}) ~ &=& ~\mathbf{0}  &\qquad& \text{ Approach Newton-Raphson} \\
+\nabla f(\mathbf{x}) &\approx \nabla f(\mathbf{x}^{[t]}) + \bm{A}^{[t]} & (\mathbf{x} - \mathbf{x}^{[t]}) ~ &=& ~ \mathbf{0} &\qquad& \text{ Approach Quasi-Newton}
+\end{alignat*}
+\end{footnotesize}
+
+The update direction is the same:
+
+\begin{footnotesize}
+\begin{alignat*}{3}
+\bm{d}^{[t]} &= - \nabla^2 f(\mathbf{x}^{[t]})^{-1} & \nabla f(\mathbf{x}^{[t]}) &\qquad& \text{ Update direction Newton-Raphson} \\
+\bm{d}^{[t]} &= - (\bm{A}^{[t]})^{-1} & \nabla f(\mathbf{x}^{[t]}) &\qquad& \text{ Update direction Quasi-Newton} \\
+\end{alignat*}
+\end{footnotesize}
+
+\framebreak
+
+\textbf{Quasi-Newton method}:
+
+
+\begin{enumerate}
+\item Select a starting point $\mathbf{x}^{[0]}$ and initialize a positive definite matrix
+$\mathbf{A}^{[0]}$ (can also be a diagonal matrix - a very rough approximation of the
+Hessian matrix).
+\item Calculate update direction by solving
+
+$$
+\bm{A}^{[t]} \bm{d}^{[t]} = - \nabla f(\mathbf{x}^{[t]})
+$$
+
+and calculate $\bm{x}^{[t+1]} = \bm{x}^{[t]} + \lambda^{[t]} \bm{d}^{[t]}$ (Step size through backtracking)
+\item Calculate an efficient update $\mathbf{A}^{[t+1]}$, which is based on $\mathbf{x}^{[t]}$,
+$\mathbf{x}^{[t+1]}$, $\nabla f(\mathbf{x}^{[t]})$, $\nabla f(\mathbf{x}^{[t+1]})$ and
+$\mathbf{A}^{[t]}$.
+\end{enumerate}
+
+\framebreak
+
+Usually the matrices $\bm{A}^{[t]}$ are calculated recursively by performing an additive update 
+
+$$
+\bm{A}^{[t+1]} = \bm{A}^{[t]} + \bm{B}^{[t]}. 
+$$
+
+How $ \bm{B}^{[t]}$ is constructed is shown on the next slides. 
+\textbf{Requirements} for the matrix sequence $\bm{A}^{[t]}$:
+\begin{enumerate}
+\item Symmetric \& positive definite matrices so that $\bm{d}^{[t]}$ are descent directions.
+\item Low calculation effort when calculating the descent direction
+
+$$
+\bm{A}^{[t]} \bm{d}^{[t]} = - \nabla f(\mathbf{x}^{[t]})
+$$
+
+\item Good approximation for Hessian: The \enquote{modified} Taylor series for $\nabla f(\bm{x})$ (especially for $i \to \infty$) should provide a good approximation
+
+$$
+\nabla f(\mathbf{x}) \approx \nabla f(\mathbf{x}^{[t]}) +
+\bm{A}^{[t]}(\mathbf{x} - \mathbf{x}^{[t]})
+$$
+\end{enumerate}
+
+
+
+\end{vbframe}
+
+\begin{vbframe}{Symmetric rank 1 update (SR1)}
+
+The simplest approach are symmetric rank 1 modifications (\textbf{SR1}) of the form
+
+$$
+\bm{A}^{[t+1]} \leftarrow \bm{A}^{[t]} + \bm{B}^{[t]} = \bm{A}^{[t]} + \alpha \bm{u}^{[t]}(\bm{u}^{[t]})^{\top}
+$$
+
+with appropriate vector $\bm{u}^{[t]} \in \R^n$, $\alpha \in \R$.
+
+
+\framebreak
+
+\textbf{Choice of} $\bm{u}^{[t]}$:
+
+The vectors should be chosen so that the \enquote{modified} Taylor series corresponds to the gradient:
+
+\begin{eqnarray*}
+\nabla f(\mathbf{x}) &\overset{!}{=}& \nabla f(\mathbf{x}^{[t+1]}) +
+\bm{A}^{[t+1]}(\mathbf{x} - \mathbf{x}^{[t+1]}) \\
+\nabla f(\mathbf{x}) &=& \nabla f(\mathbf{x}^{[t+1]}) +  \left(\bm{A}^{[t]} +
+\alpha \bm{u}^{[t]}(\bm{u}^{[t]})^\top\right)\underbrace{(\mathbf{x} - \mathbf{x}^{[t+1]})}_{:= \bm{s}^{[t+1]}} \\
+\underbrace{\nabla f(\mathbf{x}) - \nabla f(\mathbf{x}^{[t+1]})}_{\bm{y}^{[t+1]}} &=& \left(\bm{A}^{[t]} + \alpha \bm{u}^{[t]} (\bm{u}^{[t]})^{\top}\right) \bm{s}^{[t+1]} \\
+\bm{y}^{[t+1]} - \bm{A}^{[t]} \bm{s}^{[t+1]} &=& \left(\alpha (\bm{u}^{[t]})^{\top} \bm{s}^{[t+1]}\right) \bm{u}^{[t]}
+\end{eqnarray*}
+
+For $\bm{u}^{[t]} = \bm{y}^{[t+1]} - \bm{A}^{[t]} \bm{s}^{[t+1]}$ and $\alpha = \frac{1}{\left(\bm{y}^{[t+1]} - \bm{A}^{[t]}\bm{s}^{[t+1]}\right)^\top\bm{s}^{[t+1]}}$ the equation is satisfied.
+
+\framebreak
+
+\textbf{Advantage}
+\begin{itemize}
+\item The updates provide a sequence of \textbf{symmetric} matrices
+\item The matrices can be inverted efficiently and stably using the Sherman-Morrison formula (special case of Woodbury formula) using the formula
+$$
+(\bm{A} + \alpha \bm{u}\bm{u}^{\top})^{-1} = \bm{A} + \alpha \frac{\bm{u}\bm{u}^{\top}}{1 + \alpha\bm{u}^\top\bm{u}}.
+$$
+\end{itemize}
+
+\textbf{Disadvantage}
+\begin{itemize}
+\item The constructed matrices are not necessarily positive definite, and the update directions $\bm{d}^{[t]}$ are therefore not necessarily descent directions
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{BFGS algorithm}
+
+Instead of Rank 1 updates, the \textbf{BFGS} procedure (published simultaneously in 1970 by Broyden, Fletcher, Goldfarb and Shanno) uses rank 2 modifications of the form
+
+$$
+\bm{A}^{[t]} + \alpha \bm{u}^{[t]}(\bm{u}^{[t]})^{\top} + \beta \bm{v}^{[t]}(\bm{v}^{[t]})^{\top}
+$$
+
+with $\bm{s}^{[t]} := \bm{x}^{[t+1]} - \bm{x}^{[t]}$
+
+\begin{itemize}
+  \item $\bm{u}^{[t]} = \nabla f(\bm{x}^{[t+1]}) - \nabla f(\bm{x}^{[t]})$
+  \item $\bm{v}^{[t]} = \bm{A}^{[t]} \bm{s}^{[t]}$
+  \item $\alpha = \frac{1}{(\bm{u}^{[t]})^\top (\bm{s}^{[t]})}$
+  \item $\beta = - \frac{1}{(\bm{s}^{[t]})^\top \bm{A}^{[t]} \bm{s}^{[t]}}$
+\end{itemize}
+
+The resulting matrices $\bm{A}^{[t]}$ are positive definite and the corresponding quasi-newton update directions $\bm{d}^{[t]}$ are actual descent directions.
+
+
+% \begin{itemize}
+% \item Basiert auf einer endlichen Differenzenapproximation der zweiten Ableitung.
+% \item Verwendet eine additive Aktualisierung $\mathbf{A}^{(i + 1)} = \mathbf{A}^{(i)} + \mathbf{B}^{(i)}$.
+% \item Invertierung von $\mathbf{A}^{(i)}$ lässt sich mit Hilfe der Sherman-Morrison-Formel
+% vergleichsweise effizient durchführen.
+% \end{itemize}
+
+\end{vbframe}
+
+
+\endlecture
+\end{document}
+
+
+
