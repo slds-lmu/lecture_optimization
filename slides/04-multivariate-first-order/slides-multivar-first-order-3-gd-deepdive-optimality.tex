@@ -29,7 +29,7 @@
 	\begin{itemize}
 		\item GD is a greedy algorithm: In every iteration, it makes locally optimal moves.
 		\vspace*{0.5mm}
-		\item If $\riskt$ is \textbf{convex} and \textbf{differentiable}, and its gradient is Lipschitz continuous, GD is guaranteed to converge to the global minimum for small enough step-size.  
+		\item If $\fx$ is \textbf{convex} and \textbf{differentiable}, and its gradient is Lipschitz continuous, GD is guaranteed to converge to the global minimum for small enough step-size.  
 		% \vspace*{0.5mm}
 		% \item However, if $\riskt$ has multiple local optima and/or saddle points, GD might only converge to a stationary point (other than the global optimum), depending on the starting point. 
 	\end{itemize}
@@ -46,7 +46,7 @@
 	Assume $f: \R^d \rightarrow \R$ convex and differentiable and assume that global minimum $\xv^\ast$ exists. Assume $\nabla f$ is Lipschitz continuous with $L > 0$: 
 
 	\begin{equation*}
-	|| \nabla \fx - \nabla f(\bm{y}) || \le L ||\fx - \bm{y} || \quad \text{ for all } \xv, y
+	|| \nabla \fx - \nabla f(\tilde{\xv}) || \le L ||\fx - f(\tilde{\xv}) || \quad \text{ for all } \xv, \tilde{\xv}
 	\end{equation*}
 	
 	(i.e., gradient can't change arbitrarily fast).
@@ -56,7 +56,7 @@
 	\textbf{Convergence of GD:} GD with $k$ iterations with starting point $\xv^{[0]}$ and fixed step-size $\alpha \leq 1/L$ will yield a solution $f(\xv^{[k]})$, which satisfies
 
 	$$
-		f(\xv^{[k]}) - f(\xv^\ast) \leq \frac{|| \xv^{[0]} - {x}^\ast ||^2}{2\alpha k}
+		f(\xv^{[k]}) - f(\xv^\ast) \leq \frac{|| \xv^{[0]} - \xv^\ast ||^2}{2\alpha k}
 	$$
 	
 	This means, that GD converges with rate $\mathcal{O}(1/k)$.
@@ -109,25 +109,35 @@
 
 	where we used $\alpha \leq 1/L$ and therefore $- (1 - \frac{1}{2} L \alpha) \leq \frac{1}{2} L \frac{1}{L} -1 = -\frac{1}{2}$.
 				
-	Since $\frac{1}{2} \alpha ||\nabla f(\xv^{[t]})||^2$ is always positive unless $\nabla f(x) = 0$, it implies that $f$ strictly decreases with each iteration of GD until the optimal value is reached. So, it is a bound on guaranteed progress if $\alpha \leq 1/L$. 
+	Since $\frac{1}{2} \alpha ||\nabla f(\xv^{[t]})||^2$ is always positive unless $\nabla \fx = 0$, it implies that $f$ strictly decreases with each iteration of GD until the optimal value is reached.  So, it is a bound on guaranteed progress if $\alpha \leq 1/L$. 
+ The sequence is also bounded from below, as we assume the existence of a global min, hence it convergences.
 	\end{footnotesize}
 	
 	\framebreak
 	
-			Now, we bound $\fx$ in terms of $f(\xv^\ast)$ using that $f$ is convex: 
-			
+			Now, we bound $f(\xv^{[t]})$ in terms of $f(\xv^\ast)$ using that $f$ is convex. By 1st-order condition of convexity: Every tangent / 1st order Taylor is always below f (develop at $\xv^{[t]$, var of linear function is $\xv$):
+    
+            $$
+			f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top (\xv - \xv^{[t]})
+            \leq f(\xv)
+    		$$ 
+            So this holds also for $\xv = \xv^\ast$ 
 			$$
-			\fx \leq f(\xv^\ast) + \nabla f(\xv)^\top (\xv - \xv^\ast)
-			$$ 
+			f(\xv^{[t]}) - f(\xv^\ast) \leq  \nabla f(\xv^{[t]})^\top (\xv^{[t]} - \xv^\ast)
+			$$ 	
+
+            \framebreak
 			
-			When we combine this and the bound derived before, we get
-			
+            When we combine this and the bound derived before, we get
 			\begin{eqnarray*}
-				f(\xv^{[t+1]}) - f(\xv^\ast) &\leq& \nabla \xv^\top (\xv-\xv^*) - \frac{\alpha}{2}||\nabla \fx||^2 \\
-				&=& \frac{1}{2 \alpha} \left( ||\xv-\xv^\ast||^2 - || \xv - \xv^\ast - \alpha \nabla \fx||^2 \right) \\
-				&=& \frac{1}{2 \alpha} \left( ||\xv-\xv^\ast||^2 - || \xv^{[t+1]} - \xv^\ast ||^2 \right)
+				f(\xv^{[t+1]}) - f(\xv^\ast) &\leq& f(\xv^{[t]})  - \frac{\alpha}{2}||\nabla f(\xv^{[t]})||^2  - f(\xv^\ast) \\
+				&=& f(\xv^{[t]})  - f(\xv^\ast)  - \frac{\alpha}{2}||\nabla f(\xv^{[t]})||^2 \\
+				&\leq& \nabla f(\xv^{[t]})^\top (\xv^{[t]}-\xv^*) - \frac{\alpha}{2}||\nabla \fx||^2 \\
+				&=& \frac{1}{2 \alpha} \left( ||\xv^{[t]}-\xv^\ast||^2 - || \xv^{[t]} - \xv^\ast - \alpha \nabla \fx||^2 \right) \\
+				&=& \frac{1}{2 \alpha} \left( ||\xv^{[t]}-\xv^\ast||^2 - || \xv^{[t+1]} - \xv^\ast ||^2 \right)
 			\end{eqnarray*}
-		
+        3rd to 4th line might be harder to see, simply multiply-out 4th line.
+        
 		This holds for every iteration of GD. 
 		
 		\framebreak 
@@ -135,12 +145,13 @@
 		Summing over iterations, we get: 
 		
 		\begin{eqnarray*}
-			\sum_{t = 0}^{k} f(\xv^{[t+1]}) - f(\xv^\ast) &\leq& \sum_{t= 0}^{k} \frac{1}{2 \alpha} \left( ||\xv^{[t]}-\xv^\ast||^2 - || \xv^{[t+1]} - \xv^\ast ||^2 \right) \\
-			&=& \frac{1}{2 \alpha}  \left( ||x^{[0]}-\xv^\ast||^2 - || x^{k} - \xv^\ast ||^2 \right) \\
+			k ( f(\xv^{[k]}) - f(\xv^\ast)) &\leq& \sum_{t=1}^{k} ( f(\xv^{[t]}) - f(\xv^\ast))\\
+            &\leq& \sum_{t=1}^{k} \frac{1}{2 \alpha} \left( ||\xv^{[t-1]}-\xv^\ast||^2 - || \xv^{[t]} - \xv^\ast ||^2 \right) \\
+			&=& \frac{1}{2 \alpha}  \left( ||\xv^{[0]}-\xv^\ast||^2 - || \xv^{[k]} - \xv^\ast ||^2 \right) \\
 			& \leq & \frac{1}{2 \alpha} \left( ||x^{[0]}-\xv^\ast||^2 \right),
 		\end{eqnarray*}
 	
-		where we used that the LHS is a telescoping sum. In addition, we know that $f$ decreases on every iteration, so we can conclude that
+		where we used that $f$ decreases in every iter, and the 2nd line is a telescoping sum. Hence
 		$$
 		f(\xv^{[k]}) - f(\xv^\ast) \leq \frac{|| \xv^{[0]} - \xv^\ast ||^2}{2\alpha k}
 		$$
