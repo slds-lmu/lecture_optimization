@@ -41,12 +41,8 @@ In the following we consider procedures based on the Hessian matrix (2nd derivat
 
 \lz
 
-\textbf{Aim:} Find stationary point
-
-\vspace*{-0.2cm}
-\begin{eqnarray*}
-\nabla f(\bm{x}) &=& \bm{0}
-\end{eqnarray*}
+\textbf{Aim:} Find stationary point $\nabla f(\bm{x}) = \bm{0}$
+\lz 
 
 \textbf{Idea:} Find root of Taylor approximation (1st order) of $\nabla f(\bm{x})$:
 \begin{eqnarray*}
@@ -58,7 +54,11 @@ In the following we consider procedures based on the Hessian matrix (2nd derivat
 
 \vspace*{-0.2cm}
 
-This motivates the update $\bm{x}^{[t+1]} = \bm{x}^{[t]} + \bm{d}^{[t]}$ with update direction $\bm{d}^{[t]} = - \left(\nabla^2 f(\mathbf{ x}^{[t]})\right)^{-1}\nabla f(\mathbf{x}^{[t]})$.
+Update: $\bm{x}^{[t+1]} = \bm{x}^{[t]} + \bm{d}^{[t]}$ with $\bm{d}^{[t]} =  \left(\nabla^2 f(\mathbf{ x}^{[t]})\right)^{-1}\nabla f(\mathbf{x}^{[t]})$.
+
+\vspace*{0.3cm}
+
+\textbf{Note: } Numerically, we determine $\bm{d}^{[t]}$ by solving the LGS $\nabla^2 f(\mathbf{x}^{[t]})\bm{d}^{[t]} = - \nabla f(\mathbf{x}^{[t]})$ with symmetic matrix $\nabla^2 f(\mathbf{x}^{[t]})$. 
 
 
 % \begin{vbframe}{Newton-Raphson}
@@ -142,12 +142,22 @@ y^{[0]}
 
 Newton-Raphson only needs one iteration to solve the problem!
 
+\framebreak 
+
+Example: Optimize Branin function with Newton Raphson and gradient descent (GD). 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth]{slides/05-multivariate-second-order/figure_man/NR_1.png} ~~ \includegraphics[width=0.45\textwidth]{slides/05-multivariate-second-order/figure_man/NR_2.png} \\
+    Red: Newton Raphson. Right: Gradient descent. Newton raphson 
+\end{figure}
+
 \framebreak
 
 \textbf{Advantages:}
 
 \begin{itemize}
-\item If the function is sufficiently smooth, the procedure converges quadratically locally (i.e. if the starting point is close enough to optimum)
+\item If $f$ sufficiently smooth, the procedure converges quadratically locally (i.e. if the starting point is close enough to optimum)
 \end{itemize}
 
 \textbf{Disadvantages}
@@ -157,7 +167,9 @@ Newton-Raphson only needs one iteration to solve the problem!
 \item The Hessian must be calculated and the direction of descent determined by solving a system of equations
 \end{itemize}
 
-\lz
+\end{vbframe}
+
+\begin{vbframe}{Newton-Raphson: Limitations}
 
 \textbf{Problem 1:} The update direction
 
