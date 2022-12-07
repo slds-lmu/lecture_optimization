@@ -49,18 +49,36 @@ OptimizerGD = R6Class("OptimizerGD", inherit = Optimizer,
 # Newton raphson
 OptimizerNR = R6Class("OptimizerNR", inherit = Optimizer,
   public = list(
-    initialize = function(steps, step_size, x0) {
+    gamma = NULL,
+    tau = NULL,
+    initialize = function(steps, step_size, x0, gamma, tau) {
       super$initialize(steps, step_size, x0)  # assert in super
+      self$gamma = gamma
+      self$tau = tau 
     },
     
     optimize = function(obj) {
       assert_r6(obj, "Objective")
       # implement NR algorithm here
       x_old = self$x0
+
       for (step in 1:self$steps) {
-        d = t(solve(obj$hess(x_old)) %*% obj$grad(x_old))
-        dn = norm(d, type = "2")
-        x_new = x_old - self$step_size * d / dn
+        hess = obj$hess(x_old)
+        grad = obj$grad(x_old)
+        d = t(solve(hess, grad))
+        # d = d / norm(d, type = "2")
+
+        # Step size through Armijo rule
+        alpha = self$step_size
+
+        # while (obj$eval(x_old + alpha * d) > obj$eval(x_old) + self$gamma * alpha * (grad %*% t(d))[1]) {
+        #   alpha = alpha * self$tau
+        # }
+
+        # print(alpha)
+
+        # dn = norm(d, type = "2")
+        x_new = x_old - d #/ dn
         y_new = obj$eval_store(x_new)
         x_old = x_new
       }
@@ -89,6 +107,11 @@ Objective = R6Class("Objective",
     },
     
     #FIXME: wir sollten hier auch immer den grad und dessen norm immer speichern
+    eval = function(x) {
+      assert_numeric(x, len = self$xdim)
+      fval = self$fun(x)
+      return(fval)
+    },
     
     eval_store = function(x) {
       assert_numeric(x, len = self$xdim)
@@ -159,10 +182,10 @@ Visualizer = R6Class("Visualizer",
           p = a$x[[j]]
           if (j > 1) {
             q = a$x[[j-1]]
-            lines(c(p[1], q[1]), c(p[2], q[2]))
-            points(q[1], q[2], pch = 16, col = "black")
+            lines(c(p[1], q[1]), c(p[2], q[2]), col = i + 1)
+            points(q[1], q[2], pch = 16, col = i + 1)
           }
-          points(p[1], p[2], pch = 16, col = "black")
+          points(p[1], p[2], pch = 16, col = i + 1)
         }
       }
     },
@@ -192,10 +215,10 @@ Visualizer = R6Class("Visualizer",
             q = a$x[[j-1]]
             qf = a$fval[j-1]
             t3d2 = trans3d(q[1], q[2], qf, pmat)
-            lines(c(t3d1$x, t3d2$x), c(t3d1$y, t3d2$y), lwd = run_lwd) 
-            points(x = t3d2$x, y = t3d2$y, pch = 16, col = "black") 
+            lines(c(t3d1$x, t3d2$x), c(t3d1$y, t3d2$y), lwd = run_lwd, col = i + 1) 
+            points(x = t3d2$x, y = t3d2$y, pch = 16, col = i + 1) 
           }
-          points(x = t3d1$x, y = t3d1$y, pch = 16, col = "black")
+          points(x = t3d1$x, y = t3d1$y, pch = 16, col = i + 1)
         }
       }
     },
@@ -203,9 +226,15 @@ Visualizer = R6Class("Visualizer",
     
     # FIXME: y und gradnorm zeigen. nochwas?
     plot_y_trace = function() { 
+      arch = self$run_archs[[1]]$fval
       plot(1, type="n", xlab="Steps", ylab="y", 
-           xlim=c(1,length(self$obj$archive$fval)), ylim=c(0,max(self$obj$archive$fval)))
-      lines(self$obj$archive$fval, pch=16, col="blue")
+         xlim=c(1, length(arch)), ylim=c(0,max(arch)))
+    
+      for (i in 1:length(self$run_archs)) {
+        a = self$run_archs[[i]]
+        points(x = 1:length(a$fval), y = a$fval, pch = 16, col = i + 1)
+        lines(a$fval, pch=16, col=i+1)
+      }
       
     }
     

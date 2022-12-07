@@ -35,42 +35,24 @@ rosenbrock <- function(x) {
 
 # Newton-Raphson
 objNR = Objective$new(fun = rosenbrock)
-optimNR = OptimizerNR$new(steps = 50L, step_size = 0.05, x0 = c(-1, 0))
+optimNR = OptimizerNR$new(steps = 200L, step_size = 1, x0 = c(1.8, -0.8), gamma = 0.99, tau = 0.5)
 optimNR$optimize(objNR)
 print(objNR$archive)
-visNR = Visualizer$new(obj = objNR, run_archs = list(objNR$archive), x1lim = c(-2, 2), x2lim = c(-1, 3))
-visNR$plot_y_trace()
-visNR$plot_rbase_contour(20)
-visNR$plot_rbase_3dsurf()
 
-# Gradient Descent
+# Gradient descent
 objGD = Objective$new(fun = rosenbrock)
-optimGD = OptimizerGD$new(steps = 50L, step_size = 0.05, x0 = c(-1, 0))
+optimGD = OptimizerGD$new(steps = 200L, step_size = 0.05, x0 = c(1.8, -0.8))
 optimGD$optimize(objGD)
-print(objGD$archive)
-visGD = Visualizer$new(obj = objGD, run_archs = list(objGD$archive), x1lim = c(-2, 2), x2lim = c(-1, 3))
-visGD$plot_y_trace()
-visGD$plot_rbase_contour(20)
-visGD$plot_rbase_3dsurf()
 
-# NR & GD y-value:steps in one plot
-p <- ggplot()
-p <- p + geom_point(data=objGD$archive, 
-                    aes(x=seq(1:length(objGD$archive$fval)), y=objGD$archive$fval), 
-                    color="blue") +
-         geom_line(data=objGD$archive, 
-                   aes(x=seq(1:length(objGD$archive$fval)), y=objGD$archive$fval), 
-                   color="blue")
+# Visualization
+visNR = Visualizer$new(obj = objNR, run_archs = list(objNR$archive, objGD$archive), x1lim = c(-2, 2), x2lim = c(-1, 3))
 
-p <- p + geom_point(data=objNR$archive, 
-                    aes(x=seq(1:length(objNR$archive$fval)), y=objNR$archive$fval), 
-                    color="red") +
-         geom_line(data=objNR$archive, 
-                   aes(x=seq(1:length(objNR$archive$fval)), y=objNR$archive$fval), 
-                   color="red")
+png(file="figure_man/NR_1.png",width=400, height=350)
+visNR$plot_y_trace()
+dev.off()
 
-p <- p + annotate("text", x=2, y=2, label="GD", colour="blue")
-p <- p + annotate("text", x=2, y=4, label="NR", colour="red")
-p <- p + ylab("y") + xlab("Steps")
-p
-  
+png(file="figure_man/NR_2.png",width=400, height=350)
+visNR$plot_rbase_contour(20)
+dev.off()
+
+visNR$plot_rbase_3dsurf()
