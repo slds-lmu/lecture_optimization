@@ -220,11 +220,11 @@
 	\item $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}} = 
 	\frac{\partial \Vert \mathbf{u}  \Vert^2_2}{\partial \mathbf{u}} \frac{\partial \mathbf{u}}{\partial \mathbf{x}} = 
 	\frac{\partial  \mathbf{u}^\top\mathbf{u}}{\partial \mathbf{u}} \frac{\partial \mathbf{x} - \mathbf{c}}{\partial \mathbf{x}} = 
-	\frac{\partial  \mathbf{u}^\top\mathbf{I}\mathbf{u}}{\partial \mathbf{u}}(\mathbf{I} - \mathbf{0}) = \mathbf{u}^\top(\mathbf{I} + \mathbf{I}^\top) = 2(\mathbf{x} - \mathbf{c})
+	\frac{\partial  \mathbf{u}^\top\mathbf{I}\mathbf{u}}{\partial \mathbf{u}}(\mathbf{I} - \mathbf{0}) = \mathbf{u}^\top(\mathbf{I} + \mathbf{I}^\top) = 2(\mathbf{x} - \mathbf{c})^\top
 	$
 	\item $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert_2}{\partial
 	\mathbf{x}} = \frac{\partial \sqrt{\Vert \mathbf{x} - \mathbf{c}  \Vert_2^2}}{\partial
-	\mathbf{x}} = \frac{0.5}{ \sqrt{\Vert \mathbf{x} - \mathbf{c}  \Vert_2^2}}\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}} \overset{(a)}{=} \frac{\mathbf{x} - \mathbf{c}}{\Vert \mathbf{x} - \mathbf{c}  \Vert_2}$
+	\mathbf{x}} = \frac{0.5}{ \sqrt{\Vert \mathbf{x} - \mathbf{c}  \Vert_2^2}}\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}} \overset{(a)}{=} \frac{(\mathbf{x} - \mathbf{c})^\top}{\Vert \mathbf{x} - \mathbf{c}  \Vert_2}$
 	
 	\item $\frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}} = \frac{\partial \mathbf{u}^\top \mathbf{I} \mathbf{v}}{\partial \mathbf{x}} = \mathbf{u}^\top \mathbf{I} \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \mathbf{I} \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} = 
 	\mathbf{u}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}}$

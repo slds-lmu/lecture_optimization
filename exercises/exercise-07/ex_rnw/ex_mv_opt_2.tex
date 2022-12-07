@@ -1,0 +1,17 @@
+A radial basis function (RBF) network has been fitted to a blackbox function resulting in a model \\
+$f:\R^2\rightarrow\R, \mathbf{x} \mapsto \sum^2_{i=1} w_i \cdot \rho(\Vert\mathbf{x} - \mathbf{c}_i\Vert_{S_i})$ \\
+with $c_1 = (-1.1, 1.1)^\top, c_2 = (0.7, -0.7)^\top$, quartic (biweight) kernel function $\rho:\R\rightarrow\R, u \mapsto \begin{cases} (1-u^2)^2 & \vert u\vert < 1 \\ 0 & \text{otherwise} \end{cases}$, $w_1 = 1, w_2 = -1$ and Mahalanobis distance $\Vert \cdot \Vert_{S_i}$ with covariance matrices $S_1 = \mathbf{I}$ and $S_2 = \begin{pmatrix} 1.1 & -0.9 \\ -0.9 & 1.1\end{pmatrix}$.\\
+(Note: We chose the kernel function and the distance measure for educational purposes; often, a Gaussian kernel and the Euclidean distance are used in practice.)
+
+\begin{enumerate}
+\item Plot $f$ in the range $[-2, 2] \times [-2, 2]$
+\item Show that $\cap^2_{i=1} \{\mathbf{x} \in \R^2|\; \rho(\Vert\mathbf{x} - \mathbf{c}_i\Vert_{S_i}) \neq 0\} = \emptyset.$ 
+\item Find the global minimum of $f$ analytically. \\
+\textit{Hint}: b)
+\item Perform analytically two gradient descent steps starting at $x^{[0]} = (-0.4, 0.3)^\top$ with step size $\alpha=0.9$.
+What do you observe? 
+\item Repeat d) with GD with momentum. Set $v^{[0]} = (1, -1)^\top, \gamma = 0.9.$ What do you observe now?
+\item Prove that two consecutive GD steps with optimal step size are orthogonal to each other.
+\item Explain what the advantages of GD with momentum over vanilla GD are in $\{\mathbf{x} \in \R^2|\; \rho(\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}) \neq 0\}$.
+\item Write an $\texttt{R}$ script which finds the global minimum with the settings in e). (Start with $v^{[0]} = (0,0)^\top$)
+\end{enumerate}
