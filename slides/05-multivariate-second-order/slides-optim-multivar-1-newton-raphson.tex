@@ -5,7 +5,7 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{}
+\newcommand{\titlefigure}{figure_man/NR_2.png}
 \newcommand{\learninggoals}{
 \item First vs. Second order methods
 \item Newton-Raphson
@@ -171,23 +171,23 @@ Example: Optimize Branin function with Newton Raphson and gradient descent (GD).
 
 \begin{vbframe}{Newton-Raphson: Limitations}
 
-\textbf{Problem 1:} The update direction
+\textbf{Problem 1:} The update direction is generally not a direction of descent.
 
-$$
-\mathbf{d}^{[t]} = -\left(\nabla^2 f(\mathbf{x}^{[t]})\right)^{-1} \nabla f(\mathbf{x}^{[t]})
-$$
+\vspace*{-0.3cm}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{slides/05-multivariate-second-order/figure_man/NR_2.png}
+\end{figure}
 
-is generally not a direction of descent.
-
-\lz
-
-\textbf{But}: If the Hessian matrix is positive definite, it is necessarily a descent direction:
+\begin{footnotesize}
+\textbf{But}: If Hessian is positive definite, it is necessarily descent direction:
 
 $$
 (\mathbf{d}^{[t]})^\top \nabla f(\mathbf{x}^{[t]}) = - \left(\nabla f(\mathbf{x}^{[t]})\right)^\top \left(\nabla^2 f(\mathbf{x}^{[t]})\right)^{-1} \nabla f(\mathbf{x}^{[t]}) <0.
 $$
 
-Near the minimum, the Hessian matrix is positive definite. But especially at the beginning the Hessian is often not positive definite and the Newton-Raphson update direction is not sensible.
+Near the minimum, Hessian is p.d.. especially at beginning Hessian is often not p.d. and the Newton-Raphson update direction is not sensible.
+\end{footnotesize}
 
 \framebreak
 
