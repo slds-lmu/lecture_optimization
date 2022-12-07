@@ -1,0 +1,250 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/NR_2.png}
+\newcommand{\learninggoals}{
+\item First vs. Second order methods
+\item Newton-Raphson
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Second order methods: Newton-Raphson}
+\lecture{Optimization in Machine Learning}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{First and second order procedures}
+
+So far we have considered algorithms based on the gradient (1st derivative). These methods are called \textbf{first-order methods}.
+
+\lz
+
+In the following we consider procedures based on the Hessian matrix (2nd derivative). These are called \textbf{second-order methods}.
+
+\end{vbframe}
+
+\begin{vbframe}{Newton-Raphson method}
+
+\textbf{Assumption:} $f$ twice differentiable with Hessian $\nabla^2 f(\bm{x})$
+
+\lz
+
+\textbf{Aim:} Find stationary point $\nabla f(\bm{x}) = \bm{0}$
+\lz 
+
+\textbf{Idea:} Find root of Taylor approximation (1st order) of $\nabla f(\bm{x})$:
+\begin{eqnarray*}
+\nabla f(\mathbf{x}) \approx \nabla f(\mathbf{x}^{[t]}) +
+\nabla^2 f(\mathbf{x}^{[t]})(\mathbf{x} - \mathbf{x}^{[t]}) &=& \mathbf{0} \\
+\nabla^2 f(\mathbf{x}^{[t]})(\mathbf{x} - \mathbf{x}^{[t]}) &=& - \nabla f(\mathbf{x}^{[t]}) \\
+\mathbf{x}^{[t+1]} &=& \mathbf{x}^{[t]} \underbrace{- \left(\nabla^2 f(\mathbf{x}^{[t]})\right)^{-1}\nabla f(\mathbf{x}^{[t]})}_{:= d^{[t]}} \\
+\end{eqnarray*}
+
+\vspace*{-0.2cm}
+
+Update: $\bm{x}^{[t+1]} = \bm{x}^{[t]} + \bm{d}^{[t]}$ with $\bm{d}^{[t]} =  \left(\nabla^2 f(\mathbf{ x}^{[t]})\right)^{-1}\nabla f(\mathbf{x}^{[t]})$.
+
+\vspace*{0.3cm}
+
+\textbf{Note: } Numerically, we determine $\bm{d}^{[t]}$ by solving the LGS $\nabla^2 f(\mathbf{x}^{[t]})\bm{d}^{[t]} = - \nabla f(\mathbf{x}^{[t]})$ with symmetic matrix $\nabla^2 f(\mathbf{x}^{[t]})$. 
+
+
+% \begin{vbframe}{Newton-Raphson}
+% Der Newton-Raphson-Algorithmus benutzt als \textbf{Abstiegsrichtung}
+% $$
+% \mathbf{d}_{i} = -(\nabla^2 f(\mathbf{x}_{i}))^{-1} \nabla f(\mathbf{x}_{i})
+% $$
+% Dies kann auf mehrere Arten motiviert werden:
+% \begin{itemize}
+% \item Man löst die Gleichung $\nabla f(\mathbf{x}) = \mathbf{0}$, indem man den Gradienten durch
+% eine Taylorreihe erster Ordnung approximiert:
+% $$
+% \nabla f(\mathbf{x}) \approx \nabla f(\mathbf{x}_{i}) +
+% \nabla^2 f(\mathbf{x}_{i})(\mathbf{x} - \mathbf{x}_{i}) = \mathbf{0}.
+% $$
+% \item Man adjustiert die Richtung $-\nabla f(\mathbf{x}_{i})$ vom ``steilsten Abstieg'' an die lokale
+% Krümmung $\nabla^2 f(\mathbf{x}_{i})$.
+% \end{itemize}
+% Im Vergleich zum \enquote{steilsten Abstieg}: Newton-Raphson divergiert ebenfalls leicht, hat aber quadratische
+% Konvergenz nahe beim Minimum.
+
+\framebreak
+
+Example:
+
+\lz
+
+$$
+f(x, y) = \left(x^2 + \frac{y^2}{2}\right)
+$$
+Update direction:
+$$
+\mathbf{d}^{[t]} = -\left( \nabla^2 f(x^{[t]}, y^{[t]}) \right)^{-1} \nabla f(x^{[t]}, y^{[t]})
+$$
+\begin{eqnarray*}
+\nabla f(x, y) &=& \begin{pmatrix}
+\frac{\partial f(x, y)}{\partial x} \\
+\frac{\partial f(x, y)}{\partial y}
+\end{pmatrix} = \begin{pmatrix}
+2x \\
+y
+\end{pmatrix} \\
+\nabla^2 f(x, y) &=& \begin{pmatrix}
+\frac{\partial^2 f(x, y)}{\partial^2 x} & \frac{\partial^2 f(x, y)}{\partial x \partial y} \\
+\frac{\partial^2 f(x, y)}{\partial y \partial x} & \frac{\partial^2 f(x, y)}{\partial^2 y}
+\end{pmatrix} = \begin{pmatrix}
+2 & 0 \\
+0 & 1
+\end{pmatrix}
+\end{eqnarray*}
+
+\framebreak
+
+\code{t = 1}:
+\begin{eqnarray*}
+\begin{pmatrix}
+x^{[1]} \\
+y^{[1]}
+\end{pmatrix} &=& \begin{pmatrix}
+x^{[0]} \\
+y^{[0]}
+\end{pmatrix} + \mathbf{d}^{[0]} = \begin{pmatrix}
+x^{[0]} \\
+y^{[0]}
+\end{pmatrix} - \begin{pmatrix}
+0.5 &  0 \\
+0 & 1
+\end{pmatrix} \begin{pmatrix}
+2x^{[0]} \\
+y^{[0]}
+\end{pmatrix} \\
+&=& \begin{pmatrix}
+x^{[0]} \\
+y^{[0]}
+\end{pmatrix} + \begin{pmatrix}
+-x^{[0]} \\
+-y^{[0]}
+\end{pmatrix} \\
+&=& \mathbf{0}
+\end{eqnarray*}
+
+Newton-Raphson only needs one iteration to solve the problem!
+
+\framebreak 
+
+Example: Optimize Branin function with Newton Raphson and gradient descent (GD). 
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.45\textwidth]{slides/05-multivariate-second-order/figure_man/NR_1.png} ~~ \includegraphics[width=0.45\textwidth]{slides/05-multivariate-second-order/figure_man/NR_2.png} \\
+    Red: Newton Raphson. Right: Gradient descent. Newton raphson 
+\end{figure}
+
+\framebreak
+
+\textbf{Advantages:}
+
+\begin{itemize}
+\item If $f$ sufficiently smooth, the procedure converges quadratically locally (i.e. if the starting point is close enough to optimum)
+\end{itemize}
+
+\textbf{Disadvantages}
+
+\begin{itemize}
+\item At \enquote{bad} starting points the procedure may not converge at all
+\item The Hessian must be calculated and the direction of descent determined by solving a system of equations
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Newton-Raphson: Limitations}
+
+\textbf{Problem 1:} The update direction is generally not a direction of descent.
+
+\vspace*{-0.3cm}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{slides/05-multivariate-second-order/figure_man/NR_2.png}
+\end{figure}
+
+\begin{footnotesize}
+\textbf{But}: If Hessian is positive definite, it is necessarily descent direction:
+
+$$
+(\mathbf{d}^{[t]})^\top \nabla f(\mathbf{x}^{[t]}) = - \left(\nabla f(\mathbf{x}^{[t]})\right)^\top \left(\nabla^2 f(\mathbf{x}^{[t]})\right)^{-1} \nabla f(\mathbf{x}^{[t]}) <0.
+$$
+
+Near the minimum, Hessian is p.d.. especially at beginning Hessian is often not p.d. and the Newton-Raphson update direction is not sensible.
+\end{footnotesize}
+
+\framebreak
+
+\textbf{Problem 2:} The calculation of the Hessian can be \textbf{expensive} and the calculation of the descent direction by solving the system of equations
+
+$$
+\left(\nabla^2 f(\mathbf{x}^{[t]})\right)\mathbf{d}^{[t]} = - \nabla f(\mathbf{x}^{[t]})
+$$
+
+can be numerically unstable.
+
+\lz
+
+\textbf{Aim}: Find methods that can be applied without the Hessian matrix
+\begin{itemize}
+\item Quasi-Newton method.
+\item Gauss-Newton algorithm (for least squares).
+\end{itemize}
+
+
+
+\end{vbframe}
+
+
+% \begin{vbframe}{Newton-Raphson mit Backtracking}
+% Das Hauptproblem bei der globalen Divergenz ist, dass man auch in
+% Abstiegsrichtung das nächstgelegene Minimum überspringen kann und
+% dann $f(\mathbf{x}^{(i + 1)}) > f(\mathbf{x}^{(i)})$ gilt.
+% Eine zuverlässige Methode um dieses Problem zu beheben ist die {\em
+% Richtung} von $\mathbf{d}$ zu behalten, aber die Schrittweite zu reduzieren:
+% \begin{enumerate}
+% \item $\mathbf{d}$ berechnen und den vollen Schritt $\mathbf{x}^{(i + 1)} = \mathbf{x}^{(i)} + \mathbf{d}$
+% versuchen. Den Punkt behalten, falls $f(\mathbf{x}^{(i + 1)}) < f(\mathbf{x}^{(i)})$.
+% \item Falls nicht, teste Aktualisierungen mit
+% \[\mathbf{x}^{(i + 1)} = \mathbf{x}^{(i)} + \lambda \mathbf{d} \ \ \ \ \ \ \ \ \ \ \ 0 < \lambda < 1\]
+% mit abnehmender Schrittgröße $\lambda$ bis
+% \[f(\mathbf{x}^{(i + 1)}) < f(\mathbf{x}^{(i)}) - \epsilon\]
+% mit vorgegebenem $\epsilon$.
+% \end{enumerate}
+% Möglichkeiten für die Wahl von $\lambda$:
+% \begin{itemize}
+% \item Reduziere $\lambda$ um einen konstanten Faktor $c < 1$ bis Verbesserung der Lösung erzielt wurde.
+% \item Löse das eindimensionale Optimierungsproblem
+% $$
+%   \min_\lambda g(\lambda)   \mbox{ wobei }  g(\lambda) = f(\mathbf{x}^{(i)} + \lambda \mathbf{d}).
+% $$
+% % wird in der Praxis eher nicht gemacht (zu zeitaufwendig).
+% \item  Minimiere quadratische Funktion basierend auf
+% $
+% g(0), g(1) \mbox{ und } g'(0)
+% $
+% (die drei Werte sind ja bekannt).
+% \end{itemize}
+% \end{vbframe}
+
+\endlecture
+\end{document}
+
+
+

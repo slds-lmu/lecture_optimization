@@ -1,0 +1,61 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{}
+\newcommand{\learninggoals}{
+\item optim()
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Second order methods: Optimization in R}
+\lecture{Optimization in Machine Learning}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{Optimization in R}
+Function \pkg{optim()} from base R provides algorithms for general optimization problems: \\[0.15cm]
+\begin{itemize}
+\item \textbf{Brent:} Only for one-dimensional functions. Use the function \pkg{optimize()}.
+      Can be useful if \pkg{optim()} is called within another function.
+\item \textbf{CG:} conjugated Gradient Methods
+% \item \textbf{Nelder-Mead Simplex:} Gut für nicht-dif'bare Funktionen, basiert nur auf Funktionsauswertungen (default)
+\item \textbf{BFGS, Quasi-Newton}
+% \item \textbf{SANN:} Stochastisches Simulated Annealing
+\end{itemize}
+\framebreak
+\lz
+
+\begin{verbbox}
+# General Call:
+optim(par, fn, gr, method, lower, upper, control)
+\end{verbbox}
+\col
+
+\lz
+\begin{itemize}
+\item \textbf{par} starting values of the parameters to be optimized
+\item \textbf{fn} (objective) function, to be optimized (default: minimized)
+\item \textbf{gr} gradient / derivative with corresponding method
+\item \textbf{method} optimization method (see above)
+\item \textbf{lower/upper} boundaries for optimization (L-BFGS-B)
+\item \textbf{control} List of control parameters
+\end{itemize}
+\end{vbframe}
+
+\endlecture
+\end{document}
+
+
+

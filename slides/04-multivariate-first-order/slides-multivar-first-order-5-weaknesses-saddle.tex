@@ -28,13 +28,16 @@
 \begin{vbframe}{Unimodal vs. Multimodal loss surfaces}
 \begin{figure}
 \centering
-\includegraphics[width=12cm]{figure_man/difficult_vs_easy.png}
-\footnotesize{In deep learning we often find multimodal loss surfaces. Left: Multimodal loss surface; Right: (Nearly) unimodal loss surface. Source: Hao Li et al. (2017). }
 \centering
-\vspace{1cm}
 \includegraphics[width=.9\textwidth]{figure_man/multimodal.png}
 \footnotesize{Potential snippet from a loss surface with many local minima}
 \end{figure}
+
+
+
+\includegraphics[width=12cm]{figure_man/difficult_vs_easy.png}
+\footnotesize{In deep learning we often find multimodal loss surfaces. Left: Multimodal loss surface; Right: (Nearly) unimodal loss surface. Source: Hao Li et al. (2017). }
+
 
 \end{vbframe}
 
@@ -65,11 +68,27 @@
 \end{center}
 \tiny{Source: Goodfellow, Ch. 4}
 \end{figure}
-\item In DL, literature suspects that most local minima have low empirical risk. (\href{https://arxiv.org/abs/1406.2572}{Y. Dauphin et al. (2014)})
-\item Simple test: Norm of gradient should get close to zero.
+%\item In DL, literature suspects that most local minima have low empirical risk. (\href{https://arxiv.org/abs/1406.2572}{Y. Dauphin et al. (2014)})
+%\item Simple test: Norm of gradient should get close to zero.
 \end{itemize}
+
+\framebreak
+
+\begin{center}
+\vspace{1cm}
+(Non-)converging Gradient Descent for ackley function
+\end{center}
+
+
+\includegraphics[width=.45\textwidth]{figure_man/nonconv_ackley_plot.jpg} ~~
+\includegraphics[width=.49\textwidth]{figure_man/nonconv_ackley_path.jpg}
+
+
+\footnotesize{Small differences in starting value or step size can lead to huge differences in the reached minimum or even to non-convergence}
+
 \end{vbframe}
 
+%%
 
 \begin{vbframe}{GD at saddle points}
 	
@@ -182,16 +201,18 @@
     \item A property of many random functions is that eigenvalues of the Hessian become more likely to be positive in regions of lower cost.
     \item For the coin flipping example, this means we are more likely to have heads $m$ times if we are at a critical point with low cost.
     \item That means in particular that local minima are much more likely to have low cost than high cost and critical points with high cost are far more likely to be saddle points.
-    \item See Dauphin et al. (2014) for a more detailed investigation.
-    
-\framebreak
-    
+    %\item See Dauphin et al. (2014) for a more detailed investigation.
+
     \item \enquote{Saddle points are surrounded by high error plateaus that can dramatically slow down learning, and give the illusory impression of the existence of a local minimum} (Dauphin et al. (2014)).
-  \begin{figure}
-    \centering
-    \includegraphics[width=8.5cm]{figure_man/cost.png}
-    % TAKEN FROM i2dl LECTURE
-  \end{figure}
+    
+% \framebreak
+    
+%     \item \enquote{Saddle points are surrounded by high error plateaus that can dramatically slow down learning, and give the illusory impression of the existence of a local minimum} (Dauphin et al. (2014)).
+%   \begin{figure}
+%     \centering
+%     \includegraphics[width=8.5cm]{figure_man/cost.png}
+%     % TAKEN FROM i2dl LECTURE
+%   \end{figure}
   \end{itemize}
 \end{vbframe}
 
