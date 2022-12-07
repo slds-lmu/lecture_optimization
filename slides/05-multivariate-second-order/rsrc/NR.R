@@ -35,13 +35,13 @@ rosenbrock <- function(x) {
 
 # Newton-Raphson
 objNR = Objective$new(fun = rosenbrock)
-optimNR = OptimizerNR$new(steps = 200L, step_size = 1, x0 = c(1.8, -0.8), gamma = 0.99, tau = 0.5)
+optimNR = OptimizerNR$new(steps = 50L, step_size = 1, x0 = c(1.8, -0.8), gamma = 0.99, tau = 0.5)
 optimNR$optimize(objNR)
 print(objNR$archive)
 
 # Gradient descent
 objGD = Objective$new(fun = rosenbrock)
-optimGD = OptimizerGD$new(steps = 200L, step_size = 0.05, x0 = c(1.8, -0.8))
+optimGD = OptimizerGD$new(steps = 50L, step_size = 0.1, x0 = c(1.8, -0.8))
 optimGD$optimize(objGD)
 
 # Visualization
