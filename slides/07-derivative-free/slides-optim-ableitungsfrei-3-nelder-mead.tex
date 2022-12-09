@@ -1,0 +1,462 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/convex_programs.png}
+\newcommand{\learninggoals}{
+\item Idea
+\item Case distinction
+\item Advantages \& disadvantages
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Nelder-Mead method}
+\lecture{Optimization in Machine Learning}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{vbframe}{Nelder-Mead Method}
+
+\textbf{Nelder-Mead} is a robust procedure, which also works without derivatives.
+
+\lz
+
+Generalization of bisection in $d$-dimensional space.
+
+\lz
+
+Instead of an interval, a simplex is used, a geometric figure defined by $d + 1$ points:
+
+\begin{itemize}
+\item $d = $1 interval
+\item $d = $2 triangle
+\item $d = $3 tetrahedron \dots
+\end{itemize}
+
+\framebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+A version of the \textbf{Nelder-Mead} method:
+
+\lz
+
+\textbf{Initialization:} Choose $d + 1$ random, linearly independent points $\mathbf{v}_i$ ($\mathbf{v}_i$ are vertices: corner points of the simplex/polytope):
+
+\begin{enumerate}
+\item \textbf{Order}: Order points according to ascending function values
+$$
+f(\mathbf{v}_1) \leq f(\mathbf{v}_2) \leq \ldots \leq f(\mathbf{v}_d) \leq f(\mathbf{v}_{d + 1}).
+$$
+with $\mathbf{v}_1$ best point, $\mathbf{v}_{d + 1}$ worst point.
+
+\begin{figure}
+\includegraphics[width = 0.5\linewidth]{figure_man/Nelder01.png}
+\end{figure}
+
+\item Calculate \textbf{centroid} without worst point
+$$
+\bar{\mathbf{v}} = \frac{1}{d} \sum_{i = 1}^d \mathbf{v}_i.
+$$
+
+\begin{figure}
+\includegraphics[width = 0.43\linewidth]{figure_man/Nelder02.png} ~~~ \includegraphics[width = 0.43\linewidth]{figure_man/Nelder03.png}
+\end{figure}
+
+\framebreak
+
+\item \textbf{Reflection:} calculate reflection point
+$$
+\mathbf{v}_r = \bar{\mathbf{v}} + \rho (\bar{\mathbf{v}} - \mathbf{v}_{d + 1}),
+$$
+with $\rho > 0$. Calculate $f(\mathbf{v}_r)$.\\
+
+\vspace{0.4cm}
+\begin{figure}
+\includegraphics[width = 0.43\linewidth]{figure_man/Nelder04.png} 
+\end{figure}
+
+Note: the standard value for the reflection coefficient is $\rho = 1$. 
+\footnotesize
+
+
+
+\small
+\framebreak
+\vspace{0.2cm}
+We now distinguish three cases:
+
+
+\begin{itemize}
+\small
+\item \textbf{Case 1}: $f(\mathbf{v}_1) \leq f(\mathbf{v}_r) < f(\mathbf{v}_d)$ \\
+If the reflection point is better than the second worst corner, but not better than the best corner, we accept $\mathbf{v}_r$ and discard $\mathbf{v}_{d + 1}$.
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{0.2cm}
+\begin{minipage}{0.57\textwidth}
+\begin{itemize}
+\small
+\item \textbf{Case 2}: $f(\mathbf{v}_r) < f(\mathbf{v}_1)$ \\
+If the reflection point is better than the best corner so far, we \enquote{expand} the current point (\textbf{Expansion}) to find out if we could get even better in the direction of $\bm{v}_r$:
+
+  $$
+  \mathbf{v}_e = \bar{\mathbf{v}} + \chi (\mathbf{v}_{r} - \bar{\mathbf{v}}), \quad \chi > 1.
+  $$
+
+We discard $\bm{v}_{d + 1}$ in favor of the better of the two corners $\bm{v}_r, \bm{v}_e$.
+\end{itemize}
+\end{minipage}
+\begin{minipage}{0.35\textwidth}
+\begin{center}
+\includegraphics[width = 1\linewidth]{figure_man/Nelder05.png}
+\end{center}
+\tiny
+This is \textbf{case 2}: The reflection point $\bm{v}_r$ is better than the best point $\bm{v}_1$.\\
+If the \textbf{expansion} does not return a better point than $\bm{v}_r$, accept $\bm{v}_r$ and reject $\bm{v}_3$.
+\end{minipage}
+
+Note: the standard value for the expansion coefficient is $\chi = 2$. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+\small
+\item \textbf{Case 3}: $f(\mathbf{v}_r) \ge f(\mathbf{v}_d)$
+we find that running toward $\bm{v}_{r}$ was not purposeful.
+We calculate a \textbf{contraction} point:
+
+$$
+\mathbf{v}_c = \bar{\mathbf{v}} + \gamma (\mathbf{v}_{d + 1} - \bar{\mathbf{v}})
+$$
+
+with $0 < \gamma \le 0.5$.
+\begin{itemize}
+\item If $\mathbf{v}_c$ is better than the worst point, we accept $\mathbf{v}_c$.
+\item Otherwise, we shrink the \textbf{entire} Simplex (\textbf{Shrinking}):
+
+$$
+\mathbf{v}_{i} = \mathbf{v}_1 + \sigma (\mathbf{v}_{i} - \mathbf{v}_{1}) \quad \text{ for all } i
+$$
+\end{itemize}
+\end{itemize}
+
+In each of the three cases, we then continue with step 1 until a termination criterion is met.
+
+\end{enumerate}
+
+Note: standard values for the contraction and shrinkage coefficient are $\gamma = 0.5$ and $\sigma = 0.5$. 
+\end{vbframe}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\framebreak
+%A version of the \textbf{Nelder-Mead} method:
+
+%\lz
+
+%\textbf{Initialization:} Choose $p + 1$ random, linearly independent points $\mathbf{v}_i$ ($\mathbf{v}_i$ are vertices: corner points of the simplex/polytope):
+%\begin{enumerate}
+%\item \textbf{Order}: Order points according to ascending function values
+%$$
+%f(\mathbf{v}_1) \leq f(\mathbf{v}_2) \leq \ldots \leq f(\mathbf{v}_p) \leq f(\mathbf{v}_{p + 1}).
+%$$
+%with $\mathbf{v}_1$ best point, $\mathbf{v}_{p + 1}$ worst point.
+%\item Calculate \textbf{centroid} without worst point
+%$$
+%\bar{\mathbf{v}} = \frac{1}{p} \sum_{i = 1}^p \mathbf{v}_i.
+%$$
+%\item \textbf{Reflection:} calculate reflection point
+%$$
+%\mathbf{v}_r = \bar{\mathbf{v}} + \rho (\bar{\mathbf{v}} - \mathbf{v}_{p + 1}),
+%$$
+%with $\rho > 0$. Calculate $f(\mathbf{v}_r)$.
+
+%\framebreak
+
+%We now distinguish three cases:
+
+%\begin{itemize}
+%\item \textbf{Case 1}: $f(\mathbf{v}_1) \leq f(\mathbf{v}_r) < f(\mathbf{v}_p)$ \\
+%If the reflection point is better than the second worst corner, but not better than the best corner, we accept $\mathbf{v}_r$ and discard $\mathbf{v}_{p + 1}$.
+%\vspace*{0.2cm}
+%\item \textbf{Case 2}: $f(\mathbf{v}_r) < f(\mathbf{v}_1)$ \\
+%If the reflection point is better than the best corner so far, we \enquote{expand} the current point (\textbf{Expansion}) to find out if we could get even better in the direction of $\bm{v}_r$:
+
+%  $$
+%  \mathbf{v}_e = \bar{\mathbf{v}} + \chi (\mathbf{v}_{r} - \bar{\mathbf{v}}), \quad \chi > 1.
+%  $$
+
+%We discard $\bm{v}_{p + 1}$ in favor of the better of the two corners $\bm{v}_r, \bm{v}_e$.
+%\item \textbf{Case 3}: $f(\mathbf{v}_r) \ge f(\mathbf{v}_p)$
+%we find that running toward $\bm{v}_{r}$ was not purposeful.
+%We calculate a \textbf{contraction} point:
+
+%$$
+%\mathbf{v}_c = \bar{\mathbf{v}} + \gamma (\mathbf{v}_{p + 1} - \bar{\mathbf{v}})
+%$$
+
+%with $0 < \gamma \le 0.5$.
+%\begin{itemize}
+%\item If $\mathbf{v}_c$ is better than the worst point, we accept $\mathbf{x}_c$.
+%\item Otherwise, we shrink the \textbf{entire} Simplex (\textbf{Shrinking}):
+
+%$$
+%\mathbf{v}_{i} = \mathbf{v}_1 + 0.5 (\mathbf{v}_{i} - \mathbf{v}_{1}) \quad \text{ for all } i
+%$$
+%\end{itemize}
+%\end{itemize}
+
+%In each of the three cases, we then continue with step 1 until a termination criterion is met.
+
+%\end{enumerate}
+
+%\end{vbframe}
+
+%\begin{frame}[t, fragile]
+%\frametitle{{Example: Nelder-Mead method}}
+%  \begin{figure}[htbp]
+%    \centering
+%    \begin{tikzpicture}
+%      \clip (-4.6,4) rectangle (6,-4);
+
+      % Definiere Koordinaten
+%      \coordinate (A) at (0,0);
+%      \coordinate (B) at (3,0);
+%      \coordinate (C) at (0,3);
+%      \coordinate (D) at (-4,-2);
+%      \coordinate (S) at (0,1.5);
+%      \coordinate (K) at (-2.5,2.76);
+%      \coordinate (OPT) at (-2.7,3.2);
+
+%      \draw[gray!40] (OPT) circle (1cm);
+%      \draw[gray!40] (OPT) circle (2.3cm);
+%      \draw[gray!40] (OPT) circle (3.6cm);
+
+        % Zeichne Ecken des Simplex mit Labels
+%        \only<1>{\fill (A) circle (0.2em)};
+%        \only<1>{\fill (B) circle (0.2em)};
+%        \only<1>{\fill (C) circle (0.2em)};
+%        \only<1-3>{\node[anchor=north,text width=12 cm] (note1) at (1.2,-0.5) {\scriptsize
+%          \begin{enumerate}
+%          \item \textbf{Order}: Order points by ascending function values
+%          \setlength{\abovedisplayskip}{4pt}
+%          \setlength{\belowdisplayskip}{4pt}
+%          $$
+%          f(\mathbf{v}_1) \leq f(\mathbf{v}_2) \leq \ldots \leq f(\mathbf{v}_p) \leq f(\mathbf{v}_{p + 1}).
+%          $$
+%          with $f(\mathbf{v}_1)$ as best point, $f(\mathbf{v}_{p + 1})$ as worst point.
+%          \item Calculate \textbf{centroid} without worst point
+%          $$
+%          \bar{\mathbf{v}} = \frac{1}{p} \sum_{i = 1}^p \mathbf{v}_i.
+%          $$
+%          \end{enumerate}
+%          };
+%          \normalsize}
+
+%        \only<4-5>{\node[anchor=north,text width=11 cm] (note2) at (1,-0.5) {\scriptsize
+%          \begin{enumerate}\addtocounter{enumi}{2}
+%          \item \textbf{Reflection:} calculate reflection point
+%          \setlength{\abovedisplayskip}{4pt}
+%          \setlength{\belowdisplayskip}{4pt}
+%          $$
+%          \mathbf{v}_r = \bar{\mathbf{v}} + \rho (\bar{\mathbf{v}} - \mathbf{v}_{p + 1}),
+%          $$
+%          with $\rho = 1$, calculate $f(\mathbf{v}_r)$.
+%          \end{enumerate}
+%          This is \textbf{case 2}: The reflection point $\bm{v}_r$ is better than the best point $\bm{v}_1$.\\
+%        If the \textbf{expansion} does not return a better point than $\bm{v}_r$, accept $\bm{v}_r$ and reject $\bm{v}_3$.
+%          };
+%          \normalsize}
+
+%      \fill<1-4> (A) circle (0.2em) node[below] {$\scriptstyle{v_{2}}$};
+%      \only<1-4>{\fill (B) circle (0.2em) node[below] {$\scriptstyle{v_{3}}$};}
+%      \fill<1-4> (C) circle (0.2em) node[above] {$\scriptstyle{v_{1}}$};
+%      \only<3-4>{\fill (S) circle (0.2em) node[right] {$\scriptstyle{\bar{v}}$};}
+%      \only<4>{\fill (K) circle (0.2em) node[below] {$\scriptstyle{v_{r}}$};}
+%      \draw (OPT) circle (0.2em) node[above] {$\scriptstyle{OPT = (0,0)^{\top}}$};
+
+      % Zeichne initiales Simplex
+%      \only<2-4>{\draw (A) -- (C) -- (B) -- cycle;}
+
+      % Zeichne Reflektionsgerade
+%      \only<4>{\draw($(B)!-0cm!(S)$)--($(S)!-2.75cm!(B)$);}
+
+      % Zeichne gestrichelt die Verbindungslinien zwischen den Ecken des neuen Simplex
+%      \only<5->{
+%      \draw (A) -- (C);
+%      \draw[dashed] (C) -- (K) -- (A);
+%      \fill (A) circle (0.2em) node[below] {$\scriptstyle{v_{3}}$};
+%      \fill (C) circle (0.2em) node[above] {$\scriptstyle{v_{2}}$};
+%      \fill (K) circle (0.2em) node[below] {$\scriptstyle{v_{1}}$};
+%      }
+
+%    \end{tikzpicture}
+%    \lz
+    %\caption{Erste (vereinfachte) Iteration Nelder-Mead Algo für Zielfunktion $f(x) = x_1^2 + x_2^2$ mit $x = (x_1, x_2)^{\top} \in \R^2$.}
+%  \end{figure}
+%\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{vbframe}{Nelder-Mead}
+
+\textbf{Advantages:}
+\begin{itemize}
+\item Nelder-Mead only needs function values (no gradients).
+\item Very robust, often works well for non-differentiable functions.
+\end{itemize}
+\textbf{Drawbacks:}
+\begin{itemize}
+\item Relatively slow.
+\item Not every step leads to an improvement of the solution, only the mean over the points in the simplex is reduced.
+\item No guarantee for convergence in local optimum.
+\end{itemize}
+
+\textbf{Visualization:}\\
+\small
+a good illustration of the Nelder-Mead algorithm for one- and higher-dimensional optimization problems can be found at the following link: \url{http://www.benfrederickson.com/numerical-optimization/}
+
+\vspace{0.3cm}
+\textbf{Attention:} Nelder-Mead is default method of \pkg{R} function \pkg{optim()}.
+If gradient is easy to calculate, BFGS is preferred.
+
+\end{vbframe}
+
+% \begin{vbframe}{Beispiel: MLE Gamma-Verteilung}
+% \begin{itemize}
+% \item Sei $x_1, \ldots, x_n$ zufälliges Sample einer $Gamma(r,\lambda)$ Verteilung ($r$ ist \textit{shape}, $\lambda$ \textit{rate} Parameter)
+% \item $\theta = (r, \lambda) \in \R^2, \; \Theta = \R^+ \times \R^+$
+% \item gesucht ist Maximum Likelihood Schätzer von $\theta$
+% \end{itemize}
+% $$
+% L(r, \lambda) =  \frac{\lambda^{nr}}{\Gamma(r)^n} \prod_{i=1}^n x_i^{r-1} \exp(-\lambda \sum_{i=1}^nx_i), \; \; x_i \geq 0
+% $$
+% $$
+% l(r, \lambda) = nr \log \lambda - n \log \Gamma(r) + (r-1) \sum_{i=1}^n \log x_i - \lambda \sum_{i=1}^n x_i
+% $$
+
+% \framebreak
+
+% Direktes Maximieren von $l(r, \lambda)$ ist zweidimensionales Optimierungsproblem, alternativ kann univariates Nullstellenproblem über partielle Ableitungen formuliert werden.
+% $$
+% \frac{\partial}{\partial \lambda}l(r, \lambda)= \frac{nr}{\lambda}- \sum_{i=1}^n
+% x_i = 0
+% $$
+% $$
+% \frac{\partial}{\partial r}l(r, \lambda)=n \log \lambda - n \frac{\Gamma'(r)}{\Gamma(r)}+\sum_{i=1}^n \log x_i = 0
+% $$
+% Aus erster Gleichung folgt $\hat{\lambda} = \hat{r}/\bar{x}$. Setze $\hat{\lambda}$ für $\lambda$ in zweite Gleichung führt zu Nullstellensuche:
+% $$
+% n \log \frac{\hat{r}}{\bar{x}}+ \sum_{i=1}^n \log{x_i} - n \frac{\Gamma'(\hat{r})}{\Gamma(\hat{r})} = 0
+% $$
+% \framebreak
+% \begin{itemize}
+% \item Im Folgenden wird Optimierung per univariater Nullstellensuche und Nelder-Mead  durchgeführt
+% \item 20000 mal 200 ZVZ aus $Gamma(r=5, \lambda=2)$ ziehen und Parameter schätzen
+% \end{itemize}
+% <<size = "scriptsize">>=
+% # Univariate Nullstellensuche
+% m = 20000; est_univ = matrix(0, m, 2); n = 200
+% r = 5; lambda = 2
+% # define objective function
+% obj = function(lambda, xbar, logx.bar) {
+%   digamma(lambda * xbar) - logx.bar - log(lambda)
+% }
+
+% for (i in 1:m) {
+%   x = rgamma(n, shape = r, rate = lambda)
+%   xbar = mean(x)
+%   u = uniroot(obj, lower = .001, upper = 10e5,
+%                xbar = xbar, logx.bar = mean(log(x)))
+%   lambda.hat = u$root
+%   r.hat = xbar * lambda.hat
+%   est_univ[i, ] = c(r.hat, lambda.hat)
+% }
+% MLU = colMeans(est_univ)
+% @
+
+% <<size = "scriptsize">>=
+% # optim Nelder-Nead
+% LL = function(theta, sx, slogx, n) {
+%   r = theta[1]
+%   lambda = theta[2]
+%   loglik = n * r * log(lambda) + (r - 1) * slogx -
+%     lambda * sx - n * log(gamma(r))
+%   - loglik
+% }
+
+% n = 200; r = 5; lambda = 2
+
+% est_nelder = replicate(20000, expr = {
+%   x = rgamma(200, shape = 5, rate = 2)
+%   optim(c(1,1), LL, sx = sum(x), slogx = sum(log(x)), n = n)$par
+% })
+% MLN = rowMeans(est_nelder)
+% @
+
+% <<echo=FALSE>>=
+% par(mfrow=c(2,2))
+% hist(est_univ[, 1], breaks="scott", freq=FALSE,
+%      xlab="r", main="Univariate")
+% points(MLU[1], 0, cex=1.5, pch=20)
+% hist(est_univ[, 2], breaks="scott", freq=FALSE,
+%      xlab=bquote(lambda), main="Univariate")
+% points(MLU[2], 0, cex=1.5, pch=20)
+
+% hist(est_nelder[1,], breaks="scott", freq=FALSE,
+%      xlab="r", main="Nelder-Mead")
+% points(MLN[1], 0, cex=1.5, pch=20)
+% hist(est_nelder[2,], breaks="scott", freq=FALSE,
+%      xlab=bquote(lambda), main="Nelder-Mead")
+% points(MLN[2], 0, cex=1.5, pch=20)
+%@
+% \end{vbframe}
+
+% \section{Metaheuristiken}
+
+
+% \begin{vbframe}{Simulated Annealing}
+% Allgemeines Optimierungsverfahren aus dem Bereich des Machine
+% Learnings, das auch bei unstetigen und diskreten Problemen
+% Verwendung
+% finden kann.
+
+% \lz
+
+% Name: {\em Annealing = Hartglühen} (Metallurgie)
+% \begin{enumerate}
+% \item Starte mit $\mathbf{x}^{(0)}$
+% \item Ziehe zufällige Änderung $\epsilon$, setzte $\tilde{x} = \mathbf{x}^{(i)} + \eta^{(i)}\epsilon$
+% \begin{itemize}
+% \item $f(\tilde{x}) < f(\mathbf{x}^{(i)}) \Rightarrow \mathbf{x}^{(i + 1)} = \tilde{x}$
+% \item $f(\tilde{x}) \ge f(\mathbf{x}^{(i)}) \Rightarrow \mathbf{x}^{(i + 1)} = \begin{cases}
+% \tilde{x}  &\text{ mit Wkt.\ } p^{(i)}\\
+% x_i  \ \ &\text{ mit Wkt.\ } 1 - p^{(i)}
+% \end{cases}$
+% \end{itemize}
+% \item Wiederhole ab 2. bis zur maximalen Anzahl an Iterationen
+% \end{enumerate}
+
+% \lz
+
+% \begin{tabular}{ll}
+% $\eta^{(i)}, p^{(i)} \rightarrow 0$ & in Abhängigkeit von \enquote{Temperatur}. \\
+% $\eta^{(i)}$ & Schrittweite in Iteration $i$ .\\
+% $p^{(i)}$ & Wkt.\ Verschlechterung zu akzeptieren.
+% \end{tabular}
+% \end{vbframe}
+
+\endlecture
+\end{document}
+
