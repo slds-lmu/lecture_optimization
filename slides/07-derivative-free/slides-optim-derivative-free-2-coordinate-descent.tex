@@ -1,0 +1,183 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/convex_programs.png}
+\newcommand{\learninggoals}{
+\item Idea
+\item Connection to statistics \& machine learning
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Coordinate descent}
+\lecture{Optimization in Machine Learning}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{vbframe}{Coordinate descent}
+
+\textbf{Idea:} Use direction of the coordinate axis as \enquote{descent direction}.
+
+% \begin{itemize}
+% \item \textbf{Wahl der Richtung}: Wähle eine Dimension $i$, in deren Richtung wir laufen (Für $i=1$ laufen wir also in Richtung der $x_1$-Achse)
+% \item \textbf{Wahl der Schrittweite}: Minimiere (exakt oder inexakt) die Funktion in diese Richtung und halte dabei alle anderen Variablen fest (univariates Optimierungsproblem).
+% \end{itemize}
+
+\lz
+
+In the simplest case we run iteratively over all coordinates $\{1, ...,d\}$ and minimize $f$ with respect to the corresponding dimension.
+
+\lz
+
+If the derivative of the function does not exist / is not known and therefore the minimum in the $i$ direction cannot be determined \textbf{exactly}, an \textbf{inexact} procedure must be used to minimize it.
+
+\framebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+\item First a starting point $\bm{x}^{[0]} = \left(x^{[0]}_1, \hdots, x^{[0]}_d\right)$ is selected.
+\item In step $t$ we search the value $x_i$ for each dimension $i \in \left\{1,2,\hdots,d\right\}$
+that minimizes $f$, given $x^{[t]}_1, \hdots,x^{[t]}_{i-1}$ and $x^{[t-1]}_{i-1}, \hdots,x^{[t-1]}_d$:
+\end{itemize}
+
+
+
+\begin{minipage}{0.4\textwidth}
+    \begin{scriptsize}
+\begin{align*}
+x^{[t]}_1 &= \argmin_{x_1} f(x_1, x^{[t-1]}_2, x^{[t-1]}_3, \hdots, x^{[t-1]}_d) \\
+x^{[t]}_2 &= \argmin_{x_2} f(x^{[t]}_1, x_2, x^{[t-1]}_3, \hdots, x^{[t-1]}_d) \\
+x^{[t]}_3 &= \argmin_{x_3} f(x^{[t]}_1, x^{[t]}_2, x_3, \hdots, x^{[t-1]}_d) \\
+&\vdots \\
+x^{[t]}_d &= \argmin_{x_d} f(x^{[t]}_1, x^{[t]}_2, x^{[t]}_3, \hdots, x_d) \\
+\end{align*}
+\end{scriptsize}
+\end{minipage}
+\begin{minipage}{0.52\textwidth}
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figure_man/Coordinate_descent.png} \\
+\tiny{\url{https://commons.wikimedia.org/wiki/File:Coordinate_descent.svg}}
+\end{center}
+\end{minipage}
+
+
+\framebreak
+
+\begin{itemize}
+\item Minimum is determined with (exact / inexact) line search
+\item Order in which the dimensions are gone through can be any permutation of $\left\{1,2,\hdots,d\right\}$
+\item \textbf{Convergence:} if $f(\cdot)$ is continuously differentiable and the univariate minimization problem has a unique
+solution, the sequence $\bm{x}^{[t]}$ converges to $\bm{x}^{*}$ with $\nabla f(\bm{x}^*) = 0$.
+
+\lz
+
+The following applies:
+
+$$
+  f(\bm{x}^{[0]}) \geq f(\bm{x}^{[1]}) \geq f(\bm{x}^{[2]}) \geq \hdots
+$$
+\end{itemize}
+
+
+%\framebreak
+
+% Selbst programmieren
+
+%\begin{center}
+%\includegraphics[width=0.6\textwidth]{figure_man/Coordinate_descent.png} \\
+%\footnotesize{\url{https://commons.wikimedia.org/wiki/File:Coordinate_descent.svg}}
+%\end{center}
+
+% \framebreak
+%
+% \textbf{Vorteile:}
+% \begin{itemize}
+% \item Einfaches Verfahren
+% \item Schrittweite muss nicht bestimmt werden
+% \item Anwendbar für nicht-differenzierbare (und sogar nicht stetige) Funktionen
+% \end{itemize}
+%
+% \textbf{Nachteile:}
+% \begin{itemize}
+% \item Keine Konvergenz garantiert, wenn Funktion nicht hinreichend glatt
+% \item Ggf. langsamer als andere Verfahren nahe dem Optimum
+% \end{itemize}
+
+
+
+\end{vbframe}
+
+\begin{vbframe}{Example: linear regression}
+
+\textbf{Minimize RSS per coordinate descent:}
+
+We define $f(\bm{\theta}) = \frac{1}{2} \|\bm{y} - \bm{X}\bm{\theta}\|^2$,
+with $\bm{y} \in \R^n$, $\bm{X} \in \R^{n \times p}$ and columns $\bm{X}_1, \hdots, \bm{X}_p$.
+
+\lz
+
+For each  $\theta_i$ we calculate:
+
+\begin{footnotesize}
+\begin{eqnarray*}
+  0 &=& \frac{\partial{f}(\bm{\theta})}{\partial \theta_i}  = \bm{X}_i^{\top} (\bm{X\theta} - \bm{y}) = \bm{X}_i^{\top} (\bm{X}_i \theta_i + \bm{X}_{-i} \bm{\theta}_{-i} - \bm{y}) \\
+\theta_i &=& \frac{\bm{X}_i^\top (\bm{y} - \bm{X}_{-i} \bm{\theta}_{-i})}{\bm{X}_i^{\top} \bm{X}_i},
+\end{eqnarray*}
+\end{footnotesize}
+
+where $\bm{X}_{-i}, \bm{\theta}_{-i}$ are to be understood as the matrix / vector without the $i$-th column / row.
+
+\vspace*{0.2cm}
+
+Then $\theta_i$ is calculated one after the other for all $p$ dimensions and the process is repeated.
+
+
+
+
+\end{vbframe}
+
+\begin{vbframe}{Coordinate descent for statistics and machine learning}
+
+Why is it being used?
+
+\begin{itemize}
+\item Very easy to implement.
+\item Good implementation can achieve state-of-the-art performance.
+\item Scalable, e.g. no storage of data necessary.
+\item Applicable in both differentiable and derivative free cases.
+\end{itemize}
+
+Examples:
+
+\begin{itemize}
+\item Lasso regression, Lasso GLM, graphical Lasso
+\item Support Vector Machines
+\item Regression with non-convex penalites
+\end{itemize}
+
+% \framebreak
+
+% \begin{center}
+% \includegraphics[width=0.6\textwidth]{figure_man/Nonsmooth_coordinate_descent.png} \\
+% \footnotesize{\url{https://commons.wikimedia.org/wiki/File:Nonsmooth_coordinate_descent.svg}}
+% \end{center}
+
+
+\end{vbframe}
+
+
+\endlecture
+\end{document}
+

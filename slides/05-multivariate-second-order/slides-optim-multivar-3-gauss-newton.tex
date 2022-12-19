@@ -35,10 +35,10 @@ Consider the problem of minimizing a sum of squares
 	\min_{\bm{\theta}} &&g(\thetab)  \\ \text{ with } && g(\thetab) = \|r(\bm{\theta})\|_2^2 = \sum_{i = 1}^n \left[r_i(\bm{\theta})\right]^2 = r(\thetab)^\top r(\thetab). 
 \end{eqnarray*}
 
-We define $r$ as the function that maps a parameter $\thetab$ to the vector of residuals
+$r$: map $\thetab$ to residuals
 
 \begin{eqnarray*}
-	r: \R^p &\to& \R^n, \\
+	r: \R^d &\to& \R^n, \\
 	\thetab &\mapsto& r(\thetab) = \begin{pmatrix} r_1(\thetab) \\ ... \\ r_n(\thetab)\end{pmatrix}
 \end{eqnarray*}
 
@@ -55,7 +55,8 @@ also known as least squares regression is a least squares problem. $\fxit$ might
 
 \begin{columns}
 \begin{column}{0.55\textwidth}
-\textbf{Example:} Consider, for example, a regression problem with data
+\textbf{Example:} 
+%Consider, for example, a regression problem with data
 
 \begin{footnotesize}
 \begin{eqnarray*}
@@ -116,7 +117,8 @@ $$
 % Dieses Optimierungsproblem möchten wir nun mit Hilfe des Newton Verfahrens lösen. Hierfür beginnen wir mit der Berechnung der Jakobi- und Hessematrix.
 
 
-The vector of residuals is \begin{footnotesize}
+Residuals:
+\begin{footnotesize}
 $$
 r(\bm{\theta}) = \mat{\theta_1 exp(\theta_2 x^{(1)}) - y^{(1)} \\\theta_1 exp(\theta_2 x^{(2)}) - y^{(2)}\\ \theta_1 exp(\theta_2 x^{(3)}) - y^{(3)} \\ \theta_1 exp(\theta_2 x^{(4)}) - y^{(4)} \\ \theta_1 exp(\theta_2 x^{(5)}) - y^{(5)} } = \mat{
 \theta_1 exp(1 \theta_2) - 3 \\\theta_1 exp(2 \theta_2) - 7\\ \theta_1 exp(4 \theta_2) - 12 \\ \theta_1 exp(5 \theta_2) - 13 \\ \theta_1 exp(7 \theta_2) - 20
@@ -124,7 +126,7 @@ r(\bm{\theta}) = \mat{\theta_1 exp(\theta_2 x^{(1)}) - y^{(1)} \\\theta_1 exp(\t
 $$
 \end{footnotesize}
 
-and the least squares problem is to minimize
+LS problem:
 
 $$
 g(\thetab) =  r(\thetab)^\top r(\thetab) = \sum_{i=1}^{5} \left(\yi - \theta_1 \exp\left(\theta_2 x^{(i)}\right)\right)^2.
@@ -134,10 +136,10 @@ $$
 
 \end{vbframe}
 
-\begin{vbframe}{Limitations of Newton-Raphson}
+\begin{vbframe}{Newton-Raphson Idea}
 
 
-\textbf{Approach:} Calculate Newton-Raphson search direction by solving
+\textbf{Approach:} Calculate NR update direction by solving:
 
 $$
 \nabla^2 g(\bm{\theta}^{[t]}) \bm{d}^{[t]} = - \nabla g(\thetab^{[t]}).
@@ -168,7 +170,7 @@ $$
 
 \framebreak 
 
-The Hessian matrix is obtained by applying the product rule and has the elements
+Hessian is obtained by applying product rule and has elements
 
 \begin{eqnarray*}
 	H_{jk} &=& 2 \sumin \left(\frac{\partial r_i}{\partial \thetab_j}\frac{\partial r_i}{\partial \thetab_k} + r_i \frac{\partial^2 r_i}{\partial \thetab_j \partial \thetab_k}\right)
@@ -190,13 +192,13 @@ The Hessian matrix is obtained by applying the product rule and has the elements
 % % &= J(\bm{\theta})^\top J(\bm{\theta}) + W(\bm{\theta})
 % \end{align*}
 
-\textbf{Problem with Newton-Raphson:} Second derivatives can be challenging to compute! 
+\textbf{Problem with NR:} 2nd derivatives can be challenging to compute! 
 
 \end{vbframe}
 
 \begin{vbframe}{Gauss Newton for least squares}
 
-Gauss-Newton approximates the Hessian by dropping its second part:
+GN approximates H by dropping its second part:
 
 \begin{eqnarray*}
 H_{jk} &=& 2 \sumin \left(\frac{\partial r_i}{\partial \thetab_j}\frac{\partial r_i}{\partial \thetab_k} + r_i \frac{\partial^2 r_i}{\partial \thetab_j \partial \thetab_k}\right) \\
@@ -449,7 +451,7 @@ LMA is an efficient and popular method for solving nonlinear optimization proble
 
 \lz
 
-Note: The diagonal elements of a positive definite matrix are always $\geq 0$
+Note: The diag elements of a pd matrix are always $\geq 0$
 
 \end{vbframe}
 

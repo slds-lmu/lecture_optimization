@@ -1,0 +1,350 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-mbo}
+
+\newcommand{\titlefigure}{figure_man/bayesian_loop_3.png}
+\newcommand{\learninggoals}{
+\item Bayesian Surrogate Modeling
+\item Standard Acquisition Functions
+\item Types of Initial Designs
+}
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+% FIXME: alignment of figures
+
+\lecturechapter{Bayesian Optimization:\\ Bayesian Surrogate Modeling}
+\lecture{Optimization in Machine Learning}
+
+\begin{vbframe}{Bayesian Surrogate Modeling}
+
+\textbf{Goal:}
+
+Find a good trade-off between \textbf{exploraion} (explore areas we haven't evaluated points yet) and \textbf{exploitation} (interesting areas where we likely improve)
+
+\vspace{+.45cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_0.png}
+\end{center}
+
+\framebreak 
+
+\begin{itemize}
+\item \textbf{Idea}: Use a \textbf{Bayesian approach} to build a surrogate model that yields estimates for 
+\begin{itemize}
+  \item the posterior mean $m(\xv)$
+  \item the posterior variance $ s^2(\xv)$
+\end{itemize}
+\item The posterior variance expresses the \enquote{confidence} in the prediction
+\item The posterior variance should be high in regions where we have only few observations (red area) and low where we have a lot of observations (blue area)
+\item The most prominent choice for a surrogate model is a \textbf{Gaussian process} (GP)
+\item Since spatial dependencies are extremely well modeled by GPs (points that are \enquote{close} in the input space are also close in the objective space), they are considered particularly suitable as a surrogate model
+\end{itemize}
+
+\end{vbframe} 
+
+\begin{vbframe}{Gaussian Process Surrogate Model} 
+
+% FIXME: fix notation of GP
+
+We fit a GP to $D = \{(\xv^{(i)}, y^{(i)})\}_{i = 1, \ldots, 6}$
+
+\lz 
+
+The GP gives us a \textbf{distribution over functions}
+%as the posterior predictive distrbution for any set of input variables follows a multivariate Gaussian distribution}
+
+\vspace{+.45cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_1.png}
+\end{center}
+
+\vspace{0.2cm}
+
+The blue ribbons represent $m(\xv) \pm s(\xv)$
+
+\framebreak 
+
+The posterior mean and the posterior variance for a GP can be derived analytically: 
+
+\begin{itemize}
+\item Let $\D = \{(\xv^{(i)}, y^{(i)})\}_{i = 1, \ldots, t}$ be the data we are fitting the GP on
+\item Let $\bm{y}:= \left(y^{(1)}, \ldots, y^{(t)}\right)$ be the vector of observed outputs
+\item For a covariance kernel $k(\xv, \xv^{'})$, let $\bm{K} := \left(k(\xv^{(i)}, \xv^{(j)})\right)_{i,j}$ denote the \textbf{kernel (Gram) matrix} and $k(\xv) \coloneqq \left(k(\xv, \xv^{(1)}), \ldots, k(\xv, \xv^{(t)})\right)^\top$
+\item Further, we assume a zero-mean GP prior $^{(*)}$  
+\end{itemize}
+
+\vfill
+
+\begin{footnotesize}
+ $^{(*)}$ It is common but by no means necessary to consider GPs with a zero mean function. We could also model a GP with a constant trend, for example. Note, however, that using zero-mean priors is not a drastic limitation, since the mean of the posterior process is not confined to be zero. 
+\end{footnotesize}
+
+\framebreak 
+
+The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP is
+
+\begin{eqnarray*}
+  f ~|~ \xv, \D \sim \mathcal{N}\left(m(\xv), s^2(\xv)\right)
+\end{eqnarray*}
+
+with 
+
+\begin{eqnarray*}
+  m(\xv) &=& k(\xv)^\top \bm{K}^{-1} \bm{y} \\
+  s^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top \bm{K}^{-1} k(\xv)
+\end{eqnarray*}
+
+\vfill
+
+\end{vbframe}
+
+\begin{vbframe}{Acquisition Functions}
+
+To sequentially propose new points based on the GP, we make use of so-called acquisition functions $\alpha: \mathcal{S} \to \R$\\
+
+Let $f_{\min} \coloneqq \min \left\{f(\xv^{(1)}), \ldots, f(\xv^{(t)})\right\}$ denote the best observed value so far
+
+\vspace*{-0.2cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_2.png}
+\end{center}
+
+\vspace*{-0.3cm}
+
+In the examples before we simply used the posterior mean $\alpha(\xv) = m(\xv)$ as acquisition function - ignoring uncertainty
+
+\framebreak
+
+Most acquisition functions make us of the posterior predictive distribution under a GP being normal, i.e. $f(\xv) \sim \mathcal{N}\left(m(\xv), s^2(\xv)\right)$
+
+\vspace*{-0.2cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_3.png}
+\end{center}
+
+The grey line visualizes the density of the corresponding normal distribution for $\xv = 0$
+
+\end{vbframe}
+
+\begin{vbframe}{Expected Improvement}
+
+\textbf{Goal:} Propose $\xv^{(t+1)}$ that maximizes the \textbf{Expected Improvement} (EI): 
+
+\vspace*{-0.5cm}
+
+\begin{eqnarray*}
+  % FIXME: Expected value with respect to \hat{f} i.e. the GP predictive posterior distribution
+  \alpha_{\text{EI}}(\xv) &=& \E(\max\{f_{\min} - f(\xv), 0\}) \\
+\end{eqnarray*} 
+
+\vspace*{-0.5cm}
+
+Note that the improvement is bounded from below by $0$. Uncertainty only enters in the case of real improvement $f_{\min} - f(\xv) > 0$
+
+\framebreak
+
+For a GP, i.e. $f\left(\xv\right) \sim \mathcal{N}\left(m(\xv), s^2(\xv)\right)$, we can express the EI in closed-form as: 
+
+$$
+\alpha_{\text{EI}}(\xv) = (f_{\min}-{m}(\xv)) \Phi \Big(\frac{f_{\min} - {m}(\xv)}{{s}(\xv)}\Big) + {s}(\xv) \phi\Big(\frac{f_{\min}-{m}(\xv)}{{s}(\xv)}\Big), 
+$$
+
+where $\Phi(\cdot)$ and $\phi(\cdot)$ denote the distribution and density function of a standard normal random variable
+
+\vfill
+
+\begin{footnotesize}
+
+\textbf{Note:} The EI is $0$ for points that have already been visited. For a visited point $m(\xv) = f(\xv) \ge f_{\min}$, and thus $f_{\min} - m(\xv) \le 0$ and $\max\{f_{\min} - f(\xv), 0\} = 0$
+
+\end{footnotesize}
+
+\framebreak
+
+We use the EI (red line) to propose the next point ...
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_4.png}
+\end{center}
+
+The red point depicts $\argmax_{\xv \in \mathcal{S}} \alpha_{\text{EI}}(\xv)$
+
+\framebreak
+
+... evaluate that point, refit the GP and propose the next point
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_5.png}
+\end{center}
+
+The grey point visualizes the candidate we choose to evaluate in the previous iteration
+
+\framebreak
+
+...
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_6.png}
+\end{center}
+
+\framebreak
+
+The EI is capable of exploration and quickly proposes promising points in areas we haven't visited yet
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_7.png}
+\end{center}
+
+This is also a result of the well-calibrated uncertainty estimates
+
+\end{vbframe}
+
+\begin{vbframe}{Probability of Improvement}
+
+\textbf{Goal}: Find $\xv^{t+1}$ that maximizes the \textbf{Probability of Improvement}:
+
+$$
+  \alpha_{\text{PI}}(\xv) = \P(f(\xv) < f_{\min}) = \Phi\left(\frac{f_{\min} - m(\xv)}{ s(\xv)}\right)
+$$
+
+where $\Phi(\cdot)$ denotes the distribution function of a standard normal random variable
+
+\vfill
+
+\begin{footnotesize}
+\textbf{Note:} The probability of improvement is $0$ for points that have already been visited. This is clear by definition of the PI-criterion (we seek for a \enquote{real} improvement \enquote{$<$}). But it can also be seen analytically: For a visited point $s(\xv) = 0$ and $m(\xv) = f(\xv) \ge f_{\min}$, and thus $f_{\min} - m(\xv) \le 0$. Thus
+
+$$
+  \Phi\left(\frac{f_{\min} - m(\xv)}{s(\xv)}\right) = \Phi\left(- \infty\right) = 0.
+$$
+
+\end{footnotesize}
+
+\framebreak
+
+The PI does not take the size of the improvement into account
+
+Often it will propose points close to the current $f_{\min}$
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_0.png}
+\end{center}
+
+\end{vbframe}
+
+\begin{vbframe}{Lower Confidence Bound}
+
+\textbf{Goal}: Find $\xv^{t+1}$ that minimizes the \textbf{Lower Confidence Bound}:
+
+$$
+  \alpha_{\text{LCB}}(\xv) = m(\xv) - \lambda s(\xv)
+$$
+
+where $\lambda > 0$ is a constant that controls the \enquote{mean vs. uncertainty} trade-off
+
+\framebreak
+
+$\lambda = 1$
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_0.png}
+\end{center}
+
+\framebreak
+
+$\lambda = 3$
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_1.png}
+\end{center}
+
+\framebreak
+
+$\lambda = 10$
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_2.png}
+\end{center}
+
+\end{vbframe}
+
+\begin{vbframe}{Acquisition Functions: Comparison}
+
+\begin{itemize}
+  \item It can be shown that (under some mild conditions) Bayesian Optimization with a GP surrogate model with EI is a \textbf{global optimizer}
+  \begin{itemize}
+    \item That means: Convergence to the \textbf{global} (!) optimum is guaranteed given an unlimited budget
+  \end{itemize}
+  \item This cannot be proven for the PI or the LCB
+  \item From a theoretical perspective, this suggests choosing the EI as acquisition function
+  \item In practical applications, however, time to convergence is too long to rely on that theoretical property
+  \item LCB often can work very well in practice
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Acquisition Functions: Outlook}
+
+Many more acquisition functions exist:
+
+\begin{itemize}
+  \item Entropy based: Entropy search, predictive entropy search, max value entropy search
+  \item Knowledge Gradient
+  \item Thompson Sampling
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Initial Design}
+
+\begin{itemize}
+\item The initial design is used to train the \textbf{first} surrogate model
+\item It should cover the input space sufficiently: commonly used designs are
+\begin{itemize}
+  \item Random search
+  \item Grid search
+  \item Latin hypercube sampling (LHS)
+  \item Sobol sampling
+\end{itemize}
+\item Type of design usually has not the largest effect and unequal distances between points could even be beneficial
+\item A more important choice is the \textbf{size} of the initial design
+\begin{itemize}
+  \item It should neither be too small (bad initial fit) nor too large (spending too much budget without doing \enquote{intelligent} optimization)
+\end{itemize}
+\end{itemize}
+
+\framebreak
+
+LHS vs. random
+
+\begin{center}
+\includegraphics[width=\textwidth]{figure_man/initdes.png}  % FIXME: redo
+\end{center}
+
+\end{vbframe}
+
+\begin{vbframe}{Surrogate Models}
+
+\end{vbframe}
+
+\begin{vbframe}{Optimizing the Acquisition Function}
+
+\end{vbframe}
+
+\endlecture
+
+\end{document}
+
+

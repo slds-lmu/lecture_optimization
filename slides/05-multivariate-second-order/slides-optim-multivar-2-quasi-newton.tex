@@ -47,42 +47,41 @@
 % $\mathbf{A}_{i} = \nabla^2 f(\mathbf{x}_{i})$ ist für quadratische Probleme optimal, bei allgemeinen
 % Problemen muss die Hessematrix weit weg vom Optimum noch nicht einmal positiv definit sein.
 
-The starting point of the \textbf{Quasi-Newton method} is (as with Newton-Raphson) a Taylor approximation of the gradient, except that the Hessian matrix is replaced by a \textbf{positive definite} matrix $\bm{A}^{[t]}$:
+Start point of \textbf{QN method} is (as with NR) a Taylor approximation of the gradient, except that H is replaced by a \textbf{pd} matrix $\bm{A}^{[t]}$:
 
 \vspace*{-0.2cm}
 \begin{footnotesize}
 \begin{alignat*}{4}
-\nabla f(\mathbf{x}) &\approx  \nabla f(\mathbf{x}^{[t]}) + \nabla^2 f(\mathbf{x}^{[t]}) & (\mathbf{x} - \mathbf{x}^{[t]}) ~ &=& ~\mathbf{0}  &\qquad& \text{ Approach Newton-Raphson} \\
-\nabla f(\mathbf{x}) &\approx \nabla f(\mathbf{x}^{[t]}) + \bm{A}^{[t]} & (\mathbf{x} - \mathbf{x}^{[t]}) ~ &=& ~ \mathbf{0} &\qquad& \text{ Approach Quasi-Newton}
+\nabla f(\mathbf{x}) &\approx  \nabla f(\mathbf{x}^{[t]}) + \nabla^2 f(\mathbf{x}^{[t]}) & (\mathbf{x} - \mathbf{x}^{[t]}) ~ &=& ~\mathbf{0}  &\qquad& \text{ NR} \\
+\nabla f(\mathbf{x}) &\approx \nabla f(\mathbf{x}^{[t]}) + \bm{A}^{[t]} & (\mathbf{x} - \mathbf{x}^{[t]}) ~ &=& ~ \mathbf{0} &\qquad& \text{ QN}
 \end{alignat*}
 \end{footnotesize}
 
-The update direction is the same:
+The update direction:
 
 \begin{footnotesize}
 \begin{alignat*}{3}
-\bm{d}^{[t]} &= - \nabla^2 f(\mathbf{x}^{[t]})^{-1} & \nabla f(\mathbf{x}^{[t]}) &\qquad& \text{ Update direction Newton-Raphson} \\
-\bm{d}^{[t]} &= - (\bm{A}^{[t]})^{-1} & \nabla f(\mathbf{x}^{[t]}) &\qquad& \text{ Update direction Quasi-Newton} \\
+\bm{d}^{[t]} &= - \nabla^2 f(\mathbf{x}^{[t]})^{-1} & \nabla f(\mathbf{x}^{[t]}) &\qquad& \text{ NR} \\
+\bm{d}^{[t]} &= - (\bm{A}^{[t]})^{-1} & \nabla f(\mathbf{x}^{[t]}) &\qquad& \text{ QN} \\
 \end{alignat*}
 \end{footnotesize}
 
 \framebreak
 
-\textbf{Quasi-Newton method}:
+%\textbf{Quasi-Newton method}:
 
 
 \begin{enumerate}
-\item Select a starting point $\mathbf{x}^{[0]}$ and initialize a positive definite matrix
-$\mathbf{A}^{[0]}$ (can also be a diagonal matrix - a very rough approximation of the
-Hessian matrix).
+\item Select a starting point $\mathbf{x}^{[0]}$ and initialize pd matrix
+$\mathbf{A}^{[0]}$ (can also be a diagonal matrix - a very rough approximation of Hessian).
 \item Calculate update direction by solving
 
 $$
 \bm{A}^{[t]} \bm{d}^{[t]} = - \nabla f(\mathbf{x}^{[t]})
 $$
 
-and calculate $\bm{x}^{[t+1]} = \bm{x}^{[t]} + \lambda^{[t]} \bm{d}^{[t]}$ (Step size through backtracking)
-\item Calculate an efficient update $\mathbf{A}^{[t+1]}$, which is based on $\mathbf{x}^{[t]}$,
+and set $\bm{x}^{[t+1]} = \bm{x}^{[t]} + \alpha^{[t]} \bm{d}^{[t]}$ (Step size through backtracking)
+\item Calculate an efficient update $\mathbf{A}^{[t+1]}$,\\based on $\mathbf{x}^{[t]}$,
 $\mathbf{x}^{[t+1]}$, $\nabla f(\mathbf{x}^{[t]})$, $\nabla f(\mathbf{x}^{[t+1]})$ and
 $\mathbf{A}^{[t]}$.
 \end{enumerate}
@@ -95,17 +94,17 @@ $$
 \bm{A}^{[t+1]} = \bm{A}^{[t]} + \bm{B}^{[t]}. 
 $$
 
-How $ \bm{B}^{[t]}$ is constructed is shown on the next slides. 
+How $ \bm{B}^{[t]}$ is constructed is shown on the next slides. \\
 \textbf{Requirements} for the matrix sequence $\bm{A}^{[t]}$:
 \begin{enumerate}
-\item Symmetric \& positive definite matrices so that $\bm{d}^{[t]}$ are descent directions.
-\item Low calculation effort when calculating the descent direction
+\item Symmetric pd, so that $\bm{d}^{[t]}$ are descent directions.
+\item Low computational effort when solving LES
 
 $$
 \bm{A}^{[t]} \bm{d}^{[t]} = - \nabla f(\mathbf{x}^{[t]})
 $$
 
-\item Good approximation for Hessian: The \enquote{modified} Taylor series for $\nabla f(\bm{x})$ (especially for $i \to \infty$) should provide a good approximation
+\item Good approximation of Hessian: The \enquote{modified} Taylor series for $\nabla f(\bm{x})$ (especially for $t \to \infty$) should provide a good approximation
 
 $$
 \nabla f(\mathbf{x}) \approx \nabla f(\mathbf{x}^{[t]}) +
@@ -119,46 +118,46 @@ $$
 
 \begin{vbframe}{Symmetric rank 1 update (SR1)}
 
-The simplest approach are symmetric rank 1 modifications (\textbf{SR1}) of the form
+Simplest approach: symmetric rank 1 updates (\textbf{SR1}) of form
 
 $$
-\bm{A}^{[t+1]} \leftarrow \bm{A}^{[t]} + \bm{B}^{[t]} = \bm{A}^{[t]} + \alpha \bm{u}^{[t]}(\bm{u}^{[t]})^{\top}
+\bm{A}^{[t+1]} \leftarrow \bm{A}^{[t]} + \bm{B}^{[t]} = \bm{A}^{[t]} + \beta \bm{u}^{[t]}(\bm{u}^{[t]})^{\top}
 $$
 
-with appropriate vector $\bm{u}^{[t]} \in \R^n$, $\alpha \in \R$.
+with appropriate vector $\bm{u}^{[t]} \in \R^n$, $\beta \in \R$.
 
 
 \framebreak
 
 \textbf{Choice of} $\bm{u}^{[t]}$:
 
-The vectors should be chosen so that the \enquote{modified} Taylor series corresponds to the gradient:
+Vectors should be chosen so that the \enquote{modified} Taylor series corresponds to the gradient:
 
 \begin{eqnarray*}
 \nabla f(\mathbf{x}) &\overset{!}{=}& \nabla f(\mathbf{x}^{[t+1]}) +
 \bm{A}^{[t+1]}(\mathbf{x} - \mathbf{x}^{[t+1]}) \\
 \nabla f(\mathbf{x}) &=& \nabla f(\mathbf{x}^{[t+1]}) +  \left(\bm{A}^{[t]} +
-\alpha \bm{u}^{[t]}(\bm{u}^{[t]})^\top\right)\underbrace{(\mathbf{x} - \mathbf{x}^{[t+1]})}_{:= \bm{s}^{[t+1]}} \\
-\underbrace{\nabla f(\mathbf{x}) - \nabla f(\mathbf{x}^{[t+1]})}_{\bm{y}^{[t+1]}} &=& \left(\bm{A}^{[t]} + \alpha \bm{u}^{[t]} (\bm{u}^{[t]})^{\top}\right) \bm{s}^{[t+1]} \\
-\bm{y}^{[t+1]} - \bm{A}^{[t]} \bm{s}^{[t+1]} &=& \left(\alpha (\bm{u}^{[t]})^{\top} \bm{s}^{[t+1]}\right) \bm{u}^{[t]}
+\beta \bm{u}^{[t]}(\bm{u}^{[t]})^\top\right)\underbrace{(\mathbf{x} - \mathbf{x}^{[t+1]})}_{:= \bm{s}^{[t+1]}} \\
+\underbrace{\nabla f(\mathbf{x}) - \nabla f(\mathbf{x}^{[t+1]})}_{\bm{y}^{[t+1]}} &=& \left(\bm{A}^{[t]} + \beta \bm{u}^{[t]} (\bm{u}^{[t]})^{\top}\right) \bm{s}^{[t+1]} \\
+\bm{y}^{[t+1]} - \bm{A}^{[t]} \bm{s}^{[t+1]} &=& \left(\beta (\bm{u}^{[t]})^{\top} \bm{s}^{[t+1]}\right) \bm{u}^{[t]}
 \end{eqnarray*}
 
-For $\bm{u}^{[t]} = \bm{y}^{[t+1]} - \bm{A}^{[t]} \bm{s}^{[t+1]}$ and $\alpha = \frac{1}{\left(\bm{y}^{[t+1]} - \bm{A}^{[t]}\bm{s}^{[t+1]}\right)^\top\bm{s}^{[t+1]}}$ the equation is satisfied.
+For $\bm{u}^{[t]} = \bm{y}^{[t+1]} - \bm{A}^{[t]} \bm{s}^{[t+1]}$ and $\beta = \frac{1}{\left(\bm{y}^{[t+1]} - \bm{A}^{[t]}\bm{s}^{[t+1]}\right)^\top\bm{s}^{[t+1]}}$ the equation is satisfied.
 
 \framebreak
 
 \textbf{Advantage}
 \begin{itemize}
-\item The updates provide a sequence of \textbf{symmetric} matrices
-\item The matrices can be inverted efficiently and stably using the Sherman-Morrison formula (special case of Woodbury formula) using the formula
+\item Provides a sequence of \textbf{symmetric pd} matrices
+\item Matrices can be inverted efficiently and stable using Sherman-Morrison:
 $$
-(\bm{A} + \alpha \bm{u}\bm{u}^{\top})^{-1} = \bm{A} + \alpha \frac{\bm{u}\bm{u}^{\top}}{1 + \alpha\bm{u}^\top\bm{u}}.
+(\bm{A} + \beta \bm{u}\bm{u}^{\top})^{-1} = \bm{A} + \beta \frac{\bm{u}\bm{u}^{\top}}{1 + \beta\bm{u}^\top\bm{u}}.
 $$
 \end{itemize}
 
 \textbf{Disadvantage}
 \begin{itemize}
-\item The constructed matrices are not necessarily positive definite, and the update directions $\bm{d}^{[t]}$ are therefore not necessarily descent directions
+\item The constructed matrices are not necessarily pd, and the update directions $\bm{d}^{[t]}$ are therefore not necessarily descent directions
 \end{itemize}
 
 \end{vbframe}
@@ -168,7 +167,7 @@ $$
 Instead of Rank 1 updates, the \textbf{BFGS} procedure (published simultaneously in 1970 by Broyden, Fletcher, Goldfarb and Shanno) uses rank 2 modifications of the form
 
 $$
-\bm{A}^{[t]} + \alpha \bm{u}^{[t]}(\bm{u}^{[t]})^{\top} + \beta \bm{v}^{[t]}(\bm{v}^{[t]})^{\top}
+\bm{A}^{[t]} + \beta \bm{u}^{[t]}(\bm{u}^{[t]})^{\top} + \beta \bm{v}^{[t]}(\bm{v}^{[t]})^{\top}
 $$
 
 with $\bm{s}^{[t]} := \bm{x}^{[t+1]} - \bm{x}^{[t]}$
@@ -176,7 +175,7 @@ with $\bm{s}^{[t]} := \bm{x}^{[t+1]} - \bm{x}^{[t]}$
 \begin{itemize}
   \item $\bm{u}^{[t]} = \nabla f(\bm{x}^{[t+1]}) - \nabla f(\bm{x}^{[t]})$
   \item $\bm{v}^{[t]} = \bm{A}^{[t]} \bm{s}^{[t]}$
-  \item $\alpha = \frac{1}{(\bm{u}^{[t]})^\top (\bm{s}^{[t]})}$
+  \item $\beta = \frac{1}{(\bm{u}^{[t]})^\top (\bm{s}^{[t]})}$
   \item $\beta = - \frac{1}{(\bm{s}^{[t]})^\top \bm{A}^{[t]} \bm{s}^{[t]}}$
 \end{itemize}
 

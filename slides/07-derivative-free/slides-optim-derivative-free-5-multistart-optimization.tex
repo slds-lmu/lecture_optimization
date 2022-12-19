@@ -1,0 +1,282 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/convex_programs.png}
+\newcommand{\learninggoals}{
+\item Motivation
+\item Example: Nelder-Mead method
+\item Example: Levy function
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+\usepackage{verbatimbox}
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Multistart Optimization}
+\lecture{Optimization in Machine Learning}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{vbframe}{Motivation}
+\begin{itemize}
+\item So far: optimization method for unimodal objective function (exception: simulated annealing)
+\item If the objective function is actually multimodal, our procedures converge to \textbf{local minima}.
+\item Found optima may be different for different starting values $\bm{x}^{[0]}$
+\end{itemize}
+\begin{block}{$\Rightarrow$ \enquote{attraction areas}}
+Let $f_1^*, \ldots, f_k^*$ be local minimum values of $f(\cdot)$
+with $f_i^* \neq f_j^* \quad \forall i \neq j$. \\
+Then the set $\mathcal{A}$ is called basin of attraction of $f_i^*$ for algorithm $A$.
+$$
+\mathcal{A}(f_i^*, A) = \left\{ \bm{x} \in S \subseteq \R : f(A(\bm{x}))
+\rightarrow f_i^*\right\}
+$$
+
+\end{block}
+\end{vbframe}
+
+\begin{vbframe}{Example: attraction areas Nelder-Mead}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{figure_man/example-nelder.png}
+\end{center}
+
+%<<echo = FALSE, warning = FALSE, message = FALSE>>=
+%library(ggplot2)
+%library(mlr)
+%multimodFun = function(x) {
+%  x^4 + x^3 - 2 * x^2
+
+%}
+
+%x = seq(-2.5, 2.5, 0.01)
+%y = multimodFun(x)
+%multimod.dat = data.frame(x, y)
+%estimates = sapply(x, function(x) {
+%  res = optim(x, fn = multimodFun, method = "Nelder-Mead")
+%  c(res$par, res$value)
+%})
+%estimates = as.data.frame(t(estimates))
+%multimod.dat[, c("par", "value")] = estimates
+%cols = c("blue", "red")
+%multimod.dat$col = as.factor(c(rep(cols[1L], times = 250L),
+%  rep(cols[2L], times = 251L)))
+%multimod.dat$sz = rep(.1, times = nrow(multimod.dat))
+
+%ggplot(multimod.dat,aes(x = x, y = y, color = col)) + geom_line() +
+%  geom_point(aes(x, value, size = sz), color = "black") +
+%  scale_y_continuous(limits = c(-3, 3)) +
+%  scale_x_continuous(limits = c(-2.5, 2),
+%    breaks = c(-2, -1.44, 0, 0.69, 2),
+%    labels = c("-2", expression(x[1]), "0", expression(x[2]), "2")) +
+%  scale_size_continuous(range = c(0.1, 0.2), name = "",
+%    label = "optimum found by Nelder-Mead") +
+%  scale_color_manual(name="basin of attraction paths",
+%  values = cols,
+%  labels = c(expression(x[1]), expression(x[2]))) +
+%  guides(size = guide_legend(override.aes = list(size = 3))) + theme_bw()
+%@
+\end{vbframe}
+
+\begin{vbframe}{Example: Levy function}
+
+
+\footnotesize
+$$
+f(\bm{x}) = \sin^2(3\pi x_1) + (x_1 - 1)^2 [1 + \sin^2(3\pi x_2)] + (x_2 -1)^2
+[1 + \sin^2(2\pi x_2)]
+$$
+\begin{columns}
+\begin{column}{0.5\textwidth}
+   \footnotesize
+  \vspace{-0.2cm}
+  \begin{itemize}
+    \item Global minimum: $f(\bm{x}^*) = 0$ at $\bm{x}^* = (1,1)$
+    \item We optimize the Levy function using the BFGS method with a random starting value of $-2\leq x_1 \leq 2, -2\leq     x_2 \leq 2$ and note the objective function value of the result after optimization
+    \item We repeat this $100$ times
+    \end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}  %%<--- here
+    \begin{center}
+  \includegraphics[width = 0.9\textwidth]{figure_man/levy.png}
+  \end{center}
+\end{column}
+\end{columns}
+
+
+
+
+%\vspace*{1cm}
+
+Distribution of the $100$ optimization results ($y$ values):
+\vspace{0.1cm}
+
+\footnotesize
+\begin{verbatim}
+## Min.    1st Qu.    Median    Mean    3rd Qu.    Max.
+## 0.0000  0.1099     0.5356    2.4351  1.9809     18.3663
+\end{verbatim}
+
+%<<echo = FALSE>>=
+%pi = base::pi
+
+%f = function(x) {
+%  res = sin(3 * pi * x[1L])^2 + (x[1L] - 1)^2 * (1 + sin(3 * pi * x[2L])^2) +
+%  (x[2L] - 1)^2 * (1 + sin(2 * pi * x[2L])^2)
+%  return(res)
+%}
+
+%x = runif(100, -2, 2)
+%y = runif(100, -2, 2)
+
+%x = seq(-2, 2, length.out = 100)
+%y = x
+%pars = data.frame(x = x, y = y)
+
+%levy.dat = as.data.frame(t(apply(pars, MARGIN = 1, FUN = function(par) {
+%  mod = optim(par = par, fn = f, method = "BFGS")
+%  c(mod$par, mod$value)
+%})))
+%names(levy.dat) = c("x", "y", "value")
+%summary(levy.dat$value)
+%@
+
+
+
+\framebreak
+\normalsize
+
+%<<echo = F, include = FALSE>>=
+%set.seed(123L)
+%x.star = runif(2L, -10, 10)
+%fx.star = f(x.star)
+%@
+
+%<<echo = F, include = FALSE>>=
+%x.star
+%fx.star
+%@
+
+
+%<<echo = F, include = FALSE>>=
+%mod = optim(x.star, f)
+%x.star = mod$par
+%fx.star = mod$value
+%@
+
+%<<echo = F, include = FALSE>>=
+%x.star
+%fx.star
+%@
+
+
+%<<echo = F, include = FALSE>>=
+%mod = optim(x.star, f)
+%x.star = mod$par
+%fx.star = mod$value
+%@
+
+%<<echo = F, include = FALSE>>=
+%x.star
+%fx.star
+%@
+\normalsize
+\framebreak
+
+Idea: use multiple starting points $\bm{x}^{[1]}, \ldots, \bm{x}^{[k]}$ for algorithm A
+
+\begin{algorithm}[H]
+  \begin{footnotesize}
+  \begin{center}
+  \caption{Multistart optimization}
+    \begin{algorithmic}[1]
+    \State Given: optimization algorithm $A(\cdot)$, $f: \mathcal{S} \mapsto \R, x \mapsto f(x)$
+    \State $k = 0$
+      \Repeat
+        \State Draw starting point  $x^{[k]}$ from $\mathcal{S}$ (e.g. uniform if $\mathcal{S}$ is of finite volume)
+        \If{k = 0}  $\hat{x}= x_{0}$
+        \EndIf
+        \State Initialize algorithm with start value $x^{[k]} \Rightarrow \tilde{x} = A(x^{[k]})$
+        \If{$f(\tilde{x}) < f(\hat{x})$}  $\hat{x} = \tilde{x}$
+        \EndIf
+        \State k = k + 1
+      \Until{Stop criterion fulfilled}\\
+    \Return{$\hat{x}$}
+    \end{algorithmic}
+    \end{center}
+    \end{footnotesize}
+\end{algorithm}
+
+\framebreak
+
+BFGS with Multistart gives us the true minimum of the Levy function:\\
+\lz
+
+\footnotesize
+\begin{verbbox}
+iters = 20 # number of starts
+xbest = c(runif(1, -2, 2), runif(1, -2, 2))
+\end{verbbox}
+\theverbbox
+
+
+\vspace{0.4cm}
+\begin{verbbox}
+for (i in 1:iters) {
+x1 = runif(1, -2, 2)
+x2 = runif(1, -2, 2)
+res = optim(par = c(x1, x2), fn = f, method = "BFGS")
+}
+\end{verbbox}
+\theverbbox
+
+\vspace{0.4cm}
+\begin{verbbox}
+if (res$value < f(xbest)) {
+xbest = res$par
+}
+\end{verbbox}
+\theverbbox
+
+\vspace{0.4cm}
+\begin{verbbox}
+xbest
+## [1] 1 1
+\end{verbbox}
+\theverbbox
+
+%<<>>=
+%iters = 20 # number of starts
+%xbest = c(runif(1, -2, 2), runif(1, -2, 2))
+
+%for (i in 1:iters) {
+%  x1 = runif(1, -2, 2)
+%  x2 = runif(1, -2, 2)
+%  res = optim(par = c(x1, x2), fn = f, method = "BFGS")
+
+%  if (res$value < f(xbest))
+%    xbest = res$par
+%}
+
+%xbest
+%@
+
+\end{vbframe}
+
+
+
+\endlecture
+\end{document}
+
+

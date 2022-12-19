@@ -7,7 +7,7 @@
 
 \newcommand{\titlefigure}{figure_man/NR_2.png}
 \newcommand{\learninggoals}{
-\item First vs. Second order methods
+\item 1st vs. 2nd order methods
 \item Newton-Raphson
 }
 
@@ -25,17 +25,18 @@
 \sloppy
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{First and second order procedures}
+\begin{vbframe}{1st and 2nd order procedures}
 
-So far we have considered algorithms based on the gradient (1st derivative). These methods are called \textbf{first-order methods}.
+Until now: \textbf{1st order methods}. 
+They use gradient info, so 1st derivative. 
 
 \lz
 
-In the following we consider procedures based on the Hessian matrix (2nd derivative). These are called \textbf{second-order methods}.
+Here: \textbf{2nd order methods}. Use Hessian, so 2nd derivative. 
 
 \end{vbframe}
 
-\begin{vbframe}{Newton-Raphson method}
+\begin{vbframe}{Newton-Raphson}
 
 \textbf{Assumption:} $f$ twice differentiable with Hessian $\nabla^2 f(\bm{x})$
 
@@ -55,6 +56,8 @@ In the following we consider procedures based on the Hessian matrix (2nd derivat
 \vspace*{-0.2cm}
 
 Update: $\bm{x}^{[t+1]} = \bm{x}^{[t]} + \bm{d}^{[t]}$ with $\bm{d}^{[t]} =  \left(\nabla^2 f(\mathbf{ x}^{[t]})\right)^{-1}\nabla f(\mathbf{x}^{[t]})$.
+
+Or with step size: $\bm{x}^{[t+1]} = \bm{x}^{[t]} + \alpha \bm{d}^{[t]}$ 
 
 \vspace*{0.3cm}
 
@@ -80,11 +83,9 @@ Update: $\bm{x}^{[t+1]} = \bm{x}^{[t]} + \bm{d}^{[t]}$ with $\bm{d}^{[t]} =  \le
 % Im Vergleich zum \enquote{steilsten Abstieg}: Newton-Raphson divergiert ebenfalls leicht, hat aber quadratische
 % Konvergenz nahe beim Minimum.
 
-\framebreak
+\end{vbframe}
 
-Example:
-
-\lz
+\begin{vbframe}{Analytical Example on QF}
 
 $$
 f(x, y) = \left(x^2 + \frac{y^2}{2}\right)
@@ -140,38 +141,43 @@ y^{[0]}
 &=& \mathbf{0}
 \end{eqnarray*}
 
-Newton-Raphson only needs one iteration to solve the problem!
+NR only needs one iteration to solve!
 
-\framebreak 
 
-Example: Optimize Branin function with Newton Raphson and gradient descent (GD). 
+\end{vbframe}
+
+\begin{vbframe}{NR vs GD on Branin}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.45\textwidth]{slides/05-multivariate-second-order/figure_man/NR_1.png} ~~ \includegraphics[width=0.45\textwidth]{slides/05-multivariate-second-order/figure_man/NR_2.png} \\
-    Red: Newton Raphson. Right: Gradient descent. Newton raphson 
+    Red=NR; Green=GD 
 \end{figure}
 
-\framebreak
+NR has much better convergence speed here.
+
+\end{vbframe}
+
+\begin{vbframe}{Discussion}
 
 \textbf{Advantages:}
 
 \begin{itemize}
-\item If $f$ sufficiently smooth, the procedure converges quadratically locally (i.e. if the starting point is close enough to optimum)
+\item If $f$ sufficiently smooth, NR converges quadratically locally (i.e. if starting point is close enough to optimum)
 \end{itemize}
 
 \textbf{Disadvantages}
 
 \begin{itemize}
-\item At \enquote{bad} starting points the procedure may not converge at all
-\item The Hessian must be calculated and the direction of descent determined by solving a system of equations
+\item At \enquote{bad} starting points, NR may not converge at all
+\item Hessian must be calculated and the direction of descent determined by solving a system of equations
 \end{itemize}
 
 \end{vbframe}
 
-\begin{vbframe}{Newton-Raphson: Limitations}
+\begin{vbframe}{Limitations}
 
-\textbf{Problem 1:} The update direction is generally not a direction of descent.
+\textbf{Problem 1:} Update is generally not a direction of descent.
 
 \vspace*{-0.3cm}
 \begin{figure}
@@ -203,8 +209,8 @@ can be numerically unstable.
 
 \textbf{Aim}: Find methods that can be applied without the Hessian matrix
 \begin{itemize}
-\item Quasi-Newton method.
-\item Gauss-Newton algorithm (for least squares).
+\item Quasi-Newton method
+\item Gauss-Newton algorithm (for least squares)
 \end{itemize}
 
 

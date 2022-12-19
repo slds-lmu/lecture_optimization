@@ -1,0 +1,81 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/convex_programs.png}
+\newcommand{\learninggoals}{
+\item Problems with gradient based methods
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Introduction to derivative-free optimization}
+\lecture{Optimization in Machine Learning}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{Problems with gradient based methods}
+
+Where do problems possibly arise using a gradient based method?
+
+%\vspace*{-0.2cm}
+%\begin{center}
+%\includegraphics[width = 0.5\textwidth]{figure_man/griewank1.png} \\
+%\footnotesize{Griewank function on $[-400; 400]^2$}
+%\end{center}
+
+%\framebreak
+
+%\begin{center}
+%\includegraphics{figure_man/griewank2.png} \\
+%\footnotesize{Still Griewank function, but zoomed closer on $[-200; 200]^2$.}
+%\end{center}
+
+%\framebreak
+
+%\begin{center}
+%\includegraphics{figure_man/griewank3.png} \\
+%\footnotesize{Griewank function on $[-4, 4]^2$. The function is multimodal.}
+%\end{center}
+
+%\framebreak
+
+\vspace{0.3cm}
+\begin{center}
+\includegraphics[width = 0.45\linewidth]{figure_man/griewank1.png} ~~~ \includegraphics[width = 0.45\linewidth]{figure_man/griewank3.png}
+\end{center}
+
+Left: Griewank function on $[-400; 400]^2$\\Right: Griewank function on $[-4, 4]^2$. The function is multimodal.
+
+\framebreak
+
+\begin{center}
+\includegraphics{figure_man/problems.png}
+\end{center}
+
+\begin{enumerate}
+\item Discrete feasible range
+\item Non-continuous / differentiable objective function / constraints
+\item Multi-modal functions
+\item Discontinuous feasible range
+\item Analytical form of objective function unknown
+\item .....
+\end{enumerate}
+
+In such cases, optimization methods that are based on the local gradient should not be used. 
+\end{vbframe}
+
+\endlecture
+\end{document}
+
+
