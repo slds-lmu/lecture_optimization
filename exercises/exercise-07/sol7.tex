@@ -227,11 +227,12 @@
 \hlstd{S2} \hlkwb{=} \hlkwd{matrix}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{1.1}\hlstd{,} \hlopt{-}\hlnum{0.9}\hlstd{,} \hlopt{-}\hlnum{0.9}\hlstd{,} \hlnum{1.1}\hlstd{),} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{)}
 \hlstd{S2_inv} \hlkwb{=} \hlkwd{solve}\hlstd{(S2)}
 
-\hlstd{g} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{u}\hlstd{) \{}\hlkwd{ifelse}\hlstd{(}\hlkwd{abs}\hlstd{(u)} \hlopt{<} \hlnum{1}\hlstd{, (}\hlnum{1} \hlopt{-} \hlstd{u}\hlopt{^}\hlnum{2}\hlstd{)}\hlopt{^}\hlnum{2}\hlstd{,} \hlnum{0}\hlstd{)\}}
+\hlstd{rho} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{u}\hlstd{) \{}\hlkwd{ifelse}\hlstd{(}\hlkwd{abs}\hlstd{(u)} \hlopt{<} \hlnum{1}\hlstd{, (}\hlnum{1} \hlopt{-} \hlstd{u}\hlopt{^}\hlnum{2}\hlstd{)}\hlopt{^}\hlnum{2}\hlstd{,} \hlnum{0}\hlstd{)\}}
 
-\hlstd{f1} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}\hlkwd{sqrt}\hlstd{((x} \hlopt{-} \hlstd{c2)}  \hlopt{%*%} \hlstd{S2_inv} \hlopt{%*%} \hlstd{(x} \hlopt{-} \hlstd{c2))\}}
-\hlstd{f2} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}\hlkwd{sqrt}\hlstd{((x} \hlopt{-} \hlstd{c1)} \hlopt{%*%} \hlstd{(x} \hlopt{-}\hlstd{c1))\}}
-\hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}\hlopt{-}\hlkwd{g}\hlstd{(}\hlkwd{f1}\hlstd{(x))} \hlopt{+} \hlkwd{g}\hlstd{(}\hlkwd{f2}\hlstd{(x))\}}
+\hlstd{dist1} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}\hlkwd{sqrt}\hlstd{((x} \hlopt{-} \hlstd{c1)} \hlopt{%*%} \hlstd{(x} \hlopt{-}\hlstd{c1))\}}
+\hlstd{dist2} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}\hlkwd{sqrt}\hlstd{((x} \hlopt{-} \hlstd{c2)}  \hlopt{%*%} \hlstd{S2_inv} \hlopt{%*%} \hlstd{(x} \hlopt{-} \hlstd{c2))\}}
+
+\hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}\hlkwd{rho}\hlstd{(}\hlkwd{dist1}\hlstd{(x))} \hlopt{-} \hlkwd{rho}\hlstd{(}\hlkwd{dist2}\hlstd{(x))\}}
 
 \hlstd{x} \hlkwb{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{2}\hlstd{,} \hlnum{2}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.01}\hlstd{)}
 \hlstd{xx} \hlkwb{=} \hlkwd{expand.grid}\hlstd{(}\hlkwc{X1} \hlstd{= x,} \hlkwc{X2} \hlstd{= x)}
@@ -239,21 +240,23 @@
 \hlstd{fxx} \hlkwb{=} \hlkwd{apply}\hlstd{(xx,} \hlnum{1}\hlstd{, f)}
 \hlstd{df} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{xx} \hlstd{= xx,} \hlkwc{fxx} \hlstd{= fxx)}
 
-\hlkwd{ggplot}\hlstd{()} \hlopt{+}
-    \hlkwd{geom_contour_filled}\hlstd{(}\hlkwc{data} \hlstd{= df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= xx.X1,} \hlkwc{y} \hlstd{= xx.X2,} \hlkwc{z} \hlstd{= fxx))} \hlopt{+}
+\hlstd{cont_plot} \hlkwb{=} \hlkwd{ggplot}\hlstd{()} \hlopt{+}
+    \hlkwd{geom_contour_filled}\hlstd{(}\hlkwc{data} \hlstd{= df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= xx.X1,} \hlkwc{y} \hlstd{= xx.X2,} \hlkwc{z} \hlstd{= fxx),}
+                        \hlkwc{binwidth} \hlstd{=} \hlnum{0.05}\hlstd{)} \hlopt{+}
   \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{1}\hlstd{]))} \hlopt{+}
   \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{2}\hlstd{]))}
+\hlstd{cont_plot}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_r_emp-1} 
 \end{knitrout}
 \item 
-First we analyze $\rho(u):$
+First we analyze $\rho(u)$ for $\vert u \vert <1:$
 $(1-u^2)^2 = 0 \iff (1-u^2) = 0 \iff u^2 = 1 \Rightarrow \rho(u) \neq 0$ for $u^2 < 1$ and $\rho(u) = 0$ for $u^2 \geq 1$.\\
 We can check this condition for both squared distances around the centers $\mathbf{c}_1, \mathbf{c}_2$: \\
 \begin{enumerate}
 \item $\Vert\mathbf{x} - \mathbf{c}_1\Vert_{S_1}^2 < 1 \iff \Vert\mathbf{x} - \mathbf{c}_1\Vert_2^2 < 1$ (unit circle around $\mathbf{c}_1$)
-\item $\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2 = (\mathbf{x} - \mathbf{c}_2)^\top \begin{pmatrix} 1.1 & -0.9 \\ -0.9 & 1.1\end{pmatrix}^{-1} (\mathbf{x} - \mathbf{c}_2)$ (ellipse around $\mathbf{c}_2$)\\
+\item $\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2 = (\mathbf{x} - \mathbf{c}_2)^\top \begin{pmatrix} 1.1 & -0.9 \\ -0.9 & 1.1\end{pmatrix}^{-1} (\mathbf{x} - \mathbf{c}_2) < 1$ (ellipse around $\mathbf{c}_2$)\\
 In order to find the smallest enclosing circle of the ellipse we can use the eigendecomposition of $S_2:$ 
 $\det(S_2 - \lambda \mathbf{I}) = 0 \iff  \det \begin{pmatrix} 1.1 - \lambda & -0.9 \\ -0.9 & 1.1 -\lambda\end{pmatrix} = 0 \iff \lambda^2 - 2.2\lambda + 0.4 = 0 \iff \lambda_1 = 2.0, \lambda_2 = 0.2$ \\
 $\Rightarrow $ Eigenvalues $\mu_1, \mu_2$ of $S_2^{-1}$ are $\mu_i = 1/\lambda_i.$ \\
@@ -264,12 +267,13 @@ $\Vert\mathbf{c}_2 - \mathbf{c}_1\Vert_2 = \sqrt{2\cdot 1.9^2} \approx 2.69 > 1 
 $\Rightarrow$ the unit circle around $\mathbf{c}_1$ and the ellipse around $\mathbf{c}_2$ can not intersect $\Rightarrow$ only $\rho(\Vert\mathbf{x} - \mathbf{c}_1\Vert_{S_1})$ or $\rho(\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2})$ can be non-zero for a given $\mathbf{x} \in \R^2.$ \\
 \end{enumerate}
 \item Because of b) we know that we can treat $\rho(\Vert\mathbf{x} - \mathbf{c}_1\Vert_{S_1})$ and $\rho(\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2})$ independently. Also it follows from $\rho(u) \geq 0 \; \forall u \in \R, w_1 > 0$ and $w_2 < 0$ that the global minimum must be in $\{\mathbf{x} \in \R^2 |\; \Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2 < 1\}$ \\
-$\frac{\partial}{\partial \mathbf{x}}\rho(\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}) =  2(1 - \Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2)\cdot (-2) \cdot (\mathbf{x} - \mathbf{c}_2)^\top S_2^{-1} \overset{!}{=} \mathbf{0} \Rightarrow$ either $\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2 = 1$ (which is the boundary) or $\mathbf{x} = \mathbf{c}$. \\
-Since $\rho(1) = 0$ and $-\rho(\Vert \mathbf{c} - \mathbf{c} \Vert) = -1 < 0$ it follows that the global minimum must be $\mathbf{x} = \mathbf{c}.$
+$\frac{\partial}{\partial \mathbf{x}}\rho(\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}) =  2(1 - \Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2)\cdot (-2) \cdot (\mathbf{x} - \mathbf{c}_2)^\top S_2^{-1} \overset{!}{=} \mathbf{0} \Rightarrow$ either $\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2 = 1$ (which is the boundary) or $\mathbf{x} = \mathbf{c}_2$. \\
+Since $-\rho(1) = 0$ and $-\rho(\Vert \mathbf{c}_2 - \mathbf{c}_2 \Vert) = -1 < 0$ it follows that the global minimum must be $\mathbf{x} = \mathbf{c}_2.$
 \item 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
+\hlcom{# we can treat the bump functions independently b)}
 \hlstd{grad} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}
   \hlkwa{if}\hlstd{((x} \hlopt{-} \hlstd{c1)} \hlopt{%*%} \hlstd{(x} \hlopt{-} \hlstd{c1)} \hlopt{<} \hlnum{1}\hlstd{)\{}
     \hlkwd{return}\hlstd{(}\hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{4} \hlopt{*} \hlkwd{c}\hlstd{(}\hlnum{1} \hlopt{-} \hlstd{(x} \hlopt{-} \hlstd{c1)} \hlopt{%*%} \hlstd{(x} \hlopt{-} \hlstd{c1))} \hlopt{*} \hlstd{(x} \hlopt{-} \hlstd{c1)))}
@@ -306,9 +310,9 @@ Since $\rho(1) = 0$ and $-\rho(\Vert \mathbf{c} - \mathbf{c} \Vert) = -1 < 0$ it
 \end{kframe}
 \end{knitrout}
 We can not make any further progress with GD since the gradient is exactly zero.
-\item Start with $\mathbf{x}^{[0]} = (0.45, 5)^\top.$ \\
+\item Start with $\mathbf{x}^{[0]} = (-0.45, 5)^\top.$ \\
 Since $\Vert\mathbf{c}_1 - \mathbf{x}^{[0]}\Vert_2^2 = 0.5525 < 1$ we know that
-$\nabla f(\mathbf{x}^[0]) = -4(1 - \Vert\mathbf{x} - \mathbf{c}_1\Vert^2_2) \cdot (\mathbf{x} - \mathbf{c}_1)^\top = (-0.5655, 0.5220).$ \\
+$\nabla f(\mathbf{x}^{[0]}) = -4(1 - \Vert\mathbf{x} - \mathbf{c}_1\Vert^2_2) \cdot (\mathbf{x} - \mathbf{c}_1)^\top = (-0.5655, 0.5220).$ \\
 $\mathbf{x}^{[1]} = \mathbf{x}^{[0]} - 0.15 * (-0.5655, 0.5220)^\top = (-0.3652, 0.422)^\top.$ \\
 Since $\Vert\mathbf{c}_1 - \mathbf{x}^{[1]}\Vert_2^2 = 1.0001 > 1$ and $\Vert\mathbf{c}_2 - \mathbf{x}^{[1]}\Vert^2_{S_2} = 1.4323 > 1$ the gradient of $f$ is zero at $\mathbf{x}^{[1]}.$\\
 $\Rightarrow \mathbf{x}{[2]} = \mathbf{x}{[1]}$
@@ -324,25 +328,18 @@ $\Rightarrow \mathbf{x}{[2]} = \mathbf{x}{[1]}$
 \hlstd{phi} \hlkwb{=} \hlnum{0.5}
 \hlstd{x} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{0.45}\hlstd{,} \hlnum{0.5}\hlstd{)}
 
-\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{10}\hlstd{)\{}
+\hlstd{xs} \hlkwb{=} \hlstd{x}
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{15}\hlstd{)\{}
   \hlstd{v} \hlkwb{=} \hlstd{phi} \hlopt{*} \hlstd{v} \hlopt{-} \hlstd{alpha}\hlopt{*}\hlkwd{grad}\hlstd{(x)}
   \hlstd{x} \hlkwb{=} \hlstd{x} \hlopt{+} \hlstd{v}
-  \hlkwd{print}\hlstd{(x)}
+  \hlstd{xs} \hlkwb{=} \hlkwd{rbind}\hlstd{(xs, x)}
 \hlstd{\}}
+
+\hlstd{cont_plot} \hlopt{+}
+  \hlkwd{geom_line}\hlstd{(}\hlkwc{data} \hlstd{=} \hlkwd{as.data.frame}\hlstd{(xs),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2),} \hlkwc{color}\hlstd{=}\hlstr{"red"}\hlstd{)}
 \end{alltt}
-\begin{verbatim}
-## [1] -0.165175  0.221700
-## [1] -0.02167618  0.08059983
-## [1]  0.09463111 -0.08168550
-## [1]  0.2484662 -0.2776508
-## [1]  0.4707446 -0.4588692
-## [1]  0.6553028 -0.6545082
-## [1]  0.7890270 -0.7961064
-## [1]  0.8687358 -0.8585179
-## [1]  0.8743236 -0.8859787
-## [1]  0.8705992 -0.8584620
-\end{verbatim}
 \end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/mv-gd_mom-1} 
 \end{knitrout}
 
 

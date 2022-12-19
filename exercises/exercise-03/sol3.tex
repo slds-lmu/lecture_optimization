@@ -1,0 +1,277 @@
+\documentclass[a4paper]{article}
+\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+
+
+
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+\usepackage{a4wide,paralist}
+\usepackage{amsmath, amssymb, xfrac, amsthm}
+\usepackage{dsfont}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{framed}
+\usepackage{multirow}
+\usepackage{bytefield}
+\usepackage{csquotes}
+\usepackage[breakable, theorems, skins]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{cancel}
+\usepackage{bm}
+
+
+\input{../../style/common}
+
+\tcbset{enhanced}
+
+\DeclareRobustCommand{\mybox}[2][gray!20]{%
+	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+	\fi
+}
+
+\DeclareRobustCommand{\myboxshow}[2][gray!20]{%
+%	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+%	\fi
+}
+
+
+%exercise numbering
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{\roman{enumii}}
+\renewcommand\labelenumi{\theenumi}
+
+
+\font \sfbold=cmssbx10
+
+\setlength{\oddsidemargin}{0cm} \setlength{\textwidth}{16cm}
+
+
+\sloppy
+\parindent0em
+\parskip0.5em
+\topmargin-2.3 cm
+\textheight25cm
+\textwidth17.5cm
+\oddsidemargin-0.8cm
+\pagestyle{empty}
+
+\newcommand{\kopf}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfic}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfsl}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newenvironment{allgemein}
+	{\noindent}{\vspace{1cm}}
+
+\newcounter{aufg}
+\newenvironment{aufgabe}[1]
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}: #1}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newcounter{loes}
+\newenvironment{loesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+	{\bigskip}
+	
+\newenvironment{bonusaufgabe}
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}*\footnote{This
+	is a bonus exercise.}:}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newenvironment{bonusloesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}*:}\\\noindent}
+	{\bigskip}
+
+
+
+\begin{document}
+% !Rnw weave = knitr
+
+
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{3}{Mathematical Concepts 3}
+
+
+\loesung{Optimality in 2d}{
+
+\begin{enumerate}
+	%
+	\item 	
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
+
+  \hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,} \hlkwc{y}\hlstd{)} \hlkwd{cos}\hlstd{(x}\hlopt{^}\hlnum{2} \hlopt{+} \hlstd{y}\hlopt{^}\hlnum{2} \hlopt{+} \hlstd{x}\hlopt{*}\hlstd{y)}
+  \hlstd{x} \hlkwb{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{2}\hlstd{,} \hlnum{2}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.01}\hlstd{)}
+  \hlstd{xx} \hlkwb{=} \hlkwd{expand.grid}\hlstd{(}\hlkwc{X1} \hlstd{= x,} \hlkwc{X2} \hlstd{= x)}
+
+  \hlstd{fxx} \hlkwb{=} \hlkwd{f}\hlstd{(xx[,}\hlnum{1}\hlstd{], xx[,}\hlnum{2}\hlstd{])}
+  \hlstd{df} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{xx} \hlstd{= xx,} \hlkwc{fxx} \hlstd{= fxx)}
+
+  \hlkwd{ggplot}\hlstd{(df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= xx.X1,} \hlkwc{y} \hlstd{= xx.X2,} \hlkwc{z} \hlstd{= fxx))} \hlopt{+}
+    \hlkwd{geom_contour}\hlstd{()} \hlopt{+}
+    \hlkwd{geom_contour_filled}\hlstd{()} \hlopt{+}
+    \hlkwd{xlab}\hlstd{(}\hlstr{"x1"}\hlstd{)} \hlopt{+}
+    \hlkwd{ylab}\hlstd{(}\hlstr{"x2"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/1d-plot-1} 
+\end{knitrout}
+\item $\nabla f = (\sin(x_1^2 + x_2^2 + x_1x_2)(2x_1 + x_2), \sin(x_1^2 + x_2^2 + x_1x_2)(2x_2 + x_1))^\top$
+\item $\nabla^2 f = \begin{pmatrix} \cos(u)(2x_1 + x_2)^2 + 2\sin(u) & \cos(u)(2x_1 + x_2)(2x_2 + x_1) + \sin(u) \\ 
+ \cos(u)(2x_1 + x_2)(2x_2 + x_1) + \sin(u) & \cos(u)(2x_2 + x_1)^2 + 2\sin(u)\end{pmatrix}$ with $u = x_1^2 + x_2^2 + x_1x_2.$
+ \item Let $u: \R^2 \rightarrow \R, (x_1, x_2) \mapsto x_1^2 + x_2^2 + x_1x_2$. \\ % and $g:\R \rightarrow \R, u \mapsto -\cos(u)$.
+ $\nabla u = (2x_1 + x_2, x_1 + 2x_2)^\top \overset{!}{=}  \mathbf{0} \iff \mathbf{x} = \mathbf{0}$ \\
+ $\nabla^2 u = \begin{pmatrix} 2 & 1 \\ 1 & 2\end{pmatrix} \Rightarrow \mathbf{v}^\top \nabla^2 u \mathbf{v} = 2 v_1^2 + 2v_1v_2 + 2 v_2^2 = v_1^2 + v_2^2 + (v_1 + v_2)^2 \geq 0$ (equality only holds if $\mathbf{v} = \mathbf{0}$) $\Rightarrow \nabla^2 u$ is positive definite. \\
+ $    \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top}-\cos(u) = \cos(u) \left(\frac{\partial}{\partial \mathbf{x}} u\right)^\top \frac{\partial}{\partial \mathbf{x}} u + \sin(u) \frac{\partial}{\partial \mathbf{x}\partial \mathbf{x}^\top} u$ \\
+ Case $\mathbf{x} = \mathbf{0}: \left(\frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top}-\cos(u)\right)(\mathbf{0}) = \cos(u) \mathbf{0}  + 0 \frac{\partial}{\partial \mathbf{x}\partial \mathbf{x}^\top} u = \mathbf{0}$ (is p.s.d.)\\
+Case $\mathbf{x} \in S_{\overline{r}} \setminus \{\mathbf{0}\}: u \in (0, \pi/2) \Rightarrow \sin(u) > 0, \cos(u) > 0$ \\
+$\mathbf{v}^\top\left(\frac{\partial}{\partial \mathbf{x}} u\right)^\top \frac{\partial}{\partial \mathbf{x}} u\mathbf{v} = z\cdot z > 0$ with $z = \frac{\partial}{\partial \mathbf{x}}u\mathbf{v} \Rightarrow \left(\frac{\partial}{\partial \mathbf{x}} u\right)^\top \frac{\partial}{\partial \mathbf{x}} u$ is p.s.d.
+
+$    \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top}-\cos(u) = \underbrace{\cos(u) \left(\frac{\partial}{\partial \mathbf{x}} u\right)^\top \frac{\partial}{\partial \mathbf{x}} u}_{\text{p.s.d.}} + \underbrace{\sin(u) \frac{\partial}{\partial \mathbf{x}\partial \mathbf{x}^\top} u}_{\text{p.d.}}$ is p.d. \\
+$\Rightarrow f_{|S_{\overline{r}}}$ is convex\\
+\item $\nabla f_{|S_{\overline{r}}} = -\underbrace{\cos(u)}_{> 0}\nabla u$ and $\nabla u = \mathbf{0} \iff \mathbf{x} = \mathbf{0} \overset{(e)}{\Rightarrow} \mathbf{0}$ is local minimum
+\item $f(\mathbf{0}) = -1$ and $\cos: \R \rightarrow [-1, 1].$ From this it follows that $\mathbf{0}$ must be a global minimum of $f$ since no element of the image of $f$ is smaller than $-1$.
+\end{enumerate}
+}
+
+\loesung{Optimality in d dimensions}{
+
+\begin{enumerate}
+	\item $\var(\mathbf{w}^\top \mathbf{X} - \mathbf{Y}) = \var(\mathbf{w}^\top \mathbf{X}) + \var(\mathbf{Y}) -2\cov(\mathbf{w}^\top \mathbf{X}, \mathbf{Y}) = \mathbf{w}^\top \Sigma_\mathbf{X} \mathbf{w} + \var(\mathbf{Y}) - 2\mathbf{w}^\top \Sigma_{\mathbf{XY}}.$ This is a quadratic form in $\mathbf{w}$ and $\Sigma_{\mathbf{X}}$ is p.s.d. (since it is a covariance matrix) $\Rightarrow f$ is convex.
+	\item $\nabla f =  2\Sigma_{\mathbf{X}}\mathbf{w} - 2\Sigma_{\mathbf{XY}}, \nabla^2f = 2\Sigma_{\mathbf{X}}$
+	\item $\nabla f \overset{!} = \mathbf{0} \iff 2\Sigma_{\mathbf{X}}\mathbf{w} - 2\Sigma_{\mathbf{XY}} = 0 \iff \Sigma_{\mathbf{X}}\mathbf{w} = \Sigma_{\mathbf{XY}}.$
+This system of linear equations has a unique solution if $\Sigma_{\mathbf{X}}$ is non-singular. If 	$\Sigma_{\mathbf{X}}$ is non-singular it follows that $ \mathbf{w} = \Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}}.$ In this case $\Sigma_{\mathbf{X}}$ is p.d. since no eigenvalue can be zero, $f$ is strictly convex and the local minimum is global. 
+\item First condition: Since $\mathbf{w}$ exists $\Sigma_{\mathbf{X}}$ must be non-singular. \\
+Then $\Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}} = \E\left((\mathbf{X} - \E(\mathbf{X})(\mathbf{X} - \E(\mathbf{X}))^\top\right)^{-1}\E\left((\mathbf{X} - \E(\mathbf{X}))(\mathbf{Y} - \E(\mathbf{Y}))^\top\right)$ \\
+Second condition: If $\E(\mathbf{X}) = \mathbf{0}, \E(\mathbf{Y}) = \mathbf{0}$ then \\
+ $\Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}} = \left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}\E(\mathbf{X}\mathbf{Y}^\top).$ \\
+ $n(\mathbf{x}_{1:n}^\top\mathbf{x}_{1:n})^{-1}$ is a consistent estimator of $\left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}$ and \\
+ $\frac{1}{n}\mathbf{x}_{1:n}^\top y_{1:n}$ is a consistent estimator of $\E(\mathbf{X}\mathbf{Y}^\top)$.\\
+ $\Rightarrow$ The least squares estimator $(\mathbf{x}_{1:n}^\top\mathbf{x}_{1:n})^{-1}\mathbf{x}_{1:n}^\top y_{1:n}$ is a consistent estimator of $\left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}\E(\mathbf{X}\mathbf{Y}^\top)$.
+	
+\end{enumerate}
+}
+\end{document}

@@ -1,0 +1,460 @@
+\documentclass[a4paper]{article}
+\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+
+
+
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+\usepackage{a4wide,paralist}
+\usepackage{amsmath, amssymb, xfrac, amsthm}
+\usepackage{dsfont}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{framed}
+\usepackage{multirow}
+\usepackage{bytefield}
+\usepackage{csquotes}
+\usepackage[breakable, theorems, skins]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{cancel}
+\usepackage{bm}
+
+
+\input{../../style/common}
+
+\tcbset{enhanced}
+
+\DeclareRobustCommand{\mybox}[2][gray!20]{%
+	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+	\fi
+}
+
+\DeclareRobustCommand{\myboxshow}[2][gray!20]{%
+%	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+%	\fi
+}
+
+
+%exercise numbering
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{\roman{enumii}}
+\renewcommand\labelenumi{\theenumi}
+
+
+\font \sfbold=cmssbx10
+
+\setlength{\oddsidemargin}{0cm} \setlength{\textwidth}{16cm}
+
+
+\sloppy
+\parindent0em
+\parskip0.5em
+\topmargin-2.3 cm
+\textheight25cm
+\textwidth17.5cm
+\oddsidemargin-0.8cm
+\pagestyle{empty}
+
+\newcommand{\kopf}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfic}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfsl}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newenvironment{allgemein}
+	{\noindent}{\vspace{1cm}}
+
+\newcounter{aufg}
+\newenvironment{aufgabe}[1]
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}: #1}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newcounter{loes}
+\newenvironment{loesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+	{\bigskip}
+	
+\newenvironment{bonusaufgabe}
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}*\footnote{This
+	is a bonus exercise.}:}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newenvironment{bonusloesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}*:}\\\noindent}
+	{\bigskip}
+
+
+
+\begin{document}
+% !Rnw weave = knitr
+
+
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{5}{Univariate Optimization 1}
+
+\aufgabe{Golden Ratio, Brent's Method}{
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{123}\hlstd{)}
+
+\hlstd{X} \hlkwb{=} \hlkwd{matrix}\hlstd{(}\hlkwd{runif}\hlstd{(}\hlnum{100}\hlstd{),} \hlkwc{ncol} \hlstd{=} \hlnum{2}\hlstd{)}
+\hlstd{y} \hlkwb{=} \hlopt{-}\hlstd{((X} \hlopt{%*%} \hlkwd{c}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{+} \hlkwd{rnorm}\hlstd{(}\hlnum{50}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0.1}\hlstd{)} \hlopt{<} \hlnum{0}\hlstd{)} \hlopt{*} \hlnum{2} \hlopt{-} \hlnum{1}\hlstd{)}
+\hlstd{df} \hlkwb{=} \hlkwd{as.data.frame}\hlstd{(X)}
+\hlstd{df}\hlopt{$}\hlstd{type} \hlkwb{=} \hlkwd{as.character}\hlstd{(y)}
+
+\hlkwd{ggplot}\hlstd{(df)} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= V1,} \hlkwc{y} \hlstd{= V2,} \hlkwc{color}\hlstd{=type))} \hlopt{+}
+  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
+  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/univ-plot-1} 
+\end{knitrout}
+
+\begin{enumerate}
+  \item Since $f$ is convex it holds for arbitrary $\mathbf{x}, \mathbf{y} \in \R^2, t \in [0,1]$ that \\
+  $f(\mathbf{x} + t(\mathbf{y} - \mathbf{x})) \leq f(\mathbf{x}) + t(f(\mathbf{y}) - f(\mathbf{x}))).$ \\
+  This means this holds also for $\mathbf{x}_c = (x, c)^\top$ and $\mathbf{y}_c = (y, c)^\top$ with $x, y \in \R$ and fixed $c\in \R:$ \\
+$f(\mathbf{x}_c + t(\mathbf{y}_c - \mathbf{x}_c)) \leq f(\mathbf{x}_c) + t(f(\mathbf{y}_c) - f(\mathbf{x}_c))) \iff g_c(x + t(y-x)) \leq g_c(x) + t(g_c(y) - g_c(x))$. \\
+$\Rightarrow g_c$ is convex.
+  \item The non-geometric primal linear SVM formulation is convex and unconstrained $\Rightarrow$ For one parameter the objective is also convex (a)) and we can directly use GR . In contrast, the geometric formulation has linear constraints.
+  \item 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# Define objective}
+\hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{) theta} \hlopt{%*%} \hlstd{theta} \hlopt{+}
+    \hlkwd{sum}\hlstd{(}\hlkwd{sapply}\hlstd{(}\hlnum{1} \hlopt{-} \hlstd{y} \hlopt{*} \hlstd{(X} \hlopt{%*%} \hlstd{theta),} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{max}\hlstd{(x,} \hlnum{0}\hlstd{)))}
+
+\hlcom{# Objective w.r.t theta_1 with fixed theta_2}
+\hlstd{ft1} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta_1}\hlstd{)} \hlkwd{f}\hlstd{(}\hlkwd{c}\hlstd{(theta_1,} \hlnum{2}\hlstd{))}
+
+\hlstd{phi} \hlkwb{=} \hlstd{(}\hlkwd{sqrt}\hlstd{(}\hlnum{5}\hlstd{)} \hlopt{-} \hlnum{1}\hlstd{)}\hlopt{/}\hlnum{2}
+
+\hlstd{gr} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{f}\hlstd{,} \hlkwc{lx}\hlstd{=}\hlopt{-}\hlnum{3}\hlstd{,} \hlkwc{rx}\hlstd{=}\hlnum{3}\hlstd{,} \hlkwc{abs_error} \hlstd{=} \hlnum{0.01}\hlstd{)\{}
+
+  \hlcom{# initialize variables needed for stopping criterion}
+  \hlstd{fbest_old} \hlkwb{=} \hlnum{Inf}
+  \hlstd{xbest_old} \hlkwb{=} \hlnum{Inf}
+  \hlstd{xbest} \hlkwb{=} \hlnum{NA}
+
+  \hlcom{# compute candidate xs}
+  \hlstd{dist} \hlkwb{=} \hlstd{rx} \hlopt{-} \hlstd{lx}
+  \hlstd{cx} \hlkwb{=} \hlkwd{c}\hlstd{(lx} \hlopt{+} \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{phi)} \hlopt{*} \hlstd{dist, rx} \hlopt{-} \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{phi)} \hlopt{*} \hlstd{dist)}
+
+  \hlkwa{while}\hlstd{(}\hlnum{TRUE}\hlstd{)\{}
+    \hlstd{fcx1} \hlkwb{=} \hlkwd{f}\hlstd{(cx[}\hlnum{1}\hlstd{])}
+    \hlstd{fcx2} \hlkwb{=} \hlkwd{f}\hlstd{(cx[}\hlnum{2}\hlstd{])}
+
+    \hlcom{# check which candidate is better and update cx}
+    \hlkwa{if} \hlstd{(fcx1} \hlopt{<} \hlstd{fcx2)\{}
+      \hlstd{fbest} \hlkwb{=} \hlstd{fcx1}
+      \hlstd{xbest} \hlkwb{=} \hlstd{cx[}\hlnum{1}\hlstd{]}
+      \hlstd{rx} \hlkwb{=} \hlstd{cx[}\hlnum{2}\hlstd{]}
+      \hlstd{cx[}\hlnum{2}\hlstd{]} \hlkwb{=} \hlstd{cx[}\hlnum{2}\hlstd{]} \hlopt{-} \hlstd{(cx[}\hlnum{1}\hlstd{]} \hlopt{-} \hlstd{lx)}
+    \hlstd{\}}\hlkwa{else}\hlstd{\{}
+      \hlstd{fbest} \hlkwb{=} \hlstd{fcx2}
+      \hlstd{xbest} \hlkwb{=} \hlstd{cx[}\hlnum{2}\hlstd{]}
+      \hlstd{lx} \hlkwb{=} \hlstd{cx[}\hlnum{1}\hlstd{]}
+      \hlstd{cx[}\hlnum{1}\hlstd{]} \hlkwb{=} \hlstd{cx[}\hlnum{1}\hlstd{]} \hlopt{+} \hlstd{(rx} \hlopt{-} \hlstd{cx[}\hlnum{2}\hlstd{])}
+    \hlstd{\}}
+    \hlcom{# assure cx[1] < cx[2]}
+    \hlstd{cx} \hlkwb{=} \hlkwd{sort}\hlstd{(cx)}
+
+    \hlcom{# check if we need to stop the loop depending on the termination criterion}
+    \hlkwa{if} \hlstd{(}\hlkwd{abs}\hlstd{(xbest_old} \hlopt{-} \hlstd{xbest)} \hlopt{<} \hlstd{abs_error)\{}
+      \hlkwd{return}\hlstd{(}\hlkwd{c}\hlstd{(xbest, fbest))}
+    \hlstd{\}}
+    \hlstd{fbest_old} \hlkwb{=} \hlstd{fbest}
+    \hlstd{xbest_old} \hlkwb{=} \hlstd{xbest}
+  \hlstd{\}}
+\hlstd{\}}
+
+\hlkwd{gr}\hlstd{(ft1)}
+\end{alltt}
+\begin{verbatim}
+## [1] -2.45898 29.91294
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+	\item 
+	We are given three equations: \\
+	$a x_1^2 + b x_1 + c = y_1$ \\
+	$a x_2^2 + b x_2 + c = y_2$ \\
+	$a x_3^2 + b x_3 + c = y_3$. 
+	Which we can express equivalently as $\underbrace{\begin{pmatrix}  x_1^2 & x_1 & 1 \\ x_2^2 & x_2 & 1 \\ x_3^2 & x_3 & 1 \end{pmatrix}}_{:=\bm{\Lambda}} \begin{pmatrix}a \\ b \\ c \end{pmatrix} = \begin{pmatrix}y_1 \\ y_2 \\ y_3 \end{pmatrix}.$ The result follows straightforwardly assuming $\bm{\Lambda}$ is non-singular.
+	
+	\item 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{gr_step} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{f}\hlstd{,} \hlkwc{lx}\hlstd{,} \hlkwc{rx}\hlstd{)\{}
+  \hlstd{dist} \hlkwb{=} \hlstd{rx} \hlopt{-} \hlstd{lx}
+
+  \hlcom{# compute candidates}
+  \hlstd{cxs} \hlkwb{=} \hlkwd{c}\hlstd{(lx} \hlopt{+} \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{phi)} \hlopt{*} \hlstd{dist,}
+    \hlstd{rx} \hlopt{-} \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{phi)} \hlopt{*} \hlstd{dist)}
+
+  \hlstd{fcx} \hlkwb{=} \hlkwd{sapply}\hlstd{(cxs, f)}
+
+  \hlcom{# find best candidate}
+  \hlkwa{if} \hlstd{(fcx[}\hlnum{1}\hlstd{]} \hlopt{<} \hlstd{fcx[}\hlnum{2}\hlstd{])\{}
+    \hlstd{fbest} \hlkwb{=} \hlstd{fcx[}\hlnum{1}\hlstd{]}
+    \hlstd{cx} \hlkwb{=} \hlstd{cxs[}\hlnum{1}\hlstd{]}
+    \hlstd{rx} \hlkwb{=} \hlstd{cxs[}\hlnum{2}\hlstd{]}
+  \hlstd{\}}\hlkwa{else}\hlstd{\{}
+    \hlstd{fbest} \hlkwb{=} \hlstd{fcx[}\hlnum{2}\hlstd{]}
+    \hlstd{cx} \hlkwb{=} \hlstd{cxs[}\hlnum{2}\hlstd{]}
+    \hlstd{lx} \hlkwb{=} \hlstd{cxs[}\hlnum{1}\hlstd{]}
+  \hlstd{\}}
+
+  \hlkwd{return}\hlstd{(}\hlkwd{c}\hlstd{(lx, rx, cx, fbest))}
+\hlstd{\}}
+
+\hlstd{brent} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{f}\hlstd{,} \hlkwc{lx} \hlstd{=} \hlopt{-}\hlnum{3}\hlstd{,} \hlkwc{rx} \hlstd{=} \hlnum{3}\hlstd{,} \hlkwc{abs_error} \hlstd{=} \hlnum{0.01}\hlstd{)\{}
+
+  \hlstd{fbest_old} \hlkwb{=} \hlnum{Inf}
+  \hlstd{xbest} \hlkwb{=} \hlnum{NA}
+  \hlstd{xbest_old} \hlkwb{=} \hlnum{Inf}
+
+  \hlcom{# we do not have a valid candidate in the beginning}
+  \hlstd{cx} \hlkwb{=} \hlnum{Inf}
+
+  \hlkwa{while}\hlstd{(}\hlnum{TRUE}\hlstd{)\{}
+    \hlcom{# if candidate is not valid do a golden ratio step}
+    \hlkwa{if}\hlstd{(cx} \hlopt{<=} \hlstd{lx} \hlopt{|} \hlstd{cx} \hlopt{>=} \hlstd{rx)\{}
+      \hlstd{res} \hlkwb{=} \hlkwd{gr_step}\hlstd{(f, lx, rx)}
+      \hlstd{lx} \hlkwb{=} \hlstd{res[}\hlnum{1}\hlstd{]}
+      \hlstd{rx} \hlkwb{=} \hlstd{res[}\hlnum{2}\hlstd{]}
+      \hlstd{cx} \hlkwb{=} \hlstd{res[}\hlnum{3}\hlstd{]}
+      \hlstd{xbest} \hlkwb{=} \hlstd{cx}
+      \hlstd{fbest} \hlkwb{=} \hlstd{res[}\hlnum{4}\hlstd{]}
+    \hlstd{\}}\hlkwa{else}\hlstd{\{} \hlcom{# try doing quadratic interpolation otherwise}
+      \hlcom{# compute objective values}
+      \hlstd{xs} \hlkwb{=} \hlkwd{c}\hlstd{(lx, rx, cx)}
+      \hlstd{fxs} \hlkwb{=} \hlkwd{sapply}\hlstd{(xs, ft1)}
+
+      \hlcom{# find parameters of the interpolating parabola}
+      \hlstd{params} \hlkwb{=} \hlkwd{solve}\hlstd{(}\hlkwd{t}\hlstd{(}\hlkwd{sapply}\hlstd{(xs,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{c}\hlstd{(x}\hlopt{^}\hlnum{2}\hlstd{, x,} \hlnum{1}\hlstd{))), fxs)}
+      \hlcom{# find minimum of the parabola}
+      \hlstd{cx_new} \hlkwb{=} \hlopt{-}\hlstd{params[}\hlnum{2}\hlstd{]}\hlopt{/}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{params[}\hlnum{1}\hlstd{])}
+
+      \hlcom{# if candidate is valid do quadratic interpolation step}
+      \hlkwa{if}\hlstd{(cx_new} \hlopt{<} \hlstd{rx} \hlopt{&} \hlstd{cx_new} \hlopt{>} \hlstd{lx)\{}
+        \hlstd{cxs} \hlkwb{=} \hlkwd{sort}\hlstd{(}\hlkwd{c}\hlstd{(cx, cx_new))}
+        \hlstd{fcx} \hlkwb{=} \hlkwd{sapply}\hlstd{(cxs, f)}
+
+        \hlcom{# find best candidate}
+        \hlkwa{if} \hlstd{(fcx[}\hlnum{1}\hlstd{]} \hlopt{<} \hlstd{fcx[}\hlnum{2}\hlstd{])\{}
+          \hlstd{fbest} \hlkwb{=} \hlstd{fcx[}\hlnum{1}\hlstd{]}
+          \hlstd{cx} \hlkwb{=} \hlstd{cxs[}\hlnum{1}\hlstd{]}
+          \hlstd{rx} \hlkwb{=} \hlstd{cxs[}\hlnum{2}\hlstd{]}
+        \hlstd{\}}\hlkwa{else}\hlstd{\{}
+          \hlstd{fbest} \hlkwb{=} \hlstd{fcx[}\hlnum{2}\hlstd{]}
+          \hlstd{cx} \hlkwb{=} \hlstd{cxs[}\hlnum{2}\hlstd{]}
+          \hlstd{lx} \hlkwb{=} \hlstd{cxs[}\hlnum{1}\hlstd{]}
+        \hlstd{\}}
+        \hlstd{xbest} \hlkwb{=} \hlstd{cx}
+
+      \hlstd{\}}
+    \hlstd{\}}
+
+  \hlcom{# check if we need to stop the loop depending on the termination criterion}
+  \hlkwa{if} \hlstd{(}\hlkwd{abs}\hlstd{(xbest} \hlopt{-} \hlstd{xbest_old)} \hlopt{<} \hlstd{abs_error)\{}
+    \hlkwd{return}\hlstd{(}\hlkwd{c}\hlstd{(xbest, fbest))}
+  \hlstd{\}}
+  \hlstd{fbest_old} \hlkwb{=} \hlstd{fbest}
+  \hlstd{xbest_old} \hlkwb{=} \hlstd{xbest}
+  \hlstd{\}}
+\hlstd{\}}
+
+\hlkwd{brent}\hlstd{(ft1)}
+\end{alltt}
+\begin{verbatim}
+## [1] -2.409456 29.903281
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+	\item 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# intialize thetas}
+\hlstd{t1} \hlkwb{=} \hlnum{0}
+\hlstd{t2} \hlkwb{=} \hlnum{0}
+
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{0}\hlopt{:}\hlnum{9}\hlstd{)\{}
+  \hlcom{# alternate between univariately optimizing each parameter while the other}
+  \hlcom{# is fixed}
+  \hlkwa{if}\hlstd{(i} \hlopt{%%} \hlnum{2} \hlopt{==} \hlnum{0}\hlstd{)\{}
+    \hlstd{ft} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{t}\hlstd{)} \hlkwd{f}\hlstd{(}\hlkwd{c}\hlstd{(t, t2))}
+    \hlstd{res} \hlkwb{=} \hlkwd{gr}\hlstd{(ft)}
+    \hlstd{t1} \hlkwb{=} \hlstd{res[}\hlnum{1}\hlstd{]}
+
+  \hlstd{\}}\hlkwa{else}\hlstd{\{}
+    \hlstd{ft} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{t}\hlstd{)} \hlkwd{f}\hlstd{(}\hlkwd{c}\hlstd{(t1, t))}
+    \hlstd{res} \hlkwb{=} \hlkwd{gr}\hlstd{(ft)}
+    \hlstd{t2} \hlkwb{=} \hlstd{res[}\hlnum{1}\hlstd{]}
+  \hlstd{\}}
+  \hlkwd{print}\hlstd{(}\hlkwd{c}\hlstd{(t1, t2,} \hlkwd{f}\hlstd{(}\hlkwd{c}\hlstd{(t1, t2))))}
+\hlstd{\}}
+\end{alltt}
+\begin{verbatim}
+## [1] -1.583592  0.000000 37.878640
+## [1] -1.583592  1.583592 32.490253
+## [1] -2.124612  1.583592 29.742862
+## [1] -2.124612  1.583592 29.742862
+## [1] -2.124612  1.583592 29.742862
+## [1] -2.124612  1.583592 29.742862
+## [1] -2.124612  1.583592 29.742862
+## [1] -2.124612  1.583592 29.742862
+## [1] -2.124612  1.583592 29.742862
+## [1] -2.124612  1.583592 29.742862
+\end{verbatim}
+\begin{alltt}
+\hlstd{x} \hlkwb{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{3}\hlstd{,} \hlnum{3}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.1}\hlstd{)}
+\hlstd{xx} \hlkwb{=} \hlkwd{expand.grid}\hlstd{(}\hlkwc{X1} \hlstd{= x,} \hlkwc{X2} \hlstd{= x)}
+
+\hlstd{fxx} \hlkwb{=} \hlkwd{apply}\hlstd{(xx,} \hlnum{1}\hlstd{, f)}
+\hlstd{df} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{xx} \hlstd{= xx,} \hlkwc{fxx} \hlstd{= fxx)}
+
+\hlkwd{ggplot}\hlstd{()} \hlopt{+}
+    \hlkwd{geom_contour_filled}\hlstd{(}\hlkwc{data} \hlstd{= df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= xx.X1,} \hlkwc{y} \hlstd{= xx.X2,} \hlkwc{z} \hlstd{= fxx))} \hlopt{+}
+    \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
+    \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))} \hlopt{+}
+    \hlkwd{geom_point}\hlstd{(}\hlkwc{data} \hlstd{=} \hlkwd{as.data.frame}\hlstd{(}\hlkwd{t}\hlstd{(}\hlkwd{c}\hlstd{(t1, t2))),} \hlkwc{mapping} \hlstd{=} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2),}
+               \hlkwc{color}\hlstd{=}\hlstr{"red"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/univ-mv-1} 
+\end{knitrout}
+\item The trace looks like a orthogonal zig-zag line.
+\item In theory, yes, since our objective is convex and hence the objective w.r.t. each parameter is convex $\Rightarrow$ each step makes our objective as small as possible in this direction conditioned on the fixed parameters $\Rightarrow$ the found objective values are monotonically decreasing. However, depending on the curvature of the objective function this can take a long time because we can only "walk" in the direction of the coordinate axes (g)). \\
+
+\end{enumerate}
+}
+\end{document}
