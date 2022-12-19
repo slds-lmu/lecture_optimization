@@ -1,0 +1,177 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-mbo}
+
+\newcommand{\titlefigure}{figure_man/loop_2.png}
+\newcommand{\learninggoals}{
+\item Surrogate Modeling
+\item Basic Loop
+}
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+% FIXME: alignment of figures
+
+\lecturechapter{Bayesian Optimization:\\ Basic Idea}
+\lecture{Optimization in Machine Learning}
+
+\begin{vbframe}{Optimization via Surrogate Modeling}
+
+\textbf{Starting point:}
+\begin{itemize}
+\item We do not know the objective function $f: \mathcal{S} \to \R$
+\item But we can evaluate $f$ for a few different inputs $\xv \in \mathcal{S}$
+\item For now we assume that those evaluations are noise-free
+
+\item \textbf{Idea:}
+  Use the data $\D = \{(\xv^{(i)}, y^{(i)})\}_{i = 1, \ldots, t}$, $y^{(i)} := f(\xv^{(i)})$, to derive properties about the unknown function $f$
+\end{itemize}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/loop_0.png}
+\end{center}
+
+\framebreak 
+
+\begin{enumerate}
+\item \textbf{Fit} a \textbf{regression model} (blue) to extract maximum information from the design points (black) and learn properties of $f$
+\vspace{+.05cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/loop_1.png}
+\end{center}
+
+\vspace{-.1cm}
+As we can evaluate $f$ without noise, we fit an interpolating regression model
+
+\framebreak 
+
+\item Instead of the expensive $f$, we optimize the cheap model function (blue) to \textbf{propose} a new point (red) for evaluation 
+\vspace{+.05cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/loop_2.png}
+\end{center}
+
+\vspace{-.1cm}
+In the context of Bayesian Optimization, the regression model is called \textbf{surrogate model}, because it is a cheap approximation of $f$ that is iteratively trained
+
+\framebreak 
+
+\item We finally evaluate the newly proposed point
+\vspace{+.45cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/loop_3.png}
+\end{center}
+
+\end{enumerate}
+
+\framebreak 
+
+\begin{itemize}
+
+\item After evaluation of the new point, we \textbf{adjust} the model on the expanded dataset via (slow) refitting or a (cheaper) online update
+\vspace{+.45cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/loop_4.png}
+\end{center}
+
+\framebreak 
+
+\item We again obtain a new candidate point (red) by optimizing the cheap surrogate model function (blue) ...
+\vspace{+.45cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/loop_5.png}
+\end{center}
+
+\framebreak
+
+\item ... and evaluate that candidate
+\vspace{+.45cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/loop_6.png}
+\end{center}
+
+\framebreak
+
+\item We repeat: (i) \textbf{fit} the model
+\vspace{+.45cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/loop_7.png}
+\end{center}
+
+\framebreak
+
+\item (ii) \textbf{propose} a new point
+\vspace{+.45cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/loop_8.png}
+\end{center}
+
+\framebreak
+
+\item (iii) \textbf{evaluate} that point
+\vspace{+.45cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/loop_9.png}
+\end{center}
+
+\item We observe that the algorithm converged
+
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Basic Loop}
+
+The basic loop of our sequential optimization procedure is:
+  \begin{enumerate}
+    \item Fit surrogate model $\hat{f}$ on previous evaluations $\D = \{(\xv^{(i)}, y^{(i)})\}_{i = 1, \ldots, t}$
+    \item Optimize the surrogate model $\hat{f}$ to obtain a new point $\xv^{(t + 1)} \coloneqq \argmax_{\xv \in \mathcal{S}} \hat{f}(\xv)$
+    \item Evaluate $\xv^{(t + 1)}$ and update data $\D = \{(\xv^{(i)}, y^{(i)})\}_{i = 1, \ldots, t} \cup \{(\xv^{(t + 1)}, f(\xv^{(t + 1)}))\}$
+  \end{enumerate}
+
+\framebreak
+
+\begin{itemize}
+  \item We will see that other more sensible options exist for obtaining a new point
+  \item We will define so-called acquisition functions based on the prediction of the surrogate model which we then optimize
+  \item Optimizing the surrogate model directly corresponds to optimizing the mean prediction as acquisition function
+  \item This results in high exploitation but low exploration
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Exploration vs. Exploitation}
+
+The black line is the \enquote{unknown} black-box function the sequential optimization procedure has been applied to
+
+\vspace*{0.2cm} 
+We see: We ran into a local minimum. We did not \enquote{explore} the most crucial areas and \textbf{missed} the global minimum
+
+\vspace{+.45cm}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/loop_10.png}
+\end{center}
+
+
+\end{vbframe} 
+
+\endlecture
+
+\end{document}
