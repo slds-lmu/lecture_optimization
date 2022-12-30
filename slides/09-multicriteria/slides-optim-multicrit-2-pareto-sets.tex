@@ -1,0 +1,173 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/pareto-front.png}
+\newcommand{\learninggoals}{
+\item Definitions of optimality
+\item Objective/Target functions
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Pareto sets und Pareto optimality}
+\lecture{Optimization in Machine Learning}
+\sloppy
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{Pareto sets und Pareto optimality}
+
+\textbf{Definition:}
+
+Given a multicriteria optimization problem $$\min_{\bm{x} \in \Xspace} f(\bm{x}) = \left(f_1(\bm{x}), ..., f_m(\bm{x})\right), \quad f_i: \Xspace \to \R^m.$$
+
+\begin{itemize}
+\item A candidate $\bm{x}$ \textbf{(Pareto-) dominates} $\bm{\tilde{x}}$, if $f(\bm{x}) \prec f( \tilde{\bm x})$, i.e.
+\begin{enumerate}
+\item $f_i(\bm{x}) \le f_i(\tilde{\bm x})$ for all $i \in \{1, 2, ..., m\}$ and
+\item $f_j(\bm{x}) < f_j(\tilde{\bm x})$ for at least one $j \in \{1, 2, ..., m\}$
+\end{enumerate}
+\vspace*{0.1cm}
+\item A candidate $\bm{x}^*$ that is not dominated by any other candidates is called \textbf{Pareto optimal}.
+\vspace*{0.1cm}
+\item The set of all Pareto optimal candidates is called \textbf{Pareto set} $\mathcal{P} := \{\bm{x} \in \Xspace |\not \exists ~\tilde{\bm{x}} \text{ with } f(\tilde{\bm{x}}) \prec f(\bm{x})\}$
+\item $\mathcal{F} = f(\mathcal{P}) = \{f(\bm{x}) | \bm{x} \in \mathcal{P}\}$ is called \textbf{Pareto front}.
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{How to define optimality?}
+Let $y = (\text{price}, - \text{rating})$. For some cases it is \textit{clear} which point is the better one:
+\begin{itemize}
+    \item The candidate $\textcolor{green}{y^{(1)}} = \left(89, - 4.0\right)$ dominates $\textcolor{red}{y^{(2)}} = \left(108, - 4.0\right)$: $\textcolor{green}{y^{(1)}}$ is not worse in any dimension and is better in one dimension. Therefore, $\textcolor{red}{y^{(2)}}$ gets \textbf{dominated} by $\textcolor{green}{y^{(1)}}$
+$$
+\textcolor{red}{y^{(2)}} \prec \textcolor{green}{y^{(1)}}.
+$$
+\end{itemize}
+
+\begin{center}
+\includegraphics[width = 4.5cm, height = 4cm ]{figure_man/Example1.png}
+\end{center}
+
+\framebreak
+
+For the points $\textcolor{orange}{y^{(1)}} = \left(89, - 4.0\right)$ and $\textcolor{orange}{y^{(2)}} = \left(95, - 4.5\right)$ we cannot say which one is better.
+
+\begin{itemize}
+\item We define the points as \textbf{equivalent} and write
+$$
+\textcolor{orange}{y^{(1)}} \not\prec \textcolor{orange}{y^{(2)}} \text{ and } \textcolor{orange}{y^{(2)}} \not\prec \textcolor{orange}{y^{(1)}}.
+$$
+
+\end{itemize}
+
+\begin{center}
+\includegraphics[width = 4.5cm, height = 4cm ]{figure_man/Example2.png}
+\end{center}
+
+\framebreak
+
+\begin{itemize}
+\item The set of all equivalent points that are not dominated by another point is called the \textbf{Pareto front}.
+
+
+
+\vspace*{0.3cm}
+
+\lz
+\begin{center}
+\includegraphics[width = 5cm, height = 5cm ]{figure_man/pareto.png}
+\end{center}
+
+\end{itemize}
+
+\end{vbframe}
+
+
+\begin{vbframe}{Example: One objective function}
+
+We consider the minimization problem
+
+$$
+\min_{0 \le \bm{x} \le 3} f(\bm{x}) = (\bm{x} - 1)^2, \qquad 0 \le \bm{x} \le 3.
+$$
+
+The optimum is at $\bm{x}^* = 1$.
+
+\lz
+
+\begin{center}
+\includegraphics[width = 4cm, height = 4cm ]{figure_man/one-obj-func.png}
+\end{center}
+
+\end{vbframe}
+
+
+\begin{vbframe}{Example: Two target functions}
+
+We extend the above problem to two objective functions $f_1(\bm{x}) = (\bm{x} - 1)^2$ and $f_2(\bm{x}) = 3(\bm{x} - 2)^2$, thus
+
+$$
+\min_{0 \le \bm{x} \le 3} f(\bm{x}) := \left(f_1(\bm{x}), f_2(\bm{x})\right), \qquad 0 \le \bm{x} \le 3.
+$$
+
+\vspace*{0.1cm}
+
+\begin{center}
+\includegraphics[width = 4cm, height = 4cm ]{figure_man/two-target-func.png}
+\end{center}
+
+
+\framebreak
+
+We consider the functions in the objective function space $f(\Xspace)$ by drawing the objective function values $\left(f_1(\bm{x}), f_2(\bm{x})\right)$ for all $0 \le \bm{x} \le 3$.
+
+\vspace*{0.1cm}
+
+\begin{center}
+\includegraphics[width = 4cm, height = 4cm ]{figure_man/pareto-front.png}
+\end{center}
+
+\vspace*{-0.3cm}
+
+The Pareto front is shown in green.
+The Pareto front cannot be \emph{left} without getting worse in at least one objective function.
+
+\end{vbframe}
+
+
+% \begin{vbframe}{Zusammenfassung}
+%
+% Bisher:
+% \begin{itemize}
+% \item Multikriterielle Optimierungsprobleme sind Probleme, in denen mehrere Funktionen gleichzeitig optimiert werden sollen.
+% \item Zielfunktionen sind häufig konkurrierend und lassen sich nicht auf derselben Skala vergleichen
+% \item $\to$ Einführung eines geeigneten Optimalitätsbegriffs: Pareto-Optimalität
+% \end{itemize}
+%
+% \begin{itemize}
+% \item Wie findet man eine Pareto-Front?
+% \item $\to$ Lösungsverfahren
+% \end{itemize}
+%
+% \end{vbframe}
+
+%\section{Solvers}
+
+
+
+\endlecture
+\end{document}
+
+

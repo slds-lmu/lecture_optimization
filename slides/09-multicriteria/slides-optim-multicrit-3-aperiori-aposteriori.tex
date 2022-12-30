@@ -1,0 +1,170 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/posteriori1.png}
+\newcommand{\learninggoals}{
+\item Approaches
+\item Procedures
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{A-priori vs. A-posteriori}
+\lecture{Optimization in Machine Learning}
+\sloppy
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{vbframe}{A-priori vs. A-posteriori}
+
+\begin{itemize}
+\item The Pareto set is a set of equally optimal solutions.
+\item In many applications, one is often interested in a \textbf{single} optimal solution.
+\item Without further information, no unambiguous optimal solution can be determined. \\
+$\to$ The decision must be based on other criteria.
+\end{itemize}
+
+\vspace{0.5cm}
+
+There are two possible approaches:
+\begin{itemize}
+\item \textbf{A-priori approach}: User preferences are considered \textbf{before} the optimization process
+\item \textbf{A-posteriori approach}: User preferences are considered \textbf{after} the optimization process
+\end{itemize}
+
+\end{vbframe}
+
+
+\begin{vbframe}{A-priori procedure}
+
+\textbf{Example: weighted total}\\
+\textbf{Prior knowledge:} One rating point is worth $50$ Euro to a customer. \\
+    $\to$ We optimize the weighted sum:
+
+$$
+\min_\text{Hotel} \text{(Price / Night)} - 50 \cdot \text{Rating}
+$$
+
+
+\begin{center}
+\includegraphics[height=3.5cm, width =0.3\linewidth]{figure_man/priori1.png} ~~~ \includegraphics[height=3.5cm, width =0.35\linewidth]{figure_man/priori2.png}
+\end{center}
+
+%<<echo = F, fig.width = 4, fig.height=2, fig.align='center', out.height = '40%', out.width = '70%'>>=
+%df$apriori = df$mean_price + 50 * df$mean_rating
+%
+%p1 = ggplot()
+%p1 = p1 + geom_point(data = df, aes(x = apriori, y = 0), size = 2)
+%p1 = p1 + geom_point(data = df[which.min(df$apriori), ], aes(x = apriori, y = 0), colour = "green", size = 2)
+%p1 = p1 + theme_bw()
+%p1 = p1 + xlab("Weighted sum")
+%p1 = p1 + theme(axis.title.y = element_blank(),
+%                axis.text.y = element_blank(),
+%                axis.ticks.y = element_blank())
+%
+%p2 = ggplot(data = df, aes(x = mean_price, y = mean_rating)) + geom_point(size = 2)
+%p2 = p2 + geom_point(data = df[which.min(df$apriori), ], aes(x = mean_price, y = mean_rating), size = 2, colour = "green")
+%p2 = p2 + theme_bw()
+%p2 = p2 + ylim(c(-5, -2))
+%p2 = p2 + xlab("Price per night") + ylab("Rating")
+%
+%grid.arrange(p1, p2, ncol = 2)
+%@
+
+Alternative a weighted sum: $\min_{\bm{x} \in \Xspace} \sum_{i = 1}^m w_i f_i(\bm{x}) \qquad \text{with} \quad w_i \ge 0 $
+
+\framebreak
+
+\textbf{Example: Lexicographic method}\\
+\textbf{Prior knowledge:} Customer prioritizes rating over price. \\
+$\to$ Optimize target functions one after the other.
+
+\lz
+
+\begin{center}
+\includegraphics[height=4cm, width =0.35\linewidth]{figure_man/priori3.png} ~~~ \includegraphics[height=4cm, width =0.35\linewidth]{figure_man/priori4.png}
+\end{center}
+
+%<<echo = F, fig.width = 5, fig.height=2, fig.align='center', out.height = '40%', out.width = '80%'>>=
+%p1 = ggplot(data = df, aes(x = mean_price, y = mean_rating)) + geom_point(size = 2)
+%p1 = p1 + geom_point(data = df[df$mean_rating == -5, ], aes(x = mean_price, y = mean_rating), size = 2, colour = "orange")
+%p1 = p1 + theme_bw()
+%p1 = p1 + ylim(c(-5, -2))
+%p1 = p1 + ggtitle("1) max. rating")
+%p1 = p1 + xlab("Price per night") + ylab("Rating")
+%
+%p2 = p1 + geom_point(data = df[(df$mean_rating == - 5.0 & df$mean_price < 150), ], colour = "green", size = 2)
+%p2 = p2 + ggtitle("2) min. price")
+%
+%grid.arrange(p1, p2, ncol = 2)
+%@
+
+\framebreak
+
+A-priori approach: lexicographic method
+
+\begin{eqnarray*}
+y_1^* &=& \min_{\bm{x} \in \Xspace} f_1(\bm{x})\\
+y_2^* &=& \min_{\bm{x} \in \{\bm{x} ~|~ f_1(\bm{x}) = y_1^*\}} f_2(\bm{x}) \\
+y_3^* &=& \min_{\bm{x} \in \{\bm{x} ~|~ f_1(\bm{x}) = y_1^* \land f_2(\bm{x}) = y_2^*\}} f_3(\bm{x}) \\
+&\vdots&
+\end{eqnarray*}
+
+\textbf{But:} Different sequences provide different solutions.
+
+\framebreak
+
+\textbf{Summary a-priori approach:}
+\vspace{0.5cm}
+\begin{itemize}
+\item Implicit assumption: Single-objective optimization is \emph{easy}.
+\item Only one solution is obtained, which depends on a-priori weights, order, etc.
+\item Several solutions can be obtained if weights, order, etc. are systematically varied.
+\item Usually, not all non-dominated candidates can be found by these methods.
+\end{itemize}
+
+\end{vbframe}
+
+
+\begin{vbframe}{A-posteriori procedure}
+
+A-posteriori methods try to
+
+\begin{itemize}
+\item find the set of \textbf{all} optimal candidates (the Pareto set),
+\item select (if necessary) an optimal candidate based on prior knowledge or individual preferences.
+\item Implicit assumption: Specifying your hidden preferences / making a selection from a pool of candidates is easier if you see the non-dominated solutions.
+\end{itemize}
+
+A-posteriori methods are therefore the more generic approach to solving a multi-criteria optimization problem.
+
+\framebreak
+
+\textbf{Example:} A user is displayed all Pareto optimal hotels (left) and chooses an optimal candidate (right) based on his hidden preferences or additional criteria (e.g. location of the hotel).
+
+\vspace*{0.3cm}
+
+\lz
+\begin{center}
+\includegraphics[height=4cm, width =0.35\linewidth]{figure_man/posteriori1.png} ~~~ \includegraphics[height=4cm, width =0.35\linewidth]{figure_man/posteriori2.png}
+\end{center}
+
+\end{vbframe}
+
+
+\endlecture
+\end{document}
+
+

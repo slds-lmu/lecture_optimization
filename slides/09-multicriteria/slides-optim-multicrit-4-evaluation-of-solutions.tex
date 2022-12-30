@@ -1,0 +1,138 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/dominated_hypervolume.png}
+\newcommand{\learninggoals}{
+\item Quality indicators
+\item $\epsilon$-indicator
+\item Hypervolume indicator
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Evaluation of solutions}
+\lecture{Optimization in Machine Learning}
+\sloppy
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{vbframe}{Evaluation of solutions}
+
+
+The result of a multi-objective algorithm is a set of candidates $\mathcal{P}$.
+
+\lz
+
+To evaluate the quality of this set or compare it to other sets, one needs a quantitative measure. This is usually achieved by the so-called \textbf{quality indicators}.
+
+\lz
+
+How well a single solution set represents the Pareto front can be divided into four qualities:
+
+\begin{itemize}
+\item \textbf{Convergence:} The proximity to the true Pareto front
+\item \textbf{Spread:} The coverage of the Pareto front
+\item \textbf{Uniformity:} The evenness of the distribution of the solutions
+\item \textbf{Cardinality:} The number of solutions
+\end{itemize}
+
+\framebreak
+Many quality indicators focus on one of the four mentioned qualities by mapping the approximation of the Pareto front to a real number representing the quality of a set of solutions.
+\lz
+
+Nonetheless, some quality indicators focus on all the four qualities. These quality indicators are divided into two groups:
+
+\begin{itemize}
+\item \textbf{Distance-based:} requiring the knowledge of the true Pareto front
+\item \textbf{Volume-based:} measuring the space implied by a solution
+\end{itemize}
+
+\lz
+
+\textbf{$\epsilon$-indicator} and \textbf{hypervolume indicator} are common examples for the distance-based and the volume-based approaches, respectively.
+
+
+%\framebreak
+\end{vbframe}
+
+
+\begin{vbframe}{$\epsilon$-indicator}
+
+\begin{itemize}
+\item \textbf{$\epsilon$-indicator} is a binary, distance-based quality indicator, defined as: 
+$$
+\epsilon (\mathcal{P}, \mathcal{Q}):= \max_{q \in \mathcal{Q}} \min_{p \in \mathcal{P}} \max_{1 \leq i \leq m} \frac{p_{i}}{q_{i}}
+$$
+\small
+where $\mathcal{P}$ and $\mathcal{Q}$ are two solution sets and $m$ is the number of objectives. 
+\vspace{0.2cm}
+\normalsize
+\item $\epsilon$ denotes the factor needed to scale $\mathcal{Q}$, such that $\mathcal{Q}$ weakly dominates $\mathcal{P}$:
+$$
+\epsilon(\mathcal{P}, \mathcal{Q}) \leq 1 \Rightarrow \mathcal{P} \preceq \mathcal{Q}
+$$
+\small
+where $\mathcal{P}$ is said to weakly dominate $\mathcal{Q}$, if every solution $p \in \mathcal{P}$ is weakly Pareto optimal regarding the combined solution set $\mathcal{P} \cup \mathcal{Q}$.
+
+\vspace{0.2cm}
+\normalsize
+\item Note that $\epsilon$-indicator considers only the objective with the maximum difference. Hence, it might output similar results for substantially different approximations.
+
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Hypervolume indicator}
+
+\begin{minipage}[t]{1\textwidth}
+\begin{itemize}
+\small
+\item \textbf{Hypervolume indicator} is a volume-based quality indicator, defined as:
+\footnotesize
+
+\vspace{-0.2cm}
+$$S(\mathcal{P}, R) = \lambda\left(\bigcup_{\tilde{\bm{x}} \in \mathcal{P}}\left\{\bm{x} | \tilde{\bm{x}} \prec \bm{x} \prec R\right\}\right),$$ 
+
+\vspace{-0.1cm} 
+where $\mathcal{P} \subset \Xspace$ and $\lambda$ is the Lebesgue measure.
+\end{itemize}
+\end{minipage}
+
+
+\vspace{0.4cm}
+\begin{minipage}[t]{0.65\textwidth}
+\footnotesize
+\begin{itemize}
+            \item HV is calculated w.r.t the reference point $R$, which often reflects in each component the natural maximum of the respective objective -- if possible
+            \item The dominated hypervolume is also often called \textbf{S-Metric}.
+            \item Computation of HV scales exponentially in the number of objective functions $\mathcal{O}(n^{m-1})$.
+            \item Fast approximations exist for small values of $m$, and especially for machine learning applications we rarely optimize $m > 3$ objectives.
+    \end{itemize}
+\end{minipage}
+\begin{minipage}[t]{0.3\textwidth}
+\begin{figure}
+\includegraphics[width = 1\linewidth]{figure_man/dominated_hypervolume.png}
+\end{figure}
+\end{minipage}
+
+
+%\vspace*{-0.4cm}
+
+%The dominated hypervolume of the set of points $\mathcal{P} \subset \Xspace$ (here: 5 black points) is the area in the target function space (regarding a reference point $R$) which is dominated by points $\mathcal{P}$.
+
+\end{vbframe}
+
+\endlecture
+\end{document}

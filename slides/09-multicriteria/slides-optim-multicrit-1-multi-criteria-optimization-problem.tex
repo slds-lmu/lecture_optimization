@@ -1,0 +1,187 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/price-per-night.png}
+\newcommand{\learninggoals}{
+\item Introduction
+\item Definition
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Multi-criteria optimization problem}
+\lecture{Optimization in Machine Learning}
+\sloppy
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{vbframe}{Introductory example}
+
+Often we want to solve optimization problems concerning several goals.
+
+\vspace{0.5cm}
+    \textbf{General applications:}
+\begin{itemize}
+\item Medicine: maximum effect, but minimum side effect of a drug.
+\item Finances: maximum return, but minimum risk of an equity portfolio.
+\item Production planning: maximum revenue, but minimum costs.
+\item Booking a hotel: maximum rating, but minimum costs.
+\end{itemize}
+
+\vspace{0.5cm}
+    \textbf{In machine learning:}
+\begin{itemize}
+\item Sparse models: maximum predictive performance, but minimal number of features.
+\item Fast models: maximum predictive performance, but short prediction time.
+\item ...
+\end{itemize}
+
+\framebreak
+
+\textbf{Example}:
+
+Choose the best hotel to stay at by maximizing ratings subject to a maximum price per night.
+
+\vspace{0.5cm}
+ \textbf{Problems}:
+
+\footnotesize
+\begin{itemize}
+ \item The result depends on how we select the maximum price and usually returns different solutions for different maximum price values.
+ \item We could also choose a minimum rating and optimize the price per night.
+ \item The more objectives we optimize, the more difficult such a definition becomes.
+\end{itemize}
+
+\normalsize
+\vspace{0.5cm}
+\textbf{Goal}:\\
+\footnotesize
+Find a more general approach to solve multi-criteria problems.\\
+
+\framebreak
+
+\normalsize
+
+\begin{center}
+\includegraphics[width = 0.45\linewidth]{figure_man/booking1.png} ~~~ \includegraphics[width = 0.45\linewidth]{figure_man/booking2.png}
+\end{center}
+
+When booking a hotel: find the hotel with
+
+\begin{itemize}
+\item minimum price per night (\textbf{costs}) and
+\item maximum user rating (\textbf{performance}).
+\end{itemize}
+
+\vfill
+
+\begin{footnotesize}
+Since our standard is to minimize objectives, we minimize negative ratings.
+\end{footnotesize}
+
+\framebreak
+
+
+The objectives often conflict with each other:
+
+\begin{itemize}
+\item Lower price $\to$ usually lower hotel rating.
+\item Better rating $\to$ usually higher price.
+\end{itemize}
+
+Example: (negative) average rating by hotel guests (1 - 5) vs. average price per night (excerpt).
+
+%\begin{center}
+%\includegraphics[height = 4cm, width = 5cm]{figure_man/price-per-night.png}
+%\end{center}
+
+
+\vspace*{0.2cm}
+
+\begin{center}
+\includegraphics[width = 4.5cm, height = 4cm ]{figure_man/price-per-night.png}
+\end{center}
+%<<echo = F, fig.width = 3, fig.height=1.5, fig.align='center'>>=
+%df = readRDS("rsrc/expedia_example.rds")
+%
+%p = ggplot(data = df, aes(x = mean_price, y = - mean_rating)) + geom_point(size = 1.5)
+%p = p + theme_bw()
+%p = p + ylim(c(- 5.5, -2))
+%p = p + xlab("Price per night") + ylab("Rating")
+%p
+%@
+
+\framebreak
+\footnotesize
+Often, objectives are not directly comparable as they are measured on different scales:
+\begin{itemize}
+\item Left: A hotel with rating $4$ for $89$ Euro ($\textcolor{green}{y^{(1)}} = \left(89, - 4.0\right)$) would be preferred to a hotel for $108$ Euro with the same rating ($\textcolor{red}{y^{(2)}} = \left(108, - 4.0\right)$).
+\item Right: How to decide if $\textcolor{orange}{y^{(1)}} = \left(89, - 4.0\right)$ or $\textcolor{orange}{y^{(2)}} = \left(95, - 4.5\right)$ is preferred?
+\item How much is one \textit{rating point} worth?
+\end{itemize}
+
+\vspace{0.5cm}
+\normalsize
+
+\begin{center}
+\includegraphics[height=3.5cm, width =0.35\linewidth]{figure_man/Example1.png} ~~~ \includegraphics[height=3.5cm, width =0.35\linewidth]{figure_man/Example2.png}
+\end{center}
+
+%<<echo = F, fig.width = 5, fig.height=1.5, fig.align='center'>>=
+%p1 = ggplot(data = df, aes(x = mean_price, y = - mean_rating)) + geom_point(size = 1.5)
+%p1 = p1 + geom_point(data = df[16:17, ], aes(x = mean_price, y = - mean_rating), size = 2, colour = c("green", "red"))
+%p1 = p1 + theme_bw()
+%p1 = p1 + ylim(c(- 5.5, -2))
+%p1 = p1 + xlab("Price per night") + ylab("Rating")
+%
+%p2 = ggplot(data = df, aes(x = mean_price, y = - mean_rating)) + geom_point(size = 2)
+%p2 = p2 + geom_point(data = df[c(10, 16), ], aes(x = mean_price, y = - mean_rating), size = 2, colour = "orange")
+%p2 = p2 + theme_bw()
+%p2 = p2 + ylim(c(-5.5, -2))
+%p2 = p2 + xlab("Price per night") + ylab("Rating")
+%
+%grid.arrange(p1, p2, ncol = 2)
+%@
+
+\end{vbframe}
+
+\begin{vbframe}{multi-criteria optimization problem}
+A \textbf{multi-criteria optimization problem} is defined by\\
+
+$$
+\min_{\bm{x} \in \Xspace} f(\bm{x}) \Leftrightarrow \min_{\bm{x} \in \Xspace} \left(f_1(\bm{x}),  f_2(\bm{x}), ..., f_m(\bm{x})\right),
+$$
+
+%Be $\Xspace \subset \R^n$ and $f: \Xspace \to \R^m$, $m \ge 2$. A \textbf{multi-criteria optimization problem} is defined by
+
+%\begin{eqnarray*}
+%\min_{\bm{x} \in \Xspace} & & f(\bm{x}) \\ \Leftrightarrow \min_{\bm{x} \in \Xspace} \left(f_1(\bm{x}), f_2(\bm{x}), ..., f_m(\bm{x})\right).
+%\end{eqnarray*}
+with $\Xspace \subset \R ^ n$ and multi-criteria objective function $f: \Xspace \to \R ^ m$, $m \ge 2$.
+
+\begin{itemize}
+\item \textbf{Goal:} minimize multiple target functions simultaneously.
+\item $\left(f_1(\bm{x}), ..., f_m(\bm{x})\right)^\top$ maps each candidate $\bm{x}$ into the objecive space $\R^m$.
+\item Often no clear best solution, as objective are usually conflicting and we cannot totally order in $\R^m$. 
+% \item Objective functions are often conflicting.
+\item W.l.o.g. we always minimize.
+\item Alternative names: multi-criteria optimization, multi-objective optimization, Pareto optimization.
+\end{itemize}
+
+\end{vbframe}
+
+
+\endlecture
+\end{document}
+
