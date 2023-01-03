@@ -7,6 +7,7 @@
 
 \newcommand{\titlefigure}{figure_man/loop_2.png}
 \newcommand{\learninggoals}{
+\item Initial design
 \item Surrogate modeling
 \item Basic loop
 }
@@ -38,8 +39,44 @@
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_0.png}
 \end{center}
 
-\framebreak 
+\end{vbframe}
 
+\begin{vbframe}{Initial Design}
+
+\begin{itemize}
+\item Used to train the \textbf{first} surrogate model
+\item Should cover / explore input space:
+\begin{itemize}
+  \item Random design
+  \item Latin hypercube sampling
+  \item Sobol sampling
+\end{itemize}
+\item Type of design usually has not the largest effect
+%and unequal distances between points could even be beneficial
+\item A more important choice is the \textbf{size} of the initial design
+\begin{itemize}
+  \item It should neither be too small (bad initial fit) nor too large (spending too much budget without doing \enquote{intelligent} optimization)
+\end{itemize}
+\end{itemize}
+
+\framebreak
+
+Random design vs. LHS:
+
+\vspace{+0.45cm}
+
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{slides/010-bayesian-optimization/figure_man/init_0.png}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{slides/010-bayesian-optimization/figure_man/init_1.png}
+\end{minipage}
+
+\end{vbframe}
+
+
+\begin{vbframe}{Surrogate Modeling}
 \begin{enumerate}
 \item \textbf{Fit} a \textbf{regression model} $\hat{f}: \D \rightarrow \R$ (blue) to extract maximum information from the design points (black) and learn properties of $f$
 \vspace{+.05cm}
