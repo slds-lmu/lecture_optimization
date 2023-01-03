@@ -7,8 +7,8 @@
 
 \newcommand{\titlefigure}{figure_man/loop_2.png}
 \newcommand{\learninggoals}{
-\item Surrogate Modeling
-\item Basic Loop
+\item Surrogate modeling
+\item Basic loop
 }
 
 \title{Optimization in Machine Learning}
@@ -41,7 +41,7 @@
 \framebreak 
 
 \begin{enumerate}
-\item \textbf{Fit} a \textbf{regression model} (blue) to extract maximum information from the design points (black) and learn properties of $f$
+\item \textbf{Fit} a \textbf{regression model} $\hat{f}: \D \rightarrow \R$ (blue) to extract maximum information from the design points (black) and learn properties of $f$
 \vspace{+.05cm}
 
 \begin{center}
@@ -53,15 +53,16 @@ As we can evaluate $f$ without noise, we fit an interpolating regression model
 
 \framebreak 
 
-\item Instead of the expensive $f$, we optimize the cheap model function (blue) to \textbf{propose} a new point (red) for evaluation 
+\item Instead of the expensive $f$, we optimize the cheap 
+ surrogate $\fh$ (blue) to \textbf{propose} a new point (red) for evaluation 
 \vspace{+.05cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_2.png}
 \end{center}
 
-\vspace{-.1cm}
-In the context of Bayesian Optimization, the regression model is called \textbf{surrogate model}, because it is a cheap approximation of $f$ that is iteratively trained
+%\vspace{-.1cm}
+%In the context of BO, model is called \textbf{surrogate}, because it is a cheap approximation of $f$, which is used in its place.
 
 \framebreak 
 
@@ -148,7 +149,7 @@ The basic loop of our sequential optimization procedure is:
 \framebreak
 
 \begin{itemize}
-  \item We will see that other more sensible options exist for obtaining a new point
+  \item More sensible options exist for proposing new points
   \item We will define so-called acquisition functions based on the prediction of the surrogate model which we then optimize
   \item Optimizing the surrogate model directly corresponds to optimizing the mean prediction as acquisition function
   \item This results in high exploitation but low exploration
