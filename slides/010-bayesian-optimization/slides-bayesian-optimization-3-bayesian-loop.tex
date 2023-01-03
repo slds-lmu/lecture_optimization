@@ -27,7 +27,7 @@
 
 \textbf{Goal:}
 
-Find a good trade-off between \textbf{exploraion} (explore areas we haven't evaluated points yet) and \textbf{exploitation} (interesting areas where we likely improve)
+Find trade-off between \textbf{exploration} areas we haven't visited yet) and \textbf{exploitation} (search around good design points)
 
 \vspace{+.45cm}
 
@@ -40,73 +40,32 @@ Find a good trade-off between \textbf{exploraion} (explore areas we haven't eval
 \begin{itemize}
 \item \textbf{Idea}: Use a \textbf{Bayesian approach} to build a surrogate model that yields estimates for 
 \begin{itemize}
-  \item the posterior mean $m(\xv)$
-  \item the posterior variance $ s^2(\xv)$
+  \item the posterior mean $\hat{f}(\xv)$
+  \item the posterior variance $\hat{s}^2(\xv)$
 \end{itemize}
 \item The posterior variance expresses the \enquote{confidence} in the prediction
 \item The posterior variance should be high in regions where we have only few observations (red area) and low where we have a lot of observations (blue area)
-\item The most prominent choice for a surrogate model is a \textbf{Gaussian process} (GP)
-\item Since spatial dependencies are extremely well modeled by GPs (points that are \enquote{close} in the input space are also close in the objective space), they are considered particularly suitable as a surrogate model
+\item The most prominent choice for a surrogate model is a \textbf{Gaussian process} (GP), here the posterior predictive distribution for a new point is normal, $\mathcal{N}\left(\hat{f}(\xv), \hat{s}^2(\xv)\right)$
 \end{itemize}
 
-\end{vbframe} 
+\framebreak
 
-\begin{vbframe}{Gaussian Process Surrogate Model} 
 
-% FIXME: fix notation of GP
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_0.png}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/noisy_2.png}
+\end{minipage}
 
-We fit a GP to $D = \{(\xv^{(i)}, y^{(i)})\}_{i = 1, \ldots, 6}$
-
-\lz 
-
-The GP gives us a \textbf{distribution over functions}
-%as the posterior predictive distrbution for any set of input variables follows a multivariate Gaussian distribution}
-
-\vspace{+.45cm}
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_1.png}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_0.png}
 \end{center}
 
-\vspace{0.2cm}
 
-The blue ribbons represent $m(\xv) \pm s(\xv)$
-
-\framebreak 
-
-The posterior mean and the posterior variance for a GP can be derived analytically: 
-
-\begin{itemize}
-\item Let $\D = \{(\xv^{(i)}, y^{(i)})\}_{i = 1, \ldots, t}$ be the data we are fitting the GP on
-\item Let $\bm{y}:= \left(y^{(1)}, \ldots, y^{(t)}\right)$ be the vector of observed outputs
-\item For a covariance kernel $k(\xv, \xv^{'})$, let $\bm{K} := \left(k(\xv^{(i)}, \xv^{(j)})\right)_{i,j}$ denote the \textbf{kernel (Gram) matrix} and $k(\xv) \coloneqq \left(k(\xv, \xv^{(1)}), \ldots, k(\xv, \xv^{(t)})\right)^\top$
-\item Further, we assume a zero-mean GP prior $^{(*)}$  
-\end{itemize}
-
-\vfill
-
-\begin{footnotesize}
- $^{(*)}$ It is common but by no means necessary to consider GPs with a zero mean function. We could also model a GP with a constant trend, for example. Note, however, that using zero-mean priors is not a drastic limitation, since the mean of the posterior process is not confined to be zero. 
-\end{footnotesize}
-
-\framebreak 
-
-The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP is
-
-\begin{eqnarray*}
-  f ~|~ \xv, \D \sim \mathcal{N}\left(m(\xv), s^2(\xv)\right)
-\end{eqnarray*}
-
-with 
-
-\begin{eqnarray*}
-  m(\xv) &=& k(\xv)^\top \bm{K}^{-1} \bm{y} \\
-  s^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top \bm{K}^{-1} k(\xv)
-\end{eqnarray*}
-
-\vfill
-
-\end{vbframe}
+\end{vbframe} 
 
 \begin{vbframe}{Acquisition Functions}
 
@@ -310,15 +269,15 @@ Many more acquisition functions exist:
 \begin{vbframe}{Initial Design}
 
 \begin{itemize}
-\item The initial design is used to train the \textbf{first} surrogate model
-\item It should cover the input space sufficiently: commonly used designs are
+\item Used to train the \textbf{first} SM
+\item Should cover / explore input space:
 \begin{itemize}
-  \item Random search
-  \item Grid search
-  \item Latin hypercube sampling (LHS)
+  \item Random design
+  \item Latin hypercube sampling
   \item Sobol sampling
 \end{itemize}
-\item Type of design usually has not the largest effect and unequal distances between points could even be beneficial
+\item Type of design usually has not the largest effect
+%and unequal distances between points could even be beneficial
 \item A more important choice is the \textbf{size} of the initial design
 \begin{itemize}
   \item It should neither be too small (bad initial fit) nor too large (spending too much budget without doing \enquote{intelligent} optimization)

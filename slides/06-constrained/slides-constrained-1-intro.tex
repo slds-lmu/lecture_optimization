@@ -7,10 +7,9 @@
 
 \newcommand{\titlefigure}{figure_man/convex_programs.png}
 \newcommand{\learninggoals}{
-\item Definition
-\item Max. Likelihood 
-\item Normal regression
-\item Risk Minimization
+\item Examples of constrained optimization in statistics and ML 
+\item General definition
+\item Hierarchy of convex constrained problems
 }
 
 
@@ -35,7 +34,7 @@
 For data $\left(\xv^{(1)}, ..., \xv^{(n)}\right)$, we want to find the maximum likelihood estimate
 
 $$
-\max_\theta L(\theta) = \prod_{i = 1}^n f(^{(i)}, \theta)
+\max_\theta L(\theta) = \prod_{i = 1}^n f(\xv^{(i)}, \theta)
 $$
 
 In some cases, $\theta$ can only take \textbf{certain values}. 
@@ -71,15 +70,15 @@ In some cases, $\theta$ can only take \textbf{certain values}.
 \item \textbf{Lasso regression}:
 
 \begin{eqnarray*}
-\min_{\bm{\beta}} && \frac{1}{n}\sum_{i = 1}^n\left(\bm{y}^{(i)} - \bm{\theta}^T\xv^{(i)}\right)^2 \\
-\text{s.t. } && \|\bm{\theta}\|_1 \le t
+\min_{\bm{\beta}\in \R^p} && \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^T\xv^{(i)}\right)^2 \\
+\text{s.t. } && \|\bm{\beta}\|_1 \le t
 \end{eqnarray*}
 
 \item \textbf{Ridge regression}:
 
 \begin{eqnarray*}
-\min_{\bm{\theta}} && \frac{1}{n}\sum_{i = 1}^n\left(\bm{y}^{(i)} - \bm{\theta}^T\xv^{(i)}\right)^2 \\
-\text{s.t. } &&\|\bm{\theta}\|_2 \le t
+\min_{\bm{\beta}\in \R^p} && \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^T\xv^{(i)}\right)^2 \\
+\text{s.t. } &&\|\bm{\beta}\|_2 \le t
 \end{eqnarray*}
 \end{itemize}
 
@@ -89,10 +88,29 @@ In some cases, $\theta$ can only take \textbf{certain values}.
 
 \framebreak
 
+
+\begin{itemize}
+\item \textbf{Constrained Lasso regression}:
+
+\begin{eqnarray*}
+\min_{\bm{\beta}\in \R^p} && \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^T\xv^{(i)}\right)^2 \\
+\text{s.t. } && \|\bm{\beta}\|_1 \le t\\
+             && \bm{C}\bm{\beta} \le \bm{d}\\
+             && \bm{A}\bm{\beta} = \bm{b}, 
+\end{eqnarray*}
+\end{itemize}
+
+where the matrices $\bm{A}\in \R^{l \times p}$ and $\bm{C} \in \R^{k \times p}$ have full row rank. 
+\lz 
+
+This model includes many Lasso variants as special cases, e.g., the Generalized Lasso, (sparse) isotonic regression, log-contrast regression for compositional data, etc. (see, e.g., \href{https://hua-zhou.github.io/media/pdf/GainesKimZhou08CLasso.pdf}{\beamergotobutton{Gaines et al., 2018}}). 
+
+\framebreak
+
 Remember the dual formulation of the SVM, which is a convex quadratic program with box constraints plus one linear constraint: 
 
 \begin{eqnarray*}
-	& \max\limits_{\boldsymbol{\alpha}] \in \R^n} & \sum_{i=1}^n \alpha_i - \frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\yi y^{(j)} \scp{\xi}{\xv^{(j)}} \\
+	& \max\limits_{\boldsymbol{\alpha} \in \R^n} & \sum_{i=1}^n \alpha_i - \frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\yi y^{(j)} \scp{\xi}{\xv^{(j)}} \\
 	& \text{s.t. } & 0 \le \alpha_i \le C, \\
 	& \quad & \sum_{i=1}^n \alpha_i \yi = 0,
 \end{eqnarray*}
@@ -206,7 +224,9 @@ $$
 
 is known as the feasible set.
 
-\framebreak
+\end{vbframe}
+
+\begin{vbframe}{Constrained Convex Optimization}
 
 Special cases of constrained optimization problems are \textbf{convex programs}, with convex objective function $f$, convex inequality constraints $g_i$, and affine equality constraints $h_j$ (i.e. $h_j(\xv) = \bm{a}_j^\top \xv - \bm{b}_j$). 
 
@@ -228,7 +248,19 @@ $$
 for $\bm{Q} \in \R^{d \times d}, \bm{c} \in \R^d, d \in \R$, and constraints are linear.
 \end{itemize}
 
-as well as second-order cone programs (SOCP), semidefinite programs (SDP), cone programs (CP), and graph form programs (GFP). 
+as well as second-order cone programs (SOCP), semidefinite programs (SDP), and cone programs (CP). 
+
+\framebreak
+
+
+SOCPs play a pivotal role in statistics and engineering and have been popularized in the seminal article by \href{http://www.seas.ucla.edu/~vandenbe/publications/socp.pdf}{\beamergotobutton{Lobo et al., 1998}}. 
+\lz 
+
+In ML, SDPs are at the heart of, e.g., learning kernels from data (see, e.g., \href{https://www.jmlr.org/papers/volume5/lanckriet04a/lanckriet04a.pdf}{\beamergotobutton{Lanckriet et al., 2004}}).
+
+\lz 
+
+In general, this categorization of convex optimization problem classes helps in the design of specialized \emph{optimization methods} that are tailored toward the specific type of convex optimization problem (keyword: disciplined convex programming \href{https://web.stanford.edu/~boyd/papers/disc_cvx_prog.html}{\beamergotobutton{Grant et al., 2006}}).
 
 \end{vbframe}
 

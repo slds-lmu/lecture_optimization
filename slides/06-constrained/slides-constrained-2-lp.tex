@@ -7,10 +7,9 @@
 
 \newcommand{\titlefigure}{figure_man/convex_programs.png}
 \newcommand{\learninggoals}{
-\item Definition
-\item Max. Likelihood 
-\item Normal regression
-\item Risk Minimization
+\item Instances of LPs underlying statistical estimation
+\item Definition of an LP
+\item Geometric intuition of LPs
 }
 
 
@@ -117,6 +116,42 @@ objective function and constraints are \textbf{linear functions}.
 %@
 
 
+\begin{itemize}
+\item \textbf{(Sparse) Quantile regression}:
+
+\begin{eqnarray*}
+\min_{\bm{\beta}\in \R^p} && \frac{1}{n}\sum_{i = 1}^n \rho_\tau \left(y^{(i)} - \beta_0 -  \bm{\beta}^T\xv^{(i)}\right) \\
+\text{s.t. } && \|\bm{\beta}\|_1 \le t
+\end{eqnarray*}
+where scalar $\beta_0$ and $\bm{\beta} \in \R^p$ are the quantile regression coefficients for $\tau \in [0,1]$, and $\rho_\tau(\cdot)$ is the check function defined as
+
+\begin{footnotesize}
+  $$
+  \rho_\tau(s) = \begin{cases} \tau \cdot s & \text{for } s>0 \\ -1(1-\tau)\cdot s & \text{for } s\le0
+  \end{cases}
+  $$
+\end{footnotesize}
+
+When parameter $\tau = 1/2$, quantile regression amounts to median regression, least absolute error (LAE), or least absolute deviation (LAD). As in Lasso, $t\ge0$ is a tuning parameter. 
+
+\item \textbf{Dantzig selector}:
+
+\begin{eqnarray*}
+\min_{\bm{\beta}\in \R^p} && \|\bm{\beta}\|_1 \\
+\text{s.t. } && \| \bm{X}^T (\bm{X} \bm{\beta} - \bm{y})\|_\infty \le \lambda \,
+\end{eqnarray*}
+\end{itemize}
+
+where $\bm{y} \in \R^n$, $\bm{X} \in \R^{n \times p}$, and $\lambda > 0$ is a tuning parameter. The infinity norm is defined as $\| x \|_\infty = \max\{|x_1|, \dots, |x_i|, \ldots, |x_n|\}$ is  
+
+\lz
+
+The Dantzig selector is similar (and behaves similar) to the Lasso and was introduced for variable selection in the seminal paper by Terence Tao and Emmanuel Cand\`es (see moodle page for reference).
+
+\lz
+
+Details about LPs in statistical estimation can be found, e.g., in the PhD thesis of \href{ttps://etd.ohiolink.edu/apexprod/rws_etd/send_file/send?accession=osu1222035715&disposition=inline}{\beamergotobutton{Yonggong Gao}}). 
+
 \framebreak
 
 W.l.o.g. Linear programming is specified using the so-called \textbf{standard form}.
@@ -124,12 +159,12 @@ W.l.o.g. Linear programming is specified using the so-called \textbf{standard fo
 \vspace*{-0.5cm}
 
 \begin{eqnarray*}
-\min_{\bm{x} \in \R^n} && \bm{c}^T\bm{x}\\
-\text{s.t. } && \bm{A}\bm{x} \ge \bm{b} \\
+\max_{\bm{x} \in \R^n} && \bm{c}^T\bm{x}\\
+\text{s.t. } && \bm{A}\bm{x} \le \bm{b} \\
 && \bm{x} \ge 0
 \end{eqnarray*}
 
-The inequalities $\bm{Ax} \ge \bm{b}$ ($\bm{A} \in \R^{m\times n}$, $\bm{b} \in \R^m$) and $\bm{x} \ge 0$ are to be understood componentwise.
+The inequality constraints $\bm{Ax} \le \bm{b}$ ($\bm{A} \in \R^{m\times n}$, $\bm{b} \in \R^m$) and $\bm{x} \ge 0$ are to be understood componentwise.
 
 \lz
 
@@ -177,8 +212,8 @@ can also be formulated as
 \vspace*{-0.2cm}
 
 \begin{eqnarray*}
-\min && (-1, -1) \begin{pmatrix} x_1 \\ x_2 \end{pmatrix} \\
-\text{s.t. } &&  \begin{pmatrix} - 1 & - 2 \\ - 2 & - 1 \end{pmatrix} \bm{x} \ge \begin{pmatrix} - 1 \\ - 1
+\max && (1, 1) \begin{pmatrix} x_1 \\ x_2 \end{pmatrix} \\
+\text{s.t. } &&  \begin{pmatrix}  1 &  2 \\  2 &  1 \end{pmatrix} \bm{x} \le \begin{pmatrix}  1 \\  1
 \end{pmatrix} \\
 && \bm{x} \ge 0
 \end{eqnarray*}
