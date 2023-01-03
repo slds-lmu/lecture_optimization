@@ -1,0 +1,144 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-mbo}
+
+\newcommand{\titlefigure}{figure_man/surrogate_0.png}
+\newcommand{\learninggoals}{
+\item Gaussian Process vs. Random Forest
+}
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Bayesian Optimization:\\ Types of Surrogate Models}
+\lecture{Optimization in Machine Learning}
+
+\begin{frame}{Surrogate Models}
+
+Desiderata:
+
+\begin{itemize}
+  \item Regression model with uncertainty estimates
+  \item Accurate predictions
+\end{itemize}
+
+\vspace{+0.45cm}
+
+Depending on the application:
+
+\begin{itemize}
+  \item Should be cheap to train
+  \item Scales well in the number of data points
+  \item Scales well in the number of dimensions
+  \item Can handle different types of inputs (categorical and continuous)
+  \item Can handle dependencies (i.e., hierarchical input)
+\end{itemize}
+
+\end{frame}
+
+
+\begin{vbframe}{Gaussian Process}
+Pros:
+\begin{itemize}
+  \item Spatial dependencies are extremely well modeled by GPs (points that are \enquote{close} in the input space are also close in the objective space)
+  \item GPs yield well calibrated uncertainty estimates
+  \item The posterior predictive distribution under a GP is normal
+\end{itemize}
+
+\vspace{+0.45cm}
+
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/surrogate_0.png}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/surrogate_1.png}
+\end{minipage}
+
+\framebreak
+
+The posterior mean and the posterior variance for a GP can be derived analytically: 
+
+\begin{itemize}
+  \item Let $\D = \{(\xv^{(i)}, y^{(i)})\}_{i = 1, \ldots, t}$ be the data we are fitting the GP on
+  \item Let $\bm{y}:= \left(y^{(1)}, \ldots, y^{(t)}\right)$ be the vector of observed outputs
+  \item For a covariance kernel $k(\xv, \xv^{'})$, let $\bm{K} := \left(k(\xv^{(i)}, \xv^{(j)})\right)_{i,j}$ denote the \textbf{kernel (Gram) matrix} and $k(\xv) \coloneqq \left(k(\xv, \xv^{(1)}), \ldots, k(\xv, \xv^{(t)})\right)^\top$
+  \item Further, we assume a zero-mean GP prior $^{(*)}$  
+\end{itemize}
+
+\vfill
+
+\begin{footnotesize}
+ $^{(*)}$ It is common but by no means necessary to consider GPs with a zero mean function. We could also model a GP with a constant trend, for example. Note, however, that using zero-mean priors is not a drastic limitation, since the mean of the posterior process is not confined to be zero. 
+\end{footnotesize}
+
+\framebreak 
+
+The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP is
+
+\begin{eqnarray*}
+  Y(\xv) ~|~ \xv, \D \sim \mathcal{N}\left(\hat{f}(\xv), \hat{s}^2(\xv)\right)
+\end{eqnarray*}
+
+with 
+
+\begin{eqnarray*}
+  \hat{f}(\xv) &=& k(\xv)^\top \bm{K}^{-1} \bm{y} \\
+  \hat{s}^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top \bm{K}^{-1} k(\xv)
+\end{eqnarray*}
+
+\vfill
+
+\framebreak
+
+Cons:
+\begin{itemize}
+  \item Vanilla GPs scale cubic in the number of data points
+  \item GPs can natively only handle numeric features\\
+    Categorical features and dependencies require special handling via custom kernel
+  \item GPs aren't that robust\\
+    In practice, \enquote{white-noise} can occur where the posterior mean and variance is constant (except for the interpolation of training points)
+  \item Performance can be sensitive to the choice of kernel and hyperparameters
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Random Forest - Different Choices}
+
+Pros:
+\begin{itemize}
+ \item Cheap to train
+ \item Scales well with the number of data points
+ \item Scales well with the number of dimensions
+ \item Can easily handle hierarchical mixed spaces
+ \item Robust
+\end{itemize}
+
+\framebreak
+
+\begin{center}
+  \includegraphics[width = 0.9\textwidth]{figure_man/surrogate_2.png}\\
+\end{center}
+
+\end{vbframe}
+
+
+\begin{frame}{Random Forest}
+Cons:
+\begin{itemize}
+  \item Poor uncertainty estimates
+  \item Not really Bayesian, (no real posterior predictive distribution)
+  \item Poor extrapolation
+\end{itemize}
+ 
+\end{frame}
+
+\endlecture
+\end{document}
+
