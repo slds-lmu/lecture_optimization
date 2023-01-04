@@ -28,7 +28,11 @@
 
 \begin{vbframe}{Coordinate descent}
 
-\textbf{Idea:} Use direction of the coordinate axis as \enquote{descent direction}.
+If derivative of objective function does not exist / is unknown we cannot compute a descent direction analytically and an \textbf{inexact} procedure must be used.
+
+\lz 
+
+\textbf{Idea:} Use direction of coordinate axes as \enquote{descent directions}.
 
 % \begin{itemize}
 % \item \textbf{Wahl der Richtung}: Wähle eine Dimension $i$, in deren Richtung wir laufen (Für $i=1$ laufen wir also in Richtung der $x_1$-Achse)
@@ -39,9 +43,6 @@
 
 In the simplest case we run iteratively over all coordinates $\{1, ...,d\}$ and minimize $f$ with respect to the corresponding dimension.
 
-\lz
-
-If the derivative of the function does not exist / is not known and therefore the minimum in the $i$ direction cannot be determined \textbf{exactly}, an \textbf{inexact} procedure must be used to minimize it.
 
 \framebreak
 
@@ -157,9 +158,9 @@ $$\theta_{j}* = \frac{1}{n} \sum_{i=1}^{n} x_{i,j}r_{i,j}$$
 A penalty is included in the model through a \textbf{soft-thresholding operator}:
 $$\theta_{j} = \bm{S}(\theta-{j}*, \lambda) = sign(\theta_{j}*)(|\theta-{j}*|-\lambda)_{+} = $$
 $$ = \left\{ \begin{array}{rcl}
-		\theta_{j}^{*} - \lambda ~~~~~~    \theta_{j}^{*}>0 ~ and ~ \lambda<|\theta_{j}^{*}| \\ 
-		\theta_{j}^{*} + \lambda ~~~~~~    \theta_{j}^{*}>0 ~ and ~ \lambda<|\theta_{j}^{*}| \\ 
-		0 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \lambda \geq |\theta_{j}^{*}| 
+    \theta_{j}^{*} - \lambda ~~~~~~    \theta_{j}^{*}>0 ~ and ~ \lambda<|\theta_{j}^{*}| \\ 
+    \theta_{j}^{*} + \lambda ~~~~~~    \theta_{j}^{*}>0 ~ and ~ \lambda<|\theta_{j}^{*}| \\ 
+    0 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \lambda \geq |\theta_{j}^{*}| 
    \end{array} \right. $$
    
 \framebreak
@@ -187,7 +188,6 @@ In essence, by providing are starting place for optimization warm starting can s
 \end{vbframe}
 
 
-\end{vbframe}
 \begin{vbframe}{Coordinate descent for statistics and machine learning}
 
 Why is it being used?

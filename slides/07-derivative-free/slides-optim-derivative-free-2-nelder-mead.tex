@@ -336,17 +336,20 @@ If gradient is easy to calculate, BFGS is preferred.
 
 \begin{vbframe}{Nelder-Mead Visualization in 2D}
 \vspace*{-0.5cm}
-$$f(x,y) = x^{2} + y^{2} + xsiny + ysinx $$ 
+
+$$\min_\xv f(x_1,x_2) = x_1^{2} + x_2^{2} + x_1\cdot \sin x_2 + x_2 \cdot \sin x_1 $$ 
 \vspace*{-0.5cm}
 \begin{figure}
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width = 0.75\linewidth]{figure_man/nm_animation2d_1.PNG}
+        \includegraphics[width = 0.6\linewidth]{figure_man/nm_animation2d_1.PNG}
+        \caption*{(1)}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width = 0.75\linewidth]{figure_man/nm_animation2d_2.PNG}
+        \includegraphics[width = 0.6\linewidth]{figure_man/nm_animation2d_2.PNG}
+        \caption*{(2)}
     \end{minipage}
 \end{figure}
 \vspace*{-0.5cm}
@@ -354,21 +357,24 @@ $$f(x,y) = x^{2} + y^{2} + xsiny + ysinx $$
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width = 0.75\linewidth]{figure_man/nm_animation2d_3.PNG}
+        \includegraphics[width = 0.6\linewidth]{figure_man/nm_animation2d_3.PNG}
+        \caption*{(3)}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
-        \includegraphics[width = 0.75\linewidth]{figure_man/nm_animation2d_4.PNG}
+        \includegraphics[width = 0.6\linewidth]{figure_man/nm_animation2d_4.PNG}
+        \caption*{(4)}
     \end{minipage}
 \end{figure}
-\vspace*{-0.5cm}
-\begin{figure}
-    \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width = 0.75\linewidth]{figure_man/nm_animation2d_5.PNG}
-    \end{minipage}
-\end{figure}
+% \vspace*{-0.5cm}
+% \begin{figure}
+%     \centering
+%     \begin{minipage}{0.45\textwidth}
+%         \centering
+%         \includegraphics[width = 0.6\linewidth]{figure_man/nm_animation2d_5.PNG}
+%         \caption*{(5)}
+%     \end{minipage}
+% \end{figure}
 
 \end{vbframe}
 
