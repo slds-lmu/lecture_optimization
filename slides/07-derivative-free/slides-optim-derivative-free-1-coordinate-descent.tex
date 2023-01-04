@@ -5,10 +5,10 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/convex_programs.png}
+\newcommand{\titlefigure}{figure_man/Coordinate_descent.png}
 \newcommand{\learninggoals}{
-\item Idea
-\item Connection to statistics \& machine learning
+\item Axes as descent direction 
+\item Meaning in statistics
 }
 
 
@@ -52,9 +52,8 @@ If the derivative of the function does not exist / is not known and therefore th
 that minimizes $f$, given $x^{[t]}_1, \hdots,x^{[t]}_{i-1}$ and $x^{[t-1]}_{i-1}, \hdots,x^{[t-1]}_d$:
 \end{itemize}
 
-
-
-\begin{minipage}{0.4\textwidth}
+\begin{columns}
+\begin{column}{.4\textwidth}
     \begin{scriptsize}
 \begin{align*}
 x^{[t]}_1 &= \argmin_{x_1} f(x_1, x^{[t-1]}_2, x^{[t-1]}_3, \hdots, x^{[t-1]}_d) \\
@@ -64,14 +63,14 @@ x^{[t]}_3 &= \argmin_{x_3} f(x^{[t]}_1, x^{[t]}_2, x_3, \hdots, x^{[t-1]}_d) \\
 x^{[t]}_d &= \argmin_{x_d} f(x^{[t]}_1, x^{[t]}_2, x^{[t]}_3, \hdots, x_d) \\
 \end{align*}
 \end{scriptsize}
-\end{minipage}
-\begin{minipage}{0.52\textwidth}
+\end{column}
+\begin{column}{.5\textwidth}
 \begin{center}
-\includegraphics[width=0.9\textwidth]{figure_man/Coordinate_descent.png} \\
+\vspace*{-0.3cm}
+\includegraphics[width=0.8\textwidth]{figure_man/Coordinate_descent.png} \\
 \tiny{\url{https://commons.wikimedia.org/wiki/File:Coordinate_descent.svg}}
-\end{center}
-\end{minipage}
-
+\end{center}\end{column}
+\end{columns}
 
 \framebreak
 
