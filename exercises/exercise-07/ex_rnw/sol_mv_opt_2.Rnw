@@ -9,11 +9,12 @@ c2 = c(0.8, -0.8)
 S2 = matrix(c(1.1, -0.9, -0.9, 1.1), nrow = 2)
 S2_inv = solve(S2)
 
-g <- function(u) {ifelse(abs(u) < 1, (1 - u^2)^2, 0)}
+rho <- function(u) {ifelse(abs(u) < 1, (1 - u^2)^2, 0)}
 
-f1 <- function(x) {sqrt((x - c2)  %*% S2_inv %*% (x - c2))}
-f2 <- function(x) {sqrt((x - c1) %*% (x -c1))}
-f <- function(x) {-g(f1(x)) + g(f2(x))}
+dist1 <- function(x) {sqrt((x - c1) %*% (x -c1))}
+dist2 <- function(x) {sqrt((x - c2)  %*% S2_inv %*% (x - c2))}
+
+f <- function(x) {rho(dist1(x)) - rho(dist2(x))}
 
 x = seq(-2, 2, by=0.01)
 xx = expand.grid(X1 = x, X2 = x)
@@ -21,18 +22,20 @@ xx = expand.grid(X1 = x, X2 = x)
 fxx = apply(xx, 1, f)
 df = data.frame(xx = xx, fxx = fxx)
   
-ggplot() +
-    geom_contour_filled(data = df, aes(x = xx.X1, y = xx.X2, z = fxx)) + 
+cont_plot = ggplot() +
+    geom_contour_filled(data = df, aes(x = xx.X1, y = xx.X2, z = fxx), 
+                        binwidth = 0.05) + 
   xlab(expression(x[1])) +   
   ylab(expression(x[2]))
+cont_plot
 @
 \item 
-First we analyze $\rho(u):$
+First we analyze $\rho(u)$ for $\vert u \vert <1:$
 $(1-u^2)^2 = 0 \iff (1-u^2) = 0 \iff u^2 = 1 \Rightarrow \rho(u) \neq 0$ for $u^2 < 1$ and $\rho(u) = 0$ for $u^2 \geq 1$.\\
 We can check this condition for both squared distances around the centers $\mathbf{c}_1, \mathbf{c}_2$: \\
 \begin{enumerate}
 \item $\Vert\mathbf{x} - \mathbf{c}_1\Vert_{S_1}^2 < 1 \iff \Vert\mathbf{x} - \mathbf{c}_1\Vert_2^2 < 1$ (unit circle around $\mathbf{c}_1$)
-\item $\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2 = (\mathbf{x} - \mathbf{c}_2)^\top \begin{pmatrix} 1.1 & -0.9 \\ -0.9 & 1.1\end{pmatrix}^{-1} (\mathbf{x} - \mathbf{c}_2)$ (ellipse around $\mathbf{c}_2$)\\
+\item $\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2 = (\mathbf{x} - \mathbf{c}_2)^\top \begin{pmatrix} 1.1 & -0.9 \\ -0.9 & 1.1\end{pmatrix}^{-1} (\mathbf{x} - \mathbf{c}_2) < 1$ (ellipse around $\mathbf{c}_2$)\\
 In order to find the smallest enclosing circle of the ellipse we can use the eigendecomposition of $S_2:$ 
 $\det(S_2 - \lambda \mathbf{I}) = 0 \iff  \det \begin{pmatrix} 1.1 - \lambda & -0.9 \\ -0.9 & 1.1 -\lambda\end{pmatrix} = 0 \iff \lambda^2 - 2.2\lambda + 0.4 = 0 \iff \lambda_1 = 2.0, \lambda_2 = 0.2$ \\
 $\Rightarrow $ Eigenvalues $\mu_1, \mu_2$ of $S_2^{-1}$ are $\mu_i = 1/\lambda_i.$ \\
@@ -43,10 +46,11 @@ $\Vert\mathbf{c}_2 - \mathbf{c}_1\Vert_2 = \sqrt{2\cdot 1.9^2} \approx 2.69 > 1 
 $\Rightarrow$ the unit circle around $\mathbf{c}_1$ and the ellipse around $\mathbf{c}_2$ can not intersect $\Rightarrow$ only $\rho(\Vert\mathbf{x} - \mathbf{c}_1\Vert_{S_1})$ or $\rho(\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2})$ can be non-zero for a given $\mathbf{x} \in \R^2.$ \\
 \end{enumerate}
 \item Because of b) we know that we can treat $\rho(\Vert\mathbf{x} - \mathbf{c}_1\Vert_{S_1})$ and $\rho(\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2})$ independently. Also it follows from $\rho(u) \geq 0 \; \forall u \in \R, w_1 > 0$ and $w_2 < 0$ that the global minimum must be in $\{\mathbf{x} \in \R^2 |\; \Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2 < 1\}$ \\
-$\frac{\partial}{\partial \mathbf{x}}\rho(\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}) =  2(1 - \Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2)\cdot (-2) \cdot (\mathbf{x} - \mathbf{c}_2)^\top S_2^{-1} \overset{!}{=} \mathbf{0} \Rightarrow$ either $\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2 = 1$ (which is the boundary) or $\mathbf{x} = \mathbf{c}$. \\
-Since $\rho(1) = 0$ and $-\rho(\Vert \mathbf{c} - \mathbf{c} \Vert) = -1 < 0$ it follows that the global minimum must be $\mathbf{x} = \mathbf{c}.$
+$\frac{\partial}{\partial \mathbf{x}}\rho(\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}) =  2(1 - \Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2)\cdot (-2) \cdot (\mathbf{x} - \mathbf{c}_2)^\top S_2^{-1} \overset{!}{=} \mathbf{0} \Rightarrow$ either $\Vert\mathbf{x} - \mathbf{c}_2\Vert_{S_2}^2 = 1$ (which is the boundary) or $\mathbf{x} = \mathbf{c}_2$. \\
+Since $-\rho(1) = 0$ and $-\rho(\Vert \mathbf{c}_2 - \mathbf{c}_2 \Vert) = -1 < 0$ it follows that the global minimum must be $\mathbf{x} = \mathbf{c}_2.$
 \item 
 <<mv-gd, echo=TRUE, out.width="50%">>=
+# we can treat the bump functions independently b)
 grad <- function(x) {
   if((x - c1) %*% (x - c1) < 1){
     return(c(-4 * c(1 - (x - c1) %*% (x - c1)) * (x - c1)))
@@ -68,9 +72,9 @@ print(x2)
 print(grad(x1))
 @ 
 We can not make any further progress with GD since the gradient is exactly zero.
-\item Start with $\mathbf{x}^{[0]} = (0.45, 5)^\top.$ \\
+\item Start with $\mathbf{x}^{[0]} = (-0.45, 5)^\top.$ \\
 Since $\Vert\mathbf{c}_1 - \mathbf{x}^{[0]}\Vert_2^2 = 0.5525 < 1$ we know that
-$\nabla f(\mathbf{x}^[0]) = -4(1 - \Vert\mathbf{x} - \mathbf{c}_1\Vert^2_2) \cdot (\mathbf{x} - \mathbf{c}_1)^\top = (-0.5655, 0.5220).$ \\
+$\nabla f(\mathbf{x}^{[0]}) = -4(1 - \Vert\mathbf{x} - \mathbf{c}_1\Vert^2_2) \cdot (\mathbf{x} - \mathbf{c}_1)^\top = (-0.5655, 0.5220).$ \\
 $\mathbf{x}^{[1]} = \mathbf{x}^{[0]} - 0.15 * (-0.5655, 0.5220)^\top = (-0.3652, 0.422)^\top.$ \\
 Since $\Vert\mathbf{c}_1 - \mathbf{x}^{[1]}\Vert_2^2 = 1.0001 > 1$ and $\Vert\mathbf{c}_2 - \mathbf{x}^{[1]}\Vert^2_{S_2} = 1.4323 > 1$ the gradient of $f$ is zero at $\mathbf{x}^{[1]}.$\\
 $\Rightarrow \mathbf{x}{[2]} = \mathbf{x}{[1]}$
@@ -84,11 +88,15 @@ v = c(0.4, -0.4)
 phi = 0.5
 x = c(-0.45, 0.5)
 
-for (i in 1:10){
+xs = x
+for (i in 1:15){
   v = phi * v - alpha*grad(x)
   x = x + v
-  print(x)
+  xs = rbind(xs, x)    
 }
+
+cont_plot + 
+  geom_line(data = as.data.frame(xs), aes(x=V1, y=V2), color="red")
 @
 
 

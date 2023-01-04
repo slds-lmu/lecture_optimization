@@ -287,93 +287,69 @@ since $\tilde{\bm{\theta}}$ perfectly seperates the data.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
+\hlkwd{library}\hlstd{(gridExtra)}
+
+\hlstd{plot_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{gd_fun}\hlstd{,} \hlkwc{lambda}\hlstd{)\{}
+  \hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{)}
+  \hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
+  \hlstd{thetas_norm} \hlkwb{=} \hlkwa{NULL}
+  \hlstd{fs} \hlkwb{=} \hlkwa{NULL}
+  \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{500}\hlstd{)\{}
+    \hlstd{theta} \hlkwb{=} \hlkwd{gd_fun}\hlstd{(theta)}
+    \hlstd{thetas_norm} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas_norm,} \hlkwd{sqrt}\hlstd{(theta} \hlopt{%*%} \hlstd{theta))}
+    \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
+    \hlstd{fs} \hlkwb{=} \hlkwd{rbind}\hlstd{(fs,} \hlkwd{f}\hlstd{(theta, lambda))}
+  \hlstd{\}}
+
+  \hlstd{df_trace} \hlkwb{=} \hlkwd{as.data.frame}\hlstd{(thetas)}
+  \hlstd{trace_plot} \hlkwb{=} \hlkwd{ggplot}\hlstd{()} \hlopt{+}
+    \hlkwd{geom_line}\hlstd{(}\hlkwc{data} \hlstd{= df_trace,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2))} \hlopt{+}
+    \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
+    \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))} \hlopt{+}
+    \hlkwd{geom_point}\hlstd{(}\hlkwc{data} \hlstd{=} \hlkwd{tail}\hlstd{(df_trace),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2))}
+  \hlstd{norm_plot} \hlkwb{=} \hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{norms} \hlstd{= thetas_norm,} \hlkwc{t} \hlstd{=} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(thetas_norm)))} \hlopt{+}
+    \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= t,} \hlkwc{y} \hlstd{= norms))} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"||"}\hlstd{, theta,} \hlstr{"||"}\hlstd{[}\hlnum{2}\hlstd{])))}
+  \hlstd{remp_plot} \hlkwb{=} \hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{f} \hlstd{= fs,} \hlkwc{t} \hlstd{=} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(thetas_norm)))} \hlopt{+}
+    \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= t,} \hlkwc{y} \hlstd{= f))} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(R[emp]))}
+  \hlkwd{grid.arrange}\hlstd{(trace_plot, norm_plot, remp_plot,} \hlkwc{ncol}\hlstd{=}\hlnum{3}\hlstd{)}
+\hlstd{\}}
+
 \hlstd{df_t} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{lambda}\hlstd{) lambda} \hlopt{*} \hlkwd{t}\hlstd{(theta)} \hlopt{-}\hlstd{(}\hlkwd{t}\hlstd{(y)} \hlopt{%*%} \hlstd{X)} \hlopt{+}
   \hlkwd{t}\hlstd{(}\hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1} \hlopt{+} \hlkwd{exp}\hlstd{(}\hlopt{-}\hlstd{X} \hlopt{%*%} \hlstd{theta)))} \hlopt{%*%} \hlstd{X}
 
 \hlstd{gd_step} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{alpha}\hlstd{,} \hlkwc{lambda}\hlstd{)} \hlkwd{return}\hlstd{(theta} \hlopt{-} \hlstd{alpha} \hlopt{*} \hlkwd{df_t}\hlstd{(theta, lambda)[}\hlnum{1}\hlstd{,])}
-\hlcom{## Alpha = 0.5}
-\hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{)}
-\hlstd{alpha} \hlkwb{=} \hlnum{0.01}
 
-\hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
-\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{500}\hlstd{)\{}
-  \hlstd{theta} \hlkwb{=} \hlkwd{gd_step}\hlstd{(theta, alpha, lambda)}
-  \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
-\hlstd{\}}
-
-\hlkwd{ggplot}\hlstd{(}\hlkwd{as.data.frame}\hlstd{(thetas),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2))} \hlopt{+}
-  \hlkwd{geom_line}\hlstd{()} \hlopt{+}
-  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
-  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
+\hlcom{## Alpha = 0.01}
+\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_step}\hlstd{(theta,} \hlnum{0.01}\hlstd{, lambda))}
+\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{0}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_step-1} 
 \begin{kframe}\begin{alltt}
-\hlcom{## Alpha = 2}
-\hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{)}
-\hlstd{alpha} \hlkwb{=} \hlnum{0.02}
-
-\hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
-\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{500}\hlstd{)\{}
-  \hlstd{theta} \hlkwb{=} \hlkwd{gd_step}\hlstd{(theta, alpha, lambda)}
-  \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
-\hlstd{\}}
-
-\hlkwd{ggplot}\hlstd{(}\hlkwd{as.data.frame}\hlstd{(thetas),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2))} \hlopt{+}
-  \hlkwd{geom_line}\hlstd{()} \hlopt{+}
-  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
-  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
+\hlcom{## Alpha = 0.02}
+\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_step}\hlstd{(theta,} \hlnum{0.02}\hlstd{, lambda))}
+\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{0}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_step-2} 
 \end{knitrout}
 
-Gradient descent will in theory not converge since $\mathcal{R}_\text{emp}$ has no minimum (a))
+Gradient descent will in theory not converge since $\mathcal{R}_\text{emp}$ has no minimum (a)
 \item
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{## Lambda = 0.5, alpha = 0.5}
-\hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{)}
-\hlstd{alpha} \hlkwb{=} \hlnum{0.01}
-
-\hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
-\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{500}\hlstd{)\{}
-  \hlstd{theta} \hlkwb{=} \hlkwd{gd_step}\hlstd{(theta, alpha,} \hlnum{0.5}\hlstd{)}
-  \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
-\hlstd{\}}
-
-\hlkwd{ggplot}\hlstd{(}\hlkwd{as.data.frame}\hlstd{(thetas),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2))} \hlopt{+}
-  \hlkwd{geom_line}\hlstd{()} \hlopt{+}
-  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
-  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
+\hlcom{## Lambda = 1, alpha = 0.01}
+\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_step}\hlstd{(theta,} \hlnum{0.01}\hlstd{,} \hlnum{1}\hlstd{))}
+\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{1}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_step_reg-1} 
 \begin{kframe}\begin{alltt}
-\hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{)}
-\hlstd{alpha} \hlkwb{=} \hlnum{0.02}
-
-\hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
-\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{500}\hlstd{)\{}
-  \hlstd{theta} \hlkwb{=} \hlkwd{gd_step}\hlstd{(theta, alpha,} \hlnum{0.5}\hlstd{)}
-  \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
-\hlstd{\}}
-\hlcom{## Lambda = 0.5, alpha = 0.02}
-\hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{)}
-\hlstd{alpha} \hlkwb{=} \hlnum{0.02}
-
-\hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
-\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{500}\hlstd{)\{}
-  \hlstd{theta} \hlkwb{=} \hlkwd{gd_step}\hlstd{(theta, alpha,} \hlnum{0.5}\hlstd{)}
-  \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
-\hlstd{\}}
-
-\hlkwd{ggplot}\hlstd{(}\hlkwd{as.data.frame}\hlstd{(thetas),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2))} \hlopt{+}
-  \hlkwd{geom_line}\hlstd{()} \hlopt{+}
-  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
-  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
+\hlcom{## Lambda = 1, alpha = 0.02}
+\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_step}\hlstd{(theta,} \hlnum{0.02}\hlstd{,} \hlnum{1}\hlstd{))}
+\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{1}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_step_reg-2} 
@@ -413,40 +389,16 @@ Gradient descent will in theory not converge since $\mathcal{R}_\text{emp}$ has 
     \hlkwd{return}\hlstd{(theta)}
 \hlstd{\}}
 
-\hlcom{## Lambda = 0.5, alpha = 0.5}
-
-\hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{)}
-\hlstd{alpha} \hlkwb{=} \hlnum{0.5}
-
-\hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
-\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{500}\hlstd{)\{}
-  \hlstd{theta} \hlkwb{=} \hlkwd{gd_backtracking_step}\hlstd{(theta, alpha,} \hlnum{0.9}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlnum{0.5}\hlstd{)}
-  \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
-\hlstd{\}}
-
-\hlkwd{ggplot}\hlstd{(}\hlkwd{as.data.frame}\hlstd{(thetas),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2))} \hlopt{+}
-  \hlkwd{geom_line}\hlstd{()} \hlopt{+}
-  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
-  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
+\hlcom{## Lambda = 1, alpha = 0.01}
+\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_backtracking_step}\hlstd{(theta,} \hlnum{0.01}\hlstd{,} \hlnum{0.9}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlnum{1}\hlstd{))}
+\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{1}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_backtrack-1} 
 \begin{kframe}\begin{alltt}
-\hlcom{## Lambda = 0.5, alpha = 0.02}
-
-\hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{)}
-\hlstd{alpha} \hlkwb{=} \hlnum{0.02}
-
-\hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
-\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{500}\hlstd{)\{}
-  \hlstd{theta} \hlkwb{=} \hlkwd{gd_backtracking_step}\hlstd{(theta, alpha,} \hlnum{0.9}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlnum{0.5}\hlstd{)}
-  \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
-\hlstd{\}}
-
-\hlkwd{ggplot}\hlstd{(}\hlkwd{as.data.frame}\hlstd{(thetas),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2))} \hlopt{+}
-  \hlkwd{geom_line}\hlstd{()} \hlopt{+}
-  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
-  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
+\hlcom{## Lambda = 1, alpha = 0.02}
+\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_backtracking_step}\hlstd{(theta,} \hlnum{0.02}\hlstd{,} \hlnum{0.9}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlnum{1}\hlstd{))}
+\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{1}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_backtrack-2} 
