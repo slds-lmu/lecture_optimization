@@ -121,74 +121,133 @@ $$
 
 \begin{vbframe}{Example: linear regression}
 
-\textbf{Minimize RSS per coordinate descent:}
+\textbf{Minimize LM with L2-loss per CD:}
+\vspace*{0.2cm}
 
-We define $f(\bm{\theta}) = \frac{1}{2} \|\bm{y} - \bm{X}\bm{\theta}\|^2$,
-with $\bm{y} \in \R^n$, $\bm{X} \in \R^{n \times p}$ and columns $\bm{X}_1, \hdots, \bm{X}_p$.
+$$
+    \min g(\thetab) = \min_{\thetab} \frac{1}{2}\sumin \left(y^{(i)} - \thetab^\top \xi\right)^2 = \min_{\thetab} \frac{1}{2}\|\bm{y} - \Xmat \thetab\|^2 
+$$
 
-\lz
+where $\bm{y} \in \R^n$, $\bm{X} \in \R^{n \times p}$ with columns $\bm{X}_1, \hdots, \bm{X}_p \in \R^n$. 
 
-For each  $\theta_i$ we calculate:
+\vspace*{0.3cm}
+
+Assumption: data is scaled $\Xmat_j^\top \mathbf{1} = 0$ and $\Xmat^\top \Xmat = \bm{1}_p$. 
+
+\lz 
+
+$g$ simplifies to 
 
 \begin{footnotesize}
 \begin{eqnarray*}
-  0 &=& \frac{\partial{f}(\bm{\theta})}{\partial \theta_i}  = \bm{X}_i^{\top} (\bm{X\theta} - \bm{y}) = \bm{X}_i^{\top} (\bm{X}_i \theta_i + \bm{X}_{-i} \bm{\theta}_{-i} - \bm{y}) \\
-\theta_i &=& \frac{\bm{X}_i^\top (\bm{y} - \bm{X}_{-i} \bm{\theta}_{-i})}{\bm{X}_i^{\top} \bm{X}_i},
+    g(\thetab) &=& \frac{1}{2}\bm{y}^\top \bm{y} + \frac{1}{2}\thetab^\top \thetab - \bm{y}^\top \Xmat \thetab  \\
+    &\overset{(*)}{=}& \frac{1}{2}\bm{y}^\top \bm{y} + \frac{1}{2}\thetab^\top \thetab  - \sum_{k = 1}^p \bm{y}^\top \Xmat_k \thetab_k 
 \end{eqnarray*}
+
+\vfill
+$^{(*)}$ $\Xmat \thetab = \Xmat_1 \thetab_1 + \Xmat_2 \thetab_2 + ... + \Xmat_p \thetab_p = \sum_{k = 1}^p \Xmat_k \thetab_k$.
 \end{footnotesize}
 
-where $\bm{X}_{-i}, \bm{\theta}_{-i}$ are to be understood as the matrix / vector without the $i$-th column / row.
+\framebreak
+
+To compute the exact CD update in direction $j$ we compute 
+
+\begin{eqnarray*}
+    \frac{\partial{g}(\thetab)}{\partial \thetab_j} &=& \thetab_j - \bm{y}^\top \Xmat_j 
+\end{eqnarray*}  
+
+By solving $\frac{\partial{g}(\thetab)}{\partial \thetab_j} = 0$, we get 
+
+$$
+    \thetab_j^\ast = \bm{y}^\top \Xmat_j
+$$ 
+
+as exact update for CD in direction $j$.  We repeat this update over all variables. 
+
+% We define $f(\bm{\theta}) = \frac{1}{2} \|\bm{y} - \bm{X}\bm{\theta}\|^2$,
+% with $\bm{y} \in \R^n$, $\bm{X} \in \R^{n \times p}$ and columns $\bm{X}_1, \hdots, \bm{X}_p$.
+
+% \lz
+
+% For each  $\theta_i$ we calculate:
+
+% \begin{footnotesize}
+% \begin{eqnarray*}
+%   0 &=& \frac{\partial{f}(\bm{\theta})}{\partial \theta_i}  = \bm{X}_i^{\top} (\bm{X\theta} - \bm{y}) = \bm{X}_i^{\top} (\bm{X}_i \theta_i + \bm{X}_{-i} \bm{\theta}_{-i} - \bm{y}) \\
+% \theta_i &=& \frac{\bm{X}_i^\top (\bm{y} - \bm{X}_{-i} \bm{\theta}_{-i})}{\bm{X}_i^{\top} \bm{X}_i},
+% \end{eqnarray*}
+% \end{footnotesize}
+
+% where $\bm{X}_{-i}, \bm{\theta}_{-i}$ are to be understood as the matrix / vector without the $i$-th column / row.
+
+% \vspace*{0.2cm}
+
+% Then $\theta_i$ is calculated one after the other for all $p$ dimensions and the process is repeated.
+
+\end{vbframe}
+
+\begin{vbframe}{Soft thresholding operator}
+
+\textbf{Minimize LM with L2-loss and L1 regularization per CD:}
+
+$$
+    \min_{\thetab} h(\thetab) = \min_{\thetab} \frac{1}{2}\|\bm{y} - \Xmat \thetab\|^2 + \lambda \|\thetab\|_1 % = g(\thetab) + \tilde g(\thetab)
+$$
+
+We can write $h(\thetab) = \frac{1}{2}\bm{y}^\top \bm{y} + \frac{1}{2}\thetab^\top \thetab  - \sum_{k = 1}^p \bm{y}^\top \Xmat_k \thetab_k + \lambda|\thetab_k|$. 
+
+\vspace*{0.3cm}
+
+Because $|\cdot|$ is not differentiable, we distinguish three cases: 
+
+% https://aswani.ieor.berkeley.edu/teaching/SP15/265/lecture_notes/ieor265_lec6.pdf
+\begin{footnotesize}
+    \begin{itemize}
+        \item \textbf{Case 1}: $\thetab_j > 0$. Then $|\thetab_j| = \thetab_j$ and 
+        \begin{eqnarray*}
+            0 &=& \frac{\partial{g}(\thetab)}{\partial \thetab_j} = \thetab_j - \bm{y}^\top \Xmat_j + \lambda \qquad \Leftrightarrow \qquad \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j - \lambda        
+            \end{eqnarray*}
+        \item \textbf{Case 2}: $\thetab_j < 0$. Then $|\thetab_j| = - \thetab_j$ and 
+        \begin{eqnarray*}
+            0 &=& \frac{\partial{g}(\thetab)}{\partial \thetab_j} = \thetab_j - \bm{y}^\top \Xmat_j - \lambda \qquad \Leftrightarrow \qquad \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j + \lambda        
+            \end{eqnarray*}
+        \item \textbf{Case 3}: $\thetab_j = 0$. 
+    \end{itemize}
+\end{footnotesize}
+
+We can write the solution as: 
+
+\begin{eqnarray*}
+    \thetab^\ast_{j, \text{LASSO}} &=& 
+    \begin{cases}
+        \thetab^\ast_j - \lambda & \text{ if } \thetab^\ast_j > \lambda \\
+        \thetab^\ast_j + \lambda & \text{ if } \thetab^\ast_j < - \lambda \\
+        0 &  \text{ if }  \thetab^\ast_j \in [- \lambda, \lambda],
+    \end{cases}
+\end{eqnarray*}
+
+which is also referred to as \textbf{soft-thresholding operator}. Coefficients for which the solution to the unregularized problem are smaller than a threshold, $|\thetab^\ast_j| < \lambda$, are shrinked to zero. 
 
 \vspace*{0.2cm}
 
-Then $\theta_i$ is calculated one after the other for all $p$ dimensions and the process is repeated.
-
+\begin{footnotesize}
+\textbf{Note: }
+\begin{itemize}
+    \item For case 1, we require 
+    $$
+        \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j - \lambda  > 0 \qquad \Leftrightarrow \qquad \thetab^\ast_j > \lambda 
+    $$
+    \item For case 2, we require
+    $$
+        \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j + \lambda  < 0 \qquad \Leftrightarrow \qquad \thetab^\ast_j < - \lambda 
+    $$
+\end{itemize}
+\end{footnotesize}
 
 \end{vbframe}
 
 
-
-\begin{vbframe}{Regularized Coordinate Descent}
-
-The simplest form of CD calculates the LS coefficient via partial residuals across all other features:
-$$r_{i,j} = y_{i} - \sum_{k \neq j} x_{i,k} \theta{k}$$
-and therefore, the estimate for a single coefficient is
-$$\theta_{j}* = \frac{1}{n} \sum_{i=1}^{n} x_{i,j}r_{i,j}$$
-
-A penalty is included in the model through a \textbf{soft-thresholding operator}:
-$$\theta_{j} = \bm{S}(\theta-{j}*, \lambda) = sign(\theta_{j}*)(|\theta-{j}*|-\lambda)_{+} = $$
-$$ = \left\{ \begin{array}{rcl}
-    \theta_{j}^{*} - \lambda ~~~~~~    \theta_{j}^{*}>0 ~ and ~ \lambda<|\theta_{j}^{*}| \\ 
-    \theta_{j}^{*} + \lambda ~~~~~~    \theta_{j}^{*}>0 ~ and ~ \lambda<|\theta_{j}^{*}| \\ 
-    0 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \lambda \geq |\theta_{j}^{*}| 
-   \end{array} \right. $$
-   
-\framebreak
-
-Naive updates for improved efficiency:
-$$\theta_{j}^{*} = \frac{1}{n} \sum_{i=1}^{n} x_{i,j}r_{i} + \theta_{j}$$
-\begin{footnotesize}
-(where $r_{i}$ is the current model residual for all $n$ samples)
-\end{footnotesize} \\
-In case of $n>>p$, efficiency can be further improved via \textbf{Covariance updates}:
-$$\sum_{=1}^{n} x_{i,j}r_{i} = \langle x_{j},y \rangle - \sum_{k:|\theta_{k}|>0} \langle x_{j}x_{k} \rangle \theta_{k}$$
-
-\framebreak
-
-\textbf{Warm starts} can improve efficiency even further. A sequence of models are fitted with the last coefficients of the previous iteration as the initialization coefficients for each iteraten. The path can be expressed as:
-$$\lambda_{max} \rightarrow \lambda_{min} = \epsilon \cdot \lambda_{max}$$
-\begin{footnotesize}
-(where typically $\epsilon=0.001$ and 100 values spaced on a log scale)
-\end{footnotesize} \\
-\vspace{0.5cm}
-The maximum value of the tuning parameter to begin the path at can be found by finding the minimum value that will bring the estimates for all model coefficients to zero, since any values above this value will result in total sparsity of the coefficient vector. The max value of the path (starting point) is:
-$$\lambda_{max} = \frac{max_{l}|\langle x_{l},y \rangle |}{n}$$
-In essence, by providing are starting place for optimization warm starting can speed up convergence.
-
-\end{vbframe}
-
-
-\begin{vbframe}{Coordinate descent for statistics and machine learning}
+\begin{vbframe}{CD for statistics and ML}
 
 Why is it being used?
 
@@ -196,15 +255,17 @@ Why is it being used?
 \item Very easy to implement.
 \item Good implementation can achieve state-of-the-art performance.
 \item Scalable, e.g. no storage of data necessary.
-\item Applicable in both differentiable and derivative free cases.
+\item Applicable in both differentiable and derivative-free cases.
 \end{itemize}
+
+\lz 
 
 Examples:
 
 \begin{itemize}
 \item Lasso regression, Lasso GLM, graphical Lasso
 \item Support Vector Machines
-\item Regression with non-convex penalites
+\item Regression with non-convex penalties
 \end{itemize}
 
 % \framebreak
