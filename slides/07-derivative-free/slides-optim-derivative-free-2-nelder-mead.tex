@@ -5,7 +5,7 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/convex_programs.png}
+\newcommand{\titlefigure}{figure_man/Nelder04.png}
 \newcommand{\learninggoals}{
 \item Idea
 \item Case distinction
@@ -124,7 +124,7 @@ We discard $\bm{v}_{d + 1}$ in favor of the better of the two corners $\bm{v}_r,
 \end{minipage}
 \begin{minipage}{0.35\textwidth}
 \begin{center}
-\includegraphics[width = 1\linewidth]{figure_man/Nelder05.png}
+\includegraphics[width = 1\linewidth]{figure_man/Nelder06.png}
 \end{center}
 \tiny
 This is \textbf{case 2}: The reflection point $\bm{v}_r$ is better than the best point $\bm{v}_1$.\\
@@ -333,6 +333,110 @@ If gradient is easy to calculate, BFGS is preferred.
 
 \end{vbframe}
 
+
+\begin{vbframe}{Nelder-Mead Visualization in 2D}
+\vspace*{-0.5cm}
+$$f(x,y) = x^{2} + y^{2} + xsiny + ysinx $$ 
+\vspace*{-0.5cm}
+\begin{figure}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.75\linewidth]{figure_man/nm_animation2d_1.PNG}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.75\linewidth]{figure_man/nm_animation2d_2.PNG}
+    \end{minipage}
+\end{figure}
+\vspace*{-0.5cm}
+\begin{figure}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.75\linewidth]{figure_man/nm_animation2d_3.PNG}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.75\linewidth]{figure_man/nm_animation2d_4.PNG}
+    \end{minipage}
+\end{figure}
+\vspace*{-0.5cm}
+\begin{figure}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.75\linewidth]{figure_man/nm_animation2d_5.PNG}
+    \end{minipage}
+\end{figure}
+
+\end{vbframe}
+
+
+
+\begin{vbframe}{Nelder-Mead vs. GD}
+\vspace*{-0.5cm}
+\begin{figure}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_1.PNG}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_2.PNG}
+    \end{minipage}
+\end{figure}
+\begin{figure}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_3.PNG}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_4.PNG}
+    \end{minipage}
+\end{figure}
+\vspace*{0.2cm}
+\begin{footnotesize}
+For >10 cities, GD (top) converges well for an appropriate learning rate. NM (bottom) completely fails to converge, even after many iterations.
+\end{footnotesize}
+
+
+\framebreak
+\vspace*{-0.8cm}
+\begin{figure}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_5.PNG}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_6.PNG}
+    \end{minipage}
+\end{figure}
+\begin{figure}
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_7.PNG}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_8.PNG}
+    \end{minipage}
+\end{figure}
+\vspace*{0.5cm}
+\begin{footnotesize}
+Even for only 5 cities, NM (bottom) struggles. GD (top) again works well.
+\end{footnotesize}
+
+\end{vbframe}
+
+
+
 % \begin{vbframe}{Beispiel: MLE Gamma-Verteilung}
 % \begin{itemize}
 % \item Sei $x_1, \ldots, x_n$ zufälliges Sample einer $Gamma(r,\lambda)$ Verteilung ($r$ ist \textit{shape}, $\lambda$ \textit{rate} Parameter)
@@ -424,6 +528,7 @@ If gradient is easy to calculate, BFGS is preferred.
 % \end{vbframe}
 
 % \section{Metaheuristiken}
+
 
 
 % \begin{vbframe}{Simulated Annealing}

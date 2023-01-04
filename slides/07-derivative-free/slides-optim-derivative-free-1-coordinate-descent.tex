@@ -54,7 +54,7 @@ that minimizes $f$, given $x^{[t]}_1, \hdots,x^{[t]}_{i-1}$ and $x^{[t-1]}_{i-1}
 
 \begin{columns}
 \begin{column}{.4\textwidth}
-    \begin{scriptsize}
+\begin{scriptsize}
 \begin{align*}
 x^{[t]}_1 &= \argmin_{x_1} f(x_1, x^{[t-1]}_2, x^{[t-1]}_3, \hdots, x^{[t-1]}_d) \\
 x^{[t]}_2 &= \argmin_{x_2} f(x^{[t]}_1, x_2, x^{[t-1]}_3, \hdots, x^{[t-1]}_d) \\
@@ -143,10 +143,51 @@ where $\bm{X}_{-i}, \bm{\theta}_{-i}$ are to be understood as the matrix / vecto
 Then $\theta_i$ is calculated one after the other for all $p$ dimensions and the process is repeated.
 
 
+\end{vbframe}
 
+
+
+\begin{vbframe}{Regularized Coordinate Descent}
+
+The simplest form of CD calculates the LS coefficient via partial residuals across all other features:
+$$r_{i,j} = y_{i} - \sum_{k \neq j} x_{i,k} \theta{k}$$
+and therefore, the estimate for a single coefficient is
+$$\theta_{j}* = \frac{1}{n} \sum_{i=1}^{n} x_{i,j}r_{i,j}$$
+
+A penalty is included in the model through a \textbf{soft-thresholding operator}:
+$$\theta_{j} = \bm{S}(\theta-{j}*, \lambda) = sign(\theta_{j}*)(|\theta-{j}*|-\lambda)_{+} = $$
+$$ = \left\{ \begin{array}{rcl}
+		\theta_{j}^{*} - \lambda ~~~~~~    \theta_{j}^{*}>0 ~ and ~ \lambda<|\theta_{j}^{*}| \\ 
+		\theta_{j}^{*} + \lambda ~~~~~~    \theta_{j}^{*}>0 ~ and ~ \lambda<|\theta_{j}^{*}| \\ 
+		0 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \lambda \geq |\theta_{j}^{*}| 
+   \end{array} \right. $$
+   
+\framebreak
+
+Naive updates for improved efficiency:
+$$\theta_{j}^{*} = \frac{1}{n} \sum_{i=1}^{n} x_{i,j}r_{i} + \theta_{j}$$
+\begin{footnotesize}
+(where $r_{i}$ is the current model residual for all $n$ samples)
+\end{footnotesize} \\
+In case of $n>>p$, efficiency can be further improved via \textbf{Covariance updates}:
+$$\sum_{=1}^{n} x_{i,j}r_{i} = \langle x_{j},y \rangle - \sum_{k:|\theta_{k}|>0} \langle x_{j}x_{k} \rangle \theta_{k}$$
+
+\framebreak
+
+\textbf{Warm starts} can improve efficiency even further. A sequence of models are fitted with the last coefficients of the previous iteration as the initialization coefficients for each iteraten. The path can be expressed as:
+$$\lambda_{max} \rightarrow \lambda_{min} = \epsilon \cdot \lambda_{max}$$
+\begin{footnotesize}
+(where typically $\epsilon=0.001$ and 100 values spaced on a log scale)
+\end{footnotesize} \\
+\vspace{0.5cm}
+The maximum value of the tuning parameter to begin the path at can be found by finding the minimum value that will bring the estimates for all model coefficients to zero, since any values above this value will result in total sparsity of the coefficient vector. The max value of the path (starting point) is:
+$$\lambda_{max} = \frac{max_{l}|\langle x_{l},y \rangle |}{n}$$
+In essence, by providing are starting place for optimization warm starting can speed up convergence.
 
 \end{vbframe}
 
+
+\end{vbframe}
 \begin{vbframe}{Coordinate descent for statistics and machine learning}
 
 Why is it being used?
