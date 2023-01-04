@@ -1,0 +1,87 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/ea_bit_titlefigure.PNG}
+\newcommand{\learninggoals}{
+\item Recombination for Bit Strings
+\item Mutation for Bit Strings
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Evolutionary Algorithms - Bit Strings}
+\lecture{Optimization in Machine Learning}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{vbframe}{Recombination for bit strings}
+\footnotesize
+Two individuals $\bm{x},\bm{\tilde{x}} \in \{0, 1\}^d$ encoded as bit strings can be recombined as follows:
+
+  \begin{itemize}
+  \normalsize
+  \item \textbf{1-point crossover}: select crossover $k \in \{1, ..., d - 1\}$ randomly and the first $k$ bits from 1st and the last $d-k$ bits from 2nd parent.
+  \footnotesize
+  \begin{center}
+  \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
+    \textcolor{red}{1} & \textcolor{blue}{1}  & & \textcolor{red}{1}  \\
+    \textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{red}{0}  \\ \cmidrule{1-4}
+    \textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
+    \textcolor{red}{1} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
+    \textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{blue}{0}
+  \end{tabular}
+  \end{center}
+  \normalsize
+  \item \textbf{Uniform crossover}: select bit $j$ with probability $p$ of 1st parent and $1-p$ of 2nd parent.
+  \footnotesize
+  \begin{center}
+  \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
+    \textcolor{red}{1} & \textcolor{blue}{0}  & & \textcolor{red}{1}  \\
+    \textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{blue}{0}  \\ 
+    \textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
+    \textcolor{red}{0} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
+    \textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{red}{1}
+  \end{tabular}
+  \end{center}
+  \normalsize
+  \end{itemize}
+  
+\end{vbframe}
+
+\begin{vbframe}{Mutation for bit strings}
+  An individual $\bm{x} \in \{0, 1\}^d$ encoded as a bit string can be mutated as follows:
+  \vspace{0.5cm}
+  
+  \begin{itemize}
+  \item \textbf{Bitflip}: for each index $j \in \{1, ..., d\}$: bit $j$ is flipped with probability $p \in (0,1)$.
+  \end{itemize}
+  \begin{center}
+  \begin{tabular}{c @{\hspace{2\tabcolsep}} *{5}{c}}
+  \\[1ex]
+   1  &               & \textcolor{red}{0}  \\
+   0  &               & 0  \\
+   0  & $\Rightarrow$ & 0  \\
+   0  &               & \textcolor{red}{1}  \\
+   1  &               & 1
+  \end{tabular}
+  \end{center}
+\end{vbframe}
+
+
+
+
+
+\endlecture
+\end{document}
