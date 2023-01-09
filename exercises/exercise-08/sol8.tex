@@ -1,0 +1,346 @@
+\documentclass[a4paper]{article}
+\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+
+
+
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+\usepackage{a4wide,paralist}
+\usepackage{amsmath, amssymb, xfrac, amsthm}
+\usepackage{dsfont}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{framed}
+\usepackage{multirow}
+\usepackage{bytefield}
+\usepackage{csquotes}
+\usepackage[breakable, theorems, skins]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{cancel}
+\usepackage{bm}
+
+
+\input{../../style/common}
+
+\tcbset{enhanced}
+
+\DeclareRobustCommand{\mybox}[2][gray!20]{%
+	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+	\fi
+}
+
+\DeclareRobustCommand{\myboxshow}[2][gray!20]{%
+%	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+%	\fi
+}
+
+
+%exercise numbering
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{\roman{enumii}}
+\renewcommand\labelenumi{\theenumi}
+
+
+\font \sfbold=cmssbx10
+
+\setlength{\oddsidemargin}{0cm} \setlength{\textwidth}{16cm}
+
+
+\sloppy
+\parindent0em
+\parskip0.5em
+\topmargin-2.3 cm
+\textheight25cm
+\textwidth17.5cm
+\oddsidemargin-0.8cm
+\pagestyle{empty}
+
+\newcommand{\kopf}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfic}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfsl}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newenvironment{allgemein}
+	{\noindent}{\vspace{1cm}}
+
+\newcounter{aufg}
+\newenvironment{aufgabe}[1]
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}: #1}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newcounter{loes}
+\newenvironment{loesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+	{\bigskip}
+	
+\newenvironment{bonusaufgabe}
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}*\footnote{This
+	is a bonus exercise.}:}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newenvironment{bonusloesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}*:}\\\noindent}
+	{\bigskip}
+
+
+
+\begin{document}
+% !Rnw weave = knitr
+
+
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{8}{Multivariate Optimization 3}
+
+\aufgabe{Stochastic Gradient Descent}{
+
+\begin{enumerate}
+\item \begin{itemize} 
+\item $\E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 = \E_\mathbf{x} \E_{y|\mathbf{x}}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 =  \E_\mathbf{x} \E_{y|\mathbf{x}} 2\mathbf{x} \mathbf{x}^\top \bm{\theta} - 2\mathbf{x}y = \E_\mathbf{x} 2\mathbf{x} \mathbf{x}^\top \bm{\theta} - 2\mathbf{x}\mathbf{x}^\top \bm{\theta}^* = 2\bm{\Sigma}_\mathbf{x}(\bm{\theta} - \bm{\theta}^*)$ 
+\item $\nabla_{\bm{\theta}}\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 = \nabla_{\bm{\theta}}\E_\mathbf{x} \E_{y|\mathbf{x}} \bm{\theta}^\top\mathbf{x}\mathbf{x}^\top\bm{\theta} - 2\bm{\theta}^\top\mathbf{x} y + y^2 = \nabla_{\bm{\theta}}\E_\mathbf{x} \bm{\theta}^\top\mathbf{x}\mathbf{x}^\top\bm{\theta} - 2\bm{\theta}^\top\mathbf{x}\mathbf{x}^\top \bm{\theta}^*  + {\bm{\theta}^*}^\top\mathbf{x}\mathbf{x}^\top \bm{\theta}^*$ \\
+$= \nabla_{\bm{\theta}}(\bm{\theta}^\top\bm{\Sigma}_\mathbf{x}\bm{\theta} - 2\bm{\theta}^\top\bm{\Sigma}_\mathbf{x} \bm{\theta}^*  + {\bm{\theta}^*}^\top\bm{\Sigma}_\mathbf{x} \bm{\theta}^*) = 2\bm{\Sigma}_\mathbf{x}(\bm{\theta} - \bm{\theta}^*)$
+\end{itemize}
+\item We can estimate $\E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$ without bias via SGD since we have access to realizations of $\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$.\\ From a) it follows that this estimate is also an unbiased estimate of the gradient of our objective \\ $\nabla_{\bm{\theta}}\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$. Hence, SGD can be successfully applied in this situation.
+\item 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
+\hlkwd{library}\hlstd{(gridExtra)}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{123}\hlstd{)}
+
+\hlstd{sigma_x} \hlkwb{=} \hlnum{0.5}
+\hlstd{sigma_y} \hlkwb{=} \hlnum{0.1}
+
+\hlstd{n} \hlkwb{=} \hlnum{10000}
+\hlstd{x} \hlkwb{=} \hlkwd{sort}\hlstd{(}\hlkwd{rnorm}\hlstd{(n,} \hlkwc{sd} \hlstd{= sigma_x))}
+\hlstd{theta_star} \hlkwb{=} \hlnum{0.5}
+\hlstd{y} \hlkwb{=} \hlstd{theta_star} \hlopt{*} \hlstd{x} \hlopt{+} \hlkwd{rnorm}\hlstd{(n,} \hlkwc{sd} \hlstd{= sigma_y)}
+
+\hlstd{theta} \hlkwb{=} \hlnum{0.9}
+\hlkwd{mean}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{(x}\hlopt{*}\hlstd{x}\hlopt{*}\hlstd{theta} \hlopt{-} \hlstd{y}\hlopt{*}\hlstd{x))}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.2015163
+\end{verbatim}
+\begin{alltt}
+\hlstd{compute_conf} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{n}\hlstd{)\{}
+  \hlstd{x} \hlkwb{=} \hlkwd{rnorm}\hlstd{(n,} \hlkwc{sd} \hlstd{= sigma_x)}
+  \hlstd{y} \hlkwb{=} \hlstd{theta_star} \hlopt{*} \hlstd{x} \hlopt{+} \hlkwd{rnorm}\hlstd{(n,} \hlkwc{sd} \hlstd{= sigma_y)}
+  \hlcom{# mean of squared differences between the sampled gradients and }
+  \hlcom{# the gradient of the objective}
+  \hlkwd{return}\hlstd{(}\hlkwd{mean}\hlstd{((}\hlnum{2}\hlopt{*}\hlstd{(x}\hlopt{*}\hlstd{x}\hlopt{*}\hlstd{theta} \hlopt{-} \hlstd{y}\hlopt{*}\hlstd{x)} \hlopt{-} \hlnum{2}\hlopt{*}\hlstd{sigma_x}\hlopt{^}\hlnum{2}\hlopt{*}\hlstd{(theta} \hlopt{-} \hlstd{theta_star))}\hlopt{^}\hlnum{2}\hlstd{))}
+\hlstd{\}}
+
+\hlcom{# compute confusions for m = 100}
+
+\hlstd{confs} \hlkwb{=} \hlkwd{c}\hlstd{()}
+\hlstd{m} \hlkwb{=} \hlnum{100}
+\hlstd{reps} \hlkwb{=} \hlnum{200}
+\hlstd{thetas} \hlkwb{=} \hlkwd{seq}\hlstd{(}\hlkwc{from}\hlstd{=}\hlnum{0}\hlstd{,} \hlkwc{to}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{length.out} \hlstd{=} \hlnum{21}\hlstd{)}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{reps)\{}
+  \hlkwa{for}\hlstd{(theta} \hlkwa{in} \hlstd{thetas)\{}
+    \hlstd{confs} \hlkwb{=} \hlkwd{c}\hlstd{(confs,} \hlkwd{compute_conf}\hlstd{(theta, m))}
+  \hlstd{\}}
+\hlstd{\}}
+
+\hlstd{p_batch100} \hlkwb{=} \hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{thetas} \hlstd{=} \hlkwd{rep}\hlstd{(thetas, reps),} \hlkwc{confs} \hlstd{= confs),}
+                    \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= thetas,} \hlkwc{y} \hlstd{= confs))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{()} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta))} \hlopt{+} \hlkwd{ylim}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0.4}\hlstd{)} \hlopt{+} \hlkwd{ggtitle}\hlstd{(}\hlstr{"m = 100"}\hlstd{)} \hlopt{+}
+  \hlkwd{ylab}\hlstd{(}\hlstr{"confusion"}\hlstd{)}
+
+\hlcom{# compute confusions for m = 1000}
+
+\hlstd{confs} \hlkwb{=} \hlkwd{c}\hlstd{()}
+\hlstd{m} \hlkwb{=} \hlnum{1000}
+\hlstd{reps} \hlkwb{=} \hlnum{200}
+\hlstd{thetas} \hlkwb{=} \hlkwd{seq}\hlstd{(}\hlkwc{from}\hlstd{=}\hlnum{0}\hlstd{,} \hlkwc{to}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{length.out} \hlstd{=} \hlnum{21}\hlstd{)}
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlstd{reps)\{}
+  \hlkwa{for}\hlstd{(theta} \hlkwa{in} \hlstd{thetas)\{}
+    \hlstd{confs} \hlkwb{=} \hlkwd{c}\hlstd{(confs,} \hlkwd{compute_conf}\hlstd{(theta, m))}
+  \hlstd{\}}
+\hlstd{\}}
+
+\hlstd{p_batch1000} \hlkwb{=} \hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{thetas} \hlstd{=} \hlkwd{rep}\hlstd{(thetas, reps),} \hlkwc{confs} \hlstd{= confs),}
+                     \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= thetas,} \hlkwc{y} \hlstd{= confs))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{()} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta))} \hlopt{+} \hlkwd{ylim}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0.4}\hlstd{)} \hlopt{+} \hlkwd{ggtitle}\hlstd{(}\hlstr{"m = 1000"}\hlstd{)}  \hlopt{+}
+  \hlkwd{ylab}\hlstd{(}\hlstr{"confusion"}\hlstd{)}
+
+\hlcom{# plot all}
+\hlkwd{grid.arrange}\hlstd{(p_batch100, p_batch1000,} \hlkwc{ncol} \hlstd{=} \hlnum{2}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.75\linewidth]{figure/mv-plot_confusion-1} 
+\end{knitrout}
+\item Qualitatively, we observe for both settings that the mean and the variance of the confusion rise symmetrically around $\bm{\theta}^*.$ As expected, the mean and the variance of the confusion is smaller for the larger batch size $m = 1000$ than for $m = 100$.
+\item 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{123}\hlstd{)}
+
+\hlcom{# SGD}
+\hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
+\hlstd{alpha} \hlkwb{=} \hlnum{0.3}
+\hlstd{m} \hlkwb{=} \hlnum{10}
+\hlkwa{for}\hlstd{(j} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{200}\hlstd{)\{}
+  \hlstd{theta} \hlkwb{=} \hlnum{0}
+  \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{20}\hlstd{)\{}
+    \hlstd{x} \hlkwb{=} \hlkwd{rnorm}\hlstd{(m,} \hlkwc{sd} \hlstd{= sigma_x)}
+    \hlstd{y} \hlkwb{=} \hlstd{theta_star} \hlopt{*} \hlstd{x} \hlopt{+} \hlkwd{rnorm}\hlstd{(n,} \hlkwc{sd} \hlstd{= sigma_y)}
+
+    \hlstd{theta} \hlkwb{=} \hlstd{theta}  \hlopt{-} \hlstd{alpha} \hlopt{*} \hlkwd{mean}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{(x}\hlopt{*}\hlstd{x}\hlopt{*}\hlstd{theta} \hlopt{-} \hlstd{y}\hlopt{*}\hlstd{x))}
+    \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
+  \hlstd{\}}
+\hlstd{\}}
+
+\hlstd{plot_sgd} \hlkwb{=} \hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{thetas} \hlstd{= thetas,} \hlkwc{it} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{20}\hlstd{,} \hlnum{200}\hlstd{)),}
+       \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= it,} \hlkwc{y} \hlstd{= thetas))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{()} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta))} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlstr{"iteration"}\hlstd{)} \hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"SGD with m=10 (200 runs)"}\hlstd{)}
+
+\hlcom{# GD }
+\hlstd{theta} \hlkwb{=} \hlnum{0}
+\hlstd{thetas} \hlkwb{=} \hlstd{theta}
+\hlstd{alpha} \hlkwb{=} \hlnum{0.3}
+
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{20}\hlstd{)\{}
+  \hlstd{theta} \hlkwb{=} \hlstd{theta}  \hlopt{-} \hlstd{alpha} \hlopt{*}  \hlnum{2}\hlopt{*}\hlstd{sigma_x}\hlopt{^}\hlnum{2}\hlopt{*}\hlstd{(theta} \hlopt{-} \hlstd{theta_star)}
+  \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
+\hlstd{\}}
+
+\hlstd{plot_gd} \hlkwb{=} \hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{thetas} \hlstd{= thetas,} \hlkwc{it} \hlstd{=} \hlnum{1}\hlopt{:}\hlnum{21}\hlstd{),}
+                 \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= it,} \hlkwc{y} \hlstd{= thetas))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{()} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta))} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlstr{"iteration"}\hlstd{)} \hlopt{+} \hlkwd{ggtitle}\hlstd{(}\hlstr{"GD"}\hlstd{)}
+
+\hlcom{# plot all}
+\hlkwd{grid.arrange}\hlstd{(plot_sgd, plot_gd,} \hlkwc{ncol}\hlstd{=}\hlnum{2}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/mv-plot_compare-1} 
+\end{knitrout}
+\end{enumerate}
+
+}
+\end{document}
