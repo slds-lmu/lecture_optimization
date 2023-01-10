@@ -1,0 +1,60 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-mbo}
+
+\newcommand{\titlefigure}{}
+\newcommand{\learninggoals}{
+\item Size of the initial design
+\item Optimizing the acquisition function
+\item When to terminate
+}
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Bayesian Optimization:\\ Practical Aspects}
+\lecture{Optimization in Machine Learning}
+
+\begin{frame}{Size of the Initial Design}
+  \begin{itemize}
+    \item Should not be too small
+    \item Should not be too large
+    \item Scale with the dimensionality of the search space $\mathcal{S}$
+    \item A certain SM may impose restrictions on the lower bound of the size of the initial design
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Optimizing the Acquisition Function}
+  \begin{itemize}
+    \item Optimizing the acquisition function to find the next candidate point is typically comparably cheap
+    \item Still can be a hard optimization problem: non-linear, multimodal
+    \item Properly optimizing the acquisition function can be crucial
+    \item Choice of optimizer depends on the search space $\mathcal{S}$
+      \begin{itemize}
+        \item Numeric: L-BFGS-B with restarts, DIRECT,
+        \item Mixed: EAs, local search
+      \end{itemize}
+    \item Sometimes, gradient-based optimizers can be used (e.g. when using a GP as SM)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{When to terminate}
+  \begin{itemize}
+    \item After a certain number of evaluations
+      \begin{itemize}
+        \item Potentially scaling the budget with the dimensionality of the search space $\mathcal{S}$
+       \end{itemize}
+    \item After a certain runtime
+    \item Specify a target threshold (of the objective or acquisition function)
+    \item Based on stagnation (of the objective or acquisition function)
+  \end{itemize}
+\end{frame}
+
+\endlecture
+\end{document}
