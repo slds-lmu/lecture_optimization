@@ -7,9 +7,9 @@
 
 \newcommand{\titlefigure}{figure_man/01_BlackBox.png}
 \newcommand{\learninggoals}{
-\item Definition and Properties
+\item Definition and properties
 \item Examples
-\item Naive Approaches
+\item Naive approaches
 }
 
 \title{Optimization in Machine Learning}
@@ -31,7 +31,7 @@ with objective function  % FIXME: weird spacing
 $$
 f: \; \mathcal{S} \to \R,
 $$
-where $\mathcal{S}$ is usually bounded.
+where $\mathcal{S}$ is usually box constrained.
 
 \lz 
 
@@ -60,7 +60,7 @@ with objective function
 $$
 f: \; \mathcal{S} \to \R,
 $$
-where $\mathcal{S}$ is usually bounded.
+where $\mathcal{S}$ is usually box constrained.
 
 \lz 
 
@@ -89,7 +89,7 @@ with objective function
 $$
 f: \; \mathcal{S} \to \R,
 $$
-where $\mathcal{S}$ is usually bounded.
+where $\mathcal{S}$ is usually box constrained.
 
 \lz 
 
@@ -152,7 +152,8 @@ Optimization gets \textbf{really hard} if ...
 \end{center}
 \begin{footnotesize}
 \begin{itemize}
-\item \textbf{Goal: } Find parameters s.t. velocity of the robot is maximized
+\item \textbf{Goal: } Find parameters s.t. average velocity (directional speed) of the robot is maximized
+\item Parameters of the goat control e.g. joints of ankles and knees
 \item \emph{Calandra et al. (2014). An Experimental Evaluation of Bayesian Optimization on Bipedal Locomotion}
 \end{itemize}
 \end{footnotesize}
@@ -190,17 +191,16 @@ Optimization gets \textbf{really hard} if ...
 \begin{itemize}
 \item Grid search: Exhaustive search of a predefined grid of inputs
 \item Random search: Evaluate uniformly sampled inputs 
-\item Latin hypercube sampling: inputs are sampled randomly, but no two inputs share the same value in a dimension. 
 \item \textbf{Advantages: } Easy, intuitive, parallelization is trivial
 \item \textbf{Disadvantages: } Inefficient, search large irrelevant areas
 \end{itemize}
 
 \begin{center}
 \begin{figure}
-\includegraphics[width = 3cm]{figure_man/01_GridSearch.png} ~ \includegraphics[width = 3cm]{figure_man/02_RandomSearch.png} ~ \includegraphics[width = 3cm]{figure_man/03_LatHypercube.png}
+\includegraphics[width=0.3\textwidth]{figure_man/01_GridSearch.png} ~ \includegraphics[width=0.3\textwidth]{figure_man/02_RandomSearch.png}
 \end{figure}
 \begin{footnotesize}
-  Examples for a grid (left), random design (middle), and a Latin Hypercube design (right). The curves on the axes represent the function values w.r.t. the respective parameter (the other parameter is integrated out). 
+Marginal distribution plots of GS vs. RS.
 \end{footnotesize}
 \end{center}
 

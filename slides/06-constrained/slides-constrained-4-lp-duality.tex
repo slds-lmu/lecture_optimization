@@ -5,12 +5,11 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/convex_programs.png}
+\newcommand{\titlefigure}{figure_man/Weak_and_Strong_Duality.png}
 \newcommand{\learninggoals}{
-\item Definition
-\item Max. Likelihood 
-\item Normal regression
-\item Risk Minimization
+\item Concepts of duality in optimization
+\item LP duality 
+\item Weak and strong duality in LP
 }
 
 
@@ -22,11 +21,16 @@
 
 \begin{document}
 
-\lecturechapter{LP Duality}
+\lecturechapter{Duality in optimization}
 \lecture{Optimization in Machine Learning}
 \sloppy
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{vbframe}{Duality: introductory example}
+
+\begin{vbframe}{Duality: overview}
+
+\end{vbframe}
+
+\begin{vbframe}{LP Duality: introductory example}
 
 \textbf{Example:}
 
@@ -94,7 +98,7 @@ The baker informs the supplier that he needs at least $6$ units of chocolate, $1
 
 \lz
 
-The supplier asks himself how he must set the prices for chocolate, sugar and creamcheese ($\alpha_1, \alpha_2, \alpha_3$) such that he can
+The supplier asks himself how he must set the prices for chocolate, sugar and cream cheese ($\alpha_1, \alpha_2, \alpha_3$) such that he can
 
 \begin{itemize}
 \item maximize his revenue

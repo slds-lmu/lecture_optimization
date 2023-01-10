@@ -7,7 +7,7 @@
 
 \newcommand{\titlefigure}{figure_man/surrogate_0.png}
 \newcommand{\learninggoals}{
-\item Gaussian Process vs. Random Forest
+\item Gaussian process vs. random forest
 }
 
 \title{Optimization in Machine Learning}
@@ -66,9 +66,10 @@ Pros:
 The posterior mean and the posterior variance for a GP can be derived analytically: 
 
 \begin{itemize}
-  \item Let $\D = \{(\xv^{(i)}, y^{(i)})\}_{i = 1, \ldots, t}$ be the data we are fitting the GP on
-  \item Let $\bm{y}:= \left(y^{(1)}, \ldots, y^{(t)}\right)$ be the vector of observed outputs
-  \item For a covariance kernel $k(\xv, \xv^{'})$, let $\bm{K} := \left(k(\xv^{(i)}, \xv^{(j)})\right)_{i,j}$ denote the \textbf{kernel (Gram) matrix} and $k(\xv) \coloneqq \left(k(\xv, \xv^{(1)}), \ldots, k(\xv, \xv^{(t)})\right)^\top$
+  \item Let $\Dts$ be the data we are fitting the GP on
+  \item Let $\bm{y}:= \left(\ysi[1], \ldots, \ysi[t]\right)$ be the vector of observed outputs
+  \item For a covariance kernel $k(\xv, \xv^{'})$, let $\bm{K} := \left(k(\xvsi, \xvsi[j])\right)_{i,j}$ denote the \textbf{kernel (Gram) matrix} and $k(\xv) \coloneqq \left(k(\xv, \xv^{[1]}), \ldots, k(\xv, \xvsi[t])\right)^\top$
+  \item Radial basis function kernel (also known as Gauss kernel): $k(\xv, \xv^{'})=\exp (-\frac{||\xv - \xv^{'}||^2}{2 \sigma^2})$
   \item Further, we assume a zero-mean GP prior $^{(*)}$  
 \end{itemize}
 
@@ -83,14 +84,14 @@ The posterior mean and the posterior variance for a GP can be derived analytical
 The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP is
 
 \begin{eqnarray*}
-  Y(\xv) ~|~ \xv, \D \sim \mathcal{N}\left(\hat{f}(\xv), \hat{s}^2(\xv)\right)
+  Y(\xv) ~|~ \xv, \Dt \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)
 \end{eqnarray*}
 
 with 
 
 \begin{eqnarray*}
-  \hat{f}(\xv) &=& k(\xv)^\top \bm{K}^{-1} \bm{y} \\
-  \hat{s}^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top \bm{K}^{-1} k(\xv)
+  \fh(\xv) &=& k(\xv)^\top \bm{K}^{-1} \bm{y} \\
+  \sh^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top \bm{K}^{-1} k(\xv)
 \end{eqnarray*}
 
 \vfill
@@ -103,13 +104,13 @@ Cons:
   \item GPs can natively only handle numeric features\\
     Categorical features and dependencies require special handling via custom kernel
   \item GPs aren't that robust\\
-    In practice, \enquote{white-noise} can occur where the posterior mean and variance is constant (except for the interpolation of training points)
+    In practice, \enquote{white-noise} models can occur where the posterior mean and variance is constant (except for the interpolation of training points)
   \item Performance can be sensitive to the choice of kernel and hyperparameters
 \end{itemize}
 
 \end{vbframe}
 
-\begin{vbframe}{Random Forest - Different Choices}
+\begin{frame}{Random Forest}
 
 Pros:
 \begin{itemize}
@@ -120,13 +121,24 @@ Pros:
  \item Robust
 \end{itemize}
 
-\framebreak
+\begin{center}
+  \includegraphics[width = 0.7\textwidth]{slides/010-bayesian-optimization/figure_man/random_forests.jpg}
+\end{center}
 
+\end{frame}
+
+
+\begin{frame}{Random Forest - Different Choices}
+
+% we always use all data (fraction = 1)
+% no bootstrap means we do subsampling (i.e., simply use all data once)
+% no random split means we split by variance criterion
+% random split means we choose the split point in a feature uniformly at random between feature bounds
 \begin{center}
   \includegraphics[width = 0.9\textwidth]{figure_man/surrogate_2.png}\\
 \end{center}
 
-\end{vbframe}
+\end{frame}
 
 
 \begin{frame}{Random Forest}
