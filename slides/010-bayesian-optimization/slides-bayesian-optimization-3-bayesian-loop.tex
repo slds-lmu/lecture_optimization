@@ -7,8 +7,8 @@
 
 \newcommand{\titlefigure}{figure_man/bayesian_loop_3.png}
 \newcommand{\learninggoals}{
-\item Bayesian Surrogate Modeling
-\item Standard Acquisition Functions
+\item Bayesian surrogate modeling
+\item Standard acquisition functions
 }
 
 \title{Optimization in Machine Learning}
@@ -37,22 +37,10 @@ Find trade-off between \textbf{exploration} areas we haven't visited yet) and \t
 \framebreak 
 
 \begin{itemize}
-\item \textbf{Idea}: Use a \textbf{Bayesian approach} to build a surrogate model that yields estimates for 
-\begin{itemize}
-  \item the posterior mean $\hat{f}(\xv)$
-  \item the posterior variance $\hat{s}^2(\xv)$
-\end{itemize}
+\item \textbf{Idea}: Use a \textbf{Bayesian approach} to build a surrogate model that yields estimates for the posterior mean $\fh(\xv)$ and the posterior variance $\sh^2(\xv)$
 \item The posterior variance expresses the \enquote{confidence} in the prediction
 \item The posterior variance should be high in regions where we have only few observations (red area) and low where we have a lot of observations (blue area)
-\item We will denote by $Y(\xv)$ the random variable associated with the evaluation of a new point $\xv \in \mathcal{S}$
-\item The most prominent choice for a surrogate model (SM) is a \textbf{Gaussian process} (GP), here the posterior predictive distribution for a new point is normal, $Y(\xv) \sim \mathcal{N}\left(\hat{f}(\xv), \hat{s}^2(\xv)\right)$
 \end{itemize}
-
-\framebreak
-
-GP Example:
-\vspace{+.45cm}
-
 \begin{minipage}[b]{0.45\textwidth}
   \includegraphics[width = \textwidth]{figure_man/bayesian_loop_0.png}
 \end{minipage}
@@ -61,13 +49,23 @@ GP Example:
   \includegraphics[width = \textwidth]{figure_man/bayesian_loop_1.png}
 \end{minipage}
 
+\framebreak
+
+\begin{itemize}
+\item We will denote by $Y(\xv)$ the random variable associated with the evaluation of a new point $\xv \in \mathcal{S}$
+\item The most prominent choice for a surrogate model (SM) is a \textbf{Gaussian process} (GP), here the posterior predictive distribution for a new point is normal, $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$
+\item For now we assume an interpolating SM (for example a GP) resulting in $\fh(\xv) = f(\xv)$ and $\sh(\xv) = 0$ for training points
+\end{itemize}
+
 \end{vbframe} 
 
 \begin{vbframe}{Acquisition Functions}
 
-To sequentially propose new points based on the SM, we make use of so-called acquisition functions $\alpha: \mathcal{S} \to \R$\\
+To sequentially propose new points based on the SM, we make use of so-called acquisition functions $a: \mathcal{S} \to \R$\\
 
-Let $f_{\min} \coloneqq \min \left\{f(\xv^{(1)}), \ldots, f(\xv^{(t)})\right\}$ denote the best observed value so far
+\vspace{1em}
+
+Let $\fmin \coloneqq \min \left\{f(\xvsi[1]), \ldots, f(\xvsi[t])\right\}$ denote the best observed value so far (visualized in green)
 
 \vspace*{-0.2cm}
 
@@ -77,11 +75,11 @@ Let $f_{\min} \coloneqq \min \left\{f(\xv^{(1)}), \ldots, f(\xv^{(t)})\right\}$ 
 
 \vspace*{-0.3cm}
 
-In the examples before we simply used the posterior mean $\alpha(\xv) = \hat{f}(\xv)$ as acquisition function - ignoring uncertainty
+In the examples before we simply used the posterior mean $a(\xv) = \fh(\xv)$ as acquisition function - ignoring uncertainty
 
 \framebreak
 
-Most acquisition functions make us of the posterior predictive distribution under a SM being normal, $Y(\xv) \sim \mathcal{N}\left(\hat{f}(\xv), \hat{s}^2(\xv)\right)$
+Many acquisition functions make us of the posterior predictive distribution under a SM being normal, $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$
 
 \vspace*{-0.2cm}
 
@@ -89,31 +87,131 @@ Most acquisition functions make us of the posterior predictive distribution unde
   \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_3.png}
 \end{center}
 
-The grey line visualizes the density of the corresponding normal distribution for $\xv = 0$
+\begin{footnotesize}   
+The grey line visualizes the density of the corresponding normal distribution for $\xv = 0$.
+We see that for $\xv = 0$, there is some small probability mass for $\P(Y(\xv) < \fmin)$ (area under the grey curve exceeding the green horizontal line)
+\end{footnotesize}
+
+\end{vbframe}
+
+\begin{vbframe}{Lower Confidence Bound}
+
+\textbf{Goal}: Find $\xvsi[t+1]$ that minimizes the \textbf{Lower Confidence Bound} (LCB):
+
+$$
+  a_{\text{LCB}}(\xv) = \fh(\xv) - \lambda \sh(\xv)
+$$
+
+where $\lambda > 0$ is a constant that controls the \enquote{mean vs. uncertainty} trade-off\\
+
+\vspace{1em}
+
+The LCB is conceptually very simple and does \textbf{not} rely on distributional assumptions of the posterior predictive distribution under a SM
+
+\framebreak
+
+$\lambda = 1$
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_0.png}
+\end{center}
+
+The red point depicts $\argmin_{\xv \in \mathcal{S}} a_{\text{LCB}}(\xv)$
+
+\framebreak
+
+$\lambda = 3$
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_1.png}
+\end{center}
+
+\framebreak
+
+$\lambda = 10$
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_2.png}
+\end{center}
+
+\end{vbframe}
+
+\begin{vbframe}{Probability of Improvement}
+
+\textbf{Goal}: Find $\xvsi[t+1]$ that maximizes the \textbf{Probability of Improvement} (PI):
+
+$$
+  a_{\text{PI}}(\xv) = \P(Y(\xv) < \fmin) = \Phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right)
+$$
+
+where $\Phi(\cdot)$ denotes the distribution function of a standard normal random variable\\
+
+\vspace{1em}
+
+PI is more complex than LCB and typically makes assumptions regarding the posterior predictive distribution under a SM
+
+\vfill
+
+\begin{footnotesize}
+\textbf{Note:} The probability of improvement is $0$ for points that have already been evaluated. This can be seen analytically: For a visited point $\sh(\xv) = 0$ and $\fh(\xv) = f(\xv) \ge \fmin$, and thus $\fmin - \fh(\xv) \le 0$. Thus
+
+$$
+  \Phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right) = \Phi\left(- \infty\right) = 0.
+$$
+
+\end{footnotesize}
+
+\framebreak
+
+PI illustration for $\xv = 0$ given a SM yielding a normally distributed posterior predictive distribution
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_0.png}
+\end{center}
+
+\begin{footnotesize}
+The green vertical line represents $\fmin$. $a_{\text{PI}}(\xv)$ is given by the black area
+\end{footnotesize}
+
+\framebreak
+
+The PI does not take the size of the improvement into account
+
+Often it will propose points close to the current $\fmin$
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_1.png}
+\end{center}
+
+The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{PI}}(\xv)$
 
 \end{vbframe}
 
 \begin{vbframe}{Expected Improvement}
 
-\textbf{Goal:} Propose $\xv^{(t+1)}$ that maximizes the \textbf{Expected Improvement} (EI): 
+\textbf{Goal:} Propose $\xvsi[t+1]$ that maximizes the \textbf{Expected Improvement} (EI): 
 
 \vspace*{-0.5cm}
 
 \begin{eqnarray*}
-  % FIXME: Expected value with respect to \hat{f} i.e. the GP predictive posterior distribution
-  \alpha_{\text{EI}}(\xv) &=& \E(\max\{f_{\min} - Y(\xv), 0\}) \\
+  % FIXME: Expected value with respect to \fh i.e. the GP predictive posterior distribution
+  a_{\text{EI}}(\xv) &=& \E(\max\{\fmin - Y(\xv), 0\}) \\
 \end{eqnarray*} 
 
 \vspace*{-0.5cm}
 
-Note that the improvement is bounded from below by $0$. Uncertainty only enters in the case of real improvement $f_{\min} - Y(\xv) > 0$
+EI is more complex than PI and typically also makes assumptions regarding the posterior predictive distribution under a SM\\
+
+\vspace{1em}
+
+Note that the improvement is bounded from below by $0$. Uncertainty only enters in the case of real improvement $\fmin - Y(\xv) > 0$
 
 \framebreak
 
-If $Y(\xv) \sim \mathcal{N}\left(\hat{f}(\xv), \hat{s}^2(\xv)\right)$, we can express the EI in closed-form as: 
+If $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$, we can express the EI in closed-form as: 
 
 $$
-\alpha_{\text{EI}}(\xv) = (f_{\min}-\hat{f}(\xv)) \Phi \Big(\frac{f_{\min} - \hat{f}(\xv)}{\hat{s}(\xv)}\Big) + \hat{s}(\xv) \phi\Big(\frac{f_{\min}-\hat{f}(\xv)}{\hat{s}(\xv)}\Big), 
+a_{\text{EI}}(\xv) = (\fmin-\fh(\xv)) \Phi \Big(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\Big) + \sh(\xv) \phi\Big(\frac{\fmin-\fh(\xv)}{\sh(\xv)}\Big), 
 $$
 
 where $\Phi(\cdot)$ and $\phi(\cdot)$ denote the distribution and density function of a standard normal random variable
@@ -121,9 +219,7 @@ where $\Phi(\cdot)$ and $\phi(\cdot)$ denote the distribution and density functi
 \vfill
 
 \begin{footnotesize}
-
-\textbf{Note:} The EI is $0$ for points that have already been evaluated. For a visited point $\hat{f}(\xv) = f(\xv) \ge f_{\min}$, and thus $f_{\min} - \hat{f}(\xv) \le 0$ and $\max\{f_{\min} - \hat{f}(\xv), 0\} = 0$
-
+\textbf{Note:} The EI is $0$ for points that have already been evaluated. For a visited point $\fh(\xv) = f(\xv) \ge \fmin$, and thus $\fmin - \fh(\xv) \le 0$ and $\max\{\fmin - \fh(\xv), 0\} = 0$
 \end{footnotesize}
 
 \framebreak
@@ -134,7 +230,7 @@ We use the EI (red line) to propose the next point ...
   \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_4.png}
 \end{center}
 
-The red point depicts $\argmax_{\xv \in \mathcal{S}} \alpha_{\text{EI}}(\xv)$
+The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
 
 \framebreak
 
@@ -166,75 +262,6 @@ This is also a result of the well-calibrated uncertainty estimates of the SM (in
 
 \end{vbframe}
 
-\begin{vbframe}{Probability of Improvement}
-
-\textbf{Goal}: Find $\xv^{t+1}$ that maximizes the \textbf{Probability of Improvement}:
-
-$$
-  \alpha_{\text{PI}}(\xv) = \P(Y(\xv) < f_{\min}) = \Phi\left(\frac{f_{\min} - \hat{f}(\xv)}{\hat{s}(\xv)}\right)
-$$
-
-where $\Phi(\cdot)$ denotes the distribution function of a standard normal random variable
-
-\vfill
-
-\begin{footnotesize}
-\textbf{Note:} The probability of improvement is $0$ for points that have already been evaluated. This is clear by definition of the PI-criterion (we seek for a \enquote{real} improvement \enquote{$<$}). But it can also be seen analytically: For a visited point $\hat{s}(\xv) = 0$ and $\hat{f}(\xv) = f(\xv) \ge f_{\min}$, and thus $f_{\min} - \hat{f}(\xv) \le 0$. Thus
-
-$$
-  \Phi\left(\frac{f_{\min} - \hat{f}(\xv)}{\hat{s}(\xv)}\right) = \Phi\left(- \infty\right) = 0.
-$$
-
-\end{footnotesize}
-
-\framebreak
-
-The PI does not take the size of the improvement into account
-
-Often it will propose points close to the current $f_{\min}$
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_0.png}
-\end{center}
-
-\end{vbframe}
-
-\begin{vbframe}{Lower Confidence Bound}
-
-\textbf{Goal}: Find $\xv^{t+1}$ that minimizes the \textbf{Lower Confidence Bound}:
-
-$$
-  \alpha_{\text{LCB}}(\xv) = \hat{f}(\xv) - \lambda \hat{s}(\xv)
-$$
-
-where $\lambda > 0$ is a constant that controls the \enquote{mean vs. uncertainty} trade-off
-
-\framebreak
-
-$\lambda = 1$
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_0.png}
-\end{center}
-
-\framebreak
-
-$\lambda = 3$
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_1.png}
-\end{center}
-
-\framebreak
-
-$\lambda = 10$
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_2.png}
-\end{center}
-
-\end{vbframe}
-
 \begin{vbframe}{Acquisition Functions: Comparison}
 
 \begin{itemize}
@@ -258,6 +285,7 @@ Many more acquisition functions exist:
   \item Entropy based: Entropy search, predictive entropy search, max value entropy search
   \item Knowledge Gradient
   \item Thompson Sampling
+  \item ...
 \end{itemize}
 
 \end{vbframe}

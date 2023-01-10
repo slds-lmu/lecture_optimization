@@ -64,7 +64,7 @@
   \min \limits_{\xv \in \mathcal{S}} && f(\xv) = \left(f_1(\xv), \ldots, f_m(\xv)\right)
 \end{eqnarray*}
 \begin{itemize}
-  \item A configuration $\xv$ \textbf{dominates} ($\preceq$) $\tilde{\xv}$ if
+  \item A configuration $\xv$ \textbf{dominates} ($\prec$) $\tilde{\xv}$ if
 \begin{eqnarray*}
   \forall i \in \{ 1, ..., m\}: && f_i(\xv) \leq f_i(\tilde{\xv})\\
   \text{and}~\exists j \in \{1, ..., m\}: && f_j(\xv) < f_j(\tilde{\xv})
@@ -72,7 +72,7 @@
 \item Set of non-dominated solutions:
   \begin{small}
   \begin{align*}
-    \mathcal{P} := \{\xv \in \mathcal{S} | \nexists \tilde{\xv} \in \mathcal{S}: \tilde{\xv} \preceq \xv \}
+    \mathcal{P} := \{\xv \in \mathcal{S} | \nexists \tilde{\xv} \in \mathcal{S}: \tilde{\xv} \prec \xv \}
 \end{align*}
 \end{small}
 \item Pareto set $\mathcal{P}$, Pareto front $ f(\mathcal{P})$
@@ -162,7 +162,7 @@ ParEGO Example, initial design and true Pareto front in black ...
 \begin{itemize}
   \item Calculate LCB for each objective
   \item Measure contribution with regard to the hypervolume improvement
-  \item For $\varepsilon$-dominated ($\preceq_{\varepsilon}$) solutions, a penalty is added
+  \item For $\varepsilon$-dominated ($\prec_{\varepsilon}$) solutions, a penalty is added
 \end{itemize}
 \vfill
 \end{column}
