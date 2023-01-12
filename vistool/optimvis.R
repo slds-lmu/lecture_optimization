@@ -3,11 +3,16 @@ library(rootSolve) # fun: gradient, hessian
 library(checkmate)
 library(data.table)
 library(colorspace)
+library(mlr3misc) # nice helper stuff
+library(TestFunctions)
 options(warn = 2)
 
+
+l2norm = function(x) sqrt(sum(x*x))
+
 # question: do we enforce that x is always 2d? 
-# currently not, as we maybe want to benchmark in some d, then show at least 
-# y-traces. restriction seems to have no value, currently
+#   currently not, as we maybe want to benchmark in some d, then show at least 
+#   y-traces. restriction seems to have no value, currently
 
 Optimizer = R6Class("Optimizer",
   public = list(
@@ -18,7 +23,7 @@ Optimizer = R6Class("Optimizer",
     initialize = function(steps, step_size, x0) {
       steps = asInt(steps, lower = 0)
       assert_number(step_size, lower = 0)      
-      x0 = assert_numeric(x0, len = 2L) 
+      x0 = assert_numeric(x0, min.len = 1) 
       self$steps = steps
       self$step_size = step_size
       self$x0 = x0
@@ -32,21 +37,29 @@ OptimizerGD = R6Class("OptimizerGD", inherit = Optimizer,
       super$initialize(steps, step_size, x0)  # assert in super
     },
     
+    #FIXME: implement a generic step size control mechanism here.
+    # constant, armijo, downschedule
     optimize = function(obj) {
       assert_r6(obj, "Objective")
       x_old = self$x0
       for (step in 1:self$steps) {
-        d = obj$grad(x_old)
-        dn = norm(d, type = "2")
-        x_new = x_old - self$step_size * d / dn
-        y_new = obj$eval_store(x_new)
+        ee = obj$eval_store(x_old)
+        d = -ee$grad
+        
+        alpha = self$step_size
+        while (TRUE)
+          x_test = x_old + alpha * d
+          obj$eval() > obj$eval(x_old) + self$gamma * alpha * (grad %*% t(d))[1]) {
+          alpha = alpha * self$tau
+        }
+        
+        x_new = x_old + self$step_size * d
         x_old = x_new
       }
     }
   )
 )
 
-# Newton raphson
 OptimizerNR = R6Class("OptimizerNR", inherit = Optimizer,
   public = list(
     gamma = NULL,
@@ -59,14 +72,17 @@ OptimizerNR = R6Class("OptimizerNR", inherit = Optimizer,
     
     optimize = function(obj) {
       assert_r6(obj, "Objective")
-      # implement NR algorithm here
       x_old = self$x0
 
       for (step in 1:self$steps) {
+        # FIXM: all bad here
+        ee = obj$eval_store(x_old)
         hess = obj$hess(x_old)
         grad = obj$grad(x_old)
+        # FIXME: transpose seems uneccassary? H symmetric?
+        # FIXME: we can take hessian from eval_store
         d = t(solve(hess, grad))
-        # d = d / norm(d, type = "2")
+        # d = d / l2norm(d)
 
         # Step size through Armijo rule
         alpha = self$step_size
@@ -77,9 +93,8 @@ OptimizerNR = R6Class("OptimizerNR", inherit = Optimizer,
 
         # print(alpha)
 
-        # dn = norm(d, type = "2")
+        # dn = l2norm(d)
         x_new = x_old - d #/ dn
-        y_new = obj$eval_store(x_new)
         x_old = x_new
       }
     }
@@ -91,22 +106,26 @@ OptimizerNR = R6Class("OptimizerNR", inherit = Optimizer,
 Objective = R6Class("Objective",
   public = list(
     id = NULL,
+    label = NULL,
     fun = NULL,
     # store evals as (x, fval)
     # x = listcol, unclear whether thats best, we can always add an unwrapper
     archive = NULL,
     xdim = NULL,
   
-    initialize = function(id = "f", fun, xdim = 2) {
+    initialize = function(id, fun, label = "f", xdim = 2) {
       self$id = assert_string(id)
+      self$label = assert_string(label)
       self$fun = assert_function(fun) 
-      testx = rep(0, xdim)
+      xdim = asInt(xdim, na.ok = TRUE, lower = 1)
+      # using testx=0 that might break if origin is outofbound? 
+      # OTOH unlikely and we dont really consider bounds atm
+      testx = rep(0, ifelse(is.na(xdim), 2, xdim)) # dim=2 if fun has arbitrary dim
       assert_number(self$fun(testx)) # check that fun works as expected
       self$archive = data.table()
       self$xdim = xdim
     },
     
-    #FIXME: wir sollten hier auch immer den grad und dessen norm immer speichern
     eval = function(x) {
       assert_numeric(x, len = self$xdim)
       fval = self$fun(x)
@@ -116,8 +135,11 @@ Objective = R6Class("Objective",
     eval_store = function(x) {
       assert_numeric(x, len = self$xdim)
       fval = self$fun(x)
-      self$archive = rbind(self$archive, list(x = list(x), fval = fval))
-      return(fval)
+      grad = rootSolve::gradient(self$fun, x)[1,]
+      gnorm = l2norm(grad)
+      self$archive = rbind(self$archive, list(x = list(x), fval = fval, 
+        grad = list(grad), gnorm = gnorm))
+      list(fval = fval, grad = grad, gnorm = gnorm)
     },
     
     grad = function(x) {
@@ -141,11 +163,15 @@ Visualizer = R6Class("Visualizer",
     n_grid = NULL,
     x1lim = NULL,
     x2lim = NULL,
+    logscale = NULL,
     
+    #FIXME: use base instead of flag for logscale?
     initialize = function(obj, run_archs = NULL, x1lim = c(0, 1), x2lim = c(0, 1), 
-      n_grid = 50L, x1lab = "x1", x2lab = "x2", flab = "f", col = NULL) {
+      n_grid = 50L, x1lab = "x1", x2lab = "x2", flab = "f", col = NULL, logscale = FALSE) {
       
+      # FIXME: col arg in signature not used? typo?
       self$obj = obj
+      assert_r6(obj, "Objective")
       if (is.data.table(run_archs))
         run_archs = list(run_archs)
       self$run_archs = assert_list(run_archs, types = "data.table")
@@ -157,6 +183,7 @@ Visualizer = R6Class("Visualizer",
       self$x2lab = assert_string(x2lab)
       self$flab = assert_string(flab)
       self$bg_2d_col = terrain_hcl
+      self$logscale = assert_flag(logscale)
     },
 
     get_grid = function() { 
@@ -166,6 +193,8 @@ Visualizer = R6Class("Visualizer",
       fmat = apply(g, 1, self$obj$fun)
       # orders by col in result mat; this means: rows = x1, cols = x2
       fmat = matrix(fmat, self$n_grid, self$n_grid) 
+      if (self$logscale)
+        fmat = log(fmat)
       list(x1seq = x1seq, x2seq = x2seq, fmat = fmat)
     },
     
@@ -255,17 +284,42 @@ Visualizer = R6Class("Visualizer",
 )
 
 
+###################### testfuns and dictionary
 
-# f = function(x) { sum(x * x)}
-# obj = Objective$new(fun = f)
-# optim = OptimizerGD$new(steps = 5L, step_size = 0.1, x0 = c(10, 10))
-# optim$optimize(obj)
-# print(obj$archive)
-# vis = Visualizer$new(obj, run_archs = list(obj$archive),
-#   x1lim = c(-15, 15), x2lim = c(-15, 15))
-# vis$plot_rbase_contour(2)
-# vis$plot_rbase_3dsurf()
+tfun_dict = R6Class("DictionaryObjective", inherit = Dictionary, 
+  cloneable = FALSE)$new()
+
+as.data.table.DictionaryObjective = function(x, ..., objects = FALSE) {
+
+  setkeyv(map_dtr(x$keys(), function(key) {
+    t = x$get(key)
+    insert_named(
+      list(key = key, label = t$label, xdim = t$xdim),
+      if (objects) list(object = list(t))
+    )
+  }, .fill = TRUE), "key")[]
+}
+
+#FIXME: add all funs here
+# FIXME: check that we can work with funs of arbitrary xdim
+tfun_dict$add("TF_branin", Objective$new(fun = TestFunctions::branin,                   
+  id = "TF_branin", label = "branin", xdim = 2L))
+tfun_dict$add("TF_banana", Objective$new(fun = TestFunctions::banana,                   
+  id = "TF_banana", label = "banana",xdim = 2L))
+tfun_dict$add("TF_gaussian1", Objective$new(fun = TestFunctions::gaussian1,                   
+  id = "TF_gaussian1", label = "gaussian1", xdim = NA))
+
+print(as.data.table(tfun_dict))
+
+tf = tfun_dict$get("TF_branin")
+oo = OptimizerGD$new(steps = 10, step_size = 0.0001, x0=rep(1, 2))
+oo$optimize(tf)
+a = tf$archive
+print(a)
+v = Visualizer$new(tf, run_archs = a)
+v$x1lim = c(-0, 2)
+v$x2lim = c(-0, 2)
+v$logscale = TRUE
+v$plot_rbase_contour() 
 
 
-
-                    
