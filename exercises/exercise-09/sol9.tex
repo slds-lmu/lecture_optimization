@@ -1,0 +1,375 @@
+\documentclass[a4paper]{article}
+\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+
+
+
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+\usepackage{a4wide,paralist}
+\usepackage{amsmath, amssymb, xfrac, amsthm}
+\usepackage{dsfont}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{framed}
+\usepackage{multirow}
+\usepackage{bytefield}
+\usepackage{csquotes}
+\usepackage[breakable, theorems, skins]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{cancel}
+\usepackage{bm}
+
+
+\input{../../style/common}
+
+\tcbset{enhanced}
+
+\DeclareRobustCommand{\mybox}[2][gray!20]{%
+	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+	\fi
+}
+
+\DeclareRobustCommand{\myboxshow}[2][gray!20]{%
+%	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+%	\fi
+}
+
+
+%exercise numbering
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{\roman{enumii}}
+\renewcommand\labelenumi{\theenumi}
+
+
+\font \sfbold=cmssbx10
+
+\setlength{\oddsidemargin}{0cm} \setlength{\textwidth}{16cm}
+
+
+\sloppy
+\parindent0em
+\parskip0.5em
+\topmargin-2.3 cm
+\textheight25cm
+\textwidth17.5cm
+\oddsidemargin-0.8cm
+\pagestyle{empty}
+
+\newcommand{\kopf}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfic}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfsl}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newenvironment{allgemein}
+	{\noindent}{\vspace{1cm}}
+
+\newcounter{aufg}
+\newenvironment{aufgabe}[1]
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}: #1}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newcounter{loes}
+\newenvironment{loesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+	{\bigskip}
+	
+\newenvironment{bonusaufgabe}
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}*\footnote{This
+	is a bonus exercise.}:}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newenvironment{bonusloesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}*:}\\\noindent}
+	{\bigskip}
+
+
+
+\begin{document}
+% !Rnw weave = knitr
+
+
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{9}{Multivariate Optimization 4}
+
+\aufgabe{Newton-Raphson and Gauss-Newton}{
+
+You are given the following data situation:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{123}\hlstd{)}
+
+\hlcom{# simulate 50 binary observations with noisy linear decision boundary}
+\hlstd{n} \hlkwb{=} \hlnum{50}
+\hlstd{X} \hlkwb{=} \hlkwd{matrix}\hlstd{(}\hlkwd{runif}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{n),} \hlkwc{ncol} \hlstd{=} \hlnum{2}\hlstd{)}
+\hlstd{X_model} \hlkwb{=} \hlkwd{cbind}\hlstd{(}\hlnum{1}\hlstd{, X)}
+\hlstd{y} \hlkwb{=} \hlopt{-}\hlstd{((X_model} \hlopt{%*%} \hlkwd{c}\hlstd{(}\hlnum{0.3}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{+} \hlkwd{rnorm}\hlstd{(n,} \hlnum{0}\hlstd{,} \hlnum{0.3}\hlstd{)} \hlopt{<} \hlnum{0}\hlstd{)} \hlopt{-} \hlnum{1}\hlstd{)}
+\hlstd{df} \hlkwb{=} \hlkwd{as.data.frame}\hlstd{(X)}
+\hlstd{df}\hlopt{$}\hlstd{type} \hlkwb{=} \hlkwd{as.character}\hlstd{(y)}
+
+\hlkwd{ggplot}\hlstd{(df)} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= V1,} \hlkwc{y} \hlstd{= V2,} \hlkwc{color}\hlstd{=type))} \hlopt{+}
+  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{1}\hlstd{]))} \hlopt{+}
+  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{2}\hlstd{]))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.4\linewidth]{figure/univ-plot-1} 
+\end{knitrout}
+\begin{enumerate}
+\item Define $s:\R\rightarrow\R, f \mapsto \frac{1}{1 + \exp(f)}.$ \\
+$\nabla_{\bm{\theta}}\mathcal{R}_{\text{emp}} =  \nabla_{\bm{\theta}}\sum^n_{i=1}\Vert y^{(i)} - f(\mathbf{x}^{(i)}) \Vert^2_2 = 
+ \sum^n_{i=1}\frac{d}{df}\Vert y^{(i)} - s(f^{(i)}) \Vert^2_2 \cdot \nabla_{\bm{\theta}} f^{(i)} $ \\
+$ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)}) + 1) - 1}{\exp(f^{(i)}) + 1} \cdot \frac{\exp(f^{(i)})}{(\exp(f^{(i)}) + 1)^2} \tilde{\mathbf{x}}^{(i)}$ \\ 
+$ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)}) + 1) - 1}{\exp(f^{(i)}) + 1} \cdot \frac{\frac{\exp(f^{(i)})}{\exp(f^{(i)}) + 1}}{\exp(f^{(i)}) + 1} \tilde{\mathbf{x}}^{(i)}$ \\
+$ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)})) - \frac{\exp(f^{(i)})}{\exp(f^{(i)}) + 1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)}$ \\
+$ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)}$ 
+\item $\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} = \sum^n_{i=1}\frac{d}{df}2\frac{y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)} \tilde{\mathbf{x}}^{(i)}\nabla_{\bm{\theta}} {f^{(i)}}^\top$ \\
+$=  \sum^n_{i=1}2\frac{
+(y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-2}\exp(-f^{(i)}))(\exp(f^{(i)}) + 1)^2 
+- (y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1})\cdot 2(\exp(f^{(i)}) + 1) 
+\exp(f^{(i)})}{(\exp(f^{(i)}) + 1)^4}
+\tilde{\mathbf{x}}^{(i)}{\tilde{\mathbf{x}}}^{(i)\top}$ \\
+$=  \sum^n_{i=1}2\frac{
+y^{(i)}\exp(f^{(i)})(\exp(f^{(i)}) + 1)^2 - \exp(f^{(i)})
+- (2y^{(i)}\exp(f^{(i)})(\exp(f^{(i)}) + 1) + 2\exp(f^{(i)}))\exp(f^{(i)})
+}{(\exp(f^{(i)}) + 1)^4}
+\tilde{\mathbf{x}}^{(i)}{\tilde{\mathbf{x}}}^{(i)\top}$ \\
+$=  \sum^n_{i=1}2\frac{
+\exp(f^{(i)})(y^{(i)}(\exp(f^{(i)}) + 1)^2 - 1
+- 2y^{(i)}\exp(f^{(i)})(\exp(f^{(i)}) + 1) + 2\exp(f^{(i)})) 
+}{(\exp(f^{(i)}) + 1)^4}
+\tilde{\mathbf{x}}^{(i)}{\tilde{\mathbf{x}}}^{(i)\top}$ \\
+
+$=  \sum^n_{i=1}2\frac{
+\exp(f^{(i)})(y^{(i)}(\exp(2f^{(i)}) + 2\exp(f^{(i)}) + 1 - 2\exp(2f^{(i)}) - 2\exp(f^{(i)})) - 1 + 2\exp(f^{(i)})) 
+}{(\exp(f^{(i)}) + 1)^4}
+\tilde{\mathbf{x}}^{(i)}{\tilde{\mathbf{x}}}^{(i)\top}$ \\
+
+$=  \sum^n_{i=1}2\frac{
+\exp(f^{(i)})(y^{(i)}(-\exp(2f^{(i)}) + 1) - 1 + 2\exp(f^{(i)}))
+}{(\exp(f^{(i)}) + 1)^4}
+\tilde{\mathbf{x}}^{(i)}{\tilde{\mathbf{x}}}^{(i)\top}$
+\item Assume, e.g., there is only one observation with $y^{(1)} = 0$ then \\
+$$\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} = \frac{2\exp(f^{(1)})(2\exp(f^{(1)}) - 1)}{(\exp(f^{(1)}) + 1)^4}\underbrace{\tilde{\mathbf{x}}^{(1)}{\tilde{\mathbf{x}}}^{(1)\top}}_{\text{p.s.d.}}.$$
+If a p.s.d. matrix is multiplied with a negative number it becomes a n.s.d. matrix, i.e.,
+$\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}}$ is n.s.d. if $2\exp(f^{(1)}) < 1 \iff f^{(i)} < \ln(0.5).$ This condition trivially holds, e.g., if $\bm{\theta} = (\ln(0.5) - 1, 0, 0)^\top.$
+\item 
+For Newton-Raphson, we need to solve in each update step
+$$\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} \mathbf{d} = -\nabla_{\bm{\theta}}\mathcal{R}_{\text{emp}}$$
+for the descend direction $\mathbf{d}.$
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{)}
+\hlstd{remps} \hlkwb{=} \hlkwa{NULL}
+\hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
+
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{30}\hlstd{)\{}
+  \hlstd{exp_f} \hlkwb{=} \hlkwd{exp}\hlstd{(X_model} \hlopt{%*%} \hlstd{theta)}
+  \hlstd{remps} \hlkwb{=} \hlkwd{rbind}\hlstd{(remps,} \hlkwd{sum}\hlstd{((y} \hlopt{-} \hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{exp_f))}\hlopt{^}\hlnum{2}\hlstd{))}
+
+  \hlstd{hess} \hlkwb{=} \hlkwd{t}\hlstd{(X_model)} \hlopt{%*%}
+    \hlstd{(}\hlkwd{c}\hlstd{((}\hlnum{2} \hlopt{*} \hlstd{exp_f}\hlopt{*}\hlstd{(}\hlnum{2} \hlopt{*} \hlstd{exp_f} \hlopt{-} \hlstd{y}\hlopt{*}\hlstd{(exp_f}\hlopt{^}\hlnum{2} \hlopt{-} \hlnum{1}\hlstd{)} \hlopt{-} \hlnum{1}\hlstd{))}\hlopt{/}\hlstd{(exp_f} \hlopt{+} \hlnum{1}\hlstd{)}\hlopt{^}\hlnum{4} \hlstd{)} \hlopt{*} \hlstd{X_model)}
+  \hlstd{grad} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlkwd{t}\hlstd{(}\hlnum{2}\hlopt{*}\hlstd{(y} \hlopt{*} \hlstd{exp_f} \hlopt{-} \hlstd{(}\hlnum{1} \hlopt{+} \hlstd{exp_f}\hlopt{^-}\hlnum{1}\hlstd{)}\hlopt{^-}\hlnum{1}\hlstd{)} \hlopt{/} \hlstd{(exp_f} \hlopt{+} \hlnum{1}\hlstd{)}\hlopt{^}\hlnum{2}\hlstd{)} \hlopt{%*%} \hlstd{X_model)}
+  \hlstd{theta} \hlkwb{=} \hlstd{theta} \hlopt{+} \hlkwd{solve}\hlstd{(hess,} \hlopt{-}\hlstd{grad)}
+
+  \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
+\hlstd{\}}
+
+\hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(remps,} \hlkwc{t}\hlstd{=}\hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(remps)),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=t,} \hlkwc{y}\hlstd{=remps))} \hlopt{+}
+  \hlkwd{geom_line}\hlstd{()} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(R[emp]))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.4\linewidth]{figure/newton_raphson-plot-1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{theta} \hlstd{=} \hlkwd{c}\hlstd{(thetas),} \hlkwc{t}\hlstd{=}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(thetas),}\hlnum{3}\hlstd{),}
+                \hlkwc{id} \hlstd{=} \hlkwd{as.factor}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{2}\hlstd{),} \hlkwc{each}\hlstd{=} \hlkwd{nrow}\hlstd{(thetas)))),}
+       \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= t,} \hlkwc{y}\hlstd{=theta))} \hlopt{+}
+  \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color} \hlstd{= id))} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.4\linewidth]{figure/newton_raphson-plot-2} 
+\begin{kframe}\begin{alltt}
+\hlstd{theta}
+\end{alltt}
+\begin{verbatim}
+## [1] -2.087122  6.667438 -5.967500
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\item In this case, we can apply Gauss-Newton since $\mathcal{R}_{\text{emp}}$ is the squared sum of the residuals 
+$$\mathbf{r} = (y^{(1)} - \pi(\mathbf{x}^{(1)}), \dots, y^{(n)} - \pi(\mathbf{x}^{(n)}))^\top.$$ Here, for the update step we need to compute 
+$$\nabla_{\bm{\theta}}\mathbf{r} = \begin{pmatrix} -\frac{\exp(f^{(1)})}{(1 + \exp(f^{(1)}))^2} {\tilde{\mathbf{x}}}^{(1)\top} \\ 
+\vdots \\
+-\frac{\exp(f^{(n)})}{(1 + \exp(f^{(n)}))^2}{\tilde{\mathbf{x}}}^{(n)\top}
+\end{pmatrix}$$ \\
+For Gauss-Newton, we solve in each update step
+$$(\nabla_{\bm{\theta}}\mathbf{r}^\top \nabla_{\bm{\theta}}\mathbf{r}) \cdot \mathbf{d} = -\nabla_{\bm{\theta}}\mathbf{r}^\top \cdot \mathbf{r}$$
+for the descend direction $\mathbf{d}.$
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{)}
+\hlstd{remps} \hlkwb{=} \hlkwa{NULL}
+\hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
+
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{30}\hlstd{)\{}
+  \hlstd{exp_f} \hlkwb{=} \hlkwd{exp}\hlstd{(X_model} \hlopt{%*%} \hlstd{theta)}
+  \hlstd{remps} \hlkwb{=} \hlkwd{rbind}\hlstd{(remps,} \hlkwd{sum}\hlstd{((y} \hlopt{-} \hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{exp_f))}\hlopt{^}\hlnum{2}\hlstd{))}
+
+  \hlstd{res} \hlkwb{=} \hlopt{-}\hlstd{(y}\hlopt{-}\hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{exp_f))}
+  \hlstd{grad_res} \hlkwb{=} \hlopt{-}\hlkwd{c}\hlstd{(exp_f} \hlopt{/} \hlstd{(exp_f} \hlopt{+} \hlnum{1}\hlstd{)}\hlopt{^}\hlnum{2}\hlstd{)} \hlopt{*} \hlstd{X_model}
+
+  \hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(theta} \hlopt{+} \hlkwd{solve}\hlstd{(}\hlkwd{t}\hlstd{(grad_res)} \hlopt{%*%} \hlstd{grad_res,} \hlopt{-}\hlkwd{t}\hlstd{(grad_res)} \hlopt{%*%} \hlstd{res))}
+  \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
+\hlstd{\}}
+
+
+\hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(remps,} \hlkwc{t}\hlstd{=}\hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(remps)),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=t,} \hlkwc{y}\hlstd{=remps))} \hlopt{+}
+  \hlkwd{geom_line}\hlstd{()} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(R[emp]))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.4\linewidth]{figure/gauss_newton-plot-1} 
+\begin{kframe}\begin{alltt}
+\hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{theta} \hlstd{=} \hlkwd{c}\hlstd{(thetas),} \hlkwc{t}\hlstd{=}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(thetas),}\hlnum{3}\hlstd{),}
+                \hlkwc{id} \hlstd{=} \hlkwd{as.factor}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{2}\hlstd{),} \hlkwc{each}\hlstd{=} \hlkwd{nrow}\hlstd{(thetas)))),}
+       \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= t,} \hlkwc{y}\hlstd{=theta))} \hlopt{+}
+  \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color} \hlstd{= id))} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.4\linewidth]{figure/gauss_newton-plot-2} 
+\begin{kframe}\begin{alltt}
+\hlstd{theta}
+\end{alltt}
+\begin{verbatim}
+## [1] -2.087122  6.667438 -5.967500
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{enumerate}
+
+}
+\end{document}

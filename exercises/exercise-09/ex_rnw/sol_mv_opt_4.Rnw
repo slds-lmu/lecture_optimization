@@ -1,0 +1,124 @@
+You are given the following data situation:
+<<univ-plot, echo=TRUE, out.width="40%">>=
+library(ggplot2)
+	
+set.seed(123)
+	
+# simulate 50 binary observations with noisy linear decision boundary
+n = 50
+X = matrix(runif(2*n), ncol = 2)
+X_model = cbind(1, X)
+y = -((X_model %*% c(0.3, -1, 1) + rnorm(n, 0, 0.3) < 0) - 1)
+df = as.data.frame(X)
+df$type = as.character(y)
+  
+ggplot(df) +
+  geom_point(aes(x = V1, y = V2, color=type)) + 
+  xlab(expression(x[1])) + 
+  ylab(expression(x[2])) 
+@
+\begin{enumerate}
+\item Define $s:\R\rightarrow\R, f \mapsto \frac{1}{1 + \exp(f)}.$ \\
+$\nabla_{\bm{\theta}}\mathcal{R}_{\text{emp}} =  \nabla_{\bm{\theta}}\sum^n_{i=1}\Vert y^{(i)} - f(\mathbf{x}^{(i)}) \Vert^2_2 = 
+ \sum^n_{i=1}\frac{d}{df}\Vert y^{(i)} - s(f^{(i)}) \Vert^2_2 \cdot \nabla_{\bm{\theta}} f^{(i)} $ \\
+$ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)}) + 1) - 1}{\exp(f^{(i)}) + 1} \cdot \frac{\exp(f^{(i)})}{(\exp(f^{(i)}) + 1)^2} \tilde{\mathbf{x}}^{(i)}$ \\ 
+$ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)}) + 1) - 1}{\exp(f^{(i)}) + 1} \cdot \frac{\frac{\exp(f^{(i)})}{\exp(f^{(i)}) + 1}}{\exp(f^{(i)}) + 1} \tilde{\mathbf{x}}^{(i)}$ \\
+$ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)})) - \frac{\exp(f^{(i)})}{\exp(f^{(i)}) + 1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)}$ \\
+$ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)}$ 
+\item $\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} = \sum^n_{i=1}\frac{d}{df}2\frac{y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)} \tilde{\mathbf{x}}^{(i)}\nabla_{\bm{\theta}} {f^{(i)}}^\top$ \\
+$=  \sum^n_{i=1}2\frac{
+(y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-2}\exp(-f^{(i)}))(\exp(f^{(i)}) + 1)^2 
+- (y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1})\cdot 2(\exp(f^{(i)}) + 1) 
+\exp(f^{(i)})}{(\exp(f^{(i)}) + 1)^4}
+\tilde{\mathbf{x}}^{(i)}{\tilde{\mathbf{x}}}^{(i)\top}$ \\
+$=  \sum^n_{i=1}2\frac{
+y^{(i)}\exp(f^{(i)})(\exp(f^{(i)}) + 1)^2 - \exp(f^{(i)})
+- (2y^{(i)}\exp(f^{(i)})(\exp(f^{(i)}) + 1) + 2\exp(f^{(i)}))\exp(f^{(i)})
+}{(\exp(f^{(i)}) + 1)^4}
+\tilde{\mathbf{x}}^{(i)}{\tilde{\mathbf{x}}}^{(i)\top}$ \\
+$=  \sum^n_{i=1}2\frac{
+\exp(f^{(i)})(y^{(i)}(\exp(f^{(i)}) + 1)^2 - 1
+- 2y^{(i)}\exp(f^{(i)})(\exp(f^{(i)}) + 1) + 2\exp(f^{(i)})) 
+}{(\exp(f^{(i)}) + 1)^4}
+\tilde{\mathbf{x}}^{(i)}{\tilde{\mathbf{x}}}^{(i)\top}$ \\
+
+$=  \sum^n_{i=1}2\frac{
+\exp(f^{(i)})(y^{(i)}(\exp(2f^{(i)}) + 2\exp(f^{(i)}) + 1 - 2\exp(2f^{(i)}) - 2\exp(f^{(i)})) - 1 + 2\exp(f^{(i)})) 
+}{(\exp(f^{(i)}) + 1)^4}
+\tilde{\mathbf{x}}^{(i)}{\tilde{\mathbf{x}}}^{(i)\top}$ \\
+
+$=  \sum^n_{i=1}2\frac{
+\exp(f^{(i)})(y^{(i)}(-\exp(2f^{(i)}) + 1) - 1 + 2\exp(f^{(i)}))
+}{(\exp(f^{(i)}) + 1)^4}
+\tilde{\mathbf{x}}^{(i)}{\tilde{\mathbf{x}}}^{(i)\top}$
+\item Assume, e.g., there is only one observation with $y^{(1)} = 0$ then \\
+$$\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} = \frac{2\exp(f^{(1)})(2\exp(f^{(1)}) - 1)}{(\exp(f^{(1)}) + 1)^4}\underbrace{\tilde{\mathbf{x}}^{(1)}{\tilde{\mathbf{x}}}^{(1)\top}}_{\text{p.s.d.}}.$$
+If a p.s.d. matrix is multiplied with a negative number it becomes a n.s.d. matrix, i.e.,
+$\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}}$ is n.s.d. if $2\exp(f^{(1)}) < 1 \iff f^{(i)} < \ln(0.5).$ This condition trivially holds, e.g., if $\bm{\theta} = (\ln(0.5) - 1, 0, 0)^\top.$
+\item 
+For Newton-Raphson, we need to solve in each update step
+$$\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} \mathbf{d} = -\nabla_{\bm{\theta}}\mathcal{R}_{\text{emp}}$$
+for the descend direction $\mathbf{d}.$
+<<newton_raphson-plot, echo=TRUE, out.width="40%">>=
+theta = c(0, 0, 0)
+remps = NULL
+thetas = NULL
+
+for(i in 1:30){
+  exp_f = exp(X_model %*% theta)
+  remps = rbind(remps, sum((y - 1/(1+exp_f))^2))  
+  
+  hess = t(X_model) %*% 
+    (c((2 * exp_f*(2 * exp_f - y*(exp_f^2 - 1) - 1))/(exp_f + 1)^4 ) * X_model)
+  grad = c(t(2*(y * exp_f - (1 + exp_f^-1)^-1) / (exp_f + 1)^2) %*% X_model)
+  theta = theta + solve(hess, -grad)
+
+  thetas = rbind(thetas, theta)  
+}
+
+ggplot(data.frame(remps, t=1:nrow(remps)), aes(x=t, y=remps)) +
+  geom_line() + ylab(expression(R[emp]))
+
+ggplot(data.frame(theta = c(thetas), t=rep(1:nrow(thetas),3), 
+                id = as.factor(rep(c(0, 1, 2), each= nrow(thetas)))), 
+       aes(x = t, y=theta)) +
+  geom_line(aes(color = id)) + ylab(expression(theta))
+theta
+@
+\item In this case, we can apply Gauss-Newton since $\mathcal{R}_{\text{emp}}$ is the squared sum of the residuals 
+$$\mathbf{r} = (y^{(1)} - \pi(\mathbf{x}^{(1)}), \dots, y^{(n)} - \pi(\mathbf{x}^{(n)}))^\top.$$ Here, for the update step we need to compute 
+$$\nabla_{\bm{\theta}}\mathbf{r} = \begin{pmatrix} -\frac{\exp(f^{(1)})}{(1 + \exp(f^{(1)}))^2} {\tilde{\mathbf{x}}}^{(1)\top} \\ 
+\vdots \\
+-\frac{\exp(f^{(n)})}{(1 + \exp(f^{(n)}))^2}{\tilde{\mathbf{x}}}^{(n)\top}
+\end{pmatrix}$$ \\
+For Gauss-Newton, we solve in each update step
+$$(\nabla_{\bm{\theta}}\mathbf{r}^\top \nabla_{\bm{\theta}}\mathbf{r}) \cdot \mathbf{d} = -\nabla_{\bm{\theta}}\mathbf{r}^\top \cdot \mathbf{r}$$
+for the descend direction $\mathbf{d}.$
+<<gauss_newton-plot, echo=TRUE, out.width="40%">>=
+theta = c(0, 0, 0)
+remps = NULL
+thetas = NULL
+
+for(i in 1:30){
+  exp_f = exp(X_model %*% theta)
+  remps = rbind(remps, sum((y - 1/(1+exp_f))^2))  
+
+  res = -(y-1/(1+exp_f))
+  grad_res = -c(exp_f / (exp_f + 1)^2) * X_model
+
+  theta = c(theta + solve(t(grad_res) %*% grad_res, -t(grad_res) %*% res))
+  thetas = rbind(thetas, theta)  
+}
+
+
+ggplot(data.frame(remps, t=1:nrow(remps)), aes(x=t, y=remps)) +
+  geom_line() + ylab(expression(R[emp]))
+
+ggplot(data.frame(theta = c(thetas), t=rep(1:nrow(thetas),3), 
+                id = as.factor(rep(c(0, 1, 2), each= nrow(thetas)))), 
+       aes(x = t, y=theta)) +
+  geom_line(aes(color = id)) + ylab(expression(theta))
+theta
+@
+\end{enumerate}
+
