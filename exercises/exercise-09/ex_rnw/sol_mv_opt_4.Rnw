@@ -25,7 +25,7 @@ $ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)}) + 1) - 1}{\exp(f^{(i)}) + 1} \cdot
 $ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)}) + 1) - 1}{\exp(f^{(i)}) + 1} \cdot \frac{\frac{\exp(f^{(i)})}{\exp(f^{(i)}) + 1}}{\exp(f^{(i)}) + 1} \tilde{\mathbf{x}}^{(i)}$ \\
 $ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)})) - \frac{\exp(f^{(i)})}{\exp(f^{(i)}) + 1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)}$ \\
 $ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)}$ 
-\item $\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} = \sum^n_{i=1}\frac{d}{df}2\frac{y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)} \tilde{\mathbf{x}}^{(i)}\nabla_{\bm{\theta}} {f^{(i)}}^\top$ \\
+\item $\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} = \sum^n_{i=1}\frac{d}{df}2\frac{y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)}\nabla_{\bm{\theta}} {f^{(i)}}^\top$ \\
 $=  \sum^n_{i=1}2\frac{
 (y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-2}\exp(-f^{(i)}))(\exp(f^{(i)}) + 1)^2 
 - (y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1})\cdot 2(\exp(f^{(i)}) + 1) 
@@ -103,8 +103,8 @@ for(i in 1:30){
   exp_f = exp(X_model %*% theta)
   remps = rbind(remps, sum((y - 1/(1+exp_f))^2))  
 
-  res = -(y-1/(1+exp_f))
-  grad_res = -c(exp_f / (exp_f + 1)^2) * X_model
+  res = (y-1/(1+exp_f))
+  grad_res = c(exp_f / (exp_f + 1)^2) * X_model
 
   theta = c(theta + solve(t(grad_res) %*% grad_res, -t(grad_res) %*% res))
   thetas = rbind(thetas, theta)  

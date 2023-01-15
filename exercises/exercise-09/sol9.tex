@@ -246,7 +246,7 @@ $ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)}) + 1) - 1}{\exp(f^{(i)}) + 1} \cdot
 $ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)}) + 1) - 1}{\exp(f^{(i)}) + 1} \cdot \frac{\frac{\exp(f^{(i)})}{\exp(f^{(i)}) + 1}}{\exp(f^{(i)}) + 1} \tilde{\mathbf{x}}^{(i)}$ \\
 $ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)})) - \frac{\exp(f^{(i)})}{\exp(f^{(i)}) + 1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)}$ \\
 $ =  \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)}$ 
-\item $\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} = \sum^n_{i=1}\frac{d}{df}2\frac{y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)} \tilde{\mathbf{x}}^{(i)}\nabla_{\bm{\theta}} {f^{(i)}}^\top$ \\
+\item $\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} = \sum^n_{i=1}\frac{d}{df}2\frac{y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2}  \tilde{\mathbf{x}}^{(i)}\nabla_{\bm{\theta}} {f^{(i)}}^\top$ \\
 $=  \sum^n_{i=1}2\frac{
 (y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-2}\exp(-f^{(i)}))(\exp(f^{(i)}) + 1)^2 
 - (y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1})\cdot 2(\exp(f^{(i)}) + 1) 
@@ -340,8 +340,8 @@ for the descend direction $\mathbf{d}.$
   \hlstd{exp_f} \hlkwb{=} \hlkwd{exp}\hlstd{(X_model} \hlopt{%*%} \hlstd{theta)}
   \hlstd{remps} \hlkwb{=} \hlkwd{rbind}\hlstd{(remps,} \hlkwd{sum}\hlstd{((y} \hlopt{-} \hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{exp_f))}\hlopt{^}\hlnum{2}\hlstd{))}
 
-  \hlstd{res} \hlkwb{=} \hlopt{-}\hlstd{(y}\hlopt{-}\hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{exp_f))}
-  \hlstd{grad_res} \hlkwb{=} \hlopt{-}\hlkwd{c}\hlstd{(exp_f} \hlopt{/} \hlstd{(exp_f} \hlopt{+} \hlnum{1}\hlstd{)}\hlopt{^}\hlnum{2}\hlstd{)} \hlopt{*} \hlstd{X_model}
+  \hlstd{res} \hlkwb{=} \hlstd{(y}\hlopt{-}\hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{exp_f))}
+  \hlstd{grad_res} \hlkwb{=} \hlkwd{c}\hlstd{(exp_f} \hlopt{/} \hlstd{(exp_f} \hlopt{+} \hlnum{1}\hlstd{)}\hlopt{^}\hlnum{2}\hlstd{)} \hlopt{*} \hlstd{X_model}
 
   \hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(theta} \hlopt{+} \hlkwd{solve}\hlstd{(}\hlkwd{t}\hlstd{(grad_res)} \hlopt{%*%} \hlstd{grad_res,} \hlopt{-}\hlkwd{t}\hlstd{(grad_res)} \hlopt{%*%} \hlstd{res))}
   \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
