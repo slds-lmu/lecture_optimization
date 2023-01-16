@@ -30,7 +30,7 @@
 \item For now we assume that those evaluations are noise-free
 
 \item \textbf{Idea:}
-  Use the data $\Dt = \{(\xvsi, \ysi\}_{i = 1, \ldots t}$, $\ysi := f(\xvsi)$, to derive properties about the unknown function $f$
+  Use the data $\Dt = \{(\xvsi, \ysi)\}_{i = 1, \ldots t}$, $\ysi := f(\xvsi)$, to derive properties about the unknown function $f$
 \end{itemize}
 
 \begin{center}
@@ -53,14 +53,24 @@
 \item A more important choice is the \textbf{size} of the initial design
 \begin{itemize}
   \item Should neither be too small (bad initial fit) nor too large (spending too much budget without doing \enquote{intelligent} optimization)
+  \item Rule of thumb: $4d$
 \end{itemize}
 \end{itemize}
 \end{vbframe}
 
-\begin{frame}{LHS}
+\begin{vbframe}{LHS}
 
-Find a set of $n$ \enquote{random} points, $\D$ so that the projections onto the axes are equidistant.\\
-E.g., constructed via \textbf{Maximin}:\\
+LHS partitions the search space into bins of equal probability with the goal of attaining a more even distribution of sample points in the parameter space that would be possible with pure random sampling.\\
+\vspace{0.45em}
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/init_1.png}
+\end{center}
+
+Only allow at most one sample per bin.
+
+\framebreak
+
+Actual sampling of points, e.g., constructed via \textbf{Maximin}:\\
 \begin{itemize}
 \item The minimum distance between any two points in $\D$ is $2q = \min_{\xv \in \D, \xv' \in \D} \rho(\xv, \xv')$ ($\rho$ any metric, e.g., Euclidean distance)
 \item $q$ is the packing radius - the radius of the largest ball that can be placed around every design point such that no two balls overlap
@@ -68,13 +78,11 @@ E.g., constructed via \textbf{Maximin}:\\
 \item Ensures that the design points in $\D$ are as far apart from each other as possible
 \end{itemize}
 
-\end{frame}
+\end{vbframe}
 
 \begin{frame}{Initial Design}
 
-Random design vs. LHS:
-
-\vspace{+0.45cm}
+\vspace{1em}
 
 \begin{minipage}[b]{0.45\textwidth}
   \includegraphics[width = \textwidth]{slides/010-bayesian-optimization/figure_man/init_0.png}

@@ -7,7 +7,7 @@
 
 \newcommand{\titlefigure}{figure_man/Weak_and_Strong_Duality.png}
 \newcommand{\learninggoals}{
-\item Concepts of duality in optimization
+\item Awareness of the concept of duality in optimization
 \item LP duality 
 \item Weak and strong duality in LP
 }
@@ -28,6 +28,15 @@
 
 \begin{vbframe}{Duality: overview}
 
+\begin{itemize}
+\item Duality theory plays a fundamental role in (constrained) optimization. The concept of ``duality" emerged in the context of LPs and dates back to the 1940s (works of Tucker and Wolfe).
+\item There are several different types of duality: LP duality, Lagrangian duality, Wolfe duality, Fenchel duality (which can lead to confusion).
+\item Key take-home message: The concepts of duality give you recipes to find \textbf{lower bounds} on your original ``primal" constrained optimization problem. Under certain conditions, these lower bounds are actually identical to the optimal solution.
+\item Duality is also practical. It has been used to find \textbf{better algorithms} for solving constrained optimization problems
+
+\end{itemize}
+
+
 \end{vbframe}
 
 \begin{vbframe}{LP Duality: introductory example}
@@ -38,14 +47,14 @@ A bakery sells brownies for $50$ ct and mini cheesecakes for $80$ ct each. The t
 
 \begin{center}
 \begin{tabular}{ r c c c}
-    & \text{Chocolate} & \text{Sugar} & \text{Creamcheese} \\
+    & \text{Chocolate} & \text{Sugar} & \text{Cream cheese} \\
     \hline
   \text{Brownie} & 3 & 2 & 2 \\
   \text{Cheesecake} & 0 & 4 & 5
 \end{tabular}
 \end{center}
 
-A student wants to minimize his expenses, but at the same time eat at least $6$ units of chocolate, $10$ units of sugar and $8$ units of creamcheese.
+A student wants to minimize his expenses, but at the same time eat at least $6$ units of chocolate, $10$ units of sugar and $8$ units of cream cheese.
 
 \framebreak
 
@@ -94,7 +103,7 @@ summary(res)
 
 \framebreak
 \normalsize
-The baker informs the supplier that he needs at least $6$ units of chocolate, $10$ units of sugar and $8$ units of creamcheese to meet the student's requirements.
+The baker informs the supplier that he needs at least $6$ units of chocolate, $10$ units of sugar and $8$ units of cream cheese to meet the student's requirements.
 
 \lz
 
@@ -335,12 +344,84 @@ $$
 g(\bm{\alpha}^*) = (\bm{\alpha}^*)^T\bm{b} = \bm{c}^T\bm{x}^* = f(\bm{x}^*).
 $$
 
-In this case, the dual problem can be solved instead of the primal problem, which can lead to enormous runtime advantages, especially with many constraints and few variables.
+In this case, the dual problem can be solved instead of the primal problem, which can lead to enormous run time advantages, especially with many constraints and few variables.
 
 \lz
 
 The \textbf{dual simplex algorithm}, which has emerged as a standard procedure for Linear programming, is based on this idea.
 
+\end{vbframe}
+
+
+\begin{vbframe}{Alternative LP formulation}
+
+Unfortunately, many slightly different (but ultimately equivalent) formulations of primal and dual LPs exist in the literature. 
+
+One common alternative with inequality and equality constraints is often formulated as
+follows. Let $\bm{c} \in \R^d$, $\bm{b} \in \R^l$, $\bm{A} \in \R^{l \times d}$, $\bm{h} \in \R^k$, and $\bm{G} \in \R^{k \times d}$. 
+
+Then the primal LP is defined as 
+
+\begin{eqnarray*}
+ \min_{\xv \in \R^d} && \bm{c}^T\bm{x} \\
+\text{s.t. } && \bm{G} \bm{x} = \bm{h} \\
+             && \bm{A} \bm{x} \le \bm{b} 
+\end{eqnarray*}
+
+\framebreak
+
+and the corresponding dual LP 
+
+\begin{eqnarray*}
+ \max_{\alpha \in \R^l \beta \in \R^k} && -\bm{b}^T\bm{\alpha} -\bm{h}^T\bm{\beta} \\
+\text{s.t. } && -\bm{A}^T \bm{\alpha} - \bm{G}^T \bm{\beta} = \bm{c}\\
+             && \bm{\alpha} > 0 
+\end{eqnarray*}
+
+The following argument again highlights the interpretation of the dual
+LP as a lower bound.
+Here, for $\bm{\alpha}>0$ and any $\bm{\beta}$, and $\xv$ primal feasible, it holds that 
+$$
+    \alpha^T (\bm{A} \bm{x} - \bm{b}) + \bm{\beta}^T (\bm{G} \bm{x} - \bm{h}) \le 0
+    \iff (-\bm{A}^T \bm{\alpha} - \bm{G}^T \bm{\beta})^T \bm{x} \geq -b^T \bm{\alpha} - \bm{h}^T \bm{\beta}
+$$
+So if $\bm{c} = -\bm{A}^T \bm{\alpha} - \bm{G}^T \bm{\beta}$, we get a lower bound on the
+primal optimal value.
+
+\framebreak
+
+Another perspective on this formulation will connect LP duality to the more general notion of Lagrangian duality. Again, for $\bm{\alpha}>0$ and any $\bm{\beta}$, and $\xv$ primal feasible, it holds that
+$$
+\bm{c}^T \bm{x} \ge \bm{c}^T \bm{x} + \alpha^T (\bm{A} \bm{x} - b) + \bm{\beta}^T (\bm{G} \bm{x} - h) := \mathcal{L}(\bm{x},\bm{\alpha},\bm{\beta})
+$$
+So if $\mathcal{S}$ denotes the feasible set, $f(\bm{x}^*)$ the primal optimal value, then for $\bm{\alpha}>0$ and any $\bm{\beta}$, it holds that
+$$
+    f(\bm{x}^*) \ge \min_{\bm{x} \in \mathcal{S}}\mathcal{L}(\bm{x},\bm{\alpha},\bm{\beta}) \ge \min_{\bm{x} \in \R^d} \mathcal{L}(\bm{x},\bm{\alpha},\bm{\beta}) := g(\bm{\alpha},\bm{\beta})
+$$
+
+This shows that the function $g(\bm{\alpha},\bm{\beta})$ is a lower bound on $f(\bm{x}^*)$  
+for $\bm{\alpha}>0$ and any $\bm{\beta}$. This function is also called the \emph{Lagrange function} and is defined as
+$$\displaystyle g(\bm{\alpha},\bm{\beta}) =
+\begin{cases} 
+-\bm{b}^T\bm{\alpha} -\bm{h}^T\bm{\beta} & \text{if $c=-\bm{A}^T \bm{\alpha} - \bm{G}^T \bm{\beta}$} \\
+-\infty & \text{otherwise}
+\end{cases}$$
+
+Maximization over this function leads again to the dual LP formulation above.
+
+This last perspective is, in fact, completely general and can be applied to arbitrary
+(non-linear) optimization problems. 
+
+\vspace{1cm}
+
+\textbf{Final remarks:}
+\begin{itemize}
+    \item We introduced key concepts of duality for Linear Programming as the simplest instance 
+    of a constrained optimization problem.
+    \item We refer to the excellent course of L. Vandenberghe  
+    \href{http://www.seas.ucla.edu/~vandenbe/ee236a/ee236a.html}{\beamergotobutton{EE236A - Linear Programming}} for many more details.
+    \item We have skipped algorithmic approaches to solving linear programs: Dantzig's Simplex Algorithm, Interior point methods, and the Ellipsoid method.
+\end{itemize}
 
 \end{vbframe}
 

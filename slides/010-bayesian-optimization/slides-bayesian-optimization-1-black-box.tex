@@ -153,7 +153,7 @@ Optimization gets \textbf{really hard} if ...
 \begin{footnotesize}
 \begin{itemize}
 \item \textbf{Goal: } Find parameters s.t. average velocity (directional speed) of the robot is maximized
-\item Parameters of the goat control e.g. joints of ankles and knees
+\item Parameters of the gait control e.g. joints of ankles and knees
 \item \emph{Calandra et al. (2014). An Experimental Evaluation of Bayesian Optimization on Bipedal Locomotion}
 \end{itemize}
 \end{footnotesize}
@@ -197,10 +197,10 @@ Optimization gets \textbf{really hard} if ...
 
 \begin{center}
 \begin{figure}
-\includegraphics[width=0.3\textwidth]{figure_man/01_GridSearch.png} ~ \includegraphics[width=0.3\textwidth]{figure_man/02_RandomSearch.png}
+\includegraphics[width=0.4\textwidth]{figure_man/black_box_0.png} ~ \includegraphics[width=0.4\textwidth]{figure_man/black_box_1.png}
 \end{figure}
 \begin{footnotesize}
-Marginal distribution plots of GS vs. RS.
+Marginal distribution plots of RS vs. GS.
 \end{footnotesize}
 \end{center}
 
@@ -211,13 +211,13 @@ Marginal distribution plots of GS vs. RS.
 \begin{itemize}
 \item Traditional approaches that do not require derivatives 
 \item E.g. Nelder-Mead, simulated annealing, EAs 
-\item \textbf{Advantages:} Truly iterative, focusses on relevant regions
+\item \textbf{Advantages:} Truly iterative, focuses on relevant regions
 \item \textbf{Disadvantages:} Still inefficient; usually lots of evaluations are needed to produce good outcomes
 \end{itemize}
 
 \begin{figure}
 \begin{center}
-\includegraphics[width = 3.5cm]{figure_man/neldermead.png} ~
+\includegraphics[width = 3cm]{figure_man/neldermead.png} ~
 \begin{tikzpicture}[node distance=1cm, auto,]
 \tikzstyle{every node}=[font=\tiny]
 %nodes
@@ -233,10 +233,11 @@ Marginal distribution plots of GS vs. RS.
 \draw[->] (selection) to [bend right=50, looseness=1](crossover) node[midway, below]{};
 \draw[->] (crossover) to [bend right=50, looseness=1](mutation) node[midway, below]{};
 \draw[->] (mutation) to [bend right=50, looseness=1](selection) node[midway, above]{};
-\end{tikzpicture} \\
+\end{tikzpicture} ~
+\includegraphics[width = 3cm]{figure_man/black_box_2.png}\\
 \end{center}
 \begin{footnotesize}
-Left: Simplices of the Nelder-Mead algorithm; Right: Components of an evolutionary algorithm 
+Left: Simplices of the Nelder-Mead algorithm. Middle: Components of an evolutionary algorithm. Right: BO vs. CMAES on 2D Ackley.
 \end{footnotesize}
 \end{figure}
 
