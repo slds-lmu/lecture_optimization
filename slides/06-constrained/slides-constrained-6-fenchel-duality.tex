@@ -1,0 +1,91 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\titlefigure}{figure_man/fenchel.png}
+\newcommand{\learninggoals}{
+\item Dual norms
+\item Conjugate functions
+\item Fenchel duality
+\item Examples in statistics
+}
+
+
+%\usepackage{animate} % only use if you want the animation for Taylor2D
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Other forms of duality}
+\lecture{Optimization in Machine Learning}
+\sloppy
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{vbframe}{Constrained minimization and dual norms}
+
+Consider the problem of norm minimization under linear constraints
+in its primal form:
+
+\begin{eqnarray*}
+ \min_{\xv \in \R^d} && \| \bm{x} \| \\
+\text{s.t. } &&  \bm{G} \bm{x} = \bm{h}\,,\\
+\end{eqnarray*}
+
+where $\| \cdot \|$ is some norm function. For instance, if the norm is the $L1$ norm, this problem is the famous  \href{https://en.wikipedia.org/wiki/Basis_pursuit
+}{\beamergotobutton{basis pursuit}} problem.
+
+\lz
+
+\textbf{Question:} Is there a more straightforward way to solve constrained optimization problems involving norms?
+
+\framebreak
+
+Here, the concept of the dual norm from functional analysis can be helpful.
+
+
+\textbf{Definition:}  Let $\| \bm{x} \|$ be the norm of $\bm{x}$. Then the dual norm $\| \bm{x} \|_*$ is defined as 
+
+\begin{equation*}
+ \| \bm{x} \|_* = \max_{\|\bm{z}\| \le 1} \bm{z}^T\bm{x}  
+\end{equation*}
+
+Using this definition, one can show 
+that if $\| \bm{x} \|$ is a norm and $\| \bm{x} \|_∗$ is the dual norm
+of it, $\| \bm{z}^T \bm{x} \| \le \| \bm{z} \| \| \bm{x} \|_*$ holds.
+
+\lz
+
+\textbf{Examples:} The dual norm of the Lp norm $\| \cdot \|_p$ is the
+Lq norm $\| \cdot \|_q$ where it holds that $1/p + 1/q = 1$. 
+
+
+\framebreak
+23\\\\\2336
+
+\end{vbframe}
+
+\begin{vbframe}{Constrained problems and conjugate functions}
+
+
+
+\end{vbframe}
+
+
+
+
+
+
+
+
+
+
+\endlecture
+\end{document}
+
+
+

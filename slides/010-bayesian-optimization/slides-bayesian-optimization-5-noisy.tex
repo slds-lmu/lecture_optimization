@@ -25,12 +25,21 @@
 \begin{vbframe}{Noisy Evaluations}
 
 In many real-life applications, we cannot access the true function values $f(\xv)$ but only a \textbf{noisy} version thereof
+$$f(\xv) + \epsilon$$
+\vspace{1em}
+Examples:
+\begin{itemize}
+    \item HPO
+    \item Oil drilling optimization
+    \item Robot gait optimization (velocity of a run of a robot is an estimate of true velocity)
+\end{itemize}
+\vspace{1em}
 
-$$
-  f(\xv) + \epsilon. 
-$$
+\framebreak
 
-For the sake of simplicity, we assume $\epsilon \sim \mathcal{N}\left(0, \sigma_\epsilon^2\right)$.
+\vspace{1em}
+
+For the sake of simplicity, we assume $\epsilon \sim \mathcal{N}\left(0, \sigma_{\epsilon}^{2}\right)$
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/noisy_0.png}
@@ -58,6 +67,21 @@ This raises the following problems:
 
 In case of noisy evaluations, a nugget-effect GP (GP regression) should be used instead of an interpolating GP:
 
+\vspace{1em}
+
+The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP assuming homoscedastic noise ($\sigma_{\epsilon}^{2}$) is
+
+\begin{eqnarray*}
+  Y(\xv) ~|~ \xv, \Dt \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)
+\end{eqnarray*}
+
+with 
+
+\begin{eqnarray*}
+  \fh(\xv) &=& k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I})^{-1} \bm{y} \\
+  \sh^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I})^{-1} k(\xv)
+\end{eqnarray*}
+
 \vspace{+0.45cm}
 
 \begin{minipage}[b]{0.45\textwidth}
@@ -75,22 +99,23 @@ In case of noisy evaluations, a nugget-effect GP (GP regression) should be used 
 
 \textbf{Augmented Expected Improvement} (\emph{Huang et al., 2006})
 $$
-  a_{\text{AEI}}(\xv) = a_{\text{EI}_{f_{\min_*}}}(\xv) \Bigg(1- \frac{\sigma_\epsilon}{\sqrt{\sh^2(\xv)+ \sigma_\epsilon^2}}\Bigg).
+  a_{\text{AEI}}(\xv) = a_{\text{EI}_{f_{\min_*}}}(\xv) \Bigg(1- \frac{\sigma_{\epsilon}}{\sqrt{\sh^2(\xv)+ \sigma_{\epsilon}^{2}}}\Bigg).
 $$
 
-Here, $a_{\text{EI}_{f_{\min_*}}}$ denotes the \textbf{Expected Improvement with Plugin}.
+Here, $a_{\text{EI}_{f_{\min_*}}}$ denotes the \textbf{Expected Improvement with Plugin}.\\
 It uses the \textbf{effective best solution} as a plugin for the (unknown) best observed value $\fmin$
-
 $$
   f_{\min_*} = \min_{\xv \in \{\xvsi[1], ..., \xvsi[t]\}} \fh(\xv) + c \sh(\xv),
 $$
 
-where $c > 0$ is a constant that controls the risk aversion.
+where $c > 0$ is a constant that controls the risk aversion.\\
+\vspace{1em}
+$\sigma_{\epsilon}^{2}$ is the nugget-effect as estimated by the GP regression.
 
 
 \framebreak
 
-In addition, it takes into account the nugget effect $\sigma_\epsilon$ by a penalty term
+In addition, it takes into account the nugget-effect $\sigma_{\epsilon}^{2}$ by a penalty term
 
 $$
   \Bigg(1- \frac{\sigma_\epsilon}{\sqrt{\sh^2(\xv)+ \sigma_\epsilon^2}}\Bigg)
@@ -119,7 +144,19 @@ Clean noise from the model and then apply a general acquisition function (EI, PI
 
 \lz 
 
-The RP suggests to build \textbf{two models}: a nugget-effect GP (regression model) and then, on the predictions from the first model, an interpolating GP.
+The RP suggests to build \textbf{two models}: a nugget-effect GP (regression model; left) and then, on the predictions from the first model (grey), an interpolating GP (right)
+
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/noisy_2.png}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/noisy_4.png}
+\end{minipage}
+
+\framebreak
+
+\vspace{1em}
 
 \begin{algorithm}[H]
 \footnotesize
@@ -131,26 +168,6 @@ The RP suggests to build \textbf{two models}: a nugget-effect GP (regression mod
   \State{Based on the interpolating model, obtain a new candidate using a noise-free acquisition function}
   \end{algorithmic}
 \end{algorithm}
-
-\framebreak
-
-Build a nugget-effect GP on the noisy evaluations
-
-\vspace*{0.5cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/noisy_2.png}
-\end{center}
-
-\framebreak
-
-Obtain predictions from the nugget-effect GP (grey), fit an interpolating GP (blue) and proceed with EI
-
-\vspace*{0.5cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/noisy_4.png}
-\end{center}
 
 \end{vbframe}
 
@@ -176,7 +193,7 @@ Another problem is the identification of a final best point:
 
 Possibilities to reduce the risk of falsely returning a bad point: 
 \begin{itemize}
-  \item Return the best predicted point $\argmin_{\xv \in \{\xvsi[1], \ldots, \xvsi[t]\}} \fh(\xv)$
+  \item Return the best predicted point: $\argmin_{\xv \in \{\xvsi[1], \ldots, \xvsi[t]\}} \fh(\xv)$
   \item Repeated evaluations of the final point: infer guarantees about final point (however if final point is \enquote{bad} unclear how to find a better one)
   \item Repeated evaluations of all design points: reduce noise during optimization and risk of falsely returning a bad point
   \item More advanced replication strategies, e.g. incumbent strategies: also re-evaluate the \enquote{incumbent} in each iteration
