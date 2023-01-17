@@ -5,7 +5,7 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/selection.png}
+\newcommand{\titlefigure}{figure_man/1dim-ackley-func-selection.png}
 \newcommand{\learninggoals}{
 \item Recombination for Numeric
 \item Mutation for Numeric
@@ -41,6 +41,9 @@ $$
 
 \vspace*{-0.3cm}
 \begin{figure}
+  \vspace*{-0.3cm}
+  \includegraphics[width=0.5\textwidth]{figure_man/ea_recombination_uniform.png}  
+  % https://docs.google.com/presentation/d/12v81ZaLxJUgXVUBy3VdW0y6q7OKHS_6lFcQym3yeYsg/edit#slide=id.p
   \includegraphics[width=0.3\textwidth]{figure_man/ea_recombination_numeric.pdf}
 \end{figure}
 
@@ -74,7 +77,7 @@ In the following, a (simple) EA is shown on the 1-dim Ackley function, optimized
 
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 7cm]{figure_man/1dim-ackley-func.png}
+  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func.png}
 \end{figure}
 \end{center}
 
@@ -87,7 +90,7 @@ Randomly init population with size $\mu = 20$.
 
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 7cm]{figure_man/1dim-ackley-func-2.png}
+  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-2.png}
 \end{figure}
 \end{center}
 
@@ -100,7 +103,7 @@ We choose $\lambda = 5$ offspring by neutral selection (red individuals).
 
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 7cm]{figure_man/neutral-selec.png}
+  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-neutral-selec.png}
 \end{figure}
 \end{center}
 
@@ -114,7 +117,7 @@ Using a Gaussian mutation with $\sigma=2$, without a recombination.
 
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 7cm]{figure_man/gaussian-mutation.png}
+  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-gaussian-mutation.png}
 \end{figure}
 \end{center}
 
@@ -128,13 +131,27 @@ We use a $(\mu + \lambda)$ selection. The selected individuals are green.
 
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 7cm]{figure_man/selection.png}
+  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-selection.png}
 \end{figure}
 \end{center}
 
 
 \end{vbframe}
 
+\begin{vbframe}{Example of an evolutionary algorithm}
+
+After $50$ iterations: 
+
+\vspace{0.5cm}
+
+\begin{center}
+\begin{figure}
+  \includegraphics[width=1\textwidth]{figure_man/1dim-ackley-func-final.png}
+\end{figure}
+\end{center}
+
+
+\end{vbframe}
 
 
 \endlecture
