@@ -80,6 +80,555 @@ Two individuals $\bm{x},\bm{\tilde{x}} \in \{0, 1\}^d$ encoded as bit strings ca
 \end{vbframe}
 
 
+\begin{vbframe}{Example 3:}
+
+We consider the following simulation setting:
+
+\begin{itemize}
+\item First, we generate a $(n \times p)$ design matrix $\mathbf{X}$ by drawing $n = 1000$ samples of $p = 50$ independent normally distributed features with $\mu_j = 0$ and $\sigma_j$ varying between 1 and 5 for $j = 1, \dots, p$.
+\item Then, we assume the following linear regression problem with the target variable $\mathbf{y}$ being generated as follows: 
+$$
+\mathbf{y} = \mathbf{X}\thetab + \epsilon
+$$
+with $\epsilon \sim \mathcal N(0, 1)$\\
+and $\thetab$ being defined as follows
+\begin{eqnarray*}
+\theta_{0} &=& - 1.2 \\
+\theta{j} &=& 1 \qquad \text{for } j \in \{1, 7, 13, 19, 25, 31, 37, 43\} \\
+\theta{j} &=& 0 \qquad \text{else}
+\end{eqnarray*}
+
+Hence, there are 8 out of 50 equally influential features.
+%<<>>=
+%set.seed(123)
+%X = matrix(rnorm(50000, sd = 1:5), ncol = 50, byrow = TRUE)
+%@
+ 
+%<<>>=
+%vars = seq(1, 43, length = 8)
+%vars
+%@
+
+%<<>>=
+%y = - 1.2 + rowSums(X[, vars]) + rnorm(nrow(X), 1)
+%@
+\end{itemize}
+
+
+
+
+
+\framebreak
+\textbf{Aim:} Use a $(\mu + \lambda)$ selection strategy for feature selection.\\
+\vspace*{0.2cm}
+Our iterative algorithm with $100$ iterations is as follows:
+\begin{enumerate}
+\item Initialize the population and evaluate it. Therefore, encode a chromosome of an individual as a bit string of length $p$, i.e. $\textbf{z} \in \{0, 1\}^p$. Where $z_j =1$ means that variable $j$ is included in the model.
+\item Apply the variation and evaluate the fitness function. As fitness function, select BIC of the model belonging to the corresponding variable configuration $\textbf{z} \in \{0, 1\}^p$.
+\item Finally, use $(\mu + \lambda)$-selection strategy as the survival selection with population size of $\mu = 100$ and $\lambda =50$ offspring.
+\end{enumerate}
+
+
+
+
+%<<>>=
+%fn = function(x) {
+ % mod = lm(y ~ X[, x == 1])
+  %bic = BIC(mod)
+  % return(bic)
+%}
+%@
+
+
+
+
+%\framebreak
+%<<>>=
+%MU = 100L # Size of the population
+%LAMBDA = 50L # Number of offspring per iteration
+%@
+
+In addition:
+
+\begin{itemize}
+\item for the mutation, use bit flip with $p = 0.3$
+\item for the recombination, use Uniform crossover with $p=0.5$
+\end{itemize}
+
+\lz
+
+By exploiting \textbf{Greedy} as a selection strategy, ensure that you always choose individuals with the best fitness. 
+
+
+
+
+%<<>>=
+%control = initECRControl(fn, n.objectives = 1)
+%control = registerECROperator(control, "mutate", mutBitflip,
+%                              p = 0.3)
+%control = registerECROperator(control, "selectForMating",
+%                              selGreedy, n.select = LAMBDA)
+%control = registerECROperator(control, "recombine",
+%                              recUnifCrossover, p = 0.5)
+%control = registerECROperator(control, "selectForSurvival",
+%                              selGreedy)
+%@
+
+
+
+%\framebreak
+
+\vspace{0.5cm}
+\begin{center}
+\begin{figure}
+  \includegraphics[height = 3cm, width = 10cm]{figure_man/example3.png}
+\end{figure}
+\end{center}
+
+%<<evaluate = F>>=
+%MAX.ITER = 100L # Number of iterations
+
+%# Step 1: Initialize & rate population
+%population = genBin(MU, 50)
+%fitness = evaluateFitness(control, population)
+
+%for (i in seq_len(MAX.ITER)) {
+%    # Step 2: variation
+%    offspring = generateOffspring(control, population, fitness,
+%                                  LAMBDA)
+%    fitness.o = evaluateFitness(control, offspring)
+
+%    # Step 3: survival selection
+%    sel = replaceMuPlusLambda(control, population, offspring,
+%                              fitness, fitness.o)
+%    population = sel$population
+%    fitness = sel$fitness
+%}
+%@
+
+%<<echo = F>>=
+%set.seed(1234)
+
+%MAX.ITER = 100L # Number of iterations
+
+%# Step 1: Initialize & rate population
+%population = genBin(MU, 50)
+%fitness = evaluateFitness(control, population)
+%bic = matrix(fitness[1, ], ncol = MU)
+%best = matrix(population[[which.min(fitness)]], ncol = 50)
+
+
+%for (i in seq_len(MAX.ITER)) {
+%     # Step 2: variation
+%    offspring = generateOffspring(control, population, fitness,
+%                                  LAMBDA)
+%    fitness.o = evaluateFitness(control, offspring)
+
+%    # Step 3: survival selection
+%    sel = replaceMuPlusLambda(control, population, offspring,
+%                              fitness, fitness.o)
+%   population = sel$population
+%    fitness = sel$fitness
+%    best = rbind(best, population[[which.min(fitness)]])
+%    bic = rbind(bic, fitness[1, ])
+
+%    if (i %% 10 == 0) {
+%      print(paste("After", i, "iterations:"))
+%      print(which(population[[1]] == 1))
+%    }
+
+%    if (all((which(population[[1]] == 1)) %in% vars)) {
+%      print(paste("Included variables after", i, "iterations:"))
+%      print(which(population[[1]] == 1))
+%      break
+%    }
+%}
+%@
+\vspace{0.5cm}
+\begin{center}
+\begin{figure}
+  \includegraphics[height = 6cm, width = 9cm]{figure_man/var-selection1.png}
+\end{figure}
+\end{center}
+
+\vspace{0.5cm}
+\begin{center}
+\begin{figure}
+  \includegraphics[height = 6cm, width = 9cm]{figure_man/var-selection2.png}
+\end{figure}
+\end{center}
+
+\end{vbframe}
+
+
+\begin{vbframe}{Application}
+
+When should evolutionary algorithms be applied?
+
+\begin{itemize}
+\item Problem given by black/gray box (objective function not known or insufficiently known)
+\item No problem-specific solver available
+\item Problem insufficiently understood
+\item No resources for developing a problem-specific solver
+\item Solution with \enquote{satisfactory quality} sufficient (as a rule, EAs give no guarantee of optimality)
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Other examples}
+
+\textbf{Other examples:}
+
+\begin{itemize}
+\item Flappy Bird (\url{https://www.youtube.com/watch?v=aeWmdojEJf0})
+\item Car driving (\url{https://www.youtube.com/watch?v=8V2sX9BhAW8})
+\item Development of wind turbines (\url{https://www.youtube.com/watch?v=YZUNRmwoijw&amp=&t=422s})
+\end{itemize}
+
+\end{vbframe}
+
+
+% \begin{vbframe}{Anwendungen}
+%
+% Die Bereiche, in denen evolutionäre Algorithmen eingesetzt werden, sind nahezu unbegrenzt.
+%
+% \begin{itemize}
+% \item Wirtschaft
+% \item Forschung
+% \item Kunst und Musik
+% \end{itemize}
+%
+% \end{vbframe}
+
+
+
+% \begin{vbframe}{8-Damen-Problem}
+%
+% \begin{itemize}
+%   \item Acht Damen sollen so auf einem Schachbrett aufgestellt werden, dass keine
+%   zwei Damen einander schlagen können. Jede Figur spielt hierbei gegeneinander.
+%   \item Konkret: Keine zwei Damen dürfen auf derselben Reihe, Linie oder Diagonale stehen.
+%   \item Auf klassischem 8x8-Brett gibt es 92 Lösungen die Damen aufzustellen.
+% \end{itemize}
+%
+% \framebreak
+%
+% \begin{figure}
+%   \includegraphics[width=0.5\textwidth, height=0.5\textheight]{figure_man/damen.png}
+%   \caption{Eine Lösung des 8-Damen-Problems}
+% \end{figure}
+%
+%
+% \framebreak
+%
+% <<eval=FALSE>>=
+% # create a random chessboard of size n x n
+% # represent board as vectors of x and y coords
+% # place queens on random coords, we even allow clashes
+% # where multiple queens are on the same tile
+% createRandomBoard = function(n) {
+%   xs = integer(n)
+%   ys = integer(n)
+%   for (i in 1:n) {
+%     xs[i] = sample(n, 1)
+%     ys[i] = sample(n, 1)
+%   }
+%   list(n = n, xs = xs, ys = ys)
+% }
+% @
+%
+% \framebreak
+%
+% <<eval=FALSE, size='footnotesize'>>=
+% # print board on console so we can understand it
+% printBoard = function(b) {
+%   n = b$n
+%   f = matrix(".", n,n)
+%   for (i in 1:n) {
+%     f[b$xs[i], b$ys[i]] = i
+%   }
+%   for (i in 1:n) {
+%     for (j in 1:n) {
+%       cat(f[i,j])
+%     }
+%     cat("\n")
+%   }
+% }
+% @
+%
+% \framebreak
+%
+% <<eval=FALSE, size='footnotesize'>>=
+% # iterate over all queens and check conflicts
+% # if a queen threatens another one, +1 penalty
+% # if a queen is on top of another, +n penaly
+% objective = function(b) {
+%   n = b$n
+%   penalty = 0
+%   # check all ordered pairs of queens
+%   # (yes, we then count penalties twice)
+%   for (i in 1:n) {
+%     for (j in setdiff(1:n, i)) {
+%       x1 = b$xs[i]; y1 = b$ys[i]
+%       x2 = b$xs[j]; y2 = b$ys[j]
+%     cond = x1 == x2 || y1 == y2 || x1 + y1 == x2 + y2 ||
+%       x1 - y1 == x2 - y2
+%     [...]
+% @
+%
+% \framebreak
+%
+% <<eval=FALSE, size='footnotesize'>>=
+%     [...]
+%     if (cond) {
+%       penalty = penalty + 1
+%     }
+%     if (x1 == x2 && y1 == y2)
+%       penalty = penalty + n
+%     }
+%   }
+%   return(penalty)
+% }
+% @
+%
+%
+% \framebreak
+%
+% <<eval=FALSE, size='footnotesize'>>=
+%
+% # do a local perturbation of the board,
+% # for SA, return perturbed board
+% #
+% # select random queen, then:
+% # method "1step": move queen 1 random step
+% # to on the board (8 dirs, or even stay)
+% # method: "geom": sample movement in x and y by
+% # adding geometric distribution: G(0.5) - G(0.5)
+% # at end: if we have left the board --> clip to board boundary
+% getPerturbedBoard = function(b, op = "geom") {
+%   # select random queen
+%   i = sample(b$n, 1L)
+%   x = b$xs[i]
+%   y = b$ys[i]
+%   [...]
+% @
+%
+% \framebreak
+%
+% \vspace*{-0.4cm}
+%
+% <<eval=FALSE, size='footnotesize'>>=
+%   [...]
+%     # option a) move 1 random step
+%   if (op == "1step") {
+%     x = x + sample(c(-1,0,1), 1L)
+%     y = y + sample(c(-1,0,1), 1L)
+%   }
+%   # option b) add geometric distruted steps
+%   if (op == "geom") {
+%     h = function() rgeom(1, prob = 0.5) - rgeom(1, prob = 0.5)
+%     x = x + h()
+%     y = y + h()
+%   }
+%   [...]
+% }
+% @
+%
+%
+% \framebreak
+%
+% <<eval=FALSE, size='footnotesize'>>=
+%   [...]
+%   # clip to board and write x,y back to board
+%   x = min(max(x, 1), b$n)
+%   y = min(max(y, 1), b$n)
+%   b$xs[i] = x
+%   b$ys[i] = y
+%   return(b)
+% }
+% @
+%
+% \framebreak
+%
+% <<eval=FALSE, size='footnotesize'>>=
+% # simulated annealing for a starting board
+% # b: board of queens
+% # maxit: number of SA iterations
+% # op: operator for local perturbation, see getPerturbedBoard
+% # t.start: start temperature
+% # t.factor: used in cooling T <- t.factor * T
+% sa = function(b, maxit = 3L, op = "geom", t.start = 100,
+%   t.keep = 50L, t.factor = 0.8) {
+%   # init stuff
+%   penalty = objective(b)
+%   penalties = penalty # archive for all evals
+%   temp = t.start
+%   iter = 1L
+%   [...]
+% @
+%
+% \framebreak
+%
+% <<eval=FALSE, size='footnotesize'>>=
+%   [...]
+%   while(penalty > 0 && iter <= maxit) {
+%     # local perturbation, evaluate it, store the eval
+%     b.new = getPerturbedBoard(b, op = op)
+%     p.new = objective(b.new)
+%     penalties = c(penalties,p.new)
+%     # compute delta diff d, and prob to accept
+%     d = penalty - p.new
+%     prob = exp(d / temp)
+%     u = runif(1)
+%     messagef("iter = %4i; cur = %4i,  new = %4i,
+%         prob = %.4f,  t = %g",
+%       iter, penalty, p.new, ifelse(d < 0, prob, 0) , temp)
+%     # accept if we are better, or randomly if we are worse
+%
+%     [...]
+% @
+%
+% \framebreak
+%
+% <<eval=FALSE, size='footnotesize'>>=
+%     [...]
+%     if (d > 0 || u < prob) {
+%       b = b.new
+%       penalty = p.new
+%     }
+%
+%     # decrease temperature
+%     if (iter %% t.keep == 0)
+%       temp = temp * t.factor
+%     iter = iter + 1L
+%   }
+%   list(b = b, penalty = penalty, penalties = penalties)
+% }
+% @
+%
+%
+% \framebreak
+%
+% <<echo=FALSE, cache=TRUE>>=
+% source("rsrc/sa-8queens-example/board.R")
+% source("rsrc/sa-8queens-example/objective.R")
+% source("rsrc/sa-8queens-example/sa.R")
+% @
+%
+% <<message = FALSE, cache = TRUE>>=
+% set.seed(5)
+% b1 = createRandomBoard(8)
+% printBoard(b1)
+% print(objective(b1))
+% @
+%
+% \framebreak
+%
+% <<message = FALSE, cache = TRUE>>=
+% z = sa(b1, maxit = 2000, t.factor = 0.8, t.start = 100)
+% b2 = z$b
+% printBoard(b2)
+% print(objective(b2))
+% @
+%
+% \framebreak
+%
+% <<cache=TRUE>>=
+% library(plyr)
+% n = 8L
+% nrep = 10L
+% maxit = 10000L
+%
+% methods = c("random", "greedy", "sa1", "sa2", "sa3", "sa4")
+% ops = c("1step",  "geom")
+% reps = 1:nrep
+% t.starts =  c(random = 100000, greedy = 1e-16,
+%   sa1 = 100, sa2 = 100, sa3 = 10, sa4 = 1)
+% t.factors = c(random = 1, greedy = 1,
+%   sa1 = 0.8, sa2 = 0.7, sa3 = 0.8, sa4 = 0.8)
+% grid = expand.grid(method = methods, op = ops, rep = reps)
+%
+% boards = lapply(reps, function(i) createRandomBoard(n = n))
+% @
+%
+% \framebreak
+%
+% <<eval = FALSE, message=FALSE>>=
+% for (i in seq_row(grid)) {
+%   g = grid[i, ]
+%   m = as.character(g$method)
+%   b = boards[[g$rep]]
+%   z = sa(b, maxit = maxit, op = g$op , t.start = t.starts[m],
+%     t.factor = t.factors[m])
+%   grid[i, "y"] = min(z$penalties)
+%   grid[i, "ert"] = length(z$penalties)
+% }
+% grid2 = ddply(grid, c("method", "op"), summarize, ert = median(ert))
+% @
+%
+% <<results = 'hide', echo = FALSE, eval = FALSE, message=FALSE>>=
+% # library(plyr)
+% # library(parallelMap)
+% # parallelStartSocket(30)
+% # parallelExport("grid", "t.starts", "t.factors", "n", "maxit", "rep", "boards")
+% # parallelLibrary("BBmisc")
+% # parallelSource(files = paste0(getwd(),c("/sa-8queens-example/board.R", "/sa-8queens-example/objective.R", "/sa-8queens-example/sa.R")))
+% # z = parallelLapply(seq_row(grid), function(i) {
+% #   g = grid[i, ]
+% #   m = as.character(g$method)
+% #   b = boards[[g$rep]]
+% #   return(sa(b, maxit = maxit, op = g$op , t.start = t.starts[m], t.factor = t.factors[m]))
+% # })
+% # parallelStop()
+% #
+% # grid[, "y"] = vnapply(z, function(x) min(x$penalties))
+% # grid[, "ert"] = vnapply(z, function(x) length(x$penalties))
+% #
+% # grid2 = ddply(grid, c("method", "op"), summarize, ert = median(ert))
+% # save(grid, grid2, file = "sa-8queens-example/sa-8queens-benchmark.RData")
+% @
+%
+% \framebreak
+%
+% <<echo = -1>>=
+% load("rsrc/sa-8queens-example/sa-8queens-benchmark.RData")
+% grid[1:12, ]
+% @
+%
+% \framebreak
+%
+% <<>>=
+% grid2
+% @
+%
+% \end{vbframe}
+
+% \section{Optimierung in R}
+%
+% \begin{vbframe}{Optimierung in R}
+% Funktion \pkg{optim()} aus base R stellt Algorithmen für allgemeine Optimierungsprobleme bereit: \\[0.15cm]
+% \begin{itemize}
+% \item \textbf{BRENT:} Nur für eindimensionale Funktionen. Benutzt die Funktion \pkg{optimize()}.
+%       Kann sinnvoll sein, wenn \pkg{optim()} innerhalb einer anderen Funktion aufgerufen wird.
+% \item \textbf{CG:} Konjugierte Gradienten Verfahren
+% % \item \textbf{Nelder-Mead Simplex:} Gut für nicht-dif'bare Funktionen, basiert nur auf Funktionsauswertungen (default)
+% \item \textbf{BFGS, Quasi-Newton:} Veröffentlicht in 1970 zeitgleich durch Broyden, Fletcher, Goldfarb and Shanno
+% % \item \textbf{SANN:} Stochastisches Simulated Annealing
+% \end{itemize}
+% \framebreak
+% <<eval=FALSE>>=
+% # Grundlegender Aufruf:
+% optim(par, fn, gr, method, lower, upper, control)
+% @
+% \begin{itemize}
+% \item \textbf{par} Startwerte der zu optimierenden Parameter
+% \item \textbf{fn} (Objective) Function, die optimiert (default: minimiert) werden soll
+% \item \textbf{gr} Gradient/Ableitung bei entsprechender Methode
+% \item \textbf{method} Optimierungsmethode (siehe oben)
+% \item \textbf{lower/upper} Grenzen für Optimierung (L-BFGS-B)
+% \item \textbf{control} Liste von Kontrollparametern
+% \end{itemize}
+% \end{vbframe}
 
 
 
