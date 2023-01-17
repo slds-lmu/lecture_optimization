@@ -5,7 +5,7 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/ea_structure.PNG}
+\newcommand{\titlefigure}{figure_man/ea.eps}
 \newcommand{\learninggoals}{
 \item Definition
 \item Structure
@@ -47,30 +47,34 @@ The boundaries between the terms become increasingly blurred and are often used 
 \begin{vbframe}{Structure of an evolutionary algorithm}
 
 \begin{figure}
-\centering
-\begin{tikzpicture}[node distance=1cm, auto,]
-%nodes
-\node (init) {Initialize population};
-\node[below = 0.3cm of init](rating1) {Eval population};
-\node[below = 0.3cm of rating1](selection1) {Parent selection};
-\node[below = 0.3cm of selection1](variation) {Variation};
-\node[below = 0.3cm of variation](rating2) {Eval offspring};
-\node[below = 0.3cm of rating2](selection2) {Survival selection};
-\node[below = 0.3cm of selection2](stop) {Stop};
-\node[below = 1cm of stop](dummy2) {};
-\node[below = 0.2cm of stop](dummy3) {};
-\node[right = 0.01cm of dummy3](dummy4) {yes};
-\node[left = 1.1cm of rating2](dummy1) {no};
-\draw[->] (init) to (rating1) node[midway, above]{};
-\draw[->] (rating1) to (selection1) node[midway, above]{};
-\draw[->] (selection1) to (variation) node[midway, above]{};
-\draw[->] (variation) to (rating2) node[midway, above]{};
-\draw[->] (rating2) to (selection2) node[midway, above]{};
-\draw[->] (selection2) to (stop) node[midway, above]{};
-\draw[->] (stop) to (dummy2) node[midway, above]{};
-\draw[->] (stop) to [bend left=90, looseness=2](selection1) node[midway, above]{};
-\end{tikzpicture}
+  \includegraphics{figure_man/ea.eps}
 \end{figure}
+
+% \begin{figure}
+% \centering
+% \begin{tikzpicture}[node distance=1cm, auto,]
+% %nodes
+% \node (init) {Initialize population};
+% \node[below = 0.3cm of init](rating1) {Eval population};
+% \node[below = 0.3cm of rating1](selection1) {Parent selection};
+% \node[below = 0.3cm of selection1](variation) {Variation};
+% \node[below = 0.3cm of variation](rating2) {Eval offspring};
+% \node[below = 0.3cm of rating2](selection2) {Survival selection};
+% \node[below = 0.3cm of selection2](stop) {Stop};
+% \node[below = 1cm of stop](dummy2) {};
+% \node[below = 0.2cm of stop](dummy3) {};
+% \node[right = 0.01cm of dummy3](dummy4) {yes};
+% \node[left = 1.1cm of rating2](dummy1) {no};
+% \draw[->] (init) to (rating1) node[midway, above]{};
+% \draw[->] (rating1) to (selection1) node[midway, above]{};
+% \draw[->] (selection1) to (variation) node[midway, above]{};
+% \draw[->] (variation) to (rating2) node[midway, above]{};
+% \draw[->] (rating2) to (selection2) node[midway, above]{};
+% \draw[->] (selection2) to (stop) node[midway, above]{};
+% \draw[->] (stop) to (dummy2) node[midway, above]{};
+% \draw[->] (stop) to [bend left=90, looseness=2](selection1) node[midway, above]{};
+% \end{tikzpicture}
+% \end{figure}
 
 \end{vbframe}
 
@@ -95,8 +99,37 @@ The boundaries between the terms become increasingly blurred and are often used 
 \end{tabular}
 \end{center}
 
+% We now look into \textbf{operators}: Functions operating on (a set of) individuals and modifying 
+
 %$$f(\bm{x}) = \widehat{GE}_{\mathcal{D}_{test}}\left(\inducer(\mathcal{D}_{train},\bm{x})\right)$$
 
+
+\end{vbframe}
+
+\begin{vbframe}{Encoding}
+
+Encoding of chromosomes is the first step of solving a problem with EAs.  Technically: Mapping from \textbf{genotype} to \textbf{phenotype}. Encoding depends on the problem, and eventually decides performance of problem solving. 
+
+\lz 
+
+\textbf{Encoding methods}: 
+\begin{itemize}
+  \item Binary encoding: Strings of 0s and 1s 
+  \item Real value encoding: Real values 
+
+  \begin{figure}
+    \includegraphics[width=0.7\textwidth]{figure_man/encoding_binary_numeric.png}
+  \end{figure}
+   %\item Order encoding: Sequence of elements 
+  \item Tree encoding: Tree objects
+  \begin{figure}
+    \includegraphics[width=0.7\textwidth]{figure_man/encoding_tree.png} \\
+    \begin{footnotesize}
+      Souce: Encoding Techniques in Genetic Algorithms, Debasis Samanta, 2018. 
+      % https://cse.iitkgp.ac.in/~dsamanta/courses/sca/resources/slides/GA-02%20Encoding%20Techniques.pdf
+    \end{footnotesize}
+  \end{figure}
+\end{itemize}
 
 \end{vbframe}
 
@@ -115,9 +148,6 @@ The boundaries between the terms become increasingly blurred and are often used 
 \footnotesize
 The first step of an iteration chooses $\lambda$ parents, that create offspring for the next step.
 
-\medskip
-
-Possibilities for selection of parents:
 \begin{itemize}
 \item \textbf{Neutral selection: }choose individual with a probability $1/\mu$.
 \item \textbf{Fitness-proportional selection: }draw individuals with probability proportional to their fitness.
@@ -125,7 +155,10 @@ Possibilities for selection of parents:
 \end{itemize}
 \vspace*{-0.2cm}
 \begin{figure}
-  \includegraphics[width = 7cm, height = 2.5cm ]{figure_man/tournament_selection.png}
+  \includegraphics[width=0.5\textwidth]{figure_man/tournament_selection.png} \includegraphics[width=0.3\textwidth]{figure_man/ea_parent_selection.pdf} \\
+  \begin{footnotesize}
+  Left: Random selection. Right: Fitness-proportional selection. Fitness values of $\mu = 10$ individuals (labels in pie-chart) are transferred inversely into probabilities (proportions of the pie-chart). 
+  \end{footnotesize}
 \end{figure}
 \end{vbframe}
 
@@ -146,6 +179,8 @@ Recombination and mutation are not always performed both; sometimes only one ope
   \includegraphics[width = 8cm, height = 2.6cm ]{figure_man/rec-and-mut.png}\\
 \end{figure}
 \end{center}
+
+\textbf{Note: } The operation depends on the encoding. We will later look into examples for binary and numeric encodings. 
 
 \end{vbframe}
 
