@@ -128,7 +128,7 @@ Cons:
     \item Mean prediction of the forest: $\mu: \mathcal{S} \to \R$,\\
     $\xv \mapsto \frac{1}{B} \sum_{b = 1}^{B} \mu_{b}(\xv)$
     \item Variance prediction of the forest: $\sigma^{2}: \mathcal{S} \to \R$,\\
-    $\xv \mapsto  \left( \frac{1}{B} \sum_{b = 1}^{B} \sigma_{b}^2(\xv) + \mu_{b}(\xv) \right) - \mu(\xv)$\\
+    $\xv \mapsto  \left( \frac{1}{B} \sum_{b = 1}^{B} \sigma_{b}^2(\xv) + \mu_{b}(\xv)^{2} \right) - \mu(\xv)^{2}$\\
     (law of total variance assuming a mixture of $B$ models;\\
     other variance estimates also exist)
 \end{itemize}
