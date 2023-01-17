@@ -7,10 +7,9 @@
 
 \newcommand{\titlefigure}{figure_man/Weak_and_Strong_Duality.png}
 \newcommand{\learninggoals}{
-\item Definition
-\item Max. Likelihood 
-\item Normal regression
-\item Risk Minimization
+\item KKT conditions
+\item Regularity conditions 
+\item Examples 
 }
 
 
@@ -26,12 +25,33 @@
 \lecture{Optimization in Machine Learning}
 \sloppy
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{vbframe}{Stationary point of the Lagrangian}
 
-\begin{vbframe}{KKT Conditions}
+When we introduced the Lagrangian $\mathcal{L}$ from a geometrical
+perspective for the equality constraint problem, 
+we realized that the geometrical conditions for the optimum
+coincided with finding a stationary point of $\mathcal{L}$: 
+
+$$
+  \begin{pmatrix}
+  \nabla_\xv \mathcal{L}(\xv^\ast, \beta) \\
+  \nabla_\beta \mathcal{L}(\xv^\ast, \beta)
+  \end{pmatrix} = \begin{pmatrix} \nabla f(\xv^\ast) + \beta \nabla h(\xv^\ast) \\
+  h(\xv)
+  \end{pmatrix} = \begin{pmatrix}
+  0 \\ 0 \end{pmatrix}
+$$
+
+\lz
+
+For this and the general Lagrangian, this leads to the following question.
+\lz
 
 \textbf{Question: } Is $\nabla L(\xv, \bm{\alpha}, \bm{\beta}) = 0$ a \textbf{necessary / sufficient condition for the optimum}?
 
-\lz
+\end{vbframe}
+
+\begin{vbframe}{KKT Conditions}
 
 In order to be able to formulate necessary and sufficient conditions for optimality, we need the \textbf{Karush-Kuhn-Tucker conditions} (KKT conditions).
 
@@ -104,7 +124,7 @@ The following two formulas are common for ridge regression:
 \lz
 \textbf{Formula 1:}
 \begin{eqnarray}
-  \min_{\bm{\theta}} && f_\lambda(\bm{\theta}) := \|\bm{y} - \mathbf{X}\bm{\theta}\|^2 + \lambda \|\bm{\theta}\|^2
+  \min_{\bm{\theta}} && f_\lambda(\bm{\theta}) := \|\bm{y} - \mathbf{X}\bm{\theta}\|_2^2 + \lambda \|\bm{\theta}\|_2^2
 \label{eq:form1}
 \end{eqnarray}
 
@@ -112,7 +132,7 @@ The following two formulas are common for ridge regression:
 \textbf{Formula 2:}
 \begin{align}
 \begin{split}
-\min_{\bm{\theta}} & \quad \|\bm{y} - \mathbf{X}\bm{\theta}\|^2 \\
+\min_{\bm{\theta}} & \quad \|\bm{y} - \mathbf{X}\bm{\theta}\|_2^2 \\
 \text{s.t. } & \quad \|\bm{\theta}\|_2^2 - t \le 0
 \end{split}
 \label{eq:form2}
@@ -157,7 +177,7 @@ We calculate the Lagrange function of \eqref{eq:form2}
 
 \vspace*{-0.5cm}
 \begin{eqnarray*}
-  L(\bm{\theta}, \alpha) &=& \|\bm{y} - \mathbf{X}\bm{\theta}\|^2 + \alpha (\|\bm{\theta}\|^2_2 - t).
+  L(\bm{\theta}, \alpha) &=& \|\bm{y} - \mathbf{X}\bm{\theta}\|_2^2 + \alpha (\|\bm{\theta}\|^2_2 - t).
 \end{eqnarray*}
 
 The first KKT condition (stationarity of the Lagrange function) is

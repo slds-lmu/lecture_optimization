@@ -7,10 +7,9 @@
 
 \newcommand{\titlefigure}{figure_man/Weak_and_Strong_Duality.png}
 \newcommand{\learninggoals}{
-\item Definition
-\item Max. Likelihood 
-\item Normal regression
-\item Risk Minimization
+\item Lagrangian for general constrained optimization
+\item Geometric intuition for Lagrangian duality
+\item Properties and examples
 }
 
 
@@ -28,23 +27,41 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{vbframe}{Nonlinear Constrained Optimization}
 
-Given the optimization problem
+In the previous lecture, we introduced the general primal LP of the form 
+
+\begin{eqnarray*}
+ \min_{\xv \in \R^d} && \bm{c}^T\bm{x} \\
+\text{s.t. } &&  \bm{A} \bm{x} \le \bm{b}\\
+             && \bm{G} \bm{x} = \bm{h} 
+\end{eqnarray*}
+
+and discussed how its dual formulation can be related to a function $\mathcal{L}$ of the form 
+$$
+\mathcal{L}(\bm{x},\bm{\alpha},\bm{\beta}) = \bm{c}^T \bm{x} + \alpha^T (\bm{A} \bm{x} - \bm{b}) + \bm{\beta}^T (\bm{G} \bm{x} - \bm{h}) 
+$$
+
+\framebreak
+
+Given the general form of a constraint optimization problem
 
 \begin{eqnarray*}
  \min_{\xv \in \R^d} && f(\xv) \\
-\text{s.t. } && g_i(\xv) \le 0 \text{ for all } k, \\
-&& h_j(\xv) = 0 \text{ for all } l
+\text{s.t. } && g_i(\xv) \le 0 \, i=1,\ldots, k, \\
+             && h_j(\xv) = 0 \, j=1,\ldots, l,.\\
 \end{eqnarray*}
 
-with not necessarily linear functions $f:\R^d \to \R$, $g_i:\R^d \to \R$, $h_j:\R^d \to \R$. We assume $f, g, h \in \mathcal{C}^2$. 
+with not necessarily linear functions $f:\R^d \to \R$, $g_i:\R^d \to \R$, $h_j:\R^d \to \R$ and assuming $f, g, h \in \mathcal{C}^2$, it is tempting to mirror this construction and define  
+$$
+\mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) := f(\xv) + \sum_{i=1}^k \alpha_i g_i(\xv) + \sum_{j=1}^l \beta_j h_j(\xv)
+$$
 
-\lz 
-
-How do we find the solution to this problem?
+with  multipliers $\alpha_i\ge 0$ and unconstrained $\beta_i$. As we will see later, this construction, called the Lagrange function (or Lagrangian) associated with the primal nonlinear optimization problem, will be key to defining Lagrangian duality. The multipliers $\alpha_i$ and $\beta_i$ are called Lagrange multipliers.   
 
 \end{vbframe}
 
 \begin{vbframe}{Constrained problems: the direct way}
+
+Similar to LPs, however, certain constraint problems can be solved in a direct way using methods from calculus and linear algebra.  
 
 \textbf{Example 1:}
 
@@ -69,61 +86,64 @@ and insert it into the objective:
 \begin{eqnarray*}
 x^\ast &=& 1, \qquad f(x^\ast) = 1
 \end{eqnarray*}
-However, such a direct way is not possible in most cases. 
 
-% \framebreak
+\framebreak
 
-% \textbf{Example 2:}
+\textbf{Example 2:}
 
-% \vspace*{-0.5cm}
+     \vspace*{-0.5cm}
 
-% \begin{footnotesize}
-% \begin{eqnarray*}
-% \min_{\xv \in \R^2} && - 2 + x_1^2 + 2 x_2^2\\
-% \text{s.t. } && x_1^2 + x_2^2 - 1 = 0
-% \end{eqnarray*}
-% \end{footnotesize}
+ \begin{footnotesize}
+ \begin{eqnarray*}
+ \min_{\xv \in \R^2} && - 2 + x_1^2 + 2 x_2^2\\
+ \text{s.t. } && x_1^2 + x_2^2 - 1 = 0
+ \end{eqnarray*}
+ \end{footnotesize}
 
-% \vspace*{-0.2cm}
+ \vspace*{-0.2cm}
 
-% We solve the problem by resolving the constraint
+ We solve the problem by resolving the constraint
 
-% \vspace*{-0.5cm}
+ \begin{footnotesize}
+ \begin{eqnarray*}
+ x_1^2 = 1 - x_2^2
+ \end{eqnarray*}
+ \end{footnotesize}
 
-% \begin{footnotesize}
-% \begin{eqnarray*}
-% x_1^2 = 1 - x_2^2
-% \end{eqnarray*}
-% \end{footnotesize}
+ and inserting it into the objective function
 
-% \vspace*{-0.5cm}
+ \vspace*{-0.5cm}
 
-% and inserting it into the objective function
+ \begin{footnotesize}
+ \begin{eqnarray*}
+ f(x_1, x_2) &=& - 2 + x_1^2 + 2 x_2^2 \\
+ &=& -2 + (1 - x_2^2) + 2 x_2^2 = - 1 + x_2^2.
+ \end{eqnarray*}
+ \end{footnotesize}
 
-% \vspace*{-0.5cm}
+ \vspace*{-0.3cm}
 
-% \begin{footnotesize}
-% \begin{eqnarray*}
-% f(x_1, x_2) &=& - 2 + x_1^2 + 2 x_2^2 \\
-% &=& -2 + (1 - x_2^2) + 2 x_2^2 = - 1 + x_2^2.
-% \end{eqnarray*}
-% \end{footnotesize}
+ We turned the optimization problem into a one-dimensional, unconstrained optimization problem
+ that has a minimum at $x_2 = 0$. Plugging $x_2 = 0$ into constraint, we get $x_1 = \pm 1$.
 
-% \vspace*{-0.3cm}
+ \vspace*{0.2cm}
 
-% We turned the optimization problem into a one-dimensional, unconstrained optimization problem that has a minimum at $x_2 = 0$. Plugging $x_2 = 0$ into constraint, we get $x_1 = \pm 1$.
-
-% \vspace*{0.2cm}
-
-% However, this direct way is not possible in most cases.
-
+ However, this direct way is not possible in most cases.
 
 \end{vbframe}
 
-
 \begin{vbframe}{A classic example: "milkmaid problem"}
 
-Let us start with the classical \enquote{milkmaid problem}; the following example is taken from \textit{Steuard Jensen, An Introduction to Lagrange Multipliers} (but the example works of course equally well with a \enquote{milk man}). 
+\textbf{Question 1:} Is a general recipe for solving general constraint nonlinear optimization problems? 
+
+\textbf{Question 2:} Can we understand this recipe geometrically?
+
+\textbf{Question 3:} How does this relate to the Lagrange function approach?
+
+\lz
+For this purpose, we consider the classical \enquote{milkmaid problem}; the following example is taken
+from \textit{Steuard Jensen, An Introduction to Lagrange Multipliers} (but the example works
+of course equally well with a \enquote{milk man}). 
 
 \begin{itemize}
 	\item Assume a milk maid is sent to the field to get the day's milk
@@ -131,10 +151,11 @@ Let us start with the classical \enquote{milkmaid problem}; the following exampl
 	\item However, she has to rinse out her bucket first in the nearby river. 
 \end{itemize}
 
+\framebreak 
 What is the best point $P$ to rinse her bucket? 
 
 \begin{center}
-	\includegraphics[width = 0.4\textwidth]{figure_man/milkmaid1.png}
+	\includegraphics[width = 0.7\textwidth]{figure_man/milkmaid1.png}
 \end{center}
 
 \framebreak 
@@ -519,7 +540,7 @@ $$
 \begin{pmatrix} \bm{Q} & \bm{C}^\top \\ \bm{C} & \bm{0} \end{pmatrix} \begin{pmatrix} \xv \\ \bm{\beta} \end{pmatrix} = \begin{pmatrix} \bm{0} \\ \bm{d}  \end{pmatrix}.
 $$
 
-It follows that finding stationary points of the Lagrange function corresponds to the solution of a system of linear equations and can be solved efficiently and stable with the help of suitable matrix decompositions (see chapter 7).
+It follows that finding stationary points of the Lagrange function corresponds to the solution of a system of linear equations and can be solved efficiently and stable with the help of suitable matrix decompositions.
 \end{vbframe}
 
 \begin{vbframe}{Example: Lagrange function for Lasso}
@@ -528,15 +549,17 @@ It follows that finding stationary points of the Lagrange function corresponds t
 
 \begin{eqnarray*}
 	\min_\theta && \|\yv - \Xmat \thetab\|_2^2 \\
-	\text{s.t. } && \|\thetab\|^2_1 - t \le 0.
+	\text{s.t. } && \|\thetab\|_1 - t \le 0.
 \end{eqnarray*}
 
 We formulate the primal problem with the help of the Lagrangian:
 
 \begin{eqnarray*}
-	\min_\theta \max_{\alpha \ge 0} \mathcal{L}(\xv, \bm{\alpha}) &=& \min_\theta \max_{\alpha \ge 0} \left\{\|\yv - \Xmat \thetab\|_2^2 + \alpha \left(\|\thetab\|^2_1 - t\right)\right\}.
+	\min_\theta \max_{\alpha \ge 0} \mathcal{L}(\xv, \bm{\alpha}) &=& \min_\theta \max_{\alpha \ge 0} \left\{\|\yv - \Xmat \thetab\|_2^2 + \alpha \left(\|\thetab\|_1 - t\right)\right\}.
 \end{eqnarray*}
 
+The explicit derivation of the dual of the Lasso can be found in 
+\href{https://sites.stat.washington.edu/courses/stat527/s13/readings/osborneetal00.pdf}{\beamergotobutton{Osbourne et al.,2000}}.
 
 \end{vbframe}
 

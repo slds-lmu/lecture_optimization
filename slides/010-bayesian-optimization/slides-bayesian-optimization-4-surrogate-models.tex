@@ -25,7 +25,8 @@ Desiderata:
 
 \begin{itemize}
   \item Regression model with uncertainty estimates
-  \item Accurate predictions
+  \item Accurate predictions (especially for small sample size)
+  \item Robust
 \end{itemize}
 
 \vspace{+0.45cm}
@@ -33,9 +34,6 @@ Desiderata:
 Depending on the application:
 
 \begin{itemize}
-  \item Should be cheap to train
-  \item Scales well in the number of data points
-  \item Scales well in the number of dimensions
   \item Can handle different types of inputs (categorical and continuous)
   \item Can handle dependencies (i.e., hierarchical input)
 \end{itemize}
@@ -44,32 +42,13 @@ Depending on the application:
 
 
 \begin{vbframe}{Gaussian Process}
-Pros:
-\begin{itemize}
-  \item Spatial dependencies are extremely well modeled by GPs (points that are \enquote{close} in the input space are also close in the objective space)
-  \item GPs yield well calibrated uncertainty estimates
-  \item The posterior predictive distribution under a GP is normal
-\end{itemize}
-
-\vspace{+0.45cm}
-
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/surrogate_0.png}
-\end{minipage}
-\hfill
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/surrogate_1.png}
-\end{minipage}
-
-\framebreak
-
 The posterior mean and the posterior variance for a GP can be derived analytically: 
 
 \begin{itemize}
   \item Let $\Dts$ be the data we are fitting the GP on
   \item Let $\bm{y}:= \left(\ysi[1], \ldots, \ysi[t]\right)$ be the vector of observed outputs
   \item For a covariance kernel $k(\xv, \xv^{'})$, let $\bm{K} := \left(k(\xvsi, \xvsi[j])\right)_{i,j}$ denote the \textbf{kernel (Gram) matrix} and $k(\xv) \coloneqq \left(k(\xv, \xv^{[1]}), \ldots, k(\xv, \xvsi[t])\right)^\top$
-  \item Radial basis function kernel (also known as Gauss kernel): $k(\xv, \xv^{'})=\exp (-\frac{||\xv - \xv^{'}||^2}{2 \sigma^2})$
+  \item Example: radial basis function kernel (also known as Gauss kernel): $k(\xv, \xv^{'})=\exp (-\frac{||\xv - \xv^{'}||^2}{2 \sigma^2})$
   \item Further, we assume a zero-mean GP prior $^{(*)}$  
 \end{itemize}
 
@@ -98,6 +77,24 @@ with
 
 \framebreak
 
+Pros:
+\begin{itemize}
+  \item GPs yield well calibrated uncertainty estimates
+  \item The posterior predictive distribution under a GP is normal
+\end{itemize}
+
+\vspace{+0.45cm}
+
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/surrogate_0.png}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/surrogate_1.png}
+\end{minipage}
+
+\framebreak
+
 Cons:
 \begin{itemize}
   \item Vanilla GPs scale cubic in the number of data points
@@ -112,18 +109,29 @@ Cons:
 
 \begin{frame}{Random Forest}
 
-Pros:
 \begin{itemize}
- \item Cheap to train
- \item Scales well with the number of data points
- \item Scales well with the number of dimensions
- \item Can easily handle hierarchical mixed spaces
- \item Robust
+    \item Bagging ensemble
+    \item Fit $B$ decision trees on bootstrap samples using different features sampled at random
 \end{itemize}
 
 \begin{center}
   \includegraphics[width = 0.7\textwidth]{slides/010-bayesian-optimization/figure_man/random_forests.jpg}
 \end{center}
+
+\end{frame}
+
+\begin{frame}{Random Forest}
+
+\begin{itemize}
+    \item Let $\mu_b: \mathcal{S} \to \R$ be the mean prediction of a decision tree $b$ (mean of all data points in the same node as observation $\xv \in \mathcal{S}$)
+    \item Let $\sigma_{b}^2: \mathcal{S} \to \R$ be the variance prediction (variance of all data points in the same node as observation $\xv \in \mathcal{S})$
+    \item Mean prediction of the forest: $\mu: \mathcal{S} \to \R$,\\
+    $\xv \mapsto \frac{1}{B} \sum_{b = 1}^{B} \mu_{b}(\xv)$
+    \item Variance prediction of the forest: $\sigma^{2}: \mathcal{S} \to \R$,\\
+    $\xv \mapsto  \left( \frac{1}{B} \sum_{b = 1}^{B} \sigma_{b}^2(\xv) + \mu_{b}(\xv)^{2} \right) - \mu(\xv)^{2}$\\
+    (law of total variance assuming a mixture of $B$ models;\\
+    other variance estimates also exist)
+\end{itemize}
 
 \end{frame}
 
@@ -140,15 +148,24 @@ Pros:
 
 \end{frame}
 
+\begin{frame}{Random Forest}
+Pros:
+\begin{itemize}
+ \item Cheap to train
+ \item Scales well with the number of data points
+ \item Scales well with the number of dimensions
+ \item Can easily handle hierarchical mixed spaces
+ \item Robust
+\end{itemize}
+\end{frame}
 
 \begin{frame}{Random Forest}
 Cons:
 \begin{itemize}
   \item Poor uncertainty estimates
-  \item Not really Bayesian, (no real posterior predictive distribution)
+  \item Not really Bayesian (no real posterior predictive distribution)
   \item Poor extrapolation
 \end{itemize}
- 
 \end{frame}
 
 \endlecture

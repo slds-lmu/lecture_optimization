@@ -28,18 +28,21 @@
 
 \begin{vbframe}{Recombination for numeric}
 
-Two individuals $\bm{x}, \bm{\tilde x} \in \R^d$ in numerical representation can be recombined as follows:
+Options for recombination of two individuals $\bm{x}, \bm{\tilde x} \in \R^d$: 
 \begin{itemize}
 \item \textbf{Uniform crossover}: choose gene $j$ with probability $p$ of 1st parent and probability $1-p$ of 2nd parent.
 \item \textbf{Intermediate recombination}: new individual is created from the mean value of two parents $\frac{1}{2}(\bm{x} + \bm{\tilde x})$.
-\item \textbf{Simulated Binary Crossover (SBX)}: generate \textbf{two offspring} based on
+\item \textbf{Simulated Binary Crossover (SBX)}: generate \textbf{two offspring}
 
 $$
-\bm{\bar x} \pm \frac{1}{2} \beta (\bm{\tilde x} - \bm{x})
+\bm{\bar x} \pm \frac{1}{2} \beta (\bm{\tilde x} - \bm{x}), \bm{\bar x} = \frac{1}{2} (\bm{x} + \bm{\tilde x}), \beta \text{ randomly sampled}
 $$
-
-with $\bm{\bar x} = \frac{1}{2} (\bm{x} + \bm{\tilde x})$ and $\beta$ randomly sampled from a certain distribution.
 \end{itemize}
+
+\vspace*{-0.3cm}
+\begin{figure}
+  \includegraphics[width=0.3\textwidth]{figure_man/ea_recombination_numeric.pdf}
+\end{figure}
 
 \end{vbframe}
 

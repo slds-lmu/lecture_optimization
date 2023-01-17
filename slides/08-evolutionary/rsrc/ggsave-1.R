@@ -19,7 +19,7 @@ ggsave("../13-optim-ableitunsfrei/figure_man/1dim-ackley-func.png", pl)
 
 
 # initialize evolutionary algorithm
-MU = 20L; LAMBDA = 5L; MAX.ITER = 200L
+MU = 10L; LAMBDA = 5L; MAX.ITER = 200L
 lower = - 30
 upper = 30
 control = initECRControl(fn)

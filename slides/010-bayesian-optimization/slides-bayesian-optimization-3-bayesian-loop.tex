@@ -5,7 +5,7 @@
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-mbo}
 
-\newcommand{\titlefigure}{figure_man/bayesian_loop_3.png}
+\newcommand{\titlefigure}{figure_man/bayesian_loop_sm_normal_fmin.png}
 \newcommand{\learninggoals}{
 \item Bayesian surrogate modeling
 \item Standard acquisition functions
@@ -31,7 +31,7 @@ Find trade-off between \textbf{exploration} areas we haven't visited yet) and \t
 \vspace{+.45cm}
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_0.png}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_ee.png}
 \end{center}
 
 \framebreak 
@@ -42,11 +42,11 @@ Find trade-off between \textbf{exploration} areas we haven't visited yet) and \t
 \item The posterior variance should be high in regions where we have only few observations (red area) and low where we have a lot of observations (blue area)
 \end{itemize}
 \begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_0.png}
+  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_ee.png}
 \end{minipage}
 \hfill
 \begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_1.png}
+  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_sm.png}
 \end{minipage}
 
 \framebreak
@@ -65,12 +65,12 @@ To sequentially propose new points based on the SM, we make use of so-called acq
 
 \vspace{1em}
 
-Let $\fmin \coloneqq \min \left\{f(\xvsi[1]), \ldots, f(\xvsi[t])\right\}$ denote the best observed value so far (visualized in green)
+Let $\fmin \coloneqq \min \left\{f(\xvsi[1]), \ldots, f(\xvsi[t])\right\}$ denote the best observed value so far (visualized in green - we will need this later!)
 
 \vspace*{-0.2cm}
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_2.png}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_sm_fmin.png}
 \end{center}
 
 \vspace*{-0.3cm}
@@ -84,13 +84,13 @@ Many acquisition functions make us of the posterior predictive distribution unde
 \vspace*{-0.2cm}
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_3.png}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_sm_normal.png}
 \end{center}
 
-\begin{footnotesize}   
-The grey line visualizes the density of the corresponding normal distribution for $\xv = 0$.
-We see that for $\xv = 0$, there is some small probability mass for $\P(Y(\xv) < \fmin)$ (area under the grey curve exceeding the green horizontal line)
-\end{footnotesize}
+%\begin{footnotesize}   
+%The grey line visualizes the density of the corresponding normal distribution for $\xv = 0$.
+%We see that for $\xv = 0$, there is some small probability mass for $\P(Y(\xv) < \fmin)$ (area under the grey curve exceeding the green horizontal line)
+%\end{footnotesize}
 
 \end{vbframe}
 
@@ -99,10 +99,10 @@ We see that for $\xv = 0$, there is some small probability mass for $\P(Y(\xv) <
 \textbf{Goal}: Find $\xvsi[t+1]$ that minimizes the \textbf{Lower Confidence Bound} (LCB):
 
 $$
-  a_{\text{LCB}}(\xv) = \fh(\xv) - \lambda \sh(\xv)
+  a_{\text{LCB}}(\xv) = \fh(\xv) - \tau \sh(\xv)
 $$
 
-where $\lambda > 0$ is a constant that controls the \enquote{mean vs. uncertainty} trade-off\\
+where $\tau > 0$ is a constant that controls the \enquote{mean vs. uncertainty} trade-off\\
 
 \vspace{1em}
 
@@ -110,7 +110,7 @@ The LCB is conceptually very simple and does \textbf{not} rely on distributional
 
 \framebreak
 
-$\lambda = 1$
+$\tau = 1$
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_0.png}
@@ -120,7 +120,7 @@ The red point depicts $\argmin_{\xv \in \mathcal{S}} a_{\text{LCB}}(\xv)$
 
 \framebreak
 
-$\lambda = 3$
+$\tau = 3$
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_1.png}
@@ -128,7 +128,7 @@ $\lambda = 3$
 
 \framebreak
 
-$\lambda = 10$
+$\tau = 10$
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_2.png}
@@ -163,11 +163,17 @@ $$
 
 \framebreak
 
-PI illustration for $\xv = 0$ given a SM yielding a normally distributed posterior predictive distribution
+PI illustration for $\xv = 0$ given a SM yielding a normally distributed posterior predictive distribution\\
 
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_0.png}
-\end{center}
+\vspace{0.45em}
+
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_sm_normal_fmin.png}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_pi_0.png}
+\end{minipage}
 
 \begin{footnotesize}
 The green vertical line represents $\fmin$. $a_{\text{PI}}(\xv)$ is given by the black area
@@ -175,15 +181,35 @@ The green vertical line represents $\fmin$. $a_{\text{PI}}(\xv)$ is given by the
 
 \framebreak
 
-The PI does not take the size of the improvement into account
-
-Often it will propose points close to the current $\fmin$
+The PI does not take the size of the improvement into account\\
+\vspace{1em}
+Often it will propose points close to the current $\fmin$\\
+\vspace{1em}
+We use the PI (red line) to propose the next point ...
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_1.png}
 \end{center}
 
 The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{PI}}(\xv)$
+
+\framebreak
+
+... evaluate that point, refit the SM and propose the next point
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_2.png}
+\end{center}
+
+The grey point visualizes the candidate we choose to evaluate in the previous iteration
+
+\framebreak
+
+...
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_3.png}
+\end{center}
 
 \end{vbframe}
 
@@ -227,7 +253,7 @@ where $\Phi(\cdot)$ and $\phi(\cdot)$ denote the distribution and density functi
 We use the EI (red line) to propose the next point ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_4.png}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_1.png}
 \end{center}
 
 The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
@@ -237,7 +263,7 @@ The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
 ... evaluate that point, refit the SM and propose the next point
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_5.png}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_2.png}
 \end{center}
 
 The grey point visualizes the candidate we choose to evaluate in the previous iteration
@@ -247,7 +273,7 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_6.png}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_3.png}
 \end{center}
 
 \framebreak
@@ -255,7 +281,7 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 The EI is capable of exploration and quickly proposes promising points in areas we haven't visited yet
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_7.png}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_4.png}
 \end{center}
 
 This is also a result of the well-calibrated uncertainty estimates of the SM (in this example a GP)
