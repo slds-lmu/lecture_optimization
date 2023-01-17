@@ -100,6 +100,8 @@ The boundaries between the terms become increasingly blurred and are often used 
 \end{tabular}
 \end{center}
 
+\textbf{Note}: Unintuitively, we are minimizing fitness because we always minimize $f$ by convention.
+
 % We now look into \textbf{operators}: Functions operating on (a set of) individuals and modifying 
 
 %$$f(\bm{x}) = \widehat{GE}_{\mathcal{D}_{test}}\left(\inducer(\mathcal{D}_{train},\bm{x})\right)$$
@@ -153,7 +155,7 @@ The first step of an iteration chooses $\lambda$ parents, that create offspring 
 
 \begin{itemize}
 \item \textbf{Neutral selection: }choose individual with a probability $1/\mu$.
-\item \textbf{Fitness-proportional selection: }draw individuals with probability proportional to their fitness.
+\item \textbf{Fitness-proportional / Roulette wheel selection: }draw individuals with probability proportional to their fitness.
 \item \textbf{Tournament selection: }randomly select $k$ individuals for a "tournament group". Of the drawn individuals, the best one (according to fitness value) is then chosen. In order to draw $\lambda$ individuals, the procedure must be performed $\lambda$-times.
 \end{itemize}
 \vspace*{-0.2cm}
