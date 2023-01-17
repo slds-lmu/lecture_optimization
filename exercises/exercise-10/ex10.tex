@@ -247,7 +247,8 @@ The $\rho_\tau(s)$ function is also called pinball loss. For $\tau \neq 0.5$, it
 
 In the following we consider only the univariate case:
 \begin{enumerate}
-\item Find the standard form (as defined in the lecture) of the one-dimensional sparse quantile regression
+\item Find the standard form (as defined in the lecture) of the one-dimensional sparse quantile regression \\
+\textit{Hint:} If an unconstrained variable $x$ is decomposed into two non-negative variables such that $x = x^+ - x^-,$ then the absolute value $\vert x\vert = x^+ + x^-.$ This works since the optimization algorithm ensures that at most one of the variables $x^+, x^-$ is not zero.
 \item Plot $\mathcal{R}_\text{emp}$ for $(\beta_0, \beta_1) \in [-3, 3]\times[-3, 3]$ and
 $\tau = 0.4$ and mark the feasible region $(t = 1.7)$
 \item Use the $\texttt{solveLP}$ command in $\texttt{R}$ to solve the sparse 40\% quantile regression $(t = 1.7)$
