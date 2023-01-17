@@ -5,10 +5,10 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/ea_bit_titlefigure.PNG}
+\newcommand{\titlefigure}{figure_man/var-selection2.png}
 \newcommand{\learninggoals}{
-\item Recombination for Bit Strings
-\item Mutation for Bit Strings
+\item Recombination for bit strings
+\item Mutation for bit strings
 }
 
 
@@ -79,8 +79,27 @@ Two individuals $\bm{x},\bm{\tilde{x}} \in \{0, 1\}^d$ encoded as bit strings ca
   \end{center}
 \end{vbframe}
 
+\begin{vbframe}{Example 1: One-Max Example}
 
-\begin{vbframe}{Example 3:}
+$\xv \in \{0, 1\}^d$ bit vector representation. Goal: Find the vector with the maximum number of 1's. 
+
+\begin{itemize}
+  \item Fitness: $f(\xv) = \sum_{i = 1}^d \xv_i$
+  \item $\mu = 15$, $\lambda = 5$, bitflip mutation
+\end{itemize}
+
+\begin{figure}
+  \includegraphics[width=0.7\textwidth]{figure_man/one_max_example.pdf} \\
+  \begin{footnotesize}
+  Green: Representation of best individual per iteration. Right scale shows fitness value of individual.  
+  \end{footnotesize}
+\end{figure}
+
+\end{vbframe}
+
+
+
+\begin{vbframe}{Example 2: Feature selection}
 
 We consider the following simulation setting:
 
@@ -275,17 +294,7 @@ When should evolutionary algorithms be applied?
 
 \end{vbframe}
 
-\begin{vbframe}{Other examples}
 
-\textbf{Other examples:}
-
-\begin{itemize}
-\item Flappy Bird (\url{https://www.youtube.com/watch?v=aeWmdojEJf0})
-\item Car driving (\url{https://www.youtube.com/watch?v=8V2sX9BhAW8})
-\item Development of wind turbines (\url{https://www.youtube.com/watch?v=YZUNRmwoijw&amp=&t=422s})
-\end{itemize}
-
-\end{vbframe}
 
 
 % \begin{vbframe}{Anwendungen}
