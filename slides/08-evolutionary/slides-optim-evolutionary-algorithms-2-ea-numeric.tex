@@ -5,11 +5,10 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/selection.png}
+\newcommand{\titlefigure}{figure_man/1dim-ackley-func-selection.png}
 \newcommand{\learninggoals}{
-\item Recombination for Numeric
-\item Mutation for Numeric
-\item Example
+\item Recombination operators
+\item Mutation operators
 }
 
 
@@ -41,6 +40,9 @@ $$
 
 \vspace*{-0.3cm}
 \begin{figure}
+  \vspace*{-0.3cm}
+  \includegraphics[width=0.5\textwidth]{figure_man/ea_recombination_uniform.png}  
+  % https://docs.google.com/presentation/d/12v81ZaLxJUgXVUBy3VdW0y6q7OKHS_6lFcQym3yeYsg/edit#slide=id.p
   \includegraphics[width=0.3\textwidth]{figure_man/ea_recombination_numeric.pdf}
 \end{figure}
 
@@ -74,7 +76,7 @@ In the following, a (simple) EA is shown on the 1-dim Ackley function, optimized
 
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 7cm]{figure_man/1dim-ackley-func.png}
+  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func.png}
 \end{figure}
 \end{center}
 
@@ -87,51 +89,130 @@ Randomly init population with size $\mu = 20$.
 
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 7cm]{figure_man/1dim-ackley-func-2.png}
+  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-2.png}
 \end{figure}
 \end{center}
 
 \end{vbframe}
 
-\begin{vbframe}{Example of an evolutionary algorithm}
+% \begin{vbframe}{Example 1:}
+
+% \begin{itemize}
+% \item Let the fitness function be a 1-dim Ackley function, aiming to be optimized on the interval $[-30, 30]$. That is, $-30$ and $+30$ are the lower and upper boundaries, respectively.
+% \item Consider an initial population with size $\mu=30$ and $\lambda=5$ as the number of offspring per iteration. Besides, let $\sigma=2$ represent a Gaussian mutation. We want $5$ iterations for this algorithm.
+% \item Step 1: Randomly initialize the population and evaluate it by the fitness function.
+% \item Step 2: As the first iterative step, choose parents by neutral selection.
+% \item Step 3: As the second iterative step, choose the Gaussian mutation as variation and evaluate the fitness function.
+% \item Step 4: As the final iterative step, use $(\mu + \lambda)$-selection strategy as the survival selection.
+% \end{itemize}
+
+% \framebreak
+
+% \vspace{1cm}
+% \begin{center}
+% \begin{figure}
+%   \includegraphics[height = 5cm, width = 8cm]{figure_man/example.png}
+% \end{figure}
+% \end{center}
+
+% \end{vbframe}
+
+
+\begin{vbframe}{Example 1: Ackley function}
 We choose $\lambda = 5$ offspring by neutral selection (red individuals).
 
 \vspace{0.5cm}
 
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 7cm]{figure_man/neutral-selec.png}
+  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-neutral-selec.png}
 \end{figure}
 \end{center}
 
 \end{vbframe}
 
+\begin{vbframe}{Example 1: Ackley function}
 
-\begin{vbframe}{Example of an evolutionary algorithm}
 %We use a Gaussian mutation with $\sigma = 2$ and don't apply a recombination.
 Using a Gaussian mutation with $\sigma=2$, without a recombination.
 \vspace{0.5cm}
 
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 7cm]{figure_man/gaussian-mutation.png}
+  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-gaussian-mutation.png}
 \end{figure}
 \end{center}
 
 \end{vbframe}
 
 
-\begin{vbframe}{Example of an evolutionary algorithm}
+\begin{vbframe}{Example 1: Ackley function}
 We use a $(\mu + \lambda)$ selection. The selected individuals are green.
 
 \vspace{0.5cm}
 
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 7cm]{figure_man/selection.png}
+  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-selection.png}
 \end{figure}
 \end{center}
 
+
+\end{vbframe}
+
+\begin{vbframe}{Example 1: Ackley function}
+
+After $50$ iterations: 
+
+\vspace{0.5cm}
+
+\begin{center}
+\begin{figure}
+  \includegraphics[width=1\textwidth]{figure_man/1dim-ackley-func-final.png}
+\end{figure}
+\end{center}
+
+
+\end{vbframe}
+
+\begin{vbframe}{Example 2: Grid of balls}
+
+Consider a grid in which $n$ balls with random radius are placed.
+\begin{center}
+\begin{figure}
+  \includegraphics[height = 4.25cm, width = 5.25cm]{figure_man/grid.png}
+\end{figure}
+\end{center}
+
+
+\textbf{Aim:} Find the circle with the largest possible radius in the grid that does \textbf{not} intersect with the other existing circles.
+
+\begin{itemize}
+\item What is the fitness function?
+\item How is the population defined?
+\end{itemize}
+
+Implementation: \url{https://juliambr.shinyapps.io/balls/}
+
+\framebreak
+
+In our example, the chromosome of an individual is the center of a circle, so the chromosomes are encoded as 2-dimensional real vectors $\bm{x} = (x_1, x_2) \in \R^2$.
+
+\lz
+
+The population $P \subset \R^2$ is given as a set of circle centers.
+
+\lz
+
+The fitness function evaluates an individual $\bm{x} \in P$ based on the distance to the nearest neighboring gray circle $k$.
+
+$$
+f(\bm{x}) = \min_{k \in \text{Grid}} \text{distance} (k, \bm{x}),
+$$
+
+where the distance is defined as $0$ if a circle center is within the radius of a circle of the grid.
+
+This function is to be maximized: we are looking for the largest circle that does not touch any of the gray circles.
 
 \end{vbframe}
 
