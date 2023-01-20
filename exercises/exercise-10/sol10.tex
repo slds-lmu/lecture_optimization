@@ -1,0 +1,313 @@
+\documentclass[a4paper]{article}
+\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+
+
+
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+\usepackage{a4wide,paralist}
+\usepackage{amsmath, amssymb, xfrac, amsthm}
+\usepackage{dsfont}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{framed}
+\usepackage{multirow}
+\usepackage{bytefield}
+\usepackage{csquotes}
+\usepackage[breakable, theorems, skins]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{cancel}
+\usepackage{bm}
+
+
+\input{../../style/common}
+
+\tcbset{enhanced}
+
+\DeclareRobustCommand{\mybox}[2][gray!20]{%
+	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+	\fi
+}
+
+\DeclareRobustCommand{\myboxshow}[2][gray!20]{%
+%	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+%	\fi
+}
+
+
+%exercise numbering
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{\roman{enumii}}
+\renewcommand\labelenumi{\theenumi}
+
+
+\font \sfbold=cmssbx10
+
+\setlength{\oddsidemargin}{0cm} \setlength{\textwidth}{16cm}
+
+
+\sloppy
+\parindent0em
+\parskip0.5em
+\topmargin-2.3 cm
+\textheight25cm
+\textwidth17.5cm
+\oddsidemargin-0.8cm
+\pagestyle{empty}
+
+\newcommand{\kopf}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfic}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfsl}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newenvironment{allgemein}
+	{\noindent}{\vspace{1cm}}
+
+\newcounter{aufg}
+\newenvironment{aufgabe}[1]
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}: #1}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newcounter{loes}
+\newenvironment{loesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+	{\bigskip}
+	
+\newenvironment{bonusaufgabe}
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}*\footnote{This
+	is a bonus exercise.}:}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newenvironment{bonusloesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}*:}\\\noindent}
+	{\bigskip}
+
+
+
+\begin{document}
+% !Rnw weave = knitr
+
+
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{10}{Linear Programming 1}
+
+\aufgabe{Sparse Quantile Regression}{
+
+\begin{enumerate}
+\item Univariate sparse quantile regression: \\
+$$\min_{(\beta_0, \beta_1) \in \R^2}\frac{1}{n}\sum^n_{i = 1}\rho_\tau(y^{(i)} - \beta_0 -\beta_1 x^{(i)}) \text{ s.t. } \vert \beta_1\vert \leq t$$
+\begin{enumerate}
+\item Decompose unconstrained parameters into positive and negative part: $\beta_i = \beta^+_i - \beta^-_i \quad i = 0,1$ 
+\item Transform absolute value: $\vert \beta_1\vert \leq t \iff \beta^+_1 + \beta^-_1 \leq t$
+\item We can write $\rho_\tau(\underbrace{y^{(i)} - \beta_0 -\beta_1 x^{(i)}}_{=:r^{(i)}}) = \tau \cdot r^{(i)} \mathds{1}_{\{r^{(i)} > 0\}} - (1-\tau) \cdot r^{(i)} \mathds{1}_{\{r^{(i)} \leq 0\}} = \tau  \cdot {r^{(i)}}^+ + (1-\tau)\cdot {r^{(i)}}^-$
+\item Transform equality of the residuals into two inequalities: \\
+${r^{(i)}}^+ - {r^{(i)}}^- = y^{(i)} - \beta_0 -\beta_1 x^{(i)} \iff {r^{(i)}}^+ - {r^{(i)}}^- \leq y^{(i)} - \beta_0 -\beta_1 x^{(i)}$ and \\ 
+$-{r^{(i)}}^+ + {r^{(i)}}^- \leq -y^{(i)} + \beta_0 +\beta_1 x^{(i)}$
+\end{enumerate}
+With this we get the standard form:\\
+$$\max_{\mathbf{z} \in \R^{4+2n}} \mathbf{c}^\top\mathbf{z}\quad $$
+s.t. $$\mathbf{A}\mathbf{z} \leq \mathbf{b},$$ 
+$$\mathbf{z} \geq \mathbf{0}$$ 
+with $\mathbf{z} = \begin{pmatrix}\beta_0^+\\ \beta_0^-\\ \beta_1^+\\ \beta_1^- \\ {r^{(1)}}^+ \\ \vdots \\ {r^{(n)}}^+ \\ {r^{(1)}}^- \\ \vdots \\ {r^{(n)}}^-  \end{pmatrix}, \mathbf{c} = \begin{pmatrix}0\\ 0\\ 0\\ 0 \\ -\tau \\ \vdots \\ -\tau \\ -(1-\tau) \\ \vdots \\ -(1-\tau)  \end{pmatrix},
+\mathbf{A} = \begin{pmatrix}0 & 0 & 1 & 1 & 0 & \cdots  & 0 \\ 
+\bm{1}_n & -\bm{1}_n & \mathbf{x} & -\mathbf{x} & \mathbf{I}_n && -\mathbf{I}_n \\ 
+-\bm{1}_n & \bm{1}_n & -\mathbf{x} & \mathbf{x} & -\mathbf{I}_n && \mathbf{I}_n \
+ \end{pmatrix},  \mathbf{b} = \begin{pmatrix}t\\ \mathbf{y}\\ -\mathbf{y} \end{pmatrix}$
+ \item 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
+
+\hlkwd{set.seed}\hlstd{(}\hlnum{123}\hlstd{)}
+\hlstd{n} \hlkwb{=} \hlnum{30}
+\hlstd{x} \hlkwb{=} \hlkwd{runif}\hlstd{(n)}
+\hlstd{y} \hlkwb{=} \hlnum{2} \hlopt{*} \hlstd{x} \hlopt{+} \hlkwd{rgamma}\hlstd{(n,} \hlkwc{shape} \hlstd{=} \hlnum{1}\hlstd{)}
+
+\hlstd{remp} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{beta}\hlstd{)\{}
+ \hlstd{r} \hlkwb{=} \hlstd{y} \hlopt{-} \hlstd{beta[}\hlnum{1}\hlstd{]} \hlopt{-} \hlstd{beta[}\hlnum{2}\hlstd{]} \hlopt{*} \hlstd{x}
+ \hlkwd{return}\hlstd{(}\hlkwd{sum}\hlstd{(}\hlkwd{ifelse}\hlstd{(r} \hlopt{>} \hlnum{0}\hlstd{, tau}\hlopt{*}\hlstd{r,} \hlopt{-}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{tau)}\hlopt{*}\hlstd{r)))}
+\hlstd{\}}
+
+\hlstd{tau} \hlkwb{=} \hlnum{0.4}
+\hlstd{tval} \hlkwb{=} \hlnum{1.7}
+
+\hlstd{b} \hlkwb{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{3}\hlstd{,} \hlnum{3}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.05}\hlstd{)}
+\hlstd{bb} \hlkwb{=} \hlkwd{expand.grid}\hlstd{(}\hlkwc{X1} \hlstd{= b,} \hlkwc{X2} \hlstd{= b)}
+\hlstd{fbb} \hlkwb{=} \hlkwd{apply}\hlstd{(bb,} \hlnum{1}\hlstd{,} \hlkwa{function}\hlstd{(}\hlkwc{beta}\hlstd{)} \hlkwd{remp}\hlstd{(beta))}
+
+\hlstd{df} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{bb} \hlstd{= bb,} \hlkwc{fbb} \hlstd{= fbb)}
+\hlstd{remp_plot} \hlkwb{=} \hlkwd{ggplot}\hlstd{()} \hlopt{+}
+ \hlkwd{geom_contour_filled}\hlstd{(}\hlkwc{data} \hlstd{= df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= bb.X1,} \hlkwc{y} \hlstd{= bb.X2,} \hlkwc{z} \hlstd{= fbb))} \hlopt{+}
+ \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(beta[}\hlnum{0}\hlstd{]))} \hlopt{+}
+ \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(beta[}\hlnum{1}\hlstd{]))} \hlopt{+}
+ \hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept} \hlstd{= tval,} \hlkwc{color}\hlstd{=}\hlstr{"red"}\hlstd{)} \hlopt{+}
+ \hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept} \hlstd{=} \hlopt{-}\hlstd{tval,} \hlkwc{color}\hlstd{=}\hlstr{"red"}\hlstd{)}
+
+\hlstd{remp_plot}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/remp-plot-1} 
+\end{knitrout}
+\item 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(linprog)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: lpSolve}}\begin{alltt}
+\hlstd{Amat} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlkwd{rep}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{2}\hlopt{*}\hlstd{n))}
+\hlstd{Amat} \hlkwb{=} \hlkwd{rbind}\hlstd{(Amat,} \hlkwd{cbind}\hlstd{(}\hlnum{1}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{, x,} \hlopt{-}\hlstd{x,} \hlkwd{diag}\hlstd{(n),} \hlopt{-}\hlkwd{diag}\hlstd{(n)))}
+\hlstd{Amat} \hlkwb{=} \hlkwd{rbind}\hlstd{(Amat,} \hlkwd{cbind}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{1}\hlstd{,} \hlopt{-}\hlstd{x, x,} \hlopt{-}\hlkwd{diag}\hlstd{(n),} \hlkwd{diag}\hlstd{(n)))}
+
+\hlstd{bvec} \hlkwb{=} \hlkwd{c}\hlstd{(tval, y,} \hlopt{-}\hlstd{y)}
+\hlstd{cvec} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlkwd{rep}\hlstd{(tau, n),} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{tau, n))}
+
+\hlstd{res} \hlkwb{=} \hlkwd{solveLP}\hlstd{(cvec, bvec, Amat,} \hlkwc{maximum} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{lpSolve} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+
+\hlstd{beta} \hlkwb{=} \hlkwd{c}\hlstd{(res}\hlopt{$}\hlstd{solution[}\hlnum{1}\hlstd{]} \hlopt{-} \hlstd{res}\hlopt{$}\hlstd{solution[}\hlnum{2}\hlstd{], res}\hlopt{$}\hlstd{solution[}\hlnum{3}\hlstd{]} \hlopt{-} \hlstd{res}\hlopt{$}\hlstd{solution[}\hlnum{4}\hlstd{])}
+
+\hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{x} \hlstd{= x,} \hlkwc{y} \hlstd{= y),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=y))} \hlopt{+}
+ \hlkwd{geom_point}\hlstd{()} \hlopt{+}
+ \hlkwd{geom_abline}\hlstd{(}\hlkwc{intercept} \hlstd{= beta[}\hlnum{1}\hlstd{],} \hlkwc{slope} \hlstd{= beta[}\hlnum{2}\hlstd{])}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/remp-lpsolve-1} 
+\begin{kframe}\begin{alltt}
+\hlstd{remp_plot} \hlopt{+}   \hlkwd{geom_point}\hlstd{(}\hlkwc{data}\hlstd{=}\hlkwd{data.frame}\hlstd{(}\hlkwc{x} \hlstd{= beta[}\hlnum{1}\hlstd{],} \hlkwc{y} \hlstd{= beta[}\hlnum{2}\hlstd{]),}
+            \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=y),} \hlkwc{color}\hlstd{=}\hlstr{"lightblue"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/remp-lpsolve-2} 
+\end{knitrout}
+\item From the lecture, we know that the dual problem must be
+$$\max_{\bm{\alpha} \in \R^{2n + 1}} -\bm{\alpha}^\top\mathbf{b}$$ 
+s.t.
+$$-\bm{\alpha}^\top \mathbf{A} \leq -\mathbf{c}^\top$$
+$$\bm{\alpha} \geq \mathbf{0}$$
+\end{enumerate}
+}
+\end{document}
