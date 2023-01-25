@@ -240,7 +240,7 @@ You are given the following data situation:
 \\ 
 We can extend the linear SVM to a nonlinear SVM by transforming the features via a nonlinear transformation $\phi:\R^d \rightarrow \R^l.$ With this, the primal form with soft constraints becomes
 $$\min_{\bm{\theta}, \theta_0, \bm{\zeta}} 0.5\Vert \bm{\theta} \Vert^2 + C\sum^n_{i=1}\zeta^{(i)}$$ \\
-s.t. $$y^{(i)}(\langle\bm{\theta}, \phi(\mathbf{x}^{(i)})\rangle + \theta_0) \leq 1 - \zeta^{(i)}\quad\forall i \in\{1,\dots,n\}$$ \\
+s.t. $$y^{(i)}(\langle\bm{\theta}, \phi(\mathbf{x}^{(i)})\rangle + \theta_0) \geq 1 - \zeta^{(i)}\quad\forall i \in\{1,\dots,n\}$$ \\
 and  
 $$\zeta^{(i)} \geq 0\quad \forall i \in\{1,\dots,n\}.$$
 
