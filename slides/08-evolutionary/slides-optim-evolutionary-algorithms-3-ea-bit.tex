@@ -25,6 +25,21 @@
 \sloppy
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{vbframe}{Binary encoding}
+
+    In theory, all problems can be encoded binary (binary system / binary code). Not always best representation (e.g., if values are numeric). 
+    
+    \lz 
+
+    We typically encode problems with \textbf{binary decision variables} in binary representation. Examples:
+    \begin{itemize}
+        \item Scheduling problems
+        \item Integer / binary linear programming
+        \item Feature selection 
+        \item ... 
+    \end{itemize}
+    
+\end{vbframe}
 
 \begin{vbframe}{Recombination for bit strings}
 \footnotesize
@@ -81,11 +96,11 @@ Two individuals $\bm{x},\bm{\tilde{x}} \in \{0, 1\}^d$ encoded as bit strings ca
 
 \begin{vbframe}{Example 1: One-Max Example}
 
-$\xv \in \{0, 1\}^d$ bit vector representation. Goal: Find the vector with the maximum number of 1's. 
+$\xv \in \{0, 1\}^d, d = 15$ bit vector representation. Goal: Find the vector with the maximum number of 1's. 
 
 \begin{itemize}
   \item Fitness: $f(\xv) = \sum_{i = 1}^d \xv_i$
-  \item $\mu = 15$, $\lambda = 5$, bitflip mutation
+  \item $\mu = 15$, $\lambda = 5$, $(\mu + \lambda)$-strategy, bitflip mutation, no recombination
 \end{itemize}
 
 \begin{figure}
