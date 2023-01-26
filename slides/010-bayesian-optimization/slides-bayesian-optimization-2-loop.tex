@@ -58,17 +58,26 @@
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{LHS}
+\begin{frame}{Latin Hypercube Sampling}
 
-LHS partitions the search space into bins of equal probability with the goal of attaining a more even distribution of sample points in the parameter space that would be possible with pure random sampling.\\
-\vspace{0.45em}
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/init_1.png}
-\end{center}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+\item LHS partitions the search space into bins of equal probability
+\item Goal is to attain a more even distribution of a sample points than random sampling
+\item Allow at most one sample per bin
+\end{itemize}
+\end{column}
 
-Only allow at most one sample per bin.
+\begin{column}{0.5\textwidth}
+\includegraphics[width = 0.75\textwidth]{slides/010-bayesian-optimization/figure_man/init_0.png}
+\includegraphics[width = 0.75\textwidth]{slides/010-bayesian-optimization/figure_man/init_1.png}
+\end{column}
+\end{columns}
 
-\framebreak
+\end{frame}
+
+\begin{frame}{Latin Hypercube Sampling}
 
 Actual sampling of points, e.g., constructed via \textbf{Maximin}:\\
 \begin{itemize}
@@ -77,20 +86,6 @@ Actual sampling of points, e.g., constructed via \textbf{Maximin}:\\
 \item Goal: Find $\D$ that maximizes $2q$: $\max_{\D} \min_{\xv \in \D, \xv' \in \D} \rho(\xv, \xv')$
 \item Ensures that the design points in $\D$ are as far apart from each other as possible
 \end{itemize}
-
-\end{vbframe}
-
-\begin{frame}{Initial Design}
-
-\vspace{1em}
-
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{slides/010-bayesian-optimization/figure_man/init_0.png}
-\end{minipage}
-\hfill
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{slides/010-bayesian-optimization/figure_man/init_1.png}
-\end{minipage}
 
 \end{frame}
 
