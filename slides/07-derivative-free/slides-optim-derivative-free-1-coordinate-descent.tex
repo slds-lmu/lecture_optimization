@@ -8,7 +8,8 @@
 \newcommand{\titlefigure}{figure_man/Coordinate_descent.png}
 \newcommand{\learninggoals}{
 \item Axes as descent direction 
-\item Meaning in statistics
+\item CD on linear model and LASSO
+\item Soft-Thresholding operator
 }
 
 
@@ -78,12 +79,12 @@ x^{[t]}_d &= \argmin_{x_d} f(x^{[t]}_1, x^{[t]}_2, x^{[t]}_3, \hdots, x_d) \\
 \begin{itemize}
 \item Minimum is determined with (exact / inexact) line search
 \item Order in which the dimensions are gone through can be any permutation of $\left\{1,2,\hdots,d\right\}$
-\item \textbf{Convergence:} if $f(\cdot)$ is continuously differentiable and the univariate minimization problem has a unique
-solution, the sequence $\bm{x}^{[t]}$ converges to $\bm{x}^{*}$ with $\nabla f(\bm{x}^*) = 0$.
+\item \textbf{Convergence:} if $f(\cdot)$ is continuously differentiable and the univariate minimization problems have unique
+solutions, the sequence $\bm{x}^{[t]}$ converges to $\bm{x}^{*}$ with $\nabla f(\bm{x}^*) = 0$.
 
 \lz
 
-The following applies:
+The following holds:
 
 $$
   f(\bm{x}^{[0]}) \geq f(\bm{x}^{[1]}) \geq f(\bm{x}^{[2]}) \geq \hdots
@@ -121,7 +122,7 @@ $$
 
 \begin{vbframe}{Example: linear regression}
 
-\textbf{Minimize LM with L2-loss per CD:}
+\textbf{Minimize LM with L2-loss via CD:}
 \vspace*{0.2cm}
 
 $$
@@ -188,13 +189,13 @@ as exact update for CD in direction $j$.  We repeat this update over all variabl
 
 \begin{vbframe}{Soft thresholding operator}
 
-\textbf{Minimize LM with L2-loss and L1 regularization per CD:}
+\textbf{Minimize LM with L2-loss and L1 regularization via CD:}
 
 $$
     \min_{\thetab} h(\thetab) = \min_{\thetab} \frac{1}{2}\|\bm{y} - \Xmat \thetab\|^2 + \lambda \|\thetab\|_1 % = g(\thetab) + \tilde g(\thetab)
 $$
 
-We can write $h(\thetab) = \frac{1}{2}\bm{y}^\top \bm{y} + \frac{1}{2}\thetab^\top \thetab  - \sum_{k = 1}^p \bm{y}^\top \Xmat_k \thetab_k + \lambda|\thetab_k|$. 
+We can write $h(\thetab) = \frac{1}{2}\bm{y}^\top \bm{y} + \frac{1}{2}\thetab^\top \thetab  - \sum_{k = 1}^p (\bm{y}^\top \Xmat_k \thetab_k + \lambda|\thetab_k|)$. 
 
 \vspace*{0.3cm}
 
@@ -254,7 +255,8 @@ Why is it being used?
 \begin{itemize}
 \item Very easy to implement.
 \item Good implementation can achieve state-of-the-art performance.
-\item Scalable, e.g. no storage of data necessary.
+\item Scalable, e.g. no storage or operations on large objects,
+  only the current point
 \item Applicable in both differentiable and derivative-free cases.
 \end{itemize}
 

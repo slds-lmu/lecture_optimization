@@ -21,12 +21,14 @@
 \lecturechapter{Bayesian Optimization:\\ Practical Aspects}
 \lecture{Optimization in Machine Learning}
 %%%
+
 \begin{frame}{Size of the Initial Design}
   \begin{itemize}
     \item Should not be too small
     \item Should not be too large
     \item Scale with the dimensionality of the search space $\mathcal{S}$
     \item A certain SM may impose restrictions on the lower bound of the size of the initial design
+    \item Rule of thumb $4d$
   \end{itemize}
 \end{frame}
 
@@ -37,8 +39,9 @@
     \item Properly optimizing the acquisition function can be crucial
     \item Choice of optimizer depends on the search space $\mathcal{S}$
       \begin{itemize}
-        \item Numeric: L-BFGS-B with restarts, DIRECT,
+        \item Numeric: L-BFGS-B with restarts, DIRECT
         \item Mixed: EAs, local search
+        \item A random search can always be used but may not find a good solution (even if the budget is large)
       \end{itemize}
     \item Sometimes, gradient-based optimizers can be used (e.g. when using a GP as SM)
   \end{itemize}
@@ -54,6 +57,19 @@
     \item Specify a target threshold (of the objective or acquisition function)
     \item Based on stagnation (of the objective or acquisition function)
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Robustness}
+A good BO implementation should be \textbf{robust}:\\
+\vspace{1em}
+\begin{itemize}
+  \item Handle crashing SM
+  \begin{itemize}
+    \item Especially a GP can result in errors during training (Kernel matrix not invertible, training points too close to each other)
+    \item Use a fallback SM (e.g., Random Forest) or catch errors and propose a new candidate uniformly at random
+  \end{itemize}
+  \item Automatically detect input types (numerical, categorical; hierarchical) and choose an appropriate SM
+\end{itemize}
 \end{frame}
 
 \endlecture

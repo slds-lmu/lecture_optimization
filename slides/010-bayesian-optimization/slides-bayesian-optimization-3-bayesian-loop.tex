@@ -53,9 +53,18 @@ Find trade-off between \textbf{exploration} areas we haven't visited yet) and \t
 
 \begin{itemize}
 \item We will denote by $Y(\xv)$ the random variable associated with the evaluation of a new point $\xv \in \mathcal{S}$
-\item The most prominent choice for a surrogate model (SM) is a \textbf{Gaussian process} (GP), here the posterior predictive distribution for a new point is normal, $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$
-\item For now we assume an interpolating SM (for example a GP) resulting in $\fh(\xv) = f(\xv)$ and $\sh(\xv) = 0$ for training points
+\item The most prominent choice for a surrogate model (SM) is a \textbf{Gaussian process} (GP), here $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$
 \end{itemize}
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_sm_normal.png}
+\end{center}
+
+\vfill
+
+\begin{footnotesize}
+For now we assume an interpolating SM; $\fh(\xv) = f(\xv)$ and $\sh(\xv) = 0$ for training points
+\end{footnotesize}
 
 \end{vbframe} 
 
@@ -76,21 +85,6 @@ Let $\fmin \coloneqq \min \left\{f(\xvsi[1]), \ldots, f(\xvsi[t])\right\}$ denot
 \vspace*{-0.3cm}
 
 In the examples before we simply used the posterior mean $a(\xv) = \fh(\xv)$ as acquisition function - ignoring uncertainty
-
-\framebreak
-
-Many acquisition functions make us of the posterior predictive distribution under a SM being normal, $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$
-
-\vspace*{-0.2cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_sm_normal.png}
-\end{center}
-
-%\begin{footnotesize}   
-%The grey line visualizes the density of the corresponding normal distribution for $\xv = 0$.
-%We see that for $\xv = 0$, there is some small probability mass for $\P(Y(\xv) < \fmin)$ (area under the grey curve exceeding the green horizontal line)
-%\end{footnotesize}
 
 \end{vbframe}
 
@@ -211,6 +205,54 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
   \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_3.png}
 \end{center}
 
+\framebreak
+
+In our example, using the PI results in spending plenty of time optimizing the local optimum ...
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_4.png}
+\end{center}
+
+\framebreak
+
+...
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_5.png}
+\end{center}
+
+\framebreak
+
+...
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_6.png}
+\end{center}
+
+\framebreak
+
+...
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_7.png}
+\end{center}
+
+\framebreak
+
+... eventually, we explore other regions ...
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_8.png}
+\end{center}
+
+\framebreak
+
+...
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_9.png}
+\end{center}
+
 \end{vbframe}
 
 \begin{vbframe}{Expected Improvement}
@@ -278,10 +320,26 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 
 \framebreak
 
-The EI is capable of exploration and quickly proposes promising points in areas we haven't visited yet
+...
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_4.png}
+\end{center}
+
+\framebreak
+
+...
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_5.png}
+\end{center}
+
+\framebreak
+
+The EI is capable of exploration and quickly proposes promising points in areas we haven't visited yet
+
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_6.png}
 \end{center}
 
 This is also a result of the well-calibrated uncertainty estimates of the SM (in this example a GP)
@@ -315,8 +373,6 @@ Many more acquisition functions exist:
 \end{itemize}
 
 \end{vbframe}
-
-% FIXME: optimizing acquisition functions
 
 \endlecture
 

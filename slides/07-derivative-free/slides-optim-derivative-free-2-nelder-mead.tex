@@ -7,9 +7,10 @@
 
 \newcommand{\titlefigure}{figure_man/Nelder04.png}
 \newcommand{\learninggoals}{
-\item Idea
-\item Case distinction
+\item General idea 
+\item Reflection, expansion, contraction
 \item Advantages \& disadvantages
+\item Examples
 }
 
 
@@ -320,7 +321,7 @@ Note: standard values for the contraction and shrinkage coefficient are $\gamma 
 \begin{itemize}
 \item Relatively slow.
 \item Not every step leads to an improvement of the solution, only the mean over the points in the simplex is reduced.
-\item No guarantee for convergence in local optimum.
+\item No guarantee for convergence to local optimum / stationary point.
 \end{itemize}
 
 \textbf{Visualization:}\\
@@ -334,53 +335,22 @@ If gradient is easy to calculate, BFGS is preferred.
 \end{vbframe}
 
 
-\begin{vbframe}{Nelder-Mead Visualization in 2D}
-\vspace*{-0.5cm}
+\begin{frame}{Nelder-Mead Visualization in 2D}
 
 $$\min_\xv f(x_1,x_2) = x_1^{2} + x_2^{2} + x_1\cdot \sin x_2 + x_2 \cdot \sin x_1 $$ 
-\vspace*{-0.5cm}
-\begin{figure}
-    \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width = 0.6\linewidth]{figure_man/nm_animation2d_1.PNG}
-        \caption*{(1)}
-    \end{minipage}\hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width = 0.6\linewidth]{figure_man/nm_animation2d_2.PNG}
-        \caption*{(2)}
-    \end{minipage}
-\end{figure}
-\vspace*{-0.5cm}
-\begin{figure}
-    \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width = 0.6\linewidth]{figure_man/nm_animation2d_3.PNG}
-        \caption*{(3)}
-    \end{minipage}\hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width = 0.6\linewidth]{figure_man/nm_animation2d_4.PNG}
-        \caption*{(4)}
-    \end{minipage}
-\end{figure}
-% \vspace*{-0.5cm}
-% \begin{figure}
-%     \centering
-%     \begin{minipage}{0.45\textwidth}
-%         \centering
-%         \includegraphics[width = 0.6\linewidth]{figure_man/nm_animation2d_5.PNG}
-%         \caption*{(5)}
-%     \end{minipage}
-% \end{figure}
 
-\end{vbframe}
+
+\only<1>{\includegraphics{figure_man/nm_animation2d_1.PNG}}
+\only<2>{\includegraphics{figure_man/nm_animation2d_2.PNG}}
+\only<3>{\includegraphics{figure_man/nm_animation2d_3.PNG}}
+\only<4>{\includegraphics{figure_man/nm_animation2d_4.PNG}}
+
+\end{frame}
 
 
 
 \begin{vbframe}{Nelder-Mead vs. GD}
+%% http://www.benfrederickson.com/numerical-optimization/
 \vspace*{-0.5cm}
 \begin{figure}
     \centering
@@ -406,6 +376,7 @@ $$\min_\xv f(x_1,x_2) = x_1^{2} + x_2^{2} + x_1\cdot \sin x_2 + x_2 \cdot \sin x
 \end{figure}
 \vspace*{0.2cm}
 \begin{footnotesize}
+NM for multidim. scaling. Convert a matrix of distances to 2D coords, so the distances approximately stay.
 For >10 cities, GD (top) converges well for an appropriate learning rate. NM (bottom) completely fails to converge, even after many iterations.
 \end{footnotesize}
 
