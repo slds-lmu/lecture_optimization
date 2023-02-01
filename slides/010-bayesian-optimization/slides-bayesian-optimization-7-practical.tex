@@ -5,11 +5,12 @@
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-mbo}
 
-\newcommand{\titlefigure}{}
+%\newcommand{\titlefigure}{}
 \newcommand{\learninggoals}{
 \item Size of the initial design
 \item Optimizing the acquisition function
 \item When to terminate
+\item BO Components and robustness
 }
 
 \title{Optimization in Machine Learning}
@@ -18,7 +19,7 @@
 
 \begin{document}
 %%%
-\lecturechapter{Bayesian Optimization:\\ Practical Aspects}
+\lecturechapter{Bayesian Optimization:\\ Practical Aspects of BO}
 \lecture{Optimization in Machine Learning}
 %%%
 
@@ -26,24 +27,34 @@
   \begin{itemize}
     \item Should not be too small
     \item Should not be too large
-    \item Scale with the dimensionality of the search space $\mathcal{S}$
-    \item A certain SM may impose restrictions on the lower bound of the size of the initial design
+    \item Scale with the dimensionality of the search space
+    \item Certain SM may impose restrictions on the lower bound of the size of the initial design
     \item Rule of thumb $4d$
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Optimizing the Acquisition Function}
   \begin{itemize}
-    \item Optimizing the acquisition function to find the next candidate point is typically comparably cheap
+    \item Optimizing the acquisition function to find the next candidate point is comparably cheap
     \item Still can be a hard optimization problem: non-linear, multimodal
-    \item Properly optimizing the acquisition function can be crucial
-    \item Choice of optimizer depends on the search space $\mathcal{S}$
+    \item Properly optimizing the acquisition function can be crucial for performance
+    \only<1> {
+    \begin{center}
+    \includegraphics[width = 0.5\textwidth]{figure_man/practical.png}\\
+    \begin{foonotesize}
+    Example EI landscape for a 2D problem.
+    \end{foonotesize}
+    \end{center}
+    }
+    \only<2> {
+    \item Choice of optimizer depends on the search space
       \begin{itemize}
-        \item Numeric: L-BFGS-B with restarts, DIRECT
-        \item Mixed: EAs, local search
+        \item Numeric: L-BFGS-B with restarts, DIRECT, ...
+        \item Mixed: EAs, local search with restarts, ...
         \item A random search can always be used but may not find a good solution (even if the budget is large)
       \end{itemize}
     \item Sometimes, gradient-based optimizers can be used (e.g. when using a GP as SM)
+    }
   \end{itemize}
 \end{frame}
 
@@ -51,7 +62,7 @@
   \begin{itemize}
     \item After a certain number of evaluations
       \begin{itemize}
-        \item Potentially scaling the budget with the dimensionality of the search space $\mathcal{S}$
+        \item Potentially scaling the budget with the dimensionality of the search space
        \end{itemize}
     \item After a certain runtime
     \item Specify a target threshold (of the objective or acquisition function)
@@ -69,7 +80,17 @@ A good BO implementation should be \textbf{robust}:\\
     \item Use a fallback SM (e.g., Random Forest) or catch errors and propose a new candidate uniformly at random
   \end{itemize}
   \item Automatically detect input types (numerical, categorical; hierarchical) and choose an appropriate SM
+  \item Have sensible defaults that work well for most scenarios
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Choosing the right components}
+\begin{itemize}
+\item BO is modular: SM, acquisition function, acquisition function optimizer
+\item Different choices induce different overhead, e.g., GP vs. RF, entropy based acquisition functions vs. cheap to compute ones like EI, thorough acquisition function optimization with a large budget can be expensive
+\item Choosing the right components usually depends on the concrete application at hand and how expensive the evaluation of the black box itself is
+\end{itemize}
+
 \end{frame}
 
 \endlecture

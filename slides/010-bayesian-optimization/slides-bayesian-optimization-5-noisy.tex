@@ -18,7 +18,7 @@
 
 \begin{document}
 
-\lecturechapter{Bayesian Optimization:\\ Noisy Evaluations}
+\lecturechapter{Bayesian Optimization:\\ Noisy Bayesian Optimization}
 \lecture{Optimization in Machine Learning}
 
 
@@ -37,7 +37,7 @@ For the sake of simplicity, we assume $\epsilon(\xv) \sim \mathcal{N}\left(0, \s
 Examples:
 \begin{itemize}
     \item HPO (due to non-deterministic learning algorithm and/or resampling technique)
-    \item Oil drilling optimization
+    \item Oil drilling optimization (an oil sample is only an estimate)
     \item Robot gait optimization (velocity of a run of a robot is an estimate of true velocity)
 \end{itemize}
 }
@@ -80,8 +80,8 @@ The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$
 \end{eqnarray*}
 with 
 \begin{eqnarray*}
-  \fh(\xv) &=& k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I})^{-1} \bm{y} \\
-  \sh^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I})^{-1} k(\xv)
+  \fh(\xv) &=& k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I}_{t})^{-1} \bm{y} \\
+  \sh^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I}_{t})^{-1} k(\xv)
 \end{eqnarray*}
 
 \end{vbframe}

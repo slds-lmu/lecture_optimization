@@ -5,9 +5,9 @@
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-mbo}
 
-\newcommand{\titlefigure}{figure_man/surrogate_0.png}
+\newcommand{\titlefigure}{figure_man/surrogate_1.png}
 \newcommand{\learninggoals}{
-\item Search space / Input data peculiarities in black box problems
+\item Search space / input data peculiarities in black box problems
 \item Gaussian process 
 \item Random forest
 }
@@ -18,7 +18,7 @@
 
 \begin{document}
 
-\lecturechapter{Bayesian Optimization:\\ Types of Surrogate Models}
+\lecturechapter{Bayesian Optimization:\\ Important Surrogate Models}
 \lecture{Optimization in Machine Learning}
 
 \begin{frame}{Surrogate Models}
@@ -98,7 +98,7 @@ Pros:
 \end{itemize}
 
 \begin{center}
-\includegraphics[width = 0.5\textwidth]{figure_man/surrogate_0.png}
+\includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_sm_normal.png}
 \end{center}
 \framebreak
 
@@ -136,12 +136,12 @@ Cons:
 \begin{frame}{Random Forest - Mean and Variance}
 
 \begin{itemize}
-    \item Let $\mu_b: \mathcal{S} \to \R$ be the mean prediction of a decision tree $b$ (mean of all data points in the same node as observation $\xv \in \mathcal{S}$)
-    \item Let $\sigma_{b}^2: \mathcal{S} \to \R$ be the variance prediction (variance of all data points in the same node as observation $\xv \in \mathcal{S})$
-    \item Mean prediction of forest: $\mu: \mathcal{S} \to \R$,
-    $\xv \mapsto \frac{1}{B} \sum_{b = 1}^{B} \mu_{b}(\xv)$
-    \item Variance prediction of forest: $\sigma^{2}: \mathcal{S} \to \R$,\\
-    $\xv \mapsto  \left( \frac{1}{B} \sum_{b = 1}^{B} \sigma_{b}^2(\xv) + \mu_{b}(\xv)^{2} \right) - \mu(\xv)^{2}$\\
+    \item Let $\fh_b: \mathcal{S} \to \R$ be the mean prediction of a decision tree $b$ (mean of all data points in the same node as observation $\xv \in \mathcal{S}$)
+    \item Let $\sh_{b}^2: \mathcal{S} \to \R$ be the variance prediction (variance of all data points in the same node as observation $\xv \in \mathcal{S})$
+    \item Mean prediction of forest: $\fh: \mathcal{S} \to \R$,
+    $\xv \mapsto \frac{1}{B} \sum_{b = 1}^{B} \fh_{b}(\xv)$
+    \item Variance prediction of forest: $\sh^{2}: \mathcal{S} \to \R$,\\
+    $\xv \mapsto  \left( \frac{1}{B} \sum_{b = 1}^{B} \sh_{b}^2(\xv) + \fh_{b}(\xv)^{2} \right) - \fh(\xv)^{2}$\\
     (law of total variance assuming a mixture of $B$ models)
     \item Alternative variance estimator:
     \begin{itemize}
@@ -197,7 +197,7 @@ Minimize the 2D Ackley Function using BO\_GP (GP with Matérn 3/2, EI), BO\_RF (
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/surrogate_2.png}
 \end{center}
-Strong BO\_GP performance; BO\_RF and BO\_RF\_ET not too bad either; BO\_RF\_ET maybe slightly better final performance than BO\_RF.
+Strong BO\_GP performance. BO\_RF and BO\_RF\_ET not too bad either. BO\_RF\_ET maybe slightly better final performance than BO\_RF.
 \end{frame}
 
 \endlecture

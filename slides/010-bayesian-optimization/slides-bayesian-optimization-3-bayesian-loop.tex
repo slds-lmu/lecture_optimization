@@ -19,7 +19,7 @@
 
 % FIXME: alignment of figures
 
-\lecturechapter{Bayesian Optimization:\\ Bayesian Surrogate Modeling}
+\lecturechapter{Bayesian Optimization:\\ Posterior Uncertainty and Acquisition Functions}
 \lecture{Optimization in Machine Learning}
 
 \begin{vbframe}{Bayesian Surrogate Modeling}
@@ -37,7 +37,7 @@ Find trade-off between \textbf{exploration} areas we haven't visited yet) and \t
 \framebreak 
 
 \begin{itemize}
-\item \textbf{Idea}: Use a \textbf{Bayesian approach} to build a surrogate model that yields estimates for the posterior mean $\fh(\xv)$ and the posterior variance $\sh^2(\xv)$
+\item \textbf{Idea}: Use a \textbf{Bayesian approach} to build a surrogate model (SM) that yields estimates for the posterior mean $\fh(\xv)$ and the posterior variance $\sh^2(\xv)$
 \item The posterior variance expresses the \enquote{confidence} in the prediction
 \item The posterior variance should be high in regions where we have only few observations (red area) and low where we have a lot of observations (blue area)
 \end{itemize}
@@ -52,18 +52,15 @@ Find trade-off between \textbf{exploration} areas we haven't visited yet) and \t
 \framebreak
 
 \begin{itemize}
-\item We will denote by $Y(\xv)$ the random variable associated with the evaluation of a new point $\xv \in \mathcal{S}$
-\item The most prominent choice for a surrogate model (SM) is a \textbf{Gaussian process} (GP), here $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$
+\item We will denote by $Y~|~\xv, \Dt$ the random variable associated with the posterior predictive distribution of a new point $\xv \in \mathcal{S}$ under a SM; in the following we will abbreviate it as $Y(\xv)$
+\item The most prominent choice for a SM is a \textbf{Gaussian process} (GP), here $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$
 \end{itemize}
-
+\vspace{-1em}
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_sm_normal.png}
 \end{center}
-
-\vfill
-
 \begin{footnotesize}
-For now we assume an interpolating SM; $\fh(\xv) = f(\xv)$ and $\sh(\xv) = 0$ for training points
+    For now we assume an interpolating SM; $\fh(\xv) = f(\xv)$ and $\sh(\xv) = 0$ for training points\\
 \end{footnotesize}
 
 \end{vbframe} 
@@ -75,7 +72,6 @@ To sequentially propose new points based on the SM, we make use of so-called acq
 \vspace{1em}
 
 Let $\fmin \coloneqq \min \left\{f(\xvsi[1]), \ldots, f(\xvsi[t])\right\}$ denote the best observed value so far (visualized in green - we will need this later!)
-
 \vspace*{-0.2cm}
 
 \begin{center}
@@ -107,17 +103,18 @@ The LCB is conceptually very simple and does \textbf{not} rely on distributional
 $\tau = 1$
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_0.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_lcb_0.png}
 \end{center}
 
-The red point depicts $\argmin_{\xv \in \mathcal{S}} a_{\text{LCB}}(\xv)$
+Top: Design points and SM showing $\fh(\xv)$ (blue) and $\fh(\xv) - \tau \sh(\xv)$ (red)\\
+Bottom: the red point depicts $\argmin_{\xv \in \mathcal{S}} a_{\text{LCB}}(\xv)$
 
 \framebreak
 
 $\tau = 3$
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_1.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_lcb_1.png}
 \end{center}
 
 \framebreak
@@ -125,7 +122,7 @@ $\tau = 3$
 $\tau = 10$
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_lcb_2.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_lcb_2.png}
 \end{center}
 
 \end{vbframe}
@@ -170,19 +167,18 @@ PI illustration for $\xv = 0$ given a SM yielding a normally distributed posteri
 \end{minipage}
 
 \begin{footnotesize}
-The green vertical line represents $\fmin$. $a_{\text{PI}}(\xv)$ is given by the black area
+Left: The green vertical line represents $\fmin$ Right: $a_{\text{PI}}(\xv)$ is given by the black area
 \end{footnotesize}
 
 \framebreak
 
 The PI does not take the size of the improvement into account\\
-\vspace{1em}
 Often it will propose points close to the current $\fmin$\\
 \vspace{1em}
 We use the PI (red line) to propose the next point ...
-
+\vspace{-1em}
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_1.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_1.png}
 \end{center}
 
 The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{PI}}(\xv)$
@@ -192,7 +188,7 @@ The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{PI}}(\xv)$
 ... evaluate that point, refit the SM and propose the next point
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_2.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_2.png}
 \end{center}
 
 The grey point visualizes the candidate we choose to evaluate in the previous iteration
@@ -202,7 +198,7 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_3.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_3.png}
 \end{center}
 
 \framebreak
@@ -210,7 +206,7 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 In our example, using the PI results in spending plenty of time optimizing the local optimum ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_4.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_4.png}
 \end{center}
 
 \framebreak
@@ -218,7 +214,7 @@ In our example, using the PI results in spending plenty of time optimizing the l
 ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_5.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_5.png}
 \end{center}
 
 \framebreak
@@ -226,7 +222,7 @@ In our example, using the PI results in spending plenty of time optimizing the l
 ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_6.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_6.png}
 \end{center}
 
 \framebreak
@@ -234,7 +230,7 @@ In our example, using the PI results in spending plenty of time optimizing the l
 ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_7.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_7.png}
 \end{center}
 
 \framebreak
@@ -242,7 +238,7 @@ In our example, using the PI results in spending plenty of time optimizing the l
 ... eventually, we explore other regions ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_8.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_8.png}
 \end{center}
 
 \framebreak
@@ -250,7 +246,7 @@ In our example, using the PI results in spending plenty of time optimizing the l
 ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_pi_9.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_9.png}
 \end{center}
 
 \end{vbframe}
@@ -295,7 +291,7 @@ where $\Phi(\cdot)$ and $\phi(\cdot)$ denote the distribution and density functi
 We use the EI (red line) to propose the next point ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_1.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_1.png}
 \end{center}
 
 The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
@@ -305,7 +301,7 @@ The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
 ... evaluate that point, refit the SM and propose the next point
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_2.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_2.png}
 \end{center}
 
 The grey point visualizes the candidate we choose to evaluate in the previous iteration
@@ -315,7 +311,7 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_3.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_3.png}
 \end{center}
 
 \framebreak
@@ -323,7 +319,7 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_4.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_4.png}
 \end{center}
 
 \framebreak
@@ -331,7 +327,7 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 ...
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_5.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_5.png}
 \end{center}
 
 \framebreak
@@ -339,7 +335,7 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 The EI is capable of exploration and quickly proposes promising points in areas we haven't visited yet
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_6.png}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_6.png}
 \end{center}
 
 This is also a result of the well-calibrated uncertainty estimates of the SM (in this example a GP)

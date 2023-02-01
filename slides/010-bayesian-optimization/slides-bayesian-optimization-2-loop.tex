@@ -18,7 +18,7 @@
 
 \begin{document}
 
-\lecturechapter{Bayesian Optimization:\\ Basic Loop and Surrogate Modeling}
+\lecturechapter{Bayesian Optimization:\\ Basic BO Loop and Surrogate Modelling}
 \lecture{Optimization in Machine Learning}
 
 \begin{vbframe}{Optimization via Surrogate Modeling}
@@ -65,13 +65,17 @@
 \begin{itemize}
 \item LHS partitions the search space into bins of equal probability
 \item Goal is to attain a more even distribution of a sample points than random sampling
-\item Allow at most one sample per bin
+\item Allow at most one sample per bin; exactly one sample per row and column
 \end{itemize}
 \end{column}
 
 \begin{column}{0.5\textwidth}
+\center
 \includegraphics[width = 0.75\textwidth]{slides/010-bayesian-optimization/figure_man/init_0.png}
-\includegraphics[width = 0.75\textwidth]{slides/010-bayesian-optimization/figure_man/init_1.png}
+\includegraphics[width = 0.75\textwidth]{slides/010-bayesian-optimization/figure_man/init_1.png}\\
+\begin{footnotesize}
+Marginal histograms RS vs. LHS
+\end{footnotesize}
 \end{column}
 \end{columns}
 
