@@ -64,7 +64,7 @@
 \begin{column}{0.5\textwidth}
 \begin{itemize}
 \item LHS partitions the search space into bins of equal probability
-\item Goal is to attain a more even distribution of a sample points than random sampling
+\item Goal is to attain a more even distribution of sample points than random sampling
 \item Allow at most one sample per bin; exactly one sample per row and column
 \end{itemize}
 \end{column}
@@ -141,67 +141,69 @@ As we can evaluate $f$ without noise, we fit an interpolating regression model
 
 \end{enumerate}
 
-\framebreak 
+\end{vbframe}
+
+\begin{frame}{Surrogate Modeling}
 
 \begin{itemize}
 
+\only<1>{
 \item After evaluation of the new point, we \textbf{adjust} the model on the expanded dataset via (slow) refitting or a (cheaper) online update
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_5.png}
 \end{center}
-
-\framebreak 
-
+}
+\only<2>{
 \item We again obtain a new candidate point (red) by optimizing the cheap surrogate model function (blue) ...
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_6.png}
 \end{center}
+}
 
-\framebreak
-
+\only<3>{
 \item ... and evaluate that candidate
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_7.png}
 \end{center}
+}
 
-\framebreak
-
+\only<4>{
 \item We repeat: (i) \textbf{fit} the model
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_8.png}
 \end{center}
+}
 
-\framebreak
-
+\only<5>{
 \item (ii) \textbf{propose} a new point
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_9.png}
 \end{center}
+}
 
-\framebreak
-
+\only<6>{
 \item (iii) \textbf{evaluate} that point
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_10.png}
 \end{center}
-
 \item We observe that the algorithm converged
+}
 
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
 \begin{vbframe}{Basic Loop}
 
