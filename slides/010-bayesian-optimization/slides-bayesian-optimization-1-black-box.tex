@@ -74,7 +74,7 @@ where $\mathcal{S}$ is usually box constrained.
 Optimization gets harder ...
 \begin{itemize}
 \item ... if we cannot calculate gradients (because $f$ is not differentiable or $f$ is not known to us)
-\item ... but as long as evaluations of $f$ are cheap, we can use standard derivative-free optimization methods (e.g. Nelder-Mead, simulated annealing)
+\item ... but as long as evaluations of $f$ are cheap, we can use standard derivative-free optimization methods (e.g. Nelder-Mead, simulated annealing, EAs)
 \end{itemize}
 \end{column}
 \end{columns}
@@ -207,7 +207,7 @@ Rug plots of RS vs. GS.
 
 \framebreak 
 
-\item Traditional Black-Box Optimization 
+\item Traditional black-box optimization 
 \begin{itemize}
 \item Traditional approaches that do not require derivatives 
 \item E.g. Nelder-Mead, simulated annealing, EAs 
@@ -237,8 +237,9 @@ Rug plots of RS vs. GS.
 \includegraphics[width = 3cm]{figure_man/black_box_2.png}\\
 \end{center}
 \begin{footnotesize}
-Left: Simplices of the Nelder-Mead algorithm. Middle: Components of an evolutionary algorithm. Right: BO vs. CMAES vs. Random on 2D Ackley.
-CMAES initially performs poorly as it needs some iterations to initialize and is not made for expensive black-box problems.
+%Left: Simplices of the Nelder-Mead algorithm. Middle: Components of an evolutionary algorithm. 
+Right: BO vs. CMAES vs. RS on 2D Ackley.
+CMAES initially performs poorly, needs to init itself, not made for expensive regimes.
 \end{footnotesize}
 \end{figure}
 

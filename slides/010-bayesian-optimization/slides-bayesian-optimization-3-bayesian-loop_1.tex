@@ -8,7 +8,8 @@
 \newcommand{\titlefigure}{figure_man/bayesian_loop_sm_normal.png}
 \newcommand{\learninggoals}{
 \item Bayesian surrogate modeling
-\item Standard acquisition functions
+\item Acquisition functions
+\item Lower confidence bound
 }
 
 \title{Optimization in Machine Learning}
@@ -35,10 +36,11 @@ Find trade-off between \textbf{exploration} areas we haven't visited yet) and \t
 \framebreak 
 
 \begin{itemize}
-\item \textbf{Idea}: Use a \textbf{Bayesian approach} to build a surrogate model (SM) that yields estimates for the posterior mean $\fh(\xv)$ and the posterior variance $\sh^2(\xv)$
-\item The posterior variance expresses the \enquote{confidence} in the prediction
-\item The posterior variance should be high in regions where we have only few observations (red area) and low where we have a lot of observations (blue area)
+\item \textbf{Idea}: Use a \textbf{Bayesian approach} to build SM that yields estimates for the posterior mean $\fh(\xv)$ and the posterior variance $\sh^2(\xv)$
+\item  $\sh^2(\xv)$ expresses \enquote{confidence} in prediction
+\item The High the more observations there are in region
 \end{itemize}
+\vspace{+.45cm}
 \begin{minipage}[b]{0.45\textwidth}
   \includegraphics[width = \textwidth]{figure_man/bayesian_loop_ee.png}
 \end{minipage}
@@ -50,8 +52,8 @@ Find trade-off between \textbf{exploration} areas we haven't visited yet) and \t
 \framebreak
 
 \begin{itemize}
-\item We will denote by $Y~|~\xv, \Dt$ the random variable associated with the posterior predictive distribution of a new point $\xv \in \mathcal{S}$ under a SM; in the following we will abbreviate it as $Y(\xv)$
-\item The most prominent choice for a SM is a \textbf{Gaussian process} (GP), here $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$
+\item Denote by $Y~|~\xv, \Dt$ the (conditional) RV associated with the posterior predictive distribution of a new point $\xv$ under a SM;\\will abbreviate it as $Y(\xv)$
+\item Most prominent choice for a SM is a \textbf{Gaussian process}, here $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$
 \end{itemize}
 \vspace{-1em}
 \begin{center}
