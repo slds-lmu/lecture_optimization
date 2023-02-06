@@ -28,7 +28,7 @@ Desiderata:
 \begin{itemize}
   \item Regression model (there are also classification approaches)
   \item Non-linear local model
-  \item Accurate predictions (especially for small sample size)
+  \item Accurate predictions (especially for small sample sizes)
   \item Often: uncertainty estimates
   \item Robust, works often well without human modeler intervention
 \end{itemize}
@@ -46,14 +46,33 @@ Depending on the application:
 
 
 \begin{vbframe}{Gaussian Process}
-The posterior mean and the posterior variance for a GP can be derived analytically: 
-\vspace{1em}
-\begin{itemize}
-  \item Let $\Dts$ be the data we are fitting the GP on
-  \item Let $\bm{y}:= \left(\ysi[1], \ldots, \ysi[t]\right)$ be the vector of observed outputs
-  \item For a covariance kernel $k(\xv, \xv^{'})$, let $\bm{K} := \left(k(\xvsi, \xvsi[j])\right)_{i,j}$ denote the \textbf{kernel (Gram) matrix} and $k(\xv) \coloneqq \left(k(\xv, \xv^{[1]}), \ldots, k(\xv, \xvsi[t])\right)^\top$
-  \item Further, we assume a zero-mean GP prior
-\end{itemize}
+
+
+Posterior predictive distribution for test point $\xv \in \mathcal{S}$:
+\begin{eqnarray*}
+  Y(\xv) ~|~ \xv, \Dt \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)
+\end{eqnarray*}
+with 
+\begin{eqnarray*}
+  \fh(\xv) &=& k(\xv)^\top \bm{K}^{-1} \bm{y} \\
+  \sh^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top \bm{K}^{-1} k(\xv)
+\end{eqnarray*}
+\begin{center}
+\includegraphics[width = 0.3\textwidth]{figure_man/bayesian_loop_sm_normal.png}
+\end{center}
+
+Kernel method, based on kernel / Gram matrix $\bm{K} := \left(k(\xvsi, \xvsi[j])\right)_{i,j}$ 
+\framebreak
+
+
+% The posterior mean and the posterior variance for a GP can be derived analytically: 
+% \vspace{1em}
+% \begin{itemize}
+%   \item Let $\Dts$ be the data we are fitting the GP on
+%   \item Let $\bm{y}:= \left(\ysi[1], \ldots, \ysi[t]\right)$ be the vector of observed outputs
+%   \item For a covariance kernel $k(\xv, \xv^{'})$, let $\bm{K} := \left(k(\xvsi, \xvsi[j])\right)_{i,j}$ denote the \textbf{kernel (Gram) matrix} and $k(\xv) \coloneqq \left(k(\xv, \xv^{[1]}), \ldots, k(\xv, \xvsi[t])\right)^\top$
+%   \item Further, we assume a zero-mean GP prior
+% \end{itemize}
 
 \framebreak 
 
@@ -74,42 +93,25 @@ Example kernel functions:
 
 \framebreak
 
-The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP is
 
-\begin{eqnarray*}
-  Y(\xv) ~|~ \xv, \Dt \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)
-\end{eqnarray*}
-
-with 
-
-\begin{eqnarray*}
-  \fh(\xv) &=& k(\xv)^\top \bm{K}^{-1} \bm{y} \\
-  \sh^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top \bm{K}^{-1} k(\xv)
-\end{eqnarray*}
-
-\vfill
 
 \framebreak
 
 Pros:
 \begin{itemize}
-  \item GPs yield well calibrated uncertainty estimates
+  \item Smooth, local, powerful estimator, also for small data
+  \item GPs yield well-calibrated uncertainty estimates
   \item The posterior predictive distribution under a GP is normal
 \end{itemize}
-
-\begin{center}
-\includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_sm_normal.png}
-\end{center}
-\framebreak
 
 Cons:
 \begin{itemize}
   \item Vanilla GPs scale cubic in the number of data points
-  \item GPs can natively only handle numeric features\\
-    Categorical features and dependencies require special handling via custom kernel
-  \item GPs aren't that robust\\
-    In practice, \enquote{white-noise} models can occur where the posterior mean and variance is constant (except for the interpolation of training points)
-  \item Performance can be sensitive to the choice of kernel and hyperparameters
+  \item Can natively only handle numeric features\\
+    Mixed inputs / dependencies require special kernels
+  \item GPs aren't that robust; numerical problems can occur
+    %In practice, \enquote{white-noise} models can occur where the posterior mean and variance is constant (except for the interpolation of training points)
+  \item Can be sensitive to the choice of kernel and hyperparameters
 \end{itemize}
 
 \end{vbframe}
@@ -118,14 +120,15 @@ Cons:
 
 \begin{itemize}
     \item Bagging ensemble
-    \item Fit $B$ decision trees on bootstrap samples using different features sampled at random
+    \item Fit $B$ decision trees on bootstrap samples
+    \item Feature subsampling
 \end{itemize}
 
 \begin{center}
   \includegraphics[width = 0.7\textwidth]{slides/010-bayesian-optimization/figure_man/random_forests.jpg}
 \end{center}
 
-\enquote{extratrees} / Random Splits:\\
+\enquote{extratrees} / random splits:\\
 \begin{itemize}
   \item Choose split location uniformly at random
   \item Results in a \enquote{smoother} mean prediction
@@ -173,18 +176,15 @@ Cons:
 \begin{frame}{Random Forest}
 Pros:
 \begin{itemize}
-  \item Cheap to train
+  \item Cheap(er) to train
   \item Scales well with the number of data points
   \item Scales well with the number of dimensions
   \item Can easily handle hierarchical mixed spaces. Either via imputation or directly respecting dependencies in the tree structure
   \item Robust
 \end{itemize}
-\end{frame}
-
-\begin{frame}{Random Forest}
 Cons:
 \begin{itemize}
-  \item Poor uncertainty estimates
+  \item Suboptimal uncertainty estimates
   \item Not really Bayesian (no real posterior predictive distribution)
   \item Poor extrapolation
 \end{itemize}
