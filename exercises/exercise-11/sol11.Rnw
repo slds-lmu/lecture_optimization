@@ -1,0 +1,16 @@
+% !Rnw weave = knitr
+
+<<setup-child, include = FALSE>>=
+library('knitr')
+knitr::set_parent("../../style/preamble_ueb.Rnw")
+@
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{11}{Nonlinear Programming 1}
+
+\aufgabe{Nonlinear SVM}{
+	<<child="ex_rnw/sol_nlp_1.Rnw">>=
+	@
+}

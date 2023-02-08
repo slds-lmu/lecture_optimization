@@ -1,0 +1,4 @@
+
+Minimize Ridge regression, i.e.,
+$$\min_{\bm{\theta}}\frac{1}{2} \Vert\mathbf{X}\bm{\theta}\Vert^2_2 + \frac{1}{2} \Vert\bm{\theta}\Vert^2_2$$
+via coordinate descent.

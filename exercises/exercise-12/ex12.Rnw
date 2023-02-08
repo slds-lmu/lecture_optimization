@@ -1,0 +1,21 @@
+% !Rnw weave = knitr
+
+<<setup-child, include = FALSE>>=
+library('knitr')
+knitr::set_parent("../../style/preamble_ueb.Rnw")
+@
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{12}{Derivative free optimization and evolutionary strategies}
+
+\aufgabe{Coordinate descent}{
+	<<child="ex_rnw/ex_cd_1.Rnw">>=
+	@
+}
+
+\aufgabe{CMA-ES}{
+	<<child="ex_rnw/ex_cmaes_1.Rnw">>=
+	@
+}

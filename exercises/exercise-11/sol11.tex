@@ -1,0 +1,364 @@
+\documentclass[a4paper]{article}
+\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+
+
+
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+\usepackage{a4wide,paralist}
+\usepackage{amsmath, amssymb, xfrac, amsthm}
+\usepackage{dsfont}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{framed}
+\usepackage{multirow}
+\usepackage{bytefield}
+\usepackage{csquotes}
+\usepackage[breakable, theorems, skins]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{cancel}
+\usepackage{bm}
+
+
+\input{../../style/common}
+
+\tcbset{enhanced}
+
+\DeclareRobustCommand{\mybox}[2][gray!20]{%
+	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+	\fi
+}
+
+\DeclareRobustCommand{\myboxshow}[2][gray!20]{%
+%	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+%	\fi
+}
+
+
+%exercise numbering
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{\roman{enumii}}
+\renewcommand\labelenumi{\theenumi}
+
+
+\font \sfbold=cmssbx10
+
+\setlength{\oddsidemargin}{0cm} \setlength{\textwidth}{16cm}
+
+
+\sloppy
+\parindent0em
+\parskip0.5em
+\topmargin-2.3 cm
+\textheight25cm
+\textwidth17.5cm
+\oddsidemargin-0.8cm
+\pagestyle{empty}
+
+\newcommand{\kopf}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfic}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfsl}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in machine learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2022/2023}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newenvironment{allgemein}
+	{\noindent}{\vspace{1cm}}
+
+\newcounter{aufg}
+\newenvironment{aufgabe}[1]
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}: #1}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newcounter{loes}
+\newenvironment{loesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+	{\bigskip}
+	
+\newenvironment{bonusaufgabe}
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}*\footnote{This
+	is a bonus exercise.}:}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newenvironment{bonusloesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}*:}\\\noindent}
+	{\bigskip}
+
+
+
+\begin{document}
+% !Rnw weave = knitr
+
+
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\kopfsl{11}{Nonlinear Programming 1}
+
+\aufgabe{Nonlinear SVM}{
+
+\begin{enumerate}
+\item $$\mathcal{L} = 0.5\Vert \bm{\theta} \Vert^2 + C\sum^n_{i=1}\zeta^{(i)} - \sum^n_{i=1}\alpha^{(i)}(\mathbf{y}^{(i)}({\phi(\mathbf{x}^{(i)})}^\top\bm{\theta} + \theta_0) - 1 + \zeta^{(i)})- \sum^n_{i=1}\mu^{(i)}\zeta^{(i)}$$
+ \item 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
+\hlkwd{library}\hlstd{(mlr3)}
+\hlkwd{library}\hlstd{(RColorBrewer)}
+\hlkwd{library}\hlstd{(CVXR)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# \\\#\# Attaching package: 'CVXR'}}
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# The following object is masked from 'package:stats':\\\#\# \\\#\# \ \ \ \ power}}\begin{alltt}
+\hlcom{# generate 200 nonlinear separable binary observations}
+\hlkwd{set.seed}\hlstd{(}\hlnum{123}\hlstd{)}
+\hlstd{n} \hlkwb{=} \hlnum{200}
+\hlstd{moon_data} \hlkwb{=} \hlkwd{tgen}\hlstd{(}\hlstr{"moons"}\hlstd{)}\hlopt{$}\hlkwd{generate}\hlstd{(n)}\hlopt{$}\hlkwd{data}\hlstd{()}
+
+\hlstd{moon_data}\hlopt{$}\hlstd{y} \hlkwb{=} \hlkwd{ifelse}\hlstd{(moon_data}\hlopt{$}\hlstd{y} \hlopt{==} \hlstr{"A"}\hlstd{,} \hlnum{1}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{)}
+\hlstd{moon_data}\hlopt{$}\hlstd{y_dec} \hlkwb{=} \hlkwd{as.factor}\hlstd{(moon_data}\hlopt{$}\hlstd{y)}
+
+\hlkwd{ggplot}\hlstd{(moon_data,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x1,} \hlkwc{y}\hlstd{=x2))} \hlopt{+}
+ \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=y_dec))} \hlopt{+}
+ \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{1}\hlstd{]))} \hlopt{+}
+ \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{2}\hlstd{]))} \hlopt{+}
+ \hlkwd{labs}\hlstd{(}\hlkwc{color}\hlstd{=}\hlkwd{expression}\hlstd{(y))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/nsvm_primal-plot-1} 
+\begin{kframe}\begin{alltt}
+\hlstd{X} \hlkwb{=} \hlkwd{as.matrix}\hlstd{(moon_data[,}\hlkwd{c}\hlstd{(}\hlstr{"x1"}\hlstd{,} \hlstr{"x2"}\hlstd{)])}
+\hlcom{# define cubic polynomial transformation (without intercept)}
+\hlstd{cubic_trafo} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{cbind}\hlstd{(x[}\hlnum{1}\hlstd{], x[}\hlnum{2}\hlstd{], x[}\hlnum{1}\hlstd{]}\hlopt{^}\hlnum{2}\hlstd{, x[}\hlnum{2}\hlstd{]}\hlopt{^}\hlnum{2}\hlstd{, x[}\hlnum{1}\hlstd{]}\hlopt{*}\hlstd{x[}\hlnum{2}\hlstd{],}
+                                       \hlstd{x[}\hlnum{1}\hlstd{]}\hlopt{^}\hlnum{2}\hlopt{*}\hlstd{x[}\hlnum{2}\hlstd{], x[}\hlnum{1}\hlstd{]}\hlopt{*}\hlstd{x[}\hlnum{2}\hlstd{]}\hlopt{^}\hlnum{2}\hlstd{, x[}\hlnum{1}\hlstd{]}\hlopt{^}\hlnum{3}\hlstd{,}
+                                       \hlstd{x[}\hlnum{2}\hlstd{]}\hlopt{^}\hlnum{3}\hlstd{))}
+
+\hlstd{Z} \hlkwb{=} \hlkwd{t}\hlstd{(}\hlkwd{apply}\hlstd{(}\hlkwd{t}\hlstd{(X),} \hlnum{2}\hlstd{, cubic_trafo))}
+\hlstd{C} \hlkwb{=} \hlnum{1.0}
+
+\hlcom{# define variables for cvxr}
+\hlstd{theta0} \hlkwb{=} \hlkwd{Variable}\hlstd{()}
+\hlstd{theta}  \hlkwb{=} \hlkwd{Variable}\hlstd{(}\hlnum{9}\hlstd{)}
+\hlstd{slack} \hlkwb{=} \hlkwd{Variable}\hlstd{(n)}
+
+\hlstd{objective} \hlkwb{=} \hlstd{(}\hlnum{1}\hlopt{/}\hlnum{2}\hlstd{)} \hlopt{*} \hlkwd{sum_squares}\hlstd{(theta)} \hlopt{+} \hlstd{C} \hlopt{*} \hlkwd{sum}\hlstd{(slack)}
+\hlstd{constraints} \hlkwb{=} \hlkwd{list}\hlstd{(moon_data}\hlopt{$}\hlstd{y} \hlopt{*} \hlstd{(Z} \hlopt{%*%} \hlstd{theta} \hlopt{+} \hlstd{theta0)} \hlopt{>=} \hlnum{1} \hlopt{-} \hlstd{slack, slack} \hlopt{>=} \hlnum{0}\hlstd{)}
+\hlstd{problem} \hlkwb{=} \hlkwd{Problem}\hlstd{(}\hlkwd{Minimize}\hlstd{(objective), constraints)}
+\hlstd{solution} \hlkwb{=} \hlkwd{solve}\hlstd{(problem)}
+
+\hlstd{theta0_sol} \hlkwb{=} \hlstd{solution}\hlopt{$}\hlkwd{getValue}\hlstd{(theta0)}
+\hlstd{theta_sol} \hlkwb{=} \hlstd{solution}\hlopt{$}\hlkwd{getValue}\hlstd{(theta)}
+
+\hlcom{# create grid for plot}
+\hlstd{x} \hlkwb{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{10}\hlstd{,} \hlnum{10}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.05}\hlstd{)}
+\hlstd{xx} \hlkwb{=} \hlkwd{expand.grid}\hlstd{(}\hlkwc{X1} \hlstd{= x,} \hlkwc{X2} \hlstd{= x)}
+\hlstd{yxx} \hlkwb{=} \hlkwd{as.matrix}\hlstd{(}\hlkwd{cubic_trafo}\hlstd{(xx))} \hlopt{%*%} \hlstd{theta_sol} \hlopt{+} \hlstd{theta0_sol}
+
+\hlstd{df} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{xx} \hlstd{= xx,} \hlkwc{yxx} \hlstd{= yxx)}
+\hlkwd{ggplot}\hlstd{()} \hlopt{+}
+ \hlkwd{geom_contour_filled}\hlstd{(}\hlkwc{data} \hlstd{= df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= xx.X1,} \hlkwc{y} \hlstd{= xx.X2,} \hlkwc{z} \hlstd{= yxx),} \hlkwc{bins}\hlstd{=}\hlnum{10}\hlstd{)} \hlopt{+}
+ \hlkwd{scale_fill_brewer}\hlstd{(}\hlkwc{palette} \hlstd{=} \hlstr{"RdBu"}\hlstd{)} \hlopt{+}
+ \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{1}\hlstd{]))} \hlopt{+}
+ \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{2}\hlstd{]))} \hlopt{+}
+ \hlkwd{geom_point}\hlstd{(}\hlkwc{data} \hlstd{= moon_data,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x1,} \hlkwc{y}\hlstd{=x2,} \hlkwc{color}\hlstd{=y_dec))} \hlopt{+}
+ \hlkwd{labs}\hlstd{(}\hlkwc{color} \hlstd{=} \hlkwd{expression}\hlstd{(y),} \hlkwc{fill} \hlstd{=} \hlkwd{expression}\hlstd{(theta}\hlopt{^}\hlstd{T}\hlopt{~}\hlstd{x} \hlopt{+} \hlstd{theta[}\hlnum{0}\hlstd{]))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/nsvm_primal-plot-2} 
+\end{knitrout}
+\item 
+Stationarity \\
+$$\nabla_{\bm{\theta}}\mathcal{L} = \bm{\theta} - \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) = 0$$
+$$\nabla_{\theta_0}\mathcal{L} = - \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)} = 0$$
+$$\nabla_{\bm{\zeta}}\mathcal{L} = C\cdot\mathbf{1}_n - \alpha - \mu = 0$$ 
+Primal feasability \\
+$$-(\mathbf{y}^{(i)}({\phi(\mathbf{x}^{(i)})}^\top\bm{\theta} + \theta_0) - 1 + \zeta^{(i)}) \leq 0$$
+$$- \zeta^{(i)} \leq 0$$
+Dual feasability \\
+$$\mu \geq 0$$
+$$\alpha \geq 0$$
+Complementary slackness \\
+$$-\mu^{(i)}\zeta^{(i)} = 0 \quad i = 1,\dots,n$$
+$$-\alpha^{(i)}(\mathbf{y}^{(i)}({\phi(\mathbf{x}^{(i)})}^\top\bm{\theta} + \theta_0) - 1 + \zeta^{(i)}) = 0 \quad i = 1,\dots, n$$
+\item 
+From the KKT conditions it follows that $$\bm{\theta} = \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}),$$
+$$\sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)} = 0,$$
+$$C  - \underbrace{\mu^{(i)}}_{\geq 0} = \alpha^{(i)}  \Rightarrow C \geq \alpha^{(i)} \quad i=1,\dots,n. $$
+Plugging these into the Lagrangian gives 
+$$0.5\Vert  \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) \Vert^2 + \sum^n_{i=1}\mu^{(i)}\zeta^{(i)} + \sum^n_{i=1}\alpha^{(i)}\zeta^{(i)} - \Vert  \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) \Vert^2  + \sum^n_{i=1}\alpha^{(i)} - \sum^n_{i=1}\alpha^{(i)}\zeta^{(i)})- \sum^n_{i=1}\mu^{(i)}\zeta^{(i)}$$
+$$= -0.5\Vert  \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) \Vert^2  + \sum^n_{i=1}\alpha^{(i)} =  -0.5  \sum^n_{i=1}\sum^n_{j=1}\alpha^{(i)}\alpha^{(j)}\mathbf{y}^{(i)}\mathbf{y}^{(j)} \langle\phi(\mathbf{x}^{(i)}),\phi(\mathbf{x}^{(j)})\rangle   + \sum^n_{i=1}\alpha^{(i)}$$
+Hence, the dual form of the nonlinear SVM is
+$$\max_{\alpha}  -0.5  \sum^n_{i=1}\sum^n_{j=1}\alpha^{(i)}\alpha^{(j)}\mathbf{y}^{(i)}\mathbf{y}^{(j)} \langle\phi(\mathbf{x}^{(i)}),\phi(\mathbf{x}^{(j)})\rangle   + \sum^n_{i=1}\alpha^{(i)}$$
+s.t.
+$$\sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)} = 0,$$
+$$0 \leq \alpha \leq C.$$
+Here, we can use the kernel trick to evaluate $\langle\phi(\mathbf{x}^{(i)}),\phi(\mathbf{x}^{(j)})\rangle$ without explicitly computing the projections of each observation. (We only need to compute  $\langle\mathbf{x}^{(i)},\mathbf{x}^{(j)}\rangle$)
+\item 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{gram} \hlkwb{=} \hlstd{(X} \hlopt{%*%} \hlkwd{t}\hlstd{(X)} \hlopt{+} \hlnum{1}\hlstd{)}\hlopt{^}\hlnum{3} \hlopt{-} \hlnum{1}
+
+\hlstd{alpha} \hlkwb{=} \hlkwd{Variable}\hlstd{(n)}
+\hlstd{P} \hlkwb{=} \hlkwd{diag}\hlstd{(moon_data}\hlopt{$}\hlstd{y)} \hlopt{%*%} \hlstd{gram} \hlopt{%*%} \hlkwd{diag}\hlstd{(moon_data}\hlopt{$}\hlstd{y)}
+\hlstd{P} \hlkwb{=} \hlstd{P} \hlopt{+} \hlkwd{diag}\hlstd{(n)}\hlopt{*}\hlnum{0.0000001}
+
+
+\hlstd{objective} \hlkwb{=} \hlkwd{sum}\hlstd{(alpha)} \hlopt{-} \hlstd{(}\hlnum{1}\hlopt{/}\hlnum{2}\hlstd{)} \hlopt{*} \hlkwd{quad_form}\hlstd{(alpha, P)}
+\hlstd{constraints} \hlkwb{=} \hlkwd{list}\hlstd{(}\hlkwd{t}\hlstd{(alpha)} \hlopt{%*%} \hlstd{moon_data}\hlopt{$}\hlstd{y} \hlopt{==} \hlnum{0}\hlstd{,}
+                  \hlstd{alpha} \hlopt{>=} \hlnum{0}\hlstd{,}
+                  \hlstd{C} \hlopt{>=} \hlstd{alpha)}
+\hlstd{problem} \hlkwb{=} \hlkwd{Problem}\hlstd{(}\hlkwd{Maximize}\hlstd{(objective), constraints)}
+\hlstd{solution} \hlkwb{=} \hlkwd{solve}\hlstd{(problem)}
+
+\hlstd{solution}\hlopt{$}\hlstd{status}
+\end{alltt}
+\begin{verbatim}
+## [1] "optimal"
+\end{verbatim}
+\begin{alltt}
+\hlstd{D} \hlkwb{=} \hlkwd{diag}\hlstd{(}\hlkwd{c}\hlstd{(}\hlkwd{sqrt}\hlstd{(}\hlnum{3}\hlstd{),} \hlkwd{sqrt}\hlstd{(}\hlnum{3}\hlstd{),} \hlkwd{sqrt}\hlstd{(}\hlnum{3}\hlstd{),} \hlkwd{sqrt}\hlstd{(}\hlnum{3}\hlstd{),} \hlkwd{sqrt}\hlstd{(}\hlnum{6}\hlstd{),} \hlkwd{sqrt}\hlstd{(}\hlnum{3}\hlstd{),} \hlkwd{sqrt}\hlstd{(}\hlnum{3}\hlstd{),} \hlnum{1}\hlstd{,} \hlnum{1}\hlstd{))}
+\hlstd{theta_sol} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlkwd{t}\hlstd{(solution}\hlopt{$}\hlkwd{getValue}\hlstd{(alpha)} \hlopt{*} \hlstd{moon_data}\hlopt{$}\hlstd{y)} \hlopt{%*%} \hlstd{Z} \hlopt{%*%} \hlstd{D)}
+\hlstd{theta0_sol} \hlkwb{=} \hlopt{-}\hlnum{0.5} \hlopt{*} \hlstd{(}\hlkwd{max}\hlstd{((z_m} \hlkwb{=} \hlstd{Z} \hlopt{%*%} \hlstd{D} \hlopt{%*%} \hlstd{theta_sol)[moon_data}\hlopt{$}\hlstd{y} \hlopt{== -}\hlnum{1}\hlstd{])} \hlopt{+}
+                      \hlkwd{min}\hlstd{((z_m} \hlkwb{=} \hlstd{Z} \hlopt{%*%} \hlstd{D} \hlopt{%*%} \hlstd{theta_sol)[moon_data}\hlopt{$}\hlstd{y} \hlopt{==} \hlnum{1}\hlstd{]))}
+
+\hlstd{x} \hlkwb{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{10}\hlstd{,} \hlnum{10}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.05}\hlstd{)}
+\hlstd{xx} \hlkwb{=} \hlkwd{expand.grid}\hlstd{(}\hlkwc{X1} \hlstd{= x,} \hlkwc{X2} \hlstd{= x)}
+\hlstd{yxx} \hlkwb{=} \hlkwd{as.matrix}\hlstd{(}\hlkwd{cubic_trafo}\hlstd{(xx))} \hlopt{%*%} \hlstd{D} \hlopt{%*%} \hlstd{theta_sol} \hlopt{+} \hlstd{theta0_sol}
+
+\hlstd{df} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{xx} \hlstd{= xx,} \hlkwc{yxx} \hlstd{= yxx)}
+\hlkwd{ggplot}\hlstd{()} \hlopt{+}
+ \hlkwd{geom_contour_filled}\hlstd{(}\hlkwc{data} \hlstd{= df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= xx.X1,} \hlkwc{y} \hlstd{= xx.X2,} \hlkwc{z} \hlstd{= yxx),} \hlkwc{bins}\hlstd{=}\hlnum{10}\hlstd{)} \hlopt{+}
+ \hlkwd{scale_fill_brewer}\hlstd{(}\hlkwc{palette} \hlstd{=} \hlstr{"RdBu"}\hlstd{)} \hlopt{+}
+ \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{1}\hlstd{]))} \hlopt{+}
+ \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{2}\hlstd{]))} \hlopt{+}
+ \hlkwd{geom_point}\hlstd{(}\hlkwc{data} \hlstd{= moon_data,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x1,} \hlkwc{y}\hlstd{=x2,} \hlkwc{color}\hlstd{=y_dec))} \hlopt{+}
+ \hlkwd{labs}\hlstd{(}\hlkwc{color} \hlstd{=} \hlkwd{expression}\hlstd{(y),} \hlkwc{fill} \hlstd{=} \hlkwd{expression}\hlstd{(theta}\hlopt{^}\hlstd{T}\hlopt{~}\hlstd{x} \hlopt{+} \hlstd{theta[}\hlnum{0}\hlstd{]))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/nsvm_dual-plot-1} 
+\end{knitrout}
+\end{enumerate}
+
+}
+\end{document}
