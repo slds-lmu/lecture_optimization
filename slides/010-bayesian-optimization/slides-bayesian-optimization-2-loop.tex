@@ -18,7 +18,7 @@
 
 \begin{document}
 
-\lecturechapter{Bayesian Optimization:\\ Basic Loop and Surrogate Modeling}
+\lecturechapter{Bayesian Optimization:\\ Basic BO Loop and Surrogate Modelling}
 \lecture{Optimization in Machine Learning}
 
 \begin{vbframe}{Optimization via Surrogate Modeling}
@@ -58,17 +58,30 @@
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{LHS}
+\begin{frame}{Latin Hypercube Sampling}
 
-LHS partitions the search space into bins of equal probability with the goal of attaining a more even distribution of sample points in the parameter space that would be possible with pure random sampling.\\
-\vspace{0.45em}
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/init_1.png}
-\end{center}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+\item LHS partitions the search space into bins of equal probability
+\item Goal is to attain a more even distribution of sample points than random sampling
+\item Allow at most one sample per bin; exactly one sample per row and column
+\end{itemize}
+\end{column}
 
-Only allow at most one sample per bin.
+\begin{column}{0.5\textwidth}
+\center
+\includegraphics[width = 0.75\textwidth]{slides/010-bayesian-optimization/figure_man/init_0.png}
+\includegraphics[width = 0.75\textwidth]{slides/010-bayesian-optimization/figure_man/init_1.png}\\
+\begin{footnotesize}
+Marginal histograms RS vs. LHS
+\end{footnotesize}
+\end{column}
+\end{columns}
 
-\framebreak
+\end{frame}
+
+\begin{frame}{Latin Hypercube Sampling}
 
 Actual sampling of points, e.g., constructed via \textbf{Maximin}:\\
 \begin{itemize}
@@ -78,28 +91,14 @@ Actual sampling of points, e.g., constructed via \textbf{Maximin}:\\
 \item Ensures that the design points in $\D$ are as far apart from each other as possible
 \end{itemize}
 
-\end{vbframe}
-
-\begin{frame}{Initial Design}
-
-\vspace{1em}
-
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{slides/010-bayesian-optimization/figure_man/init_0.png}
-\end{minipage}
-\hfill
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{slides/010-bayesian-optimization/figure_man/init_1.png}
-\end{minipage}
-
 \end{frame}
 
 \begin{frame}{Surrogate Modeling}
 
-Our running example will be to minimize the following \enquote{black-box} function:
+Running example = minimize this \enquote{black-box}:
 
 \begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_0.png}
+  \includegraphics[width = 0.8\textwidth]{figure_man/loop_0.png}
 \end{center}
 
 \end{frame}
@@ -116,7 +115,7 @@ Our running example will be to minimize the following \enquote{black-box} functi
 \end{center}
 
 \vspace{-.1cm}
-As we can evaluate $f$ without noise, we fit an interpolating regression model
+As we can eval $f$ without noise, we fit an interpolator
 
 \framebreak 
 
@@ -142,101 +141,111 @@ As we can evaluate $f$ without noise, we fit an interpolating regression model
 
 \end{enumerate}
 
-\framebreak 
+\end{vbframe}
+
+\begin{frame}{Surrogate Modeling}
 
 \begin{itemize}
 
-\item After evaluation of the new point, we \textbf{adjust} the model on the expanded dataset via (slow) refitting or a (cheaper) online update
+\only<1>{
+\item After evaluation of the new point, we \textbf{adjust} the model on the expanded dataset via (slower) refitting or a (cheaper) online update
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_5.png}
 \end{center}
-
-\framebreak 
-
+}
+\only<2>{
 \item We again obtain a new candidate point (red) by optimizing the cheap surrogate model function (blue) ...
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_6.png}
 \end{center}
+}
 
-\framebreak
-
+\only<3>{
 \item ... and evaluate that candidate
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_7.png}
 \end{center}
+}
 
-\framebreak
-
+\only<4>{
 \item We repeat: (i) \textbf{fit} the model
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_8.png}
 \end{center}
+}
 
-\framebreak
-
+\only<5>{
 \item (ii) \textbf{propose} a new point
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_9.png}
 \end{center}
+}
 
-\framebreak
-
+\only<6>{
 \item (iii) \textbf{evaluate} that point
 \vspace{+.45cm}
 
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/loop_10.png}
 \end{center}
-
 \item We observe that the algorithm converged
+}
 
 \end{itemize}
 
-\end{vbframe}
+\end{frame}
 
 \begin{vbframe}{Basic Loop}
 
 The basic loop of our sequential optimization procedure is:
   \begin{enumerate}
     \item Fit surrogate model $\fh$ on previous evaluations $\Dts$
-    \item Optimize the surrogate model $\fh$ to obtain a new point $\xvsi[t+1] \coloneqq \argmax_{\xv \in \mathcal{S}} \fh(\xv)$
+    \item Optimize the surrogate model $\fh$ to obtain a new point $\xvsi[t+1] \coloneqq \argmin_{\xv \in \mathcal{S}} \fh(\xv)$
     \item Evaluate $\xvsi[t+1]$ and update data $\Dt[t+1] = \Dt \cup \{(\xvsi[t+1], f(\xvsi[t+1]))\}$
   \end{enumerate}
-
-\framebreak
-
-\begin{itemize}
-  \item More sensible options exist for proposing new points
-  \item We will define so-called acquisition functions based on the prediction of the surrogate model which we then optimize
-  \item Optimizing the surrogate model directly corresponds to optimizing the mean prediction as acquisition function
-  \item This results in high exploitation but low exploration
-\end{itemize}
 
 \end{vbframe}
 
 \begin{vbframe}{Exploration vs. Exploitation}
 
-The black line is the \enquote{unknown} black-box function the sequential optimization procedure has been applied to
+We see: We ran into a local minimum. We did not \enquote{explore} the most crucial areas and \textbf{missed} the global minimum.
 
-\vspace*{0.2cm} 
-We see: We ran into a local minimum. We did not \enquote{explore} the most crucial areas and \textbf{missed} the global minimum
+\vspace*{0.5cm} 
 
-\vspace{+.45cm}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/loop_11.png}\end{column}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+  %\item We will define so-called acquisition functions based on the prediction of the surrogate model which we then optimize
+\item Better ways to propose points based on our model exist, so-called \textbf{acquisition functions}
+  \item Optimizing SM directly corresponds to raw / mean prediction as AQF
+  \item Results in \textbf{high exploitation but low exploration}
+\end{itemize}
+\end{column}
 
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_11.png}
-\end{center}
+\end{columns}
 
+
+%The black line is the \enquote{unknown} black-box function the sequential optimization procedure has been applied to
+%\vspace*{0.2cm} 
+%We see: We ran into a local minimum. We did not \enquote{explore} the most crucial areas and \textbf{missed} the global minimum
+
+%\vspace{+.45cm}
+
+%\begin{center}
+  %\includegraphics[width = 0.5\textwidth]{figure_man/loop_11.png}
+%\end{center}
 
 \end{vbframe} 
 

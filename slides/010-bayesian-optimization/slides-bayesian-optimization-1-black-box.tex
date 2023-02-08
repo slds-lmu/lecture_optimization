@@ -27,7 +27,7 @@
 $$
 \min_{\xv \in \mathcal{S}} \fx
 $$
-with objective function  % FIXME: weird spacing
+with objective function
 $$
 f: \; \mathcal{S} \to \R,
 $$
@@ -74,7 +74,7 @@ where $\mathcal{S}$ is usually box constrained.
 Optimization gets harder ...
 \begin{itemize}
 \item ... if we cannot calculate gradients (because $f$ is not differentiable or $f$ is not known to us)
-\item ... but as long as evaluations of $f$ are cheap, we can use standard derivative-free optimization methods (e.g. Nelder-Mead, simulated annealing)
+\item ... but as long as evaluations of $f$ are cheap, we can use standard derivative-free optimization methods (e.g. Nelder-Mead, simulated annealing, EAs)
 \end{itemize}
 \end{column}
 \end{columns}
@@ -187,14 +187,14 @@ Optimization gets \textbf{really hard} if ...
 \end{itemize}
 
 \framebreak 
-\item Grid search / random search / Latin hypercube sampling
+\item Grid search / random search
 \begin{itemize}
 \item Grid search: Exhaustive search of a predefined grid of inputs
 \item Random search: Evaluate uniformly sampled inputs 
 \item \textbf{Advantages: } Easy, intuitive, parallelization is trivial
 \item \textbf{Disadvantages: } Inefficient, search large irrelevant areas
 \end{itemize}
-
+\vfill
 \begin{center}
 \begin{figure}
 \includegraphics[width=0.4\textwidth]{figure_man/black_box_0.png} ~ \includegraphics[width=0.4\textwidth]{figure_man/black_box_1.png}
@@ -207,14 +207,14 @@ Rug plots of RS vs. GS.
 
 \framebreak 
 
-\item Traditional Black-Box Optimization 
+\item Traditional black-box optimization 
 \begin{itemize}
 \item Traditional approaches that do not require derivatives 
 \item E.g. Nelder-Mead, simulated annealing, EAs 
 \item \textbf{Advantages:} Truly iterative, focuses on relevant regions
 \item \textbf{Disadvantages:} Still inefficient; usually lots of evaluations are needed to produce good outcomes
 \end{itemize}
-
+\vfill
 \begin{figure}
 \begin{center}
 \includegraphics[width = 3cm]{figure_man/neldermead.png} ~
@@ -237,7 +237,9 @@ Rug plots of RS vs. GS.
 \includegraphics[width = 3cm]{figure_man/black_box_2.png}\\
 \end{center}
 \begin{footnotesize}
-Left: Simplices of the Nelder-Mead algorithm. Middle: Components of an evolutionary algorithm. Right: BO vs. CMAES vs. Random on 2D Ackley.
+%Left: Simplices of the Nelder-Mead algorithm. Middle: Components of an evolutionary algorithm. 
+Right: BO vs. CMAES vs. RS on 2D Ackley.
+CMAES initially performs poorly, needs to init itself, not made for expensive regimes.
 \end{footnotesize}
 \end{figure}
 

@@ -5,11 +5,11 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/convex_programs.png}
+\newcommand{\titlefigure}{figure_man/levy.png}
 \newcommand{\learninggoals}{
-\item Motivation
-\item Example: Nelder-Mead method
-\item Example: Levy function
+\item Multimodal functions
+\item Basins of Attractions
+\item Simple multi-start procedure
 }
 
 
@@ -22,7 +22,7 @@
 
 \begin{document}
 
-\lecturechapter{Multistart Optimization}
+\lecturechapter{Multi-Start Optimization}
 \lecture{Optimization in Machine Learning}
 \sloppy
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -39,14 +39,14 @@ Let $f_1^*, \ldots, f_k^*$ be local minimum values of $f(\cdot)$
 with $f_i^* \neq f_j^* \quad \forall i \neq j$. \\
 Then the set $\mathcal{A}$ is called basin of attraction of $f_i^*$ for algorithm $A$.
 $$
-\mathcal{A}(f_i^*, A) = \left\{ \bm{x} \in S \subseteq \R : f(A(\bm{x}))
+\mathcal{A}(f_i^*, A) = \left\{ \bm{x} \in S \subseteq \R^d : f(A(\bm{x}))
 \rightarrow f_i^*\right\}
 $$
 
 \end{block}
 \end{vbframe}
 
-\begin{vbframe}{Example: attraction areas Nelder-Mead}
+\begin{vbframe}{Attraction Areas}
 
 \begin{center}
 \includegraphics[width=1\textwidth]{figure_man/example-nelder.png}
@@ -89,7 +89,7 @@ $$
 %@
 \end{vbframe}
 
-\begin{vbframe}{Example: Levy function}
+\begin{vbframe}{Multi-Starts}
 
 
 \footnotesize
@@ -205,7 +205,7 @@ Idea: use multiple starting points $\bm{x}^{[1]}, \ldots, \bm{x}^{[k]}$ for algo
     \State $k = 0$
       \Repeat
         \State Draw starting point  $x^{[k]}$ from $\mathcal{S}$ (e.g. uniform if $\mathcal{S}$ is of finite volume)
-        \If{k = 0}  $\hat{x}= x_{0}$
+        \If{k = 0}  $\hat{x}= x^{[0]}$
         \EndIf
         \State Initialize algorithm with start value $x^{[k]} \Rightarrow \tilde{x} = A(x^{[k]})$
         \If{$f(\tilde{x}) < f(\hat{x})$}  $\hat{x} = \tilde{x}$

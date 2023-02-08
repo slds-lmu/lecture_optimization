@@ -5,9 +5,11 @@
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-mbo}
 
-\newcommand{\titlefigure}{figure_man/surrogate_0.png}
+\newcommand{\titlefigure}{figure_man/surrogate_1.png}
 \newcommand{\learninggoals}{
-\item Gaussian process vs. random forest
+\item Search space / input data peculiarities in black box problems
+\item Gaussian process 
+\item Random forest
 }
 
 \title{Optimization in Machine Learning}
@@ -16,7 +18,7 @@
 
 \begin{document}
 
-\lecturechapter{Bayesian Optimization:\\ Types of Surrogate Models}
+\lecturechapter{Bayesian Optimization:\\ Important Surrogate Models}
 \lecture{Optimization in Machine Learning}
 
 \begin{frame}{Surrogate Models}
@@ -24,9 +26,11 @@
 Desiderata:
 
 \begin{itemize}
-  \item Regression model with uncertainty estimates
-  \item Accurate predictions (especially for small sample size)
-  \item Robust
+  \item Regression model (there are also classification approaches)
+  \item Non-linear local model
+  \item Accurate predictions (especially for small sample sizes)
+  \item Often: uncertainty estimates
+  \item Robust, works often well without human modeler intervention
 \end{itemize}
 
 \vspace{+0.45cm}
@@ -34,7 +38,7 @@ Desiderata:
 Depending on the application:
 
 \begin{itemize}
-  \item Can handle different types of inputs (categorical and continuous)
+  \item Can handle different types of inputs (numerical and categorical)
   \item Can handle dependencies (i.e., hierarchical input)
 \end{itemize}
 
@@ -42,67 +46,72 @@ Depending on the application:
 
 
 \begin{vbframe}{Gaussian Process}
-The posterior mean and the posterior variance for a GP can be derived analytically: 
 
-\begin{itemize}
-  \item Let $\Dts$ be the data we are fitting the GP on
-  \item Let $\bm{y}:= \left(\ysi[1], \ldots, \ysi[t]\right)$ be the vector of observed outputs
-  \item For a covariance kernel $k(\xv, \xv^{'})$, let $\bm{K} := \left(k(\xvsi, \xvsi[j])\right)_{i,j}$ denote the \textbf{kernel (Gram) matrix} and $k(\xv) \coloneqq \left(k(\xv, \xv^{[1]}), \ldots, k(\xv, \xvsi[t])\right)^\top$
-  \item Example: radial basis function kernel (also known as Gauss kernel): $k(\xv, \xv^{'})=\exp (-\frac{||\xv - \xv^{'}||^2}{2 \sigma^2})$
-  \item Further, we assume a zero-mean GP prior $^{(*)}$  
-\end{itemize}
 
-\vfill
-
-\begin{footnotesize}
- $^{(*)}$ It is common but by no means necessary to consider GPs with a zero mean function. We could also model a GP with a constant trend, for example. Note, however, that using zero-mean priors is not a drastic limitation, since the mean of the posterior process is not confined to be zero. 
-\end{footnotesize}
-
-\framebreak 
-
-The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP is
-
+Posterior predictive distribution for test point $\xv \in \mathcal{S}$:
 \begin{eqnarray*}
   Y(\xv) ~|~ \xv, \Dt \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)
 \end{eqnarray*}
-
 with 
-
 \begin{eqnarray*}
   \fh(\xv) &=& k(\xv)^\top \bm{K}^{-1} \bm{y} \\
   \sh^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top \bm{K}^{-1} k(\xv)
 \end{eqnarray*}
+\begin{center}
+\includegraphics[width = 0.3\textwidth]{figure_man/bayesian_loop_sm_normal.png}
+\end{center}
 
-\vfill
+Kernel method, based on kernel / Gram matrix $\bm{K} := \left(k(\xvsi, \xvsi[j])\right)_{i,j}$ 
+\framebreak
+
+
+% The posterior mean and the posterior variance for a GP can be derived analytically: 
+% \vspace{1em}
+% \begin{itemize}
+%   \item Let $\Dts$ be the data we are fitting the GP on
+%   \item Let $\bm{y}:= \left(\ysi[1], \ldots, \ysi[t]\right)$ be the vector of observed outputs
+%   \item For a covariance kernel $k(\xv, \xv^{'})$, let $\bm{K} := \left(k(\xvsi, \xvsi[j])\right)_{i,j}$ denote the \textbf{kernel (Gram) matrix} and $k(\xv) \coloneqq \left(k(\xv, \xv^{[1]}), \ldots, k(\xv, \xvsi[t])\right)^\top$
+%   \item Further, we assume a zero-mean GP prior
+% \end{itemize}
+
+\framebreak 
+
+Example kernel functions:
+\vspace{1em}
+\begin{itemize}
+  \item Radial basis function kernel (also known as Gauss kernel): $k(\xv, \xv^{'})=\exp \left(-\frac{d(\xv, \xv^{'})^2}{2 l^2}\right)$
+  \begin{itemize}
+    \item $l$ length scale; $d(\cdot, \cdot)$ Euclidean distance
+    \item infinitely differentiable - very \enquote{smooth}
+  \end{itemize}
+  \item Matérn kernels: $k(\xv, \xv^{'})=\frac{1}{\Gamma(\nu) 2^{\nu-1}}\left(\frac{\sqrt{2 \nu}}{l} d(\xv, \xv^{'})\right)^\nu K_\nu\left(\frac{\sqrt{2 \nu}}{l} d(\xv, \xv^{'})\right)$
+  \begin{itemize}
+    \item $l$ length scale; $d(\cdot, \cdot)$ Euclidean distance; $K_\nu(\cdot)$ modified Bessel function; $\Gamma(\cdot)$ Gamma function \item for $\nu = 3/2$ once differentiable, for $\nu = 5/2$ twice differentiable
+    \item Popular choice as a kernel function when using a GP as SM
+  \end{itemize}
+\end{itemize}
+
+\framebreak
+
+
 
 \framebreak
 
 Pros:
 \begin{itemize}
-  \item GPs yield well calibrated uncertainty estimates
+  \item Smooth, local, powerful estimator, also for small data
+  \item GPs yield well-calibrated uncertainty estimates
   \item The posterior predictive distribution under a GP is normal
 \end{itemize}
-
-\vspace{+0.45cm}
-
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/surrogate_0.png}
-\end{minipage}
-\hfill
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/surrogate_1.png}
-\end{minipage}
-
-\framebreak
 
 Cons:
 \begin{itemize}
   \item Vanilla GPs scale cubic in the number of data points
-  \item GPs can natively only handle numeric features\\
-    Categorical features and dependencies require special handling via custom kernel
-  \item GPs aren't that robust\\
-    In practice, \enquote{white-noise} models can occur where the posterior mean and variance is constant (except for the interpolation of training points)
-  \item Performance can be sensitive to the choice of kernel and hyperparameters
+  \item Can natively only handle numeric features\\
+    Mixed inputs / dependencies require special kernels
+  \item GPs aren't that robust; numerical problems can occur
+    %In practice, \enquote{white-noise} models can occur where the posterior mean and variance is constant (except for the interpolation of training points)
+  \item Can be sensitive to the choice of kernel and hyperparameters
 \end{itemize}
 
 \end{vbframe}
@@ -111,26 +120,42 @@ Cons:
 
 \begin{itemize}
     \item Bagging ensemble
-    \item Fit $B$ decision trees on bootstrap samples using different features sampled at random
+    \item Fit $B$ decision trees on bootstrap samples
+    \item Feature subsampling
 \end{itemize}
 
 \begin{center}
   \includegraphics[width = 0.7\textwidth]{slides/010-bayesian-optimization/figure_man/random_forests.jpg}
 \end{center}
 
+\enquote{extratrees} / random splits:\\
+\begin{itemize}
+  \item Choose split location uniformly at random
+  \item Results in a \enquote{smoother} mean prediction
+\end{itemize}
+
 \end{frame}
 
-\begin{frame}{Random Forest}
+\begin{frame}{Random Forest - Mean and Variance}
 
 \begin{itemize}
-    \item Let $\mu_b: \mathcal{S} \to \R$ be the mean prediction of a decision tree $b$ (mean of all data points in the same node as observation $\xv \in \mathcal{S}$)
-    \item Let $\sigma_{b}^2: \mathcal{S} \to \R$ be the variance prediction (variance of all data points in the same node as observation $\xv \in \mathcal{S})$
-    \item Mean prediction of the forest: $\mu: \mathcal{S} \to \R$,\\
-    $\xv \mapsto \frac{1}{B} \sum_{b = 1}^{B} \mu_{b}(\xv)$
-    \item Variance prediction of the forest: $\sigma^{2}: \mathcal{S} \to \R$,\\
-    $\xv \mapsto  \left( \frac{1}{B} \sum_{b = 1}^{B} \sigma_{b}^2(\xv) + \mu_{b}(\xv)^{2} \right) - \mu(\xv)^{2}$\\
-    (law of total variance assuming a mixture of $B$ models;\\
-    other variance estimates also exist)
+    \item Let $\fh_b: \mathcal{S} \to \R$ be the mean prediction of a decision tree $b$ (mean of all data points in the same node as observation $\xv \in \mathcal{S}$)
+    \item Let $\sh_{b}^2: \mathcal{S} \to \R$ be the variance prediction (variance of all data points in the same node as observation $\xv \in \mathcal{S})$
+    \item Mean prediction of forest: $\fh: \mathcal{S} \to \R$,
+    $\xv \mapsto \frac{1}{B} \sum_{b = 1}^{B} \fh_{b}(\xv)$
+    \item Variance prediction of forest: $\sh^{2}: \mathcal{S} \to \R$,\\
+    $\xv \mapsto  \left( \frac{1}{B} \sum_{b = 1}^{B} \sh_{b}^2(\xv) + \fh_{b}(\xv)^{2} \right) - \fh(\xv)^{2}$\\
+    (law of total variance assuming a mixture of $B$ models)
+    \item Alternative variance estimator:
+    \begin{itemize}
+        \item (infinitesimal) Jackknife
+    \end{itemize}
+    \item Variance prediction derived from randomness of individual trees
+    \begin{itemize}
+    \item Bagging / boostrap samples
+    \item Features sampled at random
+    \item (randomized split locations in the case of \enquote{extratrees})
+    \end{itemize}
 \end{itemize}
 
 \end{frame}
@@ -143,7 +168,7 @@ Cons:
 % no random split means we split by variance criterion
 % random split means we choose the split point in a feature uniformly at random between feature bounds
 \begin{center}
-  \includegraphics[width = 0.9\textwidth]{figure_man/surrogate_2.png}\\
+  \includegraphics[width = 0.9\textwidth]{figure_man/surrogate_1.png}
 \end{center}
 
 \end{frame}
@@ -151,21 +176,30 @@ Cons:
 \begin{frame}{Random Forest}
 Pros:
 \begin{itemize}
- \item Cheap to train
- \item Scales well with the number of data points
- \item Scales well with the number of dimensions
- \item Can easily handle hierarchical mixed spaces
- \item Robust
+  \item Cheap(er) to train
+  \item Scales well with the number of data points
+  \item Scales well with the number of dimensions
+  \item Can easily handle hierarchical mixed spaces. Either via imputation or directly respecting dependencies in the tree structure
+  \item Robust
 \end{itemize}
-\end{frame}
-
-\begin{frame}{Random Forest}
 Cons:
 \begin{itemize}
-  \item Poor uncertainty estimates
+  \item Suboptimal uncertainty estimates
   \item Not really Bayesian (no real posterior predictive distribution)
   \item Poor extrapolation
 \end{itemize}
+\end{frame}
+
+\begin{frame}{Example}
+% BO_RF is the RF top right on slide 9
+% BO_RF_ET is the RF top bottom on slide 9
+Minimize the 2D Ackley Function using BO\_GP (GP with Matérn 3/2, EI), BO\_RF (standard Random Forest, EI), BO\_RF\_ET (Random Forest with extratrees, EI) or a random search:
+\begin{center}
+  \includegraphics[width = 0.5\textwidth]{figure_man/surrogate_2.png}
+\end{center}
+\begin{footnotesize}
+Strong BO\_GP performance. BO\_RF and BO\_RF\_ET not too bad either. BO\_RF\_ET maybe slightly better final performance than BO\_RF.
+\end{footnotesize}
 \end{frame}
 
 \endlecture

@@ -5,11 +5,11 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/convex_programs.png}
+\newcommand{\titlefigure}{figure_man/cmaes/cmaes_generations.png}
 \newcommand{\learninggoals}{
-\item Strategy
-\item Basic Method
-\item Updating
+\item CMA-ES strategy
+\item Estimation of distribution
+\item Step size control
 }
 
 
@@ -364,9 +364,9 @@ Initialize $\bm{m} \in \R^d$ and $\bm{C} = \bm{\I}$, set $\sigma = 1$, learning 
 
 The rank-one update was developed in several domains independently, conducting a \textbf{principle component analysis} (PCA) of steps $\bm{y}_w$ sequentially in time and space.
 
-\lz
+% \lz
 
-\textit{In principle}: the adaptation increases the likelihood of successful steps $\bm{y}_w$ to appear again.
+% \textit{In principle}: the adaptation increases the likelihood of successful steps $\bm{y}_w$ to appear again.
 
 % \textit{Different viewpoint}: the adaptation follows a natural gradient approximation of the expected fitness.
 

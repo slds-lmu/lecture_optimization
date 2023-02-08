@@ -1,0 +1,290 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-mbo}
+
+\newcommand{\titlefigure}{figure_man/bayesian_loop_sm_normal_fmin.png}
+\newcommand{\learninggoals}{
+\item Probability of improvement
+\item Expected improvement
+}
+
+\title{Optimization in Machine Learning}
+%\author{Bernd Bischl}
+\date{}
+
+\begin{document}
+
+\lecturechapter{Bayesian Optimization:\\ Posterior Uncertainty and Acquisition Functions II}
+\lecture{Optimization in Machine Learning}
+
+\begin{frame}{Probability of Improvement}
+
+\textbf{Goal}: Find $\xvsi[t+1]$ that maximizes the \textbf{Probability of Improvement} (PI):
+$$
+  a_{\text{PI}}(\xv) = \P(Y(\xv) < \fmin) = \Phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right)
+$$
+where $\Phi(\cdot)$ is the standard normal cdf (assuming Gaussian posterior) 
+
+%PI illustration for $\xv = 0$ given a SM yielding a normally distributed posterior predictive distribution\\
+
+%\vspace{0.45em}
+\only<1> {
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_sm_normal_fmin.png}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_pi_0.png}
+\end{minipage}
+
+\begin{footnotesize}
+Left: The green vertical line represents $\fmin$ Right: $a_{\text{PI}}(\xv)$ is given by the black area
+\end{footnotesize}
+}
+%\vspace{1em}
+
+%PI is more complex than LCB and typically makes assumptions regarding the posterior predictive distribution under a SM
+
+\only<2> {
+\vspace{1em}
+%\begin{footnotesize}
+\textbf{Note:} $PI=0$ for already evaluated points $\xv$: Then, $\sh(\xv) = 0$ and $\fh(\xv) = f(\xv) \ge \fmin$, and thus $\fmin - \fh(\xv) \le 0$. Thus
+
+$$
+  \Phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right) = \Phi\left(- \infty\right) = 0.
+$$
+
+%\end{footnotesize}
+}
+%\framebreak
+
+\end{frame}
+
+\begin{vbframe}{Probability of Improvement}
+
+The PI does not take the size of the improvement into account\\
+Often it will propose points close to the current $\fmin$\\
+\vspace{1em}
+We use the PI (red line) to propose the next point ...
+\vspace{-1em}
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_1.png}
+\end{center}
+
+The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{PI}}(\xv)$
+
+\framebreak
+
+... evaluate that point, refit the SM and propose the next point
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_2.png}
+\end{center}
+
+(grey point = prev point from last iter)
+
+\end{vbframe}
+
+\begin{frame}{Probability of Improvement}
+
+\only<1>{
+...
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_3.png}
+\end{center}
+}
+
+\only<2>{
+In our example, using the PI results in spending plenty of time optimizing the local optimum ...
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_4.png}
+\end{center}
+}
+
+\only<3>{
+...
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_5.png}
+\end{center}
+}
+
+\only<4>{
+...
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_6.png}
+\end{center}
+}
+
+\only<5>{
+...
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_7.png}
+\end{center}
+}
+
+\only<6>{
+... eventually, we explore other regions ...
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_8.png}
+\end{center}
+}
+
+\only<7>{
+...
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_pi_9.png}
+\end{center}
+}
+
+\end{frame}
+
+\begin{frame}{Expected Improvement}
+
+\textbf{Goal:} Propose $\xvsi[t+1]$ that maximizes the \textbf{Expected Improvement} (EI): 
+
+\vspace*{-0.5cm}
+
+\begin{eqnarray*}
+  % FIXME: Expected value with respect to \fh i.e. the GP predictive posterior distribution
+  a_{\text{EI}}(\xv) &=& \E(\max\{\fmin - Y(\xv), 0\}) \\
+\end{eqnarray*} 
+
+\vspace*{-0.5cm}
+
+\begin{minipage}[b]{0.40\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_sm_normal_fmin.png}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.40\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_pi_0.png}
+\end{minipage}
+
+\vspace*{-0.1cm}
+
+\footnotesize{
+\only<1>{
+\begin{itemize}
+\item NB1: We now take the expectation in the tail, 
+instead of the prob as in PI.
+
+\item NB2: Improvement is always assumed $\geq 0$. So in a certain sense, we only use uncertainty optimistically. This enforces exploration.
+\end{itemize}
+}
+%EI is more complex than PI and typically also makes assumptions regarding the posterior predictive distribution under a SM\\
+
+
+\only<2>{
+
+If $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$, we can express the EI in closed-form as: 
+$$
+a_{\text{EI}}(\xv) = (\fmin-\fh(\xv)) \Phi \Big(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\Big) + \sh(\xv) \phi\Big(\frac{\fmin-\fh(\xv)}{\sh(\xv)}\Big), 
+$$
+
+%(where $\Phi(\cdot)$ and $\phi(\cdot)$ are standard normal cdf and df)
+\begin{itemize}
+\item NB3: EI=0 at evals:
+%\begin{tiny}
+$a_{\text{EI}}(\xv) = (\fmin-\fh(\xv)) \underbrace{ \Phi \Big(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\Big)}_{= 0, \text{ see PI }} + \underbrace{\sh(\xv)}_{ = 0} \phi\Big(\frac{\fmin-\fh(\xv)}{\sh(\xv)}\Big)$
+%\end{tiny}
+\end{itemize}
+}
+}
+
+\end{frame}
+
+\begin{vbframe}{Expected Improvement}
+
+We use the EI (red line) to propose the next point ...
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_1.png}
+\end{center}
+
+The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
+
+\framebreak
+
+... evaluate that point, refit the SM and propose the next point
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_2.png}
+\end{center}
+
+(grey point = prev point from last iter)
+
+\end{vbframe}
+
+\begin{frame}{Expected Improvement}
+
+\only<1>{
+...
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_3.png}
+\end{center}
+}
+
+\only<2>{
+...
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_4.png}
+\end{center}
+}
+
+\only<3>{
+...
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_5.png}
+\end{center}
+}
+
+\end{frame}
+
+\begin{frame}{Expected Improvement}
+
+The EI is capable of exploration and quickly proposes promising points in areas we haven't visited yet
+
+\begin{center}
+  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_6.png}
+\end{center}
+
+Here, also a result of well-calibrated uncertainty $\sh(\xv)$ of our GP.
+
+\end{frame}
+
+\begin{frame}{Discussion}
+
+\begin{itemize}
+  \item Under some mild conditions: BO with a GP as SM and EI is a \textbf{global optimizer}, i.e., convergence to the \textbf{global} (!) optimum is guaranteed given unlimited budget
+  \item Cannot be proven for the PI or the LCB
+  \item In theory, this suggests choosing the EI as ACQF
+  \item In practice, LCB works quite well, and EI generates a very multi-modal landscape
+\end{itemize}
+
+\vspace*{0.3cm}
+
+Other ACQFs:
+\begin{itemize}
+  \item Entropy based: Entropy search, predictive entropy search, max value entropy search
+  \item Knowledge Gradient
+  \item Thompson Sampling
+  \item ...
+\end{itemize}
+
+\end{frame}
+
+\endlecture
+
+\end{document}

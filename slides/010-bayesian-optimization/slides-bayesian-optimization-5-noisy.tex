@@ -18,35 +18,33 @@
 
 \begin{document}
 
-\lecturechapter{Bayesian Optimization:\\ Noisy Evaluations}
+\lecturechapter{Bayesian Optimization:\\ Noisy Bayesian Optimization}
 \lecture{Optimization in Machine Learning}
 
 
-\begin{vbframe}{Noisy Evaluations}
+\begin{frame}{Noisy Evaluations}
 
 In many real-life applications, we cannot access the true function values $f(\xv)$ but only a \textbf{noisy} version thereof
-$$f(\xv) + \epsilon$$
-\vspace{1em}
-Examples:
-\begin{itemize}
-    \item HPO
-    \item Oil drilling optimization
-    \item Robot gait optimization (velocity of a run of a robot is an estimate of true velocity)
-\end{itemize}
-\vspace{1em}
-
-\framebreak
-
-\vspace{1em}
-
-For the sake of simplicity, we assume $\epsilon \sim \mathcal{N}\left(0, \sigma_{\epsilon}^{2}\right)$
-
+$$f(\xv) + \epsilon(\xv)$$
+For the sake of simplicity, we assume $\epsilon(\xv) \sim \mathcal{N}\left(0, \sigma_{\epsilon}^{2}\right)$ for now\\
+\vfill
+\only<1>{
 \begin{center}
   \includegraphics[width = 0.5\textwidth]{figure_man/noisy_0.png}
 \end{center}
+}
+\only<2>{
+Examples:
+\begin{itemize}
+    \item HPO (due to non-deterministic learning algorithm and/or resampling technique)
+    \item Oil drilling optimization (an oil sample is only an estimate)
+    \item Robot gait optimization (velocity of a run of a robot is an estimate of true velocity)
+\end{itemize}
+}
 
-\framebreak 
+\end{frame}
 
+\begin{frame}{Noisy Evaluations} 
 
 This raises the following problems: 
 
@@ -61,36 +59,30 @@ This raises the following problems:
 \end{itemize}
 
 
-\end{vbframe}
+\end{frame}
 
 \begin{vbframe}{Surrogate Model}
 
-In case of noisy evaluations, a nugget-effect GP (GP regression) should be used instead of an interpolating GP:
-
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+In case of noisy evaluations, a nugget-effect GP (GP regression) should be used instead of an interpolating GP.\\
 \vspace{1em}
+The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP assuming homoscedastic noise ($\sigma_{\epsilon}^{2}$) is:
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width = \textwidth]{figure_man/noisy_2.png}
+\end{column}
+\end{columns}
 
-The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP assuming homoscedastic noise ($\sigma_{\epsilon}^{2}$) is
-
+\vfill
 \begin{eqnarray*}
   Y(\xv) ~|~ \xv, \Dt \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)
 \end{eqnarray*}
-
 with 
-
 \begin{eqnarray*}
-  \fh(\xv) &=& k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I})^{-1} \bm{y} \\
-  \sh^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I})^{-1} k(\xv)
+  \fh(\xv) &=& k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I}_{t})^{-1} \bm{y} \\
+  \sh^2(\xv) &=& k(\xv, \xv) - k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I}_{t})^{-1} k(\xv)
 \end{eqnarray*}
-
-\vspace{+0.45cm}
-
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/noisy_1.png}
-\end{minipage}
-\hfill
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/noisy_2.png}
-\end{minipage}
 
 \end{vbframe}
 
@@ -114,50 +106,34 @@ $\sigma_{\epsilon}^{2}$ is the nugget-effect as estimated by the GP regression.
 
 
 \framebreak
-
-In addition, it takes into account the nugget-effect $\sigma_{\epsilon}^{2}$ by a penalty term
-
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+In addition, it takes into account the nugget-effect $\sigma_{\epsilon}^{2}$ by a penalty term:
 $$
   \Bigg(1- \frac{\sigma_\epsilon}{\sqrt{\sh^2(\xv)+ \sigma_\epsilon^2}}\Bigg)
 $$
-
+The penalty is justified to \enquote{account for the diminishing return of additional replicates as the predictions become more accurate} (\emph{Huang et al., 2006})
+\end{column}
+\begin{column}{0.5\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/noisy_3.png}
+\end{column}
+\end{columns}
+\vfill
 \begin{itemize}
-  \item The penalty is justified to \enquote{account for the diminishing return of additional replicates as the predictions become more accurate} (\emph{Huang et al., 2006})
   \item Designs with small predictive variance $\sh^2(\xv)$ are penalized in favor of more exploration.
-  \item If $\sigma_\epsilon^2 = 0$ (noise-free case), the AEI corresponds to the EI with plugin. 
+  \item If $\sigma_\epsilon^2 = 0$ (noise-free), the AEI corresponds to the EI with plugin. 
 \end{itemize}
-
-\framebreak
-
-\vspace*{1cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/noisy_3.png}
-\end{center}
-
 
 \end{vbframe}
 
-\begin{vbframe}{Reinterpolation}
+\begin{frame}{Reinterpolation}
 
-Clean noise from the model and then apply a general acquisition function (EI, PI, LCB, ...)
-
-\lz 
-
-The RP suggests to build \textbf{two models}: a nugget-effect GP (regression model; left) and then, on the predictions from the first model (grey), an interpolating GP (right)
-
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/noisy_2.png}
-\end{minipage}
-\hfill
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/noisy_4.png}
-\end{minipage}
-
-\framebreak
-
+\only<1> {
+Clean noise from the model and then apply a general acquisition function (EI, PI, LCB, ...)\\
 \vspace{1em}
-
+The RP suggests to build \textbf{two models}: a nugget-effect GP (regression model; left) and then, on the predictions from the first model (grey), an interpolating GP (right)
+}
+\only<2> {
 \begin{algorithm}[H]
 \footnotesize
   \caption{Reinterpolation Procedure}
@@ -168,8 +144,17 @@ The RP suggests to build \textbf{two models}: a nugget-effect GP (regression mod
   \State{Based on the interpolating model, obtain a new candidate using a noise-free acquisition function}
   \end{algorithmic}
 \end{algorithm}
+}
+\vfill
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/noisy_2.png}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.45\textwidth}
+  \includegraphics[width = \textwidth]{figure_man/noisy_4.png}
+\end{minipage}
 
-\end{vbframe}
+\end{frame}
 
 \begin{vbframe}{Identification of final best point}
 
