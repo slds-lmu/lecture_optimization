@@ -34,16 +34,17 @@
   \begin{center}
   \caption{CMA-ES}
     \begin{algorithmic}[1]
-    \State Input: $m \in \R_n$, $\sigma \in \R_+$, $\lambda$ (problem dependent)
+    \State Input: $m \in \R^{d}$, $\sigma \in \R_+$, $\lambda$ (problem-dependent)
     \State Initialize: $\bm{C} = \bm{\I}$, $\bm{p}_{\bm{c}} = \bm{0}$, $\bm{p}_{\sigma} = \bm{0}$
-    \State Set: $c_{\bm{C}} \approx 4/d$, $c_{\sigma} \approx 4/d$, $c_1 \approx 2/d^2$, $c_{\mu} \approx \mu_w/d^2$, $c_1+c_{\mu} \leq 1$, $d_{\sigma} \approx 1+\sqrt{\mu_w/d}$ and $w_{i=1,\dots, \lambda}$ such that $\mu_w = \frac{1}{\sum_{i=1}^{\mu} w_i^2} \approx 0.3 \lambda$
+    \State Set: $c_{\bm{C}} \approx 4/d$, $c_{\sigma} \approx 4/d$, $c_1 \approx 2/d^2$, $c_{\mu} \approx \mu_w/d^2$, $c_1+c_{\mu} \leq 1$, $d_{\sigma} \approx 1+\sqrt{\mu_w/d}$ and $w_{i=1,\dots, \mu}$ such that $\mu_w = \frac{1}{\sum_{i=1}^{\mu} w_i^2} \approx 0.3 \lambda$
     \While{not terminate}
-      \State $\xv^{(k)} = \bm{m} + \sigma \normal_i(\bm{0}, \bm{C}) \quad \text{for } i=1,\dots, \lambda$ \quad \textit{Sampling}
-      \State $\bm{m} \leftarrow m + \sigma \bm{y}_w, \quad \text{where } \bm{y}_w = \sum_{i=1}^{\mu} w_i \xv_{i:\lambda}$ \quad \textit{Update mean}
-      \State $\bm{p}_{\bm{C}} \leftarrow (1-c_{\bm{C}})\bm{p}_{\bm{C}} + \one_{\{||\bm{p}_{\sigma}|| < 1.5\sqrt{n}\}}\sqrt{1-(1-c_{\bm{C}})^2} \sqrt{\mu_w} \bm{y}_w$ \quad \textit{Cumulation of $\bm{C}$}
-      \State $\bm{p}_{\sigma} \leftarrow (1-c_{\bm{C}})\bm{p}_{\bm{C}} + \sqrt{1-(1-c_{\sigma})^2} \sqrt{\mu_w} \bm{C}^{-\frac{1}/{2}} \bm{y}_w$ \quad \textit{Cumulation of $\sigma$}
-      \State $\bm{C} \leftarrow (1-c_1-c_{\mu}) \bm{C} + c_1 \bm{p}_{\bm{C}} \bm{p}_{\bm{C}}^\top + c_{\mu} \sum_{i=1}^{\mu} w_i \xv_{i:\lambda} \xv_{i:\lambda}^\top$ \quad \textit{Update $\bm{C}$}
-      \State $\sigma \leftarrow \sigma \times \exp\biggl( \frac{c_\sigma}{d_\sigma}\Bigl(\frac{||\bm{p}_\sigma||}{\E||\normal(\bm{0}, \bm{\I})||} - 1 \Bigl)\biggl)$ \quad \textit{Update $\sigma$}
+      \State $\xv^{(i)} = \bm{m} + \sigma \normal(\bm{0}, \bm{C}) \quad \text{for } i=1,\dots, \lambda$ \quad \hfill \textit{Sampling}
+      \State $\bm{y}_w = \sum_{i=1}^{\mu} w_i \bm{y}_{i:\lambda},\;\text{where }\bm{y}_{i:\lambda}=(\xv_{i:\lambda}-\bm{m})/\sigma$ \quad \hfill \textit{Selection/Recombination}
+      \State $\bm{m} \leftarrow \bm{m} + \sigma \bm{y}_w$ \quad \hfill \textit{Update $\bm{m}$}
+      \State $\bm{p}_{\bm{C}} \leftarrow (1-c_{\bm{C}})\bm{p}_{\bm{C}} + \sqrt{c_{\bm{C}}(2-c_{\bm{C}})\mu_w}\bm{y}_w$ \quad \hfill \textit{Cumulation of $\bm{C}$}
+      \State $\bm{p}_{\sigma} \leftarrow (1-c_{\sigma})\bm{p}_{\sigma} + \sqrt{c_{\sigma}(2-c_{\sigma})\mu_w} \bm{C}^{-\frac{1}{2}} \bm{y}_w$ \quad \hfill \textit{Cumulation of $\sigma$}
+      \State $\bm{C} \leftarrow (1-c_1-c_{\mu}{\scriptsize\sum}w_j) \bm{C} + c_1 \bm{p}_{\bm{C}} \bm{p}_{\bm{C}}^\top + c_{\mu} \sum_{i=1}^{\mu} w_i \bm{y}_{i:\lambda} \bm{y}_{i:\lambda}^\top$ \quad \hfill \textit{Update $\bm{C}$}
+      \State $\sigma \leftarrow \sigma \times \exp\biggl( \frac{c_\sigma}{d_\sigma}\Bigl(\frac{||\bm{p}_\sigma||}{\E||\normal(\bm{0}, \bm{\I})||} - 1 \Bigl)\biggl)$ \quad \hfill \textit{Update $\sigma$}
     \EndWhile
     \end{algorithmic}
     \end{center}
@@ -79,21 +80,23 @@ Related to selection and recombination:
 Related to $\bm{C}$-update:
 
 \begin{itemize}
-\item $\bm{1-c_{\bm{C}}}$: decay rate for evolution path, cumulation factor \textcolor{blue}{$\quad 1- \frac{4+\mu_{eff}/d}{d+4+2\mu_{eff}/d}$}
-\item $\bm{c_1}$: learning rate for rank-one update of $\bm{C}$ \textcolor{blue}{$\quad \frac{2}{(d+1.3)^2+\mu_{eff}}$}
-\item $\bm{c_{\mu}}$: learning rate for rank-$\mu$ update of $\bm{C}$ \textcolor{blue}{$\quad \min\Bigl(1-c_1, 2\cdot \frac{\mu_{eff}-2+1/\mu_{eff}}{(d+2)^2+\mu_{eff}}\Bigl)$}
+\item $\bm{1-c_{\bm{C}}}$: decay rate for evolution path, cumulation factor \textcolor{blue}{$\quad 1- \frac{4+\mu_w/d}{d+4+2\mu_w/d}$}
+\item $\bm{c_1}$: learning rate for rank-one update of $\bm{C}$ \textcolor{blue}{$\quad \frac{2}{(d+1.3)^2+\mu_w}$}
+\item $\bm{c_{\mu}}$: learning rate for rank-$\mu$ update of $\bm{C}$ \textcolor{blue}{$\quad \min\Bigl(1-c_1, 2\cdot \frac{\mu_w-2+1/\mu_w}{(d+2)^2+\mu_w}\Bigl)$}
 \end{itemize}
 
 Related to $\sigma$-update:
 
 \begin{itemize}
-\item $\bm{1-c_{\sigma}}$: decay rate for evolution path \textcolor{blue}{$\quad 1- \frac{\mu_{eff}+2}{d+\mu_{eff}+5}$}
-\item $\bm{d_{\sigma}}$: damping for $\sigma$-change \textcolor{blue}{$\quad 1+2 \max\Bigl(0, \sqrt{\frac{\mu_{eff}-1}{d+1}}-1\Bigl) + c_\sigma$}
+\item $\bm{1-c_{\sigma}}$: decay rate for evolution path \textcolor{blue}{$\quad 1- \frac{\mu_w+2}{d+\mu_w+5}$}
+\item $\bm{d_{\sigma}}$: damping for $\sigma$-change \textcolor{blue}{$\quad 1+2 \max\Bigl(0, \sqrt{\frac{\mu_w-1}{d+1}}-1\Bigl) + c_\sigma$}
 \end{itemize}
 
-with $\mu_{eff}=\bigl(\frac{||\bm{w}||_1}{||\bm{w}||_2}\bigl)=\frac{(\sum_{i=1}^\mu |w_i|)^2}{\sum_{i=1}^\mu w_i^2} = \frac{1}{\sum_{i=1}^\mu w_i^2}$ and \textcolor{blue}{typical default parameter values}.
-
-$\mu_{eff}$ introduced for a general framework such that even negative weights can be taken into account (for the remaining $\lambda-\mu$ points).
+with $\mu_w=\bigl(\frac{||\bm{w}||_1}{||\bm{w}||_2}\bigl)=\frac{(\sum_{i=1}^\mu |w_i|)^2}{\sum_{i=1}^\mu w_i^2} = \frac{1}{\sum_{i=1}^\mu w_i^2}$ and \textcolor{blue}{typical default parameter values}.
+\vspace{0.2cm}
+\begin{itemize}
+\item $\mu_w$ can be extended to $\lambda$ instead of $\mu$ weights, allowing negative weights for the remaining $\lambda-\mu$ points (\enquote{active covariance adaption}).
+\end{itemize}
 
 % The default values depend only on the dimension. In the first place they do not depend on the objective function.
 }
@@ -117,10 +120,12 @@ $\mu_{eff}$ introduced for a general framework such that even negative weights c
 CMA-ES can outperform other strategies in following cases:
 
 \begin{itemize}
+\setlength\itemsep{1.2em}
 \item Non-separable problems (parameters of the objective function are dependent)
 \item Derivative of the objective function is not available
-\item High dimensional problems (large $d$)
+\item High-dimensional problems (large $d$)
 \item Very large search space
+\item Useful in case \enquote{classical} search methods like quasi-Newton methods (BFGS) or conjugate gradient methods fail due to a non-convex or rugged search landscape (e.g. outliers, noise, local optima, sharp bends).
 \end{itemize}
 \end{vbframe}
 
@@ -129,9 +134,10 @@ CMA-ES can outperform other strategies in following cases:
 CMA-ES can be outperformed by other strategies in following cases:
 
 \begin{itemize}
+\setlength\itemsep{1.2em}
 \item Partly separable problems (i.e. optimization of $n$-dimensional objective function can be divided into a series of $d$ optimizations of every single parameter)
 \item Derivative of the objective function is easily available $\rightarrow$ Gradient Descend / Ascend
-\item Low dimensional problems (large $d$)
+\item Low dimensional problems (small $d$)
 \item Problems that can be solved by using a relative small number of function evaluations (e.g. $< 10 d$ evaluations)
 \end{itemize}
 \end{vbframe}
@@ -147,7 +153,7 @@ functions and however can get stuck in local optima on multi-modal functions, su
 \item It could be shown that increasing the population size improves the performance of the CMA-ES on multi-modal functions
 \item \textbf{IPOP-CMA-ES} is a special form of restart-CMA-ES, where the \textit{population size is increased for each restart} (IPOP)
 \item By increasing the population size the search characteristic becomes more global after each restart
-\item For the restart strategy CMA-ES is stopped whenever one stopping criterion (not further discussed here) is met, and an independent restart is launched with the population size increased by a factor of 2 (values between 1.5 and 5 are reasonable).
+\item For the restart strategy CMA-ES is stopped whenever some stopping criterion is met, and an independent restart is launched with the population size increased by a factor of 2 (values between 1.5 and 5 are reasonable).
 \end{itemize}
 }
 \end{vbframe}
