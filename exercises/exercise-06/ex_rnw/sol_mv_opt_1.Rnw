@@ -23,12 +23,12 @@ In the following we want to estimate a logistic regression without intercept via
 \begin{enumerate}
 \item  
 First consider the derivative of $g:\R \rightarrow \R, z\mapsto \log(1+\exp(z)) - z$, i.e.,\\
-$g'(z) = \underbrace{\frac{\exp(z)}{1+\exp(z)}}_{< 1} - 1 < 0 \Rightarrow g$ is monotonically decreasing $\Rightarrow g(z) > g(\alpha z) \quad \forall z > 0$ and $\alpha > 0.$
+$g'(z) = \underbrace{\frac{\exp(z)}{1+\exp(z)}}_{< 1} - 1 < 0 \Rightarrow g$ is monotonically decreasing $\Rightarrow g(z) > g(\alpha z) \quad \forall z > 0$ and $\alpha > 1.$
 \\
 Second consider the derivative of $h:\R \rightarrow \R, z\mapsto \log(1+\exp(-z))$, i.e.,\\
-$h'(z) = -\underbrace{\frac{\exp(-z)}{1+\exp(-z)}}_{>0} < 0 \Rightarrow h$ is monotonically decreasing $\Rightarrow h(z) > h(\alpha z) \quad \forall z > 0$ and $\alpha > 0.$
+$h'(z) = -\underbrace{\frac{\exp(-z)}{1+\exp(-z)}}_{>0} < 0 \Rightarrow h$ is monotonically decreasing $\Rightarrow h(z) > h(\alpha z) \quad \forall z > 0$ and $\alpha > 1.$
 
-With this we get for $\alpha > 0$ \\
+With this we get for $\alpha > 1$ \\
 $\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) = \sum^n_{i=1} \log(1 + \exp(\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)})) - y^{(i)}\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)} =$\\
 $\sum^n_{i=1} \mathds{1}_{y^{(i)} = 1} (\log(1 + \exp(\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) - \vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert) + \mathds{1}_{y^{(i)} = 0} (\log(1 + \exp(-\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) > $ \\
 $\sum^n_{i=1} \mathds{1}_{y^{(i)} = 1} (\log(1 + \exp(\alpha\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) - \alpha\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert) + \mathds{1}_{y^{(i)} = 0} (\log(1 + \exp(-\alpha\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) = $ \\

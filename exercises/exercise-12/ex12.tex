@@ -216,8 +216,8 @@
 
 
 Minimize Ridge regression, i.e.,
-$$\min_{\bm{\theta}}\frac{1}{2} \Vert\mathbf{X}\bm{\theta}\Vert^2_2 + \frac{1}{2} \Vert\bm{\theta}\Vert^2_2$$
-via coordinate descent.
+$$\min_{\bm{\theta}}\frac{1}{2} \Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + \frac{1}{2} \Vert\bm{\theta}\Vert^2_2$$
+via coordinate descent under the assumption that $\mathbf{X}^\top \mathbf{X} = \mathbf{I}_p$.
 }
 
 \aufgabe{CMA-ES}{
