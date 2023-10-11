@@ -1,4 +1,4 @@
-# Optimization for Machine Learning
+# Optimization in Machine Learning
 
 [![Course Website](https://img.shields.io/badge/Main_Course_Site-517FF7)](https://slds-lmu.github.io/website_optimization/)
 [![Slide Check](https://img.shields.io/badge/Slide_Check-E0911F)](https://slds-lmu.github.io/lecture_optimization/)
