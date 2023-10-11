@@ -8,9 +8,10 @@
 
 \newcommand{\titlefigure}{figure_man/Taylor2D/Taylor2D_1st100.png}
 \newcommand{\learninggoals}{
-\item Taylor Polynomials (Univariate)
-\item Taylor Series
-\item Taylor Polynomials (Multivariate)}
+\item Taylor's theorem (univariate)
+\item Taylor series (univariate)
+\item Taylor's theorem (multivariate)
+\item Taylor series (multivariate)}
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
@@ -26,14 +27,12 @@
 \sloppy
 
 
-\begin{vbframe}{Taylor Approximations}
+\begin{vbframe}{Taylor approximations}
 
 \begin{itemize}
-
-\item Mathematically fascinating:
-We can approx a whole function via a sum of polynomials which are computed based only on properties of one local point. 
-
-\item Extremely important in the analysis of optimization algorithms. We understand the geometry of linear and quadratic functions very well, so we often approx with them.
+    \item Mathematically fascinating: \textbf{Globally} approximate function by sum of polynomials determined by \textbf{local} properties
+    \item Extremely important for \textbf{analyzing} optimization algorithms
+    \item Geometry of \textbf{linear} and \textbf{quadratic} functions very well understood \\ $\implies$ use them for \textbf{approximations}
 \end{itemize}
 
 \begin{columns}
@@ -48,218 +47,205 @@ We can approx a whole function via a sum of polynomials which are computed based
 
 \end{vbframe}
 
-\begin{vbframe}{Definition Taylor's Theorem (univariate)}
+\begin{vbframe}{Taylor's theorem (univariate)}
 
-\vspace*{-0.1cm}
+\begin{kframe}
+    \textbf{Taylor's theorem:} Let $I \subseteq \R$ be an open interval and $f \in \mathcal{C}^k(I,\R)$.
+    For each $a,x \in I$, it holds that
+    \begin{equation*}
+        f(x) = \underbrace{\sum_{j=0}^{k} \frac{f^{(j)}(a)}{j!}(x-a)^{j}}_{T_k(x,a)} + R_k(x,a)
+    \end{equation*}
+    with the $k$-th \textbf{Taylor polynomial} $T_{k}$ and a \textbf{remainder term}
+    \begin{equation*}
+        R_k(x, a) = \littleo(|x-a|^k) \quad\textnormal{as~$x \to a$}.
+    \end{equation*}
+\end{kframe}
 
-Let $I \subseteq \R$ an open interval and $a, x \in I$ and $f \in \mathcal{C}^{m+1}(I,\R)$. Then 
+\begin{itemize}
+    \item There are explicit formulas for the remainder
+    \item Wording: We \enquote{expand~$f$ via Taylor around~$a$}
+\end{itemize}
 
-\vspace*{-0.1cm}
-
-$$f(x) = T_{m}(x,a) + R_{m}(x,a), \text{with}$$ 
-
-
-    \begin{itemize}
-      \item We develop via Taylor around point $a$
-      \item $m$-th \textbf{Taylor polynomial}: $T_{m}(x,a) \overset{(*)}{=} \sum_{k=0}^{m} \frac{f^{(k)}(a)}{k!}(x-a)^{k}$ 
-      \item \textbf{Remainder term}: $R_m(x, a)$ %(we will cover this term later)
-    \end{itemize}
-
-\vspace*{-0.3cm}
-
-    \begin{figure}[htp]
-        \centering
-        \includegraphics[width=0.4\textwidth]{figure_man/taylor_univariate.png}
-    \end{figure}
-
-    \begin{footnotesize}
-      $^{(*)}$ $T_{m}(x,a) = f(a) + f'(a)(x-a) + \frac{f''(a)}{2!}(x-a)^{2} + ... + \frac{f^{(m)}(a)}{m!} (x - a)^m$
-    \end{footnotesize}
-
-    
 \end{vbframe}
 
-\begin{vbframe}{Taylor Series}
+\begin{vbframe}{Taylor series (univariate)}
 
-$$\sum_{k=0}^{\infty} \frac{f^{(k)}(a)}{k!}(x-a)^{k} $$
+\begin{itemize}
+    \item If $f \in C^\infty$, it \textit{might} be expandable around~$a \in I$ as a \textbf{Taylor series}
+        \begin{equation*}
+            \sum_{k=0}^{\infty} \frac{f^{(k)}(a)}{k!}(x-a)^{k}
+        \end{equation*}
+    \item If Taylor series converges to~$f$ in an interval~$I_0 \subseteq I$ centered at~$a$ (does not have to), we call~$f$ an \textit{analytic function}
+    \item Convergence if $R_k(x, a) \rightarrow 0$ as $k \rightarrow \infty$ for all $x \in I_0$
+    \item Then, for all~$x \in I_0$:
+        \begin{equation*}
+            f(x) = \sum_{j=0}^{\infty} \frac{f^{(j)}(a)}{j!}(x-a)^{j}
+        \end{equation*}
+\end{itemize}
 
-\vspace*{2cm}
-
-    \begin{itemize}
-      \item If the Taylor series converges (does not have to) and it converges to $f$ (does not  have to), we call f an \emph{analytic function}
-      \item Convergence happens if $R_m(x, a) \rightarrow 0$ as $m \rightarrow \infty$ for all $x$
-      \item Then:
-$$f(x) = \sum_{k=0}^{\infty} \frac{f^{(k)}(a)}{k!}(x-a)^{k} $$
-    \end{itemize}
-    
 \end{vbframe}
 
 
+\begin{vbframe}{Taylor's theorem (multivariate)}
 
+\vspace{-\baselineskip}
 
+\begin{kframe}
+    \textbf{Taylor's theorem (1st order)}: For $f\in\mathcal{C}^1$, it holds that
+    \begin{equation*}
+        f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a})}_{T_1(\xv, \bm{a})} + R_1(\xv,\bm{a}).
+    \end{equation*}
+\end{kframe}
 
-% \begin{vbframe}{Remainder estimation}
+\begin{footnotesize}
+    \textbf{Example: } $\fx = \sin(2x_1) + \cos(x_2)$, $\bm{a} = (1, 1)^T$.
+    Since $\nabla \fx = \begin{pmatrix}2\cos(2x_1) \\ -\sin(x_2)\end{pmatrix}$,
 
-% $$
-%   f(x) = T_m(x, a) + R_m(x, a)
-% $$
-% \vspace*{0.3cm}
-
-% If there is a positive constant $M$ such that $|f^{(m+1)}(t)∣ \leq M$\\
-% for all $t$ between $x$ and $a$, inclusive, 
-
-% \vspace*{0.3cm}
-
-% then the remainder term $R_m(x,a)$ satisfies the inequality:
-
-
-
-
-%    %\item If the Taylor series converges (does not have to) and it converges to $f$ (does not  have to), we call f an \emph{analytic function}.
-  
-% %\end{itemize}
-
-%\framebreak 
-
-
-\begin{vbframe}{Multivariate Taylor polynomials}
-
-\textbf{Taylor's theorem (1st order)}: 
-
-$$
-  f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a})}_{T_1(\xv, \bm{a})} + R_1(\xv, a) 
-$$
-
-\vspace*{-0.3cm}
-
-\begin{footnotesize} \textbf{Example: } $\fx = \text{sin}(2x_1) + \text{cos}(x_2)$, $\bm{a} = (1, 1)^\top$. Since $\nabla \fx = \begin{pmatrix} 2\cdot\text{cos}(2x_1) \\ -\text{sin}(x_2) \end{pmatrix}$
-
-\vspace*{-0.3cm}
-
-\begin{eqnarray*}
-  \fx &=& T_1(\xv) + R_1(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a}) + R_1(\xv, \bm{a})\\ &=& \sin(2) + \cos(1) + (2 \cdot \cos(2), - \sin(1))^\top\begin{pmatrix} x_1 - 1 \\ x_2 - 1\end{pmatrix} + R_1(\xv, \bm{a})
-\end{eqnarray*}
-
+    \vspace{-0.7\baselineskip}
+    
+    \begin{align*}
+        \fx &= T_1(\xv) + R_1(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a}) + R_1(\xv, \bm{a})\\
+        &= \sin(2) + \cos(1) + (2 \cos(2), - \sin(1))^T\begin{pmatrix} x_1 - 1 \\ x_2 - 1\end{pmatrix} + R_1(\xv, \bm{a})
+    \end{align*}
 \end{footnotesize}
 
-\vspace*{-0.3cm}
+\vspace*{-0.5\baselineskip}
 
 \begin{columns}
-  \begin{column}{0.4\textwidth}
-%   \animategraphics[loop,controls,width=\linewidth]{7}{figure_man/Taylor2D/Taylor2D_1st}{0}{359}
-    \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st100.png}
-  \end{column}
-  \begin{column}{0.4\textwidth}
-    \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st301.png}
-  \end{column}
+    \begin{column}{0.4\textwidth}
+        %   \animategraphics[loop,controls,width=\linewidth]{7}{figure_man/Taylor2D/Taylor2D_1st}{0}{359}
+        \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st100.png}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+        \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st301.png}
+    \end{column}
 \end{columns}
+
+\framebreak
+
+\vspace*{-1cm}
+
+\begin{kframe}
+    \textbf{Taylor's theorem (2nd order)}: If $f \in \mathcal{C}^2$, it holds that
+    \begin{equation*}
+        f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^T\bm{H}(\bm{a})(\xv - \bm{a})}_{T_2(\xv, \bm{a})} + R_2(\xv,\bm{a})
+\end{equation*}
+\end{kframe}
+
+\begin{footnotesize}
+    \textbf{Example (continued):} Since $H(\xv) = \begin{pmatrix} -4 \sin(2x_1) & 0 \\ 0 & -\cos(x_2) \end{pmatrix}$,
+    \begin{equation*}
+        \fx = T_1(\xv, \bm{a}) + \frac{1}{2}\begin{pmatrix}x_1 - 1 \\ x_2 - 1 \end{pmatrix}^T \begin{pmatrix} -4 \sin(2) & 0 \\ 0 & -\cos(1) \end{pmatrix} \begin{pmatrix}x_1 - 1 \\ x_2 - 1 \end{pmatrix} + R_2(\xv, \bm{a})
+    \end{equation*}
+\end{footnotesize}
+
+\vspace*{-0.5\baselineskip}
+
+\begin{columns}
+    \begin{column}{0.4\textwidth}
+        %   \animategraphics[loop,controls,width=\linewidth]{7}{figure_man/Taylor2D/Taylor2D_2nd-}{0}{359}
+        \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-100.png}
+    \end{column}
+    \begin{column}{0.4\textwidth}
+        \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-301.png}
+    \end{column}
+\end{columns}  
+
+\end{vbframe}
+
+
+\begin{vbframe}{Multivariate Taylor approximation}
+
+\begin{itemize}
+    \item Higher order~$k$ gives a better approximation
+    \item $T_k(\xv,\bm{a})$ is the best $k$-th order approximation to $\fx$ near $\bm{a}$
+\end{itemize}
+
+\begin{columns}
+    \begin{column}{0.48\textwidth}
+        \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st100.png}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+        \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-100.png}
+    \end{column}
+\end{columns}
+
+Consider $T_2(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^T (\xv-\bm{a}) + \frac{1}{2}(\xv-\bm{a})^T H (\bm{a})(\xv-\bm{a})$.
+The first/second/third term ensures the values/slopes/curvatures of~$T_2$ and~$f$ match at~$\bm{a}$.
+
+\end{vbframe}
+
+
+\begin{vbframe}{Taylor's theorem (multivariate)}
+
+The theorem for general order~$k$ requires a more involved notation.
+
+\begin{kframe}
+    \textbf{Taylor's theorem ($k$-th order):} If $f \in \mathcal{C}^k$, it holds that
+    \begin{equation*}
+        f(\xv) = \underbrace{\sum_{|\bm{\alpha}| \le k} \frac{D^{\bm{\alpha}} f(\bm{a})}{{\bm{\alpha}}!} (\xv - \bm{a})^{\bm{\alpha}}}_{T_k(\xv, \bm{a})} + R_k(\xv, \bm{a})
+    \end{equation*}
+    with $R_k(\xv, \bm{a}) = \littleo(\|\xv-\bm{a}\|^k)$ as~$\xv \to \bm{a}$.
+\end{kframe}
+
+\textbf{Notation:} Multi-index~$\bm{\alpha} \in \N^d$
+
+\begin{minipage}[t]{0.49\linewidth}
+    \begin{itemize}
+        \item $|\bm{\alpha}| = \alpha_1 + \cdots + \alpha_d$
+        \item $\bm{\alpha}! = \alpha_1! \cdots \alpha_d!$
+    \end{itemize}
+\end{minipage}
+\begin{minipage}[t]{0.49\linewidth}
+    \begin{itemize}
+        \item $\xv^{\bm{\alpha}} = x_1^{\alpha_1} \cdots x_d^{\alpha_d}$
+        \item $D^{\bm{\alpha}} f = \frac{\partial^{|\bm{\alpha}|} f}{\partial x_1^{\alpha_1} \cdots \partial x_d^{\alpha_d}}$ 
+    \end{itemize}
+\end{minipage}
 
 \framebreak 
 
-\textbf{Taylor's theorem (2nd order)}: 
+Let us check for bivariate~$f$ ($d=2$) and $m=1$.
+For $|\bm{\alpha}| \le 1$, we have
 
-\vspace*{-0.7cm}
+\begin{table}
+    \centering
+    \begin{tabular}{c|c||c|c|c|c}
+        $\alpha_1$ & $\alpha_2$ & $|\bm{\alpha}|$ & $D^{\bm{\alpha}} f$ & $\bm{\alpha}!$ & $(\xv-\bm{a})^{\bm{\alpha}}$ \\ \hline\hline
+        0 & 0 & 0 & $f$                         & 1 & 1          \\ \hline
+        1 & 0 & 1 & $\partial f / \partial x_1$ & 1 & $x_1-a_1$  \\ \hline
+        0 & 1 & 1 & $\partial f / \partial x_2$ & 1 & $x_2-a_2$
+    \end{tabular}
+\end{table}
 
-$$
-  f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^\top\bm{H}(\bm{a})(\xv - \bm{a})}_{T_2(\xv, \bm{a})} + R_2(\xv, a) 
-$$
+and therefore
 
-\begin{footnotesize}
-\textbf{Example (continued):} $\fx = \text{sin}(2x_1) + \text{cos}(x_2)$, $\bm{a} = (1, 1)^\top$. Since
+\vspace{-\baselineskip}
 
-$$\nabla \fx = \begin{pmatrix} 2\cdot\text{cos}(2x_1) \\ -\text{sin}(x_2) \end{pmatrix}\text{ and } H(\xv) = \begin{pmatrix} -4 \text{sin}(2x_1) & 0 \\ 0 & -\text{cos}(x_2) \end{pmatrix} $$
- 
-we get 
-
-\vspace*{-0.8cm}
-
-  \begin{eqnarray*}
-    \fx &=& T_1(\xv, \bm{a}) + \frac{1}{2}\begin{pmatrix}x_1 - 1 \\ x_2 - 1 \end{pmatrix}^\top \begin{pmatrix} -4 \text{sin}(2) & 0 \\ 0 & -\text{cos}(1) \end{pmatrix} \begin{pmatrix}x_1 - 1 \\ x_2 - 1 \end{pmatrix} + R_2(\xv, \bm{a})
-  \end{eqnarray*}
-  \vspace*{-0.2cm}
-  \end{footnotesize}
-  \begin{columns}
-    \begin{column}{0.3\textwidth}
-  %   \animategraphics[loop,controls,width=\linewidth]{7}{figure_man/Taylor2D/Taylor2D_2nd-}{0}{359}
-      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-100.png}
-    \end{column}
-    \begin{column}{0.3\textwidth}
-      \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-301.png}
-    \end{column}
-  \end{columns}  
-
+\begin{align*}
+    T_k(\xv,\bm{a}) &= \frac{f(\bm{a})}{1} \cdot 1 + \frac{\partial f(\bm{a})}{\partial x_1} (x_1 - a_1) + \frac{\partial f(\bm{a})}{\partial x_2} (x_2 - a_2) \\
+    &= f(\bm{a}) + \begin{pmatrix}\frac{\partial f(\bm{a})}{\partial x_1} \\ \frac{\partial f(\bm{a})}{\partial x_2}\end{pmatrix}^T \begin{pmatrix}x_1 - a_1 \\ x_2 - a_2\end{pmatrix} \\
+    &= f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a}). 
+\end{align*}
 
 \end{vbframe}
 
-\begin{vbframe}{Multivariate Taylor Approximation}
+\begin{vbframe}{Taylor series (multivariate)}
 
 \begin{itemize}
-  \item Higher $m$ gives a better approximation
-  \item The $m^{th}$ order Taylor term is the best $m^{th}$ order approximation to $\fx$ near $\bm{a}$
+    \item Analogous to univariate case, if~$f \in \mathcal{C}^\infty$, there \textit{might} exist an open ball~$B_r(\bm{a})$ with radius~$r>0$ around~$\bm{a}$ such that the \textbf{Taylor series}
+        \begin{equation*}
+            \sum_{|\bm{\alpha}| \geq 0} \frac{D^{\bm{\alpha}} f(\bm{a})}{{\bm{\alpha}}!} (\xv - \bm{a})^{\bm{\alpha}}
+        \end{equation*}
+        converges to~$f$ on~$B_r(\bm{a})$
+    \item Even if Taylor series converges, it might not converge to~$f$
+    \item Upper bound $R = \sup \left\lbrace r \;|\; \textnormal{Taylor series converges on } B_r(\bm{a}) \right\rbrace$ is called the \textbf{radius of convergence} of Taylor series around~$\bm{a}$
+    \item If~$R>0$ and~$f$ analytic, Taylor series converges \textit{absolutely} and \textit{uniformly} to~$f$ on \textit{compact} sets inside~$B_R(\bm{a})$
+    \item No general convergence behaviour on boundary of~$B_R(\bm{a})$
 \end{itemize}
-
-
-\begin{columns}
-\begin{column}{0.48\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_1st100.png}
-\end{column}
-\begin{column}{0.48\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-100.png}
-\end{column}
-\end{columns}
-
-\begin{footnotesize}
-Consider $T_2(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^\top\bm{H}(\bm{a})(\xv - \bm{a})$. The first term ensures the \textbf{value} of $T_2$ and $f$ match at $\bm{a}$. The second term ensures the \textbf{slopes} of $T_2$ and $f$ match at $\bm{a}$. The third term ensures the \textbf{curvature} of $T_2$ and $f$ match at $\bm{a}$. 
-\end{footnotesize}
 
 \end{vbframe}
 
+\endlecture
 
-\begin{vbframe}{Multivariate Taylor polynomials}  
-
-What can be written down nicely for first and second order Taylor polynomial is (notationally) a bit more cumbersome for general $k$.
-
-\lz 
-
-Let $f: \R^d \to \R$, $f \in \mathcal{C}^k$ at $\bm{a} \in \R^d$. Then 
-
-$$
-  f(x) = T_m(\xv, \bm{a}) + R_m(\xv, \bm{a}), \text{ with}
-$$
-
-$$
-  T_m(\xv,\bm{a}) = \sum_{|\bm{\alpha}| \le k} \frac{D^{\bm{\alpha}} f(\bm{a})}{{\bm{\alpha}}!} (\xv - \bm{a})^{\bm{\alpha}} \text{ and } \lim_{\xv \to \bm{a}} R_m(\xv,\bm{a}) = 0
-$$
-
-with $\bm{\alpha} \in \N^d$ and the multi-index notation
-\begin{itemize}
-  \item $|\bm{\alpha}| = \alpha_1 + \cdots + \alpha_d$
-  \item $\bm{\alpha}! = \alpha_1! \cdots \alpha_d!$
-  \item $\xv^{\bm{\alpha}} = x_1^{\alpha_1} \cdots x_d^{\alpha_d}$
-  \item $D^{\bm{\alpha}} f = \frac{\partial^{|\bm{\alpha}|} f}{\partial x_1^{\alpha_1} \cdots \partial x_d^{\alpha_d}}$ 
-\end{itemize}
-
-\framebreak 
-
-Let's check for $f: \R^2 \to \R$ and $k = 1$. We have for $|\alpha| \le 1$: 
-
-\begin{itemize}
-  \item $\alpha_1 = 0, \alpha_2 = 0$: $|\bm{\alpha}| = 0, \bm{\alpha}! = 1, \xv^{\bm{\alpha}} = 1, D^{\bm{\alpha}} f = 1$
-  \item $\alpha_1 = 1, \alpha_2 = 0$: $|\bm{\alpha}| = 1, \bm{\alpha}! = 1, \xv^{\bm{\alpha}} = x_1, D^{\bm{\alpha}} f = \frac{\partial f}{\partial x_1}$
-  \item $\alpha_1 = 0, \alpha_2 = 1$: $|\bm{\alpha}| = 1, \bm{\alpha}! = 1, \xv^{\bm{\alpha}} = x_2, D^{\bm{\alpha}} f = \frac{\partial f}{\partial x_2}$
-\end{itemize}
-
-and therefore: 
-
-\begin{eqnarray*}
-  T_m(\xv,\bm{a}) &=& \sum_{|\bm{\alpha|} \le k} \frac{D^{\bm\alpha} f(\bm{a})}{\bm{\alpha}!} (\xv - \bm{a})^{\bm{\alpha}} \\ &=& \frac{1 \cdot f(\bm{a})}{1} \cdot 1 + \frac{\partial f}{\partial x_1}(\bm{a}) (x_1 - a_1) + \frac{\partial f}{\partial x_2}(\bm{a}) (x_2 - a_2) \\
-  &=& f(a) + \begin{pmatrix} \frac{\partial f}{\partial x_1} (\bm{a})\\ \frac{\partial f}{\partial x_2}(\bm{a})\end{pmatrix}^\top \begin{pmatrix} x_1 - a_1 \\ x_2 - a_2\end{pmatrix} = f(\bm{a}) + \nabla f(\bm{a})^\top (\xv - \bm{a}). 
-\end{eqnarray*}
-
-
-\end{vbframe}
-
-
-
-  \endlecture
 \end{document}

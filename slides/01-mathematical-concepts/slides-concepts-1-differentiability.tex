@@ -11,8 +11,9 @@
 \item Definition of smoothness
 \item Uni- \& multivariate differentiation
 \item Gradient, partial derivatives 
-\item Jacobi-Matrix
-\item Hessian Matrix
+\item Jacobian matrix
+\item Hessian matrix
+\item Lipschitz continuity
 }
 
 
@@ -36,7 +37,7 @@
 
 \begin{vbframe}{Univariate differentiability}
 
-\textbf{Definition:} A function $f: \mathcal{S} \subseteq \R \to \R$ is said to be differentiable for each inner point $x \in \mathcal{S}$ if the following limit exists:
+\textbf{Definition:} A function $f: \mathcal{S} \subseteq \R \to \R$ is said to be \textbf{differentiable} for each inner point $x \in \mathcal{S}$ if the following limit exists:
 
 $$
 f'(x) := \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
@@ -44,12 +45,12 @@ $$
 
 Intuitively: $f$ can be approxed locally by a lin. fun. with slope $m = f'(x)$. 
 
-\begin{center}
-\includegraphics[width = 0.8\textwidth]{figure_man/tangent.png} \\
-\begin{footnotesize}
-Left: Function is differentiable everywhere. Right: Not differentiable at the red point. 
-\end{footnotesize}
-\end{center}
+\begin{figure}
+    \centering
+    \includegraphics[width = 0.8\textwidth]{figure_man/tangent.png}
+    \caption*{\footnotesize \textbf{Left:} Function is differentiable everywhere.
+        \textbf{Right:} Not differentiable at the red point. }
+\end{figure}
 
 % \framebreak
 
@@ -78,10 +79,10 @@ Left: Function is differentiable everywhere. Right: Not differentiable at the re
 \begin{vbframe}{Smooth vs. non-smooth}
 
 \begin{itemize}
-\item \textbf{Smoothness} of a function  $f: \mathcal{S} \to \R$ is measured by the number of its continuous derivatives
-\item $k$-times continuously diff. means: $f^{(k)}$ exists + is continuous for every $\xv \in \mathcal{S}$\\
-($f \in \mathcal{C}^k$ class of continuously differentiable functions) 
-\item In this lecture, we call $f$ \enquote{smooth}, if at least $f \in \mathcal{C}^1$
+    \item \textbf{Smoothness} of a function  $f: \mathcal{S} \to \R$ is measured by the number of its continuous derivatives
+    \item $\mathcal{C}^k$ is class of $k$-times continuously differentiable functions \\
+        ($f\in\mathcal{C}^k$ means $f^{(k)}$ exists and is continuous)
+    \item In this lecture, we call $f$ \enquote{smooth}, if at least $f \in \mathcal{C}^1$
 \end{itemize}
 
 
@@ -97,10 +98,10 @@ $f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-co
 
 \begin{vbframe}{Multivariate differentiability}
 
-\textbf{Definition: }$f: \mathcal{S}\subseteq \R^d \to \R$ is differentiable in $\xv \in \mathcal{S}$ if there exists a (continuous) linear map $\nabla f(\xv): \mathcal{S}\subseteq \R^d \to \R^d$ with %it can be locally approximated by a linear function in $\xv$. 
+\textbf{Definition:} $f: \mathcal{S}\subseteq \R^d \to \R$ is \textbf{differentiable} in $\xv \in \mathcal{S}$ if there exists a (continuous) linear map $\nabla f(\xv): \mathcal{S}\subseteq \R^d \to \R^d$ with %it can be locally approximated by a linear function in $\xv$. 
 
 $$
-\lim_{\bm{h} \to 0} \frac{f(\xv + \bm{h}) - f(\xv) - \nabla f(\xv) \cdot \bm{h}}{||\bm{h}||} = 0
+\lim_{\bm{h} \to 0} \frac{f(\xv + \bm{h}) - f(\xv) - \nabla f(\xv)^T \cdot \bm{h}}{||\bm{h}||} = 0
 $$
 
 \begin{center}
@@ -115,193 +116,250 @@ Source: \url{https://github.com/jermwatt/machine_learning_refined}.
 
 \begin{vbframe}{Gradient}
 
-This linear approximation is given by the \textbf{gradient}: % If $f$ is differentiable in $\xv$, the \textbf{gradient} is defined by
-\vspace*{-0.3cm}
-$$
-\nabla f = \frac{\partial f}{\partial x_1} \bm e_1 + \cdots + \frac{\partial f}{\partial x_n} \bm e_n =
-  \biggl(\frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, ..., \frac{\partial f}{\partial x_n}\biggr)^{\top}.
-$$
-The elements of the gradient are called \textbf{partial derivatives}. 
+\begin{itemize}
+    \item Linear approximation is given by the \textbf{gradient}:
+        \begin{equation*}
+            \nabla f = \frac{\partial f}{\partial x_1} \bm e_1 + \cdots + \frac{\partial f}{\partial x_d} \bm e_d =
+            \left(\frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, \ldots, \frac{\partial f}{\partial x_d}\right)^T
+        \end{equation*}
+    \item Elements of the gradient are called \textbf{partial derivatives}.
+    \item To compute $\partial f/\partial x_j$, regard $f$ as function of~$x_j$ only (others fixed)
+\end{itemize}
 
-\vspace*{0.3cm}
+\vspace{0.5\baselineskip}
 
-\begin{columns}
-\begin{column}{0.6\textwidth}
-\vspace{1cm} \quad 
+\textbf{Example:} $\fx = x_1^2/2 + x_1 x_2 + x_2^2$ $\Rightarrow$ $\nabla \fx = (x_1 + x_2, x_1 + 2x_2)^T$
 
-To compute a partial derivative in $x_j$, we treat the function as univariate in $x_j$ (and everything else as constant), then compute the derivative in $x_j$.
-\end{column}
-\begin{column}{0.4\textwidth}
-%\begin{center}
-\vspace{\topsep}
-\includegraphics[width=\columnwidth,trim={2.5cm 0cm 2.0cm 0cm},clip]{figure_man/grad_unit_vectors.png} \\
-%\end{center}
-\end{column}
-\end{columns}
-
-
-\framebreak
-
-Consider $\fx = 0.5 x_1^2 + x_2^2 + x_1 x_2$. The gradient is $$\nabla \fx = (x_1 + x_2, 2x_2 + x_1)^{\top}.$$
+\vspace{-0.5\baselineskip}
 
 \begin{center}
-	\includegraphics[width = 0.5\textwidth]{figure_man/grad_unit_vectors.png} ~~~ \includegraphics[width = 0.45\textwidth]{figure_man/gradient2.png}
+	\includegraphics[width=0.45\textwidth]{figure_man/grad_unit_vectors.png} ~~~ \includegraphics[width=0.45\textwidth]{figure_man/gradient2.png}
 \end{center}
-
 
 \end{vbframe}
 
 \begin{vbframe}{Directional derivative}
 
-The directional derivative tells how fast $f: \mathcal{S} \to \R$ is changing w.r.t. an arbitrary direction $\bm{v}$: 
+The \textbf{directional derivative} tells how fast $f: \mathcal{S} \to \R$ is changing w.r.t. an arbitrary direction $\bm{v}$: 
 
  $$
-   D_v \fx := \lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h} = \nabla \fx^\top \cdot \bm v. 
+   D_{\bm{v}} \fx := \lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h} = \nabla \fx^T \cdot \bm v. 
  $$
 
  
 \textbf{Example: } The directional derivative for $\bm{v} = (1, 1)$ is:
 
 $$
-D_v \fx = \nabla \fx^\top \cdot \begin{pmatrix} 1 \\1\end{pmatrix} = \frac{\partial f}{\partial x_1} + \frac{\partial f}{\partial x_2}
+D_{\bm{v}} \fx = \nabla \fx^T \cdot \begin{pmatrix} 1 \\1\end{pmatrix} = \frac{\partial f}{\partial x_1} + \frac{\partial f}{\partial x_2}
 $$
 
-NB: Some people require that $||\bm{v}|| = 1$. Then, we can identify $D_v \fx$ with the instantaneous rate of change in direction $\bm{v}$ -- and in our example we would have to divide by \sqrt{2}.
+NB: Some people require that $||\bm{v}|| = 1$. Then, we can identify $D_{\bm{v}} \fx$ with the instantaneous rate of change in direction $\bm{v}$ -- and in our example we would have to divide by $\sqrt{2}$.
 
 \end{vbframe}
 
 \begin{vbframe}{Properties of the gradient}
 
 \begin{itemize}
-	\item Orthogonal to level curves/surfaces of a function
+	\item \textbf{Orthogonal} to level curves/surfaces of a function
 	% \item The normal vector describing the tangent plane is has $n + 1$ components, the first $n$ correspond to $\nabla f$ and the $(n + 1)-$th has the value $-1$
-	\item Points in direction of greatest increase of $f$
+	\item Points in direction of \textbf{greatest increase} of $f$
 	\begin{center}
 		\includegraphics[width = 0.4\textwidth]{figure_man/gradient3.png} \includegraphics[width = 0.4\textwidth]{figure_man/gradient.png}
 	\end{center}
 	\begin{footnotesize}
-	\textbf{Proof}: Let $\bm{v}$ be a vector of length $1$. Let $\theta$ the angle between $\bm{v}$ and $\nabla \fx$. 
- 
-	$$
-		D_{\bm{v}}\fx = \nabla \fx^\top \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
-	$$
-	using the cosine formula for dot products and because $\|v\| = 1$ by assumption. $\cos(\theta)$ is maximal if $\theta = 0$, which is if $\bm{v}$ and $\nabla \fx$ point in the same direction. \\
-	(Alternative proof: Apply Cauchy-Schwarz to $\nabla \fx^\top \bm{v}$ and show for which $\bm{v}$ the inequality holds with equality.)  
+    	\textbf{Proof}: Let $\bm{v}$ be a vector with $\|\bm{v}\|=1$ and $\theta$ the angle between $\bm{v}$ and $\nabla \fx$. 
+        \begin{equation*}
+            D_{\bm{v}}\fx = \nabla \fx^T \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
+        \end{equation*}
+    	by the cosine formula for dot products and $\|\bm{v}\| = 1$.
+        $\cos(\theta)$ is maximal if $\theta = 0$, hence if $\bm{v}$ and $\nabla \fx$ point in the same direction.
+        
+    	(Alternative proof: Apply Cauchy-Schwarz to $\nabla \fx^T \bm{v}$ and look for equality.)
+
+        Analogous: Negative gradient $- \nabla \fx$ points in direction of greatest \textit{de}crease
 	\end{footnotesize}
 \end{itemize}
-
 
 \framebreak
 
-\begin{itemize}
-	\item Negative gradient $- \nabla \fx$ points in direction of greatest decrease
-\end{itemize}
-
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figure_man/branin.jpg}
-\\
-
-(Length of arrow is scaled norm of gradient)
-
-\end{center}
-
-
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{figure_man/branin.jpg}
+    \caption*{Length of arrows is norm of their gradient}
+\end{figure}
 
 \end{vbframe}
 
 
+\begin{vbframe}{Jacobian Matrix}
 
+For vector-valued function~$f = (f_1,\dots,f_m)^T$, $f_j:\mathcal{S}\to\R$, the \textbf{Jacobian} matrix $J_f:\mathcal{S} \to \R^{m\times d}$ generalizes gradient by placing all $\nabla f_j$ in its rows:
 
-\begin{vbframe}{Jacobi Matrix}
-
-Let $f: \mathcal{S} \to \R^m$ be vector-valued with components $f_1, f_2, ..., f_m$. 
-
-\textbf{Jacobian} generalizes the gradient by placing the $\nabla f_j$ in its rows:
-
-\begin{eqnarray*}
-	J_f = \begin{pmatrix} \frac{\partial f_1}{\partial x_1} & \hdots & \frac{\partial f_1}{\partial x_n} \\
-	\vdots & \ddots & \vdots \\
-	\frac{\partial f_m}{\partial x_1} & \hdots & \frac{\partial f_m}{\partial x_n}
+\begin{equation*}
+    J_f(\xv) = \begin{pmatrix}
+        \nabla f_1(\xv)^T \\
+        \vdots \\
+        \nabla f_m(\xv)^T 
 	\end{pmatrix}
-\end{eqnarray*}
+    =
+    \begin{pmatrix}
+        \frac{\partial f_1(\xv)}{\partial x_1} & \cdots & \frac{\partial f_1(\xv)}{\partial x_d} \\
+        \vdots &  \ddots & \vdots \\
+        \frac{\partial f_m(\xv)}{\partial x_1} & \cdots & \frac{\partial f_m(\xv)}{\partial x_d}
+	\end{pmatrix}
+\end{equation*}
 
-\begin{center}
-	\includegraphics[width = 0.5\textwidth]{figure_man/Jacobian.png} \\
-	\begin{footnotesize}
-	$f: \R^2 \to \R^2$ sends  a small square (left, red) originating from a given input point to a distorted parallelogram (right, red) . Jacobian gives best linear approximation of distorted parallelogram near that point. Source: Wikipedia.
-	\end{footnotesize}
-\end{center}
+\begin{itemize}
+    \item Jacobian gives best linear approximation of distorted volumes
+\end{itemize}
 
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{figure_man/Jacobian.png}
+    \caption*{\footnotesize Source: Wikipedia}
+\end{figure}
 
 \end{vbframe}
 
 
+\begin{vbframe}{Jacobian determinant}
 
-\begin{vbframe}{Definition Hessian Matrix}
+Let $f\in\mathcal{C}^1$ and~$\xv_0\in\mathcal{S}$.
 
-The 2nd derivative of a multivariate function $f \in \mathcal{C}^2(\mathcal{S}, \R)$, $\mathcal{S}\subseteq \R^d$ (if it exists) is defined by the \textbf{Hessian} matrix
+\begin{kframe}
+    \textbf{Inverse function theorem:} Let~$\yv_0=f(\xv_0)$.
+        If~$\det(J_f(\xv_0))\not=0$, then
+        \begin{enumerate}
+            \item $f$ is invertible in a neighborhood of~$\xv_0$,
+            \item $f^{-1}\in\mathcal{C}^1$ with $J_{f^{-1}}(\yv_0) = J_f(\xv_0)^{-1}$.
+        \end{enumerate}
+\end{kframe}
 
-  \[ H(\xv) =\nabla^2 \fx =
-  \Bigl(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\Bigr)_{i,j=1\ldots d}\]
+\begin{itemize}
+    \item $|{\det(J_f(\xv_0))}|$: factor by which~$f$ expands/shrinks volumes near~$\xv_0$
+    \item If~$\det(J_f(\xv_0))>0$, $f$~preserves orientation near~$\xv_0$
+    \item If~$\det(J_f(\xv_0))<0$, $f$~reverses orientation near~$\xv_0$
+\end{itemize}
+
+\end{vbframe}
+
+
+\begin{vbframe}{Hessian Matrix}
+
+For real-valued function $f:\mathcal{S} \to \R$, the \textbf{Hessian} matrix $H:\mathcal{S} \to \R^{d \times d}$ contains all their second derivatives (if they exist):
+
+\begin{equation*}
+    H(\xv) =\nabla^2 \fx = \left(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\right)_{i,j=1,\ldots,d}
+\end{equation*}
   
-\lz 
+\medskip
 
-\textbf{Example}: Let $f(x_1,x_2) = sin(x_1) \cdot cos(2x_2)$. Then:
+\textbf{Note:} Hessian of~$f$ is Jacobian of~$\nabla f$
 
-$$
-H(\xv) = \begin{pmatrix}
-\text{-cos}(2x_2)\cdot\text{sin}(x_1) & \text{-2cos}(x_1)\cdot\text{sin}(2x_2) 
-\\ \text{-2cos}(x_1)\cdot\text{sin}(2x_2) & \text{-4cos}(2x_2)\cdot\text{sin}(x_1) 
-\end{pmatrix}
-$$
+\medskip
+
+\textbf{Example}: Let $f(\xv) = \sin(x_1) \cdot \cos(2x_2)$.
+Then:
+\begin{equation*}
+    H(\xv) = \begin{pmatrix}
+        -\cos(2x_2)\cdot\sin(x_1) & -2\cos(x_1)\cdot\sin(2x_2) \\
+        -2\cos(x_1)\cdot\sin(2x_2) & -4\cos(2x_2)\cdot\sin(x_1) 
+    \end{pmatrix}
+\end{equation*}
 
 \begin{itemize}
-    \item If all 2nd partial derivatives are continuous, $H$ will be symmetric
-    \item Many local properties, w.r.t. geometry, convexity, critical points, 
-    are encoded by the Hessian and its Eigenspectrum ($\rightarrow$ later).
+    \item If $f\in\mathcal{C}^2$, then $H$ is symmetric
+    \item Many local properties (geometry, convexity, critical points) are encoded by the Hessian and its spectrum ($\rightarrow$ later)
 \end{itemize}
 
 \end{vbframe}
 
 
-\begin{vbframe}{Hessian describes local curvature} 
+\begin{vbframe}{Local curvature by Hessian}
 
-\begin{footnotesize}
+\textbf{Eigenvector} corresponding to largest (resp. smallest) \textbf{eigenvalue} of Hessian points in direction of largest (resp. smallest) \textbf{curvature}
 
-Let w.l.o.g. $A(\xv) = \{\lambda_{1, \xv}, ..., \lambda_{d, \xv}\}$ be Eigenspectrum with $\lambda_{1, \xv} \le \lambda_{2, \xv} \le ... \le \lambda_{d, \xv}$ of $H(\xv)$; let $\bm{v}_{i, \xv}$ define the respective Eigenvectors. We can read off it: 
+\lz
 
-\begin{itemize}
-  \item $\bm{v}_d$/$\bm{v}_1$ points in the direction of largest/smallest curvature
-\end{itemize}
+\textbf{Example} (previous slide)\textbf{:}
+For $\bm{a}=(-\pi/2,0)^T$, we have
+\begin{equation*}
+    H(\bm{a}) = \begin{pmatrix}
+        1 & 0 \\ 0 & 4
+    \end{pmatrix}
+\end{equation*}
+and thus $\lambda_{1}=4, \lambda_{2}=1$, $\bm{v}_{1}=(0, 1)^T$, and $\bm{v}_{2}=(1, 0)^T$.
 
-\vspace*{0.1cm}
-
-
-
-\textbf{Example (continued):} $H(\xv) = \begin{pmatrix}
-\text{-cos}(2x_2)\cdot\text{sin}(x_1) & \text{-2cos}(x_1)\cdot\text{sin}(2x_2) 
-\\ \text{-2cos}(x_1)\cdot\text{sin}(2x_2) & \text{-4cos}(2x_2)\cdot\text{sin}(x_1) 
-\end{pmatrix}.
-$
-
-\begin{itemize}
-  \item \textcolor{orange}{$H(a),~ a=(\frac{-\pi}{2},0)$: $\lambda_{1,a}=1, \lambda_{2,a}=4$; $v_{1,a} = (1, 0)^\top$, $v_{2,a} = (0, 1)^\top$}
-\end{itemize}
-
-\end{footnotesize}
-
-\vspace*{0.05cm}
-
-\begin{figure}[!tbp]
+\begin{figure}
     \includegraphics[width=0.38\textwidth]{figure_man/hessian_3d.png}
     \hspace{0.5cm}
     \includegraphics[width=0.38\textwidth]{figure_man/hessian_contour.png}
-\end{figure} 
+\end{figure}
 
 \end{vbframe}
 
+\begin{vbframe}{Lipschitz continuity}
 
+\vspace{-\baselineskip}
 
+\begin{kframe}
+    Function $h : \mathcal{S} \to \R^m$ is \textbf{Lipschitz continuous} if slopes are bounded:
+
+    \vspace{-1.25\baselineskip}
+    
+    \begin{equation*}
+        \|h(\xv) - h(\yv)\| \leq L \|\xv - \yv\| \quad \text{for each $\xv,\yv\in\mathcal{S}$ and some~$L>0$}
+    \end{equation*}
+\end{kframe}
+
+\begin{itemize}
+    \item \textbf{Examples} ($d=m=1$)\textbf{:} $\sin(x)$, $|x|$
+    \item \textbf{Not} examples: $1/x$ (but \textit{locally} Lipschitz continuous), $\sqrt{x}$
+    \item If $m=d$ and $h$ \textbf{differentiable}:
+        
+        \vspace{-0.5\baselineskip}
+        
+        \begin{kframe}
+            \vspace{-0.3\baselineskip}
+            \begin{equation*}
+                \text{$h$ Lipschitz continuous with constant $L$} \Longleftrightarrow J_h \preccurlyeq L \cdot \mathbf{I}_d
+            \end{equation*}
+        \end{kframe}
+        
+        \begin{footnotesize}
+            \textbf{Note:} $\Amat \preccurlyeq \mathbf{B} :\Longleftrightarrow \mathbf{B} - \Amat$ is positive semidefinite, i.e., $\mathbf{v}^T(\mathbf{B} - \Amat)\mathbf{v} \geq 0 \;\; \forall \mathbf{v} \neq 0$
+
+            \medskip
+            
+            \textbf{Proof} of \enquote{$\Rightarrow$} for $d=m=1$\textbf{:}
+            \begin{equation*}
+                |h'(x)| = \left| \lim_{\eps\to0} \frac{h(x+\eps)-h(x)}{\eps} \right| \overset{\text{|$\cdot$| cont.}}{=} \lim_{\eps\to0}\underbrace{\left|\frac{h(x+\eps)-h(x)}{\eps}\right|}_{\leq L} \leq \lim_{\eps\to0}L = L
+            \end{equation*}
+            [\textbf{Proof} of \enquote{$\Leftarrow$} by mean value theorem: Show that $\lambda_\text{max}(J_h) \leq L$.]
+        \end{footnotesize}
+\end{itemize}
+
+\end{vbframe}
+
+\begin{vbframe}{Lipschitz gradients}
+    \begin{itemize}
+        \item Let $f\in\mathcal{C}^2$.
+            Since $\nabla^2 f$ is Jacobian of $h = \nabla f$ $(m=d)$:
+            
+            \begin{kframe}
+                \vspace{-\baselineskip}
+                \begin{equation*}
+                    \text{$\nabla f$ Lipschitz continuous with constant $L$} \Longleftrightarrow \nabla^2 f \preccurlyeq L \cdot \mathbf{I}_d
+                \end{equation*}
+            \end{kframe}
+        \item Equivalently, eigenvalues of $\nabla^2 f$ are bounded by~$L$
+        \item \textbf{Interpretation:} Curvature in any direction is bounded by $L$
+        \item Lipschitz gradients occur frequently in machine learning \\
+            $\implies$ Fairly \textbf{weak assumption}
+        \item Important for analysis of \textbf{gradient descent} optimization \\
+            $\implies$ Descent lemma (later)
+    \end{itemize}
+\end{vbframe}
 
 \endlecture
 \end{document}
