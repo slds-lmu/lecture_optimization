@@ -46,7 +46,7 @@
 	Assume $f: \R^d \rightarrow \R$ convex and differentiable and assume that global minimum $\xv^\ast$ exists. Assume $\nabla f$ is Lipschitz continuous with $L > 0$: 
 
 	\begin{equation*}
-	|| \nabla \fx - \nabla f(\tilde{\xv}) || \le L ||\fx - f(\tilde{\xv}) || \quad \text{ for all } \xv, \tilde{\xv}
+	   || \nabla \fx - \nabla f(\tilde{\xv}) || \le L ||\fx - f(\tilde{\xv}) || \quad \text{ for all } \xv, \tilde{\xv}
 	\end{equation*}
 	
 	(i.e., gradient can't change arbitrarily fast).
@@ -115,7 +115,7 @@
 	
 	\framebreak
 	
-			Now, we bound $f(\xv^{[t]})$ in terms of $f(\xv^\ast)$ using that $f$ is convex. By 1st-order condition of convexity: Every tangent / 1st order Taylor is always below f (develop at $\xv^{[t]$, var of linear function is $\xv$):
+			Now, we bound $f(\xv^{[t]})$ in terms of $f(\xv^\ast)$ using that $f$ is convex. By 1st-order condition of convexity: Every tangent / 1st order Taylor is always below f (develop at $\xv^{[t]}$, var of linear function is $\xv$):
     
             $$
 			f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top (\xv - \xv^{[t]})

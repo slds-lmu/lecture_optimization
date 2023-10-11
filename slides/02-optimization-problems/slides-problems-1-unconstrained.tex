@@ -205,6 +205,23 @@ $$
 	\item Analytic solution: $\thetab = (\Xmat^\top \Xmat)^{-1}\Xmat^\top \bm{y}$, where $\Xmat$ is design matrix
 \end{itemize}
 
+%TODO: Add proof of convexity
+% \textbf{Example:} Linear regression.
+% Full rank~$\mathbf{X}\in\R^{n \times p}$, $\yv\in\R^n$ given:
+% Minimize
+% \begin{equation*}
+%     f(\bm{\beta}) = \|\yv-\mathbf{X}\bm{\beta}\|^2 = (\yv-\mathbf{X}\bm{\beta})^T(\yv-\mathbf{X}\bm{\beta}).
+% \end{equation*}
+
+% \begin{itemize}
+%     \item Hessian $H(\bm{\beta}) = 2\mathbf{X}^T\mathbf{X} \in \R^{p\times p}$
+%     \item For $\bm{v}\not=0$: $\bm{v}^T H(\bm{\beta}) \bm{v} = 2\bm{v}^T \mathbf{X}^T\mathbf{X} \bm{v} = 2\|\mathbf{X}\bm{v}\|^2 \geq 0$
+%     \item $\mathbf{X}$ full rank $\implies$ $\|\mathbf{X}\bm{v}\|^2 > 0$
+%     \item $\implies$ $H(\bm{\beta})$ \textbf{positive definite}
+%     \item $\implies$ $f$ \textbf{strictly convex}
+%     \item $\implies$ Linear regression is a \textbf{strictly convex} optimization problem
+% \end{itemize}
+
 \end{vbframe}
 
 \begin{vbframe}{Risk Minimization in ML}
