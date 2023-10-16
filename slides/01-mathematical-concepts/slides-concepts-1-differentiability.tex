@@ -333,7 +333,7 @@ and thus $\lambda_{1}=4, \lambda_{2}=1$, $\bm{v}_{1}=(0, 1)^T$, and $\bm{v}_{2}=
             
             \textbf{Proof} of \enquote{$\Rightarrow$} for $d=m=1$\textbf{:}
             \begin{equation*}
-                |h'(x)| = \left| \lim_{\eps\to0} \frac{h(x+\eps)-h(x)}{\eps} \right| \overset{\text{|$\cdot$| cont.}}{=} \lim_{\eps\to0}\underbrace{\left|\frac{h(x+\eps)-h(x)}{\eps}\right|}_{\leq L} \leq \lim_{\eps\to0}L = L
+                h'(x) = \lim_{\eps\to0} \frac{h(x+\eps)-h(x)}{\eps} \leq \lim_{\eps\to0}\underbrace{\left|\frac{h(x+\eps)-h(x)}{\eps}\right|}_{\leq L} \leq \lim_{\eps\to0}L = L
             \end{equation*}
             [\textbf{Proof} of \enquote{$\Leftarrow$} by mean value theorem: Show that $\lambda_\text{max}(J_h) \leq L$.]
         \end{footnotesize}

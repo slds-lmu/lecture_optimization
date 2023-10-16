@@ -209,16 +209,15 @@
             \vspace{-0.5\baselineskip}
 
             \begin{equation*}
-                q(\xv) = \xv^T\Amat\xv = \bm{v}^T\Lambda\bm{v} = \sum_{i=1}^d \lambda_iv_i^2 =: \tilde{q}(\bm{v})
+                q(\xv) = \xv^T\Amat\xv + \bm{b}^T\xv + c = \bm{v}^T\Lambda\bm{v} + \bm{b}^T V \bm{v} + c =: \tilde{q}(\bm{v})
             \end{equation*}
 
-            Observe:
-
-            \vspace{-0.5\baselineskip}
-
+            Now:
             \begin{equation*}
-                q(\textcolor{magenta}{\bm{v}_\text{max}}) = \textcolor{magenta}{\lambda_\text{max}} = \tilde{q}(\mathbf{e}_1) \quad\text{and}\quad q(\textcolor{orange}{\bm{v}_\text{min}}) = \textcolor{orange}{\lambda_\text{min}} = \tilde{q}(\mathbf{e}_d)
+                q(\bm{v}_j) = \mathbf{e}_j^T\Lambda\mathbf{e}_j + \bm{b}^T V \mathbf{e}_j + c = \tilde{q}(\mathbf{e}_j)
             \end{equation*}
+
+            Especially: $q(\textcolor{magenta}{\bm{v}_\text{max}}) = \textcolor{magenta}{\lambda_\text{max}} = \tilde{q}(\mathbf{e}_1) \quad\text{and}\quad q(\textcolor{orange}{\bm{v}_\text{min}}) = \textcolor{orange}{\lambda_\text{min}} = \tilde{q}(\mathbf{e}_d)$
         \end{footnotesize}
 \end{itemize}
 
@@ -230,7 +229,7 @@ We skipped the \textbf{proof} at first, but can now catch up on it.
 
 \begin{kframe}
     \footnotesize
-     If $H(\xv^\ast) \succ 0$ at stationary point~$\xv^\ast$, then $\xv^\ast$ is local maximum ($\prec$ for minimum).
+     If $H(\xv^\ast) \succ 0$ at stationary point~$\xv^\ast$, then $\xv^\ast$ is local minimum ($\prec$ for maximum).
 
      \medskip
 
