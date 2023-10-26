@@ -15,17 +15,22 @@ Let $f: [-1,2] \rightarrow \R, x \mapsto \exp(x^3 - 2x^2)$
     scale_linetype_discrete(name = "Function")
 
   @
-	\item $f$ is continuously differentiable $\Rightarrow$ candidates can only be stationary points and the boundary points. \\
+	\item $f$ is continuously differentiable $\Rightarrow$ candidates can only be stationary points and boundary points. \\
 	Find stationary points, i.e., points where \\ 
 	$f'(x) = 0 \iff  \underbrace{\exp(x^3 - 2x^2)}_{>0}\cdot(3x^2 - 4x) = 0 \iff 3x^2 - 4x = 0 \iff x(3x - 4) = 0 .$ \\
 	$\Rightarrow x_1 = 0, x_2 = 4/3.$
-	The other candidates are the boundary points, i.e., $x_3 = -1, x_4 = 2.$
+	The other candidates are boundary points, i.e., $x_3 = -1, x_4 = 2.$
 	\item $f''(x) = \exp(x^3 - 2x^2)\cdot(3x^2 - 4x)^2 + \exp(x^3 - 2x^2)\cdot(6x - 4)$ \\
-	\item $f''(x_1) = \exp(0)\cdot(- 4) < 0, f''(x_2) = \exp((4/3)^3 - 2(4/3)^2)\cdot(4) > 0$ \\
-	$\Rightarrow x_1$ is a local maximum and $x_2$ is a local minimum. \\
-	$x_3$ is on the left boundary and $f'(x_3) = \exp(-3)\cdot 7 > 0 \Rightarrow x_3$ is local minimum \\
-	$x_4$ is on the right boundary and $f'(x_4) = \exp(0)\cdot 4 > 0 \Rightarrow x_4$ is local maximum \\
-	\item $f(x_1) = \exp(0), f(x_4) = \exp(0) \Rightarrow x_1, x_2$ are global maxima. \\
-	$f(x_2) = \exp((4/3)^3 - 2(4/3)^2) \approx 0.3057, f(x_4) = \exp(-3) \approx 0.05 \Rightarrow x_4$ is global minimum.
+	\item $f''(x_1) = \exp(0)\cdot(- 4) < 0$ \\
+	  $\Rightarrow x_1$ is a local maximum \\[\baselineskip]
+	  $f''(x_2) = \exp((4/3)^3 - 2(4/3)^2)\cdot(4) > 0$ \\
+	  $\Rightarrow x_2$ is a local minimum. \\[\baselineskip]
+	  The boundary points $x_3$ and $x_4$ are not considered as \textit{local} optima.
+	\item $f(x_1) = \exp(0) = 1$ \\
+	 $f(x_2) = \exp((4/3)^3 - 2(4/3)^2) \approx 0.3057$ \\
+	  $f(x_3) = \exp(-3) \approx 0.05$ \\
+	  $f(x_4) = \exp(0) = 1$ \\
+	  $\Rightarrow x_1, x_2$ are global maxima.
+	  $x_3$ is global minimum.
 	
 \end{enumerate}
