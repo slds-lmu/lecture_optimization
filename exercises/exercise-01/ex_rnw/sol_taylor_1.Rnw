@@ -10,9 +10,9 @@ Consider the bivariate function $f: \R^2 \to \R, (x_1, x_2) \mapsto \exp(\pi \cd
 	With $\nabla^2 f(\mathbf{a}) = \begin{pmatrix}\pi^2  &  \pi \\
 	\pi & 0 \end{pmatrix}$ we get that 
 	\begin{align*}
-	T_{2,\mathbf{a}}(\mathbf{x}) = T_{1,\mathbf{a}}(\mathbf{x}) &+ 0.5\pi^2x_1^2 + \pi x_1 x_2 \\
-	&+ \pi x_1 \\
-	&+ 0.
+	T_{2,\mathbf{a}}(\mathbf{x}) = T_{1,\mathbf{a}}(\mathbf{x}) &+ 0.5\pi^2x_1^2 \\
+	  &+ \pi x_1 x_2 - \pi x_1 \\
+	  &+ 0.
 	\end{align*}.
 	\item $T_{2,\mathbf{a}}(\mathbf{x})$ is multivariate polynomial of degree 2 which means its Hessian is constant and we can directly see that $\mathbf{H}:= \nabla^2 T_{2,\mathbf{a}}(\mathbf{x}) = \nabla^2 f(\mathbf{a}).$
 	For the eigenvalues of the Hessian it must hold that
