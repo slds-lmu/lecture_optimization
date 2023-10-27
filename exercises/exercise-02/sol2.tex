@@ -226,26 +226,42 @@
 	\mathbf{x}} = \frac{\partial \sqrt{\Vert \mathbf{x} - \mathbf{c}  \Vert_2^2}}{\partial
 	\mathbf{x}} = \frac{0.5}{ \sqrt{\Vert \mathbf{x} - \mathbf{c}  \Vert_2^2}}\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}} \overset{(a)}{=} \frac{(\mathbf{x} - \mathbf{c})^\top}{\Vert \mathbf{x} - \mathbf{c}  \Vert_2}$
 	
-	\item $\frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}} = \frac{\partial \mathbf{u}^\top \mathbf{I} \mathbf{v}}{\partial \mathbf{x}} = \mathbf{u}^\top \mathbf{I} \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \mathbf{I} \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} = 
+	\item $\frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}} = \frac{\partial \mathbf{u}^\top \mathbf{I} \mathbf{v}}{\partial \mathbf{x}} = \mathbf{u}^\top \mathbf{I} \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \mathbf{I}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} = 
 	\mathbf{u}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}}$
 	
 \item $\frac{\partial \mathbf{u}^\top \mathbf{Y}}{\partial\mathbf{x}} = \frac{\partial\begin{pmatrix}\mathbf{u}^\top \mathbf{y}_1 \\ \vdots \\ \mathbf{u}^\top \mathbf{y}_d\end{pmatrix}}{\partial \mathbf{x}} \overset{(c)}{=} \begin{pmatrix}	\mathbf{u}^\top \frac{\partial  \mathbf{y}_1}{\partial \mathbf{x}} + \mathbf{y}_1^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} \\ \vdots \\
 \mathbf{u}^\top \frac{\partial  \mathbf{y}_d}{\partial \mathbf{x}} + \mathbf{y}_d^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}}
 \end{pmatrix}$ 
 	
-	\item Note for $\mathbf{y}:\R^d\rightarrow\R^d, \mathbf{x}\mapsto\mathbf{y}(\mathbf{x})$ the $i-$th column of $\frac{\partial\mathbf{y}}{\partial\mathbf{x}}$ is $\frac{\partial\mathbf{y}}{\partial x_i}$. With this it follows that \\
-	$\frac{\partial^2 \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}\partial\mathbf{x}^\top} \overset{(c)}{=} \frac{\mathbf{u}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}}}{\partial\mathbf{x}^\top} \overset{(d)}{=} \begin{pmatrix}	\mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_1\partial \mathbf{x}} + \frac{\partial\mathbf{v}}{\partial x_1}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} \\ \vdots \\
-\mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_d\partial \mathbf{x}} + \frac{\partial\mathbf{v}}{\partial x_d}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}}
-\end{pmatrix} + \begin{pmatrix}	\mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_1\partial \mathbf{x}} + \frac{\partial\mathbf{u}}{\partial x_1}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} \\ \vdots \\
-\mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_d\partial \mathbf{x}} + \frac{\partial\mathbf{u}}{\partial x_d}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}}
-\end{pmatrix}$ \\
-$\quad = \begin{pmatrix}	\mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_1\partial \mathbf{x}} + \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_1\partial \mathbf{x}} \\ \vdots \\
-\mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_d\partial \mathbf{x}} + 
-\mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_d\partial \mathbf{x}} 
-\end{pmatrix} +  \frac{\partial \mathbf{v}}{\partial \mathbf{x}}^\top \frac{\partial \mathbf{u}}{\partial \mathbf{x}} + 
-\frac{\partial \mathbf{u}}{\partial \mathbf{x}}^\top \frac{\partial \mathbf{v}}{\partial \mathbf{x}}$
-
-	
+	\item Note for $\mathbf{y}:\R^d\rightarrow\R^d, \mathbf{x}\mapsto\mathbf{y}(\mathbf{x})$ the $i-$th column of $\frac{\partial\mathbf{y}}{\partial\mathbf{x}}$ is $\frac{\partial\mathbf{y}}{\partial x_i}$.
+	  With this it follows that \\
+	  \begin{align*}
+      \frac{\partial^2 \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}\partial\mathbf{x}^\top} &= \frac{\partial}{\partial\mathbf{x}} \left( \frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial\mathbf{x}} \right) \\
+      &\overset{(c)}{=} \frac{\partial ( \mathbf{u}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} )}{\partial\mathbf{x}} \\
+      &\overset{(d)}{=} \begin{pmatrix}
+                          \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_1\partial \mathbf{x}} + \frac{\partial\mathbf{v}}{\partial x_1}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} \\
+                          \vdots \\
+                          \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_d\partial \mathbf{x}} + \frac{\partial\mathbf{v}}{\partial x_d}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}}
+                         \end{pmatrix}
+                         +
+                         \begin{pmatrix}
+                           \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_1\partial \mathbf{x}} + \frac{\partial\mathbf{u}}{\partial x_1}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} \\
+                           \vdots \\
+                           \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_d\partial \mathbf{x}} + \frac{\partial\mathbf{u}}{\partial x_d}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}}
+                         \end{pmatrix} \\
+      &= \begin{pmatrix}
+            \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_1\partial \mathbf{x}} \\
+            \vdots \\
+            \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_d\partial \mathbf{x}}
+         \end{pmatrix}
+         + \frac{\partial \mathbf{v}}{\partial \mathbf{x}}^\top \frac{\partial \mathbf{u}}{\partial \mathbf{x}}
+         + \frac{\partial \mathbf{u}}{\partial \mathbf{x}}^\top \frac{\partial \mathbf{v}}{\partial \mathbf{x}}
+         + \begin{pmatrix}
+            \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_1\partial \mathbf{x}} \\
+            \vdots \\
+            \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_d\partial \mathbf{x}} 
+           \end{pmatrix}.
+    \end{align*}
 \end{enumerate}
 }
 
