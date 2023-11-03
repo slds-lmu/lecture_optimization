@@ -20,16 +20,22 @@
 \item $\nabla f = (\sin(x_1^2 + x_2^2 + x_1x_2)(2x_1 + x_2), \sin(x_1^2 + x_2^2 + x_1x_2)(2x_2 + x_1))^\top$
 \item $\nabla^2 f = \begin{pmatrix} \cos(u)(2x_1 + x_2)^2 + 2\sin(u) & \cos(u)(2x_1 + x_2)(2x_2 + x_1) + \sin(u) \\ 
  \cos(u)(2x_1 + x_2)(2x_2 + x_1) + \sin(u) & \cos(u)(2x_2 + x_1)^2 + 2\sin(u)\end{pmatrix}$ with $u = x_1^2 + x_2^2 + x_1x_2.$
- \item Let $u: \R^2 \rightarrow \R, (x_1, x_2) \mapsto x_1^2 + x_2^2 + x_1x_2$. \\ % and $g:\R \rightarrow \R, u \mapsto -\cos(u)$.
- $\nabla u = (2x_1 + x_2, x_1 + 2x_2)^\top \overset{!}{=}  \mathbf{0} \iff \mathbf{x} = \mathbf{0}$ \\
- $\nabla^2 u = \begin{pmatrix} 2 & 1 \\ 1 & 2\end{pmatrix} \Rightarrow \mathbf{v}^\top \nabla^2 u \mathbf{v} = 2 v_1^2 + 2v_1v_2 + 2 v_2^2 = v_1^2 + v_2^2 + (v_1 + v_2)^2 \geq 0$ (equality only holds if $\mathbf{v} = \mathbf{0}$) $\Rightarrow \nabla^2 u$ is positive definite. \\
- $    \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top}-\cos(u) = \cos(u) \left(\frac{\partial}{\partial \mathbf{x}} u\right)^\top \frac{\partial}{\partial \mathbf{x}} u + \sin(u) \frac{\partial}{\partial \mathbf{x}\partial \mathbf{x}^\top} u$ \\
- Case $\mathbf{x} = \mathbf{0}: \left(\frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top}-\cos(u)\right)(\mathbf{0}) = \cos(u) \mathbf{0}  + 0 \frac{\partial}{\partial \mathbf{x}\partial \mathbf{x}^\top} u = \mathbf{0}$ (is p.s.d.)\\
-Case $\mathbf{x} \in S_{\overline{r}} \setminus \{\mathbf{0}\}: u \in (0, \pi/2) \Rightarrow \sin(u) > 0, \cos(u) > 0$ \\
-$\mathbf{v}^\top\left(\frac{\partial}{\partial \mathbf{x}} u\right)^\top \frac{\partial}{\partial \mathbf{x}} u\mathbf{v} = z\cdot z > 0$ with $z = \frac{\partial}{\partial \mathbf{x}}u\mathbf{v} \Rightarrow \left(\frac{\partial}{\partial \mathbf{x}} u\right)^\top \frac{\partial}{\partial \mathbf{x}} u$ is p.s.d.
-
-$    \frac{\partial^2}{\partial \mathbf{x} \partial \mathbf{x}^\top}-\cos(u) = \underbrace{\cos(u) \left(\frac{\partial}{\partial \mathbf{x}} u\right)^\top \frac{\partial}{\partial \mathbf{x}} u}_{\text{p.s.d.}} + \underbrace{\sin(u) \frac{\partial}{\partial \mathbf{x}\partial \mathbf{x}^\top} u}_{\text{p.d.}}$ is p.d. \\
-$\Rightarrow f_{|S_{\overline{r}}}$ is convex\\
-\item $\nabla f_{|S_{\overline{r}}} = -\underbrace{\cos(u)}_{> 0}\nabla u$ and $\nabla u = \mathbf{0} \iff \mathbf{x} = \mathbf{0} \overset{(e)}{\Rightarrow} \mathbf{0}$ is local minimum
+\item Let $u: \R^2 \rightarrow \R, (x_1, x_2) \mapsto x_1^2 + x_2^2 + x_1x_2$, such that $f(\mathbf{x}) = \cos(u(\mathbf{x}))$. \\
+  $\implies \nabla^2 f(\mathbf{x}) = \cos(u(\mathbf{x})) \nabla u(\mathbf{x}) \nabla u(\mathbf{x})^\top + \sin(u(\mathbf{x})) \nabla^2 u(\mathbf{x})$ \\
+  $\nabla u(\mathbf{x}) = (2x_1 + x_2, x_1 + 2x_2)^\top$ \\
+  $\nabla^2 u(\mathbf{x}) = \begin{pmatrix} 2 & 1 \\ 1 & 2\end{pmatrix}$ \\
+  For $\mathbf{x} \in S_{\bar{r}}$, it holds that $u(\mathbf{x}) \geq 0$, since $$0 \leq \frac{1}{2} (x_1^2 + x_2^2)^2 = \frac{1}{2}x_1^2 + \frac{1}{2}x_2^2 + x_1x_2 \leq x_1^2 + x_2^2 + x_1x_2 = u(\mathbf{x}),$$ and that $u(\mathbf{x}) < \pi/4$.
+  This implies that $\cos(u(\mathbf{x})) > 0$ and $\sin(u(\mathbf{x})) \geq 0$. \\
+  $\nabla u(\mathbf{x}) \nabla u(\mathbf{x})^\top$ is positive semi-definite since $$\mathbf{v}^\top \nabla u(\mathbf{x}) \nabla u(\mathbf{x})^\top \mathbf{v} = (\mathbf{v}^\top\nabla u(\mathbf{x}))^2 \geq 0.$$
+  $\nabla^2 u(\mathbf{x})$ is positive definite since $$\mathbf{v}^\top \nabla^2 u(\mathbf{x}) \mathbf{v} = 2 v_1^2 + 2v_1v_2 + 2 v_2^2 = v_1^2 + v_2^2 + (v_1 + v_2)^2 \geq 0$$
+  and equality only holds if $\mathbf{v} = \mathbf{0}$. \\
+  So, in total, for $\mathbf{x} \in S_{\bar{r}}$, we have that
+  \begin{equation*}
+    \nabla^2 f(\mathbf{x}) = \underbrace{\cos(u(\mathbf{x}))}_{> 0} \underbrace{\nabla u(\mathbf{x}) \nabla u(\mathbf{x})^\top}_{\text{p.s.d.}} + \underbrace{\sin(u(\mathbf{x}))}_{\geq 0} \underbrace{\nabla^2 u(\mathbf{x})}_{\text{p.d.}}.
+  \end{equation*}
+  $\Rightarrow \nabla^2 f(\mathbf{x})$ is positive semi-definite. \\
+  $\Rightarrow f_{|S_{\overline{r}}}$ is convex.
+\item For $\mathbf{x} \in S_{\bar{r}}$, it holds that $\nabla f(\mathbf{x}) = -\underbrace{\cos(u(\mathbf{x}))}_{> 0} \nabla u(\mathbf{x})$ and thus $$\nabla f(\mathbf{x}) = \mathbf{0} \iff \nabla u(\mathbf{x}) = \mathbf{0} \iff \mathbf{x} = \mathbf{0}.$$
+  It follows that $\mathbf{x} = \mathbf{0}$ is a local minimum.
 \item $f(\mathbf{0}) = -1$ and $\cos: \R \rightarrow [-1, 1].$ From this it follows that $\mathbf{0}$ must be a global minimum of $f$ since no element of the image of $f$ is smaller than $-1$.
 \end{enumerate}

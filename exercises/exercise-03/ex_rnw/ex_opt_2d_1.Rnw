@@ -7,8 +7,7 @@ Let $f:\R^2 \rightarrow \R, (x_1, x_2) \mapsto -\cos(x_1^2 + x_2^2 + x_1x_2)$
 Now, we define the restriction of $f$ to $S_r = \{(x_1, x_2) \in \R^2|\;x_1^2 + x_2^2 + x_1x_2 < r\}$ with $r\in\R, r>0,$ i.e.,  $f_{|S_r}: S_r \rightarrow \R, (x_1, x_2) \mapsto f(x_1, x_2).$
 \begin{enumerate}
   \setcounter{enumi}{3}
-  \item Show that $f_{|S_{\overline{r}}}$ with $\overline{r} = \pi/4$ is convex. \\
-  \textit{Hint:} The sum of a positive definite matrix and a positive semi-definite matrix is positive definite.
+  \item Show that $f_{|S_{\overline{r}}}$ with $\overline{r} = \pi/4$ is convex.
 	%\item Let $\mathcal{R} = \{r\in\R|\;r>0, f_{|S_r} \text{ is 
 	%convex}\}.$ Find $\overline{r} = \sup \mathcal{R}.$
 	\item Find the local minimum $\mathbf{x}^*$ of $f_{|S_{\overline{r}}}$
