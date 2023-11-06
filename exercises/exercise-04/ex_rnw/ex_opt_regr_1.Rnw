@@ -1,6 +1,6 @@
 \begin{enumerate}
 \item Show that ridge regression is a convex problem and compute its analytical solution (given the feature matrix $\mathbf{X} \in \R^{n\times d}$ and the target vector $\mathbf{y} \in \R^n$).
-\item When doing Bayesian regression we are interested in the posterior density $p_{\bm{\theta}|\;\mathbf{X}, \mathbf{y}}(\bm{\theta}) \propto p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}(\mathbf{y}) p_{\bm{\theta}}(\bm{\theta})$ where $p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}$ is the likelihood and $p_{\bm{\theta}}$ is the prior density. Assume the observations are i.i.d. with $y_i \sim \mathcal{N}(\mathbf{x}^\top_i\bm{\theta}, 1)$ and the parameters are also i.i.d. with $\bm{\theta}_j \sim \mathcal{N}(0, \sigma_w^2)$.
+\item When doing Bayesian regression we are interested in the posterior density $p_{\bm{\theta}|\;\mathbf{X}, \mathbf{y}}(\bm{\theta}) \propto p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}(\mathbf{y}) p_{\bm{\theta}}(\bm{\theta})$ where $p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}$ is the likelihood and $p_{\bm{\theta}}$ is the prior density. Assume the observations are i.i.d. with $y_i|\mathbf{x}_i \sim \mathcal{N}(\mathbf{x}^\top_i\bm{\theta}, 1)$ and the parameters are also i.i.d. with $\bm{\theta}_j \sim \mathcal{N}(0, \sigma_w^2)$.
 Find the maximizer of the posterior density. What do you observe?
 \item Find the prior density that would result in Lasso regression in b).
 
