@@ -228,17 +228,6 @@ This is ridge regression and the solution follows from a) with $\lambda = \frac{
 \item From b) we see that for the density of interest it must hold that \\
 $ -\log p(\theta) = 0.5\cdot\lambda\vert \theta \vert + c$ with $c\in\R \iff p(\theta) \propto \exp(-0.5 \cdot \lambda \vert \theta \vert).$ \\
 $\Rightarrow \theta \overset{\text{i.i.d.}}{\sim} \textrm{Laplace}(0, 2/\lambda).$
-\item Let $f:\R^d\rightarrow\R, \bm{\theta} \mapsto \Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2$. \\
-First consider the difference vector between the ungregularized solution and the regularized one: \\
-$\bm{\theta}^*_{\text{reg}} - \bm{\theta}^* = (\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y} -  \bm{\theta}^* = ( (\mathbf{X}^\top\mathbf{X})^{-1} -  (\mathbf{X}^\top\mathbf{X})^{-1}\lambda\mathbf{I}(\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}) \mathbf{X}^\top\mathbf{y} -  \bm{\theta}^*$ \\
-$ = \bm{\theta}^* - (\mathbf{X}^\top\mathbf{X})^{-1}\lambda\mathbf{I}(\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1} \mathbf{X}^\top\mathbf{y} -  \bm{\theta}^* =  - (\mathbf{X}^\top\mathbf{X})^{-1}\lambda\mathbf{I}(\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1} \mathbf{X}^\top\mathbf{y}$. \\
-This difference is only zero in general if $\lambda = 0 \Rightarrow \bm{\theta}^*_{\text{reg}} \neq \bm{\theta}^*.$ \\
-Now, assume that $ \Vert\bm{\theta}^*\Vert_2 \leq  \Vert\bm{\theta}_{\text{reg}}^*\Vert_2$ then it follows that $ \bm{\theta}_{\text{reg}}^* = \argmin_{\bm{\theta}} f$ s.t. $\Vert\bm{\theta}^*\Vert_2 \leq \Vert \bm{\theta} \Vert_2\leq t$ and consequently $\bm{\theta}^*_{\text{reg}} = \bm{\theta}^*$ which is a contradiction $\Rightarrow  \Vert\bm{\theta}_{\text{reg}}^*\Vert_2 < \Vert\bm{\theta}^*\Vert_2$. \\
-Now, assume that $\Vert\bm{\theta}_{\text{reg}}^*\Vert_2 < t(\lambda) < \Vert\bm{\theta}^*\Vert_2$: \\
-Since, by assumption $\mathbf{X}^\top\mathbf{X}$ is non-singular, $f$ is strictly convex and $f(\bm{\theta}_{\text{reg}}^*) > f(\bm{\theta}^*)$. \\
-Consider $\tilde{\bm{\theta}} = \bm{\theta}_{\text{reg}}^* + \frac{\bm{\theta}^* - \bm{\theta}_{\text{reg}}^*}{\Vert\bm{\theta}^* - \bm{\theta}_{\text{reg}}^*\Vert_2}\cdot \frac{t(\lambda) - \Vert\bm{\theta}_{\text{reg}}^*\Vert_2}{2}$ then $\tilde{\bm{\theta}}$ is by construction on the line between $\bm{\theta}_{\text{reg}}^*$ and $\bm{\theta}^*$. \\
-Hence $f(\tilde{\bm{\theta}}) < f(\bm{\theta}_{\text{reg}}^*)$ which is a contradiction ($\bm{\theta}_{\text{reg}}^*$ should be minimal in the constrained region) since $\Vert\tilde{\bm{\theta}}\Vert_2 < t$ by construction. \\
-$\Rightarrow \Vert \bm{\theta}_{\text{reg}}^* \Vert = t(\lambda).$
 
 \end{enumerate}
 }
