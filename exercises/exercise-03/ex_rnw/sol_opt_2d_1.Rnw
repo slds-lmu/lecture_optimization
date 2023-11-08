@@ -24,7 +24,7 @@
   $\implies \nabla^2 f(\mathbf{x}) = \cos(u(\mathbf{x})) \nabla u(\mathbf{x}) \nabla u(\mathbf{x})^\top + \sin(u(\mathbf{x})) \nabla^2 u(\mathbf{x})$ \\
   $\nabla u(\mathbf{x}) = (2x_1 + x_2, x_1 + 2x_2)^\top$ \\
   $\nabla^2 u(\mathbf{x}) = \begin{pmatrix} 2 & 1 \\ 1 & 2\end{pmatrix}$ \\
-  For $\mathbf{x} \in S_{\bar{r}}$, it holds that $u(\mathbf{x}) \geq 0$, since $$0 \leq \frac{1}{2} (x_1^2 + x_2^2)^2 = \frac{1}{2}x_1^2 + \frac{1}{2}x_2^2 + x_1x_2 \leq x_1^2 + x_2^2 + x_1x_2 = u(\mathbf{x}),$$ and that $u(\mathbf{x}) < \pi/4$.
+  For $\mathbf{x} \in S_{\bar{r}}$, it holds that $u(\mathbf{x}) \geq 0$, since $$0 \leq \frac{1}{2} (x_1 + x_2)^2 = \frac{1}{2}x_1^2 + \frac{1}{2}x_2^2 + x_1x_2 \leq x_1^2 + x_2^2 + x_1x_2 = u(\mathbf{x}),$$ and that $u(\mathbf{x}) < \pi/4$.
   This implies that $\cos(u(\mathbf{x})) > 0$ and $\sin(u(\mathbf{x})) \geq 0$. \\
   $\nabla u(\mathbf{x}) \nabla u(\mathbf{x})^\top$ is positive semi-definite since $$\mathbf{v}^\top \nabla u(\mathbf{x}) \nabla u(\mathbf{x})^\top \mathbf{v} = (\mathbf{v}^\top\nabla u(\mathbf{x}))^2 \geq 0.$$
   $\nabla^2 u(\mathbf{x})$ is positive definite since $$\mathbf{v}^\top \nabla^2 u(\mathbf{x}) \mathbf{v} = 2 v_1^2 + 2v_1v_2 + 2 v_2^2 = v_1^2 + v_2^2 + (v_1 + v_2)^2 \geq 0$$
