@@ -4,10 +4,10 @@ $\frac{\partial}{\partial \bm{\theta}} f = \bm{\theta}^\top\mathbf{X}^\top\mathb
 $\Rightarrow \bm{\theta} = (\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y}.$ \\
 $\frac{\partial^2}{\partial \bm{\theta}\partial\bm{\theta}^\top} f = \underbrace{\mathbf{X}^\top\mathbf{X}}_{\text{p.s.d.}} + \underbrace{\lambda \mathbf{I}}_{\text{p.d. if }\lambda > 0}$ is p.d. if $\lambda > 0 \Rightarrow f$ is (strictly) convex
 \item Since the observations and parameters are assumed to be i.i.d. it follows that \\
-$p_{\bm{\theta}|\;\mathbf{X}, \mathbf{y}}(\bm{\theta}) \propto p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}(\mathbf{y}) p_{\bm{\theta}}(\bm{\theta}) \propto \exp\left(-\frac{(\mathbf{X}\bm{\theta} - \mathbf{y})^\top\mathbf{I}(\mathbf{X}\bm{\theta} - \mathbf{y})}{2}\right)\exp\left(-\frac{\bm{\theta}^\top\mathbf{I}\bm{\theta}}{2\sigma_w^2}\right).$ \\
+$p_{\bm{\theta}|\;\mathbf{X}, \mathbf{y}}(\bm{\theta}) \propto p_{\mathbf{y}|\; \mathbf{X}, \bm{\theta}}(\bm{\theta}) p_{\bm{\theta}}(\bm{\theta}) \propto \exp\left(-\frac{(\mathbf{X}\bm{\theta} - \mathbf{y})^\top\mathbf{I}^{-1}(\mathbf{X}\bm{\theta} - \mathbf{y})}{2}\right)\exp\left(-\frac{\bm{\theta}^\top\bm{\theta}}{2\sigma_w^2}\right).$ \\
 The minimizer of the negative $\log$ posterior density is maximizer of posterior density and hence \\
-$\bm{\theta}^* = \argmin_{\theta} - \log \left(\exp\left(-\frac{(\mathbf{X}\bm{\theta} - \mathbf{y})^\top\mathbf{I}(\mathbf{X}\bm{\theta} - \mathbf{y})}{2}\right)\exp\left(-\frac{\bm{\theta}^\top\mathbf{I}\bm{\theta}}{2\sigma_w^2}\right)\right) = \argmin_{\theta} 0.5\Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + 0.5\cdot\frac{1}{2\sigma_w^2}\Vert\bm{\theta}\Vert^2_2.$ \\
-This is ridge regression and the solution follows from a) with $\lambda = \frac{1}{\sigma_w^2}$.
+$\bm{\theta}^* = \argmin_{\theta} - \log \left(\exp\left(-\frac{(\mathbf{X}\bm{\theta} - \mathbf{y})^\top(\mathbf{X}\bm{\theta} - \mathbf{y})}{2} -\frac{\bm{\theta}^\top\bm{\theta}}{2\sigma_w^2}\right)\right) = \argmin_{\theta} \frac{1}{2}\Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + \frac{1}{2 \cdot \sigma_w^2}\Vert\bm{\theta}\Vert^2_2.$ \\
+This is ridge regression and the solution follows from a) with $\lambda = 1/\sigma_w^2$.
 \item From b) we see that for the density of interest it must hold that \\
 $ -\log p(\theta) = 0.5\cdot\lambda\vert \theta \vert + c$ with $c\in\R \iff p(\theta) \propto \exp(-0.5 \cdot \lambda \vert \theta \vert).$ \\
 $\Rightarrow \theta \overset{\text{i.i.d.}}{\sim} \textrm{Laplace}(0, 2/\lambda).$

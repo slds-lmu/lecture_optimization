@@ -15,15 +15,18 @@ With this we find that $\mathcal{R}_\text{emp} = -\log \prod^n_{i=1}\P(y = y^{(i
 $\frac{\partial^2}{\partial \bm{\theta}\partial \bm{\theta}^\top}\mathcal{R}_{\text{emp}} = \sum^n_{i=1} \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)}) - \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}{(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}\mathbf{x}^{(i)}{\mathbf{x}^{(i)}}^\top =  \sum^n_{i=1}\underbrace{ \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{(1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})^2}}_{> 0}\underbrace{\mathbf{x}^{(i)}{\mathbf{x}^{(i)}}^\top}_{\text{p.s.d.}}$ \\
 is p.s.d. $\Rightarrow \mathcal{R}_{\text{emp}}$ is convex.
 
-\item We can transform the inequalities such that \\
-$\zeta^{(i)} \geq 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \quad \forall i \in \{1,\dots,n\}$ and $\zeta^{(i)} \geq 0 \quad \forall i \in \{1, \dots, n\}.$\\
-We can find the smallest $\zeta^{(i)}$ by assuring that always at least one constraint is active\footnote{the $\geq$ constraint is fulfiled with equality} since this means that the value can not be further reduced:\\
-$\zeta^{(i)} = \begin{cases} 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) & \text{for } 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \geq 0 \\
-0 & \text{for } 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) < 0
-\end{cases} = \max(1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right), 0)$ \\
-Inserting these $\zeta^{(i)}$ into the objective function results in $f(\bm{\theta}) =
-\frac{1}{2}\Vert\bm{\theta}\Vert^2_2 + C\sum^n_{i=1}\max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0).$
-Minimzing $f$ is equivalent to minimizing $\frac{1}{2C}\Vert\bm{\theta}\Vert^2_2 + \sum^n_{i=1}\max(1-y^{(i)}(\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0), 0) \Rightarrow \lambda = \frac{1}{2C}.$
+\item We can transform the inequalities such that
+    $$\zeta^{(i)} \geq 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \quad\text{and}\quad \zeta^{(i)} \geq 0$$
+  for all $i \in \{1,\dots,n\}$.
+  However, for a minimizer of the first primal form, it has to hold that
+    $$\zeta^{(i)} = \begin{cases} 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) & \text{if } 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \geq 0 \\
+    0 & \text{if } 1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) < 0
+    \end{cases} \Biggr\} = \max(1 - y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right), 0),$$
+  since, otherwise, it would not be a minimizer.
+
+  Now, we can insert $\zeta^{(i)}$ into the objective function and get $$f(\bm{\theta}) =
+  \frac{1}{2}\Vert\bm{\theta}\Vert^2_2 + C\sum^n_{i=1}\max(1-y^{(i)}\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0, 0).$$
+  Minimizing $f$ is equivalent to minimizing $f/C$, i.e., $$\sum^n_{i=1}\max(1-y^{(i)}(\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0), 0) + \lambda\Vert\bm{\theta}\Vert^2_2$$ for $\lambda = 1/(2C).$
 
 \item First we show that $g:\R \rightarrow \R, x \mapsto \max(x, 0)$ is convex: \\
 $g(x) = 0.5\vert x \vert + 0.5x \Rightarrow \max(x, 0)$ is convex since it is the sum of two convex functions. \\
