@@ -5,7 +5,10 @@ library(latex2exp)
 library(ggpubr)
 
 set.seed(1234)
-x = rpois(25, lambda = 0.75)
+x = rpois(250, lambda = 1.)
+
+thetav = list()
+out = list()
 
 neg_log_lik = function(theta) {
   y = - sum(log(dpois(x, theta)))
@@ -14,35 +17,27 @@ neg_log_lik = function(theta) {
   return(y)
 }
 
-theta_grid = seq(0.25, 0.75, length.out = 1000)
+theta_grid = seq(0.75, 1.25, length.out = 1000)
 y = sapply(theta_grid, neg_log_lik)
 df = data.frame(theta = theta_grid, y = y)
 
-p1 = ggplot(data = df, aes(x = theta_grid, y = y)) + geom_line() + xlab(TeX('$\\lambda$')) + ylab("Negative log-likelihood") + theme_bw()
-
-# p1 = p1 + geom_point(data = data.frame(x = 0.6, y = neg_log_lik(0.6)), aes(x = x, y = y), colour = "blue", size = 2, shape = 8)
-
+p = ggplot(data = df, aes(x = theta_grid, y = y)) + geom_line() + xlab(TeX('$\\lambda$')) + ylab("Negative log-likelihood") + theme_bw()
 
 thetav = list()
 out = list()
 
-optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE, method = "GoldenRatio")
+optimizeR(neg_log_lik, lower = 0.5, upper = 1.5, trace = TRUE, method = "GoldenRatio", tol = 1e-10)
 
-archive = data.frame(iter = 1:length(thetav), x = unlist(thetav), y = unlist(out), M = "GoldenRatio")
+archive = data.frame(iter = 1:length(thetav), x = unlist(thetav), y = unlist(out), Method = "GoldenRatio")
 
 thetav = list()
 out = list()
 
-optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE)
+optimizeR(neg_log_lik, lower = 0.5, upper = 1.5, trace = TRUE, tol = 1e-10)
 
-archive = rbind(archive, data.frame(iter = 1:length(thetav), x = unlist(thetav), y = unlist(out), M = "Brent"))
+archive = rbind(archive, data.frame(iter = 1:length(thetav), x = unlist(thetav), y = unlist(out), Method = "Brent"))
 
-p1 = p1 + geom_point(data = archive, aes(x = x, y = y, colour = M), alpha = 0.5)
-# p1 = p1 + ylim(c(20, 40))
-
-p2 = ggplot() + geom_line(data = archive, aes(x = log(iter), y = y, colour = M)) + theme_bw()
-
-p = ggarrange(p1, p2, common.legend = TRUE)
+p = p + geom_point(data = archive, aes(x = x, y = y, colour = Method), alpha = 0.5) + theme(axis.text.y=element_blank())
 
 
-ggsave("figure_man/poisson.pdf", p, width = 6, height = 3)
+ggsave("figure_man/poisson.pdf", p, width = 4, height = 2)

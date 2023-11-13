@@ -31,22 +31,26 @@
 
 	\begin{vbframe}{Controlling step size: Fixed \& adaptive}
 		
-		In every iteration $t$, we need to choose not only a descent direction $\mathbf{d}^{[t]}$, but also a step size $\alpha^{[t]}$:
-		\begin{itemize}
-		\begin{footnotesize}
-			\item If $\alpha^{[t]}$ is too small, the procedure may converge very slowly (left). 
-			\item If $\alpha^{[t]}$ is too large, the procedure may not converge, because we \enquote{jump} around the optimum (right).
-					Use fixed step size $\alpha$ in each iteration: $\alpha^{[t]} = \alpha$
-		\end{footnotesize}
-		\end{itemize}
+		Iteration $t$: Choose not only descent direction $\mathbf{d}^{[t]}$, but also step size $\alpha^{[t]}$
 
-		
+        \medskip
+  
+        First approach: \textbf{Fixed} step size $\alpha^{[t]} = \alpha > 0$
+        \begin{footnotesize}
+            \begin{itemize}
+                \item If $\alpha$ too small, procedure may converge very slowly (left)
+                \item If $\alpha$ too large, procedure may not converge $\rightarrow$ \enquote{jumps} around optimum (middle)
+		      \end{itemize}
+        \end{footnotesize}
+        
+        \textbf{Adaptive} step size $\alpha^{[t]}$ can provide better convergence (right)
+        
 		\begin{center}
 			\includegraphics[width = 0.3\textwidth]{figure_man/stepsize_small.png}~~
 			\includegraphics[width = 0.3\textwidth]{figure_man/stepsize_large.png}~~
 			\includegraphics[width = 0.3\textwidth]{figure_man/stepsize_adaptive.png}
 			\begin{footnotesize}
-				Steps of a line search for $f(\bm{x}) = 10 x_1^2 + 0.5 x_2^2$, left $100$ steps with fixed step size, right only $40$ steps with adaptively selected step size.
+				Steps of line searches for $f(\bm{x}) = 10 x_1^2 + x_2^2/2$
 			\end{footnotesize}
 		\end{center} 		
 		
@@ -82,132 +86,214 @@
 	
 	\begin{vbframe}{Step size control: Diminishing step size}
 
-	How can we adaptively control step size? 
-	
-		\begin{itemize}
-			\item A natural way of selecting $\alpha$ is to decrease its value over time
-			% \item This involves a time-varying step size, resulting in an algorithm with update step
-			%\item These kind of methods are called \textbf{diminishing $\alpha$ rate}
-			% where the denominator contains the $t$-th run of the GD and consequently decreases $\alpha$ within each step
-			% \item Diminishing step size has to meet the following conditions:
-			% \item[] $\sum_{t=1}^{\infty} \bigl(\alpha^{[t]}\bigl)^2 < \infty, \quad \sum_{t=1}^{\infty} \alpha^{[t]} = \infty$,
-			% \item[] square summable but not summable
-			% \item Aim in both instances: $\lambda$ should be chosen to induce the most rapid minimization possible $\rightarrow$ within fixed step length this often means choosing the largest possible $\lambda$-value for proper convergence
-			% \item \textit{Note}: the diminishing step size rule does not guarantee cost function descent at each iteration, although it reduces the cost function value
-			% once the step size becomes sufficiently small.
-		\end{itemize}
+    	How can we adaptively control step size?
 
-		\begin{center}
-			\includegraphics[width = 1\textwidth]{figure_man/fixed_vs_adaptive.pdf} \\
-			\begin{footnotesize} Example: GD on $f(x) = \begin{cases} \frac{1}{2} x^2 & \text{if } |x| \le \delta \\  \delta \cdot (|x|- 1 / 2 \cdot \delta) & \text{ otherwise,}\end{cases}$ \\ with constant (small) step size, constant (large) step size, and diminishing step size $\alpha^{[t]} = \frac{1}{t}$, with $t$ being the iteration of GD. 
-			\end{footnotesize}
-		\end{center}
+        \medskip
+    
+        A natural way of selecting $\alpha^{[t]}$ is to decrease its value over time
+
+        \medskip
+    	
+        %\begin{itemize}
+            % \item A natural way of selecting $\alpha^{[t]}$ is to decrease its value over time
+            % \item This involves a time-varying step size, resulting in an algorithm with update step
+            %\item These kind of methods are called \textbf{diminishing $\alpha$ rate}
+            % where the denominator contains the $t$-th run of the GD and consequently decreases $\alpha$ within each step
+            % \item Diminishing step size has to meet the following conditions:
+            % \item[] $\sum_{t=1}^{\infty} \bigl(\alpha^{[t]}\bigl)^2 < \infty, \quad \sum_{t=1}^{\infty} \alpha^{[t]} = \infty$,
+            % \item[] square summable but not summable
+            % \item Aim in both instances: $\lambda$ should be chosen to induce the most rapid minimization possible $\rightarrow$ within fixed step length this often means choosing the largest possible $\lambda$-value for proper convergence
+            % \item \textit{Note}: the diminishing step size rule does not guarantee cost function descent at each iteration, although it reduces the cost function value
+            % once the step size becomes sufficiently small.
+        %\end{itemize}
+    
+        \textbf{Example:} GD on
+        \begin{equation*}
+            f(x) = 
+            \begin{cases}
+                \frac{1}{2} x^2 & \text{if $|x| \le \delta$}, \\
+                \delta \cdot (|x|- 1 / 2 \cdot \delta) & \text{otherwise}.
+            \end{cases}
+        \end{equation*}
+        \begin{center}
+            \includegraphics[width=\textwidth]{figure_man/fixed_vs_adaptive.pdf} \\
+            \begin{footnotesize}
+                GD with small constant (\textbf{red}), large constant (\textbf{green}), and diminishing (\textbf{blue}) step size
+            \end{footnotesize}
+        \end{center}
 		
 	\end{vbframe}	
 	
-	\begin{vbframe}{Step size control: Exact Line-Search}
+	\begin{vbframe}{Step size control: Exact Line Search}
 		Use \textbf{optimal} step size in each iteration:
 		\vspace*{-0.1cm}
 		$$ \alpha^{[t]} = \argmin_{\alpha \in \R_{\ge 0}} g(\alpha) = \argmin_{\alpha \in \R_{\ge 0}} f(\bm{x}^{[t]} + \alpha \mathbf{d}^{[t]})$$
 		\begin{columns}
-			\begin{column}{0.48\textwidth}
-				
-				\vspace*{-0.2cm}
-				% This is also called \textbf{exact} procedure, since the step size is chosen optimally.
-				In each iter solve an \textbf{univariate optimization problem} $\argmin g(\alpha)$ (e.g. via golden ratio). Problem: Expensive, \textcolor{red}{prone to poorly conditioned problems}
+			\begin{column}{0.59\textwidth}
+				Need to solve a \textbf{univariate} optimization problem in each iteration
+
+                $\Rightarrow$ univariate optimization methods
+
+                \medskip
+                
+                \textbf{Problem:} Expensive, \textcolor{red}{prone to poorly conditioned problems}
+
+                \medskip
+
+                \textbf{But:} No need for \textit{optimal} step size.
+                Only need a step size that is \enquote{good enough}.
+                
+                \textbf{Reason:} Effort may not pay off, but in some cases slows down performance.
 			\end{column}
-			\begin{column}{0.48\textwidth}
+			\begin{column}{0.4\textwidth}
 				\vspace*{-1cm}
 				\begin{center}
-					\includegraphics[width = 0.8\textwidth]{figure_man/line_search_rosenbrock.png} \\
-					\includegraphics[width = 0.8\textwidth]{figure_man/line_search_rosenbrock_alpha.png}
+					\includegraphics[width = \textwidth]{figure_man/line_search_rosenbrock.png} \\
+					\includegraphics[width = \textwidth]{figure_man/line_search_rosenbrock_alpha.png}
 				\end{center}
 			\end{column}
 		\end{columns}
 	\end{vbframe}
 	
-	
 	\begin{frame}{Armijo rule}
 		\begin{center}
-			\includegraphics[width = 0.7\textwidth]{figure_man/armijo.pdf}
+			\includegraphics[height=0.5\textheight,keepaspectratio]{figure_man/armijo.pdf}
 		\end{center}
 		
+		\onslide<1>{
+            \textbf{Inexact line search:} Minimize objective \enquote{sufficiently} without computing optimal step size exactly
 
-		\onslide<1>{Inext line search: Efficient procedures to minimize objective \enquote{sufficiently}, without computing optimal step size exactly. Common condition to ensure objective decreases \enquote{sufficiently}: \textbf{Armijo rule}.}
+            \medskip
+  
+            Common condition to guarantee \enquote{sufficient} decrease: \textbf{Armijo rule}
+        }
 		
 		\onslide<2>{
-			\vspace*{-2cm}
-			$\alpha$ satisfies \textbf{Armijo rule} in $\xv$ for descent direction $\bm{d}$ if for fixed $\gamma \in (0, 1)$:
-		$$
-		f(\xv + \alpha \bm{d}) \le \fx + \gamma \alpha \nabla \fx^\top \bm{d}.
-		$$
+			\vspace*{-1.75cm}
+            Fix $\gamma_1 \in (0, 1)$.
+			$\alpha$ satisfies \textbf{Armijo rule} in $\xv$ for descent direction $\mathbf{d}$ if
+    		$$
+    		f(\xv + \alpha \mathbf{d}) \le \fx + \gamma_1 \alpha \nabla \fx^\top \mathbf{d}.
+    		$$
+
+            \textbf{Note:} $\nabla \fx^\top \mathbf{d} < 0$ ($\mathbf{d}$ \textit{descent} dir.) $\implies f(\xv + \alpha \mathbf{d}) < \fx$.
 		}
 		
 		\onslide<3>{
-			\vspace*{-2.3cm}
-			Feasibility: If $\bm{d}$ is descent direction, there exists $\alpha$ which fulfulls Armijo rule for each $\gamma \in (0, 1)$.
-			In many cases, the Armijo rule guarantees local convergence of GD and is therefore frequently used.
+			\vspace*{-2.25cm}
+			\textbf{Feasibility:} For descent direction $\mathbf{d}$ and $\gamma_1 \in (0, 1)$, there exists $\alpha>0$ fulfilling Armijo rule.
+			In many cases, Armijo rule guarantees local convergence of GD and is therefore frequently used.
 		}
 				
 %		\onslide<8>{
 %		\begin{footnotesize}
-%			\textbf{Intuitively: } The Armijo rule is satisfied for the increments $\alpha$, for which the \enquote{tapered} tangent in $\bm{x}$ in the direction of $\bm{d}$
+%			\textbf{Intuitively: } The Armijo rule is satisfied for the increments $\alpha$, for which the \enquote{tapered} tangent in $\bm{x}$ in the direction of $\mathbf{d}$
 %			
 %			$$
-%			f(\bm{x}) + \textcolor{blue}{\gamma} \alpha \nabla f(\bm{x})^\top \bm{d}
+%			f(\bm{x}) + \textcolor{blue}{\gamma} \alpha \nabla f(\bm{x})^\top \mathbf{d}
 %			$$
 %			
-%			lies above $f(\bm{x} + \alpha \bm{d})$.
+%			lies above $f(\bm{x} + \alpha \mathbf{d})$.
 %		\end{footnotesize}}
 		
 	\end{frame}
 	
 	\begin{vbframe}{Backtracking line search}
+		\small 
+    	Procedure to meet the Armijo rule: \textbf{Backtracking} line search
+
+        \vspace{0.3\baselineskip}
 		
-		Backtracking line search is a procedure to meet the Armijo rule.
-		
-		\lz
-		
-		\textbf{Idea: } Decrease $\alpha$ until the Armijo rule is met.
+		\textbf{Idea:} Decrease $\alpha$ until Armijo rule is met
 		
 		\begin{algorithm}[H]
+            \footnotesize
 			\caption{Backtracking line search}
 			\begin{algorithmic}[1]
-				\State Choose initial step size $\alpha = \alpha^{[0]}$, $0 < \gamma < 1$ and $0 < \tau < 1$
-				\While{$f(\bm{x} + \alpha \bm{d}) > f(\bm{x}) + \gamma \alpha \nabla f(\bm{x})^\top \bm{d}$}
+				\State Choose initial step size $\alpha = \alpha_{\text{init}}$, $0 < \gamma_1 < 1$ and $0 < \tau < 1$
+				\While{$f(\bm{x} + \alpha \mathbf{d}) > f(\bm{x}) + \gamma_1 \alpha \nabla f(\bm{x})^\top \mathbf{d}$}
 				\State Decrease $\alpha$: $\alpha \leftarrow \tau \cdot \alpha$
 				\EndWhile
 			\end{algorithmic}
 		\end{algorithm}
-		
-		The procedure is simple and shows good performance in practice.
+
+        \vspace*{-\baselineskip}
+
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.7\textwidth]{figure_man/backtracking-example.png}
+            \caption*{\footnotesize (Source: Martins and Ning. \textit{Engineering Design Optimization}, 2021.)}
+        \end{figure}
 		
 	\end{vbframe}
 	
-%	\begin{vbframe}{Wolfe conditions}
-%		The Armijo rule is often complemented by the curvature condition to rule out unacceptably short steps:  
-%		
-%		$$
-%		\nabla f(x_k + \alpha_t \mathbf{d}^{[t]}) \mathbf{d}^{[t]} \geq c_2 \nabla f \mathbf{d}^{[t]}
-%		$$
-%		
-%		Both conditions together form the \textit{Wolfe conditions}. 
-%		
-%		\begin{center}
-%			\includegraphics[width = 0.5\textwidth]{figure_man/wolfe_conditions.jpg}\\
-%			\begin{footnotesize}
-%				Step lengths satisfying the Wolfe conditions. \\
-%				Source: Nocedal/Wright, Numerical Optimization (2006)
-%			\end{footnotesize}
-%		\end{center}
-%	\end{vbframe}
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{vbframe}{Wolfe conditions}
+        Backtracking is simple and shows good performance in practice
+
+        \medskip
+
+        \textbf{But:} Two undesirable scenarios
+        \begin{enumerate}
+            \item Initial step size $\alpha_{\text{init}}$ is too large $\Rightarrow$ need multiple evaluations of $f$
+            \item Step size is too small with highly negative slopes
+        \end{enumerate}
+
+        \medskip
+
+        \textbf{Solution} for small step sizes:
+        \begin{itemize}
+            \item Fix $\gamma_2$ with $0 < \gamma_1 < \gamma_2 < 1$.
+            \item $\alpha$ satisfies \textbf{sufficient curvature condition} in $\xv$ for $\mathbf{d}$ if
+                \begin{equation*}
+		              | \nabla f(\xv + \alpha \mathbf{d})^\top \mathbf{d} | \leq \gamma_2 | \nabla f(\xv)^\top \mathbf{d} |.
+                \end{equation*}
+        \end{itemize}
+        
+        \begin{center}
+            \begin{framed}
+                Armijo rule + sufficient curvature condition = \textbf{Wolfe conditions}
+            \end{framed}
+        \end{center}
+
+        \framebreak
+
+        \textbf{Algorithm} for finding a Wolfe point (point satisfying Wolfe conditions):
+        \begin{enumerate}
+            \item \textbf{Bracketing:} Find interval containing Wolfe point
+            \item \textbf{Pinpointing:} Find Wolfe point in interval from bracketing
+        \end{enumerate}
+
+        \begin{center}
+            \includegraphics[height=0.5\textheight,keepaspectratio]{figure_man/wolfe_bracketing.png}~~
+            \includegraphics[height=0.5\textheight,keepaspectratio]{figure_man/wolfe_pinpointing.png} \\
+            
+            \medskip
+            
+            {\footnotesize \textbf{Left:} Bracketing.
+                \textbf{Right:} Pinpointing. \\
+                (Source: Martins and Ning. \textit{EDO}, 2021.)}
+        \end{center}
+	\end{vbframe}
+
+    \begin{vbframe}{Bracketing \& Pinpointing}
+        \textbf{Example:}
+        \begin{itemize}
+            \item Large initial step size results in quick bracketing but multiple pinpointing steps (\textbf{left}).
+            \item Small initial step size results in multiple bracketing steps but quick pinpointing (\textbf{right}).
+        \end{itemize}
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.7\textwidth]{figure_man/bracketing-pinpointing-example.png}
+            \caption*{Source: Martins and Ning. \textit{EDO}, 2021.}
+        \end{figure}
+    \end{vbframe}
+
 	\begin{vbframe}{Gradient Descent and Optimality}
 	
 	\begin{itemize}
-		\item GD is a greedy algorithm: In every iteration, it makes locally optimal moves.
-		\vspace*{0.5mm}
-		\item If $\riskt$ is \textbf{convex} and \textbf{differentiable}, and its gradient is Lipschitz continuous, GD is guaranteed to converge to the global minimum for small enough step-size.  
+		\item GD is a greedy algorithm: locally optimal moves
+		\medskip
+		\item If $\riskt$ is \textbf{convex} and \textbf{differentiable}, and its \textbf{gradient} is \textbf{Lipschitz continuous}, GD is guaranteed to converge to the global minimum for small enough step size.
 		% \vspace*{0.5mm}
 		% \item However, if $\riskt$ has multiple local optima and/or saddle points, GD might only converge to a stationary point (other than the global optimum), depending on the starting point. 
 	\end{itemize}

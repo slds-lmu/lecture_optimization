@@ -199,7 +199,8 @@ $f, h$ smooth. Problem $\textbf{not convex}$ ($\mathcal{S}$ is not a convex set)
 
 \begin{vbframe}{Example 2: Maximum likelihood}
 
-\textbf{Experiment}: Draw $m$ balls from a bag with balls of $k$ different colors. Ball $j$ has a probability of $p_j$ of being drawn. 
+\textbf{Experiment}: Draw $m$ balls from a bag with balls of $k$ different colors.
+Color $j$ has a probability of $p_j$ of being drawn. 
 
 \lz 
 
@@ -429,7 +430,7 @@ $$
 
 	\begin{eqnarray*}
 		& \min\limits_{\thetab, \thetab_0} & \frac{1}{2} \|\thetab\|^2 \\ % + C   \sum_{i=1}^n \sli \\
-		& \text{s.t.} & \,\, \yi  \left( \scp{\thetab}{\xi} + \thetab_0 \right) \geq 1 \quad \forall\, i \in \nset
+		& \text{s.t.} & \,\, \yi  \left( \scp{\thetab}{\xi} + \theta_0 \right) \geq 1 \quad \forall\, i \in \nset
 		% & \text{and} & \,\, \sli \geq 0 \quad \forall\, i \in \nset.\\
 	\end{eqnarray*}
 
@@ -459,7 +460,7 @@ $$
 
 	\begin{eqnarray*}
 		& \min\limits_{\thetab, \thetab_0,\sli} & \frac{1}{2} \|\thetab\|^2 + \textcolor{violet}{C   \sum_{i=1}^n \sli} \\
-		& \text{s.t.} & \,\, \yi  \left( \scp{\thetab}{\xi} + \thetab_0 \right) \geq 1 \textcolor{violet}{- \sli} \quad \forall\, i \in \nset,\\
+		& \text{s.t.} & \,\, \yi  \left( \scp{\thetab}{\xi} + \theta_0 \right) \geq 1 \textcolor{violet}{- \sli} \quad \forall\, i \in \nset,\\
 		& \text{and} & \,\, \textcolor{violet}{\sli \geq 0 \quad \forall\, i \in \nset.}\\
 	\end{eqnarray*}
 
@@ -519,21 +520,21 @@ $$
 \vspace*{-0.5cm}
 
 \begin{footnotesize}
-Matrix notation: 
+\textit{Matrix notation:}
 \begin{eqnarray*}
 	& \max\limits_{\alphav \in \R^n} & \bm{\alpha}^\top \bm{1} - \frac{1}{2} \bm{\alpha}^\top ~ \text{diag}(\bm{y}) ~ \Xmat^\top \Xmat ~ \text{diag}(\bm{y})~\bm{\alpha} \\
 	& \text{s.t. } & 0 \le \alpha_i \le C \quad \forall\, i \in \nset, \quad \bm{\alpha}^\top \bm{y} = 0
 \end{eqnarray*}
-Kernelization: Replace dot-product between x's  with $\bm{K}_{ij} = k(\xi, \xi[j])$ for $k(.,.)$ pd definite kernel function / psd kernel matrix. 
-\end{footnotesize}
 
+\textit{Kernelization:}
+Replace dot product between $\xv$'s with $\bm{K}_{ij} = k(\xi, \xi[j])$, where $k(\cdot,\cdot)$ is a positive definite kernel function ($\Rightarrow$ $\bm{K}$ positive semi-definite).
+\end{footnotesize}
 
 \begin{footnotesize}
 \begin{eqnarray*}
 	& \max\limits_{\alphav \in \R^n} & \bm{\alpha}^\top \bm{1} - \frac{1}{2} \bm{\alpha} ~ \text{diag}(\bm{y}) ~ \bm{K} ~ \text{diag}(\bm{y})~\bm{\alpha} \\
 	& \text{s.t. } & 0 \le \alpha_i \le C \quad \forall\, i \in \nset, \quad \bm{\alpha}^\top \bm{y} = 0
 \end{eqnarray*}
-
 
 \vspace*{0.2cm}
 

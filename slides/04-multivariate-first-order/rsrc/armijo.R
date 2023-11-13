@@ -27,7 +27,7 @@ plot = plot + geom_text(aes(x = 0.1, y = -1.7, label = "alpha~nabla~f(x)^T~d"), 
 
 plot = plot + stat_function(fun = tangent_red, color = "blue", lty = 2)
 plot = plot + geom_text(aes(x = 1.5, y = 2, label = "tapered tangent"), color = "blue")
-plot = plot + geom_text(aes(x = 1.5, y = 1.7, label = "gamma~alpha~nabla~f(x)^T~d"), parse = T, color = "blue")
+plot = plot + geom_text(aes(x = 1.5, y = 1.7, label = "gamma[1]~alpha~nabla~f(x)^T~d"), parse = T, color = "blue")
 
 plot = plot + geom_line(data = d, aes(x = x, y = y), color = "red")
 plot = plot + geom_text(aes(x = 1, y = -1, label = "Armijo rule holds"), color = "red")
