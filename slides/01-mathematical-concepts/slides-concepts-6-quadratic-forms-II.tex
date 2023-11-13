@@ -188,13 +188,13 @@
             \vspace{-\baselineskip}
             
             \begin{equation*}
-                \xv^T\Amat\xv = \xv^T\mathbf{V}\Lambda\mathbf{V}^T\xv = \bm{v}^T\Lambda\bm{v} = \sum_{i=1}^d \lambda_iv_i^2 \leq \textcolor{magenta}{\lambda_\text{max}} \sum_{i=1}^d v_i^2 = \textcolor{magenta}{\lambda_\text{max}}\|\bm{v}\|^2
+                \xv^T \mathbf{H} \xv = \xv^T\mathbf{V}\Lambda\mathbf{V}^T\xv = \bm{v}^T\Lambda\bm{v} = \sum_{i=1}^d \lambda_iv_i^2 \leq \textcolor{magenta}{\lambda_\text{max}} \sum_{i=1}^d v_i^2 = \textcolor{magenta}{\lambda_\text{max}}\|\bm{v}\|^2
             \end{equation*}
-            Since $\|\bm{v}\| = \|\xv\|$ ($\mathbf{V}$ orthogonal): $\max_{\|\xv\|=1} \xv^T\Amat\xv \leq \textcolor{magenta}{\lambda_\text{max}}$
+            Since $\|\bm{v}\| = \|\xv\|$ ($\mathbf{V}$ orthogonal): $\max_{\|\xv\|=1} \xv^T \mathbf{H} \xv \leq \textcolor{magenta}{\lambda_\text{max}}$
             
-            Additional: $\textcolor{magenta}{\bm{v}_\text{max}}^T\Amat\textcolor{magenta}{\bm{v}_\text{max}} = \mathbf{e}_1^T\Lambda\mathbf{e}_1 = \textcolor{magenta}{\lambda_\text{max}}$
+            Additional: $\textcolor{magenta}{\bm{v}_\text{max}}^T \mathbf{H} \textcolor{magenta}{\bm{v}_\text{max}} = \mathbf{e}_1^T\Lambda\mathbf{e}_1 = \textcolor{magenta}{\lambda_\text{max}}$
 
-            Analogous: $\min_{\|\xv\|=1} \xv^T \Amat \xv \geq \textcolor{orange}{\lambda_\text{min}}$ and $\textcolor{orange}{\bm{v}_\text{min}}^T\Amat\textcolor{orange}{\bm{v}_\text{min}} = \textcolor{orange}{\lambda_\text{min}}$
+            Analogous: $\min_{\|\xv\|=1} \xv^T \mathbf{H} \xv \geq \textcolor{orange}{\lambda_\text{min}}$ and $\textcolor{orange}{\bm{v}_\text{min}}^T \mathbf{H} \textcolor{orange}{\bm{v}_\text{min}} = \textcolor{orange}{\lambda_\text{min}}$
         \end{footnotesize}
 
     \medskip
@@ -209,7 +209,7 @@
             \vspace{-0.5\baselineskip}
 
             \begin{equation*}
-                q(\xv) = \xv^T\Amat\xv + \bm{b}^T\xv + c = \bm{v}^T\Lambda\bm{v} + \bm{b}^T V \bm{v} + c =: \tilde{q}(\bm{v})
+                q(\xv) = \xv^T \mathbf{H} \xv + \bm{b}^T\xv + c = \bm{v}^T\Lambda\bm{v} + \bm{b}^T V \bm{v} + c =: \tilde{q}(\bm{v})
             \end{equation*}
 
             Now:

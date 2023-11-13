@@ -157,147 +157,27 @@ $$(x^{\text{left}}, f^{\text{left}}), (x^{\text{best}}, f^{\text{best}}), (x^{\t
 \end{vbframe}
 
 
-\begin{vbframe}{Example: ML Cauchy}
-
+\begin{vbframe}{Example: MLE Poisson}
 
 \begin{itemize}
-\item Density Poisson:
-\begin{footnotesize}
-$
-f(k ~|~ \lambda) := \P(x = k) = \frac{\lambda^k \cdot \exp(-\lambda)}{k!}
-$
-\end{footnotesize}
-\item Negative log-Likelihood for $n$ observations:
-\begin{footnotesize}
-\begin{eqnarray*}
-- \ell(\lambda, \mathcal{D}) &=& - \log L(\lambda, \mathcal{D}) = - \log \prod_{i = 1}^n  f\left(x^{(i)} ~|~ \lambda\right) =  - \sum_{i = 1}^n \frac{\lambda^{x^{(i)} } \cdot \exp(-\lambda)}{x^{(i)} !} 
-\end{eqnarray*}
-\end{footnotesize}
-
+    \item Poisson density: $f(k ~|~ \lambda) := \P(x = k) = \frac{\lambda^k \cdot \exp(-\lambda)}{k!}$
+    \item Negative log-likelihood for $n$ observations:
+        \begin{equation*}
+        - \ell(\lambda, \mathcal{D}) = - \log \prod_{i = 1}^n  f\left(x^{(i)} ~|~ \lambda\right) =  - \sum_{i = 1}^n \log f\left(x^{(i)} ~|~ \lambda\right) 
+        \end{equation*}
 \end{itemize}
 
-\vspace*{-0.5cm}
+\vspace{-\baselineskip}
+
 \begin{figure}
-  \includegraphics[width = 0.8\textwidth]{figure_man/poisson.pdf}
+    \centering
+    \includegraphics[width=0.7\textwidth]{figure_man/poisson.pdf}
+    \caption*{\footnotesize GR and Brent converge to minimum at $x^\ast \approx 1$. \\
+        \textbf{But:} GR needs $\approx 45$ it., Brent only needs $\approx 15$ it. for same tolerance.}
 \end{figure}
 
-
-
-
-%\framebreak 
- \footnotesize
-
-GR and Brent converge to global opt at $x^\ast = 0.75$.\\But GR needs $\approx 93$ iters, Brent needs $\approx 18$ for same level of precision. 
-
-% \lz
-% \footnotesize
-% \begin{verbatim}
-% library("Rmpfr")
-% set.seed(1234)
-
-% x = rpois(200, lambda = 0.75)
-
-% neg_log_lik = function(lambda)- sum(log(dpois(x, lambda)))
-
-% optimize(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
-%   method = "Brent")
-
-% optimize(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
-%   method = "GoldenRatio")
-
-% \end{verbatim}
-
-
-% %<<warning = FALSE, eval = TRUE, echo = FALSE, message = FALSE, size = "tiny">>=
-% %library("Rmpfr")
-% %set.seed(1234)
-
-% %x = rpois(200, lambda = 0.75)
-
-% %neg_log_lik = function(lambda)- sum(log(dpois(x, lambda)))
-
-% %optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
-% % method = "Brent")
-
-% %@
-
-% \framebreak 
-
-% %<<warning = FALSE, eval = TRUE, echo = FALSE, message = FALSE, size = "tiny">>=
-% %library("Rmpfr")
-% %set.seed(1234)
-
-% %x = rpois(200, lambda = 0.75)
-
-% %neg_log_lik = function(lambda)- sum(log(dpois(x, lambda)))
-
-% %optimizeR(neg_log_lik, lower = 0, upper = 1, trace = TRUE, 
-% % method = "GoldenRatio")
-
-% %@
-
-% \vspace*{-1cm}
-
-% \begin{columns}
-% \begin{column}{1\textwidth}
-% \begin{verbatim}
-% ## $minimum
-% ## 1 'mpfr' number of precision 132 bits
-% ## [1] 0.73999999999999999995826058999834279020219
-% ##
-% ## $objective
-% ## 1 'mpfr' number of precision 132 bits
-% ## [1] 228.79065719131130788950898504582093404577
-% ##
-% ## $iter
-% ## [1] 18
-% ##
-% ## $convergence
-% ## [1] TRUE
-% ##
-% ## $estim.prec
-% ## 1 'mpfr' number of precision 132 bits
-% ## [1] 1.336469988199522593390843736470812993265e-20
-% ##
-% ## $method
-% ## [1] "Brent"
-% \end{verbatim}
-% \end{column}
-% \end{columns}
-
-% \framebreak
-
-% \vspace*{-1cm}
-
-% \begin{columns}
-% \begin{column}{1\textwidth}
-% \begin{verbatim}
-% ## $minimum
-% ## 1 'mpfr' number of precision 132 bits
-% ## [1] 0.74000000000000000006766164468351954364332
-% ##
-% ## $objective
-% ## 1 'mpfr' number of precision 132 bits
-% ## [1] 228.79065719131130788950898504582093404755
-% ##
-% ## $iter
-% ## [1] 93
-% ##
-% ## $convergence
-% ## [1] TRUE
-% ##
-% ## $estim.prec
-% ## 1 'mpfr' number of precision 132 bits
-% ## [1] 8.653395152839838611457066694127631372854e-21
-% ##
-% ## $method
-% ## [1] "GoldenRatio"
-% \end{verbatim}
-
-%\end{column}
-%\end{columns}
-
 \end{vbframe}
+
 \endlecture
 
 \end{document}
