@@ -212,7 +212,37 @@
 
 \kopfsl{11}{Nonlinear Programming 1}
 
-\aufgabe{Nonlinear SVM}{
+\loesung{Lagrange multipliers}{
+
+We know that at a minimum $(x^\ast,y^\ast)$ the contour lines of the objective function $f$ and the equality constraint $g$ touch and thus it needs to hold that
+\begin{equation*}
+  \nabla f(x^\ast,y^\ast) = \lambda \nabla g(x^\ast,y^\ast)
+\end{equation*}
+for some Lagrange multiplier $\lambda \in \R$.
+
+Hence, we get the two equalities
+\begin{align*}
+  1 &= \lambda 2 x^\ast \\
+  2 &= \lambda 8 y^\ast
+\end{align*}
+yielding $x^\ast = 2 y^\ast$.
+
+The third equality is the equality constraint.
+It gives
+\begin{alignat*}{3}
+  && {x^\ast}^2 + 4{y^\ast}^2 &= 4 \\
+  \Leftrightarrow \quad && 4 {y^\ast}^2 + 4{y^\ast}^2 &= 4 \\
+  \Leftrightarrow \quad && 8 {y^\ast}^2 &= 4 \\
+  \Leftrightarrow \quad && {y^\ast}^2 &= \frac{1}{2}.
+\end{alignat*}
+
+Therefore, we have to solutions
+\begin{equation*}
+  (x^\ast,y^\ast) = (\sqrt{2},1/\sqrt{2}) \quad \text{or} \quad (x^\ast,y^\ast) = (-\sqrt{2},-1/\sqrt{2}).
+\end{equation*}
+}
+
+\loesung{Nonlinear SVM}{
 
 \begin{enumerate}
 \item $$\mathcal{L} = 0.5\Vert \bm{\theta} \Vert^2 + C\sum^n_{i=1}\zeta^{(i)} - \sum^n_{i=1}\alpha^{(i)}(\mathbf{y}^{(i)}({\phi(\mathbf{x}^{(i)})}^\top\bm{\theta} + \theta_0) - 1 + \zeta^{(i)})- \sum^n_{i=1}\mu^{(i)}\zeta^{(i)}$$

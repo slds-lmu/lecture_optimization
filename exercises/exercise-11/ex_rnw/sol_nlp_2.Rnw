@@ -1,0 +1,125 @@
+\begin{enumerate}
+\item $$\mathcal{L} = 0.5\Vert \bm{\theta} \Vert^2 + C\sum^n_{i=1}\zeta^{(i)} - \sum^n_{i=1}\alpha^{(i)}(\mathbf{y}^{(i)}({\phi(\mathbf{x}^{(i)})}^\top\bm{\theta} + \theta_0) - 1 + \zeta^{(i)})- \sum^n_{i=1}\mu^{(i)}\zeta^{(i)}$$
+ \item 
+ <<nsvm_primal-plot, echo=TRUE, out.width="50%">>=
+library(ggplot2)
+library(mlr3)	
+library(RColorBrewer)
+library(CVXR)
+
+# generate 200 nonlinear separable binary observations
+set.seed(123)
+n = 200
+moon_data = tgen("moons")$generate(n)$data()
+
+moon_data$y = ifelse(moon_data$y == "A", 1, -1)
+moon_data$y_dec = as.factor(moon_data$y)
+
+ggplot(moon_data, aes(x=x1, y=x2)) + 
+  geom_point(aes(color=y_dec)) + 
+  xlab(expression(x[1])) +
+  ylab(expression(x[2])) +
+  labs(color=expression(y))
+
+
+X = as.matrix(moon_data[,c("x1", "x2")])
+# define cubic polynomial transformation (without intercept)
+cubic_trafo <- function(x) return(cbind(x[1], x[2], x[1]^2, x[2]^2, x[1]*x[2], 
+                                        x[1]^2*x[2], x[1]*x[2]^2, x[1]^3, 
+                                        x[2]^3))
+
+Z = t(apply(t(X), 2, cubic_trafo))
+C = 1.0
+
+# define variables for cvxr
+theta0 = Variable()
+theta  = Variable(9)
+slack = Variable(n)
+
+objective = (1/2) * sum_squares(theta) + C * sum(slack)
+constraints = list(moon_data$y * (Z %*% theta + theta0) >= 1 - slack, slack >= 0)
+problem = Problem(Minimize(objective), constraints)
+solution = solve(problem)
+
+theta0_sol = solution$getValue(theta0)
+theta_sol = solution$getValue(theta)
+
+# create grid for plot
+x = seq(-10, 10, by=0.05)
+xx = expand.grid(X1 = x, X2 = x)
+yxx = as.matrix(cubic_trafo(xx)) %*% theta_sol + theta0_sol 
+
+df = data.frame(xx = xx, yxx = yxx)
+ggplot() +
+  geom_contour_filled(data = df, aes(x = xx.X1, y = xx.X2, z = yxx), bins=10) +
+  scale_fill_brewer(palette = "RdBu") +
+  xlab(expression(x[1])) +
+  ylab(expression(x[2])) +
+  geom_point(data = moon_data, aes(x=x1, y=x2, color=y_dec)) +
+  labs(color = expression(y), fill = expression(theta^T~x + theta[0])) 
+@
+\item 
+Stationarity \\
+$$\nabla_{\bm{\theta}}\mathcal{L} = \bm{\theta} - \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) = 0$$
+$$\nabla_{\theta_0}\mathcal{L} = - \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)} = 0$$
+$$\nabla_{\bm{\zeta}}\mathcal{L} = C\cdot\mathbf{1}_n - \alpha - \mu = 0$$ 
+Primal feasability \\
+$$-(\mathbf{y}^{(i)}({\phi(\mathbf{x}^{(i)})}^\top\bm{\theta} + \theta_0) - 1 + \zeta^{(i)}) \leq 0$$
+$$- \zeta^{(i)} \leq 0$$
+Dual feasability \\
+$$\mu \geq 0$$
+$$\alpha \geq 0$$
+Complementary slackness \\
+$$-\mu^{(i)}\zeta^{(i)} = 0 \quad i = 1,\dots,n$$
+$$-\alpha^{(i)}(\mathbf{y}^{(i)}({\phi(\mathbf{x}^{(i)})}^\top\bm{\theta} + \theta_0) - 1 + \zeta^{(i)}) = 0 \quad i = 1,\dots, n$$
+\item 
+From the KKT conditions it follows that $$\bm{\theta} = \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}),$$
+$$\sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)} = 0,$$
+$$C  - \underbrace{\mu^{(i)}}_{\geq 0} = \alpha^{(i)}  \Rightarrow C \geq \alpha^{(i)} \quad i=1,\dots,n. $$
+Plugging these into the Lagrangian gives 
+$$0.5\Vert  \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) \Vert^2 + \sum^n_{i=1}\mu^{(i)}\zeta^{(i)} + \sum^n_{i=1}\alpha^{(i)}\zeta^{(i)} - \Vert  \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) \Vert^2  + \sum^n_{i=1}\alpha^{(i)} - \sum^n_{i=1}\alpha^{(i)}\zeta^{(i)})- \sum^n_{i=1}\mu^{(i)}\zeta^{(i)}$$
+$$= -0.5\Vert  \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) \Vert^2  + \sum^n_{i=1}\alpha^{(i)} =  -0.5  \sum^n_{i=1}\sum^n_{j=1}\alpha^{(i)}\alpha^{(j)}\mathbf{y}^{(i)}\mathbf{y}^{(j)} \langle\phi(\mathbf{x}^{(i)}),\phi(\mathbf{x}^{(j)})\rangle   + \sum^n_{i=1}\alpha^{(i)}$$
+Hence, the dual form of the nonlinear SVM is
+$$\max_{\alpha}  -0.5  \sum^n_{i=1}\sum^n_{j=1}\alpha^{(i)}\alpha^{(j)}\mathbf{y}^{(i)}\mathbf{y}^{(j)} \langle\phi(\mathbf{x}^{(i)}),\phi(\mathbf{x}^{(j)})\rangle   + \sum^n_{i=1}\alpha^{(i)}$$
+s.t.
+$$\sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)} = 0,$$
+$$0 \leq \alpha \leq C.$$
+Here, we can use the kernel trick to evaluate $\langle\phi(\mathbf{x}^{(i)}),\phi(\mathbf{x}^{(j)})\rangle$ without explicitly computing the projections of each observation. (We only need to compute  $\langle\mathbf{x}^{(i)},\mathbf{x}^{(j)}\rangle$)
+\item 
+ <<nsvm_dual-plot, echo=TRUE, out.width="50%">>=
+gram = (X %*% t(X) + 1)^3 - 1
+
+alpha = Variable(n)
+P = diag(moon_data$y) %*% gram %*% diag(moon_data$y)
+P = P + diag(n)*0.0000001
+
+
+objective = sum(alpha) - (1/2) * quad_form(alpha, P)
+constraints = list(t(alpha) %*% moon_data$y == 0,
+                   alpha >= 0,
+                   C >= alpha)
+problem = Problem(Maximize(objective), constraints)
+solution = solve(problem)
+
+solution$status
+
+D = diag(c(sqrt(3), sqrt(3), sqrt(3), sqrt(3), sqrt(6), sqrt(3), sqrt(3), 1, 1))
+theta_sol = c(t(solution$getValue(alpha) * moon_data$y) %*% Z %*% D)
+theta0_sol = -0.5 * (max((z_m = Z %*% D %*% theta_sol)[moon_data$y == -1]) + 
+                       min((z_m = Z %*% D %*% theta_sol)[moon_data$y == 1]))
+
+x = seq(-10, 10, by=0.05)
+xx = expand.grid(X1 = x, X2 = x)
+yxx = as.matrix(cubic_trafo(xx)) %*% D %*% theta_sol + theta0_sol 
+
+df = data.frame(xx = xx, yxx = yxx)
+ggplot() +
+  geom_contour_filled(data = df, aes(x = xx.X1, y = xx.X2, z = yxx), bins=10) +
+  scale_fill_brewer(palette = "RdBu") +
+  xlab(expression(x[1])) +
+  ylab(expression(x[2])) +
+  geom_point(data = moon_data, aes(x=x1, y=x2, color=y_dec)) +
+  labs(color = expression(y), fill = expression(theta^T~x + theta[0])) 
+@
+\end{enumerate}
+

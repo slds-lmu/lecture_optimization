@@ -10,7 +10,12 @@ knitr::set_parent("../../style/preamble_ueb.Rnw")
 
 \kopfsl{11}{Nonlinear Programming 1}
 
-\aufgabe{Nonlinear SVM}{
+\aufgabe{Lagrange multipliers}{
 	<<child="ex_rnw/ex_nlp_1.Rnw">>=
+	@
+}
+
+\aufgabe{Nonlinear SVM}{
+	<<child="ex_rnw/ex_nlp_2.Rnw">>=
 	@
 }

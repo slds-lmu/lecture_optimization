@@ -187,8 +187,8 @@
 	{\vspace{0.5cm}}
 
 \newcounter{loes}
-\newenvironment{loesung}
-	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+\newenvironment{loesung}[1]
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}: #1}\\\noindent}
 	{\bigskip}
 	
 \newenvironment{bonusaufgabe}
@@ -211,6 +211,16 @@
 \input{../../latex-math/basic-ml.tex}
 
 \kopfsl{11}{Nonlinear Programming 1}
+
+\aufgabe{Lagrange multipliers}{
+
+Solve the constrained optimization problem
+\begin{align*}
+  \min_{(x,y) \in \R^2} \quad & x + 2y \\
+  \text{s.t.} \quad & x^2 + 4y^2 = 4
+\end{align*}
+by Lagrange multipliers.
+}
 
 \aufgabe{Nonlinear SVM}{
 
