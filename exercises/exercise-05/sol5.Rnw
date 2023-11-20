@@ -10,7 +10,7 @@ knitr::set_parent("../../style/preamble_ueb.Rnw")
 
 \kopfsl{5}{Univariate Optimization 1}
 
-\aufgabe{Golden Ratio, Brent's Method}{
+\loesung{Golden Ratio, Brent's Method}{
 	<<child="ex_rnw/sol_uv_opt_1.Rnw">>=
 	@
 }

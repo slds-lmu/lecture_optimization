@@ -10,12 +10,12 @@ knitr::set_parent("../../style/preamble_ueb.Rnw")
 
 \kopfsl{12}{Derivative free optimization and evolutionary strategies}
 
-\aufgabe{Coordinate descent}{
+\loesung{Coordinate descent}{
 	<<child="ex_rnw/sol_cd_1.Rnw">>=
 	@
 }
 
-\aufgabe{CMA-ES}{
+\loesung{CMA-ES}{
 	<<child="ex_rnw/sol_cmaes_1.Rnw">>=
 	@
 }

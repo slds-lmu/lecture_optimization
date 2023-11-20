@@ -10,7 +10,7 @@ knitr::set_parent("../../style/preamble_ueb.Rnw")
 
 \kopfsl{8}{Multivariate Optimization 3}
 
-\aufgabe{Stochastic Gradient Descent}{
+\loesung{Stochastic Gradient Descent}{
 	<<child="ex_rnw/sol_mv_opt_3.Rnw">>=
 	@
 }

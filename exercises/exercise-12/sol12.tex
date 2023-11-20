@@ -187,8 +187,8 @@
 	{\vspace{0.5cm}}
 
 \newcounter{loes}
-\newenvironment{loesung}
-	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+\newenvironment{loesung}[1]
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}: #1}\\ \noindent}
 	{\bigskip}
 	
 \newenvironment{bonusaufgabe}
@@ -212,7 +212,7 @@
 
 \kopfsl{12}{Derivative free optimization and evolutionary strategies}
 
-\aufgabe{Coordinate descent}{
+\loesung{Coordinate descent}{
 
 
 \begin{equation*}
@@ -226,7 +226,7 @@
 
 }
 
-\aufgabe{CMA-ES}{
+\loesung{CMA-ES}{
 
 Pick $\mu = 3$ parents with highest fitness values, i.e.,
 $\text{Id} = 1,2,5$ which we denote with $\mathbf{x}_{1:\mu}$

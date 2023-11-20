@@ -10,7 +10,7 @@ knitr::set_parent("../../style/preamble_ueb.Rnw")
 
 \kopfsl{6}{Multivariate Optimization 1}
 
-\aufgabe{Gradient Descent}{
+\loesung{Gradient Descent}{
 	<<child="ex_rnw/sol_mv_opt_1.Rnw">>=
 	@
 }

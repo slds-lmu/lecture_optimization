@@ -10,12 +10,11 @@ knitr::set_parent("../../style/preamble_ueb.Rnw")
 
 \kopfsl{4}{Optimization Problems 1}
 
-
-\aufgabe{Regression}{
+\loesung{Regression}{
 	<<child="ex_rnw/sol_opt_regr_1.Rnw">>=
 	@
 }
-\aufgabe{Classification}{
+\loesung{Classification}{
 	<<child="ex_rnw/sol_opt_classif_1.Rnw">>=
 	@
 }

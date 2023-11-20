@@ -10,7 +10,7 @@ knitr::set_parent("../../style/preamble_ueb.Rnw")
 
 \kopfsl{10}{Linear Programming 1}
 
-\aufgabe{Sparse Quantile Regression}{
+\loesung{Sparse Quantile Regression}{
 	<<child="ex_rnw/sol_lp_1.Rnw">>=
 	@
 }

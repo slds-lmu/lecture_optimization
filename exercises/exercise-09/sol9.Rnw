@@ -10,7 +10,7 @@ knitr::set_parent("../../style/preamble_ueb.Rnw")
 
 \kopfsl{9}{Multivariate Optimization 4}
 
-\aufgabe{Newton-Raphson and Gauss-Newton}{
+\loesung{Newton-Raphson and Gauss-Newton}{
 	<<child="ex_rnw/sol_mv_opt_4.Rnw">>=
 	@
 }

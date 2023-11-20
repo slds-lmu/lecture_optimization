@@ -187,8 +187,8 @@
 	{\vspace{0.5cm}}
 
 \newcounter{loes}
-\newenvironment{loesung}
-	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+\newenvironment{loesung}[1]
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}: #1}\\ \noindent}
 	{\bigskip}
 	
 \newenvironment{bonusaufgabe}
@@ -212,8 +212,7 @@
 
 \kopfsl{4}{Optimization Problems 1}
 
-
-\aufgabe{Regression}{
+\loesung{Regression}{
 
 \begin{enumerate}
 \item Let $f:\R^d\rightarrow\R, \bm{\theta} \mapsto 0.5\Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + 0.5\cdot\lambda\Vert\bm{\theta}\Vert^2_2, \lambda > 0$\\
@@ -231,7 +230,7 @@ $\Rightarrow \theta \overset{\text{i.i.d.}}{\sim} \textrm{Laplace}(0, 2/\lambda)
 
 \end{enumerate}
 }
-\aufgabe{Classification}{
+\loesung{Classification}{
 
 \begin{enumerate}
 \item First observe that $1 - \P(y = 1|\mathbf{x}^{(i)}) = \frac{\exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}{1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})} = \frac{1}{1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})} = \P(y = 1|-\mathbf{x}^{(i)}).$ \\

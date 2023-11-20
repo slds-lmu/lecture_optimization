@@ -187,8 +187,8 @@
 	{\vspace{0.5cm}}
 
 \newcounter{loes}
-\newenvironment{loesung}
-	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+\newenvironment{loesung}[1]
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}: #1}\\ \noindent}
 	{\bigskip}
 	
 \newenvironment{bonusaufgabe}
@@ -212,7 +212,7 @@
 
 \kopfsl{5}{Univariate Optimization 1}
 
-\aufgabe{Golden Ratio, Brent's Method}{
+\loesung{Golden Ratio, Brent's Method}{
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
