@@ -240,22 +240,38 @@ You are given the following data situation:
 \includegraphics[width=0.5\linewidth]{figure/mv-plot-1} 
 \end{knitrout}
 
-In the following we want to estimate a logistic regression without intercept via gradient descent\footnote{We chose this algorithm for educational purposes; in practice, we typically use second order algorithms.}.
 \begin{enumerate}
-\item  
-First consider the derivative of $g:\R \rightarrow \R, z\mapsto \log(1+\exp(z)) - z$, i.e.,\\
-$g'(z) = \underbrace{\frac{\exp(z)}{1+\exp(z)}}_{< 1} - 1 < 0 \Rightarrow g$ is monotonically decreasing $\Rightarrow g(z) > g(\alpha z) \quad \forall z > 0$ and $\alpha > 1.$
-\\
-Second consider the derivative of $h:\R \rightarrow \R, z\mapsto \log(1+\exp(-z))$, i.e.,\\
-$h'(z) = -\underbrace{\frac{\exp(-z)}{1+\exp(-z)}}_{>0} < 0 \Rightarrow h$ is monotonically decreasing $\Rightarrow h(z) > h(\alpha z) \quad \forall z > 0$ and $\alpha > 1.$
+\item
+We start with
+\begin{align*}
+  \mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) &= \sum^n_{i=1} \log(1 + \exp(\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)})) - y^{(i)}\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)} \\
+  &= \sum^n_{i=1} \begin{cases}
+    \log(1 + \exp(\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)})) & \text{if $y^{(i)} = 0$}, \\
+    \log(1 + \exp(\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)})) - \tilde{\bm{\theta}}^\top \mathbf{x}^{(i)} & \text{if $y^{(i)} = 1$}.
+  \end{cases}
+\end{align*}
 
-With this we get for $\alpha > 1$ \\
-$\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) = \sum^n_{i=1} \log(1 + \exp(\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)})) - y^{(i)}\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)} =$\\
-$\sum^n_{i=1} \mathds{1}_{y^{(i)} = 1} (\log(1 + \exp(\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) - \vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert) + \mathds{1}_{y^{(i)} = 0} (\log(1 + \exp(-\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) > $ \\
-$\sum^n_{i=1} \mathds{1}_{y^{(i)} = 1} (\log(1 + \exp(\alpha\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) - \alpha\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert) + \mathds{1}_{y^{(i)} = 0} (\log(1 + \exp(-\alpha\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) = $ \\
-$\sum^n_{i=1} \log(1 + \exp(\alpha\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)})) - y^{(i)}\alpha\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)} =$\\
-$\mathcal{R}_\text{emp}(\alpha\tilde{\bm{\theta}})$ 
-since $\tilde{\bm{\theta}}$ perfectly seperates the data.
+Since $\tilde{\bm{\theta}}$ perfectly classifies the data, we know that
+\begin{equation*}
+  \begin{cases}
+    \tilde{\bm{\theta}}^\top \xv^{(i)} < 0 & \text{if $y^{(i)} = 0$}, \\
+    \tilde{\bm{\theta}}^\top \xv^{(i)} \geq 0 & \text{if $y^{(i)} = 1$}.
+  \end{cases}
+\end{equation*}
+
+Hence, we can focus on the functions $g(z) = \log(1 + \exp(-z))$ and $h(z) = \log(1 + \exp(z)) - z$ for $z > 0$ and study their monotonicity.
+
+We compute
+\begin{equation*}
+  g'(z) = \frac{1}{1 + \exp(-z)} \cdot \exp(-z) \cdot (-1) = - \underbrace{\frac{\exp(-z)}{1 + \exp(-z)}}_{> 0} < 0
+\end{equation*}
+and
+\begin{equation*}
+  h'(z) = \underbrace{\frac{\exp(z)}{1 + \exp(z)}}_{< 1} - 1 < 0.
+\end{equation*}
+Therefore, both $g$ and $h$ are strictly monotonically decreasing.
+
+It follows that $\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) > \mathcal{R}_\text{emp}(\alpha \tilde{\bm{\theta}})$ for $\alpha > 1$.
 
 \item
 \begin{knitrout}

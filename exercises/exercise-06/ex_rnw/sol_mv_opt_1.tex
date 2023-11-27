@@ -1,50 +1,157 @@
 You are given the following data situation:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(ggplot2)}
+\begin{Schunk}
+\begin{Sinput}
+> library(ggplot2)
+> set.seed(314)
+> n <- 100
+> X = cbind(rnorm(n, -5, 5),
++   rnorm(n, -10, 10))
+> X_design = cbind(1, X)
+> z <- 2*X[,1] + 3*X[,2] 
+> pr <- 1/(1+exp(-z))
+> y <- as.integer(pr > 0.5)
+> df <- data.frame(X = X, y = y)
+> ggplot(df) +
++   geom_point(aes(x = X.1, y = X.2, color=y)) + 
++   xlab(expression(theta[1])) + 
++   ylab(expression(theta[2]))  
+\end{Sinput}
+\end{Schunk}
 
-\hlkwd{set.seed}\hlstd{(}\hlnum{314}\hlstd{)}
-\hlstd{n} \hlkwb{<-} \hlnum{100}
-\hlstd{X} \hlkwb{=} \hlkwd{cbind}\hlstd{(}\hlkwd{rnorm}\hlstd{(n,} \hlopt{-}\hlnum{5}\hlstd{,} \hlnum{5}\hlstd{),}
-  \hlkwd{rnorm}\hlstd{(n,} \hlopt{-}\hlnum{10}\hlstd{,} \hlnum{10}\hlstd{))}
-\hlstd{X_design} \hlkwb{=} \hlkwd{cbind}\hlstd{(}\hlnum{1}\hlstd{, X)}
-
-\hlstd{z} \hlkwb{<-} \hlnum{2}\hlopt{*}\hlstd{X[,}\hlnum{1}\hlstd{]} \hlopt{+} \hlnum{3}\hlopt{*}\hlstd{X[,}\hlnum{2}\hlstd{]}
-\hlstd{pr} \hlkwb{<-} \hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlkwd{exp}\hlstd{(}\hlopt{-}\hlstd{z))}
-\hlstd{y} \hlkwb{<-} \hlkwd{as.integer}\hlstd{(pr} \hlopt{>} \hlnum{0.5}\hlstd{)}
-\hlstd{df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{X} \hlstd{= X,} \hlkwc{y} \hlstd{= y)}
-
-\hlkwd{ggplot}\hlstd{(df)} \hlopt{+}
-  \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= X.1,} \hlkwc{y} \hlstd{= X.2,} \hlkwc{color}\hlstd{=y))} \hlopt{+}
-  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
-  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=0.5\linewidth]{figure/mv-plot-1} 
-\end{knitrout}
-
-In the following we want to estimate a logistic regression without intercept via gradient descent\footnote{We chose this algorithm for educational purposes; in practice, we typically use second order algorithms.}.
 \begin{enumerate}
-\item  
+\item
+We start with
+\begin{align*}
+  \mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) &= \sum^n_{i=1} \log(1 + \exp(\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)})) - y^{(i)}\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)} \\
+  &= \sum^n_{i=1} \begin{cases}
+    \log(1 + \exp(\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)})) - \tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}) & \text{if $\tilde{\bm{\theta}}^\top \xv^{(i)} \geq 0$} \\
+    \log(1 + \exp(\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)})
+  \end{cases}
+\end{align*}
+
 First consider the derivative of $g:\R \rightarrow \R, z\mapsto \log(1+\exp(z)) - z$, i.e.,\\
-$g'(z) = \underbrace{\frac{\exp(z)}{1+\exp(z)}}_{< 1} - 1 < 0 \Rightarrow g$ is monotonically decreasing $\Rightarrow g(z) > g(\alpha z) \quad \forall z \in \R$ and $\alpha > 0.$
+$g'(z) = \underbrace{\frac{\exp(z)}{1+\exp(z)}}_{< 1} - 1 < 0 \Rightarrow g$ is monotonically decreasing $\Rightarrow g(z) > g(\alpha z) \quad \forall z > 0$ and $\alpha > 1.$
 \\
 Second consider the derivative of $h:\R \rightarrow \R, z\mapsto \log(1+\exp(-z))$, i.e.,\\
-$h'(z) = -\underbrace{\frac{\exp(z)}{1+\exp(z)}}_{>0} < 0 \Rightarrow h$ is monotonically decreasing $\Rightarrow h(z) > h(\alpha z) \quad \forall z \in \R$ and $\alpha > 0.$
+$h'(z) = -\underbrace{\frac{\exp(-z)}{1+\exp(-z)}}_{>0} < 0 \Rightarrow h$ is monotonically decreasing $\Rightarrow h(z) > h(\alpha z) \quad \forall z > 0$ and $\alpha > 1.$
 
-With this we get \\
+With this we get for $\alpha > 1$ \\
 $\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) = \sum^n_{i=1} \log(1 + \exp(\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)})) - y^{(i)}\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)} =$\\
-$\sum^n_{i=1} (\mathds{1}_{y^{(i)} = 1} \log(1 + \exp(\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) - \vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert) .$ \\
+$\sum^n_{i=1} \mathds{1}_{y^{(i)} = 1} (\log(1 + \exp(\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) - \vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert) + \mathds{1}_{y^{(i)} = 0} (\log(1 + \exp(-\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) > $ \\
+$\sum^n_{i=1} \mathds{1}_{y^{(i)} = 1} (\log(1 + \exp(\alpha\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) - \alpha\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert) + \mathds{1}_{y^{(i)} = 0} (\log(1 + \exp(-\alpha\vert\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)}\vert)) = $ \\
+$\sum^n_{i=1} \log(1 + \exp(\alpha\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)})) - y^{(i)}\alpha\tilde{\bm{\theta}}^\top \mathbf{x}^{(i)} =$\\
+$\mathcal{R}_\text{emp}(\alpha\tilde{\bm{\theta}})$ 
+since $\tilde{\bm{\theta}}$ perfectly seperates the data.
 
+\item
+\begin{Schunk}
+\begin{Sinput}
+> lambda = 0
+> f <- function(theta, lambda) lambda * theta %*% theta + 
++   sum(-y * X %*% theta + log(1 + exp(X %*% theta)))
+> x = seq(-1, 5, by=0.1)
+> xx = expand.grid(X1 = x, X2 = x)
+> fxx = log(apply(xx, 1, function(t) f(t, lambda)))
+> df = data.frame(xx = xx, fxx = fxx)
+> ggplot() +
++     geom_contour_filled(data = df, aes(x = xx.X1, y = xx.X2, z = fxx)) +
++     xlab(expression(theta[1])) +
++     ylab(expression(theta[2])) 
+> 
+\end{Sinput}
+\end{Schunk}
 
-The data situation is called complete separation, i.e., the classes can be perfectly classified with a linear classifier. Show that in this situation if $\tilde{\bm{\theta}}$ perfectly classifies the data then:\\
-$\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) \geq \mathcal{R}_\text{emp}(\alpha \tilde{\bm{\theta}})$ with $\alpha > 0.$
-\item Visualize $\mathcal{R}_\text{emp}$ in $[-1,4]\times[-1,4].$
-\item Find the gradient of $\mathcal{R}_\text{emp}$ for arbitrary $\bm{\theta}.$
-\item Solve the logistic regression via gradient descent. Use step width $\alpha = 0.01$, starting point $\bm{\theta}^{[0]} = (0,0)^\top$ and train for 500 steps. Repeat this with $\alpha = 0.02$. Explain your observation.\\
-\textit{Hint:} a)
-\item Repeat d) but add an L2 penalization term (with $\lambda = 1$) to the objective. What do you observe now?
-\item Visualize the regularized $\mathcal{R}_\text{emp}$ in $[-1,4]\times[-1,4].$
-\item Repeat e) but with backtracking. Set $\gamma = 0.9$ and $\tau = 0.5$
+\item $\frac{\partial}{\partial \bm{\theta}}\mathcal{R}_{\text{emp}} = \sum^n_{i=1} \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{\mathbf{x}^{(i)}}^\top - y^{(i)}{\mathbf{x}^{(i)}}^\top$ 
+\item 
+
+\begin{Schunk}
+\begin{Sinput}
+> library(gridExtra)
+> plot_fun <- function(gd_fun, lambda){
++   theta = c(0,0)
++   thetas = NULL
++   thetas_norm = NULL
++   fs = NULL
++   for(i in 1:500){
++     theta = gd_fun(theta)
++     thetas_norm = rbind(thetas_norm, sqrt(theta %*% theta))
++     thetas = rbind(thetas, theta)
++     fs = rbind(fs, f(theta, lambda))
++   }
++   
++   df_trace = as.data.frame(thetas)
++   trace_plot = ggplot() +
++     geom_line(data = df_trace, aes(x=V1, y=V2)) +
++     xlab(expression(theta[1])) +
++     ylab(expression(theta[2])) +
++     geom_point(data = tail(df_trace), aes(x=V1, y=V2))
++   norm_plot = ggplot(data.frame(norms = thetas_norm, t = 1:nrow(thetas_norm))) + 
++     geom_line(aes(x = t, y = norms)) + ylab(expression(paste("||", theta, "||"[2])))
++   remp_plot = ggplot(data.frame(f = fs, t = 1:nrow(thetas_norm))) + 
++     geom_line(aes(x = t, y = f)) + ylab(expression(R[emp]))
++   grid.arrange(trace_plot, norm_plot, remp_plot, ncol=3)
++ }
+> df_t <- function(theta, lambda) lambda * t(theta) -(t(y) %*% X) + 
++   t(1/(1 + exp(-X %*% theta))) %*% X
+> gd_step <- function(theta, alpha, lambda) return(theta - alpha * df_t(theta, lambda)[1,])
+> ## Alpha = 0.01
+> gd_fun <- function(theta) return(gd_step(theta, 0.01, lambda))
+> plot_fun(gd_fun, 0)
+> ## Alpha = 0.02
+> gd_fun <- function(theta) return(gd_step(theta, 0.02, lambda))
+> plot_fun(gd_fun, 0)
+\end{Sinput}
+\end{Schunk}
+
+Gradient descent will in theory not converge since $\mathcal{R}_\text{emp}$ has no minimum (a)
+\item
+
+\begin{Schunk}
+\begin{Sinput}
+> ## Lambda = 1, alpha = 0.01
+> gd_fun <- function(theta) return(gd_step(theta, 0.01, 1))
+> plot_fun(gd_fun, 1)
+> ## Lambda = 1, alpha = 0.02
+> gd_fun <- function(theta) return(gd_step(theta, 0.02, 1))
+> plot_fun(gd_fun, 1)
+> 
+\end{Sinput}
+\end{Schunk}
+
+\item 
+\begin{Schunk}
+\begin{Sinput}
+> lambda = 1
+> fxx_reg = log(apply(xx, 1, function(t) f(t, lambda)))
+> df_reg = data.frame(xx = xx, fxx = fxx_reg)
+> ggplot() +
++     geom_contour_filled(data = df_reg, aes(x = xx.X1, y = xx.X2, z = fxx)) +
++     xlab(expression(theta[1])) +
++     ylab(expression(theta[2])) 
+> 
+\end{Sinput}
+\end{Schunk}
+\item
+\begin{Schunk}
+\begin{Sinput}
+> gd_backtracking_step <- function(theta, alpha, gamma, tau, lambda){
++     ftheta = f(theta, lambda)
++     for(i in 1:1000){
++       theta_prop = theta - alpha * gamma * df_t(theta, lambda)[1,]
++       if(f(theta_prop, lambda) < ftheta){
++         return(theta_prop)
++       }else{
++         alpha = tau * alpha
++       }
++     }
++     return(theta)
++ }
+> ## Lambda = 1, alpha = 0.01
+> gd_fun <- function(theta) return(gd_backtracking_step(theta, 0.01, 0.9, 0.5, 1))
+> plot_fun(gd_fun, 1)
+> ## Lambda = 1, alpha = 0.02
+> gd_fun <- function(theta) return(gd_backtracking_step(theta, 0.02, 0.9, 0.5, 1))
+> plot_fun(gd_fun, 1)
+\end{Sinput}
+\end{Schunk}
 \end{enumerate}
