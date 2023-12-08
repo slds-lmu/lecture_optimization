@@ -214,11 +214,11 @@
 
 \aufgabe{Stochastic Gradient Descent}{
 
-Consider the ordinary linear regression (without intercept) where we want to minimize
-$$\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$$ with $\mathbf{x} \sim \mathcal{N}(\bm{0}, \bm{\Sigma}_\mathbf{x})$ and 
+Consider the ordinary linear least squares problem (without intercept) where we want to minimize
+$$\E_{\mathbf{x}, y} [(\bm{\theta}^\top\mathbf{x} -  y)^2]$$ with $\mathbf{x} \sim \mathcal{N}(\bm{0}, \bm{\Sigma}_\mathbf{x})$ and 
 $y|\xv \sim \mathcal{N}({\bm{\theta}^*}^\top\mathbf{x}, \sigma^2).$ 
 \begin{enumerate}
-\item Show that $\E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 = \nabla_{\bm{\theta}}\E_{\mathbf{x},y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$
+\item Show that $\E_{\mathbf{x}, y}[\nabla_{\bm{\theta}}[ (\bm{\theta}^\top\mathbf{x} -  y)^2]] = \nabla_{\bm{\theta}}\E_{\mathbf{x},y}[ (\bm{\theta}^\top\mathbf{x} -  y)^2]$
 \item Interpret a) in terms of SGD.
 \item Consider the univariate setting with $\bm{\Sigma}_\mathbf{x} = 1/4, \sigma=1/10, \bm{\theta}^* = 1/2$ and a data set of size $10,000$. \\
 Write an $\texttt{R}$ script which plots the "confusion", i.e., the variance of the gradients, for $\theta \in \{0, 0.05, 0.1, \dots 0.95, 1.0\}$.
