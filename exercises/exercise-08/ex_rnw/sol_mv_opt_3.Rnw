@@ -1,11 +1,19 @@
 \begin{enumerate}
-\item \begin{itemize} 
-\item $\E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 = \E_\mathbf{x} \E_{y|\mathbf{x}}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 =  \E_\mathbf{x} \E_{y|\mathbf{x}} 2\mathbf{x} \mathbf{x}^\top \bm{\theta} - 2\mathbf{x}y = \E_\mathbf{x} 2\mathbf{x} \mathbf{x}^\top \bm{\theta} - 2\mathbf{x}\mathbf{x}^\top \bm{\theta}^* = 2\bm{\Sigma}_\mathbf{x}(\bm{\theta} - \bm{\theta}^*)$ 
-\item $\nabla_{\bm{\theta}}\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 = \nabla_{\bm{\theta}}\E_\mathbf{x} \E_{y|\mathbf{x}} \bm{\theta}^\top\mathbf{x}\mathbf{x}^\top\bm{\theta} - 2\bm{\theta}^\top\mathbf{x} y + y^2 = \nabla_{\bm{\theta}}\E_\mathbf{x} \bm{\theta}^\top\mathbf{x}\mathbf{x}^\top\bm{\theta} - 2\bm{\theta}^\top\mathbf{x}\mathbf{x}^\top \bm{\theta}^*  + {\bm{\theta}^*}^\top\mathbf{x}\mathbf{x}^\top \bm{\theta}^*$ \\
-$= \nabla_{\bm{\theta}}(\bm{\theta}^\top\bm{\Sigma}_\mathbf{x}\bm{\theta} - 2\bm{\theta}^\top\bm{\Sigma}_\mathbf{x} \bm{\theta}^*  + {\bm{\theta}^*}^\top\bm{\Sigma}_\mathbf{x} \bm{\theta}^*) = 2\bm{\Sigma}_\mathbf{x}(\bm{\theta} - \bm{\theta}^*)$
-\end{itemize}
-\item We can estimate $\E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$ without bias via SGD since we have access to realizations of $\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$.\\ From a) it follows that this estimate is also an unbiased estimate of the gradient of our objective \\ $\nabla_{\bm{\theta}}\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$. Hence, SGD can be successfully applied in this situation.
-\item 
+  \item We compute both expression and compare the results.
+    \begin{align*}
+      \E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 &= \E_\mathbf{x} \E_{y|\mathbf{x}}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 \\
+      &= \E_\mathbf{x} \E_{y|\mathbf{x}} 2\mathbf{x} \mathbf{x}^\top \bm{\theta} - 2\mathbf{x}y = \E_\mathbf{x} 2\mathbf{x} \mathbf{x}^\top \bm{\theta} - 2\mathbf{x}\mathbf{x}^\top \bm{\theta}^* \\
+      &= 2\bm{\Sigma}_\mathbf{x}(\bm{\theta} - \bm{\theta}^*)
+    \end{align*}
+    
+    \begin{align*}
+      \nabla_{\bm{\theta}}\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 &= \nabla_{\bm{\theta}}\E_\mathbf{x} \E_{y|\mathbf{x}} \bm{\theta}^\top\mathbf{x}\mathbf{x}^\top\bm{\theta} - 2\bm{\theta}^\top\mathbf{x} y + y^2 \\
+      &= \nabla_{\bm{\theta}}\E_\mathbf{x} \bm{\theta}^\top\mathbf{x}\mathbf{x}^\top\bm{\theta} - 2\bm{\theta}^\top\mathbf{x}\mathbf{x}^\top \bm{\theta}^* + {\bm{\theta}^*}^\top\mathbf{x}\mathbf{x}^\top \bm{\theta}^* \\
+  &= \nabla_{\bm{\theta}}(\bm{\theta}^\top\bm{\Sigma}_\mathbf{x}\bm{\theta} - 2\bm{\theta}^\top\bm{\Sigma}_\mathbf{x} \bm{\theta}^*  + {\bm{\theta}^*}^\top\bm{\Sigma}_\mathbf{x} \bm{\theta}^*) \\
+  &= 2\bm{\Sigma}_\mathbf{x}(\bm{\theta} - \bm{\theta}^*)
+    \end{align*}
+  \item We can estimate $\E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$ without bias via SGD since we have access to realizations of $\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$.\\ From a) it follows that this estimate is also an unbiased estimate of the gradient of our objective \\ $\nabla_{\bm{\theta}}\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$. Hence, SGD can be successfully applied in this situation.
+  \item 
 <<mv-plot_confusion, echo=TRUE, out.width="75%">>=
 library(ggplot2)
 library(gridExtra)
@@ -26,7 +34,7 @@ mean(2*(x*x*theta - y*x))
 compute_conf <- function(theta, n){
   x = rnorm(n, sd = sigma_x)
   y = theta_star * x + rnorm(n, sd = sigma_y)
-  # mean of squared differences between the sampled gradients and 
+  # mean of squared differences between the sampled gradients and
   # the gradient of the objective
   return(mean((2*(x*x*theta - y*x) - 2*sigma_x^2*(theta - theta_star))^2))
 }
@@ -43,7 +51,7 @@ for(i in 1:reps){
   }
 }
 
-p_batch100 = ggplot(data.frame(thetas = rep(thetas, reps), confs = confs), 
+p_batch100 = ggplot(data.frame(thetas = rep(thetas, reps), confs = confs),
                     aes(x = thetas, y = confs)) +
   geom_point() + xlab(expression(theta)) + ylim(0, 0.4) + ggtitle("m = 100") +
   ylab("confusion")
@@ -60,7 +68,7 @@ for(i in 1:reps){
   }
 }
 
-p_batch1000 = ggplot(data.frame(thetas = rep(thetas, reps), confs = confs), 
+p_batch1000 = ggplot(data.frame(thetas = rep(thetas, reps), confs = confs),
                      aes(x = thetas, y = confs)) +
   geom_point() + xlab(expression(theta)) + ylim(0, 0.4) + ggtitle("m = 1000")  +
   ylab("confusion")
@@ -69,7 +77,7 @@ p_batch1000 = ggplot(data.frame(thetas = rep(thetas, reps), confs = confs),
 grid.arrange(p_batch100, p_batch1000, ncol = 2)
 @
 \item Qualitatively, we observe for both settings that the mean and the variance of the confusion rise symmetrically around $\bm{\theta}^*.$ As expected, the mean and the variance of the confusion is smaller for the larger batch size $m = 1000$ than for $m = 100$.
-\item 
+\item
 <<mv-plot_compare, echo=TRUE, out.width="50%">>=
 set.seed(123)
 
@@ -82,18 +90,18 @@ for(j in 1:200){
   for(i in 1:20){
     x = rnorm(m, sd = sigma_x)
     y = theta_star * x + rnorm(n, sd = sigma_y)
-  
+
     theta = theta  - alpha * mean(2*(x*x*theta - y*x))
     thetas = rbind(thetas, theta)
   }
 }
 
-plot_sgd = ggplot(data.frame(thetas = thetas, it = rep(1:20, 200)), 
+plot_sgd = ggplot(data.frame(thetas = thetas, it = rep(1:20, 200)),
        aes(x = it, y = thetas)) +
-  geom_point() + ylab(expression(theta)) + xlab("iteration") + 
+  geom_point() + ylab(expression(theta)) + xlab("iteration") +
   ggtitle("SGD with m=10 (200 runs)")
 
-# GD 
+# GD
 theta = 0
 thetas = theta
 alpha = 0.3
@@ -103,7 +111,7 @@ for(i in 1:20){
   thetas = rbind(thetas, theta)
 }
 
-plot_gd = ggplot(data.frame(thetas = thetas, it = 1:21), 
+plot_gd = ggplot(data.frame(thetas = thetas, it = 1:21),
                  aes(x = it, y = thetas)) +
   geom_point() + ylab(expression(theta)) + xlab("iteration") + ggtitle("GD")
 

@@ -187,8 +187,8 @@
 	{\vspace{0.5cm}}
 
 \newcounter{loes}
-\newenvironment{loesung}
-	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+\newenvironment{loesung}[1]
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}: #1}\\ \noindent}
 	{\bigskip}
 	
 \newenvironment{bonusaufgabe}
@@ -216,15 +216,18 @@
 
 Consider the ordinary linear regression (without intercept) where we want to minimize
 $$\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$$ with $\mathbf{x} \sim \mathcal{N}(\bm{0}, \bm{\Sigma}_\mathbf{x})$ and 
-$y \sim \mathcal{N}({\bm{\theta}^*}^\top\mathbf{x}, \sigma^2).$ 
+$y|\xv \sim \mathcal{N}({\bm{\theta}^*}^\top\mathbf{x}, \sigma^2).$ 
 \begin{enumerate}
 \item Show that $\E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 = \nabla_{\bm{\theta}}\E_{\mathbf{x},y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$
 \item Interpret a) in terms of SGD.
-\item Consider the the univariate setting with $\bm{\Sigma}_\mathbf{x} = (0.5^2), \sigma=0.1, \bm{\theta}^* = (0.5)$. \\
-Write an $\texttt{R}$ script which plots the "confusion", i.e., the variance of the gradients, for $\theta \in \{0, 0.05, 0.1, \dots 0.95, 1.0\}$ (each setting repeated 200 times).\\
-Do two such simulation studies, one where the random batches are of size $100$ and one with random batch sizes of $1000.$
+\item Consider the univariate setting with $\bm{\Sigma}_\mathbf{x} = 1/4, \sigma=1/10, \bm{\theta}^* = 1/2$ and a data set of size $10,000$. \\
+Write an $\texttt{R}$ script which plots the "confusion", i.e., the variance of the gradients, for $\theta \in \{0, 0.05, 0.1, \dots 0.95, 1.0\}$.
+For each $\theta$, plot 200 gradient samples.\\
+Perform two such simulation studies with random batches of size $100$ and $1,000$.
 \item What do you observe in c) ?
-\item Write an $\texttt{R}$ script which solves the setting in c) with SGD with random batch sizes of 1 and $\alpha = 0.3$. Start with $\bm{\theta} = 0$ and do 20 iterations. (Repeat 200 times). Compare with GD.
+\item Write an $\texttt{R}$ script which solves the setting in c) with SGD with random batch sizes of 1 and $\alpha = 0.3$. Start with $\bm{\theta} = 0$ and perform 20 iterations.
+Repeat this process 200 times.
+Compare with GD.
 \end{enumerate}
 }
 \end{document}

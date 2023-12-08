@@ -215,13 +215,21 @@
 \loesung{Stochastic Gradient Descent}{
 
 \begin{enumerate}
-\item \begin{itemize} 
-\item $\E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 = \E_\mathbf{x} \E_{y|\mathbf{x}}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 =  \E_\mathbf{x} \E_{y|\mathbf{x}} 2\mathbf{x} \mathbf{x}^\top \bm{\theta} - 2\mathbf{x}y = \E_\mathbf{x} 2\mathbf{x} \mathbf{x}^\top \bm{\theta} - 2\mathbf{x}\mathbf{x}^\top \bm{\theta}^* = 2\bm{\Sigma}_\mathbf{x}(\bm{\theta} - \bm{\theta}^*)$ 
-\item $\nabla_{\bm{\theta}}\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 = \nabla_{\bm{\theta}}\E_\mathbf{x} \E_{y|\mathbf{x}} \bm{\theta}^\top\mathbf{x}\mathbf{x}^\top\bm{\theta} - 2\bm{\theta}^\top\mathbf{x} y + y^2 = \nabla_{\bm{\theta}}\E_\mathbf{x} \bm{\theta}^\top\mathbf{x}\mathbf{x}^\top\bm{\theta} - 2\bm{\theta}^\top\mathbf{x}\mathbf{x}^\top \bm{\theta}^*  + {\bm{\theta}^*}^\top\mathbf{x}\mathbf{x}^\top \bm{\theta}^*$ \\
-$= \nabla_{\bm{\theta}}(\bm{\theta}^\top\bm{\Sigma}_\mathbf{x}\bm{\theta} - 2\bm{\theta}^\top\bm{\Sigma}_\mathbf{x} \bm{\theta}^*  + {\bm{\theta}^*}^\top\bm{\Sigma}_\mathbf{x} \bm{\theta}^*) = 2\bm{\Sigma}_\mathbf{x}(\bm{\theta} - \bm{\theta}^*)$
-\end{itemize}
-\item We can estimate $\E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$ without bias via SGD since we have access to realizations of $\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$.\\ From a) it follows that this estimate is also an unbiased estimate of the gradient of our objective \\ $\nabla_{\bm{\theta}}\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$. Hence, SGD can be successfully applied in this situation.
-\item 
+  \item We compute both expression and compare the results.
+    \begin{align*}
+      \E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 &= \E_\mathbf{x} \E_{y|\mathbf{x}}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 \\
+      &= \E_\mathbf{x} \E_{y|\mathbf{x}} 2\mathbf{x} \mathbf{x}^\top \bm{\theta} - 2\mathbf{x}y = \E_\mathbf{x} 2\mathbf{x} \mathbf{x}^\top \bm{\theta} - 2\mathbf{x}\mathbf{x}^\top \bm{\theta}^* \\
+      &= 2\bm{\Sigma}_\mathbf{x}(\bm{\theta} - \bm{\theta}^*)
+    \end{align*}
+    
+    \begin{align*}
+      \nabla_{\bm{\theta}}\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2 &= \nabla_{\bm{\theta}}\E_\mathbf{x} \E_{y|\mathbf{x}} \bm{\theta}^\top\mathbf{x}\mathbf{x}^\top\bm{\theta} - 2\bm{\theta}^\top\mathbf{x} y + y^2 \\
+      &= \nabla_{\bm{\theta}}\E_\mathbf{x} \bm{\theta}^\top\mathbf{x}\mathbf{x}^\top\bm{\theta} - 2\bm{\theta}^\top\mathbf{x}\mathbf{x}^\top \bm{\theta}^* + {\bm{\theta}^*}^\top\mathbf{x}\mathbf{x}^\top \bm{\theta}^* \\
+  &= \nabla_{\bm{\theta}}(\bm{\theta}^\top\bm{\Sigma}_\mathbf{x}\bm{\theta} - 2\bm{\theta}^\top\bm{\Sigma}_\mathbf{x} \bm{\theta}^*  + {\bm{\theta}^*}^\top\bm{\Sigma}_\mathbf{x} \bm{\theta}^*) \\
+  &= 2\bm{\Sigma}_\mathbf{x}(\bm{\theta} - \bm{\theta}^*)
+    \end{align*}
+  \item We can estimate $\E_{\mathbf{x}, y}\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$ without bias via SGD since we have access to realizations of $\nabla_{\bm{\theta}}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$.\\ From a) it follows that this estimate is also an unbiased estimate of the gradient of our objective \\ $\nabla_{\bm{\theta}}\E_{\mathbf{x}, y}\Vert \bm{\theta}^\top\mathbf{x} -  y\Vert^2_2$. Hence, SGD can be successfully applied in this situation.
+  \item 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -248,7 +256,7 @@ $= \nabla_{\bm{\theta}}(\bm{\theta}^\top\bm{\Sigma}_\mathbf{x}\bm{\theta} - 2\bm
 \hlstd{compute_conf} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{n}\hlstd{)\{}
   \hlstd{x} \hlkwb{=} \hlkwd{rnorm}\hlstd{(n,} \hlkwc{sd} \hlstd{= sigma_x)}
   \hlstd{y} \hlkwb{=} \hlstd{theta_star} \hlopt{*} \hlstd{x} \hlopt{+} \hlkwd{rnorm}\hlstd{(n,} \hlkwc{sd} \hlstd{= sigma_y)}
-  \hlcom{# mean of squared differences between the sampled gradients and }
+  \hlcom{# mean of squared differences between the sampled gradients and}
   \hlcom{# the gradient of the objective}
   \hlkwd{return}\hlstd{(}\hlkwd{mean}\hlstd{((}\hlnum{2}\hlopt{*}\hlstd{(x}\hlopt{*}\hlstd{x}\hlopt{*}\hlstd{theta} \hlopt{-} \hlstd{y}\hlopt{*}\hlstd{x)} \hlopt{-} \hlnum{2}\hlopt{*}\hlstd{sigma_x}\hlopt{^}\hlnum{2}\hlopt{*}\hlstd{(theta} \hlopt{-} \hlstd{theta_star))}\hlopt{^}\hlnum{2}\hlstd{))}
 \hlstd{\}}
@@ -294,7 +302,7 @@ $= \nabla_{\bm{\theta}}(\bm{\theta}^\top\bm{\Sigma}_\mathbf{x}\bm{\theta} - 2\bm
 \includegraphics[width=0.75\linewidth]{figure/mv-plot_confusion-1} 
 \end{knitrout}
 \item Qualitatively, we observe for both settings that the mean and the variance of the confusion rise symmetrically around $\bm{\theta}^*.$ As expected, the mean and the variance of the confusion is smaller for the larger batch size $m = 1000$ than for $m = 100$.
-\item 
+\item
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -320,7 +328,7 @@ $= \nabla_{\bm{\theta}}(\bm{\theta}^\top\bm{\Sigma}_\mathbf{x}\bm{\theta} - 2\bm
   \hlkwd{geom_point}\hlstd{()} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta))} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlstr{"iteration"}\hlstd{)} \hlopt{+}
   \hlkwd{ggtitle}\hlstd{(}\hlstr{"SGD with m=10 (200 runs)"}\hlstd{)}
 
-\hlcom{# GD }
+\hlcom{# GD}
 \hlstd{theta} \hlkwb{=} \hlnum{0}
 \hlstd{thetas} \hlkwb{=} \hlstd{theta}
 \hlstd{alpha} \hlkwb{=} \hlnum{0.3}
