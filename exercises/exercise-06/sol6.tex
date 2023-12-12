@@ -394,9 +394,10 @@ Gradient descent will in theory not converge since $\mathcal{R}_\text{emp}$ has 
 \begin{alltt}
 \hlstd{gd_backtracking_step} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{alpha}\hlstd{,} \hlkwc{gamma}\hlstd{,} \hlkwc{tau}\hlstd{,} \hlkwc{lambda}\hlstd{)\{}
     \hlstd{ftheta} \hlkwb{=} \hlkwd{f}\hlstd{(theta, lambda)}
-    \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{1000}\hlstd{)\{}
-      \hlstd{theta_prop} \hlkwb{=} \hlstd{theta} \hlopt{-} \hlstd{alpha} \hlopt{*} \hlstd{gamma} \hlopt{*} \hlkwd{df_t}\hlstd{(theta, lambda)[}\hlnum{1}\hlstd{,]}
-      \hlkwa{if}\hlstd{(}\hlkwd{f}\hlstd{(theta_prop, lambda)} \hlopt{<} \hlstd{ftheta)\{}
+    \hlstd{dftheta} \hlkwb{=} \hlkwd{df_t}\hlstd{(theta, lambda)[}\hlnum{1}\hlstd{,]}
+    \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{1000}\hlstd{) \{}
+      \hlstd{theta_prop} \hlkwb{=} \hlstd{theta} \hlopt{-} \hlstd{alpha} \hlopt{*} \hlstd{dftheta}
+      \hlkwa{if}\hlstd{(}\hlkwd{f}\hlstd{(theta_prop, lambda)} \hlopt{<=} \hlstd{ftheta} \hlopt{-} \hlstd{gamma} \hlopt{*} \hlstd{alpha} \hlopt{*} \hlkwd{t}\hlstd{(dftheta)} \hlopt{%*%} \hlstd{dftheta)\{}
         \hlkwd{return}\hlstd{(theta_prop)}
       \hlstd{\}}\hlkwa{else}\hlstd{\{}
         \hlstd{alpha} \hlkwb{=} \hlstd{tau} \hlopt{*} \hlstd{alpha}

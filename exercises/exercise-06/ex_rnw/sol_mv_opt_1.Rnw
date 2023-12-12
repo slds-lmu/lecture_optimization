@@ -149,9 +149,10 @@ ggplot() +
 
 gd_backtracking_step <- function(theta, alpha, gamma, tau, lambda){
     ftheta = f(theta, lambda)
-    for(i in 1:1000){
-      theta_prop = theta - alpha * gamma * df_t(theta, lambda)[1,]
-      if(f(theta_prop, lambda) < ftheta){
+    dftheta = df_t(theta, lambda)[1,]
+    for(i in 1:1000) {
+      theta_prop = theta - alpha * dftheta
+      if(f(theta_prop, lambda) <= ftheta - gamma * alpha * t(dftheta) %*% dftheta){
         return(theta_prop)
       }else{
         alpha = tau * alpha
