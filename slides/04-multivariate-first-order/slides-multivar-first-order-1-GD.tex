@@ -39,7 +39,7 @@
 	\textbf{Goal}: Reach the valley
 
 	$$
-	\argmin f(\xv)
+	\argmin_\xv f(\xv)
 	$$
 	
 	\textbf{Central idea}: Repeat
@@ -47,8 +47,8 @@
 	\begin{columns}
 		\begin{column}{0.58\textwidth}
 			\begin{enumerate}
-				\item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d}$ 
-			  	\item Move along $\mathbf{d}$ until $f$ sufficiently reduced (\textbf{step size control}) and update location
+				\item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d} \in \R^d$ 
+			  	\item Move along $\mathbf{d}$ until $f$ \glqq sufficiently\grqq{} reduces (\textbf{step size control}) and update location
 			\end{enumerate}
 		\end{column}
 		\begin{column}{0.4\textwidth}
@@ -67,15 +67,15 @@
 	
 	\lz
 	
-	\textbf{Definition:} $\mathbf{d}\in \R^d /\ \{\mathbf{0}\}$ is a \textbf{descent direction} in $\xv$ if
+	\textbf{Definition:} $\mathbf{d}\in \R^d$ is a \textbf{descent direction} in $\xv$ if
 	$$
-	D_d f(\xv) = \nabla f(\xv) ^T \mathbf{d} < 0 \text{ (neg. directional derivative)}
+	D_\mathbf{d} f(\xv) = \nabla f(\xv) ^T \mathbf{d} < 0 \text{ (neg. directional derivative)}
 	$$
 
 	\begin{figure}
 		\includegraphics[width = 0.4\textwidth]{figure_man/descent_direction.pdf} \\
 		\begin{footnotesize}
-			Angle between $- \nabla \fx$ and $d$ must be $\in (90^{\circ}, 270^{\circ})$. 
+			Angle between $\nabla \fx$ and $\mathbf{d}$ must be $\in (90^{\circ}, 270^{\circ})$. 
 		\end{footnotesize}
 	\end{figure}
 
@@ -112,8 +112,8 @@
 
 	Key questions: 
 	\begin{itemize}
-		\item How do choose $\mathbf{d}^{[t]}$ (now)
-		\item How do choose $\alpha^{[t]}$ (later)
+		\item How to choose $\mathbf{d}^{[t]}$ (now)
+		\item How to choose $\alpha^{[t]}$ (later)
 	\end{itemize}
 
 \end{vbframe}
@@ -145,7 +145,9 @@
 
 \begin{vbframe}{GD and Multimodal functions}
 
-Outcome will depend on start point. 
+Outcome will depend on start point.
+
+\vspace{0.5\baselineskip}
 
 \begin{figure}
 	\includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_branin.pdf} \includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_branin2.pdf}\\
@@ -244,7 +246,7 @@ Gradient for ERM problem:
 \vspace*{-0.5cm}
 
 \begin{eqnarray*}
-- \pd{\risket}{\thetab} &=& - \pd{\sumin \Lxyit}{\thetab}= - \sumin \underbrace{\pd{\Lxyi}{\fxi}}_{\text{pseudo residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetab}
+- \pd{\risket}{\thetab} &=& - \pd{\sumin \Lxyit}{\thetab}= - \sumin \underbrace{\pd{\Lxyi}{f}}_{\text{pseudo residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetab}
 \end{eqnarray*}
 
 \vspace*{-0.5cm}
@@ -260,7 +262,7 @@ Gradient for ERM problem:
   $\tilde{r}\left( f \right)$ 
   match usual residuals for L2 loss:
   \begin{align*}
-  - \pd{\Lxy}{\fx} & = - \pd{0.5(y - \fx)^2}{\fx}\\ 
+  \pd{\Lxy}{f} & = \frac{1}{2} \left. \pd{(y - f)^2}{f} \right|_{f = \fx}\\ 
                    & = y - \fx
   \end{align*}
 \end{minipage}%

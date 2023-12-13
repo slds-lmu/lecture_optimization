@@ -5,9 +5,9 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/momentum_illustration_medium.png}
+\newcommand{\titlefigure}{figure_man/gd.png}
 \newcommand{\learninggoals}{
-\item Eigendecomp of QF
+\item Eigendecomposition of\\quadratic forms
 \item GD steps in eigenspace
 }
 
@@ -25,101 +25,112 @@
 \sloppy
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{GD on quadratic forms}
+\begin{vbframe}{Quadratic forms \& GD}
 
 \begin{itemize}
-	\item We consider the quadratic function $q(\xv) = \xv^\top \bm{A} \xv - \bm{b}^\top \xv$. 
-	\item We assume that the Hessian $\bm{H} = \Amat$ is symmetric and invertible 
-	\item The optimal solution is $\xv^\ast = \Amat^{-1} b$ 
-	\item As $\nabla q(\xv) = \Amat \xv - \bm{b}$, the iterations of gradient descent are
+	\item We consider the quadratic function $q(\xv) = \xv^\top \Amat \xv - \mathbf{b}^\top \xv$. 
+	\item We assume that Hessian $\mathbf{H} = 2 \Amat$ has full rank
+	\item Optimal solution is $\xv^\ast = \frac{1}{2} \Amat^{-1} \mathbf{b}$ 
+	\item As $\nabla q(\xv) = 2 \Amat \xv - \mathbf{b}$, iterations of gradient descent are
 \end{itemize}
-	$$
-	\xv^{[ t+1 ] } = \xv^{[ t ] } - \alpha (\Amat \xv^{[ t ] } - \bm{b})
-	$$
+
+\vspace{-0.5\baselineskip}
+
+\begin{equation*}
+    \xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})
+\end{equation*}
+
+\vspace{-\baselineskip}
 
 \begin{figure}
-	\includegraphics[height=0.3\textwidth, keepaspectratio]{figure_man/gd.png} \\
+	\includegraphics[height=0.3\textwidth, keepaspectratio]{figure_man/gd.png}
+    \caption*{\centering \footnotesize
+        The following slides follow the blog post "Why Momentum Really Works", Distill, 2017.
+        \url{http://doi.org/10.23915/distill.00006}}
 \end{figure}
 
-\begin{footnotesize}
-The following slides follow the blogpost by Goh, "Why Momentum Really Works", Distill, 2017. \url{http://doi.org/10.23915/distill.00006}
-\end{footnotesize}
+\end{vbframe}
 
-\framebreak
+\begin{vbframe}{Eigendecomposition of quadratic forms}
 
-For $\Amat$, there exists an eigenvalue decomposition: 
-
-$$
-	\Amat = \bm{V} \, \bm{\Lambda} \bm{V}^\top
-$$
-
-where the columns of $\bm{V}$ contain the eigenvectors $\boldsymbol{v}_i$ and $\bm{\Lambda} = \text{diag}(\lambda_1, ..., \lambda_n)$ contains the eigenvalues $\lambda_i$ sorted from smallest to biggest. We perform a change of basis $\bm{w}^{[ t ] } = \bm{V}^\top (\xv^{[ t ] } - \xv^\ast)$ to its eigenspace, where all dimensions act independently. 
-
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/gd_eigenspace.png} \\
-\end{figure}
-
-\framebreak 
-
-We get 
-
-\begin{eqnarray*}
-    \xv^{[t + 1]} &=& \xv^{[t]} - \alpha \left(\Amat \xv^{[t]} - \bm{b} \right) \\
-    \bm{w}^{[ t ] } &=& \bm{V}^\top (\xv^{[ t ] } - \xv^\ast) \\
-    \bm{V} \cdot \bm{w}^{[ t ] } + \xv^\ast &=&  \xv^{[ t ] } \\
-\end{eqnarray*}
-
-and with $\textcolor{blue}{\xv^{[ t ] } = \bm{V} \cdot \bm{w}^{[ t ] } + \xv^\ast}$ we can write a GD step as: 
-
-\begin{footnotesize}
-\begin{alignat*}{2}
-    \textcolor{blue}{\xv^{[t + 1]}} &= \textcolor{blue}{\xv^{[t]}} - \alpha \left(\Amat \textcolor{blue}{\xv^{[t]}} - \bm{b} \right) && \\
-    \textcolor{blue}{\bm{V} \cdot \bm{w}^{[ t + 1] } + \xv^\ast} &= \textcolor{blue}{\bm{V} \cdot \bm{w}^{[ t ] } + \xv^\ast} - \alpha \left(\Amat \cdot \textcolor{blue}{\bm{V} \cdot \bm{w}^{[ t ] }} + \Amat \cdot \textcolor{blue}{\xv^\ast} - \bm{b} \right) ~\qquad && \bigg|~- \xv^\ast\\
-    \bm{V} \cdot \bm{w}^{[ t + 1] } &= \bm{V} \cdot \bm{w}^{[ t ] } - \alpha \left(\Amat \cdot \bm{V} \cdot \bm{w}^{[ t ] } + \Amat \xv^\ast - \bm{b} \right) ~\qquad && \bigg|~\bm{V}^\top (\text{NB: } \bm{V}^\top \bm{V} = \bm{1})\\
-    \bm{w}^{[ t + 1] } &= \bm{w}^{[ t ] } - \alpha \bm{V}^\top\left(\Amat \bm{V} \cdot \bm{w}^{[ t ] } + \Amat \xv^\ast - \bm{b} \right) && \bigg|~\Amat \xv^\ast - \bm{b} = 0 \\
-    \bm{w}^{[ t + 1] } &= \bm{w}^{[ t ] } - \alpha \bm{V}^\top\Amat \bm{V} \cdot \bm{w}^{[ t ] }&& \bigg|~\bm{V}^\top \bm{A} \bm{V} = \bm{\Sigma} \\
-    \bm{w}^{[ t + 1] } &= \bm{w}^{[ t ] } - \alpha \bm{\Sigma} \bm{w}^{[ t ] }&& \\
-\end{alignat*}
-\end{footnotesize}
-
-Which means: 
-
-$$
-w_i^{[ t+1 ] } &=& w_i^{[ t ] } - \alpha \lambda_i w_i^{[ t ] } = (1- \alpha \lambda_i) w_i^{[ t ] } = (1- \alpha \lambda_i)^{t+1 } w_i^{[ 0 ] }
-$$
-
-
-\framebreak
-If we now perform GD on $\boldsymbol{w}$, we get
-
-\begin{eqnarray*}
-	w_i^{[ t+1 ] } &=& w_i^{[ t ] } - \alpha \lambda_i w_i^{[ t ] } \\
-	&=& (1- \alpha \lambda_i) w_i^{[ t ] } = (1- \alpha \lambda_i)^{t+1 } w_i^{[ 0 ] }
-\end{eqnarray*}
+\begin{itemize}
+    \setlength{\itemsep}{0.5em}
+    \item We want to work in the coordinate system given by $q$
+    \item \textbf{Recall:} Coordinate system is given by the eigenvectors of $\mathbf{H} = 2\Amat$
+    \item Eigendecomposition of $\Amat = \mathbf{V} \bm{\Lambda} \mathbf{V}^\top$
+    \item $\mathbf{V}$ contains eigenvectors $\mathbf{v}_i$ and $\bm{\Lambda} = \text{diag}(\lambda_1, ..., \lambda_n)$ eigenvalues
+    \item Change of basis: $\mathbf{w}^{[t]} = \mathbf{V}^\top (\xv^{[t]} - \xv^\ast)$
+\end{itemize}
 
 \begin{figure}
 	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/gd_eigenspace.png} \\
 \end{figure}
 
+\end{vbframe}
+
+\begin{vbframe}{GD steps in eigenspace}
+
+With $\mathbf{w}^{[t]} = \mathbf{V}^\top (\xv^{[t]} - \xv^\ast)$, a single GD step
+
+\begin{equation*}
+    \xv^{[t + 1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})
+\end{equation*}
+becomes
+\begin{equation*}
+    \mathbf{w}^{[t+1]} = \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}.
+\end{equation*}
+
+Therefore:
+
+\vspace{-\baselineskip}
+
+\begin{align*}
+    w_i^{[t+1]} &= w_i^{[t]} - 2 \alpha \lambda_i w_i^{[t]} \\
+    &= (1 - 2 \alpha \lambda_i) w_i^{[t]} \\
+    &= \cdots \\
+    &= (1 - 2 \alpha \lambda_i)^{t+1} w_i^{[0]}
+\end{align*}
+
 \framebreak
 
-Moving back to the original space, we get
+\textbf{Proof} (for $\mathbf{w}^{[t+1]} = \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}$)\textbf{:}
 
-$$
-	\xv^{[ t ] } - \xv^\ast = \bm{V} \cdot \boldsymbol{w}^{[ t ] } = \sum_{i = 1}^{d} w_i^{[0]} ( 1 - \alpha \lambda_i)^t \bm{v}_i 
-$$
+\begin{itemize}
+    \item A single GD step means
+        \begin{equation*}
+            \xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})
+        \end{equation*}
+    \item Then:
+        \begin{align*}
+            \mathbf{V}^\top (\xv^{[t+1]} - \xv^\ast) &= \mathbf{V}^\top (\xv^{[t]} - \xv^\ast) - \alpha \mathbf{V}^\top (2 \Amat \xv^{[t]} - \mathbf{b}) \\
+            \mathbf{w}^{[t+1]} &= \mathbf{w}^{[t]} - \alpha \mathbf{V}^\top (2 \Amat \xv^{[t]} - \mathbf{b}) \\
+            \mathbf{w}^{[t+1]} &= \mathbf{w}^{[t]} - \alpha \mathbf{V}^\top (2 \Amat (\xv^{[t]} - \xv^\ast) + \underbrace{2 \Amat \xv^\ast - \mathbf{b}}_{=0}) \\
+            &= \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{V}^\top (\xv^{[t]} - \xv^\ast) \\
+            &= \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}
+        \end{align*}
+\end{itemize}
 
-This allows a very intuitive interpretation: each element of $w^{[0]}$ is the component of the error in the initial guess in the eigenbasis and decays with a rate of $1 - \alpha \lambda_i$. 
+\end{vbframe}
 
-For most step sizes, the eigenvectors with the largest eigenvalues converge the fastest. 
+\begin{vbframe}{GD error in original space}
+
+\begin{itemize}
+    \setlength{\itemsep}{1em}
+    \item Move back to \textbf{original space}:
+        \begin{equation*}
+            \xv^{[t]} - \xv^\ast = \mathbf{V} \mathbf{w}^{[t]} = \sum_{i = 1}^{d} (1 - 2 \alpha \lambda_i)^t w_i^{[0]} \mathbf{v}_i 
+        \end{equation*}
+    \item \textbf{Intuition:} Initial error components $w^{[0]}_i$ (in the eigenbasis) decay with rate $1 - 2 \alpha \lambda_i$
+    \item \textbf{Therefore:} For sufficiently small step sizes $\alpha$, error components along eigenvectors with large eigenvalues decay quickly
+\end{itemize}
 
 \framebreak
 
 We now consider the contribution of each eigenvector to the total loss
 
-$$
-	q(\xv^{[ t ] }) - q(\xv^\ast) = \frac{1}{2} \sum_{i}^{d} (1 - \alpha \lambda_i)^{2t} \lambda_i (w_i^{[0]})^2 
-$$
+\begin{equation*}
+    q(\xv^{[t]}) - q(\xv^\ast) = \frac{1}{2} \sum_{i}^{d} (1 - 2 \alpha \lambda_i)^{2t} \lambda_i (w_i^{[0]})^2
+\end{equation*}
 
 \begin{figure}
 	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/gd_conv.png} \\

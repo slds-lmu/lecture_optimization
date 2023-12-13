@@ -26,18 +26,25 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{vbframe}{Unimodal vs. Multimodal loss surfaces}
+
+\vspace{\baselineskip}
+
 \begin{figure}
-\centering
-\centering
-\includegraphics[width=.9\textwidth]{figure_man/multimodal.png}
-\footnotesize{Potential snippet from a loss surface with many local minima}
+    \centering
+    \includegraphics[width=.85\textwidth]{figure_man/multimodal.png}
+    \caption*{\centering \small Snippet of a loss surface with many local optima}
 \end{figure}
 
-
-
-\includegraphics[width=12cm]{figure_man/difficult_vs_easy.png}
-\footnotesize{In deep learning we often find multimodal loss surfaces. Left: Multimodal loss surface; Right: (Nearly) unimodal loss surface. Source: Hao Li et al. (2017). }
-
+\begin{figure}
+    \centering
+    \includegraphics[width=12cm]{figure_man/difficult_vs_easy.png}
+    \caption*{\centering \footnotesize In deep learning, we often find multimodal loss surfaces.
+    
+    \textbf{Left:} Multimodal loss surface.
+    \textbf{Right:} (Nearly) unimodal loss surface.
+    
+    (Source: Hao Li et al., 2017.}
+\end{figure}
 
 \end{vbframe}
 
@@ -46,14 +53,14 @@
 \begin{frame} {GD: Only locally optimal moves}
 \begin{itemize}
 \small{
-\item GD makes only \textit{locally} optimal moves
+\item GD makes only \textbf{locally} optimal moves
 \item It may move away from the global optimum
 \begin{figure}
 	\centering
-	\scalebox{0.65}{\includegraphics{figure_man/local_hill.png}}
-	\tiny{\\Source: Goodfellow, Ch. 8}
+	\includegraphics[width=0.6\textwidth]{figure_man/local_hill.png}
+	\caption*{\footnotesize Source: Goodfellow et al., 2016}
 \end{figure}
-\item Figure above: initializion on ``wrong'' side of the hill resulting in suboptimal performance
+\item Initialization on \enquote{wrong} side of the hill results in weak performance
 \item In higher dimensions, GD may move around the hill (potentially at the cost of longer trajectory and time to convergence)}
 \end{itemize}
 \end{frame}
@@ -61,12 +68,11 @@
 \begin{vbframe} {Local minima}
 
 \begin{itemize}
-\item In practice: Only local minima with high value compared to global minimium are problematic.
+\item \textbf{In practice:} Only local minima with high value compared to global minimium are problematic.
 \begin{figure}
-\begin{center}
+    \centering
 	\includegraphics[width=.6\textwidth]{figure_man/minima.png}
-\end{center}
-\tiny{Source: Goodfellow, Ch. 4}
+    \caption*{\footnotesize Source: Goodfellow et al., 2016}
 \end{figure}
 %\item In DL, literature suspects that most local minima have low empirical risk. (\href{https://arxiv.org/abs/1406.2572}{Y. Dauphin et al. (2014)})
 %\item Simple test: Norm of gradient should get close to zero.
@@ -74,17 +80,19 @@
 
 \framebreak
 
-\begin{center}
-\vspace{1cm}
-(Non-)converging Gradient Descent for ackley function
-\end{center}
+\begin{itemize}
+    \item Small differences in starting point or step size can lead to huge differences in the reached minimum or even to non-convergence
+\end{itemize}
 
+\vspace{\baselineskip}
 
 \includegraphics[width=.45\textwidth]{figure_man/nonconv_ackley_plot.jpg} ~~
 \includegraphics[width=.49\textwidth]{figure_man/nonconv_ackley_path.jpg}
 
-
-\footnotesize{Small differences in starting value or step size can lead to huge differences in the reached minimum or even to non-convergence}
+\begin{center}
+    \small
+    (Non-)Converging gradient descent for Ackley function
+\end{center}
 
 \end{vbframe}
 
@@ -97,17 +105,19 @@
 			\textbf{Example: }
 			\begin{eqnarray*}
 				f(x_1, x_2) &=& x_1^2 - x_2^2 \\
-				\nabla \fx &=& \left(2 \cdot x_1, - 2 \cdot x_2\right)^\top \\
+				\nabla f(x_1, x_2) &=& \left(2 x_1, -2 x_2\right)^\top \\
 				\bm{H} &=& \begin{pmatrix} 2 & 0 \\ 0 & - 2\end{pmatrix}
 			\end{eqnarray*}
 
-			Along $x_1$, the function curves upwards (pos. eigenvalue belonging to eigenvector $(1, 0)$ of $\bm{H}$). Along $x_2$, the function curves downwards. 
-			
+            \begin{itemize}
+                \item Along $x_1$, curvature is positive ($\lambda_1 = 2 > 0$).
+                \item Along $x_2$, curvature is negative ($\lambda_2 = -2 < 0$).
+            \end{itemize}
 		\end{column}
 		\begin{column}{0.48\textwidth}
 			\begin{figure}
 				\centering
-				\includegraphics[width=4cm]{figure_man/saddlepoint.png}
+				\includegraphics[width=\textwidth]{figure_man/saddlepoint.png}
 			\end{figure} 
 		\end{column}	
 	\end{columns}
@@ -121,8 +131,8 @@
 	
 	\frametitle{Example: Saddle point with GD}
 	\begin{itemize}
-		\item So how do saddle points impair optimization?
-		\item First-order algorithms that use only gradient information \textbf{might} get stuck in saddle points
+		\item How do saddle points impair optimization?
+		\item Gradient-based algorithms \textbf{might} get stuck in saddle points
 	\end{itemize}
 	\center
 	\only<1>{\includegraphics[width=9cm]{figure_man/opt1.png}}%
@@ -131,16 +141,12 @@
 	\only<4>{\includegraphics[width=9cm]{figure_man/opt10.png}}%
     \only<5>{\includegraphics[width=9cm]{figure_man/saddle_point_grad_norm.pdf}}%
 	
-	\begin{itemize}
-		
-		\only<1>{\item[] \small{Red dot: Starting location}}
-		\only<2>{\item[] \small{First step...}}
-		\only<3>{\item[] \small{...second step...}}
-		\only<4>{\item[] \small{...tenth step got stuck and cannot escape the saddle point!}}
-        \only<5>{\item[] \small{...tenth step got stuck and cannot escape the saddle point!}}
-		
-	\end{itemize}
-	
+	\begin{center}
+		\only<1>{Red dot: Starting location}
+		\only<2>{Step 1 ...}
+		\only<3>{... Step 2 ...}
+		\only<4,5>{... Step 10 ... got stuck and cannot escape saddle point}
+	\end{center}
 }
 
 
@@ -181,18 +187,21 @@
 %\end{figure}
 %\end{vbframe}
 
-\begin{vbframe}{Saddle Points}
-  \begin{itemize}
-    \item In optimization we look for areas with zero gradient.
-    \item A variant of zero gradient areas are saddle points.
-    \item For the empirical risk $\risk$ of a neural network, the expected ratio of the number of saddle points to local minima typically grows exponentially with $m$ 
-    $$\risk: \R^m \rightarrow \R$$ 
-    In other words: Networks with more parameters (deeper networks or larger layers) exhibit a lot more saddle points than local minima.
-     \item Why is that?
-    \item The Hessian at a local minimum has only positive eigenvalues. At a saddle point it is a mixture of positive and negative eigenvalues.
-    
+\begin{vbframe}{Saddle points in neural networks}
+\begin{itemize}
+    \setlength{\itemsep}{1em}
+    % \item In optimization we look for areas with zero gradient.
+    % \item A variant of zero gradient areas are saddle points.
+    \item For the empirical risk $\risk : \R^d \rightarrow \R$ of a neural network, the expected ratio of the number of saddle points to local minima typically grows exponentially with $d$
+    \item In other words: Networks with more parameters (deeper networks or larger layers) exhibit a lot more saddle points than local minima
+    % \item Why is that?
+    \item \textbf{Reason:} Hessian at local minimum has only positive eigenvalues.
+        Hessian at saddle point has positive and negative eigenvalues.
+\end{itemize}
+
 \framebreak
-    
+
+\begin{itemize}
     \item Imagine the sign of each eigenvalue is generated by coin flipping:
     \begin{itemize}
       \item In a single dimension, it is easy to obtain a local minimum (e.g. \enquote{head} means positive eigenvalue).
@@ -204,16 +213,16 @@
     %\item See Dauphin et al. (2014) for a more detailed investigation.
 
     \item \enquote{Saddle points are surrounded by high error plateaus that can dramatically slow down learning, and give the illusory impression of the existence of a local minimum} (Dauphin et al. (2014)).
-    
+
 % \framebreak
-    
+
 %     \item \enquote{Saddle points are surrounded by high error plateaus that can dramatically slow down learning, and give the illusory impression of the existence of a local minimum} (Dauphin et al. (2014)).
 %   \begin{figure}
 %     \centering
 %     \includegraphics[width=8.5cm]{figure_man/cost.png}
 %     % TAKEN FROM i2dl LECTURE
 %   \end{figure}
-  \end{itemize}
+\end{itemize}
 \end{vbframe}
 
 \endlecture

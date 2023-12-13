@@ -95,12 +95,12 @@ In some cases, $\theta$ can only take \textbf{certain values}.
 \begin{eqnarray*}
 \min_{\bm{\beta}\in \R^p} && \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^T\xv^{(i)}\right)^2 \\
 \text{s.t. } && \|\bm{\beta}\|_1 \le t\\
-             && \bm{C}\bm{\beta} \le \bm{d}\\
-             && \bm{A}\bm{\beta} = \bm{b}, 
+             && \mathbf{C}\bm{\beta} \le \mathbf{d}\\
+             && \Amat\bm{\beta} = \mathbf{b}, 
 \end{eqnarray*}
 \end{itemize}
 
-where the matrices $\bm{A}\in \R^{l \times p}$ and $\bm{C} \in \R^{k \times p}$ have full row rank. 
+where the matrices $\Amat\in \R^{l \times p}$ and $\mathbf{C} \in \R^{k \times p}$ have full row rank. 
 \lz 
 
 This model includes many Lasso variants as special cases, e.g., the Generalized Lasso, (sparse) isotonic regression, log-contrast regression for compositional data, etc. (see, e.g., \href{https://hua-zhou.github.io/media/pdf/GainesKimZhou08CLasso.pdf}{\beamergotobutton{Gaines et al., 2018}}). 
@@ -127,7 +127,7 @@ Remember the dual formulation of the SVM, which is a convex quadratic program wi
 % \vspace*{-0.2cm}
 %
 % $$
-% \bm{r} = (r_1, ..., r_n) \sim \mathcal{N}(\mu, \Sigma).
+% \mathbf{r} = (r_1, ..., r_n) \sim \mathcal{N}(\mu, \Sigma).
 % $$
 %
 % Wie viel Prozent seines Kapitals in Aktie $i$ investiert wird, wird durch
@@ -141,20 +141,20 @@ Remember the dual formulation of the SVM, which is a convex quadratic program wi
 %
 % \framebreak
 %
-% Die Rendite am Jahresende ist dann $R(\xv) = \bm{r}^T \xv$.
+% Die Rendite am Jahresende ist dann $R(\xv) = \mathbf{r}^T \xv$.
 %
 % \lz
 %
 % Da die erwartete Mindestrendite mindestens $r_0$ sein soll, fordern wir als Nebenbedingung
 %
 % $$
-% E(\bm{r}^T \xv) = E(\bm{r}^T) \xv = \mu^T \xv \ge r_0.
+% E(\mathbf{r}^T \xv) = E(\mathbf{r}^T) \xv = \mu^T \xv \ge r_0.
 % $$
 %
 % Das Risiko, also die Varianz, wollen wir minimieren
 %
 % $$
-% \min \text{Var}(\bm{r}^T\xv) = \xv^T \Sigma \xv.
+% \min \text{Var}(\mathbf{r}^T\xv) = \xv^T \Sigma \xv.
 % $$
 %
 % \framebreak
@@ -218,17 +218,18 @@ where
 
 \lz 
 
-The set of inputs $\xv$ that fulfill the constraints, i.e.  
-$$\mathcal{S}:= \{\xv \in \R^d ~|~ g_i(\xv) \le 0, h_j(\xv) = 0 ~\forall~ i, j\}
-$$ 
+The set of inputs $\xv$ that fulfill the constraints, i.e.,
+\begin{equation*}
+    \mathcal{S} := \{\xv \in \R^d ~|~ g_i(\xv) \le 0, h_j(\xv) = 0 ~\forall~ i, j\},
+\end{equation*} 
 
-is known as the feasible set.
+is known as the \textbf{feasible set}.
 
 \end{vbframe}
 
 \begin{vbframe}{Constrained Convex Optimization}
 
-Special cases of constrained optimization problems are \textbf{convex programs}, with convex objective function $f$, convex inequality constraints $g_i$, and affine equality constraints $h_j$ (i.e. $h_j(\xv) = \bm{a}_j^\top \xv - \bm{b}_j$). 
+Special cases of constrained optimization problems are \textbf{convex programs}, with convex objective function $f$, convex inequality constraints $g_i$, and affine equality constraints $h_j$ (i.e. $h_j(\xv) = \Amat_j^\top \xv - \mathbf{b}_j$). 
 
 \lz 
 
@@ -243,9 +244,9 @@ Convex programs can be categorized into
 \begin{itemize}
 	\item Linear program (LP): objective function $f$ and all constraints $g_i, h_j$ are linear functions
 	\item Quadratic program (QP): objective function $f$ is a quadratic form, i.e. $$
-	\fx = \frac{1}{2}\xv^\top \bm{Q} \xv + \bm{c}^\top \xv + \bm{d} 
+	\fx = \frac{1}{2}\xv^\top \mathbf{Q} \xv + \mathbf{c}^\top \xv + \mathbf{d} 
 $$
-for $\bm{Q} \in \R^{d \times d}, \bm{c} \in \R^d, d \in \R$, and constraints are linear.
+for $\mathbf{Q} \in \R^{d \times d}, \mathbf{c} \in \R^d, d \in \R$, and constraints are linear.
 \end{itemize}
 
 as well as second-order cone programs (SOCP), semidefinite programs (SDP), and cone programs (CP). 

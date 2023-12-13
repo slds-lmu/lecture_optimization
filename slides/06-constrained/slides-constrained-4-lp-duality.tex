@@ -46,7 +46,7 @@
 A bakery sells brownies for $50$ ct and mini cheesecakes for $80$ ct each. The two products contain the following ingredients
 
 \begin{center}
-\begin{tabular}{ r c c c}
+\begin{tabular}{r | c c c}
     & \text{Chocolate} & \text{Sugar} & \text{Cream cheese} \\
     \hline
   \text{Brownie} & 3 & 2 & 2 \\
@@ -61,11 +61,11 @@ A student wants to minimize his expenses, but at the same time eat at least $6$ 
 He is therefore confronted with the following optimization problem:
 
 \begin{eqnarray*}
-\min_{\bm{x}\in \R^2} && 50x_1 + 80x_2 \\
+\min_{\xv\in \R^2} && 50x_1 + 80x_2 \\
 \text{s.t. } && 3x_1 \ge 6 \\
 && 2x_1 + 4x_2 \ge 10 \\
 && 2x_1 + 5x_2 \ge 8 \\
-&& \bm{x} \ge 0
+&& \xv \ge 0
 \end{eqnarray*}
 
 \framebreak
@@ -115,10 +115,10 @@ $$
 \max_{\bm{\alpha} \in \R^3}6 \alpha_1 + 10 \alpha_2 + 8 \alpha_3
 $$
 \item and at the same time ensure that the baker buys from him (purchase cost $\le$ selling price)
-\begin{eqnarray*}
-3\alpha_1 + 2\alpha_2 + 2\alpha_3 &\le& 50 \qquad \text{Brownie} \\
-4\alpha_2 + 5\alpha_3 &\le& 80 \qquad \text{Cheesecake}
-\end{eqnarray*}
+\begin{align*}
+    3\alpha_1 + 2\alpha_2 + 2\alpha_3 &\le 50 \qquad \text{Brownie} \\
+    4\alpha_2 + 5\alpha_3 &\le 80 \qquad \text{Cheesecake}
+\end{align*}
 
 \end{itemize}
 
@@ -198,17 +198,17 @@ The example explained duality from an economic point of view. But what is the ma
 
 \lz
 
-If we \enquote{skilfully} multiply the three inequalities by factors and add factors (similar to a linear system), we can find a lower bound.
+If we \enquote{skillfully} multiply the three inequalities by factors and add factors (similar to a linear system), we can find a lower bound.
 
 \framebreak
-\vspace*{-1.6cm}
+\vspace*{-1.4cm}
 
 \begin{eqnarray*}
-\min_{\bm{x}\in \R^2} && 50x_1 + 80x_2  \\
-\text{s.t. } && 3x_1 \ge 6 \quad \vert\textcolor{green}{\cdot 5}\\
-&& 2x_1 + 4x_2 \ge 10 \quad \vert \textcolor{green}{\cdot 5} \\
-&& 2x_1 + 5x_2 \ge 8 \quad \vert \textcolor{green}{\cdot 12} \\
-&& \bm{x} \ge 0
+\min_{\xv\in \R^2} && 50x_1 + 80x_2  \\
+\text{s.t. } && 3x_1 \ge 6 \quad \vert\textcolor{orange}{\cdot 5}\\
+&& 2x_1 + 4x_2 \ge 10 \quad \vert \textcolor{orange}{\cdot 5} \\
+&& 2x_1 + 5x_2 \ge 8 \quad \vert \textcolor{orange}{\cdot 12} \\
+&& \xv \ge 0
 \end{eqnarray*}
 
 \vspace*{-0.2cm}
@@ -216,117 +216,116 @@ If we \enquote{skilfully} multiply the three inequalities by factors and add fac
 If we add up the constraints we obtain
 
 \vspace*{-0.5cm}
-\begin{eqnarray*}
-& & \textcolor{green}{5} \cdot (3x_1) + \textcolor{green}{5} \cdot (2x_1 + 4x_2) + \textcolor{green}{12} \cdot (2x_1 + 5x_2)
-\\ &=& 15x_1 + 10x_1 + 24x_1 + 20x_2 + 60x_2 = 49 x_1 + 80 x_2 \\
-&\ge& 30 + 50 + 96 = 176
-\end{eqnarray*}
+\begin{align*}
+    & \textcolor{orange}{5} \cdot (3x_1) + \textcolor{orange}{5} \cdot (2x_1 + 4x_2) + \textcolor{orange}{12} \cdot (2x_1 + 5x_2) \\
+    &\qquad = 15x_1 + 10x_1 + 24x_1 + 20x_2 + 60x_2 \\
+    &\qquad = 49 x_1 + 80 x_2 \\
+    &\qquad \ge 30 + 50 + 96 = 176
+\end{align*}
 
 Since $x_1 \ge 0$ we found a lower bound because
-
-$$
-50x_1 + 80 x_2 \ge 49 x_1 + 80 x_2 \ge 176.
-$$
+\begin{equation*}
+    50x_1 + 80 x_2 \ge 49 x_1 + 80 x_2 \ge 176.
+\end{equation*}
 
 \framebreak
 
-Maybe we could have transformed the equations more cleverly and then found a \textbf{better} lower bound. We replace the multipliers $5, 5, 12$ with $\alpha_1, \alpha_2, \alpha_3$ and demand (as a condition for a lower bound).
+Is our derived lower bound the best possible?
+
+\medskip
+
+We replace the multipliers $5, 5, 12$ by $\alpha_1, \alpha_2, \alpha_3$ and compute:
 
 % \begin{eqnarray*}
-% \min_{\bm{x}\in \R^2} && 50x_1 + 80x_2  \\
-% \text{u. d. N. } && 3x_1 \ge 6 \quad \vert \textcolor{green}{\cdot \alpha_1}\\
-% && 2x_1 + 4x_2 \ge 10 \quad \vert \textcolor{green}{\cdot \alpha_2} \\
-% && 2x_1 + 5x_2 \ge 8 \quad \vert \textcolor{green}{\cdot \alpha_3} \\
-% && \bm{x} \ge 0
+% \min_{\xv\in \R^2} && 50x_1 + 80x_2  \\
+% \text{u. d. N. } && 3x_1 \ge 6 \quad \vert \textcolor{orange}{\cdot \alpha_1}\\
+% && 2x_1 + 4x_2 \ge 10 \quad \vert \textcolor{orange}{\cdot \alpha_2} \\
+% && 2x_1 + 5x_2 \ge 8 \quad \vert \textcolor{orange}{\cdot \alpha_3} \\
+% && \xv \ge 0
 % \end{eqnarray*}
 %
 % \framebreak
 
 \vspace*{-0.5cm}
 
-\begin{eqnarray*}
-&& 50x_1 + 80x_2 \ge \textcolor{green}{\alpha_1} (3x_1) + \textcolor{green}{\alpha_2} (2x_1 + 4x_2) + \textcolor{green}{\alpha_3} (2x_1 + 5x_2) \\ &=& (3 \textcolor{green}{\alpha_1} + 2  \textcolor{green}{\alpha_2} + 2 \textcolor{green}{\alpha_3}) x_1 + (4  \textcolor{green}{\alpha_2} + 5 \textcolor{green}{\alpha_3}) x_2
-\end{eqnarray*}
+\begin{align*}
+    50x_1 + 80x_2 &\ge \textcolor{orange}{\alpha_1} (3x_1) + \textcolor{orange}{\alpha_2} (2x_1 + 4x_2) + \textcolor{orange}{\alpha_3} (2x_1 + 5x_2) \\
+    &= (3 \textcolor{orange}{\alpha_1} + 2  \textcolor{orange}{\alpha_2} + 2 \textcolor{orange}{\alpha_3}) x_1 + (4  \textcolor{orange}{\alpha_2} + 5 \textcolor{orange}{\alpha_3}) x_2 \\
+    &\geq 6 \textcolor{orange}{\alpha_1} + 10 \textcolor{orange}{\alpha_2} + 8 \textcolor{orange}{\alpha_3}
+\end{align*}
 
-or equivalently
+\textbf{But:} We have to demand that
 
 \vspace*{-0.5cm}
-\begin{eqnarray*}
-3 \textcolor{green}{\alpha_1} + 2  \textcolor{green}{\alpha_2} + 2 \textcolor{green}{\alpha_3} \le 50, \\
-4  \textcolor{green}{\alpha_2} + 5 \textcolor{green}{\alpha_3} \le 80.
-\end{eqnarray*}
-
-The lower bound (right-hand side of the inequality) is given by
-
-$$
-\textcolor{green}{\alpha_1} \cdot 6 + \textcolor{green}{\alpha_2} \cdot 10 + \textcolor{green}{\alpha_3} \cdot 8.
-$$
+\begin{align*}
+    3 \textcolor{orange}{\alpha_1} + 2  \textcolor{orange}{\alpha_2} + 2 \textcolor{orange}{\alpha_3} &\le 50 \\
+    4  \textcolor{orange}{\alpha_2} + 5 \textcolor{orange}{\alpha_3} &\le 80
+\end{align*}
 
 \framebreak
 
-We are interested in a \textbf{largest possible} lower bound, because it gives us the most information. As an optimization problem
+We are interested in a \textbf{largest possible} lower bound.
+
+\medskip
+
+This yields the \textbf{dual problem}:
 
 \begin{eqnarray*}
-\max_{\bm{\alpha} \in \R^3} && 6 \alpha_1 + 10 \alpha_2 + 8 \alpha_3 \\
-\text{s.t. } && 3\alpha_1 + 2\alpha_2 + 2\alpha_3 \le 50 \\
-&& 4\alpha_2 + 5\alpha_3 \le 80\\
-&& \bm{\alpha} \ge 0.
+    \max_{\bm{\alpha} \in \R^3} && 6 \alpha_1 + 10 \alpha_2 + 8 \alpha_3 \\
+    \text{s.t. } && 3\alpha_1 + 2\alpha_2 + 2\alpha_3 \le 50 \\
+    && 4\alpha_2 + 5\alpha_3 \le 80\\
+    && \bm{\alpha} \ge 0
 \end{eqnarray*}
 
 
 \end{vbframe}
 
-
-
 \begin{vbframe}{Duality}
 
-We denote
+\textbf{Dual problem:}
 
-\vspace*{-0.2cm}
-\begin{eqnarray*}
-\max_{\bm{\alpha} \in \R^m} && g(\bm{\alpha}) := \bm{\alpha}^T\bm{b}\\
-\text{s.t. } && \bm{\alpha}^T\bm{A} \le \bm{c}^T \\
-&& \bm{\alpha} \ge 0
-\end{eqnarray*}
-
-as the \textbf{dual problem} of
+\vspace{-\baselineskip}
 
 \begin{eqnarray*}
-\min_{\bm{x} \in \R^n} && f(\bm{x}) := \bm{c}^T\bm{x}\\
-\text{s.t. } && \bm{A}\bm{x} \ge \bm{b} \\
-&& \bm{x} \ge 0
+    \max_{\bm{\alpha} \in \R^m} && g(\bm{\alpha}) := \bm{\alpha}^\top\mathbf{b}\\
+    \text{s.t. } && \bm{\alpha}^\top\Amat \le \mathbf{c}^\top \\
+    && \bm{\alpha} \ge 0
 \end{eqnarray*}
 
-(\textbf{primal problem}).
+\textbf{Primal problem:}
+\begin{eqnarray*}
+    \min_{\xv \in \R^n} && f(\xv) := \mathbf{c}^\top\xv\\
+    \text{s.t. } && \Amat\xv \ge \mathbf{b} \\
+    && \xv \ge 0
+\end{eqnarray*}
 
 \framebreak
 
-Duality overview:
+Connection of primal and dual problem:
 
-\begin{footnotesize}
+\vspace{\baselineskip}
+
 \begin{center}
-    \begin{tabular}{c | c | c | c}
-    & $\begin{array}{c} \text{Primal} \\ \text{(minimize)} \end{array}$ & $\begin{array}{c} \text{Dual} \\ \text{(maximize)} \end{array}$ \\
-    \hline
-    \multirow{3}{*}{$\begin{array}{c} \text{condition} \end{array}$} & $\le$ & $\le 0$ & \multirow{3}{*}{variable} \\
-  & $\ge$ & $\ge 0$ & \\
-    & $=$ & unconstrained & \\
-    \hline
-    \multirow{3}{*}{variable} & $\ge 0 $ & $\le$ & \multirow{3}{*}{$\begin{array}{c} \text{condition} \end{array}$}\\
-    & $\le 0$ &  $\ge$ & \\
-    & unconstrained & $=$ & \\
-\hline
+    \begin{tabular}{c||c|c||c}
+        & $\begin{array}{c} \text{Primal} \\ \text{(minimize)} \end{array}$ & $\begin{array}{c} \text{Dual} \\ \text{(maximize)} \end{array}$ \\
+        \hline\hline
+        \multirow{3}{*}{$\begin{array}{c} \text{condition} \end{array}$} & $\le$ & $\le 0$ & \multirow{3}{*}{variable} \\
+      & $\ge$ & $\ge 0$ & \\
+        & $=$ & unconstrained & \\
+        \hline
+        \multirow{3}{*}{variable} & $\ge 0 $ & $\le$ & \multirow{3}{*}{$\begin{array}{c} \text{condition} \end{array}$}\\
+        & $\le 0$ &  $\ge$ & \\
+        & unconstrained & $=$ &
     \end{tabular}
 \end{center}
-\end{footnotesize}
 \end{vbframe}
 
 \begin{vbframe}{Duality theorem}
 
-In general, the \textbf{weak duality theorem}$^{(*)}$ applies to all feasible $\bm{x}, \bm{\alpha}$
+In general, the \textbf{weak duality theorem} applies to all feasible $\xv, \bm{\alpha}$
 
 $$
-g(\bm{\alpha}) = \bm{\alpha}^T\bm{b} \le \bm{c}^T\bm{x}  = f(\bm{x})
+g(\bm{\alpha}) = \bm{\alpha}^\top\mathbf{b} \le \mathbf{c}^\top\xv  = f(\xv)
 $$
 
 The value of the dual function is therefore \textbf{always} a lower bound for the objective function value of the primal problem.
@@ -334,21 +333,22 @@ The value of the dual function is therefore \textbf{always} a lower bound for th
 \lz
 
 \textbf{Proof:}
-$\bm{\alpha}^T\bm{b} \overset{\bm{Ax} \ge b}{\le}\bm{\alpha}^T\bm{Ax} \overset{\bm{\alpha}^T\bm{A} \le \bm{c}^T}{\le}\bm{c}^T\bm{x}$
+\begin{equation*}
+    \bm{\alpha}^\top\mathbf{b} \overset{\Amat \xv \ge \mathbf{b}}{\le}\bm{\alpha}^\top\Amat \xv \overset{\bm{\alpha}^\top\Amat \le \mathbf{c}^\top}{\le}\mathbf{c}^\top\xv
+\end{equation*}
 
 \framebreak
 
-The \textbf{strong duality theorem} states that if one of the two problems has a constrained solution, then the other also has a constrained solution. The objective function values are the same in this case.
-
-$$
-g(\bm{\alpha}^*) = (\bm{\alpha}^*)^T\bm{b} = \bm{c}^T\bm{x}^* = f(\bm{x}^*).
-$$
+The \textbf{strong duality theorem} states that if one of the two problems has a constrained solution, then the other also has a constrained solution. The objective function values are the same in this case:
+\begin{equation*}
+    g(\bm{\alpha}^*) = (\bm{\alpha}^*)^\top\mathbf{b} = \mathbf{c}^\top\xv^* = f(\xv^*)
+\end{equation*}
 
 In this case, the dual problem can be solved instead of the primal problem, which can lead to enormous run time advantages, especially with many constraints and few variables.
 
 \lz
 
-The \textbf{dual simplex algorithm}, which has emerged as a standard procedure for Linear programming, is based on this idea.
+The \textbf{dual simplex algorithm}, which has emerged as a standard procedure for linear programming, is based on this idea.
 
 \end{vbframe}
 
@@ -358,14 +358,14 @@ The \textbf{dual simplex algorithm}, which has emerged as a standard procedure f
 Unfortunately, many slightly different (but ultimately equivalent) formulations of primal and dual LPs exist in the literature. 
 
 One common alternative with inequality and equality constraints is often formulated as
-follows. Let $\bm{c} \in \R^d$, $\bm{b} \in \R^l$, $\bm{A} \in \R^{l \times d}$, $\bm{h} \in \R^k$, and $\bm{G} \in \R^{k \times d}$. 
+follows. Let $\mathbf{c} \in \R^d$, $\mathbf{b} \in \R^l$, $\Amat \in \R^{l \times d}$, $\mathbf{h} \in \R^k$, and $\mathbf{G} \in \R^{k \times d}$.
 
 Then the primal LP is defined as 
 
 \begin{eqnarray*}
- \min_{\xv \in \R^d} && \bm{c}^T\bm{x} \\
-\text{s.t. } && \bm{G} \bm{x} = \bm{h} \\
-             && \bm{A} \bm{x} \le \bm{b} 
+    \min_{\xv \in \R^d} && \mathbf{c}^\top\xv \\
+    \text{s.t. } && \mathbf{G} \xv = \mathbf{h} \\
+                 && \Amat \xv \le \mathbf{b} 
 \end{eqnarray*}
 
 \framebreak
@@ -373,46 +373,50 @@ Then the primal LP is defined as
 and the corresponding dual LP 
 
 \begin{eqnarray*}
- \max_{\alpha \in \R^l \beta \in \R^k} && -\bm{b}^T\bm{\alpha} -\bm{h}^T\bm{\beta} \\
-\text{s.t. } && -\bm{A}^T \bm{\alpha} - \bm{G}^T \bm{\beta} = \bm{c}\\
-             && \bm{\alpha} > 0 
+ \max_{\alpha \in \R^l, \beta \in \R^k} && -\mathbf{b}^\top\bm{\alpha} -\mathbf{h}^\top\bm{\beta} \\
+\text{s.t. } && -\Amat^\top \bm{\alpha} - \mathbf{G}^\top \bm{\beta} = \mathbf{c}\\
+             && \bm{\alpha} \ge 0 
 \end{eqnarray*}
 
 The following argument again highlights the interpretation of the dual
 LP as a lower bound.
 Here, for $\bm{\alpha}>0$ and any $\bm{\beta}$, and $\xv$ primal feasible, it holds that 
 $$
-    \alpha^T (\bm{A} \bm{x} - \bm{b}) + \bm{\beta}^T (\bm{G} \bm{x} - \bm{h}) \le 0
-    \iff (-\bm{A}^T \bm{\alpha} - \bm{G}^T \bm{\beta})^T \bm{x} \geq -b^T \bm{\alpha} - \bm{h}^T \bm{\beta}
+    \bm{\alpha}^\top (\Amat \xv - \mathbf{b}) + \bm{\beta}^\top (\mathbf{G} \xv - \mathbf{h}) \le 0
+    \iff (-\Amat^\top \bm{\alpha} - \mathbf{G}^\top \bm{\beta})^\top \xv \geq -\mathbf{b}^\top \bm{\alpha} - \mathbf{h}^\top \bm{\beta}
 $$
-So if $\bm{c} = -\bm{A}^T \bm{\alpha} - \bm{G}^T \bm{\beta}$, we get a lower bound on the
+So if $\mathbf{c} = -\Amat^\top \bm{\alpha} - \mathbf{G}^\top \bm{\beta}$, we get a lower bound on the
 primal optimal value.
 
 \framebreak
 
-Another perspective on this formulation will connect LP duality to the more general notion of Lagrangian duality. Again, for $\bm{\alpha}>0$ and any $\bm{\beta}$, and $\xv$ primal feasible, it holds that
+Another perspective on this formulation will connect LP duality to the more general notion of \textbf{Lagrangian duality}.
+Again, for $\bm{\alpha} \geq 0$, any $\bm{\beta}$, and $\xv$ primal feasible, it holds that
 $$
-\bm{c}^T \bm{x} \ge \bm{c}^T \bm{x} + \alpha^T (\bm{A} \bm{x} - b) + \bm{\beta}^T (\bm{G} \bm{x} - h) := \mathcal{L}(\bm{x},\bm{\alpha},\bm{\beta})
+\mathbf{c}^\top \xv \ge \mathbf{c}^\top \xv + \bm{\alpha}^\top (\Amat \xv - \mathbf{b}) + \bm{\beta}^\top (\mathbf{G} \xv - \mathbf{h}) =: \mathcal{L}(\xv,\bm{\alpha},\bm{\beta})
 $$
-So if $\mathcal{S}$ denotes the feasible set, $f(\bm{x}^*)$ the primal optimal value, then for $\bm{\alpha}>0$ and any $\bm{\beta}$, it holds that
+If $\mathcal{S}$ denotes the primal feasible set, $f(\xv^*)$ the primal optimal value, then for $\bm{\alpha} \geq 0$ and any $\bm{\beta}$, it holds that
 $$
-    f(\bm{x}^*) \ge \min_{\bm{x} \in \mathcal{S}}\mathcal{L}(\bm{x},\bm{\alpha},\bm{\beta}) \ge \min_{\bm{x} \in \R^d} \mathcal{L}(\bm{x},\bm{\alpha},\bm{\beta}) := g(\bm{\alpha},\bm{\beta})
+    f(\xv^*) \ge \min_{\xv \in \mathcal{S}}\mathcal{L}(\xv,\bm{\alpha},\bm{\beta}) \ge \min_{\xv \in \R^d} \mathcal{L}(\xv,\bm{\alpha},\bm{\beta}) =: g(\bm{\alpha},\bm{\beta})
 $$
 
-This shows that the function $g(\bm{\alpha},\bm{\beta})$ is a lower bound on $f(\bm{x}^*)$  
-for $\bm{\alpha}>0$ and any $\bm{\beta}$. This function is also called the \emph{Lagrange function} and is defined as
-$$\displaystyle g(\bm{\alpha},\bm{\beta}) =
-\begin{cases} 
--\bm{b}^T\bm{\alpha} -\bm{h}^T\bm{\beta} & \text{if $c=-\bm{A}^T \bm{\alpha} - \bm{G}^T \bm{\beta}$} \\
--\infty & \text{otherwise}
-\end{cases}$$
+This shows that the function $g(\bm{\alpha},\bm{\beta})$ is a lower bound on $f(\xv^*)$ for $\bm{\alpha} \geq 0$ and any $\bm{\beta}$.
+It is the \emph{Lagrange (dual) function} and defined as
+\begin{equation*}
+    g(\bm{\alpha},\bm{\beta}) =
+        \begin{cases}
+            -\mathbf{b}^\top\bm{\alpha} -\mathbf{h}^\top\bm{\beta} & \text{if $\mathbf{c}=-\Amat^\top \bm{\alpha} - \mathbf{G}^\top \bm{\beta}$} \\
+            -\infty & \text{otherwise}
+        \end{cases}
+\end{equation*}
 
-Maximization over this function leads again to the dual LP formulation above.
+\begin{itemize}
+    \item Maximizing $g(\bm{\alpha},\bm{\beta})$ leads again to the first dual formulation
+    \item \textbf{Note:} Lagrangian perspective is completely general \\
+        $\Rightarrow$ applicable to arbitrary (non-linear) problems
+\end{itemize}
 
-This last perspective is, in fact, completely general and can be applied to arbitrary
-(non-linear) optimization problems. 
-
-\vspace{1cm}
+\medskip
 
 \textbf{Final remarks:}
 \begin{itemize}
@@ -420,12 +424,10 @@ This last perspective is, in fact, completely general and can be applied to arbi
     of a constrained optimization problem.
     \item We refer to the excellent course of L. Vandenberghe  
     \href{http://www.seas.ucla.edu/~vandenbe/ee236a/ee236a.html}{\beamergotobutton{EE236A - Linear Programming}} for many more details.
-    \item We have skipped algorithmic approaches to solving linear programs: Dantzig's Simplex Algorithm, Interior point methods, and the Ellipsoid method.
+    \item We have skipped algorithmic approaches for solving linear programs: Dantzig's Simplex Algorithm, Interior point methods, and the Ellipsoid method.
 \end{itemize}
 
 \end{vbframe}
 
 \endlecture
 \end{document}
-
-

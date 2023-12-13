@@ -27,79 +27,79 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\begin{vbframe}{SGD with constant step-size}
+\begin{vbframe}{SGD with constant step size}
 
 \textbf{Example}: SGD with constant step size. 
 
-\lz 
-
 \begin{figure}
-    \vspace{-0.3cm}
     \centering
-    \includegraphics[width = 1\textwidth]{figure_man/sgd_example_erratic_behavior.png} \newline
-    Fast convergence of SGD at beginning, erratic behavior later on (variance too big). 
+    \includegraphics[width=0.9\textwidth]{figure_man/sgd_example_erratic_behavior.png}
+    \caption*{Fast convergence of SGD initially.
+        Erratic behavior later (variance too big).}
 \end{figure}
 
 \end{vbframe}
 
 
-\begin{vbframe}{SGD with decreasing step-size}
+\begin{vbframe}{SGD with decreasing step size}
 
 \begin{itemize}
-	\item \textbf{Idea: } Decrease step size to reduce magnitude of steps of erratic behavior. 
-	\item Consider trade-off: 
+	\item \textbf{Idea:} Decrease step size to reduce magnitude of erratic steps.
+	\item \textbf{Trade-off:}
 	\begin{itemize}
-		\item if  step size $\alpha^{[t]}$ decreases slowly, the variance of $\nabla_x ~ g_i(\xv)$ decreases slowly too.
-		\item if step size decreases too fast, we reach optimum slowly.
+		\item if step size $\alpha^{[t]}$ decreases slowly, large erratic steps% variance of $\nabla_\xv g_i(\xv)$ also decreases slowly
+		\item if step size decreases too fast, performance is impaired
 	\end{itemize}
-	\item SGD converges to stationary point if ratio of sum of squared step-sizes over the sum of step-sizes converges to $0$: 
+	\item SGD converges for sufficiently smooth functions if 
 	$$
 		\frac{\sum_{t = 1}^\infty \left(\alpha^{[t]}\right)^2}{\sum_{t = 1}^\infty \alpha^{[t]}} = 0
 	$$
-	(``how much noise affects you'' vs. ``how far you can get''). 
+	(\enquote{how much noise affects you} by \enquote{how far you can get}).
 \end{itemize}	
 
 \framebreak 
 
 \begin{itemize}
-	\item Popular solution: step size fulfilling $\alpha^{[t]} \in \order(\frac{1}{t})$. 
+	\item Popular solution: step size fulfilling $\alpha^{[t]} \in \order(1/t)$. 
 \end{itemize}
 
- 	\begin{figure}
- 		\vspace{-0.3cm}
- 		\centering
- 		\includegraphics[width = 1\textwidth]{figure_man/sgd_example_decreasing_step_size.png} \newline
-		Example continued. Step size $\alpha^{[t]} = \frac{0.2}{t}$. 
- 	\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width = 1\textwidth]{figure_man/sgd_example_decreasing_step_size.png}
+    \caption*{Example continued.
+        Step size $\alpha^{[t]} = 0.2/t$. }
+\end{figure}
+
+\vspace{-0.5\baselineskip}
 
 \begin{itemize}
- 	\item Often not working well in practice: Step size really small really fast. 
- 	\item Alternative: $\alpha^{[t]} \in \order(\sqrt{t})$
+ 	\item Often not working well in practice: step size gets small quite fast.
+ 	\item Alternative: $\alpha^{[t]} \in \order(1/\sqrt{t})$
 \end{itemize}
 
 \end{vbframe}
 
-\begin{vbframe}{Advanced step-size control} 
+\begin{vbframe}{Advanced step size control} 
 
-	\begin{blocki}{Why not Armijo-based step-size control? }
-		\item Backtracking line search or other rules based on the Armijo-condition are usually not suitable: A check of Armijo condition 
-		$$
-		f(\xv + \alpha \bm{d}) \le \fx + \gamma \alpha \textcolor{red}{\nabla g(\xv)}^\top \bm{d}
-		$$
-		requires evaluating the full gradient.
-		\item But: SGD is particularly used to \textbf{avoid} expensive evaluations of gradient! 
-		\item Recent research aims at finding approximate line-search methods that provide better convergence methods, e.g., \emph{Vaswani et al., Painless Stochastic Gradient: Interpolation, Line-Search, and Convergence Rates (NeurIPS 2019).}
-	\end{blocki}
+\begin{blocki}{Why not Armijo-based step size control? }
+    \item Backtracking line search or other approaches based on Armijo rule usually not suitable: Armijo condition 
+    $$
+          g(\xv + \alpha \mathbf{d}) \le g(\xv) + \gamma_1 \alpha \textcolor{red}{\nabla g(\xv)}^\top \mathbf{d}
+    $$
+    requires evaluating full gradient.
+    \item But SGD is used to \emph{avoid} expensive gradient computations. 
+    \item Research aims at finding inexact line search methods that provide better convergence behaviour, e.g., Vaswani et al., \emph{Painless Stochastic Gradient: Interpolation, Line-Search, and Convergence Rates}. NeurIPS, 2019.
+\end{blocki}
 
 \end{vbframe}
 
 
-\begin{vbframe}{Mini-batches} 
+\begin{vbframe}{Mini-batches}
 
 \begin{itemize}
 	\item Reduce noise by increasing batch size $m$ for better approximation
 	$$
-		\bm{\hat d} = \frac{1}{m} \sum_{i \in J} \nabla_\xv~ g_i(\xv) \approx \frac{1}{n} \sumin \nabla_\xv~ g_i(\xv) = \bm{d} 
+		\hat{\mathbf{d}} = \frac{1}{m} \sum_{i \in J} \nabla_\xv g_i(\xv) \approx \frac{1}{n} \sumin \nabla_\xv g_i(\xv) = \mathbf{d} 
 	$$
 	\item Usually, the batch size is limited by computational resources (e.g., how much data you can load into the memory)
 \end{itemize}
@@ -121,7 +121,7 @@
 	\item Practicable solution for ML: 
 	\begin{itemize}
 		\item Measure the validation set error after $T$ iterations
-		\item Stop, if validation set error is not improving
+		\item Stop if validation set error is not improving
 	\end{itemize}
 \end{itemize}
 
@@ -131,20 +131,21 @@
 
 \begin{vbframe}{SGD and ML}
 
-	\begin{blocki}{General remarks:}
-		\item SGD is a simplification of GD 
-		\item SGD particularly suitable for large-scale ML when the evaluating the gradient is too expensive / restricted by computational resources
-		\item SGD and variants are the most commonly used methods in modern ML, for example:  
-		\begin{itemize}
-			\item Linear models \\
-			\begin{footnotesize}
-			Note that even for the linear model and quadratic loss, where a closed form solution is available, SGD might be used if the size $n$ of the dataset is too large and the design matrix does not fit into memory. 			\end{footnotesize}
-			\item Neural networks 
-			\item Support vector machines
-			\item ...
-		\end{itemize}
-		% It is worthwhile to test the gradient for robustness.
-	\end{blocki}
+\begin{blocki}{General remarks:}
+    \item SGD is a variant of GD 
+    \item SGD particularly suitable for large-scale ML when evaluating gradient is too expensive / restricted by computational resources
+    \item SGD and variants are the most commonly used methods in modern ML, for example:  
+    \begin{itemize}
+        \item Linear models \\
+            \begin{footnotesize}
+                Note that even for the linear model and quadratic loss, where a closed form solution is available, SGD might be used if the size $n$ of the dataset is too large and the design matrix does not fit into memory.
+            \end{footnotesize}
+        \item Neural networks 
+        \item Support vector machines
+        \item ...
+    \end{itemize}
+    % It is worthwhile to test the gradient for robustness.
+\end{blocki}
 
 \end{vbframe}
 
@@ -170,24 +171,27 @@
 
 
 
-	 \begin{vbframe}{SGD with momentum}
+\begin{vbframe}{SGD with momentum}
 		
-	 	 SGD is usually used with momentum due to reasons mentioned in previous chapters.
-	 	\begin{algorithm}[H]
-	 		\small
-	 		\caption{Stochastic gradient descent with momentum}
-	 		\begin{algorithmic}[1]
-	 			\State \textbf{require} learning rate $\alpha$ and momentum $\varphi$ \strut
-	 			\State \textbf{require} initial parameter $\bm{x}$ and initial velocity $\bm{\nu}$ \strut
-	 			\While{stopping criterion not met}
-	 			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Sample a minibatch of $m$ examples from the training set $\{\tilde{x}^{(1)},\dots,\tilde{x}^{(m)}\}$}
-	 			\State Compute gradient estimate: $\hat{\nabla f(\bm{x})}$ % \leftarrow  \frac{1}{m} \nabla_{\bm{x}} \sum_{i} \Lxyit$
-	 			\State Compute velocity update: $\bm{\nu} \leftarrow \varphi \bm{\nu} - \alpha \hat{\nabla f(\bm{x})}$
-	 			\State Apply update: $\bm{x} \leftarrow \bm{x} + \bm{\nu}$
-	 			\EndWhile
-	 		\end{algorithmic}
-	 	\end{algorithm}
-	 \end{vbframe}
+SGD is usually used with momentum due to reasons mentioned in previous chapters.
+
+\begin{algorithm}[H]
+    \small
+    \caption{Stochastic gradient descent with momentum}
+    \begin{algorithmic}[1]
+        \State \textbf{require} step size $\alpha$ and momentum $\varphi$ \strut
+        \State \textbf{require} initial parameter $\bm{x}$ and initial velocity $\bm{\nu}$ \strut
+        \While{stopping criterion not met}
+        \State Sample mini-batch of $m$ examples
+        \State Compute gradient estimate $\nabla \hat{g}(\xv)$ using mini-batch
+        %$\leftarrow  \frac{1}{m} \nabla_{\bm{x}} \sum_{i} \Lxyit$
+        \State Compute velocity update: $\bm{\nu} \leftarrow \varphi \bm{\nu} - \alpha \nabla \hat{g}(\xv)$
+        \State Apply update: $\bm{x} \leftarrow \bm{x} + \bm{\nu}$
+        \EndWhile
+    \end{algorithmic}
+\end{algorithm}
+
+\end{vbframe}
 
 	% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

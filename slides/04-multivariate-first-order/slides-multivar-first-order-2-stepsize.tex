@@ -8,9 +8,10 @@
 \newcommand{\titlefigure}{figure_man/big_small_stepsize_cropped.png}
 \newcommand{\learninggoals}{
 \item Impact of step size
-\item Fixed vs. adaptive 
+\item Fixed vs. adaptive step size
 \item Exact line search
-\item Armijo rule and backtracking 
+\item Armijo rule \& Backtracking
+\item Bracketing \& Pinpointing
 }
 
 
@@ -288,25 +289,23 @@
         \end{figure}
     \end{vbframe}
 
-	\begin{vbframe}{Gradient Descent and Optimality}
+	% \begin{vbframe}{Gradient Descent and Optimality}
 	
-	\begin{itemize}
-		\item GD is a greedy algorithm: locally optimal moves
-		\medskip
-		\item If $\riskt$ is \textbf{convex} and \textbf{differentiable}, and its \textbf{gradient} is \textbf{Lipschitz continuous}, GD is guaranteed to converge to the global minimum for small enough step size.
-		% \vspace*{0.5mm}
-		% \item However, if $\riskt$ has multiple local optima and/or saddle points, GD might only converge to a stationary point (other than the global optimum), depending on the starting point. 
-	\end{itemize}
+	% \begin{itemize}
+	% 	\item GD is a greedy algorithm: locally optimal moves
+	% 	\medskip
+	% 	\item If $\riskt$ is \textbf{convex} and \textbf{differentiable}, and its \textbf{gradient} is \textbf{Lipschitz continuous}, GD is guaranteed to converge to the global minimum for small enough step size.
+	% 	% \vspace*{0.5mm}
+	% 	% \item However, if $\riskt$ has multiple local optima and/or saddle points, GD might only converge to a stationary point (other than the global optimum), depending on the starting point. 
+	% \end{itemize}
 	
-	\begin{figure}
-		\centering
-		\includegraphics[width=0.6\textwidth]{figure_man/gdes_1.png}
-	\end{figure}
+	% \begin{figure}
+	% 	\centering
+	% 	\includegraphics[width=0.6\textwidth]{figure_man/gdes_1.png}
+	% \end{figure}
 
-	\end{vbframe}
-			
-	
-	
+	% \end{vbframe}
+    
 	\endlecture
 \end{document}
 
