@@ -8,7 +8,9 @@
 
 \newcommand{\titlefigure}{figure_man/gdes_1.png}
 \newcommand{\learninggoals}{
-\item Convergence of GD 
+\item Convergence of GD
+\item Proof strategy and tools
+\item Descent lemma
 }
 
 
@@ -24,137 +26,188 @@
 \lecture{Optimization in Machine Learning}
 \sloppy
 	
-	\begin{vbframe}{Gradient Descent and Optimality}
-	
-	\begin{itemize}
-		\item GD is a greedy algorithm: In every iteration, it makes locally optimal moves.
-		\vspace*{0.5mm}
-		\item If $\fx$ is \textbf{convex} and \textbf{differentiable}, and its gradient is Lipschitz continuous, GD is guaranteed to converge to the global minimum for small enough step-size.  
-		% \vspace*{0.5mm}
-		% \item However, if $\riskt$ has multiple local optima and/or saddle points, GD might only converge to a stationary point (other than the global optimum), depending on the starting point. 
-	\end{itemize}
-	
-	\begin{figure}
-		\centering
-		\includegraphics[width=0.6\textwidth]{figure_man/gdes_1.png}
-	\end{figure}
+\begin{vbframe}{Setting}
 
+\begin{itemize}
+    \setlength{\itemsep}{1em}
+    \item GD is \textbf{greedy}: \textbf{locally optimal} moves in each iteration
+    \item If $f$ is \textbf{convex}, \textbf{differentiable} and has a \textbf{Lipschitz gradient}, GD converges to global minimum for sufficiently small step sizes.
+\end{itemize}
 
+\medskip
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\textwidth]{figure_man/gdes_1.png}
+\end{figure}
 
 \framebreak
-	
-	Assume $f: \R^d \rightarrow \R$ convex and differentiable and assume that global minimum $\xv^\ast$ exists. Assume $\nabla f$ is Lipschitz continuous with $L > 0$: 
 
-	\begin{equation*}
-	   || \nabla \fx - \nabla f(\tilde{\xv}) || \le L ||\fx - f(\tilde{\xv}) || \quad \text{ for all } \xv, \tilde{\xv}
-	\end{equation*}
-	
-	(i.e., gradient can't change arbitrarily fast).
-		
-	\lz 
-		
-	\textbf{Convergence of GD:} GD with $k$ iterations with starting point $\xv^{[0]}$ and fixed step-size $\alpha \leq 1/L$ will yield a solution $f(\xv^{[k]})$, which satisfies
-
-	$$
-		f(\xv^{[k]}) - f(\xv^\ast) \leq \frac{|| \xv^{[0]} - \xv^\ast ||^2}{2\alpha k}
-	$$
-	
-	This means, that GD converges with rate $\mathcal{O}(1/k)$.
-	
-
-	\framebreak 	
-	
-	\textbf{Proof: }
-	From $\nabla f$ Lipschitz it follows that $\nabla^2 \fx \preccurlyeq L \cdot \mathbf{I}$ for all $\xv$. 
-
-	\vspace*{0.2cm}
-
-	\begin{footnotesize} NB: The generalized inequality $\nabla^2 \fx \preccurlyeq L I$ means that $L \cdot \mathbf{I} - \nabla^2 \fx$ is positive semidefinite. This means that $ \bm{v} ^\top \nabla^2 f(\bm{u}) \bm{v} \leq L || \bm{v} ||^2$ for any $\bm{u}$ and $ \bm{v} $. 
-	\end{footnotesize}
-	
-	\vspace*{0.2cm}
-
-	We perform a quadratic expansion of f around $\tilde{\mathbf{x}}$:
-
-	\begin{eqnarray*}
-		\fx &\approx& f(\tilde{\mathbf{x}}) + \nabla f(\tilde{\mathbf{x}})^\top (\xv - \tilde{\mathbf{x}}) + \textcolor{blue}{0.5  (\xv - \tilde{\mathbf{x}})^\top \nabla^2 f(\tilde{\mathbf{x}}) (\xv - \tilde{\mathbf{x}})} \\
-		& \leq & f(\tilde{\mathbf{x}}) + \nabla f(\tilde{\mathbf{x}})^\top (\xv - \tilde{\mathbf{x}}) + 0.5 L ||\xv - \tilde{\mathbf{x}}||^2 \text{ (descent lemma)},
-	\end{eqnarray*}		
-	as the blue term is at most $0.5 \cdot L \cdot ||\xv - \tilde{\mathbf{x}}||^2$. 
-	
-	\lz 
-
-	Now, do one GD update with step size $\alpha \leq 1/L$: 
-
-	$$
-	\xv^{[t+1]} = \xv^{[t]} - \alpha \nabla f\left(\xv^{[t]}\right)
-	$$ 
-	and plug this in the descent lemma.
-		
-
-	\framebreak 	
-
-	\begin{footnotesize}
-	
-	We get
-	\vspace*{-0.3cm}
-	\begin{eqnarray*}
-	f(\xv^{[t+1]}) &\leq& f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top(\xv^{[t+1]} - \xv^{[t]}) + \frac{1}{2}L ||\xv^{[t+1]} - \xv^{[t]}||^2 \\
-	&=& f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top(\xv^{[t]} - \alpha \nabla f(\xv^{[t]}) - \xv^{[t]}) + \frac{1}{2}L ||\xv^{[t]} - \alpha \nabla f(\xv^{[t]}) - \xv^{[t]}||^2 \\
-	& = & f(\xv^{[t]}) - \nabla f(\xv^{[t]})^\top \alpha  \nabla f(\xv^{[t]}) + \frac{1}{2}L ||\alpha \nabla f(\xv^{[t]})||^2 \\
-	&=& f(\xv^{[t]}) - \alpha ||\nabla f(\xv^{[t]})||^2 + \frac{1}{2}L\alpha^2 ||\nabla f(\xv^{[t]})||^2 \\
-	&=& f(\xv^{[t]}) - (1 - \frac{1}{2} L \alpha)\alpha  ||\nabla f(\xv^{[t]})||^2 \\
-	&\le& f(\xv^{[t]}) - \frac{1}{2}\alpha ||\nabla f(\xv^{[t]})||^2, 
-	\end{eqnarray*}
-
-	where we used $\alpha \leq 1/L$ and therefore $- (1 - \frac{1}{2} L \alpha) \leq \frac{1}{2} L \frac{1}{L} -1 = -\frac{1}{2}$.
-				
-	Since $\frac{1}{2} \alpha ||\nabla f(\xv^{[t]})||^2$ is always positive unless $\nabla \fx = 0$, it implies that $f$ strictly decreases with each iteration of GD until the optimal value is reached.  So, it is a bound on guaranteed progress if $\alpha \leq 1/L$. 
- The sequence is also bounded from below, as we assume the existence of a global min, hence it convergences.
-	\end{footnotesize}
-	
-	\framebreak
-	
-			Now, we bound $f(\xv^{[t]})$ in terms of $f(\xv^\ast)$ using that $f$ is convex. By 1st-order condition of convexity: Every tangent / 1st order Taylor is always below f (develop at $\xv^{[t]}$, var of linear function is $\xv$):
-    
-            $$
-			f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top (\xv - \xv^{[t]})
-            \leq f(\xv)
-    		$$ 
-            So this holds also for $\xv = \xv^\ast$ 
-			$$
-			f(\xv^{[t]}) - f(\xv^\ast) \leq  \nabla f(\xv^{[t]})^\top (\xv^{[t]} - \xv^\ast)
-			$$ 	
-
-            \framebreak
-			
-            When we combine this and the bound derived before, we get
-			\begin{eqnarray*}
-				f(\xv^{[t+1]}) - f(\xv^\ast) &\leq& f(\xv^{[t]})  - \frac{\alpha}{2}||\nabla f(\xv^{[t]})||^2  - f(\xv^\ast) \\
-				&=& f(\xv^{[t]})  - f(\xv^\ast)  - \frac{\alpha}{2}||\nabla f(\xv^{[t]})||^2 \\
-				&\leq& \nabla f(\xv^{[t]})^\top (\xv^{[t]}-\xv^*) - \frac{\alpha}{2}||\nabla \fx||^2 \\
-				&=& \frac{1}{2 \alpha} \left( ||\xv^{[t]}-\xv^\ast||^2 - || \xv^{[t]} - \xv^\ast - \alpha \nabla \fx||^2 \right) \\
-				&=& \frac{1}{2 \alpha} \left( ||\xv^{[t]}-\xv^\ast||^2 - || \xv^{[t+1]} - \xv^\ast ||^2 \right)
-			\end{eqnarray*}
-        3rd to 4th line might be harder to see, simply multiply-out 4th line.
+\textbf{Assumptions:}
+\begin{itemize}
+    \item $f$ convex and differentiable
+    \item Global minimum $\xv^\ast$ exists
+    \item $f$ has Lipschitz gradient ($\nabla f$ does not change too fast)
+        \begin{framed}
+            \begin{equation*}
+               \| \nabla \fx - \nabla f(\tilde{\xv}) \| \le L \|\xv - \tilde{\xv}\| \quad \text{ for all $\xv, \tilde{\xv}$}
+            \end{equation*}
+        \end{framed}
+\end{itemize}
         
-		This holds for every iteration of GD. 
-		
-		\framebreak 
-		
-		Summing over iterations, we get: 
-		
-		\begin{eqnarray*}
-			k ( f(\xv^{[k]}) - f(\xv^\ast)) &\leq& \sum_{t=1}^{k} ( f(\xv^{[t]}) - f(\xv^\ast))\\
-            &\leq& \sum_{t=1}^{k} \frac{1}{2 \alpha} \left( ||\xv^{[t-1]}-\xv^\ast||^2 - || \xv^{[t]} - \xv^\ast ||^2 \right) \\
-			&=& \frac{1}{2 \alpha}  \left( ||\xv^{[0]}-\xv^\ast||^2 - || \xv^{[k]} - \xv^\ast ||^2 \right) \\
-			& \leq & \frac{1}{2 \alpha} \left( ||x^{[0]}-\xv^\ast||^2 \right),
-		\end{eqnarray*}
-	
-		where we used that $f$ decreases in every iter, and the 2nd line is a telescoping sum. Hence
-		$$
-		f(\xv^{[k]}) - f(\xv^\ast) \leq \frac{|| \xv^{[0]} - \xv^\ast ||^2}{2\alpha k}
-		$$
+\begin{framed}
+    \textbf{Theorem \textnormal{(Convergence of GD)}.}
+    GD with step size $\alpha \leq 1/L$ yields
+    \begin{equation*}
+        f(\xv^{[k]}) - f(\xv^\ast) \leq \frac{\| \xv^{[0]} - \xv^\ast \|^2}{2\alpha k}.
+    \end{equation*}
+    
+    In other words: GD converges with rate $\mathcal{O}(1/k)$.
+\end{framed}
+
+\end{vbframe}
+
+\begin{vbframe}{Proof strategy}
+
+\begin{enumerate}
+    \item Show that $f(\xv^{[t]})$ \textbf{strictly decreases} with each iteration $t$
+        \begin{framed}
+            \textbf{Descent lemma:}
+            \begin{equation*}
+                f(\xv^{[t+1]}) \le f(\xv^{[t]}) - \frac{\alpha}{2} \|\nabla f(\xv^{[t]})\|^2
+            \end{equation*}
+        \end{framed}
+    \item Bound \textbf{error of one step}
+        \begin{framed}
+            \begin{equation*}
+                f(\xv^{[t+1]}) - f(\xv^\ast) \leq \frac{1}{2 \alpha} \left( \|\xv^{[t]}-\xv^\ast\|^2 - \| \xv^{[t+1]} - \xv^\ast \|^2 \right)
+            \end{equation*}
+        \end{framed}
+    \item Finalize by \textbf{telescoping} argument
+\end{enumerate}
+
+\end{vbframe}
+
+\begin{vbframe}{Main tool}
+
+\textbf{Recall:} First order condition of convexity
+
+\begin{framed}
+    \centering
+    Every tangent line of $f$ is always below $f$.
+
+    \vspace*{-\baselineskip}
+
+    \begin{equation*}
+        f(\yv) \geq \fx + \nabla \fx^\top (\yv - \xv)
+    \end{equation*}
+
+    \vspace*{-0.5\baselineskip}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.4\linewidth]{../01-mathematical-concepts/figure_man/conv-first-order-cond.png}
+    \end{figure}
+\end{framed}
+
+\end{vbframe}
+
+\begin{vbframe}{Descent lemma}
+
+\textbf{Recall:} $\nabla f$ Lipschitz $\implies$ $\nabla^2 \fx \preccurlyeq L \cdot \mathbf{I}$ for all $\xv$
+
+\medskip
+
+This gives convexity of $g(\xv) := \frac{L}{2}\|\xv\|^2 - f(\xv)$ since $$\nabla^2 g(\xv) = L \cdot I - \nabla^2 \fx \succcurlyeq 0.$$
+
+First order condition of convexity of $g$ yields
+
+\vspace*{-\baselineskip}
+
+\begin{alignat*}{3}
+    && g(\xv) &\geq g(\xv^{[t]}) + \nabla g(\xv^{[t]})^\top (\xv - \xv^{[t]}) \\
+    \Leftrightarrow \quad && \frac{L}{2} \|\xv\|^2 - f(\xv) &\geq \frac{L}{2} \|\xv^{[t]}\|^2 - f(\xv^{[t]}) + (L\xv^{[t]} - \nabla f(\xv^{[t]}))^\top (\xv - \xv^{[t]}) \\
+    \Leftrightarrow \quad && &\vdotswithin{\geq} \\
+    \Leftrightarrow \quad && \fx &\leq f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top (\xv - \xv^{[t]}) + \frac{L}{2} \|\xv - \xv^{[t]}\|^2
+\end{alignat*}
+
+\textbf{Now:} One GD step with step size $\alpha \leq 1/L$:
+
+$$
+    \xv \leftarrow \xv^{[t+1]} = \xv^{[t]} - \alpha \nabla f\left(\xv^{[t]}\right)
+$$
+
+\framebreak
+
+\vspace*{-2\baselineskip}
+
+\begin{small}    
+    \begin{align*}
+        f(\xv^{[t+1]}) &\leq f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top(\xv^{[t+1]} - \xv^{[t]}) + \frac{L}{2} \|\xv^{[t+1]} - \xv^{[t]}\|^2 \\
+        &= f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top(\xv^{[t]} - \alpha \nabla f(\xv^{[t]}) - \xv^{[t]}) \\
+        &\qquad + \frac{L}{2} \|\xv^{[t]} - \alpha \nabla f(\xv^{[t]}) - \xv^{[t]}\|^2 \\
+        &= f(\xv^{[t]}) - \nabla f(\xv^{[t]})^\top \alpha  \nabla f(\xv^{[t]}) + \frac{L}{2} \|\alpha \nabla f(\xv^{[t]})\|^2 \\
+        &= f(\xv^{[t]}) - \alpha \|\nabla f(\xv^{[t]})\|^2 + \frac{L \alpha^2}{2} \|\nabla f(\xv^{[t]})\|^2 \\
+        &\le f(\xv^{[t]}) - \frac{\alpha}{2} \|\nabla f(\xv^{[t]})\|^2
+    \end{align*}
+
+\textbf{Note:} $\alpha \leq 1/L$ yields $L \alpha^2 \leq \alpha$
+
+%\framebreak
+
+\begin{itemize}
+    \item $\|\nabla f(\xv^{[t]})\|^2 > 0$ unless $\nabla \fx = \mathbf{0}$
+    \item $f$ \textbf{strictly decreases} with each GD iteration until optimum reached
+    \item Descent lemma yields bound on \textbf{guaranteed progress} if $\alpha \leq 1/L$ \\
+        (explains why GD may diverge if step sizes too large)
+    %\item Existence of global minimum gives lower bound on $f(\xv^{[t]})$ \\
+    %    $\Rightarrow$ GD converges
+\end{itemize}
+\end{small}
+
+\end{vbframe}
+
+
+\begin{vbframe}{One step error bound}
+
+Again, first order condition of convexity gives 
+$$
+    f(\xv^{[t]}) - f(\xv^\ast) \leq  \nabla f(\xv^{[t]})^\top (\xv^{[t]} - \xv^\ast).
+$$
+
+This and the descent lemma yields
+\begin{align*}
+    f(\xv^{[t+1]}) - f(\xv^\ast) &\leq f(\xv^{[t]})  - \frac{\alpha}{2}\|\nabla f(\xv^{[t]})\|^2  - f(\xv^\ast) \\
+    &= f(\xv^{[t]})  - f(\xv^\ast)  - \frac{\alpha}{2}\|\nabla f(\xv^{[t]})\|^2 \\
+    &\leq \nabla f(\xv^{[t]})^\top (\xv^{[t]}-\xv^*) - \frac{\alpha}{2}\|\nabla f(\xv^{[t]})\|^2 \\
+    &= \frac{1}{2 \alpha} \left( \|\xv^{[t]}-\xv^\ast\|^2 - \| \xv^{[t]} - \xv^\ast - \alpha \nabla f(\xv^{[t]})\|^2 \right) \\
+    &= \frac{1}{2 \alpha} \left( \|\xv^{[t]}-\xv^\ast\|^2 - \| \xv^{[t+1]} - \xv^\ast \|^2 \right)
+\end{align*}
+
+\textbf{Note:} Line 3 $\to$ 4 is hard to see (just expand line 4).
+
+\end{vbframe}
+
+\begin{vbframe}{Finalization}
+
+Summing over iterations yields
+
+\vspace*{-1.5\baselineskip}
+
+\begin{align*}
+    k ( f(\xv^{[k]}) - f(\xv^\ast)) &\leq \sum_{t=1}^{k} [f(\xv^{[t]}) - f(\xv^\ast)]\\
+    &\leq \sum_{t=1}^{k} \frac{1}{2 \alpha} \left[ \|\xv^{[t-1]}-\xv^\ast\|^2 - \| \xv^{[t]} - \xv^\ast \|^2 \right] \\
+    &= \frac{1}{2 \alpha}  \left( \|\xv^{[0]}-\xv^\ast\|^2 - \| \xv^{[k]} - \xv^\ast \|^2 \right) \\
+    &\leq \frac{1}{2 \alpha} \left( \|\xv^{[0]}-\xv^\ast\|^2 \right).
+\end{align*}
+
+\textbf{Arguments:} Descent lemma (line~1).
+Telescoping sum (line~2 $\to$ 3).
+
+\begin{framed}
+    $$f(\xv^{[t+1]}) - f(\xv^\ast) \leq \frac{\| \xv^{[0]} - \xv^\ast \|^2}{2\alpha k}$$
+\end{framed}
+
 %		\textbf{Note: } It might not be that bad if we do not find the global optimum:  
 %		
 %		\begin{itemize}
@@ -162,8 +215,8 @@
 %			\item If the model class is very flexible, it might be disadvantageous to optimize too aggressively and increase the risk of overfitting. 
 %			\item Early-stopping the optimization might even increase generalization performance. 
 %		\end{itemize}
-		
-	\end{vbframe}	
-	
-	\endlecture
+    
+\end{vbframe}	
+
+\endlecture
 \end{document}

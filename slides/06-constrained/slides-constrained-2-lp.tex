@@ -28,11 +28,10 @@
 
 \begin{vbframe}{Linear programming}
 
-\textbf{Special case:} \textbf{Linear programming} (LP)
-
-objective function and constraints are \textbf{linear functions}.
-
-\lz
+\textbf{Linear problems} (LP):
+\begin{center}
+    \textbf{linear} objective function + \textbf{linear} constraints
+\end{center}
 
 \textbf{Example:}
 
@@ -119,30 +118,36 @@ objective function and constraints are \textbf{linear functions}.
 \begin{itemize}
 \item \textbf{(Sparse) Quantile regression}:
 
+\vspace{-\baselineskip}
+
 \begin{eqnarray*}
-\min_{\bm{\beta}\in \R^p} && \frac{1}{n}\sum_{i = 1}^n \rho_\tau \left(y^{(i)} - \beta_0 -  \bm{\beta}^T\xv^{(i)}\right) \\
+    \min_{\beta_0,\bm{\beta}} && \frac{1}{n}\sum_{i = 1}^n \rho_\tau \left(y^{(i)} - \beta_0 -  \bm{\beta}^\top\xv^{(i)}\right) \\
 \text{s.t. } && \|\bm{\beta}\|_1 \le t
 \end{eqnarray*}
-where scalar $\beta_0$ and $\bm{\beta} \in \R^p$ are the quantile regression coefficients for $\tau \in [0,1]$, and $\rho_\tau(\cdot)$ is the check function defined as
+where $\beta_0 \in \R$ and $\bm{\beta} \in \R^p$ are coefficients, and $\rho_\tau$, $\tau \in [0,1]$, is the check function defined as
+\begin{equation*}
+    \rho_\tau(s) =
+    \begin{cases}
+        \tau \cdot s & \text{if } s>0, \\
+        -1(1-\tau)\cdot s & \text{if } s\le0.
+    \end{cases}
+\end{equation*}
 
-\begin{footnotesize}
-  $$
-  \rho_\tau(s) = \begin{cases} \tau \cdot s & \text{for } s>0 \\ -1(1-\tau)\cdot s & \text{for } s\le0
-  \end{cases}
-  $$
-\end{footnotesize}
+\textbf{Case $\tau = 1/2$:} Median regression (a.k.a. least absolute errors (LAE), least absolute deviations (LAD))
 
-When parameter $\tau = 1/2$, quantile regression amounts to median regression, least absolute error (LAE), or least absolute deviation (LAD). As in Lasso, $t\ge0$ is a tuning parameter. 
+\medskip
+
+Parameter $t \geq 0$ determines regularization.
 
 \item \textbf{Dantzig selector}:
 
 \begin{eqnarray*}
 \min_{\bm{\beta}\in \R^p} && \|\bm{\beta}\|_1 \\
-\text{s.t. } && \| \bm{X}^T (\bm{X} \bm{\beta} - \bm{y})\|_\infty \le \lambda \,
+\text{s.t. } && \| \Xmat^\top (\Xmat \bm{\beta} - \bm{y})\|_\infty \le \lambda \,
 \end{eqnarray*}
 \end{itemize}
 
-where $\bm{y} \in \R^n$, $\bm{X} \in \R^{n \times p}$, and $\lambda > 0$ is a tuning parameter. The infinity norm is defined as $\| x \|_\infty = \max\{|x_1|, \dots, |x_i|, \ldots, |x_n|\}$ is  
+where $\bm{y} \in \R^n$, $\Xmat \in \R^{n \times p}$, and $\lambda > 0$ is a tuning parameter. The infinity norm is defined as $\| x \|_\infty = \max\{|x_1|, \dots, |x_i|, \ldots, |x_n|\}$ is  
 
 \lz
 
@@ -154,52 +159,53 @@ Details about LPs in statistical estimation can be found, e.g., in the PhD thesi
 
 \framebreak
 
-W.l.o.g. Linear programming is specified using the so-called \textbf{standard form}.
+LPs can be formulated in the \textbf{standard form}:
 
 \vspace*{-0.5cm}
 
 \begin{eqnarray*}
-\max_{\bm{x} \in \R^n} && \bm{c}^T\bm{x}\\
-\text{s.t. } && \bm{A}\bm{x} \le \bm{b} \\
-&& \bm{x} \ge 0
+\max_{\xv \in \R^n} && \mathbf{c}^\top\xv\\
+\text{s.t. } && \Amat\xv \le \mathbf{b} \\
+&& \xv \ge 0
 \end{eqnarray*}
+with $\Amat \in \R^{m\times n}$, $\mathbf{b} \in \R^m$
 
-The inequality constraints $\bm{Ax} \le \bm{b}$ ($\bm{A} \in \R^{m\times n}$, $\bm{b} \in \R^m$) and $\bm{x} \ge 0$ are to be understood componentwise.
+\medskip
 
-\lz
-
-The condition $\bm{x} \ge 0$ is known as the \textbf{non-negativity constraint} and the vector $\bm{c}$ is known as the \textbf{cost vector}.
+\begin{itemize}
+    \item Constraints are to be understood \textbf{componentwise}
+    \item $\xv \ge 0$: \enquote{non-negativity constraint}
+    \item $\mathbf{c}$: \enquote{cost vector}
+\end{itemize}
 
 %
 % \begin{eqnarray*}
-% &&\min_{\bm{x} \in \R^n} f(\bm{x})\\
-% \text{u. d. N. } && g_i(\bm{x}) \le 0, h_j(\bm{x}) = 0,
+% &&\min_{\xv \in \R^n} f(\xv)\\
+% \text{u. d. N. } && g_i(\xv) \le 0, h_j(\xv) = 0,
 % \end{eqnarray*}
 %
 % wobei $f: \R^n \to \R$, $g_i: \R^n \to \R$, $h_j: \R^n \to \R$ lineare Funktionen sind.
 
 \framebreak
 
-Linear optimization problems can be converted to the standard form by the following operations:
+General LPs can be converted to standard form:
 
 \begin{itemize}
-\item Maximization instead of minimization: multiplication of the cost vector $\bm{c}$ by $-1$
-\item Less than or equal instead of greater than or equal: multiply the inequality by $-1$
-\item Equality instead of inequality: replace $\bm{a}_i\bm{x}=b_i$ with two conditions of inequality $\bm{a}_i\bm{x}\ge b_i$ and $\bm{a}_i\bm{x}\le b_i$
-\item Variable without non-negativity constraint: replace $x_i$ with $x_i^+ - x_i^-$ with $x_i^+, x_i^- \ge 0$ (positive or negative part).
+    \setlength{\itemsep}{1em}
+    \item $\min \longleftrightarrow \max$: multiply objective function by $-1$
+    \item $\leq \; \longleftrightarrow \; \geq$: multiply inequality by $-1$
+    \item $= \; \longleftrightarrow \; \leq,\geq$: replace $\mathbf{a}_i^\top\xv=b_i$ by $\mathbf{a}_i^\top\xv\ge b_i$ \textit{and} $\mathbf{a}_i^\top\xv\le b_i$
+    \item No non-negativity constraint: replace $x_i$ by $x_i^+ - x_i^-$ with $x_i^+, x_i^- \ge 0$ (positive and negative part)
 \end{itemize}
 
-In the following we assume that the LP is given in standard form.
+% In the following we assume that the LP is given in standard form.
 
 \framebreak
 
 \textbf{Example:}
 
-\lz
+\vspace{-\baselineskip}
 
-The example above
-
-\vspace*{-1cm}
 \begin{eqnarray*}
 \min && - x_1 - x_2 \\
 \text{s.t. } && x_1 + 2x_2 \le 1\\
@@ -209,13 +215,13 @@ The example above
 
 can also be formulated as
 
-\vspace*{-0.2cm}
+\vspace*{-\baselineskip}
 
 \begin{eqnarray*}
 \max && (1, 1) \begin{pmatrix} x_1 \\ x_2 \end{pmatrix} \\
-\text{s.t. } &&  \begin{pmatrix}  1 &  2 \\  2 &  1 \end{pmatrix} \bm{x} \le \begin{pmatrix}  1 \\  1
+\text{s.t. } &&  \begin{pmatrix}  1 &  2 \\  2 &  1 \end{pmatrix} \xv \le \begin{pmatrix}  1 \\  1
 \end{pmatrix} \\
-&& \bm{x} \ge 0
+&& \xv \ge 0
 \end{eqnarray*}
 
 \end{vbframe}
@@ -229,16 +235,15 @@ Linear programming can be interpreted geometrically.
 
 \textbf{Feasible set:}
 \begin{itemize}
-\item Let $\bm{a}_i \bm{x} \ge b_i$ be the i-th line of the inequality conditions.
-\item The points that satisfy the linear system $\bm{a}_i \bm{x} = b_i$ form a hyperplane in $n$-dimensional space.
-\item The vector $\bm{a}_i$ is perpendicular to the plane and is called the \textbf{normal vector}.
-\framebreak
-\item The set of points $\{\bm{x}: \bm{a}_i \bm{x} \ge b_i\}$ consists of points on the side of the hyperplane into which the normal vector points (\textbf{half-space}).
+    \setlength{\itemsep}{1em}
+    \item $i$-th inequality constraint: $\mathbf{a}_i^\top \xv \le b_i$
+    \item Points $\{ \xv: \mathbf{a}_i^\top \xv = b_i\}$ form a hyperplane in $\R^n$ \\
+        ($\mathbf{a}_i$ is perpendicular to the hyperplane and called \textbf{normal vector})
+    \item Points $\{\xv: \mathbf{a}_i^\top \xv \ge b_i\}$ lie on the side of the hyperplane into which the normal vector points (\enquote{half-space})
 
-\vspace{0.2cm}
-\begin{center}
-\includegraphics[width = 0.5\textwidth]{figure_man/geo-interpretation.png}
-\end{center}
+    % \begin{center}
+    %     \includegraphics[height=0.4\textheight,keepaspectratio]{figure_man/geo-interpretation.png}
+    % \end{center}
 
 
 %<<fig.align='center', out.width='80%', echo = F, warning = F>>=
@@ -261,12 +266,12 @@ Linear programming can be interpreted geometrically.
 
 \framebreak
 
-\item Each of the $m$ inequalities divides the $n$-dimensional space into two halves.
-\item \textbf{Claim:} The points that satisfy \textbf{all} inequalities form a \textbf{convex polytope}.
+\item Each inequality divides the space into two halves.
+\item \textbf{Claim:} Points satisfying \textbf{all} inequalities form a \textbf{convex polytope}.
 \end{itemize}
 
 \begin{center}
-\includegraphics[width = 0.5\textwidth]{figure_man/linear-pro-example.png}
+    \includegraphics[width=0.5\textwidth]{figure_man/linear-pro-example.png}
 \end{center}
 
 
@@ -277,45 +282,56 @@ Linear programming can be interpreted geometrically.
 
 \framebreak
 
-In geometry, a \textbf{polytope} denotes a generalized polygon in an arbitrary dimension. A polytope consists of several subpolytopes.
+Geometry: A \textbf{polytope} is a generalized polygon in arbitrary dimensions.
 
+\medskip
+
+A polytope consists of several sub-polytopes:
 \begin{itemize}
-\item A $0$ polytope is a single point,
-\item A $1$ polytope is a line,
-\item A $2$ polytope is a polygon, ...
+    \setlength{\itemsep}{1em}
+    \item $0$-polytope: point
+    \item $1$-polytope: line
+    \item $2$-polytope: polygon, ...
 \end{itemize}
 
-In general, a $d$ polytope is formed from several $(d-1)$ polytopes (so-called facets) which in turn can have a $(d-2)$ polytope in common. Thus a $3$ polytope (e.g. a cube) has several sides / facets, some of which have common edges, etc.
+\medskip
+
+\textbf{General:}
+\begin{itemize}
+    \setlength{\itemsep}{1em}
+    \item $d$-polytope is formed from several $(d-1)$-polytopes (\enquote{facets})
+    \item $(d-1)$-polytope is formed from several $(d-2)$-polytopes
+\end{itemize}
 
 \framebreak
 
-The points for which $\bm{a}_i \bm{x} = b_i$ applies lie on the \textbf{facet} of the polytope.
+\textbf{Observe:} Points $\{\xv: \mathbf{a}_i^\top \xv = b_i\}$ lie on the boundary of the polytope.
 
+\medskip
 
-\lz
-
-The polytope which is defined by the inequalities $\bm{Ax} \ge \bm{b}$ is convex. For two points $\bm{x}_1, \bm{x}_2$, which lie in the polytope, any point that results from the convex combination of the two points, is again inside the polytope:
-
-\begin{eqnarray*}
-\bm{A}(\bm{x}_1 + t(\bm{x}_2 - \bm{x}_1)) &=& \bm{A}\bm{x}_1 + t(\bm{A}\bm{x}_2 - \bm{A}\bm{x}_1) \\ &=& (1 -t)\underbrace{\bm{A}\bm{x}_1}_{\ge \bm{b}} + t\underbrace{\bm{A}\bm{x}_2}_{\ge \bm{b}} \\ &\ge& (1 - t) \bm{b} + t \bm{b} = \bm{b} \qquad \text{for }t \in [0, 1])
-\end{eqnarray*}
-
-A polytope formed by the convex hull of $(n + 1)$ affin independent points in $\R^n$ is also called $n$-\textbf{simplex}.
+\begin{itemize}
+    \item Polytope $\{ \xv: \Amat \xv \le \mathbf{b}\}$ is convex: For $\xv_1,\xv_2 \in \mathcal{S}$ and $t \in [0, 1]$
+        \begin{align*}
+            \Amat(\xv_1 + t(\xv_2 - \xv_1)) &= \Amat\xv_1 + t(\Amat\xv_2 - \Amat\xv_1) \\
+            &= (1 -t)\underbrace{\Amat\xv_1}_{\le \mathbf{b}} + t\underbrace{\Amat\xv_2}_{\le \mathbf{b}} \\ &\le (1 - t) \mathbf{b} + t \mathbf{b} = \mathbf{b}
+        \end{align*}
+    \item Polytope $\{ \xv: \Amat \xv \le \mathbf{b}\}$ is an $n$-\textbf{simplex}, i.e.,
+        \begin{center}
+            convex hull of $n + 1$ \textit{affinely independent} points
+        \end{center}
+\end{itemize}
 
 \framebreak
 
 \textbf{Objective function:}
 \begin{itemize}
-\item For the objective function, we consider the \textbf{contour lines}. Points that lie on the same contour line have the same objective function value.
-\item In the linear case, the contours $y = \bm{c}^T \bm{x}$ are also a hyperplane for fixed $y$.
-\item The vector $\bm{c}$ is again perpendicular to the respective contour lines.
-\item The vector $\bm{c}$ can also be interpreted as a gradient. The \textbf{negative} gradient $- \bm{c}$ points in the direction of the \enquote{steepest} descent.
-\framebreak
-\item The value of the function becomes smaller when we go in the direction of the \textbf{negative gradient} $- \bm{c}$.
-
-\begin{center}
-\includegraphics[width = 0.5\textwidth]{figure_man/negative-gradient.png}
-\end{center}
+    \item \textbf{Linear case:} Contour lines form a hyperplane
+    \item \textbf{Observe:} $\mathbf{c}$ is gradient and perpendicular to contour lines
+    % \item The value of the function becomes smaller when we go in the direction of the \textbf{negative gradient} $- \mathbf{c}$.
+    % \vspace{\baselineskip}
+    % \begin{center}
+    %     \includegraphics[width=0.45\textwidth]{figure_man/negative-gradient.png}
+    % \end{center}
 
 
 %<<echo = F, out.width = '80%', fig.align='center', warning = F>>=
@@ -335,11 +351,13 @@ A polytope formed by the convex hull of $(n + 1)$ affin independent points in $\
 %p
 %@
 
-\framebreak
-\item So we move the objective function \textbf{in the opposite direction} of the normal vector until the line just touches the polygon.
+% \framebreak
+\item Solution \enquote{touches} the polygon
+
+\medskip
 
 \begin{center}
-\includegraphics[width = 0.5\textwidth]{figure_man/opposite-direction.png}
+    \includegraphics[width=0.5\textwidth]{figure_man/opposite-direction.png}
 \end{center}
 
 %<<echo = F, out.width = '80%', fig.align='center', warning = FALSE, message = FALSE>>=
@@ -365,17 +383,18 @@ A polytope formed by the convex hull of $(n + 1)$ affin independent points in $\
 
 \begin{vbframe}{Solutions to LP}
 
-There are three ways to solve Linear programming:
+There are 3 ways to solve linear programming:
 
 \begin{enumerate}
-\item LP is \textbf{infeasible}, the feasible set is empty ($\mathcal{S} = \emptyset$)
-\item LP is unconstrained
-\item LP has at least one optimal solution
+\item Feasible set is \textbf{empty} $\Rightarrow$ LP is infeasible
+\item Feasible set is \textbf{\enquote{unbounded}}
+\item Feasible set is \textbf{\enquote{bounded}} $\Rightarrow$ LP has at least one solution
 \end{enumerate}
 
+\vspace{\baselineskip}
 
 \begin{center}
-\includegraphics[width = 0.8\textwidth]{figure_man/solutions-lp.png}
+    \includegraphics[width=0.9\textwidth]{figure_man/solutions-lp.png}
 \end{center}
 
 
@@ -422,7 +441,7 @@ There are three ways to solve Linear programming:
 % \item \textbf{Phase II:} determination of the \textbf{optimal solution}
 % \end{itemize}
 
-% To be able to start, a starting point must first be found in \textbf{Phase I}, i.e. a feasible corner $\bm{x}_0$.
+% To be able to start, a starting point must first be found in \textbf{Phase I}, i.e. a feasible corner $\xv_0$.
 
 % \lz
 
@@ -432,17 +451,17 @@ There are three ways to solve Linear programming:
 
 % \textbf{Phase I}:
 
-% One way to find a starting point $\bm{x}_0$ is to solve a auxiliary linear problem with artificial variables $\bm{\epsilon}$:
+% One way to find a starting point $\xv_0$ is to solve a auxiliary linear problem with artificial variables $\bm{\epsilon}$:
 
 % \begin{eqnarray*}
 % \min_{\epsilon_1, ..., \epsilon_m} && \sum_{i = 1}^m \epsilon_i \\
-% \text{s.t. } && \bm{Ax} + \bm{\epsilon} \ge \bm{b} \\
+% \text{s.t. } && \Amat \xv + \bm{\epsilon} \ge \mathbf{b} \\
 % && \epsilon_1, ..., \epsilon_m \ge 0\\
-% && \bm{x} \ge 0
+% && \xv \ge 0
 % \end{eqnarray*}
 
 % \begin{itemize}
-% \item A feasible starting point for the auxiliary problem is $\bm{x} = \bm{0}$ and $\epsilon_i = \begin{cases} 0 & \text{if } b_i < 0 \\
+% \item A feasible starting point for the auxiliary problem is $\xv = \bm{0}$ and $\epsilon_i = \begin{cases} 0 & \text{if } b_i < 0 \\
 % b_i & \text{if } b_i \ge 0
 % \end{cases}$
 % \item We then apply phase II of the simplex algorithm to the auxiliary problem.
@@ -456,12 +475,12 @@ There are three ways to solve Linear programming:
 % \textbf{Example:}
 
 % \begin{eqnarray*}
-% \min_{\bm{x} \in \R^2} && -x_1 - x_2 \\
+% \min_{\xv \in \R^2} && -x_1 - x_2 \\
 % \text{s.t. } && x_1 - x_2 \ge - 0.5 \\
 % && - x_1 - 2 x_2 \ge - 2 \\
 % && - 2x_1 - x_2 \ge - 2 \\
 % && - x_1 + x_2 \ge - 0.5 \\
-% && \bm{x} \ge 0
+% && \xv \ge 0
 % \end{eqnarray*}
 
 % A starting point is the corner $\bm{(0, 0)}$.
@@ -520,11 +539,11 @@ There are three ways to solve Linear programming:
 % He is therefore confronted with the following optimization problem:
 
 % \begin{eqnarray*}
-% \min_{\bm{x}\in \R^2} && 50x_1 + 80x_2 \\
+% \min_{\xv\in \R^2} && 50x_1 + 80x_2 \\
 % \text{s.t. } && 3x_1 \ge 6 \\
 % && 2x_1 + 4x_2 \ge 10 \\
 % && 2x_1 + 5x_2 \ge 8 \\
-% && \bm{x} \ge 0
+% && \xv \ge 0
 % \end{eqnarray*}
 
 % \framebreak
@@ -663,11 +682,11 @@ There are three ways to solve Linear programming:
 % \vspace*{-1.6cm}
 
 % \begin{eqnarray*}
-% \min_{\bm{x}\in \R^2} && 50x_1 + 80x_2  \\
+% \min_{\xv\in \R^2} && 50x_1 + 80x_2  \\
 % \text{s.t. } && 3x_1 \ge 6 \quad \vert\textcolor{green}{\cdot 5}\\
 % && 2x_1 + 4x_2 \ge 10 \quad \vert \textcolor{green}{\cdot 5} \\
 % && 2x_1 + 5x_2 \ge 8 \quad \vert \textcolor{green}{\cdot 12} \\
-% && \bm{x} \ge 0
+% && \xv \ge 0
 % \end{eqnarray*}
 
 % \vspace*{-0.2cm}
@@ -692,11 +711,11 @@ There are three ways to solve Linear programming:
 % Maybe we could have transformed the equations more cleverly and then found a \textbf{better} lower bound. We replace the multipliers $5, 5, 12$ with $\alpha_1, \alpha_2, \alpha_3$ and demand (as a condition for a lower bound).
 
 % % \begin{eqnarray*}
-% % \min_{\bm{x}\in \R^2} && 50x_1 + 80x_2  \\
+% % \min_{\xv\in \R^2} && 50x_1 + 80x_2  \\
 % % \text{u. d. N. } && 3x_1 \ge 6 \quad \vert \textcolor{green}{\cdot \alpha_1}\\
 % % && 2x_1 + 4x_2 \ge 10 \quad \vert \textcolor{green}{\cdot \alpha_2} \\
 % % && 2x_1 + 5x_2 \ge 8 \quad \vert \textcolor{green}{\cdot \alpha_3} \\
-% % && \bm{x} \ge 0
+% % && \xv \ge 0
 % % \end{eqnarray*}
 % %
 % % \framebreak
@@ -743,17 +762,17 @@ There are three ways to solve Linear programming:
 
 % \vspace*{-0.2cm}
 % \begin{eqnarray*}
-% \max_{\bm{\alpha} \in \R^m} && g(\bm{\alpha}) := \bm{\alpha}^T\bm{b}\\
-% \text{s.t. } && \bm{\alpha}^T\bm{A} \le \bm{c}^T \\
+% \max_{\bm{\alpha} \in \R^m} && g(\bm{\alpha}) := \bm{\alpha}^\top\mathbf{b}\\
+% \text{s.t. } && \bm{\alpha}^\top\Amat \le \mathbf{c}^\top \\
 % && \bm{\alpha} \ge 0
 % \end{eqnarray*}
 
 % as the \textbf{dual problem} of
 
 % \begin{eqnarray*}
-% \min_{\bm{x} \in \R^n} && f(\bm{x}) := \bm{c}^T\bm{x}\\
-% \text{s.t. } && \bm{A}\bm{x} \ge \bm{b} \\
-% && \bm{x} \ge 0
+% \min_{\xv \in \R^n} && f(\xv) := \mathbf{c}^\top\xv\\
+% \text{s.t. } && \Amat\xv \ge \mathbf{b} \\
+% && \xv \ge 0
 % \end{eqnarray*}
 
 % (\textbf{primal problem}).
@@ -782,10 +801,10 @@ There are three ways to solve Linear programming:
 
 % \begin{vbframe}{Duality theorem}
 
-% In general, the \textbf{weak duality theorem}$^{(*)}$ applies to all feasible $\bm{x}, \bm{\alpha}$
+% In general, the \textbf{weak duality theorem}$^{(*)}$ applies to all feasible $\xv, \bm{\alpha}$
 
 % $$
-% g(\bm{\alpha}) = \bm{\alpha}^T\bm{b} \le \bm{c}^T\bm{x}  = f(\bm{x})
+% g(\bm{\alpha}) = \bm{\alpha}^\top\mathbf{b} \le \mathbf{c}^\top\xv  = f(\xv)
 % $$
 
 % The value of the dual function is therefore \textbf{always} a lower bound for the objective function value of the primal problem.
@@ -793,14 +812,14 @@ There are three ways to solve Linear programming:
 % \lz
 
 % \textbf{Proof:}
-% $\bm{\alpha}^T\bm{b} \overset{\bm{Ax} \ge b}{\le}\bm{\alpha}^T\bm{Ax} \overset{\bm{\alpha}^T\bm{A} \le \bm{c}^T}{\le}\bm{c}^T\bm{x}$
+% $\bm{\alpha}^\top\mathbf{b} \overset{\Amat \xv \ge b}{\le}\bm{\alpha}^\top\Amat \xv \overset{\bm{\alpha}^\top\Amat \le \mathbf{c}^\top}{\le}\mathbf{c}^\top\xv$
 
 % \framebreak
 
 % The \textbf{strong duality theorem} states that if one of the two problems has a constrained solution, then the other also has a constrained solution. The objective function values are the same in this case.
 
 % $$
-% g(\bm{\alpha}^*) = (\bm{\alpha}^*)^T\bm{b} = \bm{c}^T\bm{x}^* = f(\bm{x}^*).
+% g(\bm{\alpha}^*) = (\bm{\alpha}^*)^\top\mathbf{b} = \mathbf{c}^\top\xv^* = f(\xv^*).
 % $$
 
 % In this case, the dual problem can be solved instead of the primal problem, which can lead to enormous runtime advantages, especially with many constraints and few variables.
