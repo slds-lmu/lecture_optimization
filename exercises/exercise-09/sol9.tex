@@ -322,9 +322,9 @@ for the descend direction $\mathbf{d}.$
 \end{knitrout}
 \item In this case, we can apply Gauss-Newton since $\mathcal{R}_{\text{emp}}$ is the squared sum of the residuals 
 $$\mathbf{r} = (y^{(1)} - \pi(\mathbf{x}^{(1)}), \dots, y^{(n)} - \pi(\mathbf{x}^{(n)}))^\top.$$ Here, for the update step we need to compute 
-$$\nabla_{\bm{\theta}}\mathbf{r} = \begin{pmatrix} -\frac{\exp(f^{(1)})}{(1 + \exp(f^{(1)}))^2} {\tilde{\mathbf{x}}}^{(1)\top} \\ 
+$$\nabla_{\bm{\theta}}\mathbf{r} = \begin{pmatrix} \frac{\exp(f^{(1)})}{(1 + \exp(f^{(1)}))^2} {\tilde{\mathbf{x}}}^{(1)\top} \\ 
 \vdots \\
--\frac{\exp(f^{(n)})}{(1 + \exp(f^{(n)}))^2}{\tilde{\mathbf{x}}}^{(n)\top}
+\frac{\exp(f^{(n)})}{(1 + \exp(f^{(n)}))^2}{\tilde{\mathbf{x}}}^{(n)\top}
 \end{pmatrix}$$ \\
 For Gauss-Newton, we solve in each update step
 $$(\nabla_{\bm{\theta}}\mathbf{r}^\top \nabla_{\bm{\theta}}\mathbf{r}) \cdot \mathbf{d} = -\nabla_{\bm{\theta}}\mathbf{r}^\top \cdot \mathbf{r}$$
