@@ -20,7 +20,12 @@ It gives
   \Leftrightarrow \quad && {y^\ast}^2 &= \frac{1}{2}.
 \end{alignat*}
 
-Therefore, we have to solutions
+Therefore, we have to candidate solutions
 \begin{equation*}
-  (x^\ast,y^\ast) = (\sqrt{2},1/\sqrt{2}) \quad \text{or} \quad (x^\ast,y^\ast) = (-\sqrt{2},-1/\sqrt{2}).
+  (x^\ast_1,y^\ast_1) = (\sqrt{2},1/\sqrt{2}) \quad \text{or} \quad (x^\ast_2,y^\ast_2) = (-\sqrt{2},-1/\sqrt{2}).
+\end{equation*}
+
+Since $f(x^\ast_1, y^\ast_1) > f(x^\ast_2,y^\ast_2)$, we get the solution
+\begin{equation*}
+  (x^\ast,y^\ast) = (-\sqrt{2},-1/\sqrt{2}).
 \end{equation*}
