@@ -187,8 +187,8 @@
 	{\vspace{0.5cm}}
 
 \newcounter{loes}
-\newenvironment{loesung}
-	{\refstepcounter{loes}\textbf{Solution \arabic{loes}:}\\\noindent}
+\newenvironment{loesung}[1]
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}: #1}\\ \noindent}
 	{\bigskip}
 	
 \newenvironment{bonusaufgabe}
@@ -216,8 +216,8 @@
 
 
 Minimize Ridge regression, i.e.,
-$$\min_{\bm{\theta}}\frac{1}{2} \Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + \frac{1}{2} \Vert\bm{\theta}\Vert^2_2$$
-via coordinate descent under the assumption that $\mathbf{X}^\top \mathbf{X} = \mathbf{I}_p$.
+$$\min_{\bm{\theta}}\frac{1}{2} \Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + \frac{\lambda}{2} \Vert\bm{\theta}\Vert^2_2$$
+for $\lambda \geq 0$ via coordinate descent under the assumption that $\mathbf{X}^\top \mathbf{X} = \mathbf{I}_p$.
 }
 
 \aufgabe{CMA-ES}{
