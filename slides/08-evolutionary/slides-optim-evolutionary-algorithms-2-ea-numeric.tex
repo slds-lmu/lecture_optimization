@@ -28,15 +28,14 @@
 
 \begin{vbframe}{Recombination for numeric}
 
-Options for recombination of two individuals $\bm{x}, \bm{\tilde x} \in \R^d$: 
+Options for recombination of two individuals $\xv, \tilde{\xv} \in \R^d$: 
 \begin{itemize}
-\item \textbf{Uniform crossover}: choose gene $j$ with probability $p$ of 1st parent and probability $1-p$ of 2nd parent.
-\item \textbf{Intermediate recombination}: new individual is created from the mean value of two parents $\frac{1}{2}(\bm{x} + \bm{\tilde x})$.
-\item \textbf{Simulated Binary Crossover (SBX)}: generate \textbf{two offspring}
-
-$$
-\bm{\bar x} \pm \frac{1}{2} \beta (\bm{\tilde x} - \bm{x}), \bm{\bar x} = \frac{1}{2} (\bm{x} + \bm{\tilde x}), \beta \text{ randomly sampled}
-$$
+    \item \textbf{Uniform crossover}: Choose gene $j$ of parent 1 with probability $p$ and of parent 2 with probability $1-p$
+    \item \textbf{Intermediate recombination}: Offspring is created from mean of two parents: $\frac{1}{2}(\xv + \tilde{\xv})$
+    \item \textbf{Simulated Binary Crossover (SBX)}: generate \textbf{two offspring}
+        $$
+            \bar{\xv} \pm \frac{1}{2} \beta (\tilde{\xv} - \xv), \; \bar{\xv} = \frac{1}{2} (\xv + \tilde{\xv}), \; \text{$\beta \in [0,1]$ uniformly at random}
+        $$
 \end{itemize}
 
 \vspace*{-0.3cm}
@@ -50,30 +49,36 @@ $$
 \end{vbframe}
 
 \begin{vbframe}{Mutation for numeric}
-
 \footnotesize
-\textbf{Mutation:} individuals are changed, for example for $\bm{x} \in \R^d$
+
+\textbf{Mutation:} Individuals get modified
+
+\medskip
+
+\textbf{Example} for $\xv \in \R^d$:
+
 \begin{itemize}
-\item \textbf{Uniform mutation:} choose a random gene $\bm{x}_j$ and replace it with a value uniformly distributed (within the feasible range).
-\item \textbf{Gauss mutation:} $\bm{\tilde{x}} = \bm{x} \pm \sigma \mathcal{N}(0, \boldsymbol{I})$
-\item \textbf{Polynomial mutation:} polynomial distribution instead of normal distribution
+    \item \textbf{Uniform mutation:} Select random gene $x_j$ and replace it by uniformly distributed value (within feasible range).
+    \item \textbf{Gauss mutation:} $\xv \pm \mathcal{N}(0, \sigma \mathbf{I})$
+    \item \textbf{Polynomial mutation:} Use a different distribution instead of normal distribution
 \end{itemize}
 \begin{center}
+
 \begin{figure}
   \includegraphics[height = 3.5cm, width = 4cm]{figure_man/polynomial_mutation.png}\\
-  \scriptsize{Source: K. Deb, Analysing mutation schemes for real-parameter genetic algorithms, 2014}
+  \scriptsize{\textbf{Source:} K. Deb, D. Deb. Analysing mutation schemes for real-parameter genetic algorithms, 2014}
 \end{figure}
 \end{center}
 
 \end{vbframe}
 
-
-
-
-
 \begin{vbframe}{Example of an evolutionary algorithm}
-\footnotesize
-In the following, a (simple) EA is shown on the 1-dim Ackley function, optimized on $[-30, 30]$. Usually, for the optimization of a function $f:\R^d \to \R$ individuals are coded as real vectors $\bm{x}_j \in \R^d$, so here we use simply one real number as a chromosome.
+\small
+
+(Simple) EA on 1-dim Ackley function on $[-30, 30]$.
+Usually, for optimizing a function $f : \R^d \to \R$, individuals are encoded as real vectors $\xv \in \R^d$.
+
+\medskip
 
 \begin{center}
 \begin{figure}
@@ -85,8 +90,9 @@ In the following, a (simple) EA is shown on the 1-dim Ackley function, optimized
 
 \begin{vbframe}{Example of an evolutionary algorithm}
 
-Randomly init population with size $\mu = 10$.
-\vspace{0.5cm}
+Random initial population with size $\mu = 10$
+
+\medskip
 
 \begin{center}
 \begin{figure}
@@ -120,7 +126,7 @@ Randomly init population with size $\mu = 10$.
 
 
 \begin{vbframe}{Example 1: Ackley function}
-We choose $\lambda = 5$ offspring by neutral selection (red individuals).
+We choose $\lambda = 5$ offsprings by neutral selection (red individuals).
 
 \vspace{0.5cm}
 
@@ -135,8 +141,9 @@ We choose $\lambda = 5$ offspring by neutral selection (red individuals).
 \begin{vbframe}{Example 1: Ackley function}
 
 %We use a Gaussian mutation with $\sigma = 2$ and don't apply a recombination.
-Using a Gaussian mutation with $\sigma=2$, without a recombination.
-\vspace{0.5cm}
+Use Gaussian mutation with $\sigma=2$, but without recombination.
+
+\medskip
 
 \begin{center}
 \begin{figure}
@@ -148,9 +155,10 @@ Using a Gaussian mutation with $\sigma=2$, without a recombination.
 
 
 \begin{vbframe}{Example 1: Ackley function}
-We use a $(\mu + \lambda)$ selection. The selected individuals are green.
+Use $(\mu + \lambda)$ selection.
+Selected individuals are marked in green.
 
-\vspace{0.5cm}
+\medskip
 
 \begin{center}
 \begin{figure}
@@ -172,7 +180,6 @@ After $50$ iterations:
   \includegraphics[width=1\textwidth]{figure_man/1dim-ackley-func-final.png}
 \end{figure}
 \end{center}
-
 
 \end{vbframe}
 
@@ -197,7 +204,7 @@ Implementation: \url{https://juliambr.shinyapps.io/balls/}
 
 \framebreak
 
-In our example, the chromosome of an individual is the center of a circle, so the chromosomes are encoded as 2-dimensional real vectors $\bm{x} = (x_1, x_2) \in \R^2$.
+In our example, the chromosome of an individual is the center of a circle, so the chromosomes are encoded as 2-dimensional real vectors $\xv = (x_1, x_2) \in \R^2$.
 
 \lz
 
@@ -205,10 +212,10 @@ The population $P \subset \R^2$ is given as a set of circle centers.
 
 \lz
 
-The fitness function evaluates an individual $\bm{x} \in P$ based on the distance to the nearest neighboring gray circle $k$.
+The fitness function evaluates an individual $\xv \in P$ based on the distance to the nearest neighboring gray circle $k$.
 
 $$
-f(\bm{x}) = \min_{k \in \text{Grid}} \text{distance} (k, \bm{x}),
+f(\xv) = \min_{k \in \text{Grid}} \text{distance} (k, \xv),
 $$
 
 where the distance is defined as $0$ if a circle center is within the radius of a circle of the grid.

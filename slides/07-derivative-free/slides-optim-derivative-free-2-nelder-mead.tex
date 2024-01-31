@@ -27,24 +27,19 @@
 \sloppy
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
 \begin{vbframe}{Nelder-Mead Method}
 
-\textbf{Nelder-Mead} is a robust procedure, which also works without derivatives.
-
-\lz
-
-Generalization of bisection in $d$-dimensional space.
-
-\lz
-
-Instead of an interval, a simplex is used, a geometric figure defined by $d + 1$ points:
-
 \begin{itemize}
-\item $d = $1 interval
-\item $d = $2 triangle
-\item $d = $3 tetrahedron \dots
+    \item Derivative-free method $\Rightarrow$ heuristic
+    \item Generalization of bisection in $d$-dimensional space
+    \item Based on $d$-simplex, defined by $d + 1$ points:
+        \begin{itemize}
+            \small
+            \item $d = 1$ interval
+            \item $d = 2$ triangle
+            \item $d = 3$ tetrahedron
+            \item $\cdots$
+        \end{itemize}
 \end{itemize}
 
 \framebreak
@@ -53,9 +48,11 @@ Instead of an interval, a simplex is used, a geometric figure defined by $d + 1$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 A version of the \textbf{Nelder-Mead} method:
 
-\lz
+\medskip
 
-\textbf{Initialization:} Choose $d + 1$ random, linearly independent points $\mathbf{v}_i$ ($\mathbf{v}_i$ are vertices: corner points of the simplex/polytope):
+\textbf{Initialization:} Choose $d + 1$ random, affinely independent points $\mathbf{v}_i$ ($\mathbf{v}_i$ are vertices: corner points of the simplex/polytope).
+
+\medskip
 
 \begin{enumerate}
 \item \textbf{Order}: Order points according to ascending function values
@@ -68,7 +65,7 @@ with $\mathbf{v}_1$ best point, $\mathbf{v}_{d + 1}$ worst point.
 \includegraphics[width = 0.5\linewidth]{figure_man/Nelder01.png}
 \end{figure}
 
-\item Calculate \textbf{centroid} without worst point
+\item Compute \textbf{centroid} without worst point
 $$
 \bar{\mathbf{v}} = \frac{1}{d} \sum_{i = 1}^d \mathbf{v}_i.
 $$
@@ -79,87 +76,96 @@ $$
 
 \framebreak
 
-\item \textbf{Reflection:} calculate reflection point
+\item \textbf{Reflection:} Compute reflection point
 $$
 \mathbf{v}_r = \bar{\mathbf{v}} + \rho (\bar{\mathbf{v}} - \mathbf{v}_{d + 1}),
 $$
-with $\rho > 0$. Calculate $f(\mathbf{v}_r)$.\\
+with $\rho > 0$.
+Compute $f(\mathbf{v}_r)$.
 
-\vspace{0.4cm}
+\vspace{\baselineskip}
+
 \begin{figure}
-\includegraphics[width = 0.43\linewidth]{figure_man/Nelder04.png} 
+    \includegraphics[width = 0.43\linewidth]{figure_man/Nelder04.png} 
 \end{figure}
 
-Note: the standard value for the reflection coefficient is $\rho = 1$. 
-\footnotesize
+\vspace{\baselineskip}
 
+\textbf{Note:} Default value for reflection coefficient: $\rho = 1$
 
+\framebreak
 
 \small
-\framebreak
-\vspace{0.2cm}
-We now distinguish three cases:
-
+Distinguish three cases:
 
 \begin{itemize}
-\small
-\item \textbf{Case 1}: $f(\mathbf{v}_1) \leq f(\mathbf{v}_r) < f(\mathbf{v}_d)$ \\
-If the reflection point is better than the second worst corner, but not better than the best corner, we accept $\mathbf{v}_r$ and discard $\mathbf{v}_{d + 1}$.
+    \small
+    \item \textbf{Case 1:} $f(\mathbf{v}_1) \leq f(\mathbf{v}_r) < f(\mathbf{v}_d)$
+
+        \medskip
+
+        $\Rightarrow$ Accept $\mathbf{v}_r$ and discard $\mathbf{v}_{d + 1}$
 \end{itemize}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\vspace{0.2cm}
+\medskip
+
 \begin{minipage}{0.57\textwidth}
 \begin{itemize}
-\small
-\item \textbf{Case 2}: $f(\mathbf{v}_r) < f(\mathbf{v}_1)$ \\
-If the reflection point is better than the best corner so far, we \enquote{expand} the current point (\textbf{Expansion}) to find out if we could get even better in the direction of $\bm{v}_r$:
+    \small
+    \item \textbf{Case 2:} $f(\mathbf{v}_r) < f(\mathbf{v}_1)$
 
-  $$
-  \mathbf{v}_e = \bar{\mathbf{v}} + \chi (\mathbf{v}_{r} - \bar{\mathbf{v}}), \quad \chi > 1.
-  $$
+        \medskip
 
-We discard $\bm{v}_{d + 1}$ in favor of the better of the two corners $\bm{v}_r, \bm{v}_e$.
+        $\Rightarrow$ \textbf{Expansion:} 
+        \begin{equation*}
+            \mathbf{v}_e = \bar{\mathbf{v}} + \chi (\mathbf{v}_{r} - \bar{\mathbf{v}}), \quad \chi > 1.
+        \end{equation*}
+    
+        We discard $\mathbf{v}_{d + 1}$ and except the better of $\mathbf{v}_r$ and $\mathbf{v}_e$.
 \end{itemize}
 \end{minipage}
 \begin{minipage}{0.35\textwidth}
-\begin{center}
-\includegraphics[width = 1\linewidth]{figure_man/Nelder06.png}
-\end{center}
-\tiny
-This is \textbf{case 2}: The reflection point $\bm{v}_r$ is better than the best point $\bm{v}_1$.\\
-If the \textbf{expansion} does not return a better point than $\bm{v}_r$, accept $\bm{v}_r$ and reject $\bm{v}_3$.
+    \begin{center}
+        \includegraphics[width = 1\linewidth]{figure_man/Nelder06.png}
+    \end{center}
 \end{minipage}
 
-Note: the standard value for the expansion coefficient is $\chi = 2$. 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{\baselineskip}
+
+\textbf{Note:} Default value for expansion coefficient: $\chi = 2$
+
+\framebreak
+
 \begin{itemize}
-\small
-\item \textbf{Case 3}: $f(\mathbf{v}_r) \ge f(\mathbf{v}_d)$
-we find that running toward $\bm{v}_{r}$ was not purposeful.
-We calculate a \textbf{contraction} point:
+    \small
+    \item \textbf{Case 3:} $f(\mathbf{v}_r) \ge f(\mathbf{v}_d)$
+        
+        \medskip
+        
+        $\Rightarrow$ \textbf{Contraction:}
+        \begin{equation*}
+            \mathbf{v}_c = \bar{\mathbf{v}} + \gamma (\mathbf{v}_{d + 1} - \bar{\mathbf{v}})
+        \end{equation*}
+        with $0 < \gamma \le 1/2$.
+        
+        \begin{itemize}
+            \item If $f(\mathbf{v}_c) < f(\mathbf{v}_{d + 1})$, accept $\mathbf{v}_c$.
+            \item Otherwise, shrink \textbf{entire} simplex (\textbf{Shrinking}):
+                \begin{equation*}
+                    \mathbf{v}_{i} = \mathbf{v}_1 + \sigma (\mathbf{v}_{i} - \mathbf{v}_{1}) \quad \forall i
+                \end{equation*}
+        \end{itemize}
 
-$$
-\mathbf{v}_c = \bar{\mathbf{v}} + \gamma (\mathbf{v}_{d + 1} - \bar{\mathbf{v}})
-$$
-
-with $0 < \gamma \le 0.5$.
-\begin{itemize}
-\item If $\mathbf{v}_c$ is better than the worst point, we accept $\mathbf{v}_c$.
-\item Otherwise, we shrink the \textbf{entire} Simplex (\textbf{Shrinking}):
-
-$$
-\mathbf{v}_{i} = \mathbf{v}_1 + \sigma (\mathbf{v}_{i} - \mathbf{v}_{1}) \quad \text{ for all } i
-$$
+        \medskip
+        
+        \textbf{Note:} Default values for contraction and shrinking coefficient: $\gamma = \sigma = 1/2$
 \end{itemize}
-\end{itemize}
 
-In each of the three cases, we then continue with step 1 until a termination criterion is met.
+\item \textbf{Repeat} all steps until stopping criterion met.
 
 \end{enumerate}
 
-Note: standard values for the contraction and shrinkage coefficient are $\gamma = 0.5$ and $\sigma = 0.5$. 
 \end{vbframe}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,15 +200,15 @@ Note: standard values for the contraction and shrinkage coefficient are $\gamma 
 %If the reflection point is better than the second worst corner, but not better than the best corner, we accept $\mathbf{v}_r$ and discard $\mathbf{v}_{p + 1}$.
 %\vspace*{0.2cm}
 %\item \textbf{Case 2}: $f(\mathbf{v}_r) < f(\mathbf{v}_1)$ \\
-%If the reflection point is better than the best corner so far, we \enquote{expand} the current point (\textbf{Expansion}) to find out if we could get even better in the direction of $\bm{v}_r$:
+%If the reflection point is better than the best corner so far, we \enquote{expand} the current point (\textbf{Expansion}) to find out if we could get even better in the direction of $\mathbf{v}_r$:
 
 %  $$
 %  \mathbf{v}_e = \bar{\mathbf{v}} + \chi (\mathbf{v}_{r} - \bar{\mathbf{v}}), \quad \chi > 1.
 %  $$
 
-%We discard $\bm{v}_{p + 1}$ in favor of the better of the two corners $\bm{v}_r, \bm{v}_e$.
+%We discard $\mathbf{v}_{p + 1}$ in favor of the better of the two corners $\mathbf{v}_r, \mathbf{v}_e$.
 %\item \textbf{Case 3}: $f(\mathbf{v}_r) \ge f(\mathbf{v}_p)$
-%we find that running toward $\bm{v}_{r}$ was not purposeful.
+%we find that running toward $\mathbf{v}_{r}$ was not purposeful.
 %We calculate a \textbf{contraction} point:
 
 %$$
@@ -277,8 +283,8 @@ Note: standard values for the contraction and shrinkage coefficient are $\gamma 
 %          $$
 %          with $\rho = 1$, calculate $f(\mathbf{v}_r)$.
 %          \end{enumerate}
-%          This is \textbf{case 2}: The reflection point $\bm{v}_r$ is better than the best point $\bm{v}_1$.\\
-%        If the \textbf{expansion} does not return a better point than $\bm{v}_r$, accept $\bm{v}_r$ and reject $\bm{v}_3$.
+%          This is \textbf{case 2}: The reflection point $\mathbf{v}_r$ is better than the best point $\mathbf{v}_1$.\\
+%        If the \textbf{expansion} does not return a better point than $\mathbf{v}_r$, accept $\mathbf{v}_r$ and reject $\mathbf{v}_3$.
 %          };
 %          \normalsize}
 
@@ -311,26 +317,28 @@ Note: standard values for the contraction and shrinkage coefficient are $\gamma 
 %\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{vbframe}{Nelder-Mead}
+\small
 
 \textbf{Advantages:}
 \begin{itemize}
-\item Nelder-Mead only needs function values (no gradients).
-\item Very robust, often works well for non-differentiable functions.
+    \item No gradients needed
+    \item Robust, often works well for non-differentiable functions.
 \end{itemize}
 \textbf{Drawbacks:}
 \begin{itemize}
-\item Relatively slow.
-\item Not every step leads to an improvement of the solution, only the mean over the points in the simplex is reduced.
-\item No guarantee for convergence to local optimum / stationary point.
+    \item Relatively slow (not applicable in high dimensions)
+    \item Not each step improves solution, only mean of corner values is reduced.
+    \item No guarantee for convergence to local optimum / stationary point.
 \end{itemize}
 
-\textbf{Visualization:}\\
-\small
-a good illustration of the Nelder-Mead algorithm for one- and higher-dimensional optimization problems can be found at the following link: \url{http://www.benfrederickson.com/numerical-optimization/}
+\textbf{Visualization:}
+\begin{center}
+    \url{http://www.benfrederickson.com/numerical-optimization/}
+\end{center}
 
 \vspace{0.3cm}
-\textbf{Attention:} Nelder-Mead is default method of \pkg{R} function \pkg{optim()}.
-If gradient is easy to calculate, BFGS is preferred.
+\textbf{Note:} Nelder-Mead is default method of \texttt{R} function \texttt{optim()}.
+If gradient is available and cheap, L-BFGS is preferred.
 
 \end{vbframe}
 
@@ -374,10 +382,12 @@ $$\min_\xv f(x_1,x_2) = x_1^{2} + x_2^{2} + x_1\cdot \sin x_2 + x_2 \cdot \sin x
         \includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_4.PNG}
     \end{minipage}
 \end{figure}
-\vspace*{0.2cm}
+
 \begin{footnotesize}
-NM for multidim. scaling. Convert a matrix of distances to 2D coords, so the distances approximately stay.
-For >10 cities, GD (top) converges well for an appropriate learning rate. NM (bottom) completely fails to converge, even after many iterations.
+    Nelder-Mead in multiple dimensions:
+    Organize points (US cities) to keep predefined mutual distances.
+    For 10 cities, gradient descent (top) converges well for a suitable learning rate.
+    Nelder-Mead (bottom) fails to converge, even after many iterations.
 \end{footnotesize}
 
 
@@ -407,7 +417,8 @@ For >10 cities, GD (top) converges well for an appropriate learning rate. NM (bo
 \end{figure}
 \vspace*{0.5cm}
 \begin{footnotesize}
-Even for only 5 cities, NM (bottom) struggles. GD (top) again works well.
+    Even for only 5 cities, Nelder-Mead (bottom) performs poorly.
+    However, gradient descent (top) still works.
 \end{footnotesize}
 
 \end{vbframe}

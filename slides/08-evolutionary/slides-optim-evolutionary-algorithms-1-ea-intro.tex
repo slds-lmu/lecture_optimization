@@ -81,22 +81,24 @@ The boundaries between the terms become increasingly blurred and are often used 
 
 \begin{vbframe}{Notation and Terminology}
 
-\footnotesize
+\begin{footnotesize}
 \begin{itemize}
 \item A chromosome is a set of parameters which encodes a proposed solution to the problem that the genetic algorithm is trying to solve. The chromosome is often represented as a binary string, although a wide variety of other data structures are also used.\\
 \item The set of all solutions is known as the population.
 \end{itemize}
-\vspace{0.5cm}
-\normalsize
+\end{footnotesize}
+
+\medskip
+
 \begin{center}
-\begin{tabular}{ c | c}
-    \textbf{Symbols} & \textbf{EA Terminology} \\[0.05cm]
-    \hline \\[0.01cm]
-    solution candidate $\bm{x}\in \mathcal{S}$ & Chromosome of an individual \\[0.1cm]
-    $\bm{x}_j$  & $j$-th gene of chromosome\\[0.1cm]
-    Set of candidates $P$ with $\mu = |P|$ & Population and size \\[0.1cm]
-    $\lambda$ & Number of generated offsprings\\[0.1cm]
-    $f: \mathcal{S} \to \R$ & Fitness function
+\begin{tabular}{c|c}
+    \textbf{Symbols} & \textbf{EA Terminology} \\
+    \hline\hline \\
+    solution candidate $\xv \in \mathcal{S}$ & chromosome of an individual \\[0.2em]
+    $x_j$  & $j$-th gene of chromosome \\[0.2em]
+    set of candidates $P$ with $\mu = |P|$ & population and size \\[0.2em]
+    $\lambda$ & number of generated offsprings \\[0.2em]
+    $f: \mathcal{S} \to \R$ & fitness function
 \end{tabular}
 \end{center}
 
@@ -104,7 +106,7 @@ The boundaries between the terms become increasingly blurred and are often used 
 
 % We now look into \textbf{operators}: Functions operating on (a set of) individuals and modifying 
 
-%$$f(\bm{x}) = \widehat{GE}_{\mathcal{D}_{test}}\left(\inducer(\mathcal{D}_{train},\bm{x})\right)$$
+%$$f(\xv) = \widehat{GE}_{\mathcal{D}_{test}}\left(\inducer(\mathcal{D}_{train},\xv)\right)$$
 
 
 \end{vbframe}
@@ -140,43 +142,50 @@ Encoding of chromosomes is the first step of solving a problem with EAs.  Techni
 
 \begin{vbframe}{Step 1: Initialize population}
     \begin{itemize}
-            \item An evolutionary algorithm is started by generating an initial population $P = \{\bm{x}^{(1)}, ..., \bm{x}^{(\mu)}\}$.
-            \item Usually, we sample this uniformly at random.
-            \item We could introduce problem prior knowledge via a smarter init procedure.
-            \item This population is evaluated, i.e., the objective function is computed for every individual in the initial population.
-            \item The initialization can have a large influence on the quality of the found solution, so many EAs employ \textit{restarts} with new randomly generated populations.
+            \item Evolutionary algorithms start with generating initial population $P = \{\xv^{(1)}, ..., \xv^{(\mu)}\}$.
+            \item Usually: Initialize uniformly at random.
+            \item Introducing prior knowledge possible.
+            \item Population is evaluated: objective function is computed for each initial individual.
+            \item Initialization influences quality of solution, so many EAs employ \textit{restarts} with new randomly generated initial populations.
     \end{itemize}
-
 \end{vbframe}
 
 \begin{vbframe}{Step 2: parent selection}
 \footnotesize
-The first step of an iteration chooses $\lambda$ parents, that create offspring for the next step.
+Choose a number of $\lambda$ parents pairs creating $\lambda$ offsprings.
 
 \begin{itemize}
-\item \textbf{Neutral selection: }choose individual with a probability $1/\mu$.
-\item \textbf{Fitness-proportional / Roulette wheel selection: }draw individuals with probability proportional to their fitness.
-\item \textbf{Tournament selection: }randomly select $k$ individuals for a "tournament group". Of the drawn individuals, the best one (according to fitness value) is then chosen. In order to draw $\lambda$ individuals, the procedure must be performed $\lambda$-times.
+    \item \textbf{Neutral selection:} Draw parents uniformly at random.
+    \item \textbf{Fitness-proportional / Roulette wheel selection:} Draw individuals with probability proportional to their fitness.
+    \item \textbf{Tournament selection:} Randomly select $k$ individuals for a "tournament group" and pick the best one (according to fitness value).
 \end{itemize}
-\vspace*{-0.2cm}
+
+\vspace*{-1.5\baselineskip}
+
 \begin{figure}
-  \includegraphics[width=0.5\textwidth]{figure_man/tournament_selection.png} \includegraphics[width=0.3\textwidth]{figure_man/ea_parent_selection.pdf} \\
-  \begin{footnotesize}
-  Left: Random selection. Right: Fitness-proportional selection. Fitness values of $\mu = 10$ individuals (labels in pie-chart) are transferred inversely into probabilities (proportions of the pie-chart). 
-  \end{footnotesize}
+    \includegraphics[width=0.3\textwidth]{figure_man/ea_parent_selection.pdf}
+    \includegraphics[width=0.6\textwidth]{figure_man/tournament_selection.png}
+    \caption*{
+        \footnotesize
+        \centering
+        
+        \textbf{Left:} Fitness-proportional selection.
+        Fitness values of $\mu = 10$ individuals are converted into probabilities.
+        \textbf{Right:} Tournament selection.
+    }
 \end{figure}
 \end{vbframe}
 
 \begin{vbframe}{Step 3: variation}
 
-New individuals are now generated from the parent population. This is done by
+New individuals (offsprings) are generated from parents.
 
 \begin{itemize}
-\item Recombination/Crossover: combine two parents into one offspring.
-\item Mutation: (locally) change an individual.
+\item Recombination/Crossover: Combine two parents into offspring.
+\item Mutation: Modify the offspring locally.
 \end{itemize}
 
-Recombination and mutation are not always performed both; sometimes only one operation is performed.
+Sometimes only one of both operations is performed.
 
 \vspace{0.3cm}
 \begin{center}
@@ -185,50 +194,54 @@ Recombination and mutation are not always performed both; sometimes only one ope
 \end{figure}
 \end{center}
 
-\textbf{Note: } The operation depends on the encoding. We will later look into examples for binary and numeric encodings. 
+\textbf{Note: } Particular operation depends on encoding.
+Examples for binary and numeric encodings follow later.
 
 \end{vbframe}
 
-
-
-
-  
 \begin{vbframe}{Step 4: Survival selection}
-  Now individuals are chosen who survive. Two common strategies are:
-  \begin{itemize}
-  \item \textbf{$(\mu, \lambda)$-selection:} We select from the $\lambda$ descendants the $\mu$ best ($\lambda \ge \mu$ necessary).\\
-  \textbf{But:} best overall individual can get lost!
-  \item \textbf{$(\mu + \lambda)$-selection:} $\mu$ parents and $\lambda$ offspring are lumped together and the $\mu$ best individuals are chosen.\\
-  Best individual safely survives.
-  \end{itemize}
+Choosing surviving individuals.
+Two common strategies are:
+
+\vspace{1em}
+
+\begin{itemize}
+    \setlength{\itemsep}{1em}
+    \item \textbf{$(\mu, \lambda)$-selection:}
+        Select $\mu$ best individuals \textit{only from set of offsprings} ($\lambda \ge \mu$ necessary).
+        
+        \textbf{But:} Best individual can get lost!
+    \item \textbf{$(\mu + \lambda)$-selection:}
+        Select $\mu$ best individuals from set of $\mu$ parents and $\lambda$ offsprings
+        
+        \textbf{Now:} Best individual certainly survives.
+\end{itemize}
 
 \end{vbframe}
-
-
 
 \begin{vbframe}{Evolutionary Algorithms}
-\footnotesize
+% \footnotesize
 \textbf{Advantages}
-  \begin{itemize}
-    \item Conceptually simple, yet powerful enough to solve complex problems (including HPO)
+\begin{itemize}
+    \item Simple but enough to solve complex problems %(including HPO)
     \item All parameter types possible in general
-    \item Highly parallelizable (depends on $\lambda$)
-    \item Allows customization via specific variation operators
-  \end{itemize}
+    \item Highly parallelizable
+    \item Flexible through different variation operations
+\end{itemize}
+
+\medskip
+
 \textbf{Disadvantages}
-    \begin{itemize}
-      \item Less theory available (for realistic, complex EAs)
-      \item Can be hard to get balance between exploration and exploitation right
-      \item Can have quite a few control parameters, hard to set them correctly\\
-      \item Customization necessary for complex problems
-      \item Not perfectly suited for expensive problems like HPO, 
-            as quite a higher number of evaluations is usually
-            needed for appropriate convergence / progress
-    \end{itemize}
+\begin{itemize}
+    \item Little mathematical rigor (for realistic, complex EAs)
+    \item Hard to find balance between exploration and exploitation
+    \item Quite some parameters, hard to determine them
+    \item Customization necessary for complex problems
+    \item Not suitable for expensive problems like HPO as large number of function evaluations necessary
     % \item Stagnation: Optimization process does not progress any more %FIXME: JR: Isn't that the same as the point below?
     % \item Premature Convergence: Algorithm converges to a single solution, which is not as good as expected
     % \item Diversity of population structures: Loss of population diversity for solving complex optimization problems
-
+\end{itemize}
 \end{vbframe}
 
 %\begin{vbframe}{Example}
@@ -245,10 +258,10 @@ Recombination and mutation are not always performed both; sometimes only one ope
 
 %\lz
 
-%Usually for the optimization of a function $f:\R^n \to \R$ individuals are coded as real vectors $\bm{x}_i \in \R^n$.
+%Usually for the optimization of a function $f:\R^n \to \R$ individuals are coded as real vectors $\xv_i \in \R^n$.
 
 
-%We start with a randomly selected population $\mathcal{P} = \{\bm{x}_1, ..., \bm{x}_\mu\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
+%We start with a randomly selected population $\mathcal{P} = \{\xv_1, ..., \xv_\mu\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
 
 %\end{vbframe}
 
@@ -274,10 +287,10 @@ Recombination and mutation are not always performed both; sometimes only one ope
 
 %\begin{vbframe}{Mutation for numeric representations}
 
-%\textbf{Mutation:} individuals are changed, for example for $\bm{x} \in \R^n$
+%\textbf{Mutation:} individuals are changed, for example for $\xv \in \R^n$
 %\begin{itemize}
 %\item \textbf{Uniform mutation:} choose a random gene $x_i$ and replace it with a value uniformly distributed (within the feasible range).
-%\item \textbf{Gauss mutation}: $\bm{\tilde x} = \bm{x} \pm \sigma \mathcal{N}(\bm{0}, \id)$
+%\item \textbf{Gauss mutation}: $\bm{\tilde x} = \xv \pm \sigma \mathcal{N}(\bm{0}, \id)$
 %\item \textbf{Polynomial mutation:} polynomial distribution instead of normal distribution
 
 %\begin{center}
@@ -329,7 +342,7 @@ Recombination and mutation are not always performed both; sometimes only one ope
 
 %\begin{vbframe}{Mutation for bit strings}
 
-%For example, an individual $\bm{x} \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
+%For example, an individual $\xv \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
 
 %\lz
 

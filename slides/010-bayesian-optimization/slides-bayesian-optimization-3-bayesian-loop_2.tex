@@ -41,7 +41,8 @@ where $\Phi(\cdot)$ is the standard normal cdf (assuming Gaussian posterior)
 \end{minipage}
 
 \begin{footnotesize}
-Left: The green vertical line represents $\fmin$ Right: $a_{\text{PI}}(\xv)$ is given by the black area
+    \textbf{Left:} The green vertical line represents $\fmin$.
+    \textbf{Right:} $a_{\text{PI}}(\xv)$ is given by the black area.
 \end{footnotesize}
 }
 %\vspace{1em}
@@ -51,10 +52,14 @@ Left: The green vertical line represents $\fmin$ Right: $a_{\text{PI}}(\xv)$ is 
 \only<2> {
 \vspace{1em}
 %\begin{footnotesize}
-\textbf{Note:} $PI=0$ for already evaluated points $\xv$: Then, $\sh(\xv) = 0$ and $\fh(\xv) = f(\xv) \ge \fmin$, and thus $\fmin - \fh(\xv) \le 0$. Thus
-
+\textbf{Note:} $a_\text{PI}(\xv)=0$ for design points $\xv$, since
+\begin{itemize}
+    \item $\sh(\xv) = 0$,
+    \item $\fh(\xv) = f(\xv) \ge \fmin \quad \Leftrightarrow \quad \fmin - \fh(\xv) \le 0$.
+\end{itemize}
+Therefore:
 $$
-  \Phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right) = \Phi\left(- \infty\right) = 0.
+  \Phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right) = \Phi\left(- \infty\right) = 0
 $$
 
 %\end{footnotesize}
@@ -174,10 +179,10 @@ In our example, using the PI results in spending plenty of time optimizing the l
 \footnotesize{
 \only<1>{
 \begin{itemize}
-\item NB1: We now take the expectation in the tail, 
+\item We now take the expectation in the tail, 
 instead of the prob as in PI.
 
-\item NB2: Improvement is always assumed $\geq 0$. So in a certain sense, we only use uncertainty optimistically. This enforces exploration.
+\item Improvement is always assumed $\geq 0$. % So in a certain sense, we only use uncertainty optimistically. This enforces exploration.
 \end{itemize}
 }
 %EI is more complex than PI and typically also makes assumptions regarding the posterior predictive distribution under a SM\\
@@ -192,9 +197,14 @@ $$
 
 %(where $\Phi(\cdot)$ and $\phi(\cdot)$ are standard normal cdf and df)
 \begin{itemize}
-\item NB3: EI=0 at evals:
+\item $a_\text{EI}(\xv) = 0$ at design points $\xv$:
 %\begin{tiny}
-$a_{\text{EI}}(\xv) = (\fmin-\fh(\xv)) \underbrace{ \Phi \Big(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\Big)}_{= 0, \text{ see PI }} + \underbrace{\sh(\xv)}_{ = 0} \phi\Big(\frac{\fmin-\fh(\xv)}{\sh(\xv)}\Big)$
+
+\vspace{-0.8\baselineskip}
+
+$$
+    a_{\text{EI}}(\xv) = (\fmin-\fh(\xv)) \underbrace{ \Phi \Big(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\Big)}_{= 0, \text{ see PI }} + \underbrace{\sh(\xv)}_{ = 0} \phi\Big(\frac{\fmin-\fh(\xv)}{\sh(\xv)}\Big)
+$$
 %\end{tiny}
 \end{itemize}
 }
@@ -254,7 +264,7 @@ The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
 
 \begin{frame}{Expected Improvement}
 
-The EI is capable of exploration and quickly proposes promising points in areas we haven't visited yet
+The EI is capable of exploration and quickly proposes promising points in areas we have not visited yet
 
 \begin{center}
   \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_6.png}

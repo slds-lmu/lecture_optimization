@@ -9,7 +9,7 @@
 \newcommand{\learninggoals}{
 \item Axes as descent direction 
 \item CD on linear model and LASSO
-\item Soft-Thresholding operator
+\item Soft thresholding
 }
 
 
@@ -29,68 +29,58 @@
 
 \begin{vbframe}{Coordinate descent}
 
-If derivative of objective function does not exist / is unknown we cannot compute a descent direction analytically and an \textbf{inexact} procedure must be used.
-
-\lz 
-
-\textbf{Idea:} Use direction of coordinate axes as \enquote{descent directions}.
+\begin{itemize}
+    \item \textbf{Assumption:} Objective function not differentiable
+    \item \textbf{Idea:} Instead of gradient, use coordinate directions for descent
+\end{itemize}
 
 % \begin{itemize}
 % \item \textbf{Wahl der Richtung}: Wähle eine Dimension $i$, in deren Richtung wir laufen (Für $i=1$ laufen wir also in Richtung der $x_1$-Achse)
 % \item \textbf{Wahl der Schrittweite}: Minimiere (exakt oder inexakt) die Funktion in diese Richtung und halte dabei alle anderen Variablen fest (univariates Optimierungsproblem).
 % \end{itemize}
 
-\lz
-
-In the simplest case we run iteratively over all coordinates $\{1, ...,d\}$ and minimize $f$ with respect to the corresponding dimension.
-
-
-\framebreak
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{itemize}
-\item First a starting point $\bm{x}^{[0]} = \left(x^{[0]}_1, \hdots, x^{[0]}_d\right)$ is selected.
-\item In step $t$ we search the value $x_i$ for each dimension $i \in \left\{1,2,\hdots,d\right\}$
-that minimizes $f$, given $x^{[t]}_1, \hdots,x^{[t]}_{i-1}$ and $x^{[t-1]}_{i-1}, \hdots,x^{[t-1]}_d$:
+\item First: Select starting point $\bm{x}^{[0]} = (x^{[0]}_1, \ldots, x^{[0]}_d)$
+\item Step $t$: Minimize $f$ along $x_i$ for each dimension $i$ for fixed $x^{[t]}_1, \ldots,x^{[t]}_{i-1}$ and $x^{[t-1]}_{i+1}, \ldots,x^{[t-1]}_d$:
 \end{itemize}
 
-\begin{columns}
-\begin{column}{.4\textwidth}
-\begin{scriptsize}
-\begin{align*}
-x^{[t]}_1 &= \argmin_{x_1} f(x_1, x^{[t-1]}_2, x^{[t-1]}_3, \hdots, x^{[t-1]}_d) \\
-x^{[t]}_2 &= \argmin_{x_2} f(x^{[t]}_1, x_2, x^{[t-1]}_3, \hdots, x^{[t-1]}_d) \\
-x^{[t]}_3 &= \argmin_{x_3} f(x^{[t]}_1, x^{[t]}_2, x_3, \hdots, x^{[t-1]}_d) \\
-&\vdots \\
-x^{[t]}_d &= \argmin_{x_d} f(x^{[t]}_1, x^{[t]}_2, x^{[t]}_3, \hdots, x_d) \\
-\end{align*}
-\end{scriptsize}
-\end{column}
-\begin{column}{.5\textwidth}
-\begin{center}
-\vspace*{-0.3cm}
-\includegraphics[width=0.8\textwidth]{figure_man/Coordinate_descent.png} \\
-\tiny{\url{https://commons.wikimedia.org/wiki/File:Coordinate_descent.svg}}
-\end{center}\end{column}
-\end{columns}
+\vspace{-0.5\baselineskip}
+
+\begin{figure}
+    \centering
+    \includegraphics[height=0.45\textheight,keepaspectratio]{figure_man/Coordinate_descent.png}
+    \caption*{\small \textbf{Source:} Wikipedia (Coordinate descent)}
+\end{figure}
 
 \framebreak
 
 \begin{itemize}
-\item Minimum is determined with (exact / inexact) line search
-\item Order in which the dimensions are gone through can be any permutation of $\left\{1,2,\hdots,d\right\}$
-\item \textbf{Convergence:} if $f(\cdot)$ is continuously differentiable and the univariate minimization problems have unique
-solutions, the sequence $\bm{x}^{[t]}$ converges to $\bm{x}^{*}$ with $\nabla f(\bm{x}^*) = 0$.
-
-\lz
-
-The following holds:
-
-$$
-  f(\bm{x}^{[0]}) \geq f(\bm{x}^{[1]}) \geq f(\bm{x}^{[2]}) \geq \hdots
-$$
+    \item Minimum is determined with (exact / inexact) line search
+    \item Order of dimensions can be any permutation of $\left\{1,2,\ldots,d\right\}$
+    \item \textbf{Convergence:}
+        \begin{itemize}
+            \item $f$ convex differentiable
+            \item $f$ sum of convex differentiable and \textit{convex separable} function:
+                \begin{equation*}
+                    f(\xv) = g(\xv) + \sum_{i=1}^d h_i(x_i),
+                \end{equation*}
+                where $g$ convex differentiable and $h_i$ convex
+        \end{itemize}
 \end{itemize}
 
+\framebreak
+
+\textbf{Not convergence} in general for convex functions.
+
+\medskip
+
+\textbf{Counterexample:}
+
+\begin{figure}
+    \centering
+    \includegraphics[height=0.6\textheight,keepaspectratio]{figure_man/Nonsmooth_coordinate_descent.png}
+    \caption*{\small \textbf{Source:} Wikipedia (Coordinate descent)}
+\end{figure}
 
 %\framebreak
 
@@ -126,47 +116,47 @@ $$
 \vspace*{0.2cm}
 
 $$
-    \min g(\thetab) = \min_{\thetab} \frac{1}{2}\sumin \left(y^{(i)} - \thetab^\top \xi\right)^2 = \min_{\thetab} \frac{1}{2}\|\bm{y} - \Xmat \thetab\|^2 
+    \min g(\thetab) = \min_{\thetab} \frac{1}{2}\sumin \left(y^{(i)} - \thetab^\top \xi\right)^2 = \min_{\thetab} \frac{1}{2}\|\yv - \Xmat \thetab\|^2 
 $$
 
-where $\bm{y} \in \R^n$, $\bm{X} \in \R^{n \times p}$ with columns $\bm{X}_1, \hdots, \bm{X}_p \in \R^n$. 
+where $\yv \in \R^n$, $\Xmat \in \R^{n \times d}$ with columns $\xv_1, \ldots, \xv_d \in \R^n$. 
 
 \vspace*{0.3cm}
 
-Assumption: data is scaled $\Xmat_j^\top \mathbf{1} = 0$ and $\Xmat^\top \Xmat = \bm{1}_p$. 
+\textbf{Assume:} Scaled data, i.e., $\Xmat^\top \Xmat = I_d$ (just to get intuition)
 
-\lz 
+\medskip
 
-$g$ simplifies to 
+Then:
+
+\vspace{-\baselineskip}
 
 \begin{footnotesize}
-\begin{eqnarray*}
-    g(\thetab) &=& \frac{1}{2}\bm{y}^\top \bm{y} + \frac{1}{2}\thetab^\top \thetab - \bm{y}^\top \Xmat \thetab  \\
-    &\overset{(*)}{=}& \frac{1}{2}\bm{y}^\top \bm{y} + \frac{1}{2}\thetab^\top \thetab  - \sum_{k = 1}^p \bm{y}^\top \Xmat_k \thetab_k 
-\end{eqnarray*}
+\begin{align*}
+    g(\thetab) &= \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetab^\top \thetab - \yv^\top \Xmat \thetab  \\
+    &\overset{(*)}{=} \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetab^\top \thetab - \yv^\top \sum_{k = 1}^p \xv_k \theta_k 
+\end{align*}
 
-\vfill
-$^{(*)}$ $\Xmat \thetab = \Xmat_1 \thetab_1 + \Xmat_2 \thetab_2 + ... + \Xmat_p \thetab_p = \sum_{k = 1}^p \Xmat_k \thetab_k$.
+$^{(*)}$ $\Xmat \thetab = \xv_1 \theta_1 + \xv_2 \theta_2 + \cdots + \xv_d \theta_d = \sum_{k = 1}^d \xv_k \theta_k$
 \end{footnotesize}
 
 \framebreak
 
-To compute the exact CD update in direction $j$ we compute 
+\begin{itemize}
+    \item Exact CD update in direction $j$:
+        \begin{equation*}
+            \frac{\partial{g}(\thetab)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j 
+        \end{equation*}
+    \item By solving $\frac{\partial{g}(\thetab)}{\partial \theta_j} = 0$, we get 
+        \begin{equation*}
+            \theta_j^\ast = \yv^\top \xv_j
+        \end{equation*}
+    \item \textbf{Repeat} this update for all $\theta_j$
+\end{itemize}
 
-\begin{eqnarray*}
-    \frac{\partial{g}(\thetab)}{\partial \thetab_j} &=& \thetab_j - \bm{y}^\top \Xmat_j 
-\end{eqnarray*}  
 
-By solving $\frac{\partial{g}(\thetab)}{\partial \thetab_j} = 0$, we get 
-
-$$
-    \thetab_j^\ast = \bm{y}^\top \Xmat_j
-$$ 
-
-as exact update for CD in direction $j$.  We repeat this update over all variables. 
-
-% We define $f(\bm{\theta}) = \frac{1}{2} \|\bm{y} - \bm{X}\bm{\theta}\|^2$,
-% with $\bm{y} \in \R^n$, $\bm{X} \in \R^{n \times p}$ and columns $\bm{X}_1, \hdots, \bm{X}_p$.
+% We define $f(\bm{\theta}) = \frac{1}{2} \|\yv - \Xmat\bm{\theta}\|^2$,
+% with $\yv \in \R^n$, $\Xmat \in \R^{n \times p}$ and columns $\Xmat_1, \ldots, \Xmat_p$.
 
 % \lz
 
@@ -174,12 +164,12 @@ as exact update for CD in direction $j$.  We repeat this update over all variabl
 
 % \begin{footnotesize}
 % \begin{eqnarray*}
-%   0 &=& \frac{\partial{f}(\bm{\theta})}{\partial \theta_i}  = \bm{X}_i^{\top} (\bm{X\theta} - \bm{y}) = \bm{X}_i^{\top} (\bm{X}_i \theta_i + \bm{X}_{-i} \bm{\theta}_{-i} - \bm{y}) \\
-% \theta_i &=& \frac{\bm{X}_i^\top (\bm{y} - \bm{X}_{-i} \bm{\theta}_{-i})}{\bm{X}_i^{\top} \bm{X}_i},
+%   0 &=& \frac{\partial{f}(\bm{\theta})}{\partial \theta_i}  = \Xmat_i^{\top} (\bm{X\theta} - \yv) = \Xmat_i^{\top} (\Xmat_i \theta_i + \Xmat_{-i} \bm{\theta}_{-i} - \yv) \\
+% \theta_i &=& \frac{\Xmat_i^\top (\yv - \Xmat_{-i} \bm{\theta}_{-i})}{\Xmat_i^{\top} \Xmat_i},
 % \end{eqnarray*}
 % \end{footnotesize}
 
-% where $\bm{X}_{-i}, \bm{\theta}_{-i}$ are to be understood as the matrix / vector without the $i$-th column / row.
+% where $\Xmat_{-i}, \bm{\theta}_{-i}$ are to be understood as the matrix / vector without the $i$-th column / row.
 
 % \vspace*{0.2cm}
 
@@ -187,63 +177,75 @@ as exact update for CD in direction $j$.  We repeat this update over all variabl
 
 \end{vbframe}
 
-\begin{vbframe}{Soft thresholding operator}
+\begin{vbframe}{Soft thresholding}
 
 \textbf{Minimize LM with L2-loss and L1 regularization via CD:}
 
-$$
-    \min_{\thetab} h(\thetab) = \min_{\thetab} \frac{1}{2}\|\bm{y} - \Xmat \thetab\|^2 + \lambda \|\thetab\|_1 % = g(\thetab) + \tilde g(\thetab)
-$$
+\begin{equation*}
+    \min_{\thetab} h(\thetab) = \min_{\thetab} \frac{1}{2}\|\yv - \Xmat \thetab\|^2 + \lambda \|\thetab\|_1 % = g(\thetab) + \tilde g(\thetab)
+\end{equation*}
 
-We can write $h(\thetab) = \frac{1}{2}\bm{y}^\top \bm{y} + \frac{1}{2}\thetab^\top \thetab  - \sum_{k = 1}^p (\bm{y}^\top \Xmat_k \thetab_k + \lambda|\thetab_k|)$. 
+Note that $h(\thetab) = \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetab^\top \thetab  - \sum_{k = 1}^d (\yv^\top \xv_k \theta_k + \lambda|\theta_k|)$
 
-\vspace*{0.3cm}
+\medskip
 
-Because $|\cdot|$ is not differentiable, we distinguish three cases: 
+\textbf{Assume} (again): $\Xmat^\top \Xmat = I_d$.
+
+Since $|\cdot|$ is not differentiable, distinguish three cases:
+
+\medskip
 
 % https://aswani.ieor.berkeley.edu/teaching/SP15/265/lecture_notes/ieor265_lec6.pdf
 \begin{footnotesize}
     \begin{itemize}
-        \item \textbf{Case 1}: $\thetab_j > 0$. Then $|\thetab_j| = \thetab_j$ and 
-        \begin{eqnarray*}
-            0 &=& \frac{\partial{g}(\thetab)}{\partial \thetab_j} = \thetab_j - \bm{y}^\top \Xmat_j + \lambda \qquad \Leftrightarrow \qquad \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j - \lambda        
-            \end{eqnarray*}
-        \item \textbf{Case 2}: $\thetab_j < 0$. Then $|\thetab_j| = - \thetab_j$ and 
-        \begin{eqnarray*}
-            0 &=& \frac{\partial{g}(\thetab)}{\partial \thetab_j} = \thetab_j - \bm{y}^\top \Xmat_j - \lambda \qquad \Leftrightarrow \qquad \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j + \lambda        
-            \end{eqnarray*}
-        \item \textbf{Case 3}: $\thetab_j = 0$. 
+        \item \textbf{Case 1:} $\theta_j > 0$.
+            Then $|\theta_j| = \theta_j$ and 
+            \begin{equation*}
+                0 = \frac{\partial{h}(\thetab)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j + \lambda \qquad \Leftrightarrow \qquad \theta^\ast_{j, \text{LASSO}} = \theta^\ast_j - \lambda        
+            \end{equation*}
+        \item \textbf{Case 2:} $\theta_j < 0$.
+            Then $|\theta_j| = - \theta_j$ and 
+            \begin{equation*}
+                0 = \frac{\partial{h}(\thetab)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j - \lambda \qquad \Leftrightarrow \qquad \theta^\ast_{j, \text{LASSO}} = \theta^\ast_j + \lambda
+                \end{equation*}
+        \item \textbf{Case 3:} $\theta_j = 0$
     \end{itemize}
 \end{footnotesize}
 
 We can write the solution as: 
 
-\begin{eqnarray*}
-    \thetab^\ast_{j, \text{LASSO}} &=& 
+\begin{equation*}
+    \theta^\ast_{j, \text{LASSO}} =
     \begin{cases}
-        \thetab^\ast_j - \lambda & \text{ if } \thetab^\ast_j > \lambda \\
-        \thetab^\ast_j + \lambda & \text{ if } \thetab^\ast_j < - \lambda \\
-        0 &  \text{ if }  \thetab^\ast_j \in [- \lambda, \lambda],
+        \theta^\ast_j - \lambda & \text{ if } \theta^\ast_j > \lambda \\
+        \theta^\ast_j + \lambda & \text{ if } \theta^\ast_j < - \lambda \\
+        0 &  \text{ if }  \theta^\ast_j \in [- \lambda, \lambda],
     \end{cases}
-\end{eqnarray*}
+\end{equation*}
 
-which is also referred to as \textbf{soft-thresholding operator}. Coefficients for which the solution to the unregularized problem are smaller than a threshold, $|\thetab^\ast_j| < \lambda$, are shrinked to zero. 
+This operation is called \textbf{soft thresholding}.
 
-\vspace*{0.2cm}
+\medskip
 
-\begin{footnotesize}
-\textbf{Note: }
-\begin{itemize}
-    \item For case 1, we require 
-    $$
-        \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j - \lambda  > 0 \qquad \Leftrightarrow \qquad \thetab^\ast_j > \lambda 
-    $$
-    \item For case 2, we require
-    $$
-        \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j + \lambda  < 0 \qquad \Leftrightarrow \qquad \thetab^\ast_j < - \lambda 
-    $$
-\end{itemize}
-\end{footnotesize}
+Coefficients for which the solution to the unregularized problem are smaller than a threshold, $|\thetab^\ast_j| < \lambda$, are shrinked to zero. 
+
+\medskip
+
+% \begin{footnotesize}
+% \textbf{Note:}
+% \begin{itemize}
+%     \item For case 1, we require 
+%     $$
+%         \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j - \lambda  > 0 \qquad \Leftrightarrow \qquad \thetab^\ast_j > \lambda 
+%     $$
+%     \item For case 2, we require
+%     $$
+%         \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j + \lambda  < 0 \qquad \Leftrightarrow \qquad \thetab^\ast_j < - \lambda 
+%     $$
+% \end{itemize}
+% \end{footnotesize}
+
+\textbf{Note:} Derivation of soft thresholding operator not trivial (subgradients)
 
 \end{vbframe}
 
@@ -253,17 +255,16 @@ which is also referred to as \textbf{soft-thresholding operator}. Coefficients f
 Why is it being used?
 
 \begin{itemize}
-\item Very easy to implement.
-\item Good implementation can achieve state-of-the-art performance.
-\item Scalable, e.g. no storage or operations on large objects,
-  only the current point
-\item Applicable in both differentiable and derivative-free cases.
+\item Easy to implement
+\item Scalable: no storage/operations on large objects,
+  just current point \\
+    $\Rightarrow$ Good implementation can achieve state-of-the-art performance
+\item Applicable for non-differentiable (but convex separable) objectives
 \end{itemize}
 
-\lz 
+\medskip
 
-Examples:
-
+\textbf{Examples:}
 \begin{itemize}
 \item Lasso regression, Lasso GLM, graphical Lasso
 \item Support Vector Machines

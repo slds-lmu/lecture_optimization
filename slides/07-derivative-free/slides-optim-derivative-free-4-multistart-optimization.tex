@@ -30,20 +30,23 @@
 
 \begin{vbframe}{Motivation}
 \begin{itemize}
-\item So far: optimization method for unimodal objective function (exception: simulated annealing)
-\item If the objective function is actually multimodal, our procedures converge to \textbf{local minima}.
-\item Found optima may be different for different starting values $\bm{x}^{[0]}$
+\item So far: derivative-free methods for \textit{unimodal} objective function (exception: simulated annealing)
+\item With multimodal objective functions, methods converge to \textbf{local minima}.
+\item Optimum found may differ for different starting values $\xv^{[0]}$
 \end{itemize}
-\begin{block}{$\Rightarrow$ \enquote{attraction areas}}
-Let $f_1^*, \ldots, f_k^*$ be local minimum values of $f(\cdot)$
-with $f_i^* \neq f_j^* \quad \forall i \neq j$. \\
-Then the set $\mathcal{A}$ is called basin of attraction of $f_i^*$ for algorithm $A$.
-$$
-\mathcal{A}(f_i^*, A) = \left\{ \bm{x} \in S \subseteq \R^d : f(A(\bm{x}))
-\rightarrow f_i^*\right\}
-$$
 
-\end{block}
+\medskip
+
+\textbf{Attraction areas:}
+\begin{itemize}
+    \item Let $f_1^*, \ldots, f_k^*$ be local minimum values of $f$ with $f_i^* \neq f_j^* \quad \forall i \neq j$.
+    \item Notation: $A(\xv^{[0]})$ denotes result of algorithm $A$ started at $\xv^{[0]}$
+    \item Then: Set
+        \begin{equation*}
+            \mathcal{A}(f_i^*, A) = \left\{ \xv : A(\xv) = f_i^*\right\}
+        \end{equation*}
+        is called \textit{attraction area}/\textit{basin of attraction} of $f_i^*$ for algorithm $A$
+\end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Attraction Areas}
@@ -89,37 +92,35 @@ $$
 %@
 \end{vbframe}
 
-\begin{vbframe}{Multi-Starts}
-
+\begin{vbframe}{Multi-starts}
 
 \footnotesize
-$$
-f(\bm{x}) = \sin^2(3\pi x_1) + (x_1 - 1)^2 [1 + \sin^2(3\pi x_2)] + (x_2 -1)^2
-[1 + \sin^2(2\pi x_2)]
-$$
+
+\textbf{Levy function:}
+\begin{equation*}
+    f(\xv) = \sin^2(3\pi x_1) + (x_1 - 1)^2 [1 + \sin^2(3\pi x_2)] + (x_2 -1)^2[1 + \sin^2(2\pi x_2)]
+\end{equation*}
+
+\vspace{-\baselineskip}
+
 \begin{columns}
-\begin{column}{0.5\textwidth}
+\begin{column}[c]{0.5\textwidth}
    \footnotesize
   \vspace{-0.2cm}
   \begin{itemize}
-    \item Global minimum: $f(\bm{x}^*) = 0$ at $\bm{x}^* = (1,1)$
-    \item We optimize the Levy function using the BFGS method with a random starting value of $-2\leq x_1 \leq 2, -2\leq     x_2 \leq 2$ and note the objective function value of the result after optimization
-    \item We repeat this $100$ times
+    \item Global minimum: $f(\xv^*) = 0$ at $\xv^* = (1,1)^\top$
+    \item Optimize $f$ by BFGS method with random starting point in $[-2,2]^2$ and collect result
+    \item Repeat $100$ times
     \end{itemize}
 \end{column}
-\begin{column}{0.5\textwidth}  %%<--- here
+\begin{column}[c]{0.5\textwidth}
     \begin{center}
   \includegraphics[width = 0.9\textwidth]{figure_man/levy.png}
   \end{center}
 \end{column}
 \end{columns}
 
-
-
-
-%\vspace*{1cm}
-
-Distribution of the $100$ optimization results ($y$ values):
+Distribution of results ($y$ values):
 \vspace{0.1cm}
 
 \footnotesize
@@ -194,25 +195,25 @@ Distribution of the $100$ optimization results ($y$ values):
 \normalsize
 \framebreak
 
-Idea: use multiple starting points $\bm{x}^{[1]}, \ldots, \bm{x}^{[k]}$ for algorithm A
+Idea: use multiple starting points $\xv^{[1]}, \ldots, \xv^{[k]}$ for algorithm A
 
 \begin{algorithm}[H]
   \begin{footnotesize}
   \begin{center}
   \caption{Multistart optimization}
     \begin{algorithmic}[1]
-    \State Given: optimization algorithm $A(\cdot)$, $f: \mathcal{S} \mapsto \R, x \mapsto f(x)$
+    \State Given: optimization algorithm $A(\cdot)$, $f: \mathcal{S} \mapsto \R, \xv \mapsto f(\xv)$
     \State $k = 0$
       \Repeat
-        \State Draw starting point  $x^{[k]}$ from $\mathcal{S}$ (e.g. uniform if $\mathcal{S}$ is of finite volume)
-        \If{k = 0}  $\hat{x}= x^{[0]}$
+        \State Draw starting point  $\xv^{[k]}$ from $\mathcal{S}$ (e.g. uniform if $\mathcal{S}$ is of finite volume)
+        \If{k = 0}  $\hat{\xv}= \xv^{[0]}$
         \EndIf
-        \State Initialize algorithm with start value $x^{[k]} \Rightarrow \tilde{x} = A(x^{[k]})$
-        \If{$f(\tilde{x}) < f(\hat{x})$}  $\hat{x} = \tilde{x}$
+        \State Initialize algorithm with start value $\xv^{[k]} \Rightarrow \tilde{\xv} = A(\xv^{[k]})$
+        \If{$f(\tilde{\xv}) < f(\hat{\xv})$}  $\hat{\xv} = \tilde{\xv}$
         \EndIf
         \State k = k + 1
       \Until{Stop criterion fulfilled}\\
-    \Return{$\hat{x}$}
+    \Return{$\hat{\xv}$}
     \end{algorithmic}
     \end{center}
     \end{footnotesize}
