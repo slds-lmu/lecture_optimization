@@ -27,114 +27,116 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{vbframe}{Nonlinear Constrained Optimization}
 
-In the previous lecture, we introduced the general primal LP of the form 
+Previous lecture: \textbf{Linear programs}
+
+\vspace{-\baselineskip}
 
 \begin{eqnarray*}
- \min_{\xv \in \R^d} && \bm{c}^T\bm{x} \\
-\text{s.t. } &&  \bm{A} \bm{x} \le \bm{b}\\
-             && \bm{G} \bm{x} = \bm{h} 
+ \min_{\xv \in \R^d} && f(\xv) := \mathbf{c}^\top\xv \\
+\text{s.t. } &&  \Amat \xv \le \mathbf{b}\\
+             && \mathbf{G} \xv = \mathbf{h} 
 \end{eqnarray*}
 
-and discussed how its dual formulation can be related to a function $\mathcal{L}$ of the form 
-$$
-\mathcal{L}(\bm{x},\bm{\alpha},\bm{\beta}) = \bm{c}^T \bm{x} + \alpha^T (\bm{A} \bm{x} - \bm{b}) + \bm{\beta}^T (\bm{G} \bm{x} - \bm{h}) 
-$$
+Related to its (Lagrange) dual formulation by the \textit{Lagrangian}
+\begin{equation*}
+    \mathcal{L}(\xv,\bm{\alpha},\bm{\beta}) = \mathbf{c}^\top \xv + \bm{\alpha}^\top (\Amat \xv - \mathbf{b}) + \bm{\beta}^\top (\mathbf{G} \xv - \mathbf{h}).
+\end{equation*}
+
+\textbf{Weak duality:} For $\bm{\alpha} \geq 0$ and $\bm{\beta}$:
+\begin{equation*}
+    f(\xv^\ast) \geq \min_{\xv \in \mathcal{S}} \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) \geq \min_{\xv \in \R^d} \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) =: g(\bm{\alpha}, \bm{\beta})
+\end{equation*}
+
+\textbf{Recall:} Implicit domain constraint in \textit{Lagrange dual function} $g(\bm{\alpha}, \bm{\beta})$.
 
 \framebreak
 
-Given the general form of a constraint optimization problem
+General form of a constraint optimization problem
+
+\vspace{-\baselineskip}
 
 \begin{eqnarray*}
  \min_{\xv \in \R^d} && f(\xv) \\
-\text{s.t. } && g_i(\xv) \le 0 \, i=1,\ldots, k, \\
-             && h_j(\xv) = 0 \, j=1,\ldots, l,.\\
+\text{s.t. } && g_i(\xv) \le 0, \quad i=1,\ldots, k, \\
+             && h_j(\xv) = 0, \quad j=1,\ldots, \ell.
 \end{eqnarray*}
 
-with not necessarily linear functions $f:\R^d \to \R$, $g_i:\R^d \to \R$, $h_j:\R^d \to \R$ and assuming $f, g, h \in \mathcal{C}^2$, it is tempting to mirror this construction and define  
-$$
-\mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) := f(\xv) + \sum_{i=1}^k \alpha_i g_i(\xv) + \sum_{j=1}^l \beta_j h_j(\xv)
-$$
-
-with  multipliers $\alpha_i\ge 0$ and unconstrained $\beta_i$. As we will see later, this construction, called the Lagrange function (or Lagrangian) associated with the primal nonlinear optimization problem, will be key to defining Lagrangian duality. The multipliers $\alpha_i$ and $\beta_i$ are called Lagrange multipliers.   
+\begin{itemize}
+    \item Functions $f$, $g_i$, $h_j$ generally nonlinear
+    \item Transfer the Lagrangian from linear programs:
+        \begin{equation*}
+            \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) := f(\xv) + \sum_{i=1}^k \alpha_i g_i(\xv) + \sum_{j=1}^\ell \beta_j h_j(\xv)
+        \end{equation*}
+    \item Dual variables $\alpha_i \ge 0$ and $\beta_i$ are also called \textit{Lagrange multipliers}.
+\end{itemize}
 
 \end{vbframe}
 
 \begin{vbframe}{Constrained problems: the direct way}
 
-Similar to LPs, however, certain constraint problems can be solved in a direct way using methods from calculus and linear algebra.  
+Simple constrained problems can be solved in a direct way.
+
+\medskip
 
 \textbf{Example 1:}
-
-\begin{footnotesize}
 \begin{eqnarray*}
-\min_{x\in \R} && 2 - x^2 \\
-\text{s.t. } && x - 1 = 0
+    \min_{x\in \R} && 2 - x^2 \\
+    \text{s.t. } && x - 1 = 0
 \end{eqnarray*}
-\end{footnotesize}
 
-In this trivial example, we would simply resolve the constraint 
+\textbf{Solution:} Resolve the constraint by
 
-\begin{eqnarray*}
-x - 1 &=& 0 \\
-x &=& 1
-\end{eqnarray*}
+\vspace{-\baselineskip}
+
+\begin{align*}
+    x - 1 &= 0 \\
+    x &= 1
+\end{align*}
 
 and insert it into the objective: 
 
-\vspace*{-0.5cm}
+\vspace*{-\baselineskip}
 
-\begin{eqnarray*}
-x^\ast &=& 1, \qquad f(x^\ast) = 1
-\end{eqnarray*}
+\begin{align*}
+    x^\ast = 1, \quad f(x^\ast) = 1
+\end{align*}
 
 \framebreak
 
 \textbf{Example 2:}
 
-     \vspace*{-0.5cm}
+\vspace*{-\baselineskip}
 
- \begin{footnotesize}
- \begin{eqnarray*}
- \min_{\xv \in \R^2} && - 2 + x_1^2 + 2 x_2^2\\
- \text{s.t. } && x_1^2 + x_2^2 - 1 = 0
- \end{eqnarray*}
- \end{footnotesize}
+\begin{eqnarray*}
+    \min_{\xv \in \R^2} && - 2 + x_1^2 + 2 x_2^2\\
+    \text{s.t. } && x_1^2 + x_2^2 - 1 = 0
+\end{eqnarray*}
 
- \vspace*{-0.2cm}
+\textbf{Solution:} Resolve the constraint
 
- We solve the problem by resolving the constraint
+\vspace{-\baselineskip}
 
- \begin{footnotesize}
- \begin{eqnarray*}
- x_1^2 = 1 - x_2^2
- \end{eqnarray*}
- \end{footnotesize}
+\begin{eqnarray*}
+    x_1^2 = 1 - x_2^2
+\end{eqnarray*}
 
- and inserting it into the objective function
+and insert it into the objective
 
- \vspace*{-0.5cm}
+\vspace*{-\baselineskip}
 
- \begin{footnotesize}
- \begin{eqnarray*}
- f(x_1, x_2) &=& - 2 + x_1^2 + 2 x_2^2 \\
- &=& -2 + (1 - x_2^2) + 2 x_2^2 = - 1 + x_2^2.
- \end{eqnarray*}
- \end{footnotesize}
+\begin{align*}
+    f(x_1, x_2) &= -2 + (1 - x_2^2) + 2 x_2^2 \\
+    &= -1 + x_2^2.
+\end{align*}
 
- \vspace*{-0.3cm}
-
- We turned the optimization problem into a one-dimensional, unconstrained optimization problem
- that has a minimum at $x_2 = 0$. Plugging $x_2 = 0$ into constraint, we get $x_1 = \pm 1$.
-
- \vspace*{0.2cm}
-
- However, this direct way is not possible in most cases.
+$\Rightarrow$ Minimum at $\xv^* = (\pm 1, 0)^\top$.
+However, direct way mostly not possible.
 
 \end{vbframe}
 
 \begin{vbframe}{A classic example: "milkmaid problem"}
 
-\textbf{Question 1:} Is a general recipe for solving general constraint nonlinear optimization problems? 
+\textbf{Question 1:} Is there a general recipe for solving general constrained nonlinear optimization problems? 
 
 \textbf{Question 2:} Can we understand this recipe geometrically?
 
@@ -148,176 +150,170 @@ of course equally well with a \enquote{milk man}).
 \begin{itemize}
 	\item Assume a milk maid is sent to the field to get the day's milk
 	\item The milkmaid wants to finish her job as quickly as possible
-	\item However, she has to rinse out her bucket first in the nearby river. 
+	\item However, she has to clean her bucket first at the nearby river. 
 \end{itemize}
 
 \framebreak 
-What is the best point $P$ to rinse her bucket? 
+Where is the best point $P$ to clean her bucket?
+
+\medskip
 
 \begin{center}
-	\includegraphics[width = 0.7\textwidth]{figure_man/milkmaid1.png}
+	\includegraphics[width=0.6\textwidth]{figure_man/milkmaid1.png}
 \end{center}
 
 \framebreak 
 
-Let us put this into maths: The milkmaid wants to find the point $P$ at the riverbank for which the total distance $f(P)$ is a minimum, with
+\textbf{Aim:} Find point $P$ at the river for minimum total distance $f(P)$
+
+\medskip
 
 \begin{itemize} 
-\item $f(P)$ being defined as $f(P) := d(M, P) + d(P, C)$ 
-(distance from $M$ to $P$ + distance from $P$ point to $C$), and
-\item the river is described by $h(x_1, x_2) = 0$. 
+    \item $f(P) := d(M, P) + d(P, C)$ ($d$ measures distance)
+    \item $h(P) = 0$ describes the river
 \end{itemize}
 
+\medskip
+
 \begin{center}
-	\includegraphics[width = 0.4\textwidth]{figure_man/milkmaid2.png}
+	\includegraphics[width=0.4\textwidth]{figure_man/milkmaid2.png}
 \end{center}
 
 
 \framebreak 
 
-We want to solve the following optimization problem 
+Corresponding optimization problem:
+
+\vspace{-\baselineskip}
 
 \begin{eqnarray*}
 	\min_{x_1, x_2} && f(x_1, x_2) \\
-	\text{s. t. } && h(x_1, x_2) = 0.
+	\text{s.t.} && h(x_1, x_2) = 0
 \end{eqnarray*}
 
+\medskip
 
 \begin{center}
-	\includegraphics[width = 0.4\textwidth]{figure_man/milkmaid2.png}
+	\includegraphics[width=0.4\textwidth]{figure_man/milkmaid2.png}
 \end{center}
-
 
 \framebreak 
 
-Let us visualize how far the milkmaid could get for any fixed total distance $f(P)$. 
+\textbf{Question:} How far can the milkmaid get for a fixed total distance $f(P)$?
 
-\vspace*{0.2cm}
+\medskip
 
-Let us first assume we only care about the distance from $M$ to $P$. We might picture this as a set of concentric circles. How far can the milkmaid get for a distance of $5$, $10$, $15$, ... meters?
+\textbf{Assume:} We only care about $d(M,P)$.
 
 \begin{center}
-	\includegraphics[width = 0.4\textwidth]{figure_man/milkmaid3.png}
+	\includegraphics[width=0.4\textwidth]{figure_man/milkmaid3.png}
 \end{center}
 
-As soon as one of those circles was big enough to touch the river, we'd recognize the point where it touched as the closest riverbank point to $M$. 
+\textbf{Observe:} Radius of circle touching river first is the minimal distance.
 
 \framebreak 
 
-We use now the geometric definition of an ellipse: 
+\begin{itemize}
+    \item For $f(P) = d(M,P) + d(P,C)$: Use an \textbf{ellipse}.
+    \item \textbf{Def.:} Given two focal points $F_1$, $F_2$ and distance $2a$:
+        \begin{equation*}
+            E = \{ P \in \mathbb{R}^2 \;|\; d(F_1,P) + d(P,F_2) = 2a \}
+        \end{equation*}
+\end{itemize}
 
-Given two fixed points, $F_1$, $F_2$ called the foci and a distance $2a$ which is greater than the distance between the foci, the ellipse is the set of points $P$ such that the sum of the distances $|PF_1|, |PF_2|$ is equal to $2a$: 
+\medskip
 
-$$
-E = \{ P \in \mathbb{R}^2 | \, |PF_1| + |PF_2| = 2a \}
-$$
-
-\vspace*{0.2cm} 
-
-\begin{center}
-	\includegraphics[width = 0.4\textwidth]{figure_man/ellipse.png}
-\end{center}
+\begin{figure}
+    \centering
+	\includegraphics[width=0.5\textwidth]{figure_man/ellipse.png}
+\end{figure}
 
 \framebreak 
 
 %Our problem is of course more difficult. However, we can make use of the following: For every point $P$ on a fixed ellipse with foci $M$ and $C$, the distance from $M$ to $P$ and back from $P$ to $C$ stays the same (independent of the exact choice of $P$). 
 
+\begin{itemize}
+    \item Let $M$ and $C$ be focal points of a collection of ellipses
+    \item Find \textbf{smallest} ellipse touching the river $h(x_1, x_2)$
+    \item Define $P$ as the touching point
+\end{itemize}
 
+\vspace*{0.5\baselineskip}
 
-In the milkmaid problem, this means that the milkmaid could get to the cow by way of any point on a given ellipse with foci $M$ and $C$ in the same amount of time: the ellipses are curves of constant $f(P)$. 
+\begin{figure}
+    \centering
+	\includegraphics[width=0.45\textwidth]{figure_man/milkmaid4.png}
+\end{figure}
 
-\vspace*{0.2cm} 
-
-\begin{center}
-	\includegraphics[width = 0.4\textwidth]{figure_man/milkmaid4.png}
-\end{center}
-
+\textbf{Question:} How can we make sense of this mathematically?
 
 \framebreak
 
-Therefore, to find the desired point $P$ on the riverbank, we must simply find the \textbf{smallest ellipse} with $M$ and $C$ as foci, that intersects the curve of the river. 
-
-\vspace*{0.2cm} 
-
-The optimum point $P$ is the one where the respective ellipse is just \textbf{tangential} to the riverbank! 
-
-\begin{center}
-	\includegraphics[width = 0.4\textwidth]{figure_man/milkmaid4.png}
-\end{center}
-
-It is obvious from the picture that the \enquote{perfect} ellipse and the river are truly tangential to each other at the ideal point $P$! 
-
-
-\framebreak 
-
-In multivariate calculus, the gradient $\nabla h$ of a function $h$ is normal to a surface on which $h$ is constant ($\nabla h$ is normal to the \enquote{contour lines}). 
-
-\vspace*{0.2cm}
-
-In our case, we have two functions whose normal vectors are parallel: 
-$$
-	\nabla f(P) = \beta \nabla h(P). 
-$$
-
-The multiplier $\beta$ is necessary because the magnitudes of the two gradients may be different. $\beta$ is called \textbf{Lagrange multiplier}. 
+\begin{itemize}
+    \item \textbf{Recall:} Gradient is normal (perpendicular) to contour lines
+    \item Since contour lines of $f$ and $h$ touch, gradients are parallel:
+        \begin{equation*}
+            \nabla f(P) = \beta \nabla h(P)
+        \end{equation*}
+    \item Multiplier $\beta$ is called \textbf{Lagrange multiplier}.
+\end{itemize}
 
 \begin{center}
-	\includegraphics[width = 0.4\textwidth]{figure_man/milkmaid5.png}
+	\includegraphics[width=0.45\textwidth]{figure_man/milkmaid5.png}
 \end{center}
 
 \end{vbframe}
 
 \begin{vbframe}{Lagrange Function}
 
-In order to solve a problem with a single equality constraint, we require the following to be fulfilled: 
+\textbf{General:} Solve problem with single equality constraint by:
 
-\begin{eqnarray*}
-\nabla f(\xv^\ast) &=& \beta \nabla h(\xv^\ast), \quad \beta \in \R\\
-h(\xv^\ast) &=& 0
-\end{eqnarray*}
+\vspace{-\baselineskip}
 
-where the first line requires that gradients are parallel, and the second requires that the constraint is met. 
+\begin{align*}
+    \nabla f(\xv) &= \beta \nabla h(\xv) \\
+    h(\xv) &= 0
+\end{align*}
 
-\lz 
+\begin{itemize}
+    \item \textbf{First line}: Parallel gradients $|$ \textbf{Second line:} Constraint
+\end{itemize}
 
-This can also be written as: 
+\textbf{Observe:} Above system is equivalent to
+\begin{equation*}
+    \nabla \mathcal{L}(\xv, \beta) = \mathbf{0}
+\end{equation*}
+for \textbf{Lagrange function} (or \textbf{Lagrangian}) $\mathcal{L}(\xv, \beta) := f(\xv) + \beta h(\xv)$
 
-\begin{eqnarray*}
-\nabla f(\xv^\ast) + \beta \nabla h(\xv^\ast) &=& 0, \quad \beta \in \R\\
-h(\xv^\ast) &=& 0
-\end{eqnarray*}
+\medskip
 
-\framebreak 
-
-If we define $\mathcal{L}(\xv, \beta) := f(\xv) + \beta h(\xv)$, then the point fulfilling the equations above is nothing but a stationary point of $\mathcal{L}$: 
-
-$$
-  \begin{pmatrix}
-  \nabla_\xv \mathcal{L}(\xv^\ast, \beta) \\
-  \nabla_\beta \mathcal{L}(\xv^\ast, \beta)
-  \end{pmatrix} = \begin{pmatrix} \nabla f(\xv^\ast) + \beta \nabla h(\xv^\ast) \\
-  h(\xv)
-  \end{pmatrix} = \begin{pmatrix}
-  0 \\ 0 \end{pmatrix}
-$$
-
-The function $\mathcal{L}$ is called \textbf{Lagrange function} or \textbf{Lagrangian}. 
-
-\vspace*{0.2cm}
-
-Note: In some books the Lagrangian is defined as $\mathcal{L}(\xv, \beta) := f(\xv) - \beta h(\xv)$. Both conventions obtain the same stationary points, but the sign of $\beta$ is different. 
+Indeed:
+\begin{equation*}
+    \begin{pmatrix}
+        \nabla_\xv \mathcal{L}(\xv, \beta) \\
+        \nabla_\beta \mathcal{L}(\xv, \beta)
+    \end{pmatrix}
+    = \begin{pmatrix}
+        \nabla f(\xv) + \beta \nabla h(\xv) \\
+        h(\xv)
+    \end{pmatrix}
+\end{equation*}
 
 \framebreak
 
-The method can be extended to inequality constraints of the form $g(\xv) \geq 0$. There are two possible cases for a solution: 
+Idea can be extended to \textbf{inequality} constraints $g(\xv) \leq 0$.
+
+\medskip
+
+There are two possible cases for a solution: 
 
 \begin{itemize}
-	\item If the optimal solution $x_b$ is inside the constraint region, the constraint is inactive, meaning that $\beta$ can be set to zero. 
-	\item If the optimal solution $x_a$ lies on the boundary $g(\xv) = 0$, the negative gradient $\nabla f$ points in the opposite direction of the gradient of $g(\xv)$
+	\item Solution $\xv_b$ inside feasible set: constraint is inactive ($\alpha_b =0$)
+	\item Solution $\xv_a$ on boundary $g(\xv) = 0$: $\nabla f(\xv_a) = \alpha_a \nabla g(\xv_a)$ ($\alpha_a > 0$)
 \end{itemize}
 
 \begin{center}
-	\includegraphics[width = 0.4\textwidth]{figure_man/constraint_lagrange.png}
+	\includegraphics[width=0.45\textwidth]{figure_man/constraint_lagrange.png}
 \end{center}
 \end{vbframe}
 
@@ -438,186 +434,160 @@ The method can be extended to inequality constraints of the form $g(\xv) \geq 0$
 
 \begin{vbframe}{Lagrange function and primal problem}
 
-The Lagrangian can be extended to general constrained optimization problems with $k$ inequality constraints ($g(\xv) \geq 0$) and $l$ equality constraints ($g(\xv) = 0$): 
+General constrained optimization problems:
+\begin{align*}
+    \min_{\xv} \quad& f(\xv) \\
+    \text{s.t.} \quad& g_i(\xv) \leq 0, \quad i = 1, \ldots ,k \\
+    & h_j(\xv) = 0, \quad j = 1, \ldots, \ell
+\end{align*}
 
-$$
-\mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) := f(\xv) + \sum_{i=1}^k \alpha_i g_i(\xv) + \sum_{j=1}^l \beta_j h_j(\xv)
-$$
+Extend Lagrangian ($\alpha_i\ge 0$, $\beta_i$ Lagrange multipliers):
+\begin{equation*}
+    \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) := f(\xv) + \sum_{i=1}^k \alpha_i g_i(\xv) + \sum_{j=1}^\ell \beta_j h_j(\xv)
+\end{equation*}
 
-with \textbf{Lagrange multipliers} $\alpha_i\ge 0$, $\beta_i$.
+\textbf{Equivalent} primal problem:
+\begin{equation*}
+    \min_{\xv} \max_{\bm{\alpha}\ge 0, \bm{\beta}}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})
+\end{equation*}
 
-\lz
+\textbf{Question:} Why?
 
-We can write the problem \textbf{equivalently} as
+\framebreak
 
-$$
-\min_{\xv} \max_{\bm{\alpha}\ge 0, \bm{\beta}}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}).
-$$
-
-We call this problem \textbf{primal problem}. \\
-
-\vspace*{0.2cm} 
-
-Why is the above formulation equal to our initial (constrained) formulation of the optimization problem? 
-
-\framebreak 
-
-For simplicity, assume we only have a single inequality constraint. 
+For simplicity: Consider only single inequality constraint $g(\xv) \leq 0$
 
 \vspace*{0.2cm} 
 
-Assume an $\xv$ \textbf{does break} the inequality constraint, i.e., $g(\xv) > 0$. Then 
+If $\xv$ \textbf{breaks} inequality constraint ($g(\xv) > 0$):
 
-\vspace*{-0.5cm} 
+\begin{equation*}
+	\max_{\alpha \ge 0} \mathcal{L}(\xv, \alpha) = \max_{\alpha \ge 0} f(\xv) +  \alpha g(\xv) = \infty
+\end{equation*}
 
-\begin{eqnarray*}
-	\max_{\alpha \ge 0} \mathcal{L}(\xv, \bm{\alpha}) = \max_{\alpha \ge 0} f(\xv) +  \alpha g(\xv) = \infty,
-\end{eqnarray*}
+If $\xv$ \textbf{satisfies} inequality constraint ($g(\xv) \le 0$):
 
-because we can pick $\alpha = \infty$ to drive the objective value to infinity. 
+\begin{equation*}
+	\max_{\alpha \ge 0} \mathcal{L}(\xv, \alpha) = \max_{\alpha \ge 0} f(\xv) +  \alpha g(\xv) = f(\xv)
+\end{equation*}
 
-\vspace*{0.2cm} 
+\medskip
 
-If otherwise $g(\xv) \le 0$, 
+Combining yields \textbf{original formulation}:
 
-\vspace*{-0.5cm} 
+\begin{equation*}
+	\min_\xv \max_{\alpha \ge 0} \mathcal{L}(\xv, \alpha) =
+    \begin{cases}
+        \infty & \text{if } g(\xv) > 0 \\
+        \min_\xv f(\xv) & \text{if }  g(\xv) \le 0
+    \end{cases}
+\end{equation*}
 
-\begin{eqnarray*}
-	\max_{\alpha \ge 0} \mathcal{L}(\xv, \bm{\alpha}) = \max_{\alpha \ge 0} f(\xv) +  \alpha g(\xv) = f(\xv),
-\end{eqnarray*}
-
-because $\alpha g(\xv) \le 0$ for any $\alpha \ge 0$, and $g(\xv) = 0$ if $\alpha = 0$. 
-
-\framebreak 
-
-We end up with 
-
-\begin{eqnarray*}
-	\min_x\max_{\alpha \ge 0} \mathcal{L}(\xv, \bm{\alpha}) = \begin{cases} \infty & \text{if } g(\xv) > 0 \\ \min_x f(\xv) & \text{if }  g(\xv) \le 0\end{cases}
-\end{eqnarray*}
-
-which corresponds to our original formulation. 
-
-\vspace*{0.2cm} 
-
-A similar argument holds for the equality constraint $h(\xv)$.
+Similar argument holds for equality constraints $h_j(\xv)$
 
 \end{vbframe}
-
-
 
 \begin{vbframe}{Example: Lagrange function for QP's}
 
-
 We consider quadratic programming
 
-\begin{eqnarray*}
-\min_{\xv} && f(\xv) := \frac{1}{2} \xv^\top \bm{Q} \xv \\
-\text{such that} && h(\xv) := \bm{C} \xv - \bm{d} = 0,
-\end{eqnarray*}
+\vspace{-\baselineskip}
 
-with $\bm{Q} \in \R^{d\times d}$ symmetric, $\bm{C} \in \R^{l \times d}, \bm{d} \in \R^n$.
+\begin{align*}
+    \min_{\xv} \quad& f(\xv) := \frac{1}{2} \xv^\top \mathbf{Q} \xv \\
+    \text{s.t.} \quad& h(\xv) := \mathbf{C} \xv - \mathbf{d} = \mathbf{0}
+\end{align*}
 
-\lz
+with $\mathbf{Q} \in \R^{d\times d}$ symmetric, $\mathbf{C} \in \R^{\ell \times d}$, and $\mathbf{d} \in \R^\ell$.
 
-The Lagrange function is
+\medskip
 
-$$
-\mathcal{L}(\xv, \bm{\beta}) = \frac{1}{2} \xv^\top \bm{Q} \xv + \bm{\beta}^\top \left(\bm{C} \xv - \bm{d}\right).
-$$
+Lagrange function: $\mathcal{L}(\xv, \bm{\beta}) = \frac{1}{2} \xv^\top \mathbf{Q} \xv + \bm{\beta}^\top (\mathbf{C} \xv - \mathbf{d})$
 
-\framebreak
+\medskip
 
-For the calculation of the stationary points we calculate the gradient of the Lagrange function:
+Solve
+\begin{alignat*}{3}
+    && \nabla \mathcal{L}(\xv, \bm{\beta}) =
+    \begin{pmatrix}
+        \partial \mathcal{L} / \partial \xv \\
+        \partial \mathcal{L} / \partial {\bm{\beta}}
+    \end{pmatrix} &=
+    \begin{pmatrix}
+        \mathbf{Q} \xv + \mathbf{C}^\top\bm{\beta} \\
+        \mathbf{C} \xv - \mathbf{d}
+    \end{pmatrix} = \bm{0} \\
+    \Leftrightarrow \quad && \begin{pmatrix}
+        \mathbf{Q} & \mathbf{C}^\top \\
+        \mathbf{C} & \bm{0}
+    \end{pmatrix}
+    \begin{pmatrix} \xv \\ \bm{\beta} \end{pmatrix} &=
+    \begin{pmatrix} \bm{0} \\ \mathbf{d} \end{pmatrix}
+\end{alignat*}
 
-$$
-\nabla \mathcal{L}(\xv, \bm{\beta}) = \begin{pmatrix} \frac{\partial{L}}{\partial{\xv}}  \\ \frac{\partial{L}}{\partial{\bm{\beta}}} \end{pmatrix} = \begin{pmatrix} \bm{Qx} + \bm{C}^\top\bm{\beta} \\ \bm{Cx - \bm{d}} \end{pmatrix} = \bm{0}
-$$
-
-This is a linear system with $n + p$ equations, which we write as
-
-$$
-\begin{pmatrix} \bm{Q} & \bm{C}^\top \\ \bm{C} & \bm{0} \end{pmatrix} \begin{pmatrix} \xv \\ \bm{\beta} \end{pmatrix} = \begin{pmatrix} \bm{0} \\ \bm{d}  \end{pmatrix}.
-$$
-
-It follows that finding stationary points of the Lagrange function corresponds to the solution of a system of linear equations and can be solved efficiently and stable with the help of suitable matrix decompositions.
-\end{vbframe}
-
-\begin{vbframe}{Example: Lagrange function for Lasso}
-
-\textbf{Lasso regression}: 
-
-\begin{eqnarray*}
-	\min_\theta && \|\yv - \Xmat \thetab\|_2^2 \\
-	\text{s.t. } && \|\thetab\|_1 - t \le 0.
-\end{eqnarray*}
-
-We formulate the primal problem with the help of the Lagrangian:
-
-\begin{eqnarray*}
-	\min_\theta \max_{\alpha \ge 0} \mathcal{L}(\xv, \bm{\alpha}) &=& \min_\theta \max_{\alpha \ge 0} \left\{\|\yv - \Xmat \thetab\|_2^2 + \alpha \left(\|\thetab\|_1 - t\right)\right\}.
-\end{eqnarray*}
-
-The explicit derivation of the dual of the Lasso can be found in 
-\href{https://sites.stat.washington.edu/courses/stat527/s13/readings/osborneetal00.pdf}{\beamergotobutton{Osbourne et al.,2000}}.
+\textbf{Observe:} Solve QP by solving a linear system
 
 \end{vbframe}
 
+% \begin{vbframe}{Example: Lagrange function for Lasso}
+
+% \textbf{Lasso regression}:
+
+% \vspace{-\baselineskip}
+
+% \begin{eqnarray*}
+% 	\min_{\thetab} && \|\yv - \Xmat \thetab\|_2^2 \\
+% 	\text{s.t. } && \|\thetab\|_1 - t \le 0.
+% \end{eqnarray*}
+
+% Formulate problem with Lagrangian:
+
+% \begin{equation*}
+% 	\min_{\thetab} \max_{\alpha \ge 0} \mathcal{L}(\xv, \bm{\alpha}) = \min_{\thetab} \max_{\alpha \ge 0} \left\{\|\yv - \Xmat \thetab\|_2^2 + \alpha \left(\|\thetab\|_1 - t\right)\right\}.
+% \end{equation*}
+
+% The explicit derivation of the dual of the Lasso can be found in 
+% \href{https://sites.stat.washington.edu/courses/stat527/s13/readings/osborneetal00.pdf}{\beamergotobutton{Osbourne et al.,2000}}.
+
+% \end{vbframe}
 
 \begin{vbframe}{Lagrange duality}
 
-The \textbf{dual problem} of the above problem results when we reverse minimization and maximization:
+\textbf{Dual problem:}
+\begin{equation*}
+    \max_{\bm{\alpha} \ge 0, \bm{\beta}} \min_{\xv}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})
+\end{equation*}
 
-$$
-\max_{\bm{\alpha} \ge 0, \bm{\beta}} \min_{\xv}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})
-$$
+Define \textbf{Lagrange dual function} $g(\bm{\alpha}, \bm{\beta}) := \min_{\xv}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})$
 
-We define the \textbf{dual function} $g(\bm{\alpha}, \bm{\beta}) := \min_{\xv}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})$.
-
-\lz
-
-We hold $\bm{\alpha}$ and $\bm{\beta}$ constant and optimize $\xv$ (unconstrained optimization problem!). In a second step, we maximize $\bm{\alpha}, \bm{\beta}$.
-
-\lz
-
-\textbf{Note:} This definition of duality is a generalization of the duality for Linear programming. For LPs, the two definitions are the same.
-
-% Warum ist das Problem häufig einfacher zu lösen als andersherum?
-% \begin{itemize}
-% \item Die duale $g(\bm{\alpha}, \bm{\beta})$ hat häufig eine schöne, geschlossene Form.
-% \item Im Gegensatz zur primalen Funktion ist $g(\bm{\alpha}, \bm{\beta})$ i.d.R. stetig.
-% \end{itemize}
-
-\framebreak
+\medskip
 
 Important characteristics of the dual problem:
 
 \begin{itemize}
-\item The dual problem is \textbf{always convex}. Many methods are therefore based on the solution of the dual problem.
-\item \textbf{Weak duality} \textbf{always} applies, i.e.
-
-$$
-g(\bm{\alpha}^*, \bm{\beta}^*) \le f(\xv^*)
-$$
-\item If the primal problem is convex, we have \textbf{strong duality} in general$^{(1)}$, i.e.
-
-$$
-g(\bm{\alpha}^*, \bm{\beta}^*) = f(\xv^*)
-$$
+    \item \textbf{Convexity} (pointwise minimum of \textit{affine} functions)
+        \begin{itemize}
+            \small
+            \item Gives methods based on dual solutions
+            \item Might be computationally inefficient (expensive minimizations)
+        \end{itemize}
+    \item \textbf{Weak duality:}
+        \begin{equation*}
+            f(\xv^*) \geq g(\bm{\alpha}^*, \bm{\beta}^*)
+        \end{equation*}
+    \item \textbf{Strong duality} if primal problem satisfies \textit{Slater's condition}$^{(1)}$:
+        \begin{equation*}
+            f(\xv^*) = g(\bm{\alpha}^*, \bm{\beta}^*)
+        \end{equation*}
 \end{itemize}
 
 \vfill
 
 \begin{footnotesize}
-$^{(1)}$ \textbf{slater's condition} must be fulfilled. Read more here \url{http://www.cs.cmu.edu/~ggordon/10725-F12/slides/15-duality.pdf}.
+$^{(1)}$ \textbf{Slater's condition}: Primal problem convex and \enquote{strictly feasible} ($\exists \xv \forall i: g_i(\xv) < 0$).
 \end{footnotesize}
 
 \end{vbframe}
-
-
-
-
-
 
 %\begin{vbframe}{Optimalitätsbedingungen}
 

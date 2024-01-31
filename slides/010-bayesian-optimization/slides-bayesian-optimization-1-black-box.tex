@@ -216,31 +216,31 @@ Rug plots of RS vs. GS.
 \end{itemize}
 \vfill
 \begin{figure}
-\begin{center}
-\includegraphics[width = 3cm]{figure_man/neldermead.png} ~
-\begin{tikzpicture}[node distance=1cm, auto,]
-\tikzstyle{every node}=[font=\tiny]
-%nodes
-\node (init) {Initial Population};
-\node[below = 0.2cm of init](dummy1) {};
-\node[below = 0.6cm of init](selection) {Selection};
-\node[below = 1cm of init](dummy2) {};
-\node[right = 1cm of dummy2](crossover) {Crossover};
-\node[right = 1cm of dummy1](mutation) {Mutation};
-\node[below = 0.7cm of selection](stop) {Termination};
-\draw[->] (init) to (selection) node[midway, above]{};
-\draw[->] (selection) to (stop) node[midway, above]{};
-\draw[->] (selection) to [bend right=50, looseness=1](crossover) node[midway, below]{};
-\draw[->] (crossover) to [bend right=50, looseness=1](mutation) node[midway, below]{};
-\draw[->] (mutation) to [bend right=50, looseness=1](selection) node[midway, above]{};
-\end{tikzpicture} ~
-\includegraphics[width = 3cm]{figure_man/black_box_2.png}\\
-\end{center}
-\begin{footnotesize}
-%Left: Simplices of the Nelder-Mead algorithm. Middle: Components of an evolutionary algorithm. 
-Right: BO vs. CMAES vs. RS on 2D Ackley.
-CMAES initially performs poorly, needs to init itself, not made for expensive regimes.
-\end{footnotesize}
+% \begin{center}
+% \includegraphics[width = 3cm]{figure_man/neldermead.png} ~
+% \begin{tikzpicture}[node distance=1cm, auto,]
+% \tikzstyle{every node}=[font=\tiny]
+% %nodes
+% \node (init) {Initial Population};
+% \node[below = 0.2cm of init](dummy1) {};
+% \node[below = 0.6cm of init](selection) {Selection};
+% \node[below = 1cm of init](dummy2) {};
+% \node[right = 1cm of dummy2](crossover) {Crossover};
+% \node[right = 1cm of dummy1](mutation) {Mutation};
+% \node[below = 0.7cm of selection](stop) {Termination};
+% \draw[->] (init) to (selection) node[midway, above]{};
+% \draw[->] (selection) to (stop) node[midway, above]{};
+% \draw[->] (selection) to [bend right=50, looseness=1](crossover) node[midway, below]{};
+% \draw[->] (crossover) to [bend right=50, looseness=1](mutation) node[midway, below]{};
+% \draw[->] (mutation) to [bend right=50, looseness=1](selection) node[midway, above]{};
+% \end{tikzpicture} ~
+\centering
+\includegraphics[width=0.45\linewidth]{figure_man/black_box_2.png}
+\caption*{\footnotesize \centering
+    BO vs. CMAES vs. RS on 2D Ackley.
+    % 
+    % CMAES initially performs poorly, needs to init itself, not made for expensive regimes.
+}
 \end{figure}
 
 \end{enumerate}

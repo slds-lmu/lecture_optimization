@@ -9,7 +9,7 @@
 \newcommand{\learninggoals}{
 \item Recombination
 \item Mutation 
-\item A few simple examples
+\item Simple examples
 }
 
 
@@ -28,112 +28,130 @@
 
 \begin{vbframe}{Binary encoding}
 
-    In theory, all problems can be encoded binary (binary system / binary code), but not always best representation (e.g., if values are numeric or trees or programs). 
-    
-    \lz 
+\begin{itemize}
+    \item In theory: Each problem can be encoded binary
+    \item In practice: Binary not always best representation (e.g., if values are numeric, trees or programs)
+\end{itemize}
 
-    We typically encode problems with \textbf{binary decision variables} in binary representation. Examples:
-    \begin{itemize}
-        \item Scheduling problems
-        \item Integer / binary linear programming
-        \item Feature selection 
-        \item ... 
-    \end{itemize}
+\medskip
+
+We typically encode problems with \textbf{binary decision variables} in binary representation.
+
+\medskip
+
+\textbf{Examples:}
+\begin{itemize}
+    \item Scheduling problems
+    \item Integer / binary linear programming
+    \item Feature selection 
+    \item ... 
+\end{itemize}
     
 \end{vbframe}
 
 \begin{vbframe}{Recombination for bit strings}
-\footnotesize
-Two individuals $\bm{x},\bm{\tilde{x}} \in \{0, 1\}^d$ encoded as bit strings can be recombined as follows:
 
-  \begin{itemize}
-  \normalsize
-  \item \textbf{1-point crossover}: select crossover $k \in \{1, ..., d - 1\}$ randomly and the first $k$ bits from 1st and the last $d-k$ bits from 2nd parent.
-  \footnotesize
-  \begin{center}
-  \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
-    \textcolor{red}{1} & \textcolor{blue}{1}  & & \textcolor{red}{1}  \\
-    \textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{red}{0}  \\ \cmidrule{1-4}
-    \textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
-    \textcolor{red}{1} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
-    \textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{blue}{0}
-  \end{tabular}
-  \end{center}
-  \normalsize
-  \item \textbf{Uniform crossover}: select bit $j$ with probability $p$ of 1st parent and $1-p$ of 2nd parent.
-  \footnotesize
-  \begin{center}
-  \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
-    \textcolor{red}{1} & \textcolor{blue}{0}  & & \textcolor{red}{1}  \\
-    \textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{blue}{0}  \\ 
-    \textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
-    \textcolor{red}{0} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
-    \textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{red}{1}
-  \end{tabular}
-  \end{center}
-  \normalsize
-  \end{itemize}
+Two individuals $\xv,\tilde{\xv} \in \{0, 1\}^d$ encoded as bit strings can be recombined as follows:
+
+\begin{itemize}
+    \item \textbf{1-point crossover:}
+        Select crossover $k \in \{1, ..., d - 1\}$ randomly.
+        Take first $k$ bits from parent 1 and last $d-k$ bits from parent 2.
+    
+        \begin{center}
+            \small
+            \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
+                \textcolor{red}{1} & \textcolor{blue}{1}  & & \textcolor{red}{1}  \\
+                \textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{red}{0}  \\ \cmidrule{1-4}
+                \textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
+                \textcolor{red}{1} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
+                \textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{blue}{0}
+            \end{tabular}
+        \end{center}
+    
+    \item \textbf{Uniform crossover:}
+        Select bit $j$ with probability $p$ from parent 1 and $1-p$ from parent 2.
+    
+        \begin{center}
+            \small
+            \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
+                \textcolor{red}{1} & \textcolor{blue}{0}  & & \textcolor{red}{1}  \\
+                \textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{blue}{0}  \\ 
+                \textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
+                \textcolor{red}{0} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
+                \textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{red}{1}
+            \end{tabular}
+        \end{center}
+\end{itemize}
   
 \end{vbframe}
 
 \begin{vbframe}{Mutation for bit strings}
-  An individual $\bm{x} \in \{0, 1\}^d$ encoded as a bit string can be mutated as follows:
-  \vspace{0.5cm}
-  
-  \begin{itemize}
-  \item \textbf{Bitflip}: for each index $j \in \{1, ..., d\}$: bit $j$ is flipped with probability $p \in (0,1)$.
-  \end{itemize}
-  \begin{center}
-  \begin{tabular}{c @{\hspace{2\tabcolsep}} *{5}{c}}
-  \\[1ex]
-   1  &               & \textcolor{red}{0}  \\
-   0  &               & 0  \\
-   0  & $\Rightarrow$ & 0  \\
-   0  &               & \textcolor{red}{1}  \\
-   1  &               & 1
-  \end{tabular}
-  \end{center}
+Offspring $\xv \in \{0, 1\}^d$ encoded as a bit string can be mutated as follows:
+\vspace{0.5cm}
+
+\begin{itemize}
+    \item \textbf{Bitflip:} Each bit $j$ is flipped with probability $p \in (0,1)$.
+\end{itemize}
+
+\begin{center}
+    \begin{tabular}{c @{\hspace{2\tabcolsep}} *{5}{c}}
+    \\[1ex]
+    1  &               & \textcolor{red}{0}  \\
+    0  &               & 0  \\
+    0  & $\Rightarrow$ & 0  \\
+    0  &               & \textcolor{red}{1}  \\
+    1  &               & 1
+    \end{tabular}
+\end{center}
 \end{vbframe}
 
 \begin{vbframe}{Example 1: One-Max Example}
 
-$\xv \in \{0, 1\}^d, d = 15$ bit vector representation. Goal: Find the vector with the maximum number of 1's. 
+$\xv \in \{0, 1\}^d, d = 15$ bit vector representation.
+
+\medskip
+
+\textbf{Goal:} Find the vector with the maximum number of 1's. 
 
 \begin{itemize}
-  \item Fitness: $f(\xv) = \sum_{i = 1}^d \xv_i$
+  \item Fitness: $f(\xv) = \sum_{i = 1}^d x_i$
   \item $\mu = 15$, $\lambda = 5$, $(\mu + \lambda)$-strategy, bitflip mutation, no recombination
 \end{itemize}
 
 \begin{figure}
-  \includegraphics[width=0.7\textwidth]{figure_man/one_max_example.pdf} \\
+  \includegraphics[width=0.65\textwidth]{figure_man/one_max_example.pdf} \\
   \begin{footnotesize}
-  Green: Representation of best individual per iteration. Right scale shows fitness value of individual.  
+  \textbf{Green:} Representation of best individual per iteration. Right scale shows fitness.
   \end{footnotesize}
 \end{figure}
 
 \end{vbframe}
 
-
-
 \begin{vbframe}{Example 2: Feature selection}
 
-We consider the following simulation setting:
+We consider the following toy setting:
 
 \begin{itemize}
-\item First, we generate a $(n \times p)$ design matrix $\mathbf{X}$ by drawing $n = 1000$ samples of $p = 50$ independent normally distributed features with $\mu_j = 0$ and $\sigma_j$ varying between 1 and 5 for $j = 1, \dots, p$.
-\item Then, we assume the following linear regression problem with the target variable $\mathbf{y}$ being generated as follows: 
+\item Generate design matrix $\Xmat \in \R^{n \times p}$ by drawing $n = 1000$ samples of $p = 50$ independent normally distributed features with $\mu_j = 0$ and $\sigma_j^2 > 0$ varying between 1 and 5 for $j = 1, \dots, p$.
+\item Linear regression problem with dependent variable $\yv$:
 $$
-\mathbf{y} = \mathbf{X}\thetab + \epsilon
+    \yv = \Xmat \thetab + \eps
 $$
-with $\epsilon \sim \mathcal N(0, 1)$\\
-and $\thetab$ being defined as follows
-\begin{eqnarray*}
-\theta_{0} &=& - 1.2 \\
-\theta{j} &=& 1 \qquad \text{for } j \in \{1, 7, 13, 19, 25, 31, 37, 43\} \\
-\theta{j} &=& 0 \qquad \text{else}
-\end{eqnarray*}
+with $\eps \sim \mathcal N(0, 1)$.
 
-Hence, there are 8 out of 50 equally influential features.
+\medskip
+
+Parameter $\thetab$:
+\begin{align*}
+    \theta_0 &= - 1.2 \\
+    \theta_j &= \begin{cases}
+        1 & \text{for $j \in {1, 7, 13, 19, 25, 31, 37, 43}$} \\
+        0 & \text{otherwise}
+    \end{cases}
+\end{align*}
+
+$\Rightarrow$ Only 8 out of 50 equally influential features
 %<<>>=
 %set.seed(123)
 %X = matrix(rnorm(50000, sd = 1:5), ncol = 50, byrow = TRUE)
@@ -149,22 +167,16 @@ Hence, there are 8 out of 50 equally influential features.
 %@
 \end{itemize}
 
-
-
-
-
 \framebreak
-\textbf{Aim:} Use a $(\mu + \lambda)$ selection strategy for feature selection.\\
-\vspace*{0.2cm}
-Our iterative algorithm with $100$ iterations is as follows:
-\begin{enumerate}
-\item Initialize the population and evaluate it. Therefore, encode a chromosome of an individual as a bit string of length $p$, i.e. $\textbf{z} \in \{0, 1\}^p$. Where $z_j =1$ means that variable $j$ is included in the model.
-\item Apply the variation and evaluate the fitness function. As fitness function, select BIC of the model belonging to the corresponding variable configuration $\textbf{z} \in \{0, 1\}^p$.
-\item Finally, use $(\mu + \lambda)$-selection strategy as the survival selection with population size of $\mu = 100$ and $\lambda =50$ offspring.
-\end{enumerate}
 
-
-
+\begin{itemize}
+    \item \textbf{Aim:} Find influential features
+    \item \textbf{Encoding:} $\textbf{z} \in \{0, 1\}^p$, $z_j = 1$ means $\theta_j$ included in model
+    \item \textbf{Fitness function} $f(\mathbf{z})$: BIC of the model belonging to $\mathbf{z}$
+    \item \textbf{Mutation:} Bit flip with $p = 0.3$
+    \item \textbf{Recombination:} Uniform crossover with $p=0.5$
+    \item \textbf{Survival selection:} $(\mu + \lambda)$ strategy with $\mu = 100$ and $\lambda =50$
+\end{itemize}
 
 %<<>>=
 %fn = function(x) {
@@ -174,28 +186,11 @@ Our iterative algorithm with $100$ iterations is as follows:
 %}
 %@
 
-
-
-
 %\framebreak
 %<<>>=
 %MU = 100L # Size of the population
 %LAMBDA = 50L # Number of offspring per iteration
 %@
-
-In addition:
-
-\begin{itemize}
-\item for the mutation, use bit flip with $p = 0.3$
-\item for the recombination, use Uniform crossover with $p=0.5$
-\end{itemize}
-
-\lz
-
-By exploiting \textbf{Greedy} as a selection strategy, ensure that you always choose individuals with the best fitness. 
-
-
-
 
 %<<>>=
 %control = initECRControl(fn, n.objectives = 1)
@@ -213,10 +208,9 @@ By exploiting \textbf{Greedy} as a selection strategy, ensure that you always ch
 
 %\framebreak
 
-\vspace{0.5cm}
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 3cm, width = 10cm]{figure_man/example3.png}
+    \includegraphics[height=3cm,keepaspectratio]{figure_man/example3.png}
 \end{figure}
 \end{center}
 
@@ -279,17 +273,20 @@ By exploiting \textbf{Greedy} as a selection strategy, ensure that you always ch
 %    }
 %}
 %@
-\vspace{0.5cm}
+
+\framebreak
+
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 9cm]{figure_man/var-selection1.png}
+    \includegraphics[width=0.8\linewidth]{figure_man/var-selection1.png}
 \end{figure}
 \end{center}
 
-\vspace{0.5cm}
+\framebreak
+
 \begin{center}
 \begin{figure}
-  \includegraphics[height = 6cm, width = 9cm]{figure_man/var-selection2.png}
+    \includegraphics[width=0.8\linewidth]{figure_man/var-selection2.png}
 \end{figure}
 \end{center}
 

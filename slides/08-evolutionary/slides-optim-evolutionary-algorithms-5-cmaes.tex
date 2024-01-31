@@ -54,17 +54,18 @@
 
 \begin{minipage}{0.62\textwidth}
 \begin{itemize}
-    \item General algorithmic template
-    \item Instead of population we maintain parameterized distribution to sample offspring from
+    % \item General algorithmic template
+    \item Instead of population, maintain distribution to sample offspring from
 \end{itemize}
 
-\vspace{0.5cm}
+\vspace{\baselineskip}
+
 \begin{enumerate}
-\item Draw $\lambda$ offsping $\xv^{(i)}$ from $p(\bm{x}|\thetab^{[t]})$
-\item Evaluate fitness $f(\xv^{(i)})$ 
-%\item Reduce to $\mu$ best offspring
-%where $W(\cdot)$ gives weights for each $\xv^{(i)}$, typically $0$ or $1$ (order-preserving fitness transformation)
-\item Update $\thetab^{[t+1]}$ with $\mu$ best offspring 
+    \item Draw $\lambda$ offsprings $\xv^{(i)}$ from $p(\cdot|\thetab^{[t]})$
+    \item Evaluate fitness $f(\xv^{(i)})$ 
+    %\item Reduce to $\mu$ best offspring
+    %where $W(\cdot)$ gives weights for each $\xv^{(i)}$, typically $0$ or $1$ (order-preserving fitness transformation)
+    \item Update $\thetab^{[t+1]}$ with $\mu$ best offsprings
 \end{enumerate}
 
 %This core algorithm is often modified in a variety of ways to improve performance via \textbf{Covariance Matrix Adaptation (CMA-ES)}.
@@ -100,36 +101,19 @@
 %\end{vbframe}
 
 
-\begin{vbframe}{Covariance Matrix Adaptation ES}
+\begin{vbframe}{Covariance Matrix Adaptation}
 
-
-\begin{itemize}
- \item Sample distribution is multivariate Gaussian
-\end{itemize}
-
-\vspace{-10pt}
-
-\begin{eqnarray*}
-\xv^{[t+1](i)} \sim \bm{m}^{[t]} + \sigma^{[t]} \normal (\bm{0}, \bm{C}^{[t]}) \quad \text{for } i = 1, \dots, \lambda.
-\end{eqnarray*}
-\vspace{-20pt}
-
-\begin{figure}
-  \includegraphics[width=0.6\textwidth, height=0.45\textheight]{figure_man/cmaes/cmaes_generations.png}
-\end{figure}
-
-\framebreak
 Sample distribution is multivariate Gaussian
 $$
-\xv^{[t+1](i)} \sim \bm{m}^{[t]} + \sigma^{[t]} \normal (\bm{0}, \bm{C}^{[t]}) \quad \text{for } i = 1, \dots, \lambda
+    \xv^{[t+1](i)} \sim \mathbf{m}^{[t]} + \sigma^{[t]} \normal (\bm{0}, \mathbf{C}^{[t]}) \quad \text{for } i = 1, \dots, \lambda
 $$
 \vspace{-20pt}
 \begin{itemize}
 \item $\xv^{[t+1](i)} \in \R^d$ $i$-th offspring; $\lambda \geq 2$ number of offspring
-%\item $\normal(\bm{0}, \bm{C}^{[t]})$ is multivariate normal distribution with zero mean, covariance matrix $\bm{C}^{[t]}$. \textit{Note}: $\bm{m}^{[t]} + \sigma^{[t]} \normal(\bm{0}, \bm{C}^{[t]}) \sim \normal(\bm{m}^{[t]}, (\sigma^{[t]})^2 \bm{C}^{[t]})$.
-\item $\bm{m}^{[t]} \in \R^d$ mean value and $\bm{C}^{[t]} \in \R^{d \times d}$ covar matrix
+%\item $\normal(\bm{0}, \mathbf{C}^{[t]})$ is multivariate normal distribution with zero mean, covariance matrix $\mathbf{C}^{[t]}$. \textit{Note}: $\mathbf{m}^{[t]} + \sigma^{[t]} \normal(\bm{0}, \mathbf{C}^{[t]}) \sim \normal(\mathbf{m}^{[t]}, (\sigma^{[t]})^2 \mathbf{C}^{[t]})$.
+\item $\mathbf{m}^{[t]} \in \R^d$ mean value and $\mathbf{C}^{[t]} \in \R^{d \times d}$ covariance matrix
 \item $\sigma^{[t]} \in \R_{+}$ \enquote{overall} standard deviation/step size
-% Up to the scalar factor $\sigma^{(g)^2}$, $\bm{C}^{(g)}$ is the covariance matrix of the search distribution.
+% Up to the scalar factor $\sigma^{(g)^2}$, $\mathbf{C}^{(g)}$ is the covariance matrix of the search distribution.
 \end{itemize}
 
 \begin{figure}
@@ -137,26 +121,27 @@ $$
 \end{figure}
 
 
-$\rightarrow$ \textit{How to calculate $\bm{m}^{[t+1]}$, $\bm{C}^{[t+1]}$, $\sigma^{[t+1]}$ for next generation $t+1$?}
+\textbf{Question:} How to adapt $\mathbf{m}^{[t+1]}$, $\mathbf{C}^{[t+1]}$, $\sigma^{[t+1]}$ for next generation $t+1$?
+
 \end{vbframe}
 
 
 % \begin{vbframe}{Recall: Evolution Strategies (ES)}
 
-% New search points are sampled normally distributed as perturbations of $\bm{m}$:
+% New search points are sampled normally distributed as perturbations of $\mathbf{m}$:
 % \begin{eqnarray*}
-% \xv_k \sim \bm{m} + \sigma \normal_k (\bm{0}, \bm{C}) \quad \text{for } i = 1, \dots, \lambda
+% \xv_k \sim \mathbf{m} + \sigma \normal_k (\bm{0}, \mathbf{C}) \quad \text{for } i = 1, \dots, \lambda
 % \end{eqnarray*}
 
-% where $\xv_k$, $\bm{m} \in \R^{n}$, $\sigma \in \R_{+}$, $\bm{C} \in \R^{n \times n}$
+% where $\xv_k$, $\mathbf{m} \in \R^{n}$, $\sigma \in \R_{+}$, $\mathbf{C} \in \R^{n \times n}$
 
 % \begin{itemize}
-% \item Mean vector $\bm{m} \in \R^d$ represents the favorite solution
+% \item Mean vector $\mathbf{m} \in \R^d$ represents the favorite solution
 % \item Step-size $\sigma \in \R_{+}$ controls the step length
-% \item Covariance matrix $\bm{C} \in \R^{n \times n}$ determines the shape of the distribution ellipsoid.
+% \item Covariance matrix $\mathbf{C} \in \R^{n \times n}$ determines the shape of the distribution ellipsoid.
 % \end{itemize}
 
-% Remaining question: How to update $\bm{m}$, $\bm{C}$ and $\sigma$?
+% Remaining question: How to update $\mathbf{m}$, $\mathbf{C}$ and $\sigma$?
 % \end{vbframe}
 
 
@@ -164,7 +149,7 @@ $\rightarrow$ \textit{How to calculate $\bm{m}^{[t+1]}$, $\bm{C}^{[t+1]}$, $\sig
 % \begin{vbframe}{CMA-ES: Basic Method}
 % \begin{enumerate}
 % \item \textbf{Sample maximum entropy} distribution
-% \item[] $x_i = m + \sigma \normal_i(\bm{0}, \bm{C})$ multivariate normal distribution
+% \item[] $x_i = m + \sigma \normal_i(\bm{0}, \mathbf{C})$ multivariate normal distribution
 % \item \textbf{Ranking} solutions according to their fitness
 % \item[] Invariance to order-preserving transformations
 % \item \textbf{Update mean and covariance matrix} by natural gradient ascend, improving the \enquote{expected fitness} and the likelihood for good steps
@@ -176,162 +161,84 @@ $\rightarrow$ \textit{How to calculate $\bm{m}^{[t+1]}$, $\bm{C}^{[t+1]}$, $\sig
 
 
 
-\begin{frame}
+\begin{vbframe}{CMA-ES: Basic Method - Iteration 1}
 % \begin{eqnarray*}
-% \bm{m} \leftarrow \bm{m} + \sigma \bm{y}_w, \quad \bm{y}_w = \sum_{i=1}^{\mu} w_i \bm{y}_{i:\lambda}, \quad \bm{y}_i\sim \normal_i(\bm{0}, \bm{C})
+% \mathbf{m} \leftarrow \mathbf{m} + \sigma \yv_w, \quad \yv_w = \sum_{i=1}^{\mu} w_i \yv_{i:\lambda}, \quad \yv_i\sim \normal_i(\bm{0}, \mathbf{C})
 % \end{eqnarray*}
 
-\begin{figure}
-\begin{overprint}
-
-\centering
-\only<1>{
-\frametitle{CMA-ES: Basic Method - Iteration 1}
 \begin{enumerate}
-\addtocounter{enumi}{-1}
-\item Initialize $\bm{m}^{[0]},\sigma^{[0]}$ problem-dependent and $\bm{C}^{[0]}=\bm{\I}_{d}$
-\item \textbf{Sample} from distribution
-\item[] $\xv^{[1](i)} = \bm{m}^{[0]} + \sigma^{[0]} \normal(\bm{0}, \bm{C}^{[0]})$ multivariate Gaussian
-\item[]
+    \addtocounter{enumi}{-1}
+    \item Initialize $\mathbf{m}^{[0]},\sigma^{[0]}$ problem-dependent and $\mathbf{C}^{[0]}=\mathbf{I}_{d}$
+        \scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_1.png}}
+
+    \framebreak
+
+    \item \textbf{Sample} $\lambda$ offsprings from distribution
+    $$\xv^{[1](i)} = \mathbf{m}^{[0]} + \sigma^{[0]} \normal(\bm{0}, \mathbf{C}^{[0]})$$
+        \scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_2.png}}
+
+    \item \textbf{Selection and recombination} of $\mu<\lambda$ best-performing offspring using fixed weights $w_1\geq\ldots\geq w_{\mu}>0,\sum_{i=1}^{\mu} w_i = 1$. %solutions according to their fitness (\textit{Selection} of $\mu$ best)
+    
+    $\xv_{i:\lambda}$ is $i$-th ranked solution, ranked by $f(\xv_{i:\lambda})$.
+
+        \scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_21.png}}
+        \vspace{-0.5cm}\\
+        Calculation of auxiliary variables ($\mu=3$ points) $\yv_w^{[1]} := \sum_{i=1}^{\mu} w_i (\xv_{i:\lambda}^{[1]}-\mathbf{m}^{[0]})/\sigma^{[0]} := \sum_{i=1}^{\mu} w_i \yv_{i:\lambda}^{[1]}$%, using $\mu = 3$ points. %(high fitness $\rightarrow$ high weights)
+
+%Movement to new population mean $\mathbf{m}^{[1]}$ (disregarding $\sigma$) of the $\mu = 3$ selected points (high fitness $\rightarrow$ high weights, $\yv_w := \sum_{i=1}^{\mu} w_i \xv_{i:\lambda}$).
+
+    \item \textbf{Update mean}
+        \scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_3.png}}
+        Movement towards the new distribution with mean
+        
+        $\mathbf{m}^{[1]} = \mathbf{m}^{[0]} + \sigma^{[0]} \yv_{w}^{[1]}$.
+
+    \item \textbf{Update covariance matrix} %(\textit{Recombination}),
+    
+        Roughly: elongate density ellipsoid in direction of successful steps.
+        
+        $\mathbf{C}^{[1]}$ reproduces successful points with higher probability than $\mathbf{C}^{[0]}$. %Improving \enquote{expected fitness} and likelihood for successful steps.
+        
+        \scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_4.png}}
+        \vspace{-0.5cm}
+
+        \begin{small}
+            Update $\mathbf{C}^{[0]}$ using sum of outer products and parameter $c_{\mu}$: %(simplified):
+            $\mathbf{C}^{[1]} = (1-c_{\mu}) \mathbf{C}^{[0]} + c_{\mu} \sum_{i=1}^{\mu} w_i \yv_{i:\lambda}^{[1]}(\yv_{i:\lambda}^{[1]})^{\top}$ (rank-$\mu$ update).
+            %\yv_w^{[1]} (\yv_w^{[1]})^\top$ (Rank 1 update).
+        \end{small}
+
+    %New Distribution $\normal^{[1]}\sim (\mathbf{m}^{[1]}, \mathbf{C}^{[1]})$ (disregarding $\sigma$) \\
+    %of generation $t=1$, $\lambda = 6$.
 \end{enumerate}
-%\vspace{-0.5cm}
-\scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_1.png}}
-%\vspace{-0.5cm}\\
+\end{vbframe}
 
-Initial distribution $\normal(\bm{m}^{[0]}, (\sigma^{[0]})^2 \bm{\I}_2)$ of generation $t=0$.
-}
-
-\only<2>{
-\frametitle{CMA-ES: Basic Method - Iteration 1}
+\begin{vbframe}{CMA-ES: Basic Method - Iteration 2}
 \begin{enumerate}
-\item \textbf{Sample} from distribution
-\item[] $\xv^{[1](i)} = \bm{m}^{[0]} + \sigma^{[0]} \normal(\bm{0}, \bm{C}^{[0]})$ multivariate normal distribution.
-\item[]
-\item[]
-\end{enumerate}
-%\vspace{-0.5cm}
-\scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_2.png}}
-%\vspace{-0.5cm}\\
+    \item \textbf{Sample} from distribution for new generation
+        \scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_5.png}}
 
-Initial distribution $\normal(\bm{m}^{[0]}, (\sigma^{[0]})^2 \bm{\I}_2)$  of generation $t=0$, $\lambda = 7$.
-}
-
-\only<3>{
-\frametitle{CMA-ES: Basic Method - Iteration 1}
-\begin{enumerate}
-\addtocounter{enumi}{1}
-\item \textbf{Selection and recombination} of $\mu<\lambda$ best-performing offspring using fixed weights $w_1\geq\ldots\geq w_{\mu}>0,\sum_{i=1}^{\mu} w_i = 1$. %solutions according to their fitness (\textit{Selection} of $\mu$ best)
-\item[] $\xv_{i:\lambda}$ is $i$-th ranked solution, ranked by $f(\xv_{i:\lambda})$.
-\item[]
-\end{enumerate}
-%\vspace{-0.5cm}
-\scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_21.png}}
-\vspace{-0.5cm}\\
-Calculation of auxiliary variables ($\mu=3$ points) $\bm{y}_w^{[1]} := \sum_{i=1}^{\mu} w_i (\xv_{i:\lambda}^{[1]}-\bm{m}^{[0]})/\sigma^{[0]} := \sum_{i=1}^{\mu} w_i \bm{y}_{i:\lambda}^{[1]}$%, using $\mu = 3$ points. %(high fitness $\rightarrow$ high weights)
-
-%Movement to new population mean $\bm{m}^{[1]}$ (disregarding $\sigma$) of the $\mu = 3$ selected points (high fitness $\rightarrow$ high weights, $\bm{y}_w := \sum_{i=1}^{\mu} w_i \xv_{i:\lambda}$).
-}
-
-\only<4>{
-\frametitle{CMA-ES: Basic Method - Iteration 1}
-\begin{enumerate}
-\addtocounter{enumi}{2}
+    \framebreak
+    
+    \item \textbf{Selection and recombination} of $\mu<\lambda$ best-performing offspring
 \item \textbf{Update mean}
-\item[]
-\item[]
-\item[]
+    \scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_6.png}}
+
+    \item \textbf{Update covariance matrix} %(\textit{Recombination})
+        \scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_7.png}}
+
+    \item \textbf{Update step-size} exploiting correlation in history of steps.
+    
+        steps point in similar direction $\implies$ increase step-size
+        
+        steps cancel out $\implies$ decrease step-size
+        
+        \scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_8.png}}
+
 \end{enumerate}
-%\vspace{-0.5cm}
-\scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_3.png}}
-\vspace{-0.5cm}\\
-Movement towards the new distribution with mean $
-\bm{m}^{[1]} = \bm{m}^{[0]} + \sigma^{[0]} \bm{y}_{w}^{[1]}$.
-}
+\end{vbframe}
 
-\only<5>{
-\frametitle{CMA-ES: Basic Method - Iteration 1}
-\begin{enumerate}
-\addtocounter{enumi}{3}
-\item \textbf{Update covariance matrix} %(\textit{Recombination}),
-\item[] Roughly: elongate density ellipsoid in direction of successful steps.
-\item[] $\bm{C}^{[1]}$ reproduces successful points with higher probability than $\bm{C}^{[0]}$. %Improving \enquote{expected fitness} and likelihood for successful steps.
-\item[]
-\end{enumerate}
-%\vspace{-0.5cm}
-\scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_4.png}}
-\vspace{-0.5cm}\\
-
-Update $\bm{C}$ using sum of outer products and learning rate $c_{\mu}$ (simplified): $\bm{C}^{[1]} = (1-c_{\mu}) \bm{C}^{[0]} + c_{\mu} \sum_{i=1}^{\mu} w_i \bm{y}_{i:\lambda}^{[1]}(\bm{y}_{i:\lambda}^{[1]})^{\top}$ (rank-$\mu$ update).
-%\bm{y}_w^{[1]} (\bm{y}_w^{[1]})^\top$ (Rank 1 update).
-}
-
-\only<6>{
-\frametitle{CMA-ES: Basic Method - Iteration 2}
-\begin{enumerate}
-\item \textbf{Sample} from distribution for new generation
-\item[] %(\textit{Mutation}) with $\xv^{[2](i)} = \bm{m}^{[1]} + \sigma^{[1]} \normal(\bm{0}, \bm{C}^{[1]})$ form multivariate
-\item[] %normal distribution.
-\item[]
-\end{enumerate}
-%\vspace{-0.5cm}
-\scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_5.png}}
-
-%New Distribution $\normal^{[1]}\sim (\bm{m}^{[1]}, \bm{C}^{[1]})$ (disregarding $\sigma$) \\
-%of generation $t=1$, $\lambda = 6$.
-}
-
-\only<7>{
-\frametitle{CMA-ES: Basic Method - Iteration 2}
-\begin{enumerate}
-\addtocounter{enumi}{1}
-\item \textbf{Selection and recombination} of $\mu<\lambda$ best-performing offspring
-\item \textbf{Update mean}
-\item[] %$\xv_{i:\lambda}$ as $i$-th ranked solution point, such that $f(\xv_{1:\lambda}) \leq \dots \leq f(\xv_{\lambda:\lambda})$.
-\item[]
-\end{enumerate}
-%\vspace{-0.5cm}
-\scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_6.png}}
-
-%Movement to new population mean $\bm{m}^{[2]}$ (disregarding $\sigma$) of the $\mu = 3$ selected points (high fitness $\rightarrow$ high weights, $\bm{y}_w := \sum_{i=1}^{\mu} w_i \xv_{i:\lambda}$).
-}
-
-\only<8>{
-\frametitle{CMA-ES: Basic Method - Iteration 2}
-\begin{enumerate}
-\addtocounter{enumi}{3}
-\item \textbf{Update covariance matrix} %(\textit{Recombination})
-\item[] %improving \enquote{expected fitness} and likelihood for good steps.
-\item[]
-\item[]
-\end{enumerate}
-%\vspace{-0.5cm}
-\scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_7.png}}
-
-%Blue circle as a mixture of $\bm{C}$ and step $\bm{y}_w$: $\bm{C}^{[2]} \leftarrow 0.8 \bm{C}^{[1]} + 0.2  \bm{y}_w^{[1]} (\bm{y}_w^{[1]})^\top$.
-}
-
-\only<9>{
-\frametitle{CMA-ES: Basic Method - Iteration 2}
-\begin{enumerate}
-\addtocounter{enumi}{4}
-\item \textbf{Update step-size} exploiting correlation in history of steps.
-\item[] steps point in similar direction $\implies$ increase step-size
-\item[] steps cancel out $\implies$ decrease step-size
-\item[]
-\end{enumerate}
-%\vspace{-0.5cm}
-\scalebox{0.95}{\includegraphics{figure_man/cmaes/cmaes_update_8.png}}
-
-%Movement towards the new distribution (disregarding $\sigma$) with mean $
-%\bm{m}^{[2]} = \bm{m}^{[1]} + \sigma^{[1]} \bm{y}_{w}^{[1]}$.
-}
-\end{overprint}
-\end{figure}
-\end{frame}
-
-
-
-%\begin{vbframe}{Updating \MakeLowercase{$\bm{m}$}: The $(\mu/\mu_W, \lambda)$-ES}
+%\begin{vbframe}{Updating \MakeLowercase{$\mathbf{m}$}: The $(\mu/\mu_W, \lambda)$-ES}
 %
 %$(\mu/\mu_W, \lambda)$-ES marks the \textbf{E}volution \textbf{S}trategy with $\bm{\mu}$ parents, \textbf{W}eighted recombination of all $\bm{\mu}$ parents and $\bm{\lambda}$ offspring.
 %
@@ -342,7 +249,7 @@ Update $\bm{C}$ using sum of outer products and learning rate $c_{\mu}$ (simplif
 %
 %\vspace{-10pt}
 %\begin{eqnarray*}
-%\bm{m}^{[t+1]} = \bm{m}^{[t]} + \sigma^{[t]} \underbrace{\sum_{i=1}^{\mu} w_i \xv_{i:\lambda}^{[t]}}_{=: \bm{y}_w^{[t]}}
+%\mathbf{m}^{[t+1]} = \mathbf{m}^{[t]} + \sigma^{[t]} \underbrace{\sum_{i=1}^{\mu} w_i \xv_{i:\lambda}^{[t]}}_{=: \yv_w^{[t]}}
 %\end{eqnarray*}
 %
 %where $w_1 \geq \dots \geq w_{\mu} > 0$, $\sum_{i=1}^{\mu} w_i = 1$ and $\frac{1}{\sum_{i=1}^{\mu} w_i^2} =: \mu_w \approx \frac{\lambda}{4}$.
@@ -353,11 +260,11 @@ Update $\bm{C}$ using sum of outer products and learning rate $c_{\mu}$ (simplif
 %
 %\lz
 %
-%If $w_{i=1:\mu} = 1/\mu$ then $\bm{y}_w$ is equal to the mean of the $\mu$ best points.
+%If $w_{i=1:\mu} = 1/\mu$ then $\yv_w$ is equal to the mean of the $\mu$ best points.
 %\end{vbframe}
 
 
-%\begin{vbframe}{Updating \MakeLowercase{$\bm{m}$}: The $(\mu/\mu_W, \lambda)$-ES}
+%\begin{vbframe}{Updating \MakeLowercase{$\mathbf{m}$}: The $(\mu/\mu_W, \lambda)$-ES}
 %
 %Remarks on weights $w_i$
 %
@@ -370,43 +277,45 @@ Update $\bm{C}$ using sum of outer products and learning rate $c_{\mu}$ (simplif
 %\end{itemize}
 %\end{vbframe}
 
-\begin{vbframe}{Updating $\bm{C}$: Full Update}
-Full CMA update of $\bm{C}$ combines rank-$\mu$ update with a rank-$1$ update using exponentially smoothed evolution path $\bm{p}_c \in \mathbb{R}^{d}$ of successive steps and learning rate $c_1$:
-$$\bm{p}_{c}^{[0]}=\bm{0}, \quad \bm{p}_{c}^{[t+1]} = (1-c_1)\bm{p}_{c}^{[t]} + \sqrt{\frac{c_1(2-c_1)}{\sum_{i=1}^{\mu}w_i^2}}\bm{y}_w$$
-Final update of $\bm{C}$ is
-$$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbrace{\bm{p}_{c}^{[t+1]}(\bm{p}_{c}^{[t+1]})^{\top}}_{\text{rank-$1$}}+c_{\mu}\underbrace{\sum_{i=1}^{\mu}w_i \bm{y}_{i:\lambda}^{[t+1]}(\bm{y}_{i:\lambda}^{[t+1]})^{\top}}_{\text{rank-$\mu$}}$$
+\begin{vbframe}{Updating $\mathbf{C}$: Full Update}
+
+Full CMA update of $\mathbf{C}$ combines rank-$\mu$ update with a rank-$1$ update using exponentially smoothed evolution path $\mathbf{p}_c \in \mathbb{R}^{d}$ of successive steps and learning rate $c_1$:
+$$\mathbf{p}_{c}^{[0]}=\bm{0}, \quad \mathbf{p}_{c}^{[t+1]} = (1-c_1)\mathbf{p}_{c}^{[t]} + \sqrt{\frac{c_1(2-c_1)}{\sum_{i=1}^{\mu}w_i^2}}\yv_w$$
+Final update of $\mathbf{C}$ is
+$$\mathbf{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum_j} w_j)\mathbf{C}^{[t]}+c_1 \underbrace{\mathbf{p}_{c}^{[t+1]}(\mathbf{p}_{c}^{[t+1]})^{\top}}_{\text{rank-$1$}}+c_{\mu}\underbrace{\sum_{i=1}^{\mu}w_i \yv_{i:\lambda}^{[t+1]}(\yv_{i:\lambda}^{[t+1]})^{\top}}_{\text{rank-$\mu$}}$$
 \vspace{-0.4cm}
 \begin{itemize}
     \item Correlation between generations used in rank-$1$ update
     \item Information from entire population is used in rank-$\mu$ update
 \end{itemize}
+
 \end{vbframe}
 
 %\begin{vbframe}{Updating $C$: CMA - Rank-One Update}
-%Initialize $\bm{m} \in \R^d$ and $\bm{C} = \bm{\I}$, set $\sigma = 1$, learning rate $c_{cov} \approx 2/d^2$. While not terminate
+%Initialize $\mathbf{m} \in \R^d$ and $\mathbf{C} = \bm{\I}$, set $\sigma = 1$, learning rate $c_{cov} \approx 2/d^2$. While not terminate
 
 %\begin{align*}
-%\xv^{(i)} &= \bm{m} + \sigma \normal_i(\bm{0}, \bm{C}) \\
-%\bm{m} &\leftarrow \bm{m} + \sigma \bm{y}_w, \quad \text{where } \bm{y}_w = \sum_{i=1}^\mu \bm{w}_i(\xv_{i:\lambda}-\bm{m})/\sigma \\
-%\bm{C} &\leftarrow (1-c_{cov}) \bm{C} + c_{cov}\mu_w \underbrace{\bm{y}_w\bm{y}_w^\top}_{\text{rank-one}}, \quad \text{where } \mu_w = \frac{1}{\sum_{i=1}^\mu w_i^2}
+%\xv^{(i)} &= \mathbf{m} + \sigma \normal_i(\bm{0}, \mathbf{C}) \\
+%\mathbf{m} &\leftarrow \mathbf{m} + \sigma \yv_w, \quad \text{where } \yv_w = \sum_{i=1}^\mu \bm{w}_i(\xv_{i:\lambda}-\mathbf{m})/\sigma \\
+%\mathbf{C} &\leftarrow (1-c_{cov}) \mathbf{C} + c_{cov}\mu_w \underbrace{\yv_w\yv_w^\top}_{\text{rank-one}}, \quad \text{where } \mu_w = \frac{1}{\sum_{i=1}^\mu w_i^2}
 %\end{align*}
 
-%The rank-one update was developed in several domains independently, conducting a \textbf{principle component analysis} (PCA) of steps $\bm{y}_w$ sequentially in time and space.
+%The rank-one update was developed in several domains independently, conducting a \textbf{principle component analysis} (PCA) of steps $\yv_w$ sequentially in time and space.
 
 % \lz
 
-% \textit{In principle}: the adaptation increases the likelihood of successful steps $\bm{y}_w$ to appear again.
+% \textit{In principle}: the adaptation increases the likelihood of successful steps $\yv_w$ to appear again.
 
 % \textit{Different viewpoint}: the adaptation follows a natural gradient approximation of the expected fitness.
 
 % \framebreak
 
 % \begin{eqnarray*}
-% \bm{C} &\leftarrow (1-c_{cov}) \bm{C} + c_{cov}\mu_w \bm{y}_w\bm{y}_w^\top
+% \mathbf{C} &\leftarrow (1-c_{cov}) \mathbf{C} + c_{cov}\mu_w \yv_w\yv_w^\top
 % \end{eqnarray*}
 
 % \begin{itemize}
-% \item Conducting a \textbf{principle component analysis} (PCA) of steps $\bm{y}_w$ sequentially in time and space
+% \item Conducting a \textbf{principle component analysis} (PCA) of steps $\yv_w$ sequentially in time and space
 % \item Approximation of the \textbf{inverse Hessian} on quadratic functions
 % \item Learning of a new \textbf{rotated problem representation}
 % \item[] Components only independent in the new representation
@@ -427,10 +336,10 @@ $$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbra
 %
 %\lz
 %
-%For the evolution/search path taken over a number of generation steps an exponentially weighted sum of steps $\bm{y}_w$ is used:
+%For the evolution/search path taken over a number of generation steps an exponentially weighted sum of steps $\yv_w$ is used:
 %
 %\begin{eqnarray*}
-%\bm{p}_c \propto \sum_{t = 0}^T \underbrace{(1-c_{\bm{c}})^{T-i}}_{\substack{\text{exponentially} \\ \text{fading weights}}} \bm{y}_w^{[t]}
+%\mathbf{p}_c \propto \sum_{t = 0}^T \underbrace{(1-c_{\mathbf{C}})^{T-i}}_{\substack{\text{exponentially} \\ \text{fading weights}}} \yv_w^{[t]}
 %\end{eqnarray*}
 %
 %\framebreak
@@ -438,10 +347,10 @@ $$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbra
 %Cumulation as \textit{recursive construction of the evolution path}:
 %
 %\begin{eqnarray*}
-%\bm{p}_c^{[t+1]} = \underbrace{(1- c_{\bm{c}})}_{\text{decay factor}} \bm{p}_c^{[t]} + \underbrace{\sqrt{1-(1-c_{\bm{c}})^2}}_{\text{normalization factor}} \sqrt{\mu_w} \underbrace{\bm{y}_w^{[t]}}_{input},
+%\mathbf{p}_c^{[t+1]} = \underbrace{(1- c_{\mathbf{C}})}_{\text{decay factor}} \mathbf{p}_c^{[t]} + \underbrace{\sqrt{1-(1-c_{\mathbf{C}})^2}}_{\text{normalization factor}} \sqrt{\mu_w} \underbrace{\yv_w^{[t]}}_{input},
 %\end{eqnarray*}
 %
-%where $\bm{y}_{w}^{[t]} = \frac{\bm{m}^{[t+1]} - \bm{m}^{[t]}}{\sigma^{[t]}}$ and $\mu_w = \frac{1}{\sum w_i^2}$, $c_{C} << 1$. %FIXME: \ll
+%where $\yv_{w}^{[t]} = \frac{\mathbf{m}^{[t+1]} - \mathbf{m}^{[t]}}{\sigma^{[t]}}$ and $\mu_w = \frac{1}{\sum w_i^2}$, $c_{C} << 1$. %FIXME: \ll
 %History information is accumulated in the evolution path.
 %
 %\begin{figure}
@@ -451,28 +360,28 @@ $$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbra
 %\framebreak
 %
 %
-%$\bm{y}_w \bm{y}_w^\top$ was used for updating $\bm{C}$ and because $\bm{y}_w \bm{y}_w^\top = -\bm{y}_w (-\bm{y}_w)^\top$ the sign of $\bm{y}_w$ is lost.
+%$\yv_w \yv_w^\top$ was used for updating $\mathbf{C}$ and because $\yv_w \yv_w^\top = -\yv_w (-\yv_w)^\top$ the sign of $\yv_w$ is lost.
 %
 %\lz
 %
 %The \textbf{sign information} (signifying correlation between steps) is (re-)introduced by using the \textit{evolution path}.
 %
 %\begin{align*}
-%\bm{p}_c^{[t+1]} &= \underbrace{(1- c_{\bm{c}})}_{\text{decay factor}} \bm{p}_{\bm{c}}^{[t]} + \underbrace{\sqrt{1-(1-c_{\bm{c}})^2}}_{\text{normalization factor}} \sqrt{\mu_w} \bm{y}_w^{[t]} \\
-%\bm{C}^{[t+1]} &= (1- c_{cov}) \bm{C}^{[t]} + c_{cov} \underbrace{\bm{p}_c^{[t+1]} (\bm{p}_c^{[t+1]})^\top}_{\text{rank-one}},
+%\mathbf{p}_c^{[t+1]} &= \underbrace{(1- c_{\mathbf{C}})}_{\text{decay factor}} \mathbf{p}_{\mathbf{C}}^{[t]} + \underbrace{\sqrt{1-(1-c_{\mathbf{C}})^2}}_{\text{normalization factor}} \sqrt{\mu_w} \yv_w^{[t]} \\
+%\mathbf{C}^{[t+1]} &= (1- c_{cov}) \mathbf{C}^{[t]} + c_{cov} \underbrace{\mathbf{p}_c^{[t+1]} (\mathbf{p}_c^{[t+1]})^\top}_{\text{rank-one}},
 %\end{align*}
 %
-%where $\mu_w = \frac{1}{\sum w_i^2}, c_{cov} << c_{\bm{C}} << 1$, such that $1/{c_{\bm{c}}}$ is the \enquote{backward time horizon}. %FIXME: \ll
+%where $\mu_w = \frac{1}{\sum w_i^2}, c_{cov} << c_{\mathbf{C}} << 1$, such that $1/{c_{\mathbf{C}}}$ is the \enquote{backward time horizon}. %FIXME: \ll
 %
 %\framebreak
 %
 %\begin{align*}
-%\textcolor{green}{\bm{p}_c^{[t+1]}} &= \underbrace{(1- \textcolor{blue}{c_{\bm{c}}})}_{\text{decay factor}} \textcolor{green}{\bm{p}_{\bm{c}}^{[t]}} + \underbrace{\sqrt{1-(1-\textcolor{blue}{c_{\bm{c}}})^2}}_{\text{normalization factor}} \sqrt{\mu_w} \bm{y}_w^{[t]} \\
-%\textcolor{green}{\bm{C}^{[t+1]}} &= (1- \textcolor{blue}{c_{cov}})\textcolor{green}{\bm{C}^{[t]}} + \textcolor{blue}{c_{cov}} \underbrace{\textcolor{green}{\bm{p}_c^{[t+1]} (\bm{p}_c^{[t+1]}})^\top}_{\text{rank-one}},
+%\textcolor{green}{\mathbf{p}_c^{[t+1]}} &= \underbrace{(1- \textcolor{blue}{c_{\mathbf{C}}})}_{\text{decay factor}} \textcolor{green}{\mathbf{p}_{\mathbf{C}}^{[t]}} + \underbrace{\sqrt{1-(1-\textcolor{blue}{c_{\mathbf{C}}})^2}}_{\text{normalization factor}} \sqrt{\mu_w} \yv_w^{[t]} \\
+%\textcolor{green}{\mathbf{C}^{[t+1]}} &= (1- \textcolor{blue}{c_{cov}})\textcolor{green}{\mathbf{C}^{[t]}} + \textcolor{blue}{c_{cov}} \underbrace{\textcolor{green}{\mathbf{p}_c^{[t+1]} (\mathbf{p}_c^{[t+1]}})^\top}_{\text{rank-one}},
 %\end{align*}
 %\vspace{-10pt}
 %
-%where $\mu_w = \frac{1}{\sum \textcolor{blue}{w_i}^2}, \textcolor{blue}{c_{cov}} << \textcolor{blue}{c_{\bm{C}}} << 1$, such that $1/{c_{\bm{c}}}$ is the \enquote{backward time horizon}. %FIXME: \ll
+%where $\mu_w = \frac{1}{\sum \textcolor{blue}{w_i}^2}, \textcolor{blue}{c_{cov}} << \textcolor{blue}{c_{\mathbf{C}}} << 1$, such that $1/{c_{\mathbf{C}}}$ is the \enquote{backward time horizon}. %FIXME: \ll
 %
 %\begin{figure}
 %  \includegraphics[width=0.8\textwidth, height=0.37\textheight]{figure_man/cmaes/cmaes_cumulation_2.png}
@@ -482,7 +391,7 @@ $$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbra
 
 %
 %\begin{vbframe}{Updating $C$: CMA - Rank-$\mu$ Update}
-%In case of \textit{large population sizes $\lambda$} the \textbf{rank-$\mu$ update} extends the update rule using $\mu > 1$ vectors to update$\bm{C}$ at each generation step.
+%In case of \textit{large population sizes $\lambda$} the \textbf{rank-$\mu$ update} extends the update rule using $\mu > 1$ vectors to update$\mathbf{C}$ at each generation step.
 %
 %\lz
 %
@@ -491,12 +400,12 @@ $$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbra
 %\vspace{-10pt}
 %
 %\begin{eqnarray*}
-%\bm{C}_\mu^{[t+1]} = \sum_{i=1}^\mu \bm{w}_i \xv_{i:\lambda}^{[t+1]} (\xv_{i:\lambda}^{[t+1]})^\top
+%\mathbf{C}_\mu^{[t+1]} = \sum_{i=1}^\mu \bm{w}_i \xv_{i:\lambda}^{[t+1]} (\xv_{i:\lambda}^{[t+1]})^\top
 %\end{eqnarray*}
 %
 %The rank-$\mu$-update then reads
 %\begin{eqnarray*}
-%\bm{C}^{[t+1]} = (1-c_{cov}) \bm{C}^{[t]} + c_{cov} \bm{C}_{\mu}^{[t+1]},
+%\mathbf{C}^{[t+1]} = (1-c_{cov}) \mathbf{C}^{[t]} + c_{cov} \mathbf{C}_{\mu}^{[t+1]},
 %\end{eqnarray*}
 %
 %where $c_{cov} \approx \mu_w/d^2$ and $c_{cov} \leq 1$.
@@ -508,12 +417,12 @@ $$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbra
 %\end{figure}
 %
 %\begin{enumerate}
-%  \item Sampling $\lambda = 150$ solutions, where $\bm{C}^{[t]} = \bm{\I}$ and $\sigma^{[t]} = 1$.
-%  \item[] $\xv^{[t+1](i)} = \bm{m}^{[t]} + \sigma^{[t]} \normal(\bm{0}, \bm{C}^{[t]})$
-%  \item Calculation $\bm{C}$, where $\mu = 50$, $w_1 = \dots = w_{\mu} = 1/\mu$ and $c_{cov}=1$
-%  \item[] $\bm{C}_{\mu}^{[t+1]} = 1/\mu \sum \xv_{1:\lambda}^{[t]} (\xv_{1:\lambda}^{[t]})^\top$ and $\bm{C}^{[t+1]} = (1-1) \times \bm{C}^{[t]} + 1 \times \bm{C}_{\mu}^{[t+1]}$
+%  \item Sampling $\lambda = 150$ solutions, where $\mathbf{C}^{[t]} = \bm{\I}$ and $\sigma^{[t]} = 1$.
+%  \item[] $\xv^{[t+1](i)} = \mathbf{m}^{[t]} + \sigma^{[t]} \normal(\bm{0}, \mathbf{C}^{[t]})$
+%  \item Calculation $\mathbf{C}$, where $\mu = 50$, $w_1 = \dots = w_{\mu} = 1/\mu$ and $c_{cov}=1$
+%  \item[] $\mathbf{C}_{\mu}^{[t+1]} = 1/\mu \sum \xv_{1:\lambda}^{[t]} (\xv_{1:\lambda}^{[t]})^\top$ and $\mathbf{C}^{[t+1]} = (1-1) \times \mathbf{C}^{[t]} + 1 \times \mathbf{C}_{\mu}^{[t+1]}$
 %  \item New distribution
-%  \item[] $\bm{m}^{[t+1]} = \bm{m}^{[t]} + 1/\mu \sum \xv_{1:\lambda}^{[t]}$.
+%  \item[] $\mathbf{m}^{[t+1]} = \mathbf{m}^{[t]} + 1/\mu \sum \xv_{1:\lambda}^{[t]}$.
 %\end{enumerate}
 %
 %\end{vbframe}
@@ -570,7 +479,7 @@ $$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbra
 %  \includegraphics[width=1\textwidth, height=0.33\textheight]{figure_man/cmaes/cmaes_path.png}
 %\end{figure}
 %
-%Pathway of mean vector $\bm{m}$ in the generation sequence of above pictures
+%Pathway of mean vector $\mathbf{m}$ in the generation sequence of above pictures
 %\begin{enumerate}
 %\item decreases $\sigma$ as single steps cancel each other off
 %\item ideal case as single steps are uncorrelated
@@ -579,14 +488,14 @@ $$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbra
 %
 %\framebreak
 %
-%Initialize $\bm{m} \in \R^d$, $\sigma \in \R_+$, evolution path $p_\sigma = \bm{0}$.
+%Initialize $\mathbf{m} \in \R^d$, $\sigma \in \R_+$, evolution path $p_\sigma = \bm{0}$.
 %
 %Set $c_\sigma \approx 4/d$, $d_\sigma \approx 1$.
 %
 %\begin{align*}
-%\bm{m}^{[t+1]} &= \bm{m}^{[t]} + \sigma^{[t]} \bm{y}_w^{[t]}\\
-%\bm{p}_\sigma^{[t+1]} &= (1- c_\sigma) \bm{p}_\sigma^{[t]} + \underbrace{\sqrt{1-(1-c_\sigma)^2}}_{\text{accounts for } 1-c_\sigma} \underbrace{\sqrt{\mu_w}}_{\text{account for} w_i} \bm{y}_w^{[t]} \\
-%\sigma^{[t+1]} &= \sigma^{[t]} \times \underbrace{\exp\biggl( \frac{c_\sigma}{d_\sigma}\Bigl(\frac{||\bm{p}_\sigma^{[t+1]}||}{\E||\normal(\bm{0}, \bm{\I})||} - 1 \Bigl)\biggl)}_{>1 \Longleftrightarrow ||\bm{p}_\sigma|| \text{ is greater than its expectation}}
+%\mathbf{m}^{[t+1]} &= \mathbf{m}^{[t]} + \sigma^{[t]} \yv_w^{[t]}\\
+%\mathbf{p}_\sigma^{[t+1]} &= (1- c_\sigma) \mathbf{p}_\sigma^{[t]} + \underbrace{\sqrt{1-(1-c_\sigma)^2}}_{\text{accounts for } 1-c_\sigma} \underbrace{\sqrt{\mu_w}}_{\text{account for} w_i} \yv_w^{[t]} \\
+%\sigma^{[t+1]} &= \sigma^{[t]} \times \underbrace{\exp\biggl( \frac{c_\sigma}{d_\sigma}\Bigl(\frac{||\mathbf{p}_\sigma^{[t+1]}||}{\E||\normal(\bm{0}, \bm{\I})||} - 1 \Bigl)\biggl)}_{>1 \Longleftrightarrow ||\mathbf{p}_\sigma|| \text{ is greater than its expectation}}
 %\end{align*}
 %
 %\framebreak
@@ -605,7 +514,7 @@ $$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbra
 
 % \begin{frame}{Updating $C$: CMA - Rank-One Update}
 % \begin{eqnarray*}
-% \bm{m} \leftarrow \bm{m} + \sigma \bm{y}_w, \quad \bm{y}_w = \sum_{i=1}^{\mu} w_i \bm{y}_{i:\lambda}, \quad \bm{y}_i\sim \normal_i(\bm{0}, \bm{C})
+% \mathbf{m} \leftarrow \mathbf{m} + \sigma \yv_w, \quad \yv_w = \sum_{i=1}^{\mu} w_i \yv_{i:\lambda}, \quad \yv_i\sim \normal_i(\bm{0}, \mathbf{C})
 % \end{eqnarray*}
 
 % \begin{figure}
@@ -613,16 +522,16 @@ $$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbra
 % \centering
 % \only<1>{\scalebox{0.6}{\includegraphics[width=1.5\textwidth, height=0.75\textheight]{figure_man/cmaes_rankone_1.png}}
 
-% Initial distribution with $\bm{C} = 1$.}
+% Initial distribution with $\mathbf{C} = 1$.}
 % \only<2>{\scalebox{0.6}{\includegraphics[width=1.5\textwidth, height=0.75\textheight]{figure_man/cmaes_rankone_2.png}}
 
-% Initial distribution with $\bm{C} = 1$.}
+% Initial distribution with $\mathbf{C} = 1$.}
 % \only<3>{\scalebox{0.6}{\includegraphics[width=1.5\textwidth, height=0.75\textheight]{figure_man/cmaes_rankone_3.png}}
 
-% Movement to the population mean $m$ (disregarding $\sigma$) with $\bm{y}_w$.}
+% Movement to the population mean $m$ (disregarding $\sigma$) with $\yv_w$.}
 % \only<4>{\scalebox{0.6}{\includegraphics[width=1.5\textwidth, height=0.75\textheight]{figure_man/cmaes_rankone_4.png}}
 
-% Blue circle as a mixture of $\bm{C}$ and step $\bm{y}_w$: $\bm{C} \leftarrow 0.8\times \bm{C} + 0.2 \times \bm{y}_w \bm{y}^\top$.}
+% Blue circle as a mixture of $\mathbf{C}$ and step $\yv_w$: $\mathbf{C} \leftarrow 0.8\times \mathbf{C} + 0.2 \times \yv_w \yv^\top$.}
 % \only<5>{\scalebox{0.6}{\includegraphics[width=1.5\textwidth, height=0.75\textheight]{figure_man/cmaes_rankone_5.png}}
 
 % Movement towards the new distribution (disregarding $\sigma$).}
@@ -631,10 +540,10 @@ $$\bm{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum} w_j)\bm{C}^{[t]}+c_1 \underbra
 % New Distribution (disregarding $\sigma$).}
 % \only<7>{\scalebox{0.6}{\includegraphics[width=1.5\textwidth, height=0.75\textheight]{figure_man/cmaes_rankone_7.png}}
 
-% Movement to the population mean $\bm{m}$.}
+% Movement to the population mean $\mathbf{m}$.}
 % \only<8>{\scalebox{0.6}{\includegraphics[width=1.5\textwidth, height=0.75\textheight]{figure_man/cmaes_rankone_8.png}}
 
-% Green circle as a mixture of $\bm{C}$ and step $\bm{y}_w$: $\bm{C} \leftarrow 0.8\times \bm{C} + 0.2 \times \bm{y}_w \bm{y}^\top$.}
+% Green circle as a mixture of $\mathbf{C}$ and step $\yv_w$: $\mathbf{C} \leftarrow 0.8\times \mathbf{C} + 0.2 \times \yv_w \yv^\top$.}
 % \only<9>{\scalebox{0.6}{\includegraphics[width=1.5\textwidth, height=0.75\textheight]{figure_man/cmaes_rankone_9.png}}
 
 % Movement towards the new distribution (disregarding $\sigma$).}
