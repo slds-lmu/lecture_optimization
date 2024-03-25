@@ -6,48 +6,80 @@
 \DeclareMathSymbol{\myRightarrow}{\mathrel}{symbols}{"29}
 \let\Rightarrow\myRightarrow
 
-% ------------------------------------------------------------------------
-% R (sweave) related stuff
+% Define a toggle to compile slides with or without margin
+% - if nospeakermargin.tex exists in directory where slides are compiled,
+%   the "old" 4:3 slide layout is used. Makefiles can and do
+%   create and remove an empty file of that name to control this.
+% - if the file does not exist slides are compiled with margin in 16:9 by default
+\newif\if@speakermargin
+\IfFileExists{nospeakermargin.tex}{\@speakermarginfalse}{\@speakermargintrue}
 
-\RequirePackage{ifthen}
-\newboolean{Sweave@gin}
-\setboolean{Sweave@gin}{true}
+\RequirePackage{calc}
+% original: paperwidth: 128mm x 96mm
+% --> set 'speakerwidth' to 42.6666666667mm to get identical slides
 
-\DeclareOption{nogin}{\setboolean{Sweave@gin}{false}}
-\ProcessOptions
+% Define lengths. slidewidth is used in both if-arms
+\newlength{\speakerwidth}
+\newlength{\logooffset}
+\newlength{\slidewidth}
 
-\ifthenelse{\boolean{Sweave@gin}}{\setkeys{Gin}{width=0.8\textwidth}}{}%
+\if@speakermargin
+  % If the file exists -> no margin
+    \geometry{paperwidth=170.6666666667mm,paperheight=96mm}
 
-\RequirePackage{fancyvrb}
-\renewcommand{\ttdefault}{laett}
-\DefineVerbatimEnvironment{Sinput}{Verbatim}{}
-\DefineVerbatimEnvironment{Scode}{Verbatim}{}
-\DefineVerbatimEnvironment{Soutput}{Verbatim}{}
-\newenvironment{Schunk}{}{}
+    \setlength{\logooffset}{2mm}
+    \setlength{\speakerwidth}{42.6666666667mm}  % slide is 4:3
+    %\setlength{\speakerwidth}{34mm}  % 20% speaker
+    \setlength{\slidewidth}{\paperwidth-\speakerwidth}
+
+    % "i2ml" text color (taken from dark logo color)
+    \definecolor{logoblue}{HTML}{4D88FF}
+    %\definecolor{marginbg}{HTML}{FFFAF8}  % slightly tinted margin
+    %\definecolor{marginbg}{HTML}{F8F8F8}  % grey margin
+    \definecolor{marginbg}{HTML}{FFFFFF}  % white margin
+
+    \setbeamertemplate{background}{%
+      \begin{tikzpicture}[overlay,remember picture]
+      \path [fill=marginbg] (\slidewidth,0) rectangle (\paperwidth,-\paperheight);
+
+      \node[anchor=north,text width=0.8\speakerwidth,align=center,text=logoblue,font=\Huge] at ([shift={(-\speakerwidth/2,-\logooffset)}]current page.north east) {
+
+      %\vspace{3mm}
+        \includegraphics[width=0.6\speakerwidth]{../../style/logo.pdf}\\
+      %  \phantom{x}I2ML\\
+      };
+      \end{tikzpicture}%
+    }
+\else
+  % If the file does exist -> old 4:3 layout, no margin
+  \geometry{paperwidth=128mm,paperheight=96mm}
+  \setlength{\slidewidth}{\paperwidth}
+  \setbeamersize{text margin left=0.8cm,text margin right=0.8cm}
+\fi
 
 % ------------------------------------------------------------------------
 % special numbering for lectures
 
 \newenvironment{rightbox}[1]
- {\itemize[
+{\itemize[
     nosep,
     leftmargin=\dimexpr\textwidth-#1\relax,
     rightmargin=0pt,
     itemindent=\parindent,
     listparindent=\parindent,
   ]\item[]\relax}
- {\enditemize}
+{\enditemize}
 
 \AtBeginLecture{%
   %\usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{../../style/LMU-hintergrund1.png}}
+  \global\advance\c@lecture by -1
   \begin{frame}[plain]
-    \global\advance\c@lecture by -1
     \vspace*{1 cm}
     \LARGE\bfseries\inserttitle
     \vspace*{0.5 cm}
 
     \ifx\lecturesection\@empty\relax\else%
-    {\lecturesection}%
+      {\lecturesection}%
     \fi%
 
 \ifcsname learninggoals\endcsname
@@ -57,9 +89,9 @@
     {\begin{center}
     \begin{figure}[!b]
     \includegraphics[width=0.9\textwidth, keepaspectratio]{\titlefigure}
-     \ifcsname titlecaption\endcsname
-     \caption*{\titlecaption}
-     \fi
+    \ifcsname titlecaption\endcsname
+    \caption*{\titlecaption}
+    \fi
     \end{figure}
     \end{center}}
   \else
@@ -69,25 +101,13 @@
   \begin{minipage}{0.45\textwidth}
   \normalsize
   Learning goals
-   \normalfont
-   \footnotesize
+  \normalfont
+  \footnotesize
   \begin{itemize}
   \learninggoals
   \end{itemize}
   \end{minipage}}
 \fi
-
-    % \vspace*{\stretch{1}}
-    % \normalsize
-    % \insertshortauthor
-    % \vspace*{\stretch{0.3}}
-    % \insertshortsubtitle
-    % \vspace*{\stretch{1}} \\
-    % \normalfont
-    % \insertshortinstitute
-    % \vspace*{\stretch{0.3}}
-    % \insertshortdate
-    % \vspace*{\stretch{1}}
   \end{frame}
   \immediate\write\@auxout {\string \newlabel{lect:@@\thelecture}{{\insertframenumber}}}%
   \typeout{[LECTURE]=[\thelecture][\insertlecture][\thepage][\theframenumber]}%
@@ -131,10 +151,9 @@
 % hyperref settings
 \hypersetup{%
   colorlinks = {false},
-  pdfauthor = {\insertshortauthor},
+  pdfauthor = {\insertshortauthor}, % FIXME: hyperref complains in logs about these macros?
   pdfsubject = {\insertshorttitle},
 }
-
 
 %\usefonttheme{lmu-lecture}
 % ------------------------------------------------------------------------
@@ -190,18 +209,19 @@
 
 \setbeamertemplate{frametitle continuation}[from second][{\small/~\insertcontinuationcount}]
 
-
 %\useoutertheme{lmu-lecture}
 % ------------------------------------------------------------------------
 % Geometry
-\setbeamersize{text margin left=0.8cm,text margin right=0.8cm}
+%\setbeamersize{text margin left=0.8cm,text margin right=0.8cm}
+%\setbeamersize{text margin left=0.8cm,text margin right=\dimexpr0.8cm+\speakerwidth\relax}
+\setbeamersize{text margin left=0.8cm,text margin right=0.8cm,sidebar width right=\speakerwidth}
 
 % ------------------------------------------------------------------------
 % foot line
 
 \pgfdeclarehorizontalshading{footlineshade}{4mm}{%
   color(0pt)=(black);%
-  color(1.0\paperwidth)=(structure!50!black)}
+  color(1.0\slidewidth)=(structure!50!black)}
 
 % \@setref sometimes (depending on version) calls \@firstoftwo#1\@empty\@empty\@empty\null, sometimes \@firstoftwo#1\null
 % in the former case, we would prefer to use \@firstoffive
@@ -225,7 +245,7 @@
   \ifnum\c@lecture<0\else \expandafter\addjustlectureframenumber\csname r@lect:@@\thelecture\endcsname\fi%
   \leavevmode%
   \hbox{%
-    \setbox\beamer@linebox=\hbox to\paperwidth{%
+    \setbox\beamer@linebox=\hbox to\slidewidth{%
       \hskip 1em%
       {\usebeamercolor[fg]{author in head/foot}%
       \insertshortauthor~~\copyright~~\insertshortdate}\hfill%
@@ -243,9 +263,9 @@
     \ht\beamer@linebox=2.5mm%
     \dp\beamer@linebox=0pt%
     \setbox\beamer@linebox=\vbox{\box\beamer@linebox\vskip1.125ex}%
-    \rule[4.5mm]{\paperwidth}{0.5pt}%
+    \rule[4.5mm]{\slidewidth}{0.5pt}%
     %%
-    \hskip-\paperwidth%
+    \hskip-\slidewidth%
     \hbox{\box\beamer@linebox\hfill}}
 }
 
@@ -257,7 +277,46 @@
 % No head lines
 \defbeamertemplate*{headline}{lecture theme}{}
 
+%--------------%
+%  Citebutton  %
+%--------------%
+% Example usage (from slides-cart-discussion.tex)
+% \citebutton{Breiman, 1984}{https://www.taylorfrancis.com/books/mono/10.1201/9781315139470/classification-regression-trees-leo-breiman}
+\newcommand{\citebutton}[2]{%
+\NoCaseChange{\resizebox{!}{9pt}{\protect\beamergotobutton{\href{#2}{#1}}}}%
+}
 
+%--------------------%
+%  New environments  %
+%--------------------%
+
+% Frame with breaks and verbatim // this is used very often
+\newenvironment{vbframe}
+{
+  \begin{frame}[containsverbatim,allowframebreaks]
+    }
+    {
+  \end{frame}
+}
+
+% Frame with verbatim without breaks (to avoid numbering one slided frames)
+% This is not used anywhere but I can see it being useful
+\newenvironment{vframe}
+{
+  \begin{frame}[containsverbatim]
+    }
+    {
+  \end{frame}
+}
+
+% Itemize block
+\newenvironment{blocki}[1]
+{
+  \begin{block}{#1}\begin{itemize}
+      }
+      {
+    \end{itemize}\end{block}
+}
 
 % ------------------------------------------------------------------------
 \endinput
