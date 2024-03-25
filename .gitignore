@@ -1,17 +1,79 @@
-slides/01-mathematical-concepts/*.pdf
-!slides/01-mathematical-concepts/figure_man/*.pdf
-slides/02-optimization-problems/*.pdf
-!slides/02-optimization-problems/figure_man/*.pdf
-slides/03-univariate-optimization/*.pdf
-!slides/03-univariate-optimization/figure_man/*.pdf
-slides/04-multivariate-first-order/*.pdf
-!slides/04-multivariate-first-order/figure_man/*.pdf
+#----------------------------------------------------#
+# ----- Global gitignore file for all lectures ----- #
+# This file is included in slds-lmu/lecture_service  #
+#----------------------------------------------------#
+
+
+#--------------------------------------------#
+#  Things that need to exist but not in git  #
+#--------------------------------------------#
+
+nospeakermargin.tex
+speakermargin.tex
+
+#--------------------------------------------#
+#  Intermediate output (slides, exercises)   #
+#--------------------------------------------#
+
+# The only slide PDF output in this repo should be in slides-pdf
+# include both slides-xyz (i2ml) and slideXY- (iml) formats
+slides/*/slides*.pdf 
+
+# Similar things apply to exercises and exercises-pdf
+exercises/*/*.pdf
+exercises/*/*.tex
+exercises/*/*.log
+exercises/*/figure/unnamed-*.pdf
+exercises/*/figure/unnamed-chunk*
+
+
+#-----------------------------------------------------------------------------#
+#  TeX intermediate stuff everybody loves to hate and hates to commit to git  #
+#-----------------------------------------------------------------------------#
+
 *.aux
+*.fdb_latexmk
+*.fls
 *.log
 *.nav
 *.out
 *.snm
-*.gz
 *.toc
 *.vrb
+*.synctex.gz
+*.synctex(busy)
+
+#----------------------------------------------------------#
+#  Editor-specific stuff that should generally be ignored  #
+#----------------------------------------------------------#
+
+# vim swap files
+# http://stratus3d.com/blog/2018/06/03/stop-excluding-editor-temp-files-in-gitignore/
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+
+# used for atom editor
+.latexcfg
+# Xournal files
+*.xoj
+# Files created by code demo
+code-demos/code_demo_genclass.R
+code-demos/code_demo_knn.R
+code-demos/code_demo_limo.R
+.idea/*
+*.pkl
+
+# RStudio / R in general
+*.Rproj
 *.Rhistory
+.Rproj.user
+.RData
+.Rdata
+
+#-----------------------------------#
+#  OS-specific temp/preview files   #
+#-----------------------------------#
+*.DS_Store
+
