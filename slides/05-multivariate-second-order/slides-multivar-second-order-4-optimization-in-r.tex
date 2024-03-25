@@ -4,17 +4,16 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-
-\newcommand{\titlefigure}{}
+% Leave this commented out if not providing a figure, will cause error otherwise
+% \newcommand{\titlefigure}{}
 \newcommand{\learninggoals}{
-\item optim()
+\item \code{optim()}
 }
 
 
 %\usepackage{animate} % only use if you want the animation for Taylor2D
 
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
 \date{}
 
 \begin{document}
@@ -37,11 +36,13 @@ Function \pkg{optim()} from base R provides algorithms for general optimization 
 \framebreak
 \lz
 
-\begin{verbbox}
-# General Call:
+% Note: verbbox errors when containing literal '#'
+% Also: verbatimbox not loaded, reverted to verbatim
+General Call:
+
+\begin{verbatim}
 optim(par, fn, gr, method, lower, upper, control)
-\end{verbbox}
-\col
+\end{verbatim}
 
 \lz
 \begin{itemize}
@@ -56,6 +57,3 @@ optim(par, fn, gr, method, lower, upper, control)
 
 \endlecture
 \end{document}
-
-
-
