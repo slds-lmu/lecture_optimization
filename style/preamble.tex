@@ -75,6 +75,11 @@
 % Use align instead -- TODO: Global search & replace to check, eqnarray is used a lot
 \usepackage{eqnarray}
 
+% For shaded regions
+% Used sometimes in optim
+% https://www.ctan.org/pkg/framed
+\usepackage{framed}
+
 %--------------------------------------------------------%
 %       Displaying code and algorithms
 %--------------------------------------------------------%
@@ -188,33 +193,35 @@
 % \newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
 % \let\hlipl\hlkwb
 
-\definecolor{shadecolor}{rgb}{.97, .97, .97}
-\definecolor{messagecolor}{rgb}{0, 0, 0}
-\definecolor{warningcolor}{rgb}{1, 0, 1}
-\definecolor{errorcolor}{rgb}{1, 0, 0}
+% \makeatletter
+% \newenvironment{kframe}{%
+%  \def\at@end@of@kframe{}%
+%  \ifinner\ifhmode%
+%   \def\at@end@of@kframe{\end{minipage}}%
+%   \begin{minipage}{\columnwidth}%
+%  \fi\fi%
+%  \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+%  \colorbox{shadecolor}{##1}\hskip-\fboxsep
+%      % There is no \\@totalrightmargin, so:
+%      \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+%  \MakeFramed {\advance\hsize-\width
+%    \@totalleftmargin\z@ \linewidth\hsize
+%    \@setminipage}}%
+%  {\par\unskip\endMakeFramed%
+%  \at@end@of@kframe}
+% \makeatother
 
-\makeatletter
-\newenvironment{kframe}{%
- \def\at@end@of@kframe{}%
- \ifinner\ifhmode%
-  \def\at@end@of@kframe{\end{minipage}}%
-  \begin{minipage}{\columnwidth}%
- \fi\fi%
- \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
- \colorbox{shadecolor}{##1}\hskip-\fboxsep
-     % There is no \\@totalrightmargin, so:
-     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
- \MakeFramed {\advance\hsize-\width
-   \@totalleftmargin\z@ \linewidth\hsize
-   \@setminipage}}%
- {\par\unskip\endMakeFramed%
- \at@end@of@kframe}
-\makeatother
+% \definecolor{shadecolor}{rgb}{.97, .97, .97}
+% \definecolor{messagecolor}{rgb}{0, 0, 0}
+% \definecolor{warningcolor}{rgb}{1, 0, 1}
+% \definecolor{errorcolor}{rgb}{1, 0, 0}
+% \newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
 
 % \usepackage{alltt}
 % \newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
 % \newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
 % \newcommand{\Sexpr}[1]{}       % will only be parsed by R
+% \newcommand{\xmark}{\ding{55}}%
 
 % textpos – Place boxes at arbitrary positions on the LATEX page
 % https://ctan.org/pkg/textpos
@@ -223,38 +230,34 @@
 % \usepackage[absolute,overlay]{textpos}
 
 % -----------------------%
-%     knitr leftovers    %
+% Likely knitr leftovers %
 % -----------------------%
-
-% Shaded regions, used by kfram env above
-% Used heavily in lecture_optimization, only remove once all uses of {kframe} are removed
-\usepackage{framed}
 
 % psfrag – Replace strings in encapsulated PostScript figures
 % https://www.overleaf.com/latex/examples/psfrag-example/tggxhgzwrzhn
 % https://ftp.mpi-inf.mpg.de/pub/tex/mirror/ftp.dante.de/pub/tex/macros/latex/contrib/psfrag/pfgguide.pdf
 % Can't tell if this is needed
 % TODO: Check if really unused?
-\usepackage{psfrag}
+% \usepackage{psfrag}
 
 % arydshln – Draw dash-lines in array/tabular
 % https://www.ctan.org/pkg/arydshln
 % !! "arydshln has to be loaded after array, longtable, colortab and/or colortbl"
 % Provides \hdashline and \cdashline
 % Not used in slides
-\usepackage{arydshln}
+% \usepackage{arydshln}
 
 % tabularx – Tabulars with adjustable-width columns
 % https://ctan.org/pkg/tabularx
 % Provides \begin{tabularx}
 % Not used in slides
-\usepackage{tabularx}
+% \usepackage{tabularx}
 
 % placeins – Control float placement
 % https://ctan.org/pkg/placeins
 % Defines a \FloatBarrier command
 % TODO: Check if really unused?
-\usepackage{placeins}
+% \usepackage{placeins}
 
 % Can't find a reason why common.tex is not just part of this file?
-\input{../../style/common}
+\input{../../style/common.tex}
