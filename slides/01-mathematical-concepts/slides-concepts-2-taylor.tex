@@ -49,17 +49,17 @@
 
 \begin{vbframe}{Taylor's theorem (univariate)}
 
-\begin{kframe}
-    \textbf{Taylor's theorem:} Let $I \subseteq \R$ be an open interval and $f \in \mathcal{C}^k(I,\R)$.
-    For each $a,x \in I$, it holds that
-    \begin{equation*}
-        f(x) = \underbrace{\sum_{j=0}^{k} \frac{f^{(j)}(a)}{j!}(x-a)^{j}}_{T_k(x,a)} + R_k(x,a)
-    \end{equation*}
-    with the $k$-th \textbf{Taylor polynomial} $T_{k}$ and a \textbf{remainder term}
-    \begin{equation*}
-        R_k(x, a) = \littleo(|x-a|^k) \quad\textnormal{as~$x \to a$}.
-    \end{equation*}
-\end{kframe}
+
+\textbf{Taylor's theorem:} Let $I \subseteq \R$ be an open interval and $f \in \mathcal{C}^k(I,\R)$.
+For each $a,x \in I$, it holds that
+\begin{equation*}
+    f(x) = \underbrace{\sum_{j=0}^{k} \frac{f^{(j)}(a)}{j!}(x-a)^{j}}_{T_k(x,a)} + R_k(x,a)
+\end{equation*}
+with the $k$-th \textbf{Taylor polynomial} $T_{k}$ and a \textbf{remainder term}
+\begin{equation*}
+    R_k(x, a) = \littleo(|x-a|^k) \quad\textnormal{as~$x \to a$}.
+\end{equation*}
+
 
 \begin{itemize}
     \item There are explicit formulas for the remainder
@@ -90,19 +90,19 @@
 
 \vspace{-\baselineskip}
 
-\begin{kframe}
-    \textbf{Taylor's theorem (1st order)}: For $f\in\mathcal{C}^1$, it holds that
-    \begin{equation*}
-        f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a})}_{T_1(\xv, \bm{a})} + R_1(\xv,\bm{a}).
-    \end{equation*}
-\end{kframe}
+
+\textbf{Taylor's theorem (1st order)}: For $f\in\mathcal{C}^1$, it holds that
+\begin{equation*}
+    f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a})}_{T_1(\xv, \bm{a})} + R_1(\xv,\bm{a}).
+\end{equation*}
+
 
 \begin{footnotesize}
     \textbf{Example: } $\fx = \sin(2x_1) + \cos(x_2)$, $\bm{a} = (1, 1)^T$.
     Since $\nabla \fx = \begin{pmatrix}2\cos(2x_1) \\ -\sin(x_2)\end{pmatrix}$,
 
     \vspace{-0.7\baselineskip}
-    
+
     \begin{align*}
         \fx &= T_1(\xv) + R_1(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a}) + R_1(\xv, \bm{a})\\
         &= \sin(2) + \cos(1) + (2 \cos(2), - \sin(1))^T\begin{pmatrix} x_1 - 1 \\ x_2 - 1\end{pmatrix} + R_1(\xv, \bm{a})
@@ -125,12 +125,12 @@
 
 \vspace*{-1cm}
 
-\begin{kframe}
-    \textbf{Taylor's theorem (2nd order)}: If $f \in \mathcal{C}^2$, it holds that
-    \begin{equation*}
-        f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^T\bm{H}(\bm{a})(\xv - \bm{a})}_{T_2(\xv, \bm{a})} + R_2(\xv,\bm{a})
+
+\textbf{Taylor's theorem (2nd order)}: If $f \in \mathcal{C}^2$, it holds that
+\begin{equation*}
+    f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^T\bm{H}(\bm{a})(\xv - \bm{a})}_{T_2(\xv, \bm{a})} + R_2(\xv,\bm{a})
 \end{equation*}
-\end{kframe}
+
 
 \begin{footnotesize}
     \textbf{Example (continued):} Since $H(\xv) = \begin{pmatrix} -4 \sin(2x_1) & 0 \\ 0 & -\cos(x_2) \end{pmatrix}$,
@@ -149,7 +149,7 @@
     \begin{column}{0.4\textwidth}
         \includegraphics[width = \textwidth]{figure_man/Taylor2D/Taylor2D_2nd-301.png}
     \end{column}
-\end{columns}  
+\end{columns}
 
 \end{vbframe}
 
@@ -180,13 +180,13 @@ The first/second/third term ensures the values/slopes/curvatures of~$T_2$ and~$f
 
 The theorem for general order~$k$ requires a more involved notation.
 
-\begin{kframe}
+
     \textbf{Taylor's theorem ($k$-th order):} If $f \in \mathcal{C}^k$, it holds that
     \begin{equation*}
         f(\xv) = \underbrace{\sum_{|\bm{\alpha}| \le k} \frac{D^{\bm{\alpha}} f(\bm{a})}{{\bm{\alpha}}!} (\xv - \bm{a})^{\bm{\alpha}}}_{T_k(\xv, \bm{a})} + R_k(\xv, \bm{a})
     \end{equation*}
     with $R_k(\xv, \bm{a}) = \littleo(\|\xv-\bm{a}\|^k)$ as~$\xv \to \bm{a}$.
-\end{kframe}
+
 
 \textbf{Notation:} Multi-index~$\bm{\alpha} \in \N^d$
 
@@ -199,11 +199,11 @@ The theorem for general order~$k$ requires a more involved notation.
 \begin{minipage}[t]{0.49\linewidth}
     \begin{itemize}
         \item $\xv^{\bm{\alpha}} = x_1^{\alpha_1} \cdots x_d^{\alpha_d}$
-        \item $D^{\bm{\alpha}} f = \frac{\partial^{|\bm{\alpha}|} f}{\partial x_1^{\alpha_1} \cdots \partial x_d^{\alpha_d}}$ 
+        \item $D^{\bm{\alpha}} f = \frac{\partial^{|\bm{\alpha}|} f}{\partial x_1^{\alpha_1} \cdots \partial x_d^{\alpha_d}}$
     \end{itemize}
 \end{minipage}
 
-\framebreak 
+\framebreak
 
 Let us check for bivariate~$f$ ($d=2$).
 For $|\bm{\alpha}| \le 1$, we have
@@ -225,7 +225,7 @@ and therefore
 \begin{align*}
     T_1(\xv,\bm{a}) &= \frac{f(\bm{a})}{1} \cdot 1 + \frac{\partial f(\bm{a})}{\partial x_1} (x_1 - a_1) + \frac{\partial f(\bm{a})}{\partial x_2} (x_2 - a_2) \\
     &= f(\bm{a}) + \begin{pmatrix}\frac{\partial f(\bm{a})}{\partial x_1} \\ \frac{\partial f(\bm{a})}{\partial x_2}\end{pmatrix}^T \begin{pmatrix}x_1 - a_1 \\ x_2 - a_2\end{pmatrix} \\
-    &= f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a}). 
+    &= f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a}).
 \end{align*}
 
 \end{vbframe}

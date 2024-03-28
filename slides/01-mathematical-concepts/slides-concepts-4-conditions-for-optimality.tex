@@ -37,13 +37,12 @@ Given $\mathcal{S} \subseteq \R^d$, $f: \mathcal{S} \to \R$:
     \vspace*{0.3cm}
     \begin{tiny}
         Source (\textbf{left}): \url{https://en.wikipedia.org/wiki/Maxima_and_minima}. \\
-        Source (\textbf{right}): \url{https://wngaw.github.io/linear-regression/}. 
+        Source (\textbf{right}): \url{https://wngaw.github.io/linear-regression/}.
     \end{tiny}
 \end{center}
 
 \end{vbframe}
-  
-  
+
 \begin{vbframe}{Existence of Optima}
 
 \dlz
@@ -64,11 +63,11 @@ We regard the two main cases of $f : \mathcal{S} \to \R$:
         0 & \text{if $x=0$}.
     \end{cases}
 \end{equation*}
-  
-  % \textbf{Note}: From now on, we assume silently that the functions considered are sufficiently smooth (i.e., when we consider a second derivative of a function, we assume that the second derivative exists and is continuous). 
-  
+
+% \textbf{Note}: From now on, we assume silently that the functions considered are sufficiently smooth (i.e., when we consider a second derivative of a function, we assume that the second derivative exists and is continuous).
+
 \end{vbframe}
-    
+
 \begin{vbframe}{First order condition for optimality}
 
 \textbf{Observation:} At an interior local optimum of~$f\in\mathcal{C}^1$, first order Taylor approximation is flat, i.e., first order derivatives are zero.
@@ -88,16 +87,16 @@ This condition is therefore \textbf{necessary} and called \textbf{first order}.
 
 \framebreak
 
-\begin{kframe}
-    \textbf{First order condition:}
-    Gradient of~$f$ at local optimum $\xv^\ast \in \mathcal{S}$ is zero:
-    \vspace{-0.5\baselineskip}
-    \begin{equation*}
-        \nabla f(\xv^\ast) = (0,\ldots,0)^T
-    \end{equation*}
-\end{kframe}
 
-Points with zero first order derivative are called \textbf{stationary}. 
+\textbf{First order condition:}
+Gradient of~$f$ at local optimum $\xv^\ast \in \mathcal{S}$ is zero:
+\vspace{-0.5\baselineskip}
+\begin{equation*}
+    \nabla f(\xv^\ast) = (0,\ldots,0)^T
+\end{equation*}
+
+
+Points with zero first order derivative are called \textbf{stationary}.
 
 \medskip
 
@@ -120,14 +119,14 @@ Condition is \textbf{not sufficient}: Not all stationary points are local optima
 
 \vspace{-0.5\baselineskip}
 
-\begin{kframe}
-    \textbf{Second order condition:}
-    Hessian of~$f \in \mathcal{C}^2$ at stationary point $\xv^\ast \in \mathcal{S}$ is positive or negative definite:
-    \vspace{-0.5\baselineskip}
-    \begin{equation*}
-        H(\xv^\ast) \succ 0 \text{ or } H(\xv^\ast) \prec 0
-    \end{equation*}
-\end{kframe}
+
+\textbf{Second order condition:}
+Hessian of~$f \in \mathcal{C}^2$ at stationary point $\xv^\ast \in \mathcal{S}$ is positive or negative definite:
+\vspace{-0.5\baselineskip}
+\begin{equation*}
+    H(\xv^\ast) \succ 0 \text{ or } H(\xv^\ast) \prec 0
+\end{equation*}
+
 
 \textbf{Interpretation:} Curvature of~$f$ at local optimum is either positive in all directions or negative in all directions.
 
@@ -143,17 +142,17 @@ The second order condition is \textbf{sufficient} for a stationary point.
 % \includegraphics[width = 0.3\textwidth]{figure_man/local_global_min.png} \quad \includegraphics[width = 0.3\textwidth]{figure_man/local_global_min_2D.png} \\
 % \vspace*{0.3cm}
 % \begin{tiny}
-% Two functions that are locally convex, but not globally convex. % Source (left): \url{https://en.wikipedia.org/wiki/Maxima_and_minima}. Source (right): \url{https://wngaw.github.io/linear-regression/}. 
+% Two functions that are locally convex, but not globally convex. % Source (left): \url{https://en.wikipedia.org/wiki/Maxima_and_minima}. Source (right): \url{https://wngaw.github.io/linear-regression/}.
 % \end{tiny}
 % \end{center}
 
-%\textbf{Note:} For a convex function, $\nabla^2 f(\xv)$ is always p.s.d.; therefore, any stationary point is the local (also global) minimum. 
+%\textbf{Note:} For a convex function, $\nabla^2 f(\xv)$ is always p.s.d.; therefore, any stationary point is the local (also global) minimum.
 
-% \framebreak 
+% \framebreak
 
 % \begin{itemize}
-% \item The necessary condition says that at every local minimum the derivative is \textbf{always} $0$. It is non-exclusive: Also at a saddle point (right plot), the derivative can be zero. 
-% \item In order to make sure that a stationary point also corresponds to a local minimum, we have to require that the curvature at this point is positive. 
+% \item The necessary condition says that at every local minimum the derivative is \textbf{always} $0$. It is non-exclusive: Also at a saddle point (right plot), the derivative can be zero.
+% \item In order to make sure that a stationary point also corresponds to a local minimum, we have to require that the curvature at this point is positive.
 % \end{itemize}
 % \begin{center}
 % 	\includegraphics[width=1\textwidth, keepaspectratio]{figure_man/minmaxsaddle.png}
@@ -184,7 +183,7 @@ Let $f:\mathcal{S} \to \R$ be \textbf{convex}.
 Then:
 
 \begin{itemize}
-    \item Any local minimum is \textbf{also global} minimum 
+    \item Any local minimum is \textbf{also global} minimum
     \item If $f$ \textbf{strictly convex}, $f$ has \textbf{at most one} local minimum which would also be unique global minimum on $\mathcal{S}$
     % \item Sublevel sets $S_1 = \{\xv~|~\fx < a\}$ and $S_2 = \{\xv~|~\fx \leq a \}$, $a\in \R$, form convex sets.
 \end{itemize}
@@ -194,16 +193,16 @@ Then:
     % hessian-eigenvalues.R
     % \vspace*{0.3cm}
     \begin{footnotesize}
-      Three quadratic forms.
-      \textbf{Left:} $H(\xv^\ast)$ has two positive eigenvalues.
-      \textbf{Middle:} $H(\xv^\ast)$ has positive and negative eigenvalue.
-      \textbf{Right:} $H(\xv^\ast)$ has positive and a zero eigenvalue.
-      %Source (left): \url{https://en.wikipedia.org/wiki/Maxima_and_minima}.
-      %Source (right): \url{https://wngaw.github.io/linear-regression/}. 
+        Three quadratic forms.
+        \textbf{Left:} $H(\xv^\ast)$ has two positive eigenvalues.
+        \textbf{Middle:} $H(\xv^\ast)$ has positive and negative eigenvalue.
+        \textbf{Right:} $H(\xv^\ast)$ has positive and a zero eigenvalue.
+        %Source (left): \url{https://en.wikipedia.org/wiki/Maxima_and_minima}.
+        %Source (right): \url{https://wngaw.github.io/linear-regression/}.
     \end{footnotesize}
 \end{center}
 
-\framebreak 
+\framebreak
 
 \textbf{Example:} Branin function
 
@@ -221,7 +220,7 @@ Then:
 \vspace{-3\baselineskip}
 
 Spectra of Hessians (numerically computed):
-    
+
 \begin{table}
     \centering
     \begin{tabular}{c|c|c}
@@ -235,8 +234,8 @@ Spectra of Hessians (numerically computed):
 % \includegraphics[width=0.4\columnwidth]{figure_man/branin3d/branin3D-optim-1.pdf}\\ \vspace*{-1.5cm}
 % \includegraphics[width=0.4\columnwidth]{figure_man/branin3d/branin3D-optim-2.pdf}\\\vspace*{-1.5cm}
 % \includegraphics[width=0.4\columnwidth]{figure_man/branin3d/branin3D-optim-3.pdf}
-    
-\framebreak 
+
+\framebreak
 
 Definition: \textbf{Saddle point} at~$\xv$
 \begin{itemize}
@@ -258,15 +257,15 @@ Definition: \textbf{Saddle point} at~$\xv$
 
 \begin{itemize}
     \item $f(x,y) = x^2 - y^2$, $\nabla f(x,y) = (2x,-2y)^T$,
-        
+
         $H_f(x,y) = \begin{pmatrix}2 & 0 \\ 0 & -2\end{pmatrix}$
-        
+
         $\implies$ Saddle point at $(0,0)$ (sufficient condition met)
 
     \vspace{\baselineskip}
-        
+
     \item $g(x,y) = x^4 - y^4$, $\nabla g(x,y) = (4x^3,-4y^3)^T$,
-    
+
         $H_g(x,y) = \begin{pmatrix}12x^2 & 0 \\ 0 & -12y^2\end{pmatrix}$
 
         $\implies$ Saddle point at $(0,0)$ (sufficient condition \textbf{not} met)
@@ -277,6 +276,5 @@ Definition: \textbf{Saddle point} at~$\xv$
 \endlecture
 
 \end{document}
-  
-  
-  
+
+

@@ -6,11 +6,11 @@
 
 
 \newcommand{\titlefigure}%{figure_man/hinge_vs_l2.pdf}
-{figure_man/tangent.png} 
+{figure_man/tangent.png}
 \newcommand{\learninggoals}{
 \item Definition of smoothness
 \item Uni- \& multivariate differentiation
-\item Gradient, partial derivatives 
+\item Gradient, partial derivatives
 \item Jacobian matrix
 \item Hessian matrix
 \item Lipschitz continuity
@@ -43,7 +43,7 @@ $$
 f'(x) := \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
 $$
 
-Intuitively: $f$ can be approxed locally by a lin. fun. with slope $m = f'(x)$. 
+Intuitively: $f$ can be approxed locally by a lin. fun. with slope $m = f'(x)$.
 
 \begin{figure}
     \centering
@@ -87,9 +87,9 @@ Intuitively: $f$ can be approxed locally by a lin. fun. with slope $m = f'(x)$.
 
 
 \begin{center}
-\includegraphics[width = 0.5\textwidth]{figure_man/hinge_vs_l2.pdf} \\ 
+\includegraphics[width = 0.5\textwidth]{figure_man/hinge_vs_l2.pdf} \\
 \begin{footnotesize}
-$f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-continuous. 
+$f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-continuous.
 \end{footnotesize}
 \end{center}
 
@@ -98,7 +98,7 @@ $f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-co
 
 \begin{vbframe}{Multivariate differentiability}
 
-\textbf{Definition:} $f: \mathcal{S}\subseteq \R^d \to \R$ is \textbf{differentiable} in $\xv \in \mathcal{S}$ if there exists a (continuous) linear map $\nabla f(\xv): \mathcal{S}\subseteq \R^d \to \R^d$ with %it can be locally approximated by a linear function in $\xv$. 
+\textbf{Definition:} $f: \mathcal{S}\subseteq \R^d \to \R$ is \textbf{differentiable} in $\xv \in \mathcal{S}$ if there exists a (continuous) linear map $\nabla f(\xv): \mathcal{S}\subseteq \R^d \to \R^d$ with %it can be locally approximated by a linear function in $\xv$.
 
 $$
 \lim_{\bm{h} \to 0} \frac{f(\xv + \bm{h}) - f(\xv) - \nabla f(\xv)^T \cdot \bm{h}}{||\bm{h}||} = 0
@@ -140,13 +140,13 @@ Source: \url{https://github.com/jermwatt/machine_learning_refined}.
 
 \begin{vbframe}{Directional derivative}
 
-The \textbf{directional derivative} tells how fast $f: \mathcal{S} \to \R$ is changing w.r.t. an arbitrary direction $\bm{v}$: 
+The \textbf{directional derivative} tells how fast $f: \mathcal{S} \to \R$ is changing w.r.t. an arbitrary direction $\bm{v}$:
 
  $$
-   D_{\bm{v}} \fx := \lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h} = \nabla \fx^T \cdot \bm v. 
+   D_{\bm{v}} \fx := \lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h} = \nabla \fx^T \cdot \bm v.
  $$
 
- 
+
 \textbf{Example: } The directional derivative for $\bm{v} = (1, 1)$ is:
 
 $$
@@ -167,13 +167,13 @@ NB: Some people require that $||\bm{v}|| = 1$. Then, we can identify $D_{\bm{v}}
 		\includegraphics[width = 0.4\textwidth]{figure_man/gradient3.png} \includegraphics[width = 0.4\textwidth]{figure_man/gradient.png}
 	\end{center}
 	\begin{footnotesize}
-    	\textbf{Proof}: Let $\bm{v}$ be a vector with $\|\bm{v}\|=1$ and $\theta$ the angle between $\bm{v}$ and $\nabla \fx$. 
+    	\textbf{Proof}: Let $\bm{v}$ be a vector with $\|\bm{v}\|=1$ and $\theta$ the angle between $\bm{v}$ and $\nabla \fx$.
         \begin{equation*}
             D_{\bm{v}}\fx = \nabla \fx^T \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
         \end{equation*}
     	by the cosine formula for dot products and $\|\bm{v}\| = 1$.
         $\cos(\theta)$ is maximal if $\theta = 0$, hence if $\bm{v}$ and $\nabla \fx$ point in the same direction.
-        
+
     	(Alternative proof: Apply Cauchy-Schwarz to $\nabla \fx^T \bm{v}$ and look for equality.)
 
         Analogous: Negative gradient $- \nabla \fx$ points in direction of greatest \textit{de}crease
@@ -199,7 +199,7 @@ For vector-valued function~$f = (f_1,\dots,f_m)^T$, $f_j:\mathcal{S}\to\R$, the 
     J_f(\xv) = \begin{pmatrix}
         \nabla f_1(\xv)^T \\
         \vdots \\
-        \nabla f_m(\xv)^T 
+        \nabla f_m(\xv)^T
 	\end{pmatrix}
     =
     \begin{pmatrix}
@@ -226,14 +226,14 @@ For vector-valued function~$f = (f_1,\dots,f_m)^T$, $f_j:\mathcal{S}\to\R$, the 
 
 Let $f\in\mathcal{C}^1$ and~$\xv_0\in\mathcal{S}$.
 
-\begin{kframe}
-    \textbf{Inverse function theorem:} Let~$\yv_0=f(\xv_0)$.
-        If~$\det(J_f(\xv_0))\not=0$, then
-        \begin{enumerate}
-            \item $f$ is invertible in a neighborhood of~$\xv_0$,
-            \item $f^{-1}\in\mathcal{C}^1$ with $J_{f^{-1}}(\yv_0) = J_f(\xv_0)^{-1}$.
-        \end{enumerate}
-\end{kframe}
+
+\textbf{Inverse function theorem:} Let~$\yv_0=f(\xv_0)$.
+    If~$\det(J_f(\xv_0))\not=0$, then
+    \begin{enumerate}
+        \item $f$ is invertible in a neighborhood of~$\xv_0$,
+        \item $f^{-1}\in\mathcal{C}^1$ with $J_{f^{-1}}(\yv_0) = J_f(\xv_0)^{-1}$.
+    \end{enumerate}
+
 
 \begin{itemize}
     \item $|{\det(J_f(\xv_0))}|$: factor by which~$f$ expands/shrinks volumes near~$\xv_0$
@@ -251,7 +251,7 @@ For real-valued function $f:\mathcal{S} \to \R$, the \textbf{Hessian} matrix $H:
 \begin{equation*}
     H(\xv) =\nabla^2 \fx = \left(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\right)_{i,j=1,\ldots,d}
 \end{equation*}
-  
+
 \medskip
 
 \textbf{Note:} Hessian of~$f$ is Jacobian of~$\nabla f$
@@ -263,7 +263,7 @@ Then:
 \begin{equation*}
     H(\xv) = \begin{pmatrix}
         -\cos(2x_2)\cdot\sin(x_1) & -2\cos(x_1)\cdot\sin(2x_2) \\
-        -2\cos(x_1)\cdot\sin(2x_2) & -4\cos(2x_2)\cdot\sin(x_1) 
+        -2\cos(x_1)\cdot\sin(2x_2) & -4\cos(2x_2)\cdot\sin(x_1)
     \end{pmatrix}
 \end{equation*}
 
@@ -302,35 +302,35 @@ and thus $\lambda_{1}=4, \lambda_{2}=1$, $\bm{v}_{1}=(0, 1)^T$, and $\bm{v}_{2}=
 
 \vspace{-\baselineskip}
 
-\begin{kframe}
-    Function $h : \mathcal{S} \to \R^m$ is \textbf{Lipschitz continuous} if slopes are bounded:
 
-    \vspace{-1.25\baselineskip}
-    
-    \begin{equation*}
-        \|h(\xv) - h(\yv)\| \leq L \|\xv - \yv\| \quad \text{for each $\xv,\yv\in\mathcal{S}$ and some~$L>0$}
-    \end{equation*}
-\end{kframe}
+Function $h : \mathcal{S} \to \R^m$ is \textbf{Lipschitz continuous} if slopes are bounded:
+
+\vspace{-1.25\baselineskip}
+
+\begin{equation*}
+    \|h(\xv) - h(\yv)\| \leq L \|\xv - \yv\| \quad \text{for each $\xv,\yv\in\mathcal{S}$ and some~$L>0$}
+\end{equation*}
+
 
 \begin{itemize}
     \item \textbf{Examples} ($d=m=1$)\textbf{:} $\sin(x)$, $|x|$
     \item \textbf{Not} examples: $1/x$ (but \textit{locally} Lipschitz continuous), $\sqrt{x}$
     \item If $m=d$ and $h$ \textbf{differentiable}:
-        
+
         \vspace{-0.5\baselineskip}
-        
-        \begin{kframe}
+
+
             \vspace{-0.3\baselineskip}
             \begin{equation*}
                 \text{$h$ Lipschitz continuous with constant $L$} \Longleftrightarrow J_h \preccurlyeq L \cdot \mathbf{I}_d
             \end{equation*}
-        \end{kframe}
-        
+
+
         \begin{footnotesize}
             \textbf{Note:} $\Amat \preccurlyeq \mathbf{B} :\Longleftrightarrow \mathbf{B} - \Amat$ is positive semidefinite, i.e., $\mathbf{v}^T(\mathbf{B} - \Amat)\mathbf{v} \geq 0 \;\; \forall \mathbf{v} \neq 0$
 
             \medskip
-            
+
             \textbf{Proof} of \enquote{$\Rightarrow$} for $d=m=1$\textbf{:}
             \begin{equation*}
                 h'(x) = \lim_{\eps\to0} \frac{h(x+\eps)-h(x)}{\eps} \leq \lim_{\eps\to0}\underbrace{\left|\frac{h(x+\eps)-h(x)}{\eps}\right|}_{\leq L} \leq \lim_{\eps\to0}L = L
@@ -345,13 +345,13 @@ and thus $\lambda_{1}=4, \lambda_{2}=1$, $\bm{v}_{1}=(0, 1)^T$, and $\bm{v}_{2}=
     \begin{itemize}
         \item Let $f\in\mathcal{C}^2$.
             Since $\nabla^2 f$ is Jacobian of $h = \nabla f$ $(m=d)$:
-            
-            \begin{kframe}
+
+
                 \vspace{-\baselineskip}
                 \begin{equation*}
                     \text{$\nabla f$ Lipschitz continuous with constant $L$} \Longleftrightarrow \nabla^2 f \preccurlyeq L \cdot \mathbf{I}_d
                 \end{equation*}
-            \end{kframe}
+
         \item Equivalently, eigenvalues of $\nabla^2 f$ are bounded by~$L$
         \item \textbf{Interpretation:} Curvature in any direction is bounded by $L$
         \item Lipschitz gradients occur frequently in machine learning \\
