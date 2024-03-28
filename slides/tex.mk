@@ -1,5 +1,5 @@
 # Slide .tex files, relative paths
-TSLIDES = $(shell find . -maxdepth 1 -iname "slides-*.tex")
+TSLIDES = $(shell find . -maxdepth 1 -iname "slides*.tex")
 # Substitute file extension tex -> pdf for output pdf filenames
 TPDFS = $(TSLIDES:%.tex=%.pdf)
 # output pdf filenames for slides without margin (old 4:3 layout)
@@ -7,7 +7,22 @@ NOMARGINPDFS = $(TSLIDES:%.tex=%-nomargin.pdf)
 
 FLSFILES = $(TSLIDES:%.tex=%.fls)
 
-.PHONY: all most all-nomargin copy texclean clean
+.PHONY: all most all-nomargin most-nomargin copy texclean clean help pax
+
+help:
+	@echo "\n --- Rendering slides"
+	@echo "all                : Renders slides to PDF and runs texclean + copy (see below)"
+	@echo "all-normargin      : Same as all, but renders 4:3 slides with -nomargin.pdf suffix"
+	@echo "most               : Renders slides to PDF, does not copy or clean"
+	@echo "most-normargin     : Same as most, analogous to all-normagin"
+	@echo "\n --- Cleaning up"
+	@echo "texclean           : Deletes all LaTeX detrituts (.log, .aux, .nav, .synctex, ...)"
+	@echo "clean              : Runs texclean and deletes all rendered slides"
+	@echo "\n --- Copying to /slides-pdf/"
+	@echo "copy               : Copies PDF files to /slides-pdf/"
+	@echo "slides-pdf         : Runs texclean, renders slides, copies to /slides-pdf/, and texclean again"
+	@echo "\n --- Utilities"
+	@echo "pax                : Runs pdfannotextractor.pl (pax) to store hyperlinks etc. in .pax files for later use"
 
 # Default action compiles without margin and copies to slides-pdf!
 all: $(TPDFS)
@@ -53,6 +68,21 @@ $(FLSFILES): %.fls: %.tex
 copy:
 	cp *.pdf ../../slides-pdf
 
+# Extract pdf annotations, i.e. hyperlinks, for later reinsertion
+# When combining multiple PDFs into one (for slides/all/)
+# https://ctan.org/tex-archive/macros/latex/contrib/pax?lang=en
+# Depending on installation linked script in PATH does not have file extension
+pax:
+	@if command -v pdfannotextractor.pl &> /dev/null; then\
+		echo "Found pdfannotextractor.pl";\
+		pdfannotextractor.pl *.pdf;\
+	elif command -v pdfannotextractor &> /dev/null; then\
+		echo "Found pdfannotextractor";\
+		pdfannotextractor *.pdf;\
+	else\
+		echo "Did not find pdfannotextractor, install 'pax' with tlmgr";\
+	fi
+
 texclean:
 	-rm -rf *.out
 	-rm -rf *.dvi
@@ -70,6 +100,7 @@ texclean:
 	-rm -rf *.snm
 	-rm -rf *.vrb
 	-rm -rf *.fls
+	-rm -rf *.pax
 	-rm -rf *.fdb_latexmk
 	-rm -rf *.synctex.gz
 	-rm -rf *-concordance.tex
