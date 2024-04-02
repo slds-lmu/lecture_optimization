@@ -41,7 +41,8 @@ respectively.
 
 - Create a new subchapter for `<topic>`:
   - Create the folder `slides/<topic>`
-  - Copy one of the makefiles `Makefile` from another subchapter (e.g. `ml-basics`)
+  - Copy one of the makefiles `Makefile` from another subchapter (e.g. `all`)
+     - `slides/<topic>/Makefile` must contain `include ../tex.mk` and nothing else
   - __Note__ that all pdfs in the subchapter directory are ignored. PDFs in the figure folder of a subchapter on the other hand are valid.
 - Locally render a subchapter:
   - Change directory into the subchapter
