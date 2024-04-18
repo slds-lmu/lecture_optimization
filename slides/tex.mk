@@ -2,6 +2,8 @@
 TSLIDES = $(shell find . -maxdepth 1 -iname "slides*.tex")
 # Substitute file extension tex -> pdf for output pdf filenames
 TPDFS = $(TSLIDES:%.tex=%.pdf)
+# Substitute file extension tex -> pdf for output pdf filenames
+TPAXS = $(TSLIDES:%.tex=%.pax)
 # output pdf filenames for slides without margin (old 4:3 layout)
 NOMARGINPDFS = $(TSLIDES:%.tex=%-nomargin.pdf)
 
@@ -12,13 +14,13 @@ FLSFILES = $(TSLIDES:%.tex=%.fls)
 help:
 	@echo "\n --- Rendering slides"
 	@echo "all                : Renders slides to PDF and runs texclean + copy (see below)"
-	@echo "all-normargin      : Same as all, but renders 4:3 slides with -nomargin.pdf suffix"
 	@echo "most               : Renders slides to PDF, does not copy or clean"
+	@echo "all-normargin      : Same as all, but renders 4:3 slides with -nomargin.pdf suffix"
 	@echo "most-normargin     : Same as most, analogous to all-normagin"
 	@echo "\n --- Cleaning up"
 	@echo "texclean           : Deletes all LaTeX detrituts (.log, .aux, .nav, .synctex, ...)"
 	@echo "clean              : Runs texclean and deletes all rendered slides"
-	@echo "\n --- Copying to /slides-pdf/"
+	@echo "\n --- Copying to /slides-pdf/ (!! Linked from course website !!)"
 	@echo "copy               : Copies PDF files to /slides-pdf/"
 	@echo "slides-pdf         : Runs texclean, renders slides, copies to /slides-pdf/, and texclean again"
 	@echo "\n --- Utilities"
@@ -59,14 +61,15 @@ $(TPDFS): %.pdf: %.tex
 
 $(NOMARGINPDFS): %-nomargin.pdf: %.tex
 	touch nospeakermargin.tex
-	latexmk -pdf -jobname=%A-nomargin $<
+	latexmk -halt-on-error -pdf -jobname=%A-nomargin $<
 
 $(FLSFILES): %.fls: %.tex
 	-rm nospeakermargin.tex
-	latexmk -pdf -g $<
+	latexmk -halt-on-error -pdf -g $<
 
 copy:
-	cp *.pdf ../../slides-pdf
+	cp -u *.pdf ../../slides-pdf
+	cp -u *.pax ../../slides-pdf
 
 # Extract pdf annotations, i.e. hyperlinks, for later reinsertion
 # When combining multiple PDFs into one (for slides/all/)
@@ -107,4 +110,4 @@ texclean:
 	-rm -rf nospeakermargin.tex
 
 clean: texclean
-	-rm $(TPDFS) $(NOMARGINPDFS) 2>/dev/null
+	-rm $(TPDFS) $(NOMARGINPDFS) $(TPAXS) 2>/dev/null
