@@ -87,6 +87,28 @@
 \usepackage{framed}
 
 %--------------------------------------------------------%
+%       Cite button (version 2024-05)
+%--------------------------------------------------------%
+% Note this requires biber to be in $PATH when running,
+% telltale error in log would be e.g. Package biblatex Info: ... file 'authoryear.dbx' not found
+% aside from obvious "biber: command not found" or similar.
+
+\usepackage{hyperref}
+\usepackage{usebib}
+\usepackage[backend=biber, style=authoryear]{biblatex}
+
+% Only try adding a references file if it exists, otherwise
+% this would compile error when references.bib is not found
+\IfFileExists{references.bib} {
+  \addbibresource{references.bib}
+  \bibinput{references}
+}
+
+\newcommand{\citelink}[1]{%
+\NoCaseChange{\resizebox{!}{9pt}{\protect\beamergotobutton{\href{\usebibentry{\NoCaseChange{#1}}{url}}{\begin{NoHyper}\cite{#1}\end{NoHyper}}}}}%
+}
+
+%--------------------------------------------------------%
 %       Displaying code and algorithms
 %--------------------------------------------------------%
 
