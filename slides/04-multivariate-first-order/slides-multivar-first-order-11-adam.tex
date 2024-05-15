@@ -4,27 +4,23 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-
-\newcommand{\titlefigure}{figure_man/sattle_point2-50.png}
-\newcommand{\learninggoals}{
-\item Adaptive step sizes
-\item AdaGrad 
-\item RMSProp
-\item Adam
-}
-
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
-
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
-\date{}
 
 \begin{document}
 
-\lecturechapter{First order methods: Adam and friends}
-\lecture{\inserttitle}
-\sloppy
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  First order methods
+  }{% Lecture title  
+  Adam and friends
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/sattle_point2-50.png
+  }{
+    \item Adaptive step sizes
+    \item AdaGrad 
+    \item RMSProp
+    \item Adam
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{vbframe}{Adaptive step sizes}

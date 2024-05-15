@@ -4,28 +4,25 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
+% Also defined in latex-math/ml-nn.tex
 \newcommand{\Hess}{\mathbf{H}}
 
-\newcommand{\titlefigure}{figure_man/gdes_1.png}
-\newcommand{\learninggoals}{
-\item Convergence of GD
-\item Proof strategy and tools
-\item Descent lemma
-}
-
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
-
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
-\date{}
 
 \begin{document}
 
-\lecturechapter{Deep dive: \\Gradient descent and optimality}
-\lecture{\inserttitle}
-\sloppy
-	
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  Deep dive
+  }{% Lecture title  
+  Gradient descent and optimality
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/gdes_1.png
+  }{
+    \item Convergence of GD
+    \item Proof strategy and tools
+    \item Descent lemma
+}
+
 \begin{vbframe}{Setting}
 
 \begin{itemize}

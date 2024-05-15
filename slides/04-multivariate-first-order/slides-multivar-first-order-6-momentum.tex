@@ -4,28 +4,25 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-
-\newcommand{\titlefigure}{figure_man/momentum_illustration_medium.png}
-\newcommand{\learninggoals}{
-\item Recap of GD problems
-\item Momentum definition
-\item Unrolling formula
-\item Examples
-\item Nesterov
-}
-
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
-
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
-\date{}
 
 \begin{document}
 
-\lecturechapter{First order methods: GD with Momentum}
-\lecture{\inserttitle}
-\sloppy
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  First order methods
+  }{% Lecture title  
+  GD with Momentum
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/momentum_illustration_medium.png
+  }{
+    \item Recap of GD problems
+    \item Momentum definition
+    \item Unrolling formula
+    \item Examples
+    \item Nesterov
+}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{vbframe}{Recap: Weaknesses of Gradient Descent}
 \begin{itemize}

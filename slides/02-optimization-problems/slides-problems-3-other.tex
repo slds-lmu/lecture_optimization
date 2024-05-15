@@ -3,29 +3,23 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
-\usepackage{wrapfig}
-\usepackage{graphicx}
-
-\newcommand{\titlefigure}{figure_man/landscapes2.jpg}
-\newcommand{\learninggoals}{
-\item Discrete / feature selection
-\item Black-box / hyperparameter optimization
-\item Noisy
-\item Multi-objective
-}
-
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
 
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
-\date{}
 
 \begin{document}
 
-\lecturechapter{Optimization Problems: \\Other optimization problems}
-\lecture{\inserttitle}
-\sloppy
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  Optimization Problems
+  }{% Lecture title  
+  Other optimization problems
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/landscapes2.jpg
+  }{
+    \item Discrete / feature selection
+    \item Black-box / hyperparameter optimization
+    \item Noisy
+    \item Multi-objective    
+}
 
 \begin{vbframe}{Other classes of optimization problems}
 

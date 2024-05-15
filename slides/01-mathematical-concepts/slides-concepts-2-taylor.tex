@@ -3,28 +3,26 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
-\usepackage{graphicx}
+% \usepackage{graphicx}
 
-
-\newcommand{\titlefigure}{figure_man/Taylor2D/Taylor2D_1st100.png}
-\newcommand{\learninggoals}{
-\item Taylor's theorem (univariate)
-\item Taylor series (univariate)
-\item Taylor's theorem (multivariate)
-\item Taylor series (multivariate)}
-
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
 
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
-\date{}
+
 
 \begin{document}
 
-\lecturechapter{Mathematical Concepts: \\Taylor Approximations}
-\lecture{\inserttitle}
-\sloppy
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  Mathematical Concepts 
+  }{% Lecture title  
+  Taylor Approximation
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/Taylor2D/Taylor2D_1st100.png
+  }{
+    \item Taylor's theorem (univariate)
+    \item Taylor series (univariate)
+    \item Taylor's theorem (multivariate)
+    \item Taylor series (multivariate)
+}
 
 
 \begin{vbframe}{Taylor approximations}

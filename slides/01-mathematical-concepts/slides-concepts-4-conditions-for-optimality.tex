@@ -5,23 +5,22 @@
 \input{../../latex-math/basic-ml}
 
 
-\newcommand{\titlefigure}{figure_man/local_global_min_2D.png}
-\newcommand{\learninggoals}{
-\item Local and global optima
-\item First \& second order conditions}
-
-
 %\usepackage{animate} % only use if you want the animation for Taylor2D
 
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
-\date{}
 
 \begin{document}
 
-\lecturechapter{Mathematical Concepts: \\Conditions for optimality}
-\lecture{\inserttitle}
-\sloppy
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  Mathematical Concepts 
+  }{% Lecture title  
+  Conditions for optimality
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/local_global_min_2D.png
+  }{
+    \item Local and global optima
+    \item First \& second order conditions
+}
 
 \begin{vbframe}{Definition local and global minimum}
 Given $\mathcal{S} \subseteq \R^d$, $f: \mathcal{S} \to \R$:

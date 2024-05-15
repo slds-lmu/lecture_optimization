@@ -4,25 +4,21 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-
-\newcommand{\titlefigure}{figure_man/momentum_conv_osc.png}
-\newcommand{\learninggoals}{
-\item Momentum update in Eigenspace
-\item Effect of $\varphi$
-}
-
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
-
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
-\date{}
 
 \begin{document}
 
-\lecturechapter{First order methods: Momentum on quadratic forms}
-\lecture{\inserttitle}
-\sloppy
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  First order methods
+  }{% Lecture title  
+  Momentum on quadratic forms
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/momentum_conv_osc.png
+  }{
+    \item Momentum update in Eigenspace
+    \item Effect of $\varphi$
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{vbframe}{Recap: Momentum update}
