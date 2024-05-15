@@ -94,12 +94,13 @@
 % aside from obvious "biber: command not found" or similar.
 
 \usepackage{hyperref}
-\usepackage{usebib}
-\usepackage[backend=biber, style=authoryear]{biblatex}
 
 % Only try adding a references file if it exists, otherwise
 % this would compile error when references.bib is not found
 \IfFileExists{references.bib} {
+  \usepackage{usebib}
+  \usepackage[backend=biber, style=authoryear]{biblatex}
+
   \addbibresource{references.bib}
   \bibinput{references}
 }

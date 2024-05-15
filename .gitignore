@@ -49,6 +49,7 @@ exercises/*/.ipynb_checkpoints/
 **.bbl
 **.blg
 **.bcf
+**.bcf-SAVE-ERROR
 **.run.xml
 
 #----------------------------------------------------------#

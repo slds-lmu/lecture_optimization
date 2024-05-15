@@ -111,7 +111,10 @@
 
 % Main title slide wrapper, includes
 % Automatically uses \title{} element to insert lecture title
-% Example title on slide: "CART: Advantages \& Disadvantages"
+% Example title on slide: 
+%   CART
+%   Advantages \& Disadvantages
+% -------------------------------
 % - Argument 1: Chunk title, e.g. CART
 % - Argument 2: Chapter title, e.g. Advantages \& Disadvantages
 % - Argument 3: Relative path to title figure, can be empty, e.g.: figure/cart_dis_1
@@ -123,9 +126,9 @@
     % Use lecture title only
     \lecturechapter{#2}
   \else%
-    % Otherwise append chunk title and lecture title separated by :
-    % Trim whitespaces from chunk name to avoid space before :
-    \lecturechapter{\trim{#1}:\\#2}
+    % Otherwise append chunk title and lecture title separated by newline
+    % Trim whitespaces from chunk name to avoid superflusous spaces
+    \lecturechapter{\trim{#1}\\#2}
   \fi
 
   % Setting title requires use of \title{} command before \begin{document},
