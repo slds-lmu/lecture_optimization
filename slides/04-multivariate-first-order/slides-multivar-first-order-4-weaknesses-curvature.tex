@@ -4,25 +4,21 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-
-\newcommand{\titlefigure}{figure_man/taylor_2D_quadratic.png}
-\newcommand{\learninggoals}{
-\item Effects of curvature
-\item Step size effect in GD
-}
-
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
-
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
-\date{}
 
 \begin{document}
 
-\lecturechapter{First order methods: \\Weaknesses of GD -- Curvature}
-\lecture{Optimization in Machine Learning}
-\sloppy
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  First order methods
+  }{% Lecture title  
+  Weaknesses of GD -- Curvature
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/taylor_2D_quadratic.png
+  }{
+    \item Effects of curvature
+    \item Step size effect in GD
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{vbframe}{Reminder: Local quadratic geometry}

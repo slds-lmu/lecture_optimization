@@ -6,26 +6,21 @@
 \usepackage[export]{adjustbox}
 
 
-\newcommand{\titlefigure}{figure_man/convex.png}
-\newcommand{\learninggoals}{
-\item Convex sets
-\item Convex functions
-}
-
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
-
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
-\date{}
+
 
 \begin{document}
 
-\lecturechapter{Mathematical Concepts: \\Convexity}
-\lecture{Optimization in Machine Learning}
-\sloppy
-
-
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  Mathematical Concepts 
+  }{% Lecture title  
+  Convexity
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/convex.png
+  }{
+    \item Convex sets
+    \item Convex functions
+}
 
 
 \begin{vbframe}{Convex sets}
@@ -55,7 +50,7 @@ $f$ is \textbf{convex} if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \
 \vspace{-0.5\baselineskip}
 
 \begin{equation*}
-    f(\xv + t(\mathbf{y} - \xv)) \le \fx + t(f(\mathbf{y}) - \fx).    
+    f(\xv + t(\mathbf{y} - \xv)) \le \fx + t(f(\mathbf{y}) - \fx).
 \end{equation*}
 
 Intuitively: Connecting line lies above function.
@@ -67,7 +62,7 @@ Intuitively: Connecting line lies above function.
         \textbf{Right:} Convex, but not strictly. }
 \end{center}
 
-\textbf{Strictly convex} if \enquote{$<$} instead of \enquote{$\le$}. \textbf{Concave} (strictly) if the inequality holds with \enquote{$\ge$} (\enquote{$>$}), respectively. 
+\textbf{Strictly convex} if \enquote{$<$} instead of \enquote{$\le$}. \textbf{Concave} (strictly) if the inequality holds with \enquote{$\ge$} (\enquote{$>$}), respectively.
 
 \vspace*{0.2cm}
 
@@ -83,9 +78,9 @@ Intuitively: Connecting line lies above function.
 
 \begin{footnotesize}
     \textbf{Proof:}
-    
+
     \vspace*{-0.75cm}
-    
+
     \begin{align*}
         f\left(x + t(y - x)\right) &= |x + t(y - x)| = |(1 - t) x + t \cdot y| \\
         & \le |(1 - t) x| + |t \cdot y| = (1 - t) |x| + t |y| \\
@@ -115,7 +110,7 @@ Intuitively: Connecting line lies above function.
         $w_1f_1 + \cdots + w_nf_n$ also convex \\
         In particular: Sum of convex functions also convex
     \item \textbf{Composition:} $g$ convex, $f$ linear: $h = g \circ f$ also convex
-    
+
         \begin{footnotesize}
             \textbf{Proof:}
             \begin{align*}
@@ -127,7 +122,7 @@ Intuitively: Connecting line lies above function.
         \end{footnotesize}
     \item \textbf{Elementwise maximization:} $f_1,\ldots,f_n$ convex functions: $g(\xv) = \max\left\lbrace f_1(\xv),\ldots,f_n(\xv) \right\rbrace$ also convex
 \end{itemize}
-    
+
 \end{vbframe}
 
 
@@ -136,7 +131,7 @@ Prove convexity via \textbf{gradient}:
 
 \vspace{-0.5\baselineskip}
 
-\begin{kframe}
+
     Let $f$ be differentiable.
 
     \vspace{-\baselineskip}
@@ -146,7 +141,7 @@ Prove convexity via \textbf{gradient}:
         \Longleftrightarrow \\
         f(\yv) \overset{(>)}{\geq} f(\xv) + \nabla f(\xv)^T (\yv-\xv) \textnormal{ for all $\xv,\yv\in\mathcal{S}$ (s.t. $\xv \not= \yv$)}
     \end{gather*}
-\end{kframe}
+
 
 \vspace{-0.2cm}
 
@@ -170,7 +165,7 @@ Matrix~$A$ is \textbf{positive (semi)definite} (p.(s.)d.) if $\bm{v}^T A \bm{v} 
 
 Prove convexity via \textbf{Hessian}:
 
-\begin{kframe}
+
     Let $f \in \mathcal{C}^2$ and $H(\xv)$ be its Hessian.
 
     \vspace{-\baselineskip}
@@ -178,14 +173,14 @@ Prove convexity via \textbf{Hessian}:
     \begin{gather*}
         \textnormal{$f$ (strictly) convex} \Longleftrightarrow H(\xv) \overset{(\succ)}{\succcurlyeq} 0 \textnormal{ for all $\xv \in \mathcal{S}$}
     \end{gather*}
-\end{kframe}
+
 
 \textbf{Alternatively:} Since $H(\xv)$ symmetric for $f \in \mathcal{C}^2$:
 
 \vspace{-0.5\baselineskip}
 
 \begin{equation*}
-    H(\xv) \succcurlyeq 0 \Leftrightarrow \textnormal{all eigenvalues of $H(\xv)$ $\ge 0$}    
+    H(\xv) \succcurlyeq 0 \Leftrightarrow \textnormal{all eigenvalues of $H(\xv)$ $\ge 0$}
 \end{equation*}
 
 \framebreak
@@ -200,7 +195,7 @@ Prove convexity via \textbf{Hessian}:
 % \framebreak
 
 \begin{footnotesize}
-\textbf{Example:} $f(\xv) = x_1^2 + x_2^2 - 2x_1x_2$, $\nabla f(\xv) = \begin{pmatrix}2x_1 - 2x_2 \\ 2x_2 - 2x_1\end{pmatrix}$, $H(\xv) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}. 
+\textbf{Example:} $f(\xv) = x_1^2 + x_2^2 - 2x_1x_2$, $\nabla f(\xv) = \begin{pmatrix}2x_1 - 2x_2 \\ 2x_2 - 2x_1\end{pmatrix}$, $H(\xv) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}.
 $
 
 \begin{center}
@@ -231,12 +226,12 @@ $f$ is convex since $H(\xv)$ is p.s.d. for all $\xv\in\mathcal{S}$:
 
 
 \begin{vbframe}{Convex functions in optimization}
-  
+
 \begin{itemize}
     \item For a convex function, every local optimum is also a global one \\
         $\Rightarrow$ No need for involved global optimizers, local ones are enough
     \item A strictly convex function has at most one optimal point
-     \item Example for strictly convex function without optimum: $\exp$ on $\R$
+    \item Example for strictly convex function without optimum: $\exp$ on $\R$
 \end{itemize}
 
 \begin{figure}
@@ -247,16 +242,16 @@ $f$ is convex since $H(\xv)$ is p.s.d. for all $\xv\in\mathcal{S}$:
         \textbf{Middle:} Convex, but not strictly; all local optima are also global ones but not unique.
         \textbf{Right:} Not convex.}
 \end{figure}
-  
+
 \framebreak
 
-\begin{kframe}
+
     {\large \enquote{... in fact, the great watershed in optimization isn't between linearity and nonlinearity, but convexity and nonconvexity.}}
 
     \medskip
-    
+
     -- R. Tyrrell Rockafellar. \textit{SIAM Review}, 1993.
-\end{kframe}
+
 
 \vspace{-0.5\baselineskip}
 

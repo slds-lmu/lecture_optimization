@@ -4,25 +4,22 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-
-\newcommand{\titlefigure}{figure_man/multimodal.png}
-\newcommand{\learninggoals}{
-\item Multimodality, GD result can be arbitrarily bad
-\item Saddle points, major problem in NN error landscapes, GD can get stuck or slow crawling
-}
-
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
-
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
-\date{}
 
 \begin{document}
 
-\lecturechapter{First order methods: \\GD -- Multimodality and Saddle points}
-\lecture{Optimization in Machine Learning}
-\sloppy
+
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  First order methods
+  }{% Lecture title  
+  GD -- Multimodality and Saddle points
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/multimodal.png
+  }{
+    \item Multimodality, GD result can be arbitrarily bad
+    \item Saddle points, major problem in NN error landscapes, GD can get stuck or slow crawling
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{vbframe}{Unimodal vs. Multimodal loss surfaces}

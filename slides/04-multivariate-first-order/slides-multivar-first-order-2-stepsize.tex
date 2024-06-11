@@ -4,31 +4,24 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-
-\newcommand{\titlefigure}{figure_man/big_small_stepsize_cropped.png}
-\newcommand{\learninggoals}{
-\item Impact of step size
-\item Fixed vs. adaptive step size
-\item Exact line search
-\item Armijo rule \& Backtracking
-\item Bracketing \& Pinpointing
-}
-
-
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
-
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl}
-\date{}
 
 \begin{document}
 
-\lecturechapter{First order methods: \\Step size and optimality}
-\lecture{Optimization in Machine Learning}
-\sloppy
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  First order methods
+  }{% Lecture title  
+  Step size and optimality
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/big_small_stepsize_cropped.png
+  }{
+    \item Impact of step size
+    \item Fixed vs. adaptive step size
+    \item Exact line search
+    \item Armijo rule \& Backtracking
+    \item Bracketing \& Pinpointing
+}
 
-	
 
 	\begin{vbframe}{Controlling step size: Fixed \& adaptive}
 		

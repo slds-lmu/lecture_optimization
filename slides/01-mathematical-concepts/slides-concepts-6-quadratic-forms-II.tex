@@ -4,22 +4,20 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-
-\newcommand{\titlefigure}{figure_man/quadratic_functions_2D_example_2_4.png}
-\newcommand{\learninggoals}{
-\item Geometry of quadratic forms
-\item Spectrum of Hessian}
-
-
 \title{Optimization in Machine Learning}
-%\author{Bernd Bischl, Christoph Molnar, Daniel Schalk, Fabian Scheipl}
-\date{}
 
 \begin{document}
 
-\lecturechapter{Mathematical Concepts: \\Quadratic forms II}
-\lecture{Optimization in Machine Learning}
-\sloppy
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  Mathematical Concepts 
+  }{% Lecture title  
+  Quadratic forms II
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/quadratic_functions_2D_example_2_4.png
+  }{
+    \item Geometry of quadratic forms
+    \item Spectrum of Hessian
+}
 
 % ------------------------------------------------------------------------------
 
@@ -27,13 +25,13 @@
 
 \vspace{-\baselineskip}
 
-\begin{kframe}
+
     \textbf{Recall}: Quadratic form $q$
     \begin{itemize}
         \item Univariate: $q(x) = ax^2 + bx + c$
         \item Multivariate: $q(\xv) = \xv^T \Amat \xv + \bm{b}^T \xv + c$
     \end{itemize}
-\end{kframe}
+
 
 \textbf{General observation:} If $q\geq0$ ($q\leq0)$, $q$ is convex (concave)
 
@@ -227,7 +225,7 @@ Recall: \textbf{Second order condition for optimality} is \textbf{sufficient}.
 
 We skipped the \textbf{proof} at first, but can now catch up on it.
 
-\begin{kframe}
+
     \footnotesize
      If $H(\xv^\ast) \succ 0$ at stationary point~$\xv^\ast$, then $\xv^\ast$ is local minimum ($\prec$ for maximum).
 
@@ -251,7 +249,7 @@ We skipped the \textbf{proof} at first, but can now catch up on it.
     \begin{equation*}
         f(\xv) \geq f(\xv^\ast) + \underbrace{\frac{1}{2} \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2 + R_2(\xv,\xv^\ast)}_{>0} > f(\xv^\ast) \quad\text{for each $\xv$ with $\|\xv-\xv^\ast\|<\eps$}.
     \end{equation*}
-\end{kframe}
+
 
 \framebreak
 

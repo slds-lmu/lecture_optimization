@@ -16,8 +16,9 @@ speakermargin.tex
 #--------------------------------------------#
 
 # The only slide PDF output in this repo should be in slides-pdf
-# include both slides-xyz (i2ml) and slideXY- (iml) formats
-slides/*/slides*.pdf 
+# include both slides-xyz (i2ml) and slideXY- / tXY- (iml) formats
+slides/*/slides*.pdf
+slides/*/t*.pdf
 
 # Similar things apply to exercises and exercises-pdf
 exercises/*/*.pdf
@@ -25,7 +26,8 @@ exercises/*/*.tex
 exercises/*/*.log
 exercises/*/figure/unnamed-*.pdf
 exercises/*/figure/unnamed-chunk*
-
+exercises/*/*_files/
+exercises/*/.ipynb_checkpoints/
 
 #-----------------------------------------------------------------------------#
 #  TeX intermediate stuff everybody loves to hate and hates to commit to git  #
@@ -42,6 +44,13 @@ exercises/*/figure/unnamed-chunk*
 *.vrb
 *.synctex.gz
 *.synctex(busy)
+**.pax # pdfannotextractor / pax
+*.pax
+**.bbl
+**.blg
+**.bcf
+**.bcf-SAVE-ERROR
+**.run.xml
 
 #----------------------------------------------------------#
 #  Editor-specific stuff that should generally be ignored  #
