@@ -197,26 +197,35 @@
 
     \medskip
 
-    \item $\textcolor{magenta}{\bm{v}_\text{max}}$,$\textcolor{orange}{\bm{v}_\text{min}}$ principal axes of contour ellipses (principal axis theorem)
-
+    \item Contour lines of any quadratic form are ellipses \\
+    (with eigenvectors of A as principal axes, principal axis theorem)
         \vspace{0.25\baselineskip}
     
         \begin{footnotesize}
-            \textbf{Proof:} With $\bm{v}=\mathbf{V}^T\xv$:
-
-            \vspace{-0.5\baselineskip}
-
-            \begin{equation*}
-                q(\xv) = \xv^T \mathbf{H} \xv + \bm{b}^T\xv + c = \bm{v}^T\Lambda\bm{v} + \bm{b}^T V \bm{v} + c =: \tilde{q}(\bm{v})
-            \end{equation*}
-
-            Now:
-            \begin{equation*}
-                q(\bm{v}_j) = \mathbf{e}_j^T\Lambda\mathbf{e}_j + \bm{b}^T V \mathbf{e}_j + c = \tilde{q}(\mathbf{e}_j)
-            \end{equation*}
-
-            Especially: $q(\textcolor{magenta}{\bm{v}_\text{max}}) = \textcolor{magenta}{\lambda_\text{max}} = \tilde{q}(\mathbf{e}_1) \quad\text{and}\quad q(\textcolor{orange}{\bm{v}_\text{min}}) = \textcolor{orange}{\lambda_\text{min}} = \tilde{q}(\mathbf{e}_d)$
+        Look at $q(\xv) = \xv^T \bm{A} \xv + \bm{b}^T \xv + c$ \\
+        Now use $\bm{y} = \xv - \bm{w} = \xv + \frac{1}{2} \bm{A}^{-1} \bm{b}$\\
+        This already gives us the general form of an ellipse:\\
+        $\bm{y}^T \bm{A} \bm{y} = (\xv-\bm{w})^T \bm{A} (\xv-\bm{w}) = q(\xv) + const$\\
+        If we use $\bm{z} = \bm{V}^T y$ we obtain it in standard form\\
+        $\sumin \lambda_i z_i^2 = \bm{z}^T \bm{\Lambda} \bm{z} = y^T \bm{V} \bm{\Lambda} \bm{V}^T y = \bm{y}^T \bm{A} \bm{y} = q(\xv) + const $
         \end{footnotesize}
+
+        
+        %     \textbf{Proof:} With $\bm{v}=\mathbf{V}^T\xv$:
+
+        %     \vspace{-0.5\baselineskip}
+
+        %     \begin{equation*}
+        %         q(\xv) = \xv^T \mathbf{H} \xv + \bm{b}^T\xv + c = \bm{v}^T\Lambda\bm{v} + \bm{b}^T V \bm{v} + c =: \tilde{q}(\bm{v})
+        %     \end{equation*}
+
+        %     Now:
+        %     \begin{equation*}
+        %         q(\bm{v}_j) = \mathbf{e}_j^T\Lambda\mathbf{e}_j + \bm{b}^T V \mathbf{e}_j + c = \tilde{q}(\mathbf{e}_j)
+        %     \end{equation*}
+
+        %     Especially: $q(\textcolor{magenta}{\bm{v}_\text{max}}) = \textcolor{magenta}{\lambda_\text{max}} = \tilde{q}(\mathbf{e}_1) \quad\text{and}\quad q(\textcolor{orange}{\bm{v}_\text{min}}) = \textcolor{orange}{\lambda_\text{min}} = \tilde{q}(\mathbf{e}_d)$
+        % \end{footnotesize}
 \end{itemize}
 
 Recall: \textbf{Second order condition for optimality} is \textbf{sufficient}.
@@ -241,13 +250,13 @@ We skipped the \textbf{proof} at first, but can now catch up on it.
         f(\xv) = f(\xv^\ast) + \underbrace{\nabla f(\xv^\ast)}_{=0}{}^T(\xv-\xv^\ast) + \frac{1}{2}\underbrace{(\xv-\xv^\ast)^T H(\xv^\ast)(\xv-\xv^\ast)}_{\geq \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2 \text{ (see above)}} + \underbrace{R_2(\xv,\xv^\ast)}_{=o(\|\xv-\xv^\ast\|^2)}.
     \end{equation*}
 
-    Choose~$\eps>0$ s.t. $|R_2(\xv,\xv^\ast)| < \frac{1}{2} \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2$ for each~$\xv$ with $\|\xv-\xv^\ast\|<\eps$.
+    Choose~$\eps>0$ s.t. $|R_2(\xv,\xv^\ast)| < \frac{1}{2} \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2$ for each~$\xv \neq \xv^\ast$ with $\|\xv-\xv^\ast\|<\eps$.
     Then:
 
     \vspace{-1.25\baselineskip}
 
     \begin{equation*}
-        f(\xv) \geq f(\xv^\ast) + \underbrace{\frac{1}{2} \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2 + R_2(\xv,\xv^\ast)}_{>0} > f(\xv^\ast) \quad\text{for each $\xv$ with $\|\xv-\xv^\ast\|<\eps$}.
+        f(\xv) \geq f(\xv^\ast) + \underbrace{\frac{1}{2} \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2 + R_2(\xv,\xv^\ast)}_{>0} > f(\xv^\ast) \quad\text{for each $\xv \neq \xv^\ast$ with $\|\xv-\xv^\ast\|<\eps$}.
     \end{equation*}
 
 
