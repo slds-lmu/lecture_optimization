@@ -4,7 +4,7 @@
 	<<1d-plot, echo=TRUE, out.width="50%">>=
 	library(ggplot2)
 	
-  f <- function(x, y) cos(x^2 + y^2 + x*y)
+  f <- function(x, y) - cos(x^2 + y^2 + x*y)
   x = seq(-2, 2, by=0.01)
   xx = expand.grid(X1 = x, X2 = x)
 
