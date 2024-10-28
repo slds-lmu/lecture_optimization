@@ -1,0 +1,49 @@
+### LM ###
+
+# https://stackoverflow.com/questions/76282769/r-performance-of-running-linear-regressions-with-lm-vs-calculating-with-matr
+# https://www.r-bloggers.com/2011/07/even-faster-linear-model-fits-with-r-using-rcppeigen/
+# https://stackoverflow.com/questions/39606224/does-eigen-have-self-transpose-multiply-optimization-like-h-transposeh
+
+- teste dass das richtige ergebnis rauskommt, gegen LM
+- untersuche numerische genauigkeit
+- was passiert bei fast 0 rang
+- plotte skalierung gegen n und p
+  compu costs = O(n * p^2 + p^3). show this in plots
+- flags im compiler setzen wie hier
+  https://stackoverflow.com/questions/50544379/warning-in-rcppnumerical-and-rcppeigen-on-ubuntu-18-04
+  https://github.com/RcppCore/RcppArmadillo/issues/312
+  also check 20.1 here
+  https://kohei-kawaguchi.github.io/EmpiricalIO/rcpp.html
+- dotfiles commiten und pushen
+
+
+- debugger: an sehen:
+    If there is a run-time bug in the C++ function, you may have to use some debugger for C++ to debug the function.
+    In osx, you can debug the C++ function called from R function in the following way.
+    Open the terminal and run R with the debugger lldb by typing the following command in the terminal:
+    # terminal
+    R -d lldb
+- zuende lesen
+https://cran.r-project.org/web/packages/Rcpp/vignettes/Rcpp-attributes.pdf
+https://cran.r-project.org/web/packages/RcppEigen/vignettes/RcppEigen-Introduction.pdf
+- man kann rngscope injection ausmachen.., spart 2 ms....
+  // [[Rcpp::export(rng = false)]]
+- create a fun helper to add 1-col to X
+- kateg features einbauen
+
+### LM mit L2 ###
+
+### LogReg ###
+
+- welche strittweite benutzen wir?
+- wann stoppen wir? vermutlich maxiter festlegen, aber wir wollen wohl stoppen wenn norm von grad klein wird? 
+- bei der sigmoid hab es numerisch bessere impl?
+- können wir generell numerische probleme bekommen weil probs 0 oder 1 werden?
+- im benchmark müssen wir gucken dass wir nicht nur schnell sind sondern auch genau
+- bei den simul daten geht aktuell nur p = 2
+- bei den verschiedenen algos genauigkeit vom loss prüfen.
+  müssen wir wohl bei LM auch machen. besser als vgl in theta
+- bei bench_n den loss für die verfahren mitspeichern
+- maybe count overshoots and undershoots in simple GD?
+- measure speed of GD in R and CPP, to see how much diff simply the langiage makes
+- averaging vom gradienten genauer ansehen

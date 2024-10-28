@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/share/R/include/**",
+                "/home/bischl/R/x86_64-pc-linux-gnu-library/4.2/Rcpp/**",
+                "/home/bischl/R/x86_64-pc-linux-gnu-library/4.2/RcppEigen/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
