@@ -165,16 +165,16 @@ Outcome will depend on start point.
 	Let $\D = \Dset$ and minimize 
 
 	$$
-		\risket = \sumin \left(\thetab^\top \xi - \yi\right)^2
+		\risket = \sumin \left(\thetav^\top \xi - \yi\right)^2
 	$$
 	\textbf{NB: } For illustration, we use GD even though closed-form solution exists. GD-like (more adv.) approaches like this MIGHT make sense for large data, though.
 	\end{footnotesize}
 	
 	\begin{footnotesize}
 	\begin{eqnarray*}
-	\textbf{Gradient: } && \nabla_{\thetab}\riske(\thetab) =  \frac{\partial \riske(\thetab)}{\partial
-	\thetab} = - \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetab^{\top} \xv^{(i)}\right) \xv^{(i)} \\
-	% \textbf{GD Update: } && \thetatn \leftarrow \thetat + \alpha^{[t]} \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetab^{[t]\top} \xv^{(i)}\right) \xv^{(i)}
+	\textbf{Gradient: } && \nabla_{\thetav}\riske(\thetav) =  \frac{\partial \riske(\thetav)}{\partial
+	\thetav} = - \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetav^{\top} \xv^{(i)}\right) \xv^{(i)} \\
+	% \textbf{GD Update: } && \thetatn \leftarrow \thetat + \alpha^{[t]} \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetav^{[t]\top} \xv^{(i)}\right) \xv^{(i)}
 	\end{eqnarray*}
 	\end{footnotesize}
 
@@ -242,14 +242,14 @@ Gradient for ERM problem:
 \vspace*{-0.5cm}
 
 \begin{eqnarray*}
-- \pd{\risket}{\thetab} &=& - \pd{\sumin \Lxyit}{\thetab}= - \sumin \underbrace{\pd{\Lxyi}{f}}_{\text{pseudo residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetab}
+- \pd{\risket}{\thetav} &=& - \pd{\sumin \Lxyit}{\thetav}= - \sumin \underbrace{\pd{\Lxyi}{f}}_{\text{pseudo residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetav}
 \end{eqnarray*}
 
 \vspace*{-0.5cm}
 
 \begin{itemize}
 	\item \textbf{pseudo residuals} tell us how to distort $\fxi$ to achieve greatest decrease of $\Lxyi$ (best pointwise update)
-	\item $\pd{\fxit}{\thetab}$ tells us how to modify $\thetab$ accordingly and wiggle model output
+	\item $\pd{\fxit}{\thetav}$ tells us how to modify $\thetav$ accordingly and wiggle model output
 	\item GD step sums up these modifications across all observations $i$
 \end{itemize}
 
