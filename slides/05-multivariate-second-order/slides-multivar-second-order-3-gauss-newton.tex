@@ -26,18 +26,18 @@
 Consider the problem of minimizing a sum of squares
 
 \begin{equation*}
-	\min_{\thetab} g(\thetab),
+	\min_{\thetav} g(\thetav),
 \end{equation*}
 where
 \begin{equation*}
-    g(\thetab) = r(\thetab)^\top r(\thetab) = \sum_{i = 1}^n r_i(\bm{\theta})^2
+    g(\thetav) = r(\thetav)^\top r(\thetav) = \sum_{i = 1}^n r_i(\bm{\theta})^2
 \end{equation*}
 and
 \begin{align*}
 	r: \R^d &\to \R^n \\
-	\thetab &\mapsto (r_1(\thetab), \ldots, r_n(\thetab))^\top
+	\thetav &\mapsto (r_1(\thetav), \ldots, r_n(\thetav))^\top
 \end{align*}
-maps parameters $\thetab$ to residuals $r(\thetab)$
+maps parameters $\thetav$ to residuals $r(\thetav)$
 
 \framebreak 
 
@@ -47,12 +47,12 @@ maps parameters $\thetab$ to residuals $r(\thetab)$
 
 \textbf{Least squares regression:}
 \begin{equation*}
-    \risket = \sumin \Lxyit = \sumin \underbrace{\left(\yi - \fxit \right)^2}_{r_i(\thetab)^2}
+    \risket = \sumin \Lxyit = \sumin \underbrace{\left(\yi - \fxit \right)^2}_{r_i(\thetav)^2}
 \end{equation*}
 
 \begin{itemize}
-    \item $\fxit$ might be a function that is \textbf{nonlinear in $\thetab$}
-    \item Residuals: $r_i = y^{(i)} - f(\xv^{(i)} \,|\, \thetab)$
+    \item $\fxit$ might be a function that is \textbf{nonlinear in $\thetav$}
+    \item Residuals: $r_i = y^{(i)} - f(\xv^{(i)} \,|\, \thetav)$
 \end{itemize}
 
 \vspace*{0.3cm} 
@@ -103,7 +103,7 @@ maps parameters $\thetab$ to residuals $r(\thetab)$
 
 Suppose, we suspect an \textit{exponential} relationship between $x \in \R$ and $y$ 
 \begin{equation*}
-    f(x \,|\, \thetab) = \theta_1 \cdot \exp(\theta_2 \cdot x), \quad \theta_1, \theta_2 \in \R
+    f(x \,|\, \thetav) = \theta_1 \cdot \exp(\theta_2 \cdot x), \quad \theta_1, \theta_2 \in \R
 \end{equation*}
 
 % Die Residuen lauten also:
@@ -140,7 +140,7 @@ Suppose, we suspect an \textit{exponential} relationship between $x \in \R$ and 
 
 \textbf{Least squares problem:}
 \begin{equation*}
-    \min_{\thetab} g(\thetab) = \min_{\thetab} \sum_{i=1}^{5} \left(\yi - \theta_1 \exp\left(\theta_2 x^{(i)}\right)\right)^2
+    \min_{\thetav} g(\thetav) = \min_{\thetav} \sum_{i=1}^{5} \left(\yi - \theta_1 \exp\left(\theta_2 x^{(i)}\right)\right)^2
 \end{equation*}
 
 \end{vbframe}
@@ -150,14 +150,14 @@ Suppose, we suspect an \textit{exponential} relationship between $x \in \R$ and 
 
 \textbf{Approach:} Calculate Newton-Raphson update direction by solving:
 \begin{equation*}
-    \nabla^2 g(\bm{\theta}^{[t]}) \mathbf{d}^{[t]} = - \nabla g(\thetab^{[t]}).
+    \nabla^2 g(\bm{\theta}^{[t]}) \mathbf{d}^{[t]} = - \nabla g(\thetav^{[t]}).
 \end{equation*}
 
 Gradient is calculated via chain rule
 \begin{equation*}
-    \nabla g(\thetab) = \nabla (r(\thetab)^\top r(\thetab)) = 2 \cdot J_r(\thetab)^\top r(\thetab),
+    \nabla g(\thetav) = \nabla (r(\thetav)^\top r(\thetav)) = 2 \cdot J_r(\thetav)^\top r(\thetav),
 \end{equation*}
-where $J_r(\thetab)$ is Jacobian of $r(\thetab)$.
+where $J_r(\thetav)$ is Jacobian of $r(\thetav)$.
 
 \lz
 
@@ -165,11 +165,11 @@ In our example:
 
 \begin{equation*}
     \footnotesize
-    J_r(\thetab) = \mat{
-        \frac{\partial r_1(\thetab)}{\partial \theta_1} & \frac{\partial r_1(\thetab)}{\partial \theta_2} \\
-        \frac{\partial r_2(\thetab)}{\partial \theta_1} & \frac{\partial r_2(\thetab)}{\partial \theta_2} \\
+    J_r(\thetav) = \mat{
+        \frac{\partial r_1(\thetav)}{\partial \theta_1} & \frac{\partial r_1(\thetav)}{\partial \theta_2} \\
+        \frac{\partial r_2(\thetav)}{\partial \theta_1} & \frac{\partial r_2(\thetav)}{\partial \theta_2} \\
         \vdots & \vdots \\
-        \frac{\partial r_5(\thetab)}{\partial \theta_1} & \frac{\partial r_5(\thetab)}{\partial \theta_2}
+        \frac{\partial r_5(\thetav)}{\partial \theta_1} & \frac{\partial r_5(\thetav)}{\partial \theta_2}
         } = \mat{
             \exp(\theta_2 x^{(1)}) & x^{(1)} \theta_ 1 \exp(\theta_2 x^{(1)}) \\
             \exp(\theta_2 x^{(2)}) & x^{(2)} \theta_ 1 \exp(\theta_2 x^{(2)})\\ \exp(\theta_2 x^{(3)}) & x^{(3)} \theta_1 \exp(\theta_2 x^{(3)}) \\
@@ -186,8 +186,8 @@ Hessian of $g$, $\mathbf{H}_g = (H_{jk})_{jk}$, is obtained via product rule:
 \end{equation*}
 
 % \begin{eqnarray*}
-% \nabla^2_\theta \left(r(\thetab)^\top r(\thetab)\right) &=& \nabla_\theta \left(\nabla_\theta \left(r(\thetab)^\top(\thetab)\right)\right) = \nabla_\theta \left[2 \cdot  \nabla r(\thetab)^\top r(\thetab)\right] \\ 
-% &=& 2 \nabla_\theta r(\thetab)^\top \nabla_\theta r(\thetab) + 
+% \nabla^2_\theta \left(r(\thetav)^\top r(\thetav)\right) &=& \nabla_\theta \left(\nabla_\theta \left(r(\thetav)^\top(\thetav)\right)\right) = \nabla_\theta \left[2 \cdot  \nabla r(\thetav)^\top r(\thetav)\right] \\ 
+% &=& 2 \nabla_\theta r(\thetav)^\top \nabla_\theta r(\thetav) + 
 % \end{eqnarray*}
 
 
@@ -220,7 +220,7 @@ Gauss-Newton approximates $\mathbf{H}_g$ by dropping its second order part:
 \begin{align*}
     H_{jk} &= 2 \sum_{i=1}^n \left(\frac{\partial r_i}{\partial \theta_j}\frac{\partial r_i}{\partial \theta_k} + r_i \frac{\partial^2 r_i}{\partial \theta_j \partial \theta_k}\right) \\
     &\approx  2 \sum_{i=1}^n \frac{\partial r_i}{\partial \theta_j}\frac{\partial r_i}{\partial \theta_k} \\
-    &= 2 J_r(\thetab)^\top J_r(\thetab)
+    &= 2 J_r(\thetav)^\top J_r(\thetav)
 \end{align*}
 
 \textbf{Note}: We assume that
@@ -237,11 +237,11 @@ This assumption may be valid if:
 
 \framebreak 
 
-If $J_r(\thetab)^\top J_r(\thetab)$ is invertible, Gauss-Newton update direction is
+If $J_r(\thetav)^\top J_r(\thetav)$ is invertible, Gauss-Newton update direction is
 \begin{align*}
-    \mathbf{d}^{[t]} &= - \left[\nabla^2 g(\bm{\theta}^{[t]})\right]^{-1} \nabla g(\thetab^{[t]}) \\
-    &\approx - \left[J_r(\thetab^{[t]})^\top J_r(\thetab^{[t]})\right]^{-1} J_r(\thetab^{[t]})^\top r(\thetab) \\
-    &= - (J_r^\top J_r)^{-1} J_r^\top r(\thetab)
+    \mathbf{d}^{[t]} &= - \left[\nabla^2 g(\bm{\theta}^{[t]})\right]^{-1} \nabla g(\thetav^{[t]}) \\
+    &\approx - \left[J_r(\thetav^{[t]})^\top J_r(\thetav^{[t]})\right]^{-1} J_r(\thetav^{[t]})^\top r(\thetav) \\
+    &= - (J_r^\top J_r)^{-1} J_r^\top r(\thetav)
 \end{align*}
 
 \textbf{Advantage}:
@@ -252,10 +252,10 @@ If $J_r(\thetab)^\top J_r(\thetab)$ is invertible, Gauss-Newton update direction
 
 \textbf{Note:} Gauss-Newton can also be derived by starting with
 \begin{equation*}
-    r(\thetab) \approx r(\thetab^{[t]}) + J_r(\thetab^{[t]})^\top (\thetab - \thetab^{[t]}) = \tilde{r}(\thetab)
+    r(\thetav) \approx r(\thetav^{[t]}) + J_r(\thetav^{[t]})^\top (\thetav - \thetav^{[t]}) = \tilde{r}(\thetav)
 \end{equation*}
-and $\tilde{g}(\thetab) = \tilde{r}(\thetab)^\top \tilde{r}(\thetab)$.
-Then, set $\nabla \tilde{g}(\thetab)$ to zero.
+and $\tilde{g}(\thetav) = \tilde{r}(\thetav)^\top \tilde{r}(\thetav)$.
+Then, set $\nabla \tilde{g}(\thetav)$ to zero.
 
 % \textbf{Solution:} Gauss-Newton algorithm
 % \begin{itemize}
@@ -476,7 +476,7 @@ Then, set $\nabla \tilde{g}(\thetab)$ to zero.
             \centering
             \textbf{Levenberg-Marquardt algorithm}
             \begin{equation*}
-                (J_r^\top J_r + \lambda D) \mathbf{d}^{[t]} = -J_r^\top r(\thetab)
+                (J_r^\top J_r + \lambda D) \mathbf{d}^{[t]} = -J_r^\top r(\thetav)
             \end{equation*}
         \end{framed}
     \item $D$ is a positive diagonal matrix
@@ -491,9 +491,9 @@ Then, set $\nabla \tilde{g}(\thetab)$ to zero.
             Let $D = I$ for simplicity.
             Then:
             \begin{align*}
-                \lambda \mathbf{d}^{[t]} &= \lambda (J_r^\top J_r + \lambda I)^{-1} (- J_r^\top r(\thetab)) \\
-                &= (I - J_r^\top J_r / \lambda + (J_r^\top J_r)^2 / \lambda^2 \mp \cdots) (- J_r^\top r(\thetab)) \\
-                &\to - J_r^\top r(\thetab) = - \nabla g(\thetab) / 2
+                \lambda \mathbf{d}^{[t]} &= \lambda (J_r^\top J_r + \lambda I)^{-1} (- J_r^\top r(\thetav)) \\
+                &= (I - J_r^\top J_r / \lambda + (J_r^\top J_r)^2 / \lambda^2 \mp \cdots) (- J_r^\top r(\thetav)) \\
+                &\to - J_r^\top r(\thetav) = - \nabla g(\thetav) / 2
             \end{align*}
             for $\lambda \to \infty$
 

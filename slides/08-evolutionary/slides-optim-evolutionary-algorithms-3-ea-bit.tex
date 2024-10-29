@@ -131,13 +131,13 @@ We consider the following toy setting:
 \item Generate design matrix $\Xmat \in \R^{n \times p}$ by drawing $n = 1000$ samples of $p = 50$ independent normally distributed features with $\mu_j = 0$ and $\sigma_j^2 > 0$ varying between 1 and 5 for $j = 1, \dots, p$.
 \item Linear regression problem with dependent variable $\yv$:
 $$
-    \yv = \Xmat \thetab + \eps
+    \yv = \Xmat \thetav + \eps
 $$
 with $\eps \sim \mathcal N(0, 1)$.
 
 \medskip
 
-Parameter $\thetab$:
+Parameter $\thetav$:
 \begin{align*}
     \theta_0 &= - 1.2 \\
     \theta_j &= \begin{cases}

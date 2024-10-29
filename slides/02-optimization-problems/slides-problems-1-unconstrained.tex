@@ -170,7 +170,7 @@ Assume (multivariate) data $\D = \Dset$ \\
 and we want to fit a linear function to it
 
 $$
-y = \fx = \thetab^\top \xv 
+y = \fx = \thetav^\top \xv 
 $$
 
 \begin{center}
@@ -183,9 +183,9 @@ $$
 
 \begin{vbframe}{Example 2: Least Squares linear regr.} 
 
-Find param vector $\thetab$ that minimizes SSE / risk with L2 loss
+Find param vector $\thetav$ that minimizes SSE / risk with L2 loss
 $$
-\min_{\thetab \in \R^d} \sumin \left(\thetab^\top \xi - \yi\right)^2
+\min_{\thetav \in \R^d} \sumin \left(\thetav^\top \xi - \yi\right)^2
 $$
 
 
@@ -196,7 +196,7 @@ $$
 \begin{itemize}
 	\item \textbf{Smooth}, \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex} problem
 	\item Quadratic form
-	\item Analytic solution: $\thetab = (\Xmat^\top \Xmat)^{-1}\Xmat^\top \bm{y}$, where $\Xmat$ is design matrix
+	\item Analytic solution: $\thetav = (\Xmat^\top \Xmat)^{-1}\Xmat^\top \bm{y}$, where $\Xmat$ is design matrix
 \end{itemize}
 
 %TODO: Add proof of convexity
@@ -223,11 +223,11 @@ $$
 In the above example, if we exchange
 
 $$
-\min_{\thetab \in \R^d} \sum_{i = 1}^n \textcolor{violet}{\left(\textcolor{cyan}{\thetab^\top \xi} - \yi\right)^2}
+\min_{\thetav \in \R^d} \sum_{i = 1}^n \textcolor{violet}{\left(\textcolor{cyan}{\thetav^\top \xi} - \yi\right)^2}
 $$
 
 \begin{itemize}
-	\item the linear model $\textcolor{cyan}{\thetab^\top \xv}$ by an arbitrary model $\textcolor{cyan}{\fxt}$ % (e.g., something more complex and nonlinear)
+	\item the linear model $\textcolor{cyan}{\thetav^\top \xv}$ by an arbitrary model $\textcolor{cyan}{\fxt}$ % (e.g., something more complex and nonlinear)
 	\item the L2-loss $\textcolor{violet}{\left(\fxt - y\right)^2}$ by any loss $\textcolor{violet}{\Lxy}$
 \end{itemize}
 
@@ -242,7 +242,7 @@ we arrive at general \textbf{empirical risk minimization} (ERM)
 Usually, we add a regularizer to counteract overfitting:
 
 	$$
-	\riskrt =  \sumin L\left(\yi, \fxit\right) + \lambda J(\thetab) = \textrm{min}!
+	\riskrt =  \sumin L\left(\yi, \fxit\right) + \lambda J(\thetav) = \textrm{min}!
 	$$
 
 
@@ -282,13 +282,13 @@ ERM with L2 loss, LM, and L2 regularization term:
 \vspace*{-0.2cm}
 
 $$
-	 \riskrt = \sumin \left(\thetab^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetab\|_2^2 \quad \text{(Ridge regr.)}
+	 \riskrt = \sumin \left(\thetav^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetav\|_2^2 \quad \text{(Ridge regr.)}
 $$
 
 \vspace*{-0.1cm}
 
 
-Problem \textbf{multivariate}, \textbf{unconstrained}, \textbf{smooth}, \textbf{convex} and has analytical solution $\thetab = (\Xmat^\top \Xmat + \lambda \bm{I})^{-1}\Xmat^\top \bm{y}$. 
+Problem \textbf{multivariate}, \textbf{unconstrained}, \textbf{smooth}, \textbf{convex} and has analytical solution $\thetav = (\Xmat^\top \Xmat + \lambda \bm{I})^{-1}\Xmat^\top \bm{y}$. 
 
 \vspace*{0.1cm}
 
@@ -297,7 +297,7 @@ ERM with L2-loss, LM, and L1 regularization:
 \vspace*{-0.2cm}
 
 $$
-	\riskrt = \sumin \left(\thetab^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetab\|_1 \quad \text{(Lasso regr.)}
+	\riskrt = \sumin \left(\thetav^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetav\|_1 \quad \text{(Lasso regr.)}
 $$
 
 \vspace*{-0.1cm}
@@ -325,7 +325,7 @@ log / Bernoulli / cross-entropy loss over data
 \vspace*{-0.5cm}
 
 \begin{eqnarray*}
-	\risket = \sumin \left(-\yi \cdot \thetab^\top\xi + \log(1 + \exp\left(\thetab^\top\xi\right)\right) 
+	\risket = \sumin \left(-\yi \cdot \thetav^\top\xi + \log(1 + \exp\left(\thetav^\top\xi\right)\right) 
 \end{eqnarray*}
 
 Multivariate, unconstrained, smooth, convex, not analytically solvable. 
@@ -396,14 +396,14 @@ The higher $\lambda$, the closer to the origin, L1 shrinks coeffs exactly to 0.
 
 \begin{itemize}
 	\item $\D = \left(\left(\xi, \yi\right)\right)_{i = 1, ..., n}$ with $\yi \in \{-1, 1\}$ (classification)
-	\item $\fxt = \thetab^\top \xv \in \R$ scoring classifier:\\
+	\item $\fxt = \thetav^\top \xv \in \R$ scoring classifier:\\
  Predict $1$ if $\fxt > 0$ and $-1$ otherwise. 
 \end{itemize}
 \vspace*{0.2cm}
 ERM with LM, hinge loss, and L2 regularization: 
 
 $$
-	\riskrt = \sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \thetab^\top \thetab, \quad f^{(i)} := \thetab^\top \xi
+	\riskrt = \sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \thetav^\top \thetav, \quad f^{(i)} := \thetav^\top \xi
 $$
 
 \vspace*{-0.2cm}
@@ -476,7 +476,7 @@ $\mathbf{y}$ & $\fx$ &  \textbf{Correct pred.?}  & $\Lxy$ & \textbf{Reason for c
 \textbf{Kernelized} formulation of the primal$^{(*)}$ SVM problem: 
 
 \begin{eqnarray*}
-	\min_{\thetab}\sumin L\left(\yi, \bm{K}_i^\top ~\thetab\right) + \lambda \thetab^\top \bm{K} \thetab 
+	\min_{\thetav}\sumin L\left(\yi, \bm{K}_i^\top ~\thetav\right) + \lambda \thetav^\top \bm{K} \thetav 
 \end{eqnarray*}
 
 with $k(\cdot, \cdot)$ pos. def. kernel function, and \\$\bm{K}_{ij} := k(\xi, \xi[j])$, $n \times n$ psd kernel matrix, $\bm{K}_i$ $i$-th column of $K$. 
@@ -517,7 +517,7 @@ $^{(*)}$ There is also a dual formulation to the problem (comes later!)
 Normal loss, but complex $f$ defined as computational feed-forward graph. Complexity of optimization problem 
 
 $$
-\text{arg} \min_{\thetab} \riskrt,
+\text{arg} \min_{\thetav} \riskrt,
 $$
 
 so smoothness (maybe) or convexity (usually no) is influenced by loss, neuron function, depth, regularization, etc.

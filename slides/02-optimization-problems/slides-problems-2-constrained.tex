@@ -6,7 +6,7 @@
 
 \newcommand{\slvec}{\left(\zeta^{(1)}, \zeta^{(n)}\right)} % slack variable vector
 \newcommand{\sli}[1][i]{\zeta^{(#1)}} % i-th slack variable
-\newcommand{\scptxi}{\scp{\thetab}{\xi}} % scalar prodct of theta and xi
+\newcommand{\scptxi}{\scp{\thetav}{\xi}} % scalar prodct of theta and xi
 \newcommand{\alphav}{\bm{\alpha}} % vector alpha (bold) (basis fun coefficients)
 
 \title{Optimization in Machine Learning}
@@ -237,7 +237,7 @@ ${(*)}$: $\log$ is concave, $- \log $ is convex, and the sum of convex functions
 
 % \begin{vbframe}{Example 1.1: Maximum Likelihood Estimation: Poisson Distribution}
 	
-% $\D = \left(x^{(1)}, ..., x^{(n)}\right)$ is sampled i.i.d. from density $f(x ~|~ \thetab)$. We want to find $\lambda$ which makes the observed data most likely.
+% $\D = \left(x^{(1)}, ..., x^{(n)}\right)$ is sampled i.i.d. from density $f(x ~|~ \thetav)$. We want to find $\lambda$ which makes the observed data most likely.
 
 % \begin{center}
 % 	\includegraphics[width=0.4\textwidth, height=0.4\textwidth]{figure_man/ml_poisson_example_1.pdf} \\
@@ -304,7 +304,7 @@ ${(*)}$: $\log$ is concave, $- \log $ is convex, and the sum of convex functions
 Ridge regression can be formulated as regularized ERM: 
 
 \begin{eqnarray*}  
-	\thetah_{\text{Ridge}} &=& \argmin_{\thetab} \left\{ \sumin \left(\yi - \thetab^\top\xv\right)^2 + \lambda ||\thetab||_2^2 \right\}
+	\thetah_{\text{Ridge}} &=& \argmin_{\thetav} \left\{ \sumin \left(\yi - \thetav^\top\xv\right)^2 + \lambda ||\thetav||_2^2 \right\}
 \end{eqnarray*}
 
 Equivalently it can be written as constrained optimization problem: 
@@ -313,11 +313,11 @@ Equivalently it can be written as constrained optimization problem:
 \begin{columns}[T] % align columns
 	\begin{column}{.48\textwidth}
 		\begin{eqnarray*}
-			\min_{\thetab} && \sum_{i = 1}^n \left(\thetab^\top \xi - \yi\right)^2 \\
-			\text{s.t. } && \|\thetab\|_2 \le t
+			\min_{\thetav} && \sum_{i = 1}^n \left(\thetav^\top \xi - \yi\right)^2 \\
+			\text{s.t. } && \|\thetav\|_2 \le t
 		\end{eqnarray*}
 		
-		%We are looking for the best SSE with $\thetab$ that lies within a $t$-ball around $0$. 
+		%We are looking for the best SSE with $\thetav$ that lies within a $t$-ball around $0$. 
 	\end{column}
 
 	\begin{column}{.48\textwidth}
@@ -338,7 +338,7 @@ $f, g$ smooth. \textbf{Convex program} (convex objective, quadratic constraint).
 Lasso regression can be formulated as regularized ERM: 
 
 \begin{eqnarray*}  
-		\thetah_{\text{Lasso}} &=&  \argmin_{\thetab} \left\{ \sumin \left(\yi - \thetab^\top\xv\right)^2 + \lambda ||\thetab||_1 \right\} 
+		\thetah_{\text{Lasso}} &=&  \argmin_{\thetav} \left\{ \sumin \left(\yi - \thetav^\top\xv\right)^2 + \lambda ||\thetav||_1 \right\} 
 \end{eqnarray*}
 
 Equivalently it can be written as constrained optimization problem: 
@@ -347,8 +347,8 @@ Equivalently it can be written as constrained optimization problem:
 	\begin{columns}[T] % align columns
 		\begin{column}{.48\textwidth}
 			\begin{eqnarray*}
-				\min_{\thetab} && \sum_{i = 1}^n \left(\thetab^\top \xi - \yi\right)^2 \\
-				\text{s.t. } && \|\thetab\|_1 \le t
+				\min_{\thetav} && \sum_{i = 1}^n \left(\thetav^\top \xi - \yi\right)^2 \\
+				\text{s.t. } && \|\thetav\|_1 \le t
 			\end{eqnarray*}
 		\end{column}
 
@@ -378,7 +378,7 @@ The SVM problem can be formulated in $3$ equivalent ways: two primal, and one du
 \textbf{Formulation 1 (primal): } ERM with Hinge loss
 
 $$
-	\sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \|\thetab\|_2^2, \quad f^{(i)} := \thetab^\top \xi
+	\sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \|\thetav\|_2^2, \quad f^{(i)} := \thetav^\top \xi
 $$
 
 \vspace*{-0.3cm}
@@ -425,8 +425,8 @@ $$
 	\vspace*{-0.5cm}
 
 	\begin{eqnarray*}
-		& \min\limits_{\thetab, \thetab_0} & \frac{1}{2} \|\thetab\|^2 \\ % + C   \sum_{i=1}^n \sli \\
-		& \text{s.t.} & \,\, \yi  \left( \scp{\thetab}{\xi} + \theta_0 \right) \geq 1 \quad \forall\, i \in \nset
+		& \min\limits_{\thetav, \thetav_0} & \frac{1}{2} \|\thetav\|^2 \\ % + C   \sum_{i=1}^n \sli \\
+		& \text{s.t.} & \,\, \yi  \left( \scp{\thetav}{\xi} + \theta_0 \right) \geq 1 \quad \forall\, i \in \nset
 		% & \text{and} & \,\, \sli \geq 0 \quad \forall\, i \in \nset.\\
 	\end{eqnarray*}
 
@@ -455,8 +455,8 @@ $$
 	\vspace*{-0.5cm}
 
 	\begin{eqnarray*}
-		& \min\limits_{\thetab, \thetab_0,\sli} & \frac{1}{2} \|\thetab\|^2 + \textcolor{violet}{C   \sum_{i=1}^n \sli} \\
-		& \text{s.t.} & \,\, \yi  \left( \scp{\thetab}{\xi} + \theta_0 \right) \geq 1 \textcolor{violet}{- \sli} \quad \forall\, i \in \nset,\\
+		& \min\limits_{\thetav, \thetav_0,\sli} & \frac{1}{2} \|\thetav\|^2 + \textcolor{violet}{C   \sum_{i=1}^n \sli} \\
+		& \text{s.t.} & \,\, \yi  \left( \scp{\thetav}{\xi} + \theta_0 \right) \geq 1 \textcolor{violet}{- \sli} \quad \forall\, i \in \nset,\\
 		& \text{and} & \,\, \textcolor{violet}{\sli \geq 0 \quad \forall\, i \in \nset.}\\
 	\end{eqnarray*}
 
@@ -490,7 +490,7 @@ $$
 %		Mathematically, the support vector machine problem corresponds to the following optimization problem: 
 %		
 %		\begin{eqnarray*}
-%			& \max\limits_{\thetab, \theta_0} & \gamma \\
+%			& \max\limits_{\thetav, \theta_0} & \gamma \\
 %			& \text{s.t.} & \,\, d_f\left(\xi, \yi\right) \ge \gamma \quad \text{for all } i \in \{1, ..., n\}
 %		\end{eqnarray*}
 %		\pause

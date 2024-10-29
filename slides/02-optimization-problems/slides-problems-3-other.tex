@@ -54,7 +54,7 @@ These make the problem typically much harder to solve!
 
 % \vspace*{-0.5cm}
 % \begin{eqnarray*}
-% 	\min_{\bm{s} \in \{0, 1\}^d, \thetab \in \Theta} \left(\yi - \thetab^\top ~\text{diag}(\bm{s})~\xi\right)^2 \\
+% 	\min_{\bm{s} \in \{0, 1\}^d, \thetav \in \Theta} \left(\yi - \thetav^\top ~\text{diag}(\bm{s})~\xi\right)^2 \\
 % \end{eqnarray*}
 
 % \vspace*{-0.5cm}
@@ -67,10 +67,10 @@ These make the problem typically much harder to solve!
 % \textbf{Example:} $d = 3$, $\bm{s} = (1, 1, 0)$ results in LM only using features 1 and 2:
 
 % \begin{eqnarray*}
-% 	\thetab^\top \begin{pmatrix} 1 & 0 & 0 \\
+% 	\thetav^\top \begin{pmatrix} 1 & 0 & 0 \\
 % 	0 & 1 & 0 \\
 % 	0 & 0 & 0 
-% 	\end{pmatrix} \xi = (\thetab_1, \thetab_2, 0) \xi = \thetab_1 \xi_1 + \thetab_2 \xi_2
+% 	\end{pmatrix} \xi = (\thetav_1, \thetav_2, 0) \xi = \thetav_1 \xi_1 + \thetav_2 \xi_2
 % \end{eqnarray*}
 
 % $\bm{s}$ can take $2^d$ possible values: 
@@ -92,8 +92,8 @@ Let \begin{footnotesize}$\D = \left(\left(\xi, \yi\right)\right)_{1 \le i \le n}
 \vspace*{-0.5cm}
 
 \begin{eqnarray*}
-	% \min_{\bm{s} \in \{0, 1\}^d, \thetab \in \Theta} \left(\yi - \thetab^\top ~\text{diag}(\bm{s})~\xi\right)^2\\
-	\min_{\thetab \in \Theta} \left(\yi - \thetab^\top\xi\right)^2, ||\thetab||_{0} \leq k\\
+	% \min_{\bm{s} \in \{0, 1\}^d, \thetav \in \Theta} \left(\yi - \thetav^\top ~\text{diag}(\bm{s})~\xi\right)^2\\
+	\min_{\thetav \in \Theta} \left(\yi - \thetav^\top\xi\right)^2, ||\thetav||_{0} \leq k\\
 \end{eqnarray*}
 
 \vspace*{-0.5cm}

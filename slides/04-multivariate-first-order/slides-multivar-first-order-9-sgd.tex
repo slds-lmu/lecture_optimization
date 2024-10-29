@@ -29,7 +29,7 @@
 %	Let us consider GD for empirical risk minimization. The updates are: 
 %	
 %	$$
-%	\thetab^{[t + 1]} = \thetab^{[t]} - \alpha \cdot \frac{1}{n} \cdot \sumin \nabla_\theta L\left(\yi, f(\xi ~|~ \thetab^{[t]})\right)
+%	\thetav^{[t + 1]} = \thetav^{[t]} - \alpha \cdot \frac{1}{n} \cdot \sumin \nabla_\theta L\left(\yi, f(\xi ~|~ \thetav^{[t]})\right)
 %	$$
 %	
 %	
@@ -47,7 +47,7 @@
 %		batch gradient is costly (or even impossible, e.g., when data does not even fit into memory) to compute, particularly in DL, but it averages out all the noise from sub-sampling.
 %		\item Minibatches are in between. The batch size decides upon the compromise
 %		between speed and averaging (smoothing).
-%		\item In summary: SGD computes an unbiased estimate of the gradient by taking the average gradient over a minibatch (or one sample) to update the parameter $\thetab$ in this direction.
+%		\item In summary: SGD computes an unbiased estimate of the gradient by taking the average gradient over a minibatch (or one sample) to update the parameter $\thetav$ in this direction.
 %		% \item Optimization algorithms that use only a single example at a time are called \textbf{stochastic} or \textbf{online}. This can be used simply as a computational trick to deal with large data or to operate on real streams of online data in online learning.
 %		% Those methods are called \textbf{minibatch} or \textbf{stochastic}.
 %	\end{itemize}
@@ -58,26 +58,26 @@
 	% \footnotesize
 	%   \caption{Basic SGD pseudo code}
 	%   \begin{algorithmic}[1]
-	%   \State Initialize parameter vector $\thetab^{[0]}$ 
+	%   \State Initialize parameter vector $\thetav^{[0]}$ 
 	%   \State Randomly shuffle data and partition into minibatches $J_1, ..., J_k$ of size $m$
 	%   \State $t \leftarrow 0$
 	%   \While{stopping criterion not met}
 	%   \State Take a minibatch $J$ of $m$ examples from training set, $J \subset \nset$
-	%       \State Compute gradient estimate: $\hat{g}^{[t]} \leftarrow \frac{1}{m} \sum_{i \in J} \nabla_\theta L(\yi, f(\xi ~|~ \thetab^{[t]}) $
-	%       \State Apply update: $\thetab^{[t]} \leftarrow \thetab^{[t-1]} - \alpha \hat{g}^{[t]}$
+	%       \State Compute gradient estimate: $\hat{g}^{[t]} \leftarrow \frac{1}{m} \sum_{i \in J} \nabla_\theta L(\yi, f(\xi ~|~ \thetav^{[t]}) $
+	%       \State Apply update: $\thetav^{[t]} \leftarrow \thetav^{[t-1]} - \alpha \hat{g}^{[t]}$
 	%       \State $t \leftarrow t + 1$
 	%     \EndWhile
 	%   \end{algorithmic}
 	% \end{algorithm}
 	% \begin{itemize}
-	%   \item Thus, what SGD basically does is computing an unbiased estimate of the gradient by taking the average gradients of a minibatch to update the parameter $\thetab$.
+	%   \item Thus, what SGD basically does is computing an unbiased estimate of the gradient by taking the average gradients of a minibatch to update the parameter $\thetav$.
 	% \end{itemize}
 	
 	%\framebreak
 	
 
 	% \begin{itemize}
-	%   \item Thus, what SGD basically does is computing an unbiased estimate of the gradient by taking the average gradients of a minibatch to update the parameter $\thetab$.
+	%   \item Thus, what SGD basically does is computing an unbiased estimate of the gradient by taking the average gradients of a minibatch to update the parameter $\thetav$.
 	% \end{itemize}
 	
 %	\framebreak
@@ -164,25 +164,25 @@ with random subset $J \subset \{1, 2, ..., n\}$ of gradients called \textbf{mini
 In ML, we perform ERM:  
 
 $$
-    \risk(\thetab) = \frac{1}{n}\sumin \underbrace{\Lxyit}_{g_i(\thetab)}
+    \risk(\thetav) = \frac{1}{n}\sumin \underbrace{\Lxyit}_{g_i(\thetav)}
 $$
 
 \begin{itemize}
     \item for a data set 
     $$\D = \Dset$$
     \item a loss function $\Lxy$, e.g., L2 loss $\Lxy = (y - \fx)^2$,
-    \item and a model class $f$, e.g., the linear model $\fxit = \thetab^\top \xv$. 
+    \item and a model class $f$, e.g., the linear model $\fxit = \thetav^\top \xv$. 
 \end{itemize}
 
 \framebreak 
 
 For large data sets, computing the exact gradient 
 $$
-    \mathbf{d} = \frac{1}{n}\sum_{i=1}^n \nabla_{\thetab} \Lxyit %\quad \text{(also: score)}
+    \mathbf{d} = \frac{1}{n}\sum_{i=1}^n \nabla_{\thetav} \Lxyit %\quad \text{(also: score)}
 $$ 
 may be expensive or even infeasible to compute and is approximated by 
 $$
-\hat{\mathbf{d}} = \frac{1}{m}\sum_{i \in J} \nabla_{\thetab} \Lxyit,
+\hat{\mathbf{d}} = \frac{1}{m}\sum_{i \in J} \nabla_{\thetav} \Lxyit,
 $$
     for $J \subset{1, 2, ..., n}$ random subset. 
 
