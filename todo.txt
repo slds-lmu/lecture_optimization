@@ -5,7 +5,7 @@ task:
 * examples for optimization of linear regression and logreg with first order techniques
 * dont focus too much on the data and a "proper" benchmark. data could evem be "random"
   we are also fine with 1 example MAYBE we can vary n and p --- BUT looking at the algorithmi effect comes first
-* varying the condition number of X makes
+* varying the condition number of X makes sense
 
 a) linear regression
     direct solution 
