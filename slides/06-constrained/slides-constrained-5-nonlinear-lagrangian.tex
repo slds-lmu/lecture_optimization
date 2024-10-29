@@ -531,14 +531,14 @@ Solve
 % \vspace{-\baselineskip}
 
 % \begin{eqnarray*}
-% 	\min_{\thetab} && \|\yv - \Xmat \thetab\|_2^2 \\
-% 	\text{s.t. } && \|\thetab\|_1 - t \le 0.
+% 	\min_{\thetav} && \|\yv - \Xmat \thetav\|_2^2 \\
+% 	\text{s.t. } && \|\thetav\|_1 - t \le 0.
 % \end{eqnarray*}
 
 % Formulate problem with Lagrangian:
 
 % \begin{equation*}
-% 	\min_{\thetab} \max_{\alpha \ge 0} \mathcal{L}(\xv, \bm{\alpha}) = \min_{\thetab} \max_{\alpha \ge 0} \left\{\|\yv - \Xmat \thetab\|_2^2 + \alpha \left(\|\thetab\|_1 - t\right)\right\}.
+% 	\min_{\thetav} \max_{\alpha \ge 0} \mathcal{L}(\xv, \bm{\alpha}) = \min_{\thetav} \max_{\alpha \ge 0} \left\{\|\yv - \Xmat \thetav\|_2^2 + \alpha \left(\|\thetav\|_1 - t\right)\right\}.
 % \end{equation*}
 
 % The explicit derivation of the dual of the Lasso can be found in 

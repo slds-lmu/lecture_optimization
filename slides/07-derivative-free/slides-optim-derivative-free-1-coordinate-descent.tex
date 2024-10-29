@@ -110,7 +110,7 @@
 \vspace*{0.2cm}
 
 $$
-    \min g(\thetab) = \min_{\thetab} \frac{1}{2}\sumin \left(y^{(i)} - \thetab^\top \xi\right)^2 = \min_{\thetab} \frac{1}{2}\|\yv - \Xmat \thetab\|^2 
+    \min g(\thetav) = \min_{\thetav} \frac{1}{2}\sumin \left(y^{(i)} - \thetav^\top \xi\right)^2 = \min_{\thetav} \frac{1}{2}\|\yv - \Xmat \thetav\|^2 
 $$
 
 where $\yv \in \R^n$, $\Xmat \in \R^{n \times d}$ with columns $\xv_1, \ldots, \xv_d \in \R^n$. 
@@ -127,11 +127,11 @@ Then:
 
 \begin{footnotesize}
 \begin{align*}
-    g(\thetab) &= \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetab^\top \thetab - \yv^\top \Xmat \thetab  \\
-    &\overset{(*)}{=} \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetab^\top \thetab - \yv^\top \sum_{k = 1}^p \xv_k \theta_k 
+    g(\thetav) &= \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav - \yv^\top \Xmat \thetav  \\
+    &\overset{(*)}{=} \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav - \yv^\top \sum_{k = 1}^p \xv_k \theta_k 
 \end{align*}
 
-$^{(*)}$ $\Xmat \thetab = \xv_1 \theta_1 + \xv_2 \theta_2 + \cdots + \xv_d \theta_d = \sum_{k = 1}^d \xv_k \theta_k$
+$^{(*)}$ $\Xmat \thetav = \xv_1 \theta_1 + \xv_2 \theta_2 + \cdots + \xv_d \theta_d = \sum_{k = 1}^d \xv_k \theta_k$
 \end{footnotesize}
 
 \framebreak
@@ -139,9 +139,9 @@ $^{(*)}$ $\Xmat \thetab = \xv_1 \theta_1 + \xv_2 \theta_2 + \cdots + \xv_d \thet
 \begin{itemize}
     \item Exact CD update in direction $j$:
         \begin{equation*}
-            \frac{\partial{g}(\thetab)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j 
+            \frac{\partial{g}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j 
         \end{equation*}
-    \item By solving $\frac{\partial{g}(\thetab)}{\partial \theta_j} = 0$, we get 
+    \item By solving $\frac{\partial{g}(\thetav)}{\partial \theta_j} = 0$, we get 
         \begin{equation*}
             \theta_j^\ast = \yv^\top \xv_j
         \end{equation*}
@@ -176,10 +176,10 @@ $^{(*)}$ $\Xmat \thetab = \xv_1 \theta_1 + \xv_2 \theta_2 + \cdots + \xv_d \thet
 \textbf{Minimize LM with L2-loss and L1 regularization via CD:}
 
 \begin{equation*}
-    \min_{\thetab} h(\thetab) = \min_{\thetab} \frac{1}{2}\|\yv - \Xmat \thetab\|^2 + \lambda \|\thetab\|_1 % = g(\thetab) + \tilde g(\thetab)
+    \min_{\thetav} h(\thetav) = \min_{\thetav} \frac{1}{2}\|\yv - \Xmat \thetav\|^2 + \lambda \|\thetav\|_1 % = g(\thetav) + \tilde g(\thetav)
 \end{equation*}
 
-Note that $h(\thetab) = \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetab^\top \thetab  - \sum_{k = 1}^d (\yv^\top \xv_k \theta_k + \lambda|\theta_k|)$
+Note that $h(\thetav) = \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav  - \sum_{k = 1}^d (\yv^\top \xv_k \theta_k + \lambda|\theta_k|)$
 
 \medskip
 
@@ -195,12 +195,12 @@ Since $|\cdot|$ is not differentiable, distinguish three cases:
         \item \textbf{Case 1:} $\theta_j > 0$.
             Then $|\theta_j| = \theta_j$ and 
             \begin{equation*}
-                0 = \frac{\partial{h}(\thetab)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j + \lambda \qquad \Leftrightarrow \qquad \theta^\ast_{j, \text{LASSO}} = \theta^\ast_j - \lambda        
+                0 = \frac{\partial{h}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j + \lambda \qquad \Leftrightarrow \qquad \theta^\ast_{j, \text{LASSO}} = \theta^\ast_j - \lambda        
             \end{equation*}
         \item \textbf{Case 2:} $\theta_j < 0$.
             Then $|\theta_j| = - \theta_j$ and 
             \begin{equation*}
-                0 = \frac{\partial{h}(\thetab)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j - \lambda \qquad \Leftrightarrow \qquad \theta^\ast_{j, \text{LASSO}} = \theta^\ast_j + \lambda
+                0 = \frac{\partial{h}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j - \lambda \qquad \Leftrightarrow \qquad \theta^\ast_{j, \text{LASSO}} = \theta^\ast_j + \lambda
                 \end{equation*}
         \item \textbf{Case 3:} $\theta_j = 0$
     \end{itemize}
@@ -221,7 +221,7 @@ This operation is called \textbf{soft thresholding}.
 
 \medskip
 
-Coefficients for which the solution to the unregularized problem are smaller than a threshold, $|\thetab^\ast_j| < \lambda$, are shrinked to zero. 
+Coefficients for which the solution to the unregularized problem are smaller than a threshold, $|\thetav^\ast_j| < \lambda$, are shrinked to zero. 
 
 \medskip
 
@@ -230,11 +230,11 @@ Coefficients for which the solution to the unregularized problem are smaller tha
 % \begin{itemize}
 %     \item For case 1, we require 
 %     $$
-%         \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j - \lambda  > 0 \qquad \Leftrightarrow \qquad \thetab^\ast_j > \lambda 
+%         \thetav^\ast_{j, \text{LASSO}} = \thetav^\ast_j - \lambda  > 0 \qquad \Leftrightarrow \qquad \thetav^\ast_j > \lambda 
 %     $$
 %     \item For case 2, we require
 %     $$
-%         \thetab^\ast_{j, \text{LASSO}} = \thetab^\ast_j + \lambda  < 0 \qquad \Leftrightarrow \qquad \thetab^\ast_j < - \lambda 
+%         \thetav^\ast_{j, \text{LASSO}} = \thetav^\ast_j + \lambda  < 0 \qquad \Leftrightarrow \qquad \thetav^\ast_j < - \lambda 
 %     $$
 % \end{itemize}
 % \end{footnotesize}

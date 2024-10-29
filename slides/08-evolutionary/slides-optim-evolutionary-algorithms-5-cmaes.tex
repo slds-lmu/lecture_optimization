@@ -34,11 +34,11 @@
 %
 %Instead of solving above objective directly, EDAs solve related objective:
 %\begin{eqnarray*}
-%\thetab^\ast = \argmax_{\thetab} \E_{p(\xv|\thetab)} f(\xv),
+%\thetav^\ast = \argmax_{\thetav} \E_{p(\xv|\thetav)} f(\xv),
 %\end{eqnarray*}
 %\vspace{-10pt}
 %
-%where $p(\xv|\thetab)$ is a probability density over $\mathcal{S}$, parameterized by $p$ parameters $\thetab \in \R^p$.
+%where $p(\xv|\thetav)$ is a probability density over $\mathcal{S}$, parameterized by $p$ parameters $\thetav \in \R^p$.
 %
 %\lz
 %
@@ -56,11 +56,11 @@
 \vspace{\baselineskip}
 
 \begin{enumerate}
-    \item Draw $\lambda$ offsprings $\xv^{(i)}$ from $p(\cdot|\thetab^{[t]})$
+    \item Draw $\lambda$ offsprings $\xv^{(i)}$ from $p(\cdot|\thetav^{[t]})$
     \item Evaluate fitness $f(\xv^{(i)})$ 
     %\item Reduce to $\mu$ best offspring
     %where $W(\cdot)$ gives weights for each $\xv^{(i)}$, typically $0$ or $1$ (order-preserving fitness transformation)
-    \item Update $\thetab^{[t+1]}$ with $\mu$ best offsprings
+    \item Update $\thetav^{[t+1]}$ with $\mu$ best offsprings
 \end{enumerate}
 
 %This core algorithm is often modified in a variety of ways to improve performance via \textbf{Covariance Matrix Adaptation (CMA-ES)}.
