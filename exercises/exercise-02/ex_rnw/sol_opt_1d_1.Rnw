@@ -30,7 +30,7 @@ Let $f: [-1,2] \rightarrow \R, x \mapsto \exp(x^3 - 2x^2)$
 	 $f(x_2) = \exp((4/3)^3 - 2(4/3)^2) \approx 0.3057$ \\
 	  $f(x_3) = \exp(-3) \approx 0.05$ \\
 	  $f(x_4) = \exp(0) = 1$ \\
-	  $\Rightarrow x_1, x_2$ are global maxima.
+	  $\Rightarrow x_1, x_4$ are global maxima.
 	  $x_3$ is global minimum.
 	
 \end{enumerate}
