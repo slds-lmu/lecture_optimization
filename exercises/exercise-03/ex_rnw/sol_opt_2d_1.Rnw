@@ -9,10 +9,9 @@
   xx = expand.grid(X1 = x, X2 = x)
 
   fxx = f(xx[,1], xx[,2])
-  df = data.frame(xx = xx, fxx = fxx)
+  df = data.frame(X1 = xx$X1, X2 = xx$X2, fxx = fxx)
   
-  ggplot(df, aes(x = xx.X1, y = xx.X2, z = fxx)) +
-    geom_contour() +
+  ggplot(df, aes(x = X1, y = X2, z = fxx)) +
     geom_contour_filled() +
     xlab("x1") +
     ylab("x2")

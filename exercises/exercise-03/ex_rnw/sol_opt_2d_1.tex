@@ -6,18 +6,17 @@
 \begin{alltt}
 \hlkwd{library}\hlstd{(ggplot2)}
 
-  \hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,} \hlkwc{y}\hlstd{)} \hlkwd{cos}\hlstd{(x}\hlopt{^}\hlnum{2} \hlopt{+} \hlstd{y}\hlopt{^}\hlnum{2} \hlopt{+} \hlstd{x}\hlopt{*}\hlstd{y)}
-  \hlstd{x} \hlkwb{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{2}\hlstd{,} \hlnum{2}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.01}\hlstd{)}
-  \hlstd{xx} \hlkwb{=} \hlkwd{expand.grid}\hlstd{(}\hlkwc{X1} \hlstd{= x,} \hlkwc{X2} \hlstd{= x)}
+\hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,} \hlkwc{y}\hlstd{)} - \hlkwd{cos}\hlstd{(x}\hlopt{^}\hlnum{2} \hlopt{+} \hlstd{y}\hlopt{^}\hlnum{2} \hlopt{+} \hlstd{x}\hlopt{*}\hlstd{y)}
+\hlstd{x} \hlkwb{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{2}\hlstd{,} \hlnum{2}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.01}\hlstd{)}
+\hlstd{xx} \hlkwb{=} \hlkwd{expand.grid}\hlstd{(}\hlkwc{X1} \hlstd{= x,} \hlkwc{X2} \hlstd{= x)}
 
-  \hlstd{fxx} \hlkwb{=} \hlkwd{f}\hlstd{(xx[,}\hlnum{1}\hlstd{], xx[,}\hlnum{2}\hlstd{])}
-  \hlstd{df} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{xx} \hlstd{= xx,} \hlkwc{fxx} \hlstd{= fxx)}
+\hlstd{fxx} \hlkwb{=} \hlkwd{f}\hlstd{(xx[, }\hlnum{1}\hlstd{], xx[, }\hlnum{2}\hlstd{])}
+\hlstd{df} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{X1} \hlstd{= xx$X1,} \hlkwc{X2} \hlstd{= xx$X2,} \hlkwc{fxx} \hlstd{= fxx)}
 
-  \hlkwd{ggplot}\hlstd{(df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= xx.X1,} \hlkwc{y} \hlstd{= xx.X2,} \hlkwc{z} \hlstd{= fxx))} \hlopt{+}
-    \hlkwd{geom_contour}\hlstd{()} \hlopt{+}
-    \hlkwd{geom_contour_filled}\hlstd{()} \hlopt{+}
-    \hlkwd{xlab}\hlstd{(}\hlstr{"x1"}\hlstd{)} \hlopt{+}
-    \hlkwd{ylab}\hlstd{(}\hlstr{"x2"}\hlstd{)}
+\hlkwd{ggplot}\hlstd{(df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= X1,} \hlkwc{y} \hlstd{= X2,} \hlkwc{z} \hlstd{= fxx))} \hlopt{+}
+  \hlkwd{geom_contour_filled}\hlstd{()} \hlopt{+}
+  \hlkwd{xlab}\hlstd{(}\hlstr{"x1"}\hlstd{)} \hlopt{+}
+  \hlkwd{ylab}\hlstd{(}\hlstr{"x2"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/1d-plot-1} 
