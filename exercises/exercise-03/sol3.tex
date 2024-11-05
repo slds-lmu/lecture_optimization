@@ -237,7 +237,7 @@
 \item $\nabla f = (\sin(x_1^2 + x_2^2 + x_1x_2)(2x_1 + x_2), \sin(x_1^2 + x_2^2 + x_1x_2)(2x_2 + x_1))^\top$
 \item $\nabla^2 f = \begin{pmatrix} \cos(u)(2x_1 + x_2)^2 + 2\sin(u) & \cos(u)(2x_1 + x_2)(2x_2 + x_1) + \sin(u) \\ 
  \cos(u)(2x_1 + x_2)(2x_2 + x_1) + \sin(u) & \cos(u)(2x_2 + x_1)^2 + 2\sin(u)\end{pmatrix}$ with $u = x_1^2 + x_2^2 + x_1x_2.$
-\item Let $u: \R^2 \rightarrow \R, (x_1, x_2) \mapsto x_1^2 + x_2^2 + x_1x_2$, such that $f(\mathbf{x}) = \cos(u(\mathbf{x}))$. \\
+\item Let $u: \R^2 \rightarrow \R, (x_1, x_2) \mapsto x_1^2 + x_2^2 + x_1x_2$, such that $f(\mathbf{x}) = - \cos(u(\mathbf{x}))$. \\
   $\implies \nabla^2 f(\mathbf{x}) = \cos(u(\mathbf{x})) \nabla u(\mathbf{x}) \nabla u(\mathbf{x})^\top + \sin(u(\mathbf{x})) \nabla^2 u(\mathbf{x})$ \\
   $\nabla u(\mathbf{x}) = (2x_1 + x_2, x_1 + 2x_2)^\top$ \\
   $\nabla^2 u(\mathbf{x}) = \begin{pmatrix} 2 & 1 \\ 1 & 2\end{pmatrix}$ \\
@@ -252,7 +252,24 @@
   \end{equation*}
   $\Rightarrow \nabla^2 f(\mathbf{x})$ is positive semi-definite. \\
   $\Rightarrow f_{|S_{\overline{r}}}$ is convex.
-\item For $\mathbf{x} \in S_{\bar{r}}$, it holds that $\nabla f(\mathbf{x}) = -\underbrace{\cos(u(\mathbf{x}))}_{> 0} \nabla u(\mathbf{x})$ and thus $$\nabla f(\mathbf{x}) = \mathbf{0} \iff \nabla u(\mathbf{x}) = \mathbf{0} \iff \mathbf{x} = \mathbf{0}.$$
+%\item For $\mathbf{x} \in S_{\bar{r}}$, it holds that $\nabla f(\mathbf{x}) = \underbrace{\sin(u(\mathbf{x}))}_{\ge 0} \nabla u(\mathbf{x})$ and thus $$\nabla f(\mathbf{x}) = \mathbf{0} \iff \nabla u(\mathbf{x}) = \mathbf{0} \iff \mathbf{x} = \mathbf{0}.$$
+\item For $\mathbf{x} \in S_{\bar{r}}$, we have
+\[
+\nabla f(\mathbf{x}) = \sin(u(\mathbf{x})) \, \nabla u(\mathbf{x}),
+\]
+where $\sin(u(\mathbf{x})) \ge 0$ (as shown above). Thus, $\nabla f(\mathbf{x}) = \mathbf{0}$ if $\sin(u(\mathbf{x})) = 0$ or $\nabla u(\mathbf{x}) = \mathbf{0}$.
+
+\begin{itemize}
+    \item \textbf{Case 1:} If $\sin(u(\mathbf{x})) = 0$, then $u(\mathbf{x})$ must be a multiple of $\pi$. Since we have shown above that $u(\mathbf{x}) \in [0, \pi/4)$ (for $\mathbf{x} \in S_{\bar{r}}$) this implies $\mathbf{x} = \mathbf{0}$.
+    
+    \item \textbf{Case 2:} If $\nabla u(\mathbf{x}) = \mathbf{0}$, then by the definition of $u(\mathbf{x})$, this also implies that $\mathbf{x} = \mathbf{0}$.
+\end{itemize}
+
+Therefore, we conclude that
+\[
+\nabla f(\mathbf{x}) = \mathbf{0} \iff \mathbf{x} = \mathbf{0}.
+\]
+
   It follows that $\mathbf{x} = \mathbf{0}$ is a local minimum.
 \item $f(\mathbf{0}) = -1$ and $\cos: \R \rightarrow [-1, 1].$ From this it follows that $\mathbf{0}$ must be a global minimum of $f$ since no element of the image of $f$ is smaller than $-1$.
 \end{enumerate}
