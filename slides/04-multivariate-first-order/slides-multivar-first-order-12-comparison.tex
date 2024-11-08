@@ -154,19 +154,19 @@ Highly noisy dynamics worsened by momentum. Step size decay necessary to elimina
 \textbf{QR Decomposition}:
 \begin{itemize}
     \item Factorize \( \bm{X} \) as \( \bm{X} = \bm{Q}\bm{R} \), where \( \bm{Q} \) is orthogonal and \( \bm{R} \) is upper triangular.
-    \item Purpose: Replace solving \( \thetav = (\bm{X}^{\top} \bm{X})^{-1} \bm{X}^{\top} \bm{y} \) with a more numerically stable method by avoiding direct inversion.
+    \item Purpose: Replace solving \( \bm{\thetah} = (\bm{X}^{\top} \bm{X})^{-1} \bm{X}^{\top} \bm{y} \) with a more numerically stable method by avoiding direct inversion.
 \end{itemize}
 
 \textbf{Steps}:
 \begin{enumerate}
     \item Decompose \( \bm{X} \) into \( \bm{Q} \) and \( \bm{R} \).
     \item Compute \( \bm{Q}^{\top} \bm{y} \).
-    \item Solve triangular system \( \bm{R} \thetav = \bm{Q}^{\top} \bm{y} \) via \textbf{back substitution}.
+    \item Solve triangular system \( \bm{R} \bm{\thetah} = \bm{Q}^{\top} \bm{y} \) via \textbf{back substitution}.
 \end{enumerate}
 
 After performing QR decomposition on \( \bm{X} \), we solve the triangular system:
 \[
-\bm{R} \thetav = \bm{Q}^{\top} \bm{y},
+\bm{R} \bm{\thetah} = \bm{Q}^{\top} \bm{y},
 \]
 where:
 \[
@@ -176,11 +176,11 @@ r_{11} & r_{12} & \dots & r_{1p} \\
 \vdots & \vdots & \ddots & \vdots \\ 
 0 & 0 & \dots & r_{pp} 
 \end{bmatrix}, \quad 
-\theta = \begin{bmatrix} 
-\theta_1 \\ 
-\theta_2 \\ 
+\bm{\thetah} = \begin{bmatrix} 
+\thetah_1 \\ 
+\thetah_2 \\ 
 \vdots \\ 
-\theta_p 
+\thetah_p 
 \end{bmatrix}, \quad \bm{Q}^{\top} \bm{y} = \begin{bmatrix} 
 b_1 \\ 
 b_2 \\ 
@@ -193,19 +193,19 @@ b_p
 \begin{enumerate}
     \item Start with the last equation (1 unknown):
           \[
-          \theta_p = \frac{b_p}{r_{pp}}.
+          \thetah_p = \frac{b_p}{r_{pp}}.
           \]
     \item Move upwards to the \( (p-1) \)-th equation:
           \[
-          \theta_{p-1} = \frac{b_{p-1} - r_{p-1,p} \theta_p}{r_{p-1,p-1}}.
+          \thetah_{p-1} = \frac{b_{p-1} - r_{p-1,p} \thetah_p}{r_{p-1,p-1}}.
           \]
     \item Continue this process up to the first row:
           \[
-          \theta_i = \frac{b_i - \sum_{j=i+1}^p r_{ij} \theta_j}{r_{ii}} \quad \text{for each } i = p-1, \dots, 1.
+          \thetah_i = \frac{b_i - \sum_{j=i+1}^p r_{ij} \thetah_j}{r_{ii}} \quad \text{for each } i = p-1, \dots, 1.
           \]
 \end{enumerate}
 
-Back substitution leverages triangular structure of $\bm{R}$ to efficiently solve for $\thetav$, moving from the last row upwards and substituting previously calculated values of $\thetav$ as we go.
+Back substitution leverages triangular structure of $\bm{R}$ to efficiently solve for $\bm{\thetah}$, moving from the last row upwards and substituting previously calculated values of $\bm{\thetah}$ as we go.
 
 \end{vbframe}
 
