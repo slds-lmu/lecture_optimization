@@ -153,7 +153,7 @@ Highly noisy dynamics worsened by momentum. Step size decay necessary to elimina
 
 \textbf{QR Decomposition}:
 \begin{itemize}
-    \item Factorize \( \bm{X} \) as \( \bm{X} = \bm{Q}\bm{R} \), where \( \bm{Q} \) is orthogonal and \( \bm{R} \) is upper triangular.
+    \item Factorize \( \bm{X} \in \mathbb{R}^{n \times p} \) as \( \bm{X} = \bm{Q}\bm{R} \), where \( \bm{Q} \in \mathbb{R}^{n \times p} \) (economical form) and \( \bm{R} \in \mathbb{R}^{p \times p} \) is upper triangular.
     \item Purpose: Replace solving \( \bm{\thetah} = (\bm{X}^{\top} \bm{X})^{-1} \bm{X}^{\top} \bm{y} \) with a more numerically stable method by avoiding direct inversion.
 \end{itemize}
 
