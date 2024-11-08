@@ -112,8 +112,6 @@ gradient_descent <- function(X, y, X_test, y_test, beta_true, model = model_type
   
   global_min_preds <- X %*% beta_global_min
   min_train_loss_regr <- mean((global_min_preds - y)^2) 
-  global_min_probs <- pmax(pmin(1 / (1 + exp(-global_min_preds)), 1 - 1e-10), 1e-10)
-  min_train_loss_log <- -mean(y * log(global_min_probs) + (1 - y) * log(1 - global_min_probs))
   
   velocity <- rep(0, p)
   
@@ -148,7 +146,7 @@ gradient_descent <- function(X, y, X_test, y_test, beta_true, model = model_type
       
       train_preds <- X %*% beta
       test_preds <- X_test %*% beta
-      train_loss <- mean((train_preds - y)^2) - min_train_loss_regr
+      train_loss <- mean((train_preds - y)^2) #- min_train_loss_regr
       test_loss <- mean((test_preds - y_test)^2)
       
     } else if (model == "logistic") {
@@ -163,7 +161,7 @@ gradient_descent <- function(X, y, X_test, y_test, beta_true, model = model_type
       train_probs <- pmax(pmin(1 / (1 + exp(-train_preds)), 1 - 1e-10), 1e-10)
       test_probs <- pmax(pmin(1 / (1 + exp(-test_preds)), 1 - 1e-10), 1e-10)
       
-      train_loss <- -mean(y * log(train_probs) + (1 - y) * log(1 - train_probs)) - min_train_loss_log
+      train_loss <- -mean(y * log(train_probs) + (1 - y) * log(1 - train_probs)) #- min_train_loss_log
       test_loss <- -mean(y_test * log(test_probs) + (1 - y_test) * log(1 - test_probs))
     }
     
@@ -180,7 +178,7 @@ gradient_descent <- function(X, y, X_test, y_test, beta_true, model = model_type
     beta_history[iter, ] <- as.numeric(beta)
     loss_history[iter] <- as.numeric(train_loss)
     test_loss_history[iter] <- as.numeric(test_loss)
-    l2_diff_history[iter] <- as.numeric(log10(sqrt(sum((beta - beta_global_min)^2))))
+    l2_diff_history[iter] <- as.numeric(log10(sqrt(sum((beta - beta_true)^2))))
     time_history[iter] <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
   }
   
@@ -255,7 +253,7 @@ gradient_descent <- function(X, y, X_test, y_test, beta_true, model = model_type
 # Plotting configs
 lwidth = 1
 fsize = 14
-legendsize = 16
+legendsize = 20
 
 
 plot_optimization_results <- function(loss_histories, test_loss_histories, l2_diff_histories, 
@@ -269,8 +267,8 @@ plot_optimization_results <- function(loss_histories, test_loss_histories, l2_di
   plot_data <- data.frame(
     iteration = rep(iterations, length(method_names)),
     time = unlist(time_histories),
-    train_loss = log10(unlist(loss_histories)),
-    test_loss = (unlist(test_loss_histories)),
+    train_loss = unlist(loss_histories),
+    test_loss = unlist(test_loss_histories),
     l2_diff = unlist(l2_diff_histories),
     method = rep(method_names, each = length(iterations))
   )
@@ -299,13 +297,13 @@ plot_optimization_results <- function(loss_histories, test_loss_histories, l2_di
   p1 <- ggplot(plot_data, aes_string(x = x_var, y = "train_loss", color = "method")) +
     geom_line(linewidth = lwidth) +
     scale_x_continuous(breaks = x_breaks) +
-    coord_cartesian(ylim = c(-4, max(plot_data$train_loss+0.1))) +
-    labs(x = x_lab, y = "Train loss - min. train loss (log10)", color = "Method") +
+    coord_cartesian(ylim = c(-0.1, min(15,max(plot_data$train_loss+0.1)))) +
+    labs(x = x_lab, y = "Train loss", color = "Method") +
     theme_minimal() +
     theme(legend.position = "bottom",
           text = element_text(size = fsize+5),
           axis.text = element_text(size = fsize+1),
-          legend.text = element_text(legendsize),
+          legend.text = element_text(legendsize+20),
           legend.spacing.x = unit(1, 'cm'),
           legend.box.spacing = unit(1, 'cm'))
   
@@ -313,14 +311,14 @@ plot_optimization_results <- function(loss_histories, test_loss_histories, l2_di
     geom_line(linewidth = lwidth) +
     scale_x_continuous(breaks = x_breaks) +
     #scale_y_continuous(limits = c(0, 2)) +
-    coord_cartesian(ylim = c(min(plot_data$test_loss) - 0.1, 2)) +
-    geom_hline(yintercept = 1, linetype = "dashed", color = "black", alpha=0.6, linewidth = 0.7) +
+    coord_cartesian(ylim = c(min(plot_data$test_loss) - 0.1, min(max(plot_data$test_loss) + 0.1,2))) +
+    #geom_hline(yintercept = 1, linetype = "dashed", color = "black", alpha=0.6, linewidth = 0.7) +
     labs(x = x_lab, y = "Test Loss", color = "Method") +
     theme_minimal() +
     theme(legend.position = "bottom",
           text = element_text(size = fsize+5),
           axis.text = element_text(size=fsize+1),
-          legend.text = element_text(legendsize),
+          legend.text = element_text(legendsize+10),
           legend.spacing.x = unit(1, 'cm'),
           legend.box.spacing = unit(1, 'cm'))
   
@@ -332,22 +330,27 @@ plot_optimization_results <- function(loss_histories, test_loss_histories, l2_di
     theme(legend.position = "bottom",
           text = element_text(size = fsize+5),
           axis.text = element_text(size = fsize+1),
-          legend.text = element_text(legendsize),
+          legend.text = element_text(legendsize+10),
           legend.spacing.x = unit(1, 'cm'),   
           legend.box.spacing = unit(1, 'cm'))
   
   # Combine plots with shared legend
-  # Then replace the plot combination section with:
   final_plot <- ggpubr::ggarrange(p1, p2, p3,
                                   ncol = 3, 
                                   nrow = 1,
                                   common.legend = TRUE,
                                   legend = "bottom",
-                                  align = "hv",     # aligns plots horizontally and vertically
-                                  font.label = list(size = fsize),
+                                  align = "hv",
+                                  font.label = list(size = legendsize+10),
                                   legend.grob = get_legend(p1 + 
-                                                             theme(legend.spacing.x = unit(1, 'cm'),
-                                                                   legend.box.spacing = unit(1, 'cm'))))
+                                                             theme(
+                                                               legend.title = element_text(size = 24),  
+                                                               legend.text = element_text(size = 20),   
+                                                               legend.key.size = unit(2, "cm"),
+                                                               legend.spacing.x = unit(1, 'cm'),
+                                                               legend.box.spacing = unit(1, 'cm')
+                                                             ))
+  )
   
   return(final_plot)
 }
