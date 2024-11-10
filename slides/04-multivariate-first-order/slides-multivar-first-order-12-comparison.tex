@@ -155,6 +155,7 @@ Highly noisy dynamics worsened by momentum. Step size decay necessary to elimina
 \begin{itemize}
     \item Factorize \( \bm{X} \in \mathbb{R}^{n \times p} \) as \( \bm{X} = \bm{Q}\bm{R} \), where \( \bm{Q} \in \mathbb{R}^{n \times p} \) (economical form) and \( \bm{R} \in \mathbb{R}^{p \times p} \) is upper triangular.
     \item Purpose: Replace solving \( \bm{\thetah} = (\bm{X}^{\top} \bm{X})^{-1} \bm{X}^{\top} \bm{y} \) with a more numerically stable method by avoiding direct inversion.
+    \item The QR decomposition can be computed using Gram-Schmidt orthogonalization or Householder transformations
 \end{itemize}
 
 \textbf{Steps}:
@@ -163,6 +164,13 @@ Highly noisy dynamics worsened by momentum. Step size decay necessary to elimina
     \item Compute \( \bm{Q}^{\top} \bm{y} \).
     \item Solve triangular system \( \bm{R} \bm{\thetah} = \bm{Q}^{\top} \bm{y} \) via \textbf{back substitution}.
 \end{enumerate}
+
+Why this system? Remember normal equation for least squares problem are $\bm{X}^{\top}\bm{X} \hat{\thetav} = \bm{X}^{\top}\bm{y}$. Now replace $\bm{X}=\bm{Q} \bm{R}$:
+
+\begin{align*}
+    \bm{X}^{\top}\bm{X} \hat{\thetav} = \bm{X}^{\top}\bm{y} &\iff \bm{R}^{\top}(\bm{Q}^{\top} \bm{Q}) \bm{R}^{\top} \hat{\thetav} = \bm{R}^{\top} \bm{Q}^{\top} \bm{y} \\
+    \bm{R}^{\top}\bm{R} \hat{\thetav} = \bm{R}^{\top} \bm{Q}^{\top} \bm{y} & \iff \bm{R} \hat{\thetav} = \bm{Q}^{\top} \bm{y}\\
+\end{align*}
 
 After performing QR decomposition on \( \bm{X} \), we solve the triangular system:
 \[
