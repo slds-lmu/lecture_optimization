@@ -27,12 +27,12 @@
 Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control on simulated data. We do not use analytical solution on purpose although one exists:
 
 \begin{itemize}
-    \item Linear regression (squared loss) simulation $\bm{Y} = \bm{X}\thetav^{\ast} + \bm{\varepsilon}$ with $n=500$ samples and $p=11$ features, where $\thetav^{\ast}=(-5,-4,\ldots,4,5)^{\top}$, $\bm{\varepsilon} \sim \mathcal{N}(\bm{0}, \bm{I})$, and $\bm{X} \sim \mathcal{N}(\bm{0}, \Sigma)$ for $\Sigma=\bm{I}$ (indep. features) or $\Sigma_{i,j}=0.99^{|i-j|}$ (corr. features)
+    \item Linear regression (squared loss) simulation $\bm{y} = \bm{X}\thetav^{\ast} + \bm{\varepsilon}$ with $n=500$ samples and $p=11$ features, where $\thetav^{\ast}=(-5,-4,\ldots,4,5)^{\top}$, $\bm{\varepsilon} \sim \mathcal{N}(\bm{0}, \bm{I})$, and $\bm{X} \sim \mathcal{N}(\bm{0}, \Sigma)$ for $\Sigma=\bm{I}$ (indep. features) or $\Sigma_{i,j}=0.99^{|i-j|}$ (corr. features)
     \item Indep. features result in a condition number of $\approx 2.9$, whereas the corr. feature set-up produces a bad condition number of $\approx 600$
     \item We set the momentum parameter to $\texttt{momentum}=0.8$
     \item The step size $\alpha^{[t]}$ is decayed exponentially using deterministic schedule $\alpha^{[t]}=\alpha^{[0]} \cdot \texttt{decay}^{t/t_{\text{max}}}$ for $\texttt{decay}=0.1$
     \item For GD and SGD we use 3 step sizes each (low, medium, large). % to illustrate the effect of $\alpha$, $\texttt{momentum}$ and $\texttt{decay}$.
-    \item ERM has unique global minimizer given by $\thetah = (\bm{X}^{\top}\bm{X})^{-1}\bm{X}^{\top} \bm{Y}$
+    \item ERM has unique global minimizer given by $\bm{\thetah} = (\bm{X}^{\top}\bm{X})^{-1}\bm{X}^{\top} \bm{y}$
     \item We also track the estimation error $\Vert \thetav - \thetav^{\ast} \Vert_2$
 \end{itemize}
 
@@ -149,12 +149,12 @@ SGD with large $\alpha=1 \cdot 10^{-2}$ and indep. features:
 Highly noisy dynamics worsened by momentum. Step size decay necessary to eliminate noise toward end of training.
 \end{vbframe}
 
-\begin{vbframe}{Efficiently Solving OLS with QR Decomp.}
-
-\textbf{QR Decomposition}:
+\begin{vbframe}{Digression: solving OLS with QR Decomp.}
+Solving linear least squares via (S)GD is rarely done in practice. But inversion of $\bm{X}^{\top}\bm{X}$ is numerically unstable and to be avoided. A standard numerical approach applies \textbf{QR Decomposition}:
+\medskip
 \begin{itemize}
-    \item Factorize \( \bm{X} \in \mathbb{R}^{n \times p} \) as \( \bm{X} = \bm{Q}\bm{R} \), where \( \bm{Q} \in \mathbb{R}^{n \times p} \) (economical form) and \( \bm{R} \in \mathbb{R}^{p \times p} \) is upper triangular.
-    \item Purpose: Replace solving \( \bm{\thetah} = (\bm{X}^{\top} \bm{X})^{-1} \bm{X}^{\top} \bm{y} \) with a more numerically stable method by avoiding direct inversion.
+    \item Factorize \( \bm{X} \in \mathbb{R}^{n \times p} \) as \( \bm{X} = \bm{Q}\bm{R} \), where \( \bm{Q} \in \mathbb{R}^{n \times p} \) (thin form) so that $\bm{Q}^{\top}\bm{Q}=\bm{I}$ and \( \bm{R} \in \mathbb{R}^{p \times p} \) is upper triangular.
+    \item Purpose: replace solving \( \bm{\thetah} = (\bm{X}^{\top} \bm{X})^{-1} \bm{X}^{\top} \bm{y} \) with a more numerically stable method by avoiding direct inversion.
     \item The QR decomposition can be computed using Gram-Schmidt orthogonalization or Householder transformations
 \end{itemize}
 
@@ -165,18 +165,14 @@ Highly noisy dynamics worsened by momentum. Step size decay necessary to elimina
     \item Solve triangular system \( \bm{R} \bm{\thetah} = \bm{Q}^{\top} \bm{y} \) via \textbf{back substitution}.
 \end{enumerate}
 
-Why this system? Remember normal equation for least squares problem are $\bm{X}^{\top}\bm{X} \hat{\thetav} = \bm{X}^{\top}\bm{y}$. Now replace $\bm{X}=\bm{Q} \bm{R}$:
+Why this system? Remember normal equation for least squares problem is $\bm{X}^{\top}\bm{X} \hat{\thetav} = \bm{X}^{\top}\bm{y}$. Now replace $\bm{X}=\bm{Q} \bm{R}$:
 
 \begin{align*}
     \bm{X}^{\top}\bm{X} \hat{\thetav} = \bm{X}^{\top}\bm{y} &\iff \bm{R}^{\top}(\bm{Q}^{\top} \bm{Q}) \bm{R}^{\top} \hat{\thetav} = \bm{R}^{\top} \bm{Q}^{\top} \bm{y} \\
     \bm{R}^{\top}\bm{R} \hat{\thetav} = \bm{R}^{\top} \bm{Q}^{\top} \bm{y} & \iff \bm{R} \hat{\thetav} = \bm{Q}^{\top} \bm{y}\\
 \end{align*}
 
-After performing QR decomposition on \( \bm{X} \), we solve the triangular system:
-\[
-\bm{R} \bm{\thetah} = \bm{Q}^{\top} \bm{y},
-\]
-where:
+$\bm{R} \bm{\thetah} = \bm{Q}^{\top} \bm{y}$ is a triangular system easily solvable by back substitution:
 \[
 \bm{R} = \begin{bmatrix} 
 r_{11} & r_{12} & \dots & r_{1p} \\ 
@@ -197,6 +193,8 @@ b_p
 \end{bmatrix}.
 \]
 
+\pagebreak
+
 \textbf{Steps for Back Substitution}:
 \begin{enumerate}
     \item Start with the last equation (1 unknown):
@@ -213,20 +211,20 @@ b_p
           \]
 \end{enumerate}
 
-Back substitution leverages triangular structure of $\bm{R}$ to efficiently solve for $\bm{\thetah}$, moving from the last row upwards and substituting previously calculated values of $\bm{\thetah}$ as we go.
+Back substitution leverages triangular structure of $\bm{R}$, moving upward from the last row and inserting already known values of $\bm{\thetah}$ as we go.
 
 \end{vbframe}
 
 \begin{vbframe}{Classification on MNIST (SGD)}
-For a more realistic application, we compare optimizers on subset of the MNIST image classification task. 
-
+For a more realistic application, we compare optimizers on training an NN on subset of MNIST image classification task. 
+\medskip
 \begin{itemize}
      \setlength{\itemsep}{1.2em} 
-    \item We use a DNN with two hidden layers of sizes $128,64$, ReLu activations, and Kaiming normal init. The loss is cross-entropy
+    \item DNN has two hidden layers with $128$ and $64$ ReLu-activated units and Kaiming normal init. The loss is cross-entropy
     \item Instead of SGD we use mini-batch SGD with $100$ images per batch
     \item For the step size schedule, we use cosine decay $\alpha^{[t]} = \alpha^{[0]} \left[(1-r_{\text{min}}) \cdot \frac{1}{2}\left(1 + \cos\left(\pi \cdot \frac{t}{t_{\text{max}}}\right)\right) + r_{\text{min}}\right]$ with final step size fraction $r_{\text{min}}=0.01$
-    \item In case of momentum we set the parameter to $0.8$
-    \item We set the initial step size to $0.01$ and to $0.1$ for the large step size
+    \item In case of momentum we set the parameter to $\texttt{momentum}=0.8$
+    \item Regular initial step size is $0.01$ and to $0.1$ for large step size
 \end{itemize}
 \end{vbframe}
 
@@ -244,7 +242,7 @@ Mini-batch SGD with $\alpha=1\cdot10^{-2}$
 2. For plain SGD, step size decay slows optimization down. \\
 3. Interestingly, SGD, SGD+cos and SGD+mom achieve the same final generalization. \\
 4. Cosine decay combined with momentum improves generalization. \\
-5. Large initial step sizes with decay perform best.}
+5. Large initial step size with decay performs best.}
 \end{vbframe}
 
 \begin{vbframe}{Classification on MNIST (SGD)}
