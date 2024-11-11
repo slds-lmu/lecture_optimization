@@ -229,8 +229,8 @@ For a more realistic application, we compare optimizers on training an NN on sub
 \end{vbframe}
 
 \begin{vbframe}{Classification on MNIST (SGD)}
-\vspace{-0.4cm}
-Mini-batch SGD with $\alpha=1\cdot10^{-2}$
+\vspace{-0.3cm}
+Mini-batch SGD with $\alpha=0.01$ for 100 epochs (5000 iterations):
 \begin{figure}
             \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_compar.pdf} \\
             %\begin{footnotesize}
@@ -245,9 +245,9 @@ Mini-batch SGD with $\alpha=1\cdot10^{-2}$
 5. Large initial step size with decay performs best.}
 \end{vbframe}
 
-\begin{vbframe}{Classification on MNIST (SGD)}
-\vspace{-0.4cm}
-Why is it not a good idea to use GD in most DL applications? Speed! Compare runtime of mini-batch SGD with a batch size of $100$ vs GD, both with $\alpha=1\cdot10^{-2}$ for $t_{\text{max}}=5000$ iterations:
+\begin{vbframe}{Classification on MNIST (GD vs. SGD)}
+\vspace{-0.2cm}
+Why is it not a good idea to use GD in most DL applications? Speed! Compare runtime of mini-batch SGD (batch size=$100$) with GD (constant $\alpha=0.01$ without momentum for $t_{\text{max}}=5000$ iterations):
 \begin{figure}
             \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_GD_compar.pdf} \\
             %\begin{footnotesize}
