@@ -217,6 +217,50 @@ Back substitution leverages triangular structure of $\bm{R}$ to efficiently solv
 
 \end{vbframe}
 
+\begin{vbframe}{Classification on MNIST (SGD)}
+For a more realistic application, we compare optimizers on subset of the MNIST image classification task. 
+
+\begin{itemize}
+     \setlength{\itemsep}{1.2em} 
+    \item We use a DNN with two hidden layers of sizes $128,64$, ReLu activations, and Kaiming normal init. The loss is cross-entropy
+    \item Instead of SGD we use mini-batch SGD with $100$ images per batch
+    \item For the step size schedule, we use cosine decay $\alpha^{[t]} = \alpha^{[0]} \left[(1-r_{\text{min}}) \cdot \frac{1}{2}\left(1 + \cos\left(\pi \cdot \frac{t}{t_{\text{max}}}\right)\right) + r_{\text{min}}\right]$ with final step size fraction $r_{\text{min}}=0.01$
+    \item In case of momentum we set the parameter to $0.8$
+    \item We set the initial step size to $0.01$ and to $0.1$ for the large step size
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Classification on MNIST (SGD)}
+\vspace{-0.4cm}
+Mini-batch SGD with $\alpha=1\cdot10^{-2}$
+\begin{figure}
+            \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_compar.pdf} \\
+            %\begin{footnotesize}
+            %    Irreducible error due to additive noise is $\sigma=1$
+            %\end{footnotesize}
+\end{figure}
+{\footnotesize
+\textbf{Observations}:\\ 1. Momentum drastically speeds up optimization in all settings.\\
+2. For plain SGD, step size decay slows optimization down. \\
+3. Interestingly, SGD, SGD+cos and SGD+mom achieve the same final generalization. \\
+4. Cosine decay combined with momentum improves generalization. \\
+5. Large initial step sizes with decay perform best.}
+\end{vbframe}
+
+\begin{vbframe}{Classification on MNIST (SGD)}
+\vspace{-0.4cm}
+Why is it not a good idea to use GD in most DL applications? Speed! Compare runtime of mini-batch SGD with a batch size of $100$ vs GD, both with $\alpha=1\cdot10^{-2}$ for $t_{\text{max}}=5000$ iterations:
+\begin{figure}
+            \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_GD_compar.pdf} \\
+            %\begin{footnotesize}
+            %    Irreducible error due to additive noise is $\sigma=1$
+            %\end{footnotesize}
+\end{figure} 
+\textbf{Observations}:\\ 1. Mini-batch SGD is over an order of magnitude faster.\\
+2. SGD generalizes better than GD despite being much faster. \\
+\end{vbframe}
+
+
 \begin{comment}
 
 \begin{vbframe}{Comparison of first order methods}
