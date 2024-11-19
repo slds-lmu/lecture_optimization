@@ -11,8 +11,9 @@ df$type = as.character(y)
   
 ggplot(df) +
   geom_point(aes(x = V1, y = V2, color=type)) + 
-  xlab(expression(theta[1])) + 
-  ylab(expression(theta[2])) 
+  xlab(expression(x[1])) + 
+  ylab(expression(x[2])) +
+  labs(color="y")
 @
 \\In the following we want to estimate a linear SVM without intercept and with $\lambda = 1$. We assume we know that $\bm{\theta}_2 = 2.$
 \begin{enumerate}

@@ -222,10 +222,11 @@
 \hlstd{df} \hlkwb{=} \hlkwd{as.data.frame}\hlstd{(X)}
 \hlstd{df}\hlopt{$}\hlstd{type} \hlkwb{=} \hlkwd{as.character}\hlstd{(y)}
 
-\hlkwd{ggplot}\hlstd{(df)} \hlopt{+}
-  \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= V1,} \hlkwc{y} \hlstd{= V2,} \hlkwc{color}\hlstd{=type))} \hlopt{+}
-  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
-  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
+\hlkwd{ggplot}\hldef{(df)} \hlopt{+}
+  \hlkwd{geom_point}\hldef{(}\hlkwd{aes}\hldef{(}\hlkwc{x} \hldef{= V1,} \hlkwc{y} \hldef{= V2,} \hlkwc{color}\hldef{=type))} \hlopt{+}
+  \hlkwd{xlab}\hldef{(}\hlkwd{expression}\hldef{(x[}\hlnum{1}\hldef{]))} \hlopt{+}
+  \hlkwd{ylab}\hldef{(}\hlkwd{expression}\hldef{(x[}\hlnum{2}\hldef{]))} \hlopt{+}
+  \hlkwd{labs}\hldef{(}\hlkwc{color}\hldef{=}\hlsng{"y"}\hldef{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/univ-plot-1} 
