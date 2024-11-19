@@ -352,7 +352,7 @@ $\Rightarrow g_c$ is convex.
     \hlstd{\}}\hlkwa{else}\hlstd{\{} \hlcom{# try doing quadratic interpolation otherwise}
       \hlcom{# compute objective values}
       \hlstd{xs} \hlkwb{=} \hlkwd{c}\hlstd{(lx, rx, cx)}
-      \hlstd{fxs} \hlkwb{=} \hlkwd{sapply}\hlstd{(xs, ft1)}
+      \hlstd{fxs} \hlkwb{=} \hlkwd{sapply}\hlstd{(xs, f)}
 
       \hlcom{# find parameters of the interpolating parabola}
       \hlstd{params} \hlkwb{=} \hlkwd{solve}\hlstd{(}\hlkwd{t}\hlstd{(}\hlkwd{sapply}\hlstd{(xs,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{c}\hlstd{(x}\hlopt{^}\hlnum{2}\hlstd{, x,} \hlnum{1}\hlstd{))), fxs)}
