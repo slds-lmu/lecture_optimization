@@ -15,8 +15,8 @@ df <- data.frame(X = X, y = y)
 
 ggplot(df) +
   geom_point(aes(x = X.1, y = X.2, color=y)) + 
-  xlab(expression(theta[1])) + 
-  ylab(expression(theta[2]))  
+  xlab(expression(x[1])) + 
+  ylab(expression(x[2]))  
 @
 
 \begin{enumerate}
