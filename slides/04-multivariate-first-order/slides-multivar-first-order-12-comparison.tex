@@ -33,7 +33,7 @@ Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control 
     \item The step size $\alpha^{[t]}$ is decayed exponentially using deterministic schedule $\alpha^{[t]}=\alpha^{[0]} \cdot \texttt{decay}^{t/t_{\text{max}}}$ for $\texttt{decay}=0.1$
     \item For GD and SGD we use 3 step sizes each (low, medium, large). % to illustrate the effect of $\alpha$, $\texttt{momentum}$ and $\texttt{decay}$.
     \item ERM has unique global minimizer given by $\bm{\thetah} = (\bm{X}^{\top}\bm{X})^{-1}\bm{X}^{\top} \bm{y}$
-    \item We also track the estimation error $\Vert \thetav - \thetav^{\ast} \Vert_2$
+    \item We also track the optimization error $\Vert \thetav - \bm{\thetah} \Vert_2$
 \end{itemize}
 
 \end{vbframe}
@@ -215,51 +215,9 @@ Back substitution leverages triangular structure of $\bm{R}$, moving upward from
 
 \end{vbframe}
 
-\begin{vbframe}{Classification on MNIST (SGD)}
-For a more realistic application, we compare optimizers on training an NN on subset of MNIST image classification task. 
-\medskip
-\begin{itemize}
-     \setlength{\itemsep}{1.2em} 
-    \item DNN has two hidden layers with $128$ and $64$ ReLu-activated units and Kaiming normal init. The loss is cross-entropy
-    \item Instead of SGD we use mini-batch SGD with $100$ images per batch
-    \item For the step size schedule, we use cosine decay $\alpha^{[t]} = \alpha^{[0]} \left[(1-r_{\text{min}}) \cdot \frac{1}{2}\left(1 + \cos\left(\pi \cdot \frac{t}{t_{\text{max}}}\right)\right) + r_{\text{min}}\right]$ with final step size fraction $r_{\text{min}}=0.01$
-    \item In case of momentum we set the parameter to $\texttt{momentum}=0.8$
-    \item Regular initial step size is $0.01$ and to $0.1$ for large step size
-\end{itemize}
-\end{vbframe}
 
-\begin{vbframe}{Classification on MNIST (SGD)}
-\vspace{-0.3cm}
-Mini-batch SGD with $\alpha=0.01$ for 100 epochs (5000 iterations):
-\begin{figure}
-            \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_compar.pdf} \\
-            %\begin{footnotesize}
-            %    Irreducible error due to additive noise is $\sigma=1$
-            %\end{footnotesize}
-\end{figure}
-{\footnotesize
-\textbf{Observations}:\\ 1. Momentum drastically speeds up optimization in all settings.\\
-2. For plain SGD, step size decay slows optimization down. \\
-3. Interestingly, SGD, SGD+cos and SGD+mom achieve the same final generalization. \\
-4. Cosine decay combined with momentum improves generalization. \\
-5. Large initial step size with decay performs best.}
-\end{vbframe}
+%%%%%%%%%%%%%%% LOG-REG 
 
-\begin{vbframe}{Classification on MNIST (GD vs. SGD)}
-\vspace{-0.2cm}
-Why is it not a good idea to use GD in most DL applications? Speed! Compare runtime of mini-batch SGD (batch size=$100$) with GD (constant $\alpha=0.01$ without momentum for $t_{\text{max}}=5000$ iterations):
-\begin{figure}
-            \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_GD_compar.pdf} \\
-            %\begin{footnotesize}
-            %    Irreducible error due to additive noise is $\sigma=1$
-            %\end{footnotesize}
-\end{figure} 
-\textbf{Observations}:\\ 1. Mini-batch SGD is over an order of magnitude faster.\\
-2. SGD generalizes better than GD despite being much faster. \\
-\end{vbframe}
-
-
-\begin{comment}
 
 \begin{vbframe}{Comparison of first order methods}
 Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control on simulated data:
@@ -390,7 +348,52 @@ SGD with large $\alpha=1.5$ and indep. features:
 Only variants with simple decay converge, others overshoot severely. Loss and coef paths very noisy.
 \end{vbframe}
 
-\end{comment}
+%%%% DNN MNIST classification
+
+\begin{vbframe}{Classification on MNIST (SGD)}
+For a more realistic application, we compare optimizers on training an NN on subset of MNIST image classification task. 
+\medskip
+\begin{itemize}
+     \setlength{\itemsep}{1.2em} 
+    \item DNN has two hidden layers with $128$ and $64$ ReLu-activated units and Kaiming normal init. The loss is cross-entropy
+    \item Instead of SGD we use mini-batch SGD with $100$ images per batch
+    \item For the step size schedule, we use cosine decay $\alpha^{[t]} = \alpha^{[0]} \left[(1-r_{\text{min}}) \cdot \frac{1}{2}\left(1 + \cos\left(\pi \cdot \frac{t}{t_{\text{max}}}\right)\right) + r_{\text{min}}\right]$ with final step size fraction $r_{\text{min}}=0.01$
+    \item In case of momentum we set the parameter to $\texttt{momentum}=0.8$
+    \item Regular initial step size is $0.01$ and to $0.1$ for large step size
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Classification on MNIST (SGD)}
+\vspace{-0.3cm}
+Mini-batch SGD with $\alpha=0.01$ for 100 epochs (5000 iterations):
+\begin{figure}
+            \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_compar.pdf} \\
+            %\begin{footnotesize}
+            %    Irreducible error due to additive noise is $\sigma=1$
+            %\end{footnotesize}
+\end{figure}
+{\footnotesize
+\textbf{Observations} (NB: green/cyan and blue/purple train losses overlap):\\ 1. Momentum drastically speeds up optimization in all settings.\\
+2. For plain SGD, step size decay slows optimization down. \\
+3. Interestingly, SGD, SGD+cos and SGD+mom achieve the same final generalization. \\
+4. Cosine decay combined with momentum improves generalization. \\
+5. Large initial step size with decay performs best.}
+\end{vbframe}
+
+\begin{vbframe}{Classification on MNIST (GD vs. SGD)}
+\vspace{-0.2cm}
+Why is it not a good idea to use GD in most DL applications? Speed! Compare runtime of mini-batch SGD (batch size=$100$) with GD (constant $\alpha=0.01$ without momentum for $t_{\text{max}}=5000$ iterations):
+\begin{figure}
+            \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_GD_compar.pdf} \\
+            %\begin{footnotesize}
+            %    Irreducible error due to additive noise is $\sigma=1$
+            %\end{footnotesize}
+\end{figure} 
+\textbf{Observations}:\\ 1. Mini-batch SGD is over an order of magnitude faster.\\
+2. SGD generalizes better than GD despite being much faster. \\
+\end{vbframe}
+
+
 
 \endlecture
 \end{document}

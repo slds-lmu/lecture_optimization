@@ -16,11 +16,11 @@ library(reshape2)
 set.seed(123)
 
 # Set working directory to the location of the current file
-#current_file <- rstudioapi::getActiveDocumentContext()$path
-#if (current_file == "") {
-#  stop("Please save the script before running.")
-#}
-#setwd(dirname(current_file))
+current_file <- rstudioapi::getActiveDocumentContext()$path
+if (current_file == "") {
+  stop("Please save the script before running.")
+}
+setwd(dirname(current_file))
 
 # Create 'figure_man' directory
 if (!dir.exists("../figure_man/simu_linmod/")) {
@@ -577,7 +577,7 @@ sigma <- 1
 n_test <- 5000
 
 # Optimization parameters
-learning_rate <- 3e-4
+learning_rate <- 0.025
 max_iter <- 20000  
 momentum_value <- 0.8
 decay <- 0.1
@@ -641,7 +641,7 @@ sigma <- 1
 n_test <- 5000
 
 # Optimization parameters
-learning_rate <- 0.05
+learning_rate <- 0.25
 max_iter <- 20000  
 momentum_value <- 0.8
 decay <- 0.1
@@ -704,8 +704,8 @@ sigma <- 1
 n_test <- 5000
 
 # Optimization parameters
-learning_rate <- 1.5
-max_iter <- 2000  
+learning_rate <- 1
+max_iter <- 20000  
 momentum_value <- 0.8
 decay <- 0.1
 stochastic <- FALSE
@@ -767,7 +767,7 @@ sigma <- 1
 n_test <- 5000
 
 # Optimization parameters
-learning_rate <- 0.05
+learning_rate <- 0.25
 max_iter <- 20000  
 momentum_value <- 0.8
 decay <- 0.1
@@ -835,7 +835,7 @@ sigma <- 1
 n_test <- 5000
 
 # Optimization parameters
-learning_rate <- 3e-4
+learning_rate <- 3e-3
 max_iter <- 20000  
 momentum_value <- 0.8
 decay <- 0.1
@@ -899,7 +899,7 @@ sigma <- 1
 n_test <- 5000
 
 # Optimization parameters
-learning_rate <- 0.05
+learning_rate <- 3e-2
 max_iter <- 20000  
 momentum_value <- 0.8
 decay <- 0.1
@@ -962,7 +962,7 @@ sigma <- 1
 n_test <- 5000
 
 # Optimization parameters
-learning_rate <- 1.5
+learning_rate <- 3e-1
 max_iter <- 20000  
 momentum_value <- 0.8
 decay <- 0.1
@@ -1025,7 +1025,7 @@ sigma <- 1
 n_test <- 5000
 
 # Optimization parameters
-learning_rate <- 0.05
+learning_rate <- 3e-2
 max_iter <- 20000  
 momentum_value <- 0.8
 decay <- 0.1

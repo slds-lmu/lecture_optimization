@@ -39,17 +39,17 @@ generate_data <- function(n, p, rho, sigma, model, n_test) {
     # For even p
     neg_values <- -(1:(p/2))  # Creates sequence -1, -2, ..., -p/2
     pos_values <- seq(p/2, 1)  # Creates sequence p/2, ..., 1
-    beta_true <- c(neg_values, pos_values)
+    beta_ground_truth <- c(neg_values, pos_values)
   } else {
     # For odd p
     neg_values <- -(1:floor(p/2))  # Creates sequence -1, -2, ..., -floor(p/2)
     pos_values <- seq(floor(p/2), 1)  # Creates sequence floor(p/2), ..., 1
-    beta_true <- c(neg_values, 0, pos_values)
+    beta_ground_truth <- c(neg_values, 0, pos_values)
   }
   
   # Linear predictor
-  preds <- X %*% beta_true
-  preds_test <- X_test %*% beta_true
+  preds <- X %*% beta_ground_truth
+  preds_test <- X_test %*% beta_ground_truth
   
   # Generate response variable y
   if (model == "linear") {
@@ -67,6 +67,13 @@ generate_data <- function(n, p, rho, sigma, model, n_test) {
     stop("Invalid model type. Choose 'linear' or 'logistic'.")
   }
   
+  # Calculate beta_true from training data
+  if (model == "linear") {
+    beta_true <- coef(lm(y ~ X - 1))
+  } else if (model == "logistic") {
+    beta_true <- coef(glm(y ~ X - 1, family = binomial()))
+  }
+  
   # Compute condition number
   cond_number <- compute_condition_number(X)
   
@@ -76,9 +83,10 @@ generate_data <- function(n, p, rho, sigma, model, n_test) {
   cat("n (training set size):", n, "\n")
   cat("p (number of features):", p, "\n")
   cat("Condition number of X^T X:", cond_number, "\n\n")
+  cat("lm/glm estimates:", beta_true, "\n\n")
   
   return(list(
-    X = X, y = y, beta_true = beta_true, preds = preds,
+    X = X, y = y, beta_true = beta_true, beta_ground_truth = beta_ground_truth, preds = preds,
     X_test = X_test, y_test = y_test, preds_test = preds_test,
     condition_number = cond_number
   ))
@@ -203,7 +211,7 @@ gradient_descent <- function(X, y, X_test, y_test, beta_true, model = model_type
     cat("\nPerformance Metrics:\n")
     cat("Training RMSE:", train_rmse, "\n")
     cat("Test RMSE:", test_rmse, "\n")
-    cat("Final Parameter Estimation Error:", l2_diff_history[length(l2_diff_history)], "\n\n")
+    cat("Approximate Parameter Optimization Error:", l2_diff_history[length(l2_diff_history)], "\n\n")
     
   } else if (model == "logistic") {
     # Calculate probabilities
@@ -232,7 +240,7 @@ gradient_descent <- function(X, y, X_test, y_test, beta_true, model = model_type
     cat("\nPerformance Metrics:\n")
     cat("Training Accuracy:", sprintf("%.4f", train_accuracy), "\n")
     cat("Test Accuracy:", sprintf("%.4f", test_accuracy), "\n")
-    cat("Final Parameter Estimation Error:", l2_diff_history[length(l2_diff_history)], "\n")
+    cat("Approximate Parameter Optimization Error:", l2_diff_history[length(l2_diff_history)], "\n")
     cat("Final Cross-Entropy Loss (Train):", loss_history[length(loss_history)], "\n")
     cat("Final Cross-Entropy Loss (Test):", test_loss_history[length(test_loss_history)], "\n\n")
   }
@@ -255,10 +263,15 @@ lwidth = 1
 fsize = 14
 legendsize = 20
 
-
+########
 plot_optimization_results <- function(loss_histories, test_loss_histories, l2_diff_histories, 
                                       time_histories, method_names, xaxis = "iterations",
                                       methods_to_show = method_names) {
+  
+  # Plotting configs
+  lwidth <- 1
+  fsize <- 14
+  legendsize <- 20 
   
   # Create iteration indices
   iterations <- 1:length(loss_histories[[1]])
@@ -284,72 +297,90 @@ plot_optimization_results <- function(loss_histories, test_loss_histories, l2_di
     x_lab <- "Time (seconds)"
     # Round time to nearest second for breaks
     max_time <- ceiling(max(plot_data$time))
-    x_breaks <- seq(0, max_time, by = 0.5) #signif(max_time/5, digits=digs)
+    x_breaks <- seq(0, max_time, by = 0.5)
   } else {
     x_var <- "iteration"
     x_lab <- "Iterations"
     # Use sensible iteration breaks
     max_iter <- max(plot_data$iteration)
-    x_breaks <- seq(0, max_iter, by = floor(max_iter/5))
+    x_breaks <- seq(0, max_iter, by = floor(max_iter / 5))
   }
+  
+  # Common theme for plots
+  common_theme <- theme_minimal() +
+    theme(
+      legend.position = "bottom",
+      legend.spacing.x = unit(1.5, 'cm'),
+      text = element_text(size = fsize + 5),
+      axis.text = element_text(size = fsize + 1),
+      legend.title = element_text(size = legendsize + 2),
+      legend.text = element_text(size = legendsize)
+    )
   
   # Create the three plots
   p1 <- ggplot(plot_data, aes_string(x = x_var, y = "train_loss", color = "method")) +
     geom_line(linewidth = lwidth) +
     scale_x_continuous(breaks = x_breaks) +
-    coord_cartesian(ylim = c(-0.1, min(15,max(plot_data$train_loss+0.1)))) +
+    coord_cartesian(ylim = c(0, min(15, max(plot_data$train_loss + 0.1)))) +
     labs(x = x_lab, y = "Train loss", color = "Method") +
-    theme_minimal() +
-    theme(legend.position = "bottom",
-          text = element_text(size = fsize+5),
-          axis.text = element_text(size = fsize+1),
-          legend.text = element_text(legendsize+20),
-          legend.spacing.x = unit(1, 'cm'),
-          legend.box.spacing = unit(1, 'cm'))
+    guides(color = guide_legend(
+      nrow = 1,
+      byrow = TRUE,
+      keywidth = unit(2.5, "cm"),
+      keyheight = unit(0.5, "cm"),
+      default.unit = "cm"
+    )) +
+    common_theme
   
   p2 <- ggplot(plot_data, aes_string(x = x_var, y = "test_loss", color = "method")) +
     geom_line(linewidth = lwidth) +
     scale_x_continuous(breaks = x_breaks) +
-    #scale_y_continuous(limits = c(0, 2)) +
-    coord_cartesian(ylim = c(min(plot_data$test_loss) - 0.1, min(max(plot_data$test_loss) + 0.1,2))) +
-    #geom_hline(yintercept = 1, linetype = "dashed", color = "black", alpha=0.6, linewidth = 0.7) +
+    coord_cartesian(ylim = c(min(plot_data$test_loss) - 0.1, min(max(plot_data$test_loss) + 0.1, 2))) +
     labs(x = x_lab, y = "Test Loss", color = "Method") +
-    theme_minimal() +
-    theme(legend.position = "bottom",
-          text = element_text(size = fsize+5),
-          axis.text = element_text(size=fsize+1),
-          legend.text = element_text(legendsize+10),
-          legend.spacing.x = unit(1, 'cm'),
-          legend.box.spacing = unit(1, 'cm'))
+    guides(color = guide_legend(
+      nrow = 1,
+      byrow = TRUE,
+      keywidth = unit(2.5, "cm"),
+      keyheight = unit(0.5, "cm"),
+      default.unit = "cm"
+    )) +
+    common_theme
   
   p3 <- ggplot(plot_data, aes_string(x = x_var, y = "l2_diff", color = "method")) +
     geom_line(linewidth = lwidth) +
     scale_x_continuous(breaks = x_breaks) +
-    labs(x = x_lab, y = "Estimation error (log10)", color = "Method") +
-    theme_minimal() +
-    theme(legend.position = "bottom",
-          text = element_text(size = fsize+5),
-          axis.text = element_text(size = fsize+1),
-          legend.text = element_text(legendsize+10),
-          legend.spacing.x = unit(1, 'cm'),   
-          legend.box.spacing = unit(1, 'cm'))
+    labs(x = x_lab, y = "Optimization error (log10)", color = "Method") +
+    guides(color = guide_legend(
+      nrow = 1,
+      byrow = TRUE,
+      keywidth = unit(1.5, "cm"),
+      keyheight = unit(0.5, "cm"),
+      default.unit = "cm"
+    )) +
+    common_theme
   
-  # Combine plots with shared legend
-  final_plot <- ggpubr::ggarrange(p1, p2, p3,
-                                  ncol = 3, 
-                                  nrow = 1,
-                                  common.legend = TRUE,
-                                  legend = "bottom",
-                                  align = "hv",
-                                  font.label = list(size = legendsize+10),
-                                  legend.grob = get_legend(p1 + 
-                                                             theme(
-                                                               legend.title = element_text(size = 24),  
-                                                               legend.text = element_text(size = 20),   
-                                                               legend.key.size = unit(2, "cm"),
-                                                               legend.spacing.x = unit(1, 'cm'),
-                                                               legend.box.spacing = unit(1, 'cm')
-                                                             ))
+  # Extract legend
+  legend_grob <- ggpubr::get_legend(p1)
+  
+  # Remove legends from individual plots
+  p1 <- p1 + theme(legend.position = "none")
+  p2 <- p2 + theme(legend.position = "none")
+  p3 <- p3 + theme(legend.position = "none")
+  
+  # Combine plots
+  combined_plots <- ggpubr::ggarrange(
+    p1, p2, p3,
+    ncol = 3,
+    nrow = 1,
+    align = "hv"
+  )
+  
+  # Add legend below the combined plots
+  final_plot <- ggpubr::ggarrange(
+    combined_plots,
+    legend_grob,
+    ncol = 1,
+    heights = c(1, 0.15)  # Adjust the height ratio as needed
   )
   
   return(final_plot)
