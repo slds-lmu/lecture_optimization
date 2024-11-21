@@ -25,22 +25,21 @@
 
 \begin{vbframe}{Comparison of first order methods}
 Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control on simulated data. We do not use analytical solution on purpose although one exists:
-
+{\small
 \begin{itemize}
-    \item Linear regression (squared loss) simulation $\bm{y} = \bm{X}\thetav^{\ast} + \bm{\varepsilon}$ with $n=500$ samples and $p=11$ features, where $\thetav^{\ast}=(-5,-4,\ldots,4,5)^{\top}$, $\bm{\varepsilon} \sim \mathcal{N}(\bm{0}, \bm{I})$, and $\bm{X} \sim \mathcal{N}(\bm{0}, \Sigma)$ for $\Sigma=\bm{I}$ (indep. features) or $\Sigma_{i,j}=0.99^{|i-j|}$ (corr. features)
+    \item Linear regression (squared loss) simulation $\bm{y} = \bm{X}\thetav^{\ast} + \bm{\varepsilon}$ with $n=500$ samples and $p=11$ features, where $\thetav^{\ast}=(-5,-4,\ldots0,\ldots,4,5)^{\top}$, $\bm{\varepsilon} \sim \mathcal{N}(\bm{0}, \bm{I})$, and $\bm{X} \sim \mathcal{N}(\bm{0}, \Sigma)$ for $\Sigma=\bm{I}$ (i.i.d. features) or $\Sigma_{i,j}=0.99^{|i-j|}$ (corr. features)
     \item Indep. features result in a condition number of $\approx 2.9$, whereas the corr. feature set-up produces a bad condition number of $\approx 600$
-    \item We set the momentum parameter to $\texttt{momentum}=0.8$
-    \item The step size $\alpha^{[t]}$ is decayed exponentially using deterministic schedule $\alpha^{[t]}=\alpha^{[0]} \cdot \texttt{decay}^{t/t_{\text{max}}}$ for $\texttt{decay}=0.1$
-    \item For GD and SGD we use 3 step sizes each (low, medium, large). % to illustrate the effect of $\alpha$, $\texttt{momentum}$ and $\texttt{decay}$.
+    \item We set the momentum parameter to $0.8$ and the decay step size using schedule $\alpha^{[t]}=\alpha^{[0]} \cdot \texttt{decay}^{t/t_{\text{max}}}$ for $\texttt{decay}=0.1$
+    \item For GD and SGD we use different step sizes to show that benefit of momentum/decay depends heavily on step size
     \item ERM has unique global minimizer given by $\bm{\thetah} = (\bm{X}^{\top}\bm{X})^{-1}\bm{X}^{\top} \bm{y}$
     \item We also track the optimization error $\Vert \thetav - \bm{\thetah} \Vert_2$
 \end{itemize}
-
+}
 \end{vbframe}
 
 %%%% GD linear
 
-\begin{vbframe}{Lin-Reg (GD + med step size)}
+\begin{vbframe}{Lin-Reg (GD + med step size, default case)}
 \vspace{-0.4cm}
 GD with medium $\alpha=2\cdot10^{-3}$ and indep. features:
 \begin{figure}
@@ -50,7 +49,7 @@ GD with medium $\alpha=2\cdot10^{-3}$ and indep. features:
                 Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Momentum accelerates optimization but all versions converge to global min. Decay slows down optimization slightly.
+All variants converge to global min. \textbf{Momentum} accelerates optimization and \textbf{decay} slows down optimization under that step size.
 \end{vbframe}
 
 \begin{vbframe}{Lin-Reg (GD + corr. features)}
@@ -63,7 +62,8 @@ GD with medium $\alpha=2\cdot10^{-3}$ and bad conditioning (corr. features):
                 Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Only momentum  GD variant converges in $t_{\text{max}}$ iterations. Bad conditioning slows down optim severely!
+{\footnotesize
+Bad \textbf{conditioning slows down optim} severely! Only \textbf{momentum} w/o decay comes close to global min. \textbf{Momentum} causes ``overshooting'' of some coefs.}
 \end{vbframe}
 
 
@@ -77,7 +77,7 @@ GD with (too small) $\alpha=3\cdot10^{-4}$ and indep. features:
                 Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Only momentum permits optim close to global min in $t_{\text{max}}=10000$ iters. Decay worsens performance as $\alpha$ was already too low.
+Only two \textbf{momentum} variants come close to global min in $t_{\text{max}}=10000$. \textbf{Decay} worsens performance as $\alpha$ was already too low.
 \end{vbframe}
 
 \begin{vbframe}{Lin-Reg (GD + large step size)}
@@ -90,7 +90,7 @@ GD with large $\alpha=1.5$ and indep. features:
                 Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Super fast convergence in $<20$ steps. Decay here speeds up optim. Coefficients ``overshoot''+oscillate at beginning. Momentum variants become unstable.
+Super fast convergence in $<20$ steps. \textbf{Decay} here speeds up optim while \textbf{momentum} becomes slow and unstable. Coefficients oscillate at beginning which is reduced by decay.
 \end{vbframe}
 
 
@@ -103,12 +103,13 @@ SGD with medium $\alpha=2\cdot10^{-3}$ and indep. features:
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_reg_med_lr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_reg_coef_med.pdf}\\
             \begin{footnotesize}
-                Irreducible error due to additive noise is $\sigma=1$
+                %Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Momentum accelerates optim initially but eventually becomes worse. Momentum+decay is both fast and has small final error.
+\textbf{Momentum} accelerates optim initially but eventually outperformed by other variants. \textbf{Momentum+decay} is both fast initially and has small final error. \textbf{Decay} performs best overall but is slowest initially.
 \end{vbframe}
 
+\begin{comment}
 \begin{vbframe}{Lin-Reg (SGD + corr. features)}
 \vspace{-0.4cm}
 SGD with medium $\alpha=2\cdot10^{-3}$ and bad conditioning (corr. features):
@@ -121,7 +122,9 @@ SGD with medium $\alpha=2\cdot10^{-3}$ and bad conditioning (corr. features):
 \end{figure}
 Bad conditioning slows down and destabilizes SGD optimization compared to indep. features. Momentum helps prevent this.
 \end{vbframe}
+\end{comment}
 
+\begin{comment}
 \begin{vbframe}{Lin-Reg (SGD + small step size)}
 \vspace{-0.4cm}
 SGD with small $\alpha=3\cdot10^{-4}$ and indep. features:
@@ -134,6 +137,7 @@ SGD with small $\alpha=3\cdot10^{-4}$ and indep. features:
 \end{figure}
 Only momentum variants close to optimum in $t_{\text{max}}=10000$. Decay again worsens performance. Coef paths $\approx$ smooth due to small $\alpha$. 
 \end{vbframe}
+\end{comment}
 
 
 \begin{vbframe}{Lin-Reg (SGD + large step size)}
@@ -146,7 +150,7 @@ SGD with large $\alpha=1 \cdot 10^{-2}$ and indep. features:
                 Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Highly noisy dynamics worsened by momentum. Step size decay necessary to eliminate noise toward end of training.
+High variance in SGD dynamics. \textbf{Momentum} becomes unstable while \textbf{decay} (necessary to eliminate noise) performs best and is fastest.
 \end{vbframe}
 
 \begin{vbframe}{Digression: solving OLS with QR Decomp.}
@@ -219,17 +223,17 @@ Back substitution leverages triangular structure of $\bm{R}$, moving upward from
 %%%%%%%%%%%%%%% LOG-REG 
 
 
-\begin{vbframe}{Comparison of first order methods}
+\begin{vbframe}{(S)GD for logistic regression}
 Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control on simulated data:
 
-\begin{itemize}
-    \item Logistic regression (cross-entropy loss) simulation also with $n=500$ samples and $p=11$ features, where $\thetav^{\ast}=(-5,-4,\ldots,4,5)^{\top}$ and $\bm{X} \sim \mathcal{N}(\bm{0}, \Sigma)$ for $\Sigma=\bm{I}$ (indep. features) or $\Sigma_{i,j}=0.99^{|i-j|}$ (corr. features)
-    \item To simulate response, we set $y^{(i)} \sim \mathcal{B}(\pi^{(i)}), \pi^{(i)} = \frac{1}{1+e^{-(\bm{x}^{(i)})^{\top}\thetav^{\ast}}}$
-    \item Indep. features again result in low condition number, whereas corr. features result in bad condition number
-    \item We set the momentum parameter to $\texttt{momentum}=0.8$ and $\texttt{decay}=0.1$
-    \item For GD and SGD we use 3 step sizes each (low, appropriate, large) to illustrate the effect of $\alpha$, $\texttt{momentum}$ and $\texttt{decay}$.
-    \item ERM has unique global minimizer but no closed-form solution
-    \item We also track the estimation error $\Vert \thetav - \thetav^{\ast} \Vert_2$
+\begin{itemize}\setlength{\itemsep}{1.1em}
+    \item Logistic regression (log loss) with same simulation setup as for linear regression
+    \item To simulate response, we set $y^{(i)} \sim \mathcal{B}(\pi^{(i)}), \pi^{(i)} = \frac{1}{1+e^{-\left(\bm{x}^{(i)}\right)^{\top}\thetav^{\ast}}}$
+    %\item Indep. features again result in low condition number, whereas corr. features result in bad condition number
+    \item We set the momentum parameter to $0.8$ and $\texttt{decay}=0.1$
+    \item We again use different step sizes to illustrate benefit of momentum and decay depends on step size
+    \item ERM has unique global minimizer but no closed-form solution. We can approximate $\hat{\thetav}$ using the \texttt{glm} solution (second-order optim)
+    \item We also track the optimization error $\Vert \thetav - \hat{\thetav} \Vert_2$
 \end{itemize}
 
 \end{vbframe}
@@ -239,44 +243,47 @@ Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control 
 
 \begin{vbframe}{Log-Reg (GD + med step size)}
 \vspace{-0.4cm}
-GD with medium $\alpha=5\cdot10^{-2}$ and indep. features:
+GD with medium $\alpha=0.25$ and indep. features:
 \begin{figure}
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_med_lr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_med.pdf}\\
             \begin{footnotesize}
-                Dashed line in test loss indicates irreducible error due to $\sigma=1$
+                %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Momentum accelerates optimization while other versions still do not converge to global min. Decay slows down progress.
+All variants converge to global min. \textbf{Momentum} accelerates
+and \textbf{decay} slows down optimization. Momentum only performs best.
 \end{vbframe}
 
 \begin{vbframe}{Log-Reg (GD + corr. features)}
 \vspace{-0.4cm}
-GD with medium $\alpha=5\cdot10^{-2}$ and bad conditioning (corr. features):
+GD with medium $\alpha=0.25$ and bad conditioning (corr. features):
 \begin{figure}
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_med_lr_corr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_med_corr.pdf}\\
             \begin{footnotesize}
-                Dashed line in test loss indicates irreducible error due to $\sigma=1$
+                %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Only GD with momentum converge in $t_{\text{max}}=10000$ iterations. Step size decay slows down optimization (non-convergence).
+Bad conditioning slows down optim slightly. Only \textbf{momentum w/o decay} converges exactly to global min in $t_{\text{max}}$. Momentum causes “\textbf{overshooting}” of some coefs.
 \end{vbframe}
 
-
+\begin{comment}
 \begin{vbframe}{Log-Reg (GD + small step size)}
 \vspace{-0.4cm}
-GD with small $\alpha=2\cdot10^{-3}$ and indep. features:
+GD with small $\alpha=0.025$ and indep. features:
 \begin{figure}
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_small_lr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_small.pdf}\\
             \begin{footnotesize}
-                Dashed line in test loss indicates irreducible error due to $\sigma=1$
+                %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
 \end{figure}
 No method converges in $t_{\text{max}}=10000$, as small updates keep the process in high-error regions, accumulating error over time.
 \end{vbframe}
+\end{comment}
 
+\begin{comment}
 \begin{vbframe}{Log-Reg (GD + large step size)}
 \vspace{-0.5cm}
 GD with large $\alpha=10$ and indep. features:
@@ -284,29 +291,30 @@ GD with large $\alpha=10$ and indep. features:
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_large_lr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_large.pdf}\\
             \begin{footnotesize}
-                Dashed line in test loss indicates irreducible error due to $\sigma=1$
+                %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
 \end{figure}
 Super fast convergence for momentum around $30$ steps. Coefficient paths show ``overshooting'', while decay helps.
 \end{vbframe}
-
+\end{comment}
 
 
 %%% SGD logistic
 
 \begin{vbframe}{Log-Reg (SGD + med step size)}
 \vspace{-0.4cm}
-SGD with medium $\alpha=5\cdot10^{-2}$ and indep. features:
+SGD with medium $\alpha=0.03$ and indep. features:
 \begin{figure}
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_med_lr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_coef_med.pdf}\\
             \begin{footnotesize}
-                Dashed line in test loss indicates irreducible error due to $\sigma=1$
+                %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Momentum accelerates optim but all variants except decay converge. Coef paths slightly jittered.
+Under SGD dynamics become more noisy. \textbf{Momentum} still accelerates while \textbf{decay} slows down optimization. Only the coefs of \textbf{momentum w/o decay} come close to global minimizers.
 \end{vbframe}
 
+\begin{comment}
 \begin{vbframe}{Log-Reg (SGD + corr. features)}
 \vspace{-0.4cm}
 SGD with medium $\alpha=5\cdot10^{-2}$ and bad conditioning (corr. features):
@@ -314,13 +322,14 @@ SGD with medium $\alpha=5\cdot10^{-2}$ and bad conditioning (corr. features):
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_med_lr_corr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_coef_med_corr.pdf}\\
             \begin{footnotesize}
-                Dashed line in test loss indicates irreducible error due to $\sigma=1$
+                %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
 \end{figure}
 Only SGD and SGD+mom converge in $t_{\text{max}}=10000$. Decay slows down while momentum accelerates optim.
 \end{vbframe}
+\end{comment}
 
-
+\begin{comment}
 \begin{vbframe}{Log-Reg (SGD + small step size)}
 \vspace{-0.4cm}
 SGD with small $\alpha=3\cdot10^{-4}$ and indep. features:
@@ -328,24 +337,26 @@ SGD with small $\alpha=3\cdot10^{-4}$ and indep. features:
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_small_lr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_coef_small.pdf}\\
             \begin{footnotesize}
-                Dashed line in test loss indicates irreducible error due to $\sigma=1$
+                %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
 \end{figure}
 No method converges since lr is too small. Decay makes it even worse. 
 \end{vbframe}
+\end{comment}
 
 
 \begin{vbframe}{Log-Reg (SGD + large step size)}
 \vspace{-0.4cm}
-SGD with large $\alpha=1.5$ and indep. features:
+SGD with large $\alpha=0.3$ and indep. features:
 \begin{figure}
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_large_lr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_coef_large.pdf}\\
             \begin{footnotesize}
-                Dashed line in test loss indicates irreducible error due to $\sigma=1$
+                %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Only variants with simple decay converge, others overshoot severely. Loss and coef paths very noisy.
+{\footnotesize
+\textbf{High variance} in SGD dynamics. \textbf{Momentum} becomes unstable and oscillates at high loss value while \textbf{decay} (necessary to eliminate noise) performs best and is fastest. \textbf{Momentum+decay} initially unstable but recovers with reduced step size.}
 \end{vbframe}
 
 %%%% DNN MNIST classification
@@ -358,7 +369,7 @@ For a more realistic application, we compare optimizers on training an NN on sub
     \item DNN has two hidden layers with $128$ and $64$ ReLu-activated units and Kaiming normal init. The loss is cross-entropy
     \item Instead of SGD we use mini-batch SGD with $100$ images per batch
     \item For the step size schedule, we use cosine decay $\alpha^{[t]} = \alpha^{[0]} \left[(1-r_{\text{min}}) \cdot \frac{1}{2}\left(1 + \cos\left(\pi \cdot \frac{t}{t_{\text{max}}}\right)\right) + r_{\text{min}}\right]$ with final step size fraction $r_{\text{min}}=0.01$
-    \item In case of momentum we set the parameter to $\texttt{momentum}=0.8$
+    \item In case of momentum we set the parameter to $0.8$
     \item Regular initial step size is $0.01$ and to $0.1$ for large step size
 \end{itemize}
 \end{vbframe}
@@ -373,16 +384,16 @@ Mini-batch SGD with $\alpha=0.01$ for 100 epochs (5000 iterations):
             %\end{footnotesize}
 \end{figure}
 {\footnotesize
-\textbf{Observations} (NB: green/cyan and blue/purple train losses overlap):\\ 1. Momentum drastically speeds up optimization in all settings.\\
-2. For plain SGD, step size decay slows optimization down. \\
-3. Interestingly, SGD, SGD+cos and SGD+mom achieve the same final generalization. \\
+\textbf{Observations} (\textbf{NB}: \textcolor{green}{green}/\textcolor{cyan}{cyan} and \textcolor{blue}{blue}/\textcolor{magenta}{purple} train losses overlap but not val. acc.):\\ 1. Momentum drastically speeds up optimization in all settings.\\
+2. For plain SGD, step size decay slows optimization down slightly. \\
+3. Interestingly, SGD, SGD+cos and SGD+mom achieve same final val. acc. \\
 4. Cosine decay combined with momentum improves generalization. \\
-5. Large initial step size with decay performs best.}
+5. Large initial step size with momentum and decay performs best.}
 \end{vbframe}
 
 \begin{vbframe}{Classification on MNIST (GD vs. SGD)}
 \vspace{-0.2cm}
-Why is it not a good idea to use GD in most DL applications? Speed! Compare runtime of mini-batch SGD (batch size=$100$) with GD (constant $\alpha=0.01$ without momentum for $t_{\text{max}}=5000$ iterations):
+Why is it not a good idea to use GD in most DL applications? SGD is much faster. Compare runtime of mini-batch SGD (batch size=$100$) with GD (constant $\alpha=0.01$ without momentum for $t_{\text{max}}=5000$ iterations):
 \begin{figure}
             \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_GD_compar.pdf} \\
             %\begin{footnotesize}
