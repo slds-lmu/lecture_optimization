@@ -367,7 +367,7 @@ For a more realistic application, we compare optimizers on training an NN on sub
 \medskip
 \begin{itemize}
      \setlength{\itemsep}{1.2em} 
-    \item DNN has two hidden layers with $128$ and $64$ ReLu-activated units and Kaiming normal init. The loss is cross-entropy
+    \item DNN has two hidden layers with $128$ and $64$ ReLU-activated units and Kaiming normal init. The loss is cross-entropy
     \item Instead of SGD we use mini-batch SGD with $100$ images per batch
     \item For the step size schedule, we use cosine decay $\alpha^{[t]} = \alpha^{[0]} \left[(1-r_{\text{min}}) \cdot \frac{1}{2}\left(1 + \cos\left(\pi \cdot \frac{t}{t_{\text{max}}}\right)\right) + r_{\text{min}}\right]$ with final step size fraction $r_{\text{min}}=0.01$
     \item In case of momentum we set the parameter to $0.8$
@@ -391,8 +391,8 @@ Mini-batch SGD with $\alpha \in \{0.01, 0.1\}$ for 100 epochs (5000 iterations):
 1. \textbf{Momentum} drastically speeds up optimization in all settings.\\
 2. \textbf{Plain SGD}: step size decay slows optimization slightly. \\
 3. SGD, SGD+cos and SGD+mom achieve \textbf{same} val. acc. \\
-$\Rightarrow$ no generalization benefit for small $\alpha$\\
-4. \textbf{Cosine decay+momentum} slightly improves generalization for small $\alpha$. \\
+$\Rightarrow$ no generalization benefit for medium $\alpha$\\
+4. \textbf{Cosine decay+momentum} improves generalization for medium $\alpha$ slightly. \\
 5. \textbf{Large step size} with momentum and decay performs best}
 \end{vbframe}
 
