@@ -90,7 +90,7 @@ GD with large $\alpha=1.5$ and indep. features:
                 Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Super fast convergence in $<20$ steps. \textbf{Decay} here speeds up optim while \textbf{momentum} becomes slow and unstable. Coefficients oscillate at beginning which is reduced by decay.
+Super fast convergence in $<20$ steps. \textbf{Decay} here accelerates optim while \textbf{momentum} becomes slow and unstable. Coefficients oscillate at beginning which is reduced by decay.
 \end{vbframe}
 
 
@@ -106,7 +106,7 @@ SGD with medium $\alpha=2\cdot10^{-3}$ and indep. features:
                 %Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
 \end{figure}
-\textbf{Momentum} accelerates optim initially but eventually outperformed by other variants. \textbf{Momentum+decay} is both fast initially and has small final error. \textbf{Decay} performs best overall but is slowest initially.
+\textbf{Momentum} accelerates optim initially but is eventually outperformed by other variants. \textbf{Momentum+decay} is both fast initially and has small final error. \textbf{Decay} performs best overall but is slowest initially.
 \end{vbframe}
 
 \begin{comment}
@@ -252,7 +252,7 @@ GD with medium $\alpha=0.25$ and indep. features:
             \end{footnotesize}
 \end{figure}
 All variants converge to global min. \textbf{Momentum} accelerates
-and \textbf{decay} slows down optimization. Momentum only performs best.
+and \textbf{decay} slows down optimization. \textbf{GD+mom} performs best.
 \end{vbframe}
 
 \begin{vbframe}{Log-Reg (GD + corr. features)}
@@ -311,7 +311,7 @@ SGD with medium $\alpha=0.03$ and indep. features:
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
 \end{figure}
-Under SGD dynamics become more noisy. \textbf{Momentum} still accelerates while \textbf{decay} slows down optimization. Only the coefs of \textbf{momentum w/o decay} come close to global minimizers.
+Under SGD dynamics become more noisy. \textbf{Momentum} accelerates while \textbf{decay} slows down optimization. Only the coefs of \textbf{momentum w/o decay} come close to global minimizers.
 \end{vbframe}
 
 \begin{comment}
@@ -355,8 +355,9 @@ SGD with large $\alpha=0.3$ and indep. features:
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
 \end{figure}
+\vspace{-0.2cm}
 {\footnotesize
-\textbf{High variance} in SGD dynamics. \textbf{Momentum} becomes unstable and oscillates at high loss value while \textbf{decay} (necessary to eliminate noise) performs best and is fastest. \textbf{Momentum+decay} initially unstable but recovers with reduced step size.}
+\textbf{High variance} in optim dynamics. Plain SGD and \textbf{Momentum} become unstable and oscillate at suboptimal loss values/diverge while \textbf{decay} (necessary to eliminate oscillations) performs best and is fastest. \textbf{Momentum+decay} initially diverges but recovers once step size reduces (would converge with many more steps).}
 \end{vbframe}
 
 %%%% DNN MNIST classification
@@ -376,19 +377,23 @@ For a more realistic application, we compare optimizers on training an NN on sub
 
 \begin{vbframe}{Classification on MNIST (SGD)}
 \vspace{-0.3cm}
-Mini-batch SGD with $\alpha=0.01$ for 100 epochs (5000 iterations):
+Mini-batch SGD with $\alpha \in \{0.01, 0.1\}$ for 100 epochs (5000 iterations):
 \begin{figure}
             \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_compar.pdf} \\
             %\begin{footnotesize}
             %    Irreducible error due to additive noise is $\sigma=1$
             %\end{footnotesize}
 \end{figure}
+\vspace{-0.2cm}
+\textbf{Observations} 
 {\footnotesize
-\textbf{Observations} (\textbf{NB}: \textcolor{green}{green}/\textcolor{cyan}{cyan} and \textcolor{blue}{blue}/\textcolor{magenta}{purple} train losses overlap but not val. acc.):\\ 1. Momentum drastically speeds up optimization in all settings.\\
-2. For plain SGD, step size decay slows optimization down slightly. \\
-3. Interestingly, SGD, SGD+cos and SGD+mom achieve same final val. acc. \\
-4. Cosine decay combined with momentum improves generalization. \\
-5. Large initial step size with momentum and decay performs best.}
+(\textbf{NB}: \textcolor{green}{green}/\textcolor{cyan}{cyan} + \textcolor{blue}{blue}/\textcolor{magenta}{purple} train losses overlap but not val. acc.):\\ 
+1. \textbf{Momentum} drastically speeds up optimization in all settings.\\
+2. \textbf{Plain SGD}: step size decay slows optimization slightly. \\
+3. SGD, SGD+cos and SGD+mom achieve \textbf{same} val. acc. \\
+$\Rightarrow$ no generalization benefit for small $\alpha$\\
+4. \textbf{Cosine decay+momentum} slightly improves generalization for small $\alpha$. \\
+5. \textbf{Large step size} with momentum and decay performs best}
 \end{vbframe}
 
 \begin{vbframe}{Classification on MNIST (GD vs. SGD)}
