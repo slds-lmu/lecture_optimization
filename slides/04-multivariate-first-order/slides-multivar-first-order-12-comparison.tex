@@ -46,7 +46,7 @@ GD with medium $\alpha=2\cdot10^{-3}$ and indep. features:
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_med_lr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_coef_med.pdf}\\
             \begin{footnotesize}
-                Irreducible error due to additive noise is $\sigma=1$
+                Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers.
             \end{footnotesize}
 \end{figure}
 All variants converge to global min. \textbf{Momentum} accelerates optimization and \textbf{decay} slows down optimization under that step size.
@@ -59,11 +59,12 @@ GD with medium $\alpha=2\cdot10^{-3}$ and bad conditioning (corr. features):
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_med_lr_corr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_coef_med_corr.pdf}\\
             \begin{footnotesize}
-                Irreducible error due to additive noise is $\sigma=1$
+                Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers.
             \end{footnotesize}
 \end{figure}
+\vspace{-0.2cm}
 {\footnotesize
-Bad \textbf{conditioning slows down optim} severely! Only \textbf{momentum} w/o decay comes close to global min. \textbf{Momentum} causes ``overshooting'' of some coefs.}
+Bad \textbf{conditioning slows down optim} severely! Only \textbf{momentum} w/o decay comes close to global min. \textbf{Momentum} causes ``overshooting'' of some coefs. Corr. features cause corr. global minimizers.}
 \end{vbframe}
 
 
@@ -74,7 +75,7 @@ GD with (too small) $\alpha=3\cdot10^{-4}$ and indep. features:
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_small_lr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_coef_small.pdf}\\
             \begin{footnotesize}
-                Irreducible error due to additive noise is $\sigma=1$
+                Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers.
             \end{footnotesize}
 \end{figure}
 Only two \textbf{momentum} variants come close to global min in $t_{\text{max}}=10000$. \textbf{Decay} worsens performance as $\alpha$ was already too low.
@@ -87,7 +88,7 @@ GD with large $\alpha=1.5$ and indep. features:
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_large_lr_iters.pdf} \\
              \includegraphics[width=0.7\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_coef_large.pdf}\\
             \begin{footnotesize}
-                Irreducible error due to additive noise is $\sigma=1$
+                Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers.
             \end{footnotesize}
 \end{figure}
 Super fast convergence in $<20$ steps. \textbf{Decay} here accelerates optim while \textbf{momentum} becomes slow and unstable. Coefficients oscillate at beginning which is reduced by decay.
@@ -248,7 +249,8 @@ GD with medium $\alpha=0.25$ and indep. features:
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_med_lr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_med.pdf}\\
             \begin{footnotesize}
-                %Dashed line in test loss indicates irreducible error due to $\sigma=1$
+            Dotted lines indicate global minimizers.
+                %Dashed line in test loss indicates irreducible error due to $\sigma=1$ 
             \end{footnotesize}
 \end{figure}
 All variants converge to global min. \textbf{Momentum} accelerates
@@ -262,9 +264,11 @@ GD with medium $\alpha=0.25$ and bad conditioning (corr. features):
             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_med_lr_corr_iters.pdf} \\
              \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_med_corr.pdf}\\
             \begin{footnotesize}
+            Dotted lines indicate global minimizers.
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
 \end{figure}
+\vspace{-0.2cm}
 Bad conditioning slows down optim slightly. Only \textbf{momentum w/o decay} converges exactly to global min in $t_{\text{max}}$. Momentum causes “\textbf{overshooting}” of some coefs.
 \end{vbframe}
 

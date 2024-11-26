@@ -25,6 +25,7 @@
 
 \begin{itemize}
 	\item We consider the quadratic function $q(\xv) = \xv^\top \Amat \xv - \mathbf{b}^\top \xv$. 
+    \item We assume $q$ is convex.
 	\item We assume that Hessian $\mathbf{H} = 2 \Amat$ has full rank
 	\item Optimal solution is $\xv^\ast = \frac{1}{2} \Amat^{-1} \mathbf{b}$ 
 	\item As $\nabla q(\xv) = 2 \Amat \xv - \mathbf{b}$, iterations of gradient descent are
@@ -76,17 +77,6 @@ becomes
     \mathbf{w}^{[t+1]} = \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}.
 \end{equation*}
 
-Therefore:
-
-\vspace{-\baselineskip}
-
-\begin{align*}
-    w_i^{[t+1]} &= w_i^{[t]} - 2 \alpha \lambda_i w_i^{[t]} \\
-    &= (1 - 2 \alpha \lambda_i) w_i^{[t]} \\
-    &= \cdots \\
-    &= (1 - 2 \alpha \lambda_i)^{t+1} w_i^{[0]}
-\end{align*}
-
 \framebreak
 
 \textbf{Proof} (for $\mathbf{w}^{[t+1]} = \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}$)\textbf{:}
@@ -105,6 +95,22 @@ Therefore:
             &= \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}
         \end{align*}
 \end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{GD steps in eigenspace}
+
+Therefore:
+
+\vspace{-\baselineskip}
+
+\begin{align*}
+    w_i^{[t+1]} &= w_i^{[t]} - 2 \alpha \lambda_i w_i^{[t]} \\
+    &= (1 - 2 \alpha \lambda_i) w_i^{[t]} \\
+    &= \cdots \\
+    &= (1 - 2 \alpha \lambda_i)^{t+1} w_i^{[0]}
+\end{align*}
+
+\framebreak
 
 \end{vbframe}
 
