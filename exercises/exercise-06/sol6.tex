@@ -209,28 +209,28 @@
 \kopfsl{6}{Multivariate Optimization 1}
 
 \loesung{Gradient Descent}{
-
 You are given the following data situation:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{library}\hlstd{(ggplot2)}
+\hlkwd{library}\hldef{(ggplot2)}
 
-\hlkwd{set.seed}\hlstd{(}\hlnum{314}\hlstd{)}
-\hlstd{n} \hlkwb{<-} \hlnum{100}
-\hlstd{X} \hlkwb{=} \hlkwd{cbind}\hlstd{(}\hlkwd{rnorm}\hlstd{(n,} \hlopt{-}\hlnum{5}\hlstd{,} \hlnum{5}\hlstd{),}
-  \hlkwd{rnorm}\hlstd{(n,} \hlopt{-}\hlnum{10}\hlstd{,} \hlnum{10}\hlstd{))}
-\hlstd{X_design} \hlkwb{=} \hlkwd{cbind}\hlstd{(}\hlnum{1}\hlstd{, X)}
+\hlkwd{set.seed}\hldef{(}\hlnum{314}\hldef{)}
+\hldef{n} \hlkwb{<-} \hlnum{100}
+\hldef{X} \hlkwb{=} \hlkwd{cbind}\hldef{(}\hlkwd{rnorm}\hldef{(n,} \hlopt{-}\hlnum{5}\hldef{,} \hlnum{5}\hldef{),}
+  \hlkwd{rnorm}\hldef{(n,} \hlopt{-}\hlnum{10}\hldef{,} \hlnum{10}\hldef{))}
+\hldef{X_design} \hlkwb{=} \hlkwd{cbind}\hldef{(}\hlnum{1}\hldef{, X)}
 
-\hlstd{z} \hlkwb{<-} \hlnum{2}\hlopt{*}\hlstd{X[,}\hlnum{1}\hlstd{]} \hlopt{+} \hlnum{3}\hlopt{*}\hlstd{X[,}\hlnum{2}\hlstd{]}
-\hlstd{pr} \hlkwb{<-} \hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlkwd{exp}\hlstd{(}\hlopt{-}\hlstd{z))}
-\hlstd{y} \hlkwb{<-} \hlkwd{as.integer}\hlstd{(pr} \hlopt{>} \hlnum{0.5}\hlstd{)}
-\hlstd{df} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{X} \hlstd{= X,} \hlkwc{y} \hlstd{= y)}
+\hldef{z} \hlkwb{<-} \hlnum{2}\hlopt{*}\hldef{X[,}\hlnum{1}\hldef{]} \hlopt{+} \hlnum{3}\hlopt{*}\hldef{X[,}\hlnum{2}\hldef{]}
+\hldef{pr} \hlkwb{<-} \hlnum{1}\hlopt{/}\hldef{(}\hlnum{1}\hlopt{+}\hlkwd{exp}\hldef{(}\hlopt{-}\hldef{z))}
+\hldef{y} \hlkwb{<-} \hlkwd{as.integer}\hldef{(pr} \hlopt{>} \hlnum{0.5}\hldef{)}
+\hldef{df} \hlkwb{<-} \hlkwd{data.frame}\hldef{(}\hlkwc{X} \hldef{= X,} \hlkwc{y} \hldef{= y)}
 
-\hlkwd{ggplot}\hlstd{(df)} \hlopt{+}
-  \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= X.1,} \hlkwc{y} \hlstd{= X.2,} \hlkwc{color}\hlstd{=y))} \hlopt{+}
-  \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{1}\hlstd{]))} \hlopt{+}
-  \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(x[}\hlnum{2}\hlstd{]))}
+\hlkwd{ggplot}\hldef{(df)} \hlopt{+}
+  \hlkwd{geom_point}\hldef{(}\hlkwd{aes}\hldef{(}\hlkwc{x} \hldef{= X.1,} \hlkwc{y} \hldef{= X.2,} \hlkwc{color}\hldef{=}\hlkwd{as.factor}\hldef{(y)))} \hlopt{+}
+  \hlkwd{xlab}\hldef{(}\hlkwd{expression}\hldef{(x[}\hlnum{1}\hldef{]))} \hlopt{+}
+  \hlkwd{ylab}\hldef{(}\hlkwd{expression}\hldef{(x[}\hlnum{2}\hldef{]))} \hlopt{+}
+  \hlkwd{labs}\hldef{(}\hlkwc{colour} \hldef{=} \hlsng{"y"}\hldef{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot-1} 
@@ -273,74 +273,78 @@ It follows that $\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) > \mathcal{R}_\text
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{lambda} \hlkwb{=} \hlnum{0}
+\hldef{lambda} \hlkwb{=} \hlnum{0}
 
-\hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{lambda}\hlstd{) lambda} \hlopt{*} \hlstd{theta} \hlopt{%*%} \hlstd{theta} \hlopt{+}
-  \hlkwd{sum}\hlstd{(}\hlopt{-}\hlstd{y} \hlopt{*} \hlstd{X} \hlopt{%*%} \hlstd{theta} \hlopt{+} \hlkwd{log}\hlstd{(}\hlnum{1} \hlopt{+} \hlkwd{exp}\hlstd{(X} \hlopt{%*%} \hlstd{theta)))}
+\hldef{f} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{theta}\hldef{,} \hlkwc{lambda}\hldef{) lambda} \hlopt{*} \hldef{theta} \hlopt{%*%} \hldef{theta} \hlopt{+}
+  \hlkwd{sum}\hldef{(}\hlopt{-}\hldef{y} \hlopt{*} \hldef{X} \hlopt{%*%} \hldef{theta} \hlopt{+} \hlkwd{log}\hldef{(}\hlnum{1} \hlopt{+} \hlkwd{exp}\hldef{(X} \hlopt{%*%} \hldef{theta)))}
 
-\hlstd{x} \hlkwb{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{5}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.1}\hlstd{)}
-\hlstd{xx} \hlkwb{=} \hlkwd{expand.grid}\hlstd{(}\hlkwc{X1} \hlstd{= x,} \hlkwc{X2} \hlstd{= x)}
+\hldef{x} \hlkwb{=} \hlkwd{seq}\hldef{(}\hlopt{-}\hlnum{1}\hldef{,} \hlnum{5}\hldef{,} \hlkwc{by}\hldef{=}\hlnum{0.1}\hldef{)}
+\hldef{xx} \hlkwb{=} \hlkwd{expand.grid}\hldef{(}\hlkwc{X1} \hldef{= x,} \hlkwc{X2} \hldef{= x)}
 
-\hlstd{fxx} \hlkwb{=} \hlkwd{log}\hlstd{(}\hlkwd{apply}\hlstd{(xx,} \hlnum{1}\hlstd{,} \hlkwa{function}\hlstd{(}\hlkwc{t}\hlstd{)} \hlkwd{f}\hlstd{(t, lambda)))}
-\hlstd{df} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{xx} \hlstd{= xx,} \hlkwc{fxx} \hlstd{= fxx)}
+\hldef{fxx} \hlkwb{=} \hlkwd{log}\hldef{(}\hlkwd{apply}\hldef{(xx,} \hlnum{1}\hldef{,} \hlkwa{function}\hldef{(}\hlkwc{t}\hldef{)} \hlkwd{f}\hldef{(t, lambda)))}
+\hldef{df} \hlkwb{=} \hlkwd{data.frame}\hldef{(}\hlkwc{xx} \hldef{= xx,} \hlkwc{fxx} \hldef{= fxx)}
 
-\hlkwd{ggplot}\hlstd{()} \hlopt{+}
-    \hlkwd{geom_contour_filled}\hlstd{(}\hlkwc{data} \hlstd{= df,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= xx.X1,} \hlkwc{y} \hlstd{= xx.X2,} \hlkwc{z} \hlstd{= fxx))} \hlopt{+}
-    \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
-    \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
+\hlkwd{ggplot}\hldef{()} \hlopt{+}
+    \hlkwd{geom_contour_filled}\hldef{(}\hlkwc{data} \hldef{= df,} \hlkwd{aes}\hldef{(}\hlkwc{x} \hldef{= xx.X1,} \hlkwc{y} \hldef{= xx.X2,} \hlkwc{z} \hldef{= fxx))} \hlopt{+}
+    \hlkwd{xlab}\hldef{(}\hlkwd{expression}\hldef{(theta[}\hlnum{1}\hldef{]))} \hlopt{+}
+    \hlkwd{ylab}\hldef{(}\hlkwd{expression}\hldef{(theta[}\hlnum{2}\hldef{]))}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_r_emp-1} 
 \end{knitrout}
 
 \item $\frac{\partial}{\partial \bm{\theta}}\mathcal{R}_{\text{emp}} = \sum^n_{i=1} \frac{\exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{1 + \exp(\bm{\theta}^\top \mathbf{x}^{(i)})}{\mathbf{x}^{(i)}}^\top - y^{(i)}{\mathbf{x}^{(i)}}^\top$ 
-\item 
+\item Note that we visualize form the first iteration on ($t = 1$) and not from the initial starting point $\bm{\theta}^{[0]} = (0,0)^\top$ but after having already made one GD step.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{library}\hlstd{(gridExtra)}
+\hlkwd{library}\hldef{(gridExtra)}
 
-\hlstd{plot_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{gd_fun}\hlstd{,} \hlkwc{lambda}\hlstd{)\{}
-  \hlstd{theta} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{0}\hlstd{)}
-  \hlstd{thetas} \hlkwb{=} \hlkwa{NULL}
-  \hlstd{thetas_norm} \hlkwb{=} \hlkwa{NULL}
-  \hlstd{fs} \hlkwb{=} \hlkwa{NULL}
-  \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{500}\hlstd{)\{}
-    \hlstd{theta} \hlkwb{=} \hlkwd{gd_fun}\hlstd{(theta)}
-    \hlstd{thetas_norm} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas_norm,} \hlkwd{sqrt}\hlstd{(theta} \hlopt{%*%} \hlstd{theta))}
-    \hlstd{thetas} \hlkwb{=} \hlkwd{rbind}\hlstd{(thetas, theta)}
-    \hlstd{fs} \hlkwb{=} \hlkwd{rbind}\hlstd{(fs,} \hlkwd{f}\hlstd{(theta, lambda))}
-  \hlstd{\}}
+\hldef{plot_fun} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{gd_fun}\hldef{,} \hlkwc{lambda}\hldef{)\{}
+  \hldef{theta} \hlkwb{=} \hlkwd{c}\hldef{(}\hlnum{0}\hldef{,}\hlnum{0}\hldef{)}
+  \hldef{thetas} \hlkwb{=} \hlkwa{NULL}
+  \hldef{thetas_norm} \hlkwb{=} \hlkwa{NULL}
+  \hldef{fs} \hlkwb{=} \hlkwa{NULL}
+  \hlkwa{for}\hldef{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{500}\hldef{)\{}
+    \hldef{theta} \hlkwb{=} \hlkwd{gd_fun}\hldef{(theta)}
+    \hldef{thetas_norm} \hlkwb{=} \hlkwd{rbind}\hldef{(thetas_norm,} \hlkwd{sqrt}\hldef{(theta} \hlopt{%*%} \hldef{theta))}
+    \hldef{thetas} \hlkwb{=} \hlkwd{rbind}\hldef{(thetas,} \hlkwd{t}\hldef{(theta))}
+    \hldef{fs} \hlkwb{=} \hlkwd{rbind}\hldef{(fs,} \hlkwd{f}\hldef{(theta, lambda))}
+  \hldef{\}}
 
-  \hlstd{df_trace} \hlkwb{=} \hlkwd{as.data.frame}\hlstd{(thetas)}
-  \hlstd{trace_plot} \hlkwb{=} \hlkwd{ggplot}\hlstd{()} \hlopt{+}
-    \hlkwd{geom_line}\hlstd{(}\hlkwc{data} \hlstd{= df_trace,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2))} \hlopt{+}
-    \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
-    \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))} \hlopt{+}
-    \hlkwd{geom_point}\hlstd{(}\hlkwc{data} \hlstd{=} \hlkwd{tail}\hlstd{(df_trace),} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=V1,} \hlkwc{y}\hlstd{=V2))}
-  \hlstd{norm_plot} \hlkwb{=} \hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{norms} \hlstd{= thetas_norm,} \hlkwc{t} \hlstd{=} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(thetas_norm)))} \hlopt{+}
-    \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= t,} \hlkwc{y} \hlstd{= norms))} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"||"}\hlstd{, theta,} \hlstr{"||"}\hlstd{[}\hlnum{2}\hlstd{])))}
-  \hlstd{remp_plot} \hlkwb{=} \hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{f} \hlstd{= fs,} \hlkwc{t} \hlstd{=} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(thetas_norm)))} \hlopt{+}
-    \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= t,} \hlkwc{y} \hlstd{= f))} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(R[emp]))}
-  \hlkwd{grid.arrange}\hlstd{(trace_plot, norm_plot, remp_plot,} \hlkwc{ncol}\hlstd{=}\hlnum{3}\hlstd{)}
-\hlstd{\}}
+  \hldef{df_trace} \hlkwb{=} \hlkwd{as.data.frame}\hldef{(thetas)}
+  \hldef{df_trace}\hlopt{$}\hldef{t} \hlkwb{=} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hldef{(df_trace)}
+  \hldef{trace_plot} \hlkwb{=} \hlkwd{ggplot}\hldef{()} \hlopt{+}
+    \hlkwd{geom_point}\hldef{(}\hlkwc{data} \hldef{= df_trace,} \hlkwd{aes}\hldef{(}\hlkwc{x}\hldef{=V1,} \hlkwc{y}\hldef{=V2,} \hlkwc{colour}\hldef{=t))} \hlopt{+}
+    \hlkwd{xlab}\hldef{(}\hlkwd{expression}\hldef{(theta[}\hlnum{1}\hldef{]))} \hlopt{+}
+    \hlkwd{ylab}\hldef{(}\hlkwd{expression}\hldef{(theta[}\hlnum{2}\hldef{]))}
+  \hldef{norm_plot} \hlkwb{=} \hlkwd{ggplot}\hldef{(}\hlkwd{data.frame}\hldef{(}\hlkwc{norms} \hldef{= thetas_norm,} \hlkwc{t} \hldef{=} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hldef{(thetas_norm)))} \hlopt{+}
+    \hlkwd{geom_line}\hldef{(}\hlkwd{aes}\hldef{(}\hlkwc{x} \hldef{= t,} \hlkwc{y} \hldef{= norms))} \hlopt{+}
+    \hlkwd{scale_x_continuous}\hldef{(}\hlkwc{breaks} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{1}\hldef{,} \hlnum{100}\hldef{,} \hlnum{200}\hldef{,} \hlnum{300}\hldef{,} \hlnum{400}\hldef{,} \hlnum{500}\hldef{),} \hlkwc{limits} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{1}\hldef{,} \hlnum{500}\hldef{))} \hlopt{+}
+    \hlkwd{ylab}\hldef{(}\hlkwd{expression}\hldef{(}\hlkwd{paste}\hldef{(}\hlsng{"||"}\hldef{, theta,} \hlsng{"||"}\hldef{[}\hlnum{2}\hldef{])))}
+  \hldef{remp_plot} \hlkwb{=} \hlkwd{ggplot}\hldef{(}\hlkwd{data.frame}\hldef{(}\hlkwc{f} \hldef{= fs,} \hlkwc{t} \hldef{=} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hldef{(thetas_norm)))} \hlopt{+}
+    \hlkwd{geom_line}\hldef{(}\hlkwd{aes}\hldef{(}\hlkwc{x} \hldef{= t,} \hlkwc{y} \hldef{= f))} \hlopt{+}
+    \hlkwd{scale_x_continuous}\hldef{(}\hlkwc{breaks} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{1}\hldef{,} \hlnum{100}\hldef{,} \hlnum{200}\hldef{,} \hlnum{300}\hldef{,} \hlnum{400}\hldef{,} \hlnum{500}\hldef{),} \hlkwc{limits} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{1}\hldef{,} \hlnum{500}\hldef{))} \hlopt{+}
+    \hlkwd{ylab}\hldef{(}\hlkwd{expression}\hldef{(R[emp]))}
+  \hlkwd{grid.arrange}\hldef{(trace_plot, norm_plot, remp_plot,} \hlkwc{ncol}\hldef{=}\hlnum{3}\hldef{)}
+\hldef{\}}
 
-\hlstd{df_t} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{lambda}\hlstd{) lambda} \hlopt{*} \hlkwd{t}\hlstd{(theta)} \hlopt{-}\hlstd{(}\hlkwd{t}\hlstd{(y)} \hlopt{%*%} \hlstd{X)} \hlopt{+}
-  \hlkwd{t}\hlstd{(}\hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1} \hlopt{+} \hlkwd{exp}\hlstd{(}\hlopt{-}\hlstd{X} \hlopt{%*%} \hlstd{theta)))} \hlopt{%*%} \hlstd{X}
+\hldef{df_t} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{theta}\hldef{,} \hlkwc{lambda}\hldef{) lambda} \hlopt{*} \hlkwd{t}\hldef{(theta)} \hlopt{-}\hldef{(}\hlkwd{t}\hldef{(y)} \hlopt{%*%} \hldef{X)} \hlopt{+}
+  \hlkwd{t}\hldef{(}\hlnum{1}\hlopt{/}\hldef{(}\hlnum{1} \hlopt{+} \hlkwd{exp}\hldef{(}\hlopt{-}\hldef{X} \hlopt{%*%} \hldef{theta)))} \hlopt{%*%} \hldef{X}
 
-\hlstd{gd_step} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{alpha}\hlstd{,} \hlkwc{lambda}\hlstd{)} \hlkwd{return}\hlstd{(theta} \hlopt{-} \hlstd{alpha} \hlopt{*} \hlkwd{df_t}\hlstd{(theta, lambda)[}\hlnum{1}\hlstd{,])}
+\hldef{gd_step} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{theta}\hldef{,} \hlkwc{alpha}\hldef{,} \hlkwc{lambda}\hldef{)} \hlkwd{return}\hldef{(theta} \hlopt{-} \hldef{alpha} \hlopt{*} \hlkwd{df_t}\hldef{(theta, lambda)[}\hlnum{1}\hldef{,])}
 
 \hlcom{## Alpha = 0.01}
-\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_step}\hlstd{(theta,} \hlnum{0.01}\hlstd{, lambda))}
-\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{0}\hlstd{)}
+\hldef{gd_fun} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{theta}\hldef{)} \hlkwd{return}\hldef{(}\hlkwd{gd_step}\hldef{(theta,} \hlnum{0.01}\hldef{, lambda))}
+\hlkwd{plot_fun}\hldef{(gd_fun,} \hlnum{0}\hldef{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_step-1} 
 \begin{kframe}\begin{alltt}
 \hlcom{## Alpha = 0.02}
-\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_step}\hlstd{(theta,} \hlnum{0.02}\hlstd{, lambda))}
-\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{0}\hlstd{)}
+\hldef{gd_fun} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{theta}\hldef{)} \hlkwd{return}\hldef{(}\hlkwd{gd_step}\hldef{(theta,} \hlnum{0.02}\hldef{, lambda))}
+\hlkwd{plot_fun}\hldef{(gd_fun,} \hlnum{0}\hldef{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_step-2} 
@@ -353,15 +357,15 @@ Gradient descent will in theory not converge since $\mathcal{R}_\text{emp}$ has 
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlcom{## Lambda = 1, alpha = 0.01}
-\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_step}\hlstd{(theta,} \hlnum{0.01}\hlstd{,} \hlnum{1}\hlstd{))}
-\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{1}\hlstd{)}
+\hldef{gd_fun} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{theta}\hldef{)} \hlkwd{return}\hldef{(}\hlkwd{gd_step}\hldef{(theta,} \hlnum{0.01}\hldef{,} \hlnum{1}\hldef{))}
+\hlkwd{plot_fun}\hldef{(gd_fun,} \hlnum{1}\hldef{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_step_reg-1} 
 \begin{kframe}\begin{alltt}
 \hlcom{## Lambda = 1, alpha = 0.02}
-\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_step}\hlstd{(theta,} \hlnum{0.02}\hlstd{,} \hlnum{1}\hlstd{))}
-\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{1}\hlstd{)}
+\hldef{gd_fun} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{theta}\hldef{)} \hlkwd{return}\hldef{(}\hlkwd{gd_step}\hldef{(theta,} \hlnum{0.02}\hldef{,} \hlnum{1}\hldef{))}
+\hlkwd{plot_fun}\hldef{(gd_fun,} \hlnum{1}\hldef{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_step_reg-2} 
@@ -371,15 +375,15 @@ Gradient descent will in theory not converge since $\mathcal{R}_\text{emp}$ has 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{lambda} \hlkwb{=} \hlnum{1}
+\hldef{lambda} \hlkwb{=} \hlnum{1}
 
-\hlstd{fxx_reg} \hlkwb{=} \hlkwd{log}\hlstd{(}\hlkwd{apply}\hlstd{(xx,} \hlnum{1}\hlstd{,} \hlkwa{function}\hlstd{(}\hlkwc{t}\hlstd{)} \hlkwd{f}\hlstd{(t, lambda)))}
-\hlstd{df_reg} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{xx} \hlstd{= xx,} \hlkwc{fxx} \hlstd{= fxx_reg)}
+\hldef{fxx_reg} \hlkwb{=} \hlkwd{log}\hldef{(}\hlkwd{apply}\hldef{(xx,} \hlnum{1}\hldef{,} \hlkwa{function}\hldef{(}\hlkwc{t}\hldef{)} \hlkwd{f}\hldef{(t, lambda)))}
+\hldef{df_reg} \hlkwb{=} \hlkwd{data.frame}\hldef{(}\hlkwc{xx} \hldef{= xx,} \hlkwc{fxx} \hldef{= fxx_reg)}
 
-\hlkwd{ggplot}\hlstd{()} \hlopt{+}
-    \hlkwd{geom_contour_filled}\hlstd{(}\hlkwc{data} \hlstd{= df_reg,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= xx.X1,} \hlkwc{y} \hlstd{= xx.X2,} \hlkwc{z} \hlstd{= fxx))} \hlopt{+}
-    \hlkwd{xlab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{1}\hlstd{]))} \hlopt{+}
-    \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(theta[}\hlnum{2}\hlstd{]))}
+\hlkwd{ggplot}\hldef{()} \hlopt{+}
+    \hlkwd{geom_contour_filled}\hldef{(}\hlkwc{data} \hldef{= df_reg,} \hlkwd{aes}\hldef{(}\hlkwc{x} \hldef{= xx.X1,} \hlkwc{y} \hldef{= xx.X2,} \hlkwc{z} \hldef{= fxx))} \hlopt{+}
+    \hlkwd{xlab}\hldef{(}\hlkwd{expression}\hldef{(theta[}\hlnum{1}\hldef{]))} \hlopt{+}
+    \hlkwd{ylab}\hldef{(}\hlkwd{expression}\hldef{(theta[}\hlnum{2}\hldef{]))}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_r_emp_reg-1} 
@@ -388,30 +392,30 @@ Gradient descent will in theory not converge since $\mathcal{R}_\text{emp}$ has 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{gd_backtracking_step} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{,} \hlkwc{alpha}\hlstd{,} \hlkwc{gamma}\hlstd{,} \hlkwc{tau}\hlstd{,} \hlkwc{lambda}\hlstd{)\{}
-    \hlstd{ftheta} \hlkwb{=} \hlkwd{f}\hlstd{(theta, lambda)}
-    \hlstd{dftheta} \hlkwb{=} \hlkwd{df_t}\hlstd{(theta, lambda)[}\hlnum{1}\hlstd{,]}
-    \hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{1000}\hlstd{) \{}
-      \hlstd{theta_prop} \hlkwb{=} \hlstd{theta} \hlopt{-} \hlstd{alpha} \hlopt{*} \hlstd{dftheta}
-      \hlkwa{if}\hlstd{(}\hlkwd{f}\hlstd{(theta_prop, lambda)} \hlopt{<=} \hlstd{ftheta} \hlopt{-} \hlstd{gamma} \hlopt{*} \hlstd{alpha} \hlopt{*} \hlkwd{t}\hlstd{(dftheta)} \hlopt{%*%} \hlstd{dftheta)\{}
-        \hlkwd{return}\hlstd{(theta_prop)}
-      \hlstd{\}}\hlkwa{else}\hlstd{\{}
-        \hlstd{alpha} \hlkwb{=} \hlstd{tau} \hlopt{*} \hlstd{alpha}
-      \hlstd{\}}
-    \hlstd{\}}
-    \hlkwd{return}\hlstd{(theta)}
-\hlstd{\}}
+\hldef{gd_backtracking_step} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{theta}\hldef{,} \hlkwc{alpha}\hldef{,} \hlkwc{gamma}\hldef{,} \hlkwc{tau}\hldef{,} \hlkwc{lambda}\hldef{)\{}
+    \hldef{ftheta} \hlkwb{=} \hlkwd{f}\hldef{(theta, lambda)}
+    \hldef{dftheta} \hlkwb{=} \hlkwd{df_t}\hldef{(theta, lambda)[}\hlnum{1}\hldef{,]}
+    \hlkwa{for}\hldef{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{1000}\hldef{) \{}
+      \hldef{theta_prop} \hlkwb{=} \hldef{theta} \hlopt{-} \hldef{alpha} \hlopt{*} \hldef{dftheta}
+      \hlkwa{if}\hldef{(}\hlkwd{f}\hldef{(theta_prop, lambda)} \hlopt{<=} \hldef{ftheta} \hlopt{-} \hldef{gamma} \hlopt{*} \hldef{alpha} \hlopt{*} \hlkwd{t}\hldef{(dftheta)} \hlopt{%*%} \hldef{dftheta)\{}
+        \hlkwd{return}\hldef{(theta_prop)}
+      \hldef{\}}\hlkwa{else}\hldef{\{}
+        \hldef{alpha} \hlkwb{=} \hldef{tau} \hlopt{*} \hldef{alpha}
+      \hldef{\}}
+    \hldef{\}}
+    \hlkwd{return}\hldef{(theta)}
+\hldef{\}}
 
 \hlcom{## Lambda = 1, alpha = 0.01}
-\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_backtracking_step}\hlstd{(theta,} \hlnum{0.01}\hlstd{,} \hlnum{0.9}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlnum{1}\hlstd{))}
-\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{1}\hlstd{)}
+\hldef{gd_fun} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{theta}\hldef{)} \hlkwd{return}\hldef{(}\hlkwd{gd_backtracking_step}\hldef{(theta,} \hlnum{0.01}\hldef{,} \hlnum{0.9}\hldef{,} \hlnum{0.5}\hldef{,} \hlnum{1}\hldef{))}
+\hlkwd{plot_fun}\hldef{(gd_fun,} \hlnum{1}\hldef{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_backtrack-1} 
 \begin{kframe}\begin{alltt}
 \hlcom{## Lambda = 1, alpha = 0.02}
-\hlstd{gd_fun} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{theta}\hlstd{)} \hlkwd{return}\hlstd{(}\hlkwd{gd_backtracking_step}\hlstd{(theta,} \hlnum{0.02}\hlstd{,} \hlnum{0.9}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlnum{1}\hlstd{))}
-\hlkwd{plot_fun}\hlstd{(gd_fun,} \hlnum{1}\hlstd{)}
+\hldef{gd_fun} \hlkwb{<-} \hlkwa{function}\hldef{(}\hlkwc{theta}\hldef{)} \hlkwd{return}\hldef{(}\hlkwd{gd_backtracking_step}\hldef{(theta,} \hlnum{0.02}\hldef{,} \hlnum{0.9}\hldef{,} \hlnum{0.5}\hldef{,} \hlnum{1}\hldef{))}
+\hlkwd{plot_fun}\hldef{(gd_fun,} \hlnum{1}\hldef{)}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/mv-plot_gd_backtrack-2} 

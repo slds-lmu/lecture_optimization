@@ -14,9 +14,10 @@ y <- as.integer(pr > 0.5)
 df <- data.frame(X = X, y = y)
 
 ggplot(df) +
-  geom_point(aes(x = X.1, y = X.2, color=y)) + 
+  geom_point(aes(x = X.1, y = X.2, color=as.factor(y))) + 
   xlab(expression(x[1])) + 
-  ylab(expression(x[2]))  
+  ylab(expression(x[2])) +
+  labs(colour = "y")
 @
 
 \begin{enumerate}
@@ -86,20 +87,24 @@ plot_fun <- function(gd_fun, lambda){
   for(i in 1:500){
     theta = gd_fun(theta)
     thetas_norm = rbind(thetas_norm, sqrt(theta %*% theta))
-    thetas = rbind(thetas, theta)
+    thetas = rbind(thetas, t(theta))
     fs = rbind(fs, f(theta, lambda))
   }
   
   df_trace = as.data.frame(thetas)
+  df_trace$t = 1:nrow(df_trace)
   trace_plot = ggplot() +
-    geom_line(data = df_trace, aes(x=V1, y=V2)) +
+    geom_point(data = df_trace, aes(x=V1, y=V2, colour=t)) +
     xlab(expression(theta[1])) +
-    ylab(expression(theta[2])) +
-    geom_point(data = tail(df_trace), aes(x=V1, y=V2))
+    ylab(expression(theta[2]))
   norm_plot = ggplot(data.frame(norms = thetas_norm, t = 1:nrow(thetas_norm))) + 
-    geom_line(aes(x = t, y = norms)) + ylab(expression(paste("||", theta, "||"[2])))
+    geom_line(aes(x = t, y = norms)) +
+    scale_x_continuous(breaks = c(1, 100, 200, 300, 400, 500), limits = c(1, 500)) +
+    ylab(expression(paste("||", theta, "||"[2])))
   remp_plot = ggplot(data.frame(f = fs, t = 1:nrow(thetas_norm))) + 
-    geom_line(aes(x = t, y = f)) + ylab(expression(R[emp]))
+    geom_line(aes(x = t, y = f)) +
+    scale_x_continuous(breaks = c(1, 100, 200, 300, 400, 500), limits = c(1, 500)) +
+    ylab(expression(R[emp]))
   grid.arrange(trace_plot, norm_plot, remp_plot, ncol=3)
 }
 
@@ -144,7 +149,7 @@ ggplot() +
     ylab(expression(theta[2])) 
 
 @
-\item
+\item Note that we visualize form the first iteration on ($t = 1$) and not from the initial starting point $\bm{\theta}^{[0]} = (0,0)^\top$ but after having already made one GD step.
 <<mv-plot_gd_backtrack, echo=TRUE, out.width="50%">>=
 
 gd_backtracking_step <- function(theta, alpha, gamma, tau, lambda){
