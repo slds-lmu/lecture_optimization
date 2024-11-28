@@ -28,7 +28,7 @@ Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control 
 {\small
 \begin{itemize}
     \item Linear regression (squared loss) simulation $\bm{y} = \bm{X}\thetav^{\ast} + \bm{\varepsilon}$ with $n=500$ samples and $p=11$ features, where $\thetav^{\ast}=(-5,-4,\ldots0,\ldots,4,5)^{\top}$, $\bm{\varepsilon} \sim \mathcal{N}(\bm{0}, \bm{I})$, and $\bm{X} \sim \mathcal{N}(\bm{0}, \Sigma)$ for $\Sigma=\bm{I}$ (i.i.d. features) or $\Sigma_{i,j}=0.99^{|i-j|}$ (corr. features)
-    \item Indep. features result in a condition number of $\approx 2.9$, whereas the corr. feature set-up produces a bad condition number of $\approx 600$
+    \item Indep. features result in a condition number of $\approx 2.9$, whereas the corr. feature set-up produces a (moderately) bad condition number of $\approx 600$
     \item We set the momentum parameter to $0.8$ and the decay step size using schedule $\alpha^{[t]}=\alpha^{[0]} \cdot \texttt{decay}^{t/t_{\text{max}}}$ for $\texttt{decay}=0.1$
     \item For GD and SGD we use different step sizes to show that benefit of momentum/decay depends heavily on step size
     \item ERM has unique global minimizer given by $\bm{\thetah} = (\bm{X}^{\top}\bm{X})^{-1}\bm{X}^{\top} \bm{y}$
@@ -64,7 +64,7 @@ GD with medium $\alpha=2\cdot10^{-3}$ and bad conditioning (corr. features):
 \end{figure}
 \vspace{-0.2cm}
 {\footnotesize
-Bad \textbf{conditioning slows down optim} severely! Only \textbf{momentum} w/o decay comes close to global min. \textbf{Momentum} causes ``overshooting'' of some coefs. Corr. features cause corr. global minimizers.}
+Moderately bad \textbf{conditioning slows down optim} severely! Only \textbf{momentum} w/o decay comes close to global min. \textbf{Momentum} causes ``overshooting'' of some coefs. Corr. features cause corr. global minimizers.}
 \end{vbframe}
 
 
@@ -269,7 +269,7 @@ GD with medium $\alpha=0.25$ and bad conditioning (corr. features):
             \end{footnotesize}
 \end{figure}
 \vspace{-0.2cm}
-Bad conditioning slows down optim slightly. Only \textbf{momentum w/o decay} converges exactly to global min in $t_{\text{max}}$. Momentum causes “\textbf{overshooting}” of some coefs.
+Moderately bad conditioning slows down optim slightly and affects ERM solutions. Only \textbf{momentum w/o decay} converges exactly to global min in $t_{\text{max}}$. Momentum causes “\textbf{overshooting}” of some coefs.
 \end{vbframe}
 
 \begin{comment}

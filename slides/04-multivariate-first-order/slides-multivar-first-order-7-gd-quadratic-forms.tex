@@ -25,9 +25,9 @@
 
 \begin{itemize}
 	\item We consider the quadratic function $q(\xv) = \xv^\top \Amat \xv - \mathbf{b}^\top \xv$. 
-    \item We assume $q$ is convex.
-	\item We assume that Hessian $\mathbf{H} = 2 \Amat$ has full rank
-	\item Optimal solution is $\xv^\ast = \frac{1}{2} \Amat^{-1} \mathbf{b}$ 
+    \item We assume that Hessian $\mathbf{H} = 2 \Amat$ has full rank
+\item We assume $q$ is convex, so A psd.
+		\item Optimal solution is $\xv^\ast = \frac{1}{2} \Amat^{-1} \mathbf{b}$ 
 	\item As $\nabla q(\xv) = 2 \Amat \xv - \mathbf{b}$, iterations of gradient descent are
 \end{itemize}
 
@@ -122,21 +122,36 @@ Therefore:
         \begin{equation*}
             \xv^{[t]} - \xv^\ast = \mathbf{V} \mathbf{w}^{[t]} = \sum_{i = 1}^{d} (1 - 2 \alpha \lambda_i)^t w_i^{[0]} \mathbf{v}_i 
         \end{equation*}
-    \item \textbf{Intuition:} Initial error components $w^{[0]}_i$ (in the eigenbasis) decay with rate $1 - 2 \alpha \lambda_i$
-    \item \textbf{Therefore:} For sufficiently small step sizes $\alpha$, error components along eigenvectors with large eigenvalues decay quickly
+    \item This gives us the difference in x-space in closed form
+    \item The difference vector is written in the eigen-basis, the initial error components $w^{[0]}_i$ decay with rate $1 - 2 \alpha \lambda_i$,
+    \item The smaller this term (in abs value), the faster we decay, the closer to 1, the slower we are
+    \item For most step-sizes, eigenvectors with largest eigenvalues converge fastest. Works especially well in the first iterations.
 \end{itemize}
 
 \framebreak
 
-We now consider the contribution of each eigenvector to the total loss
+We can also analyze the regret in y-space:
 
 \begin{equation*}
     q(\xv^{[t]}) - q(\xv^\ast) = \frac{1}{2} \sum_{i}^{d} (1 - 2 \alpha \lambda_i)^{2t} \lambda_i (w_i^{[0]})^2
 \end{equation*}
 
+\begin{itemize}
+       
+    \item This is not hard to show, formulas become only somewhat lengthy
+    \item Rates become somewhat equalized at the end
+
+\end{itemize}
+
+
 \begin{figure}
 	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/gd_conv.png} \\
 \end{figure}
+
+
+
+
+
 
 %\framebreak
 
@@ -149,6 +164,30 @@ We now consider the contribution of each eigenvector to the total loss
 %	\item choosing step size, show dependence on condition number 
 %	\item maybe with example of polynomial regression
 %\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Optimal Stepsize}
+
+\begin{itemize}
+
+
+\item In order to converge, must have all : $ | 1 - \alpha \lambda_i| < 1$ 
+
+\item So for all stepsizes $0  < \alpha \lambda_i < 2 $
+
+\item Overall rate determined by slowest error component: 
+$$ \max \limits_{i = 1, \ldots n} | 1 - \alpha \lambda_i| =  \max (| 1 - \alpha \lambda_1|, | 1 - \alpha \lambda_n| )$$
+
+\item Minimized for $ \alpha = \frac{2} {\lambda_1 + \lambda_n}$
+
+\item Optimal rate 
+$\frac{\lambda_n / \lambda_1 - 1}{\lambda_n / \lambda_1 + 1}  $
+
+\item We again see that convergence is determined by condition $$\kappa = \frac{\lambda_n}{\lambda_1}$$
+
+\item $\kappa=1$ Is ideal, convergence in 1 step
+
+\end{itemize}
 \end{vbframe}
 
 
