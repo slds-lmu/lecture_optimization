@@ -235,7 +235,7 @@
       \frac{\partial^2 \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}\partial\mathbf{x}^\top} &= \frac{\partial}{\partial\mathbf{x}} \left( \frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial\mathbf{x}^\top} \right) \\
       &= \frac{\partial}{\partial\mathbf{x}} \left[ \left( \frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial\mathbf{x}} \right)^\top \right] \\
     &\overset{(c)}{=} \frac{\partial ( \mathbf{u}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} )^\top}{\partial\mathbf{x}} \\
-      &= \frac{\partial \left( \left(\frac{\partial  \mathbf{v}}{\partial \mathbf{x}}\right)^\top \mathbf{u} + \left(\frac{\partial  \mathbf{u}}{\partial \mathbf{x}}\right)^\top \mathbf{v})\right)}{\partial\mathbf{x}} \\
+      &= \frac{\partial \left( \left(\frac{\partial  \mathbf{v}}{\partial \mathbf{x}}\right)^\top \mathbf{u} + \left(\frac{\partial  \mathbf{u}}{\partial \mathbf{x}}\right)^\top \mathbf{v}\right)}{\partial\mathbf{x}} \\
       &\overset{(d)}{=} \begin{pmatrix}
                           \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_1\partial \mathbf{x}} + \frac{\partial\mathbf{v}}{\partial x_1}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} \\
                           \vdots \\
