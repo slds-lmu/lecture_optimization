@@ -145,14 +145,14 @@ Fisher scoring: $$\thetav^{(t+1)}=\thetav^{(t)} - \E[\mathbf{X}^\top \mathbf{D} 
 \end{vbframe}
 
 \begin{vbframe}{Generalized linear models}
-$Y|X=x$ belongs to an \textbf{exponential family} with density:
+$y|\xv=\xv$ belongs to an \textbf{exponential family} with density:
 $$ p(y|\delta, \phi) = exp \left\{ \frac{y\delta-b(\delta)}{a(\phi)} + c(y,\phi) \right\}, $$
 where $\delta$ is the natural parameter and $\phi > 0$ is the dispersion parameter.\\
 We often take $a_i(\phi) = \frac{\phi}{w_i}$, where $\phi$ is a positive constant, and $w_i$ is the weight.
 
 \lz
 
-Generalized linear models (GLMs) relate the conditional mean $\mu(x)=\E[Y|\xv]$ of $Y$ to a linear predictor $\eta$ via a 
+Generalized linear models (GLMs) relate the conditional mean $\mu(x)=\E[y|\xv]$ of $Y$ to a linear predictor $\eta$ via a 
 strictly increasing link function $g(\mu)=\eta=\xv^\top\theta$.\\
 
 \lz
@@ -163,30 +163,30 @@ $$\frac{\partial{b(\delta)}}{\partial{\theta}}
 =\mu \frac{1}{b''(\delta)} \frac{1}{g'(\mu)} \xv$$
 
 \framebreak
-We can estimate $\delta$ using MLE with sample $(X_i,Y_i)$ for $i=1,\ldots,n$.\\
-Take $a_i(\phi) = \frac{\phi}{w_i}$, $\phi$ is a positive constant, 
+We can estimate $\delta$ using MLE with sample $(\xv^{(i)},y^{(i)})$ for $i=1,\ldots,n$.\\
+Take $a^{(i)}(\phi) = \frac{\phi}{w^{(i)}}$, $\phi$ is a positive constant, 
 we could ignore it since the goal is to maximize the function:\\
 \begin{align*}
-\nabla \logl_{\theta}(\delta, \phi) &= \sumin \frac{w_i(y_i-\mu_i)}{b''(\delta)g'(\mu_i)}\xv_i\\
- &= \sumin \frac{w_i(y_i-\mu_i)g'(\mu_i)}{b''(\delta)[g'(\mu_i)]^2}\xv_i\\
+\nabla \logl_{\theta}(\delta, \phi) &= \sumin \frac{w_i(y^{(i)}-\mu^{(i)})}{b''(\delta)g'(\mu^{(i)})}\xv^{(i)}\\
+ &= \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})g'(\mu^{(i)})}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}\\
  &= \mathbf{X}^\top \mathbf{W} \mathbf{G} (\mathbf{Y}-\bm{\mu})
 \end{align*}
 \lz
-$\mathbf{W}$ is a diagonal matrix with element $\frac{w_i}{b''(\delta)[g'(\mu_i)]^2}$.\\
-$\mathbf{G}$ is a diagonal matrix with element $g'(\mu_i)$.\\
+$\mathbf{W}$ is a diagonal matrix with element $\frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}$.\\
+$\mathbf{G}$ is a diagonal matrix with element $g'(\mu^{(i)})$.\\
 
 \framebreak
 
 \begin{align*}
 -\nabla^2 \logl_{\theta}(\delta, \phi)
-  & = \sumin \frac{w_i}{b''(\delta)[g'(\mu_i)]^2}\xv_i\xv_i^\top \\
-  & - \sumin \frac{w_i(y_i-\mu_i)(g''(\mu_i)/g'(\mu_i))}{b''(\delta)[g'(\mu_i)]^2}\xv_i\xv_i^\top \\ 
-  & + \sumin \frac{w_i(y_i-\mu_i)(\partial{b''(\delta)[g'(\mu_i)]^2}/\partial{\mu_i})}{[b''(\delta)]^2[g'(\mu_i)]^4}\xv_i\xv_i^\top
+  & = \sumin \frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\
+  & - \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(g''(\mu^{(i)})/g'(\mu^{(i)}))}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\ 
+  & + \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(\partial{b''(\delta)[g'(\mu^{(i)})]^2}/\partial{\mu^{(i)}})}{[b''(\delta)]^2[g'(\mu^{(i)})]^4}\xv^{(i)}{\xv^{(i)}}^\top
 \end{align*}
 
-$$\E[-\nabla^2 \logl_{\theta}(\delta, \phi)] = \sumin \frac{w_i}{b''(\delta)[g'(\mu_i)]^2}\xv_i\xv_i^\top = \mathbf{X}^\top \mathbf{W} \mathbf{X}$$
+$$\E[-\nabla^2 \logl_{\theta}(\delta, \phi)] = \sumin \frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top = \mathbf{X}^\top \mathbf{W} \mathbf{X}$$
 \lz
-Iteratively Reweighted Least Squares (IRLS) with weights $\frac{w_i}{b''(\delta)[g'(\mu_i)]^2}$\\
+Iteratively Reweighted Least Squares (IRLS) with weights $\frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}$\\
 
 \framebreak
 
@@ -201,6 +201,8 @@ Fisher scoring:
 For canonical link where $\eta = g(\mu) = \xv^\top\theta$, the second and third term of Hessian vanishes and Hessian coincides with Fisher information matrix.\\
 \lz
 This will now be a convex problem with Fisher scoring equal to Newton's method.
+\lz
+There are also hybrid algorithms that start out with IRLS which is easier to initialize, and switch over to Newton-Raphson after some iterations.
 
 \end{vbframe}
 
