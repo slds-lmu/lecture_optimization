@@ -171,14 +171,14 @@ We can also analyze the regret in y-space:
 \begin{itemize}
 
 
-\item In order to converge, must have all : $ | 1 - \alpha \lambda_i| < 1$ 
+\item In order to converge, must have all : $ | 1 - 2 \alpha \lambda_i| < 1$ 
 
-\item So for all stepsizes $0  < \alpha \lambda_i < 2 $
+\item So for all stepsizes $0  < \alpha \lambda_i < 1 $
 
 \item Overall rate determined by slowest error component: 
-$$ \max \limits_{i = 1, \ldots n} | 1 - \alpha \lambda_i| =  \max (| 1 - \alpha \lambda_1|, | 1 - \alpha \lambda_n| )$$
+$$ \max \limits_{i = 1, \ldots n} | 1 - 2 \alpha \lambda_i| =  \max (| 1 - 2 \alpha \lambda_1|, | 1 - 2 \alpha \lambda_n| )$$
 
-\item Minimized for $ \alpha = \frac{2} {\lambda_1 + \lambda_n}$
+\item Minimized for $ \alpha = \frac{1} {\lambda_1 + \lambda_n}$
 
 \item Optimal rate 
 $\frac{\lambda_n / \lambda_1 - 1}{\lambda_n / \lambda_1 + 1}  $
