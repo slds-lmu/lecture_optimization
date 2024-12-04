@@ -43,6 +43,8 @@ by the Fisher information matrix, i.e., the variance of $\nabla \loglt$, which, 
 $$\E[\nabla\loglt\nabla\loglt^\top]=\E[-\nabla^{2}\loglt],$$
 and is positive semi-definite under exchangeability of expectation and differentiation.\\
 
+\textbf{NB}: it can be shown that $\E[\nabla \ell(\thetav)]=\mathbf{0}$, which provides the expression of the variance of $\nabla \ell(\thetav)$ as the expected outer product of the gradients.
+
 \lz
 
 Therefore the Fisher scoring iterates are given by
@@ -142,7 +144,10 @@ $$\nabla^2_{\thetav}\riske =  \mathbf{X}^\top \mathbf{D} \mathbf{X}$$
 
 Newton-Raphson: $$\thetav^{(t+1)}=\thetav^{(t)} - [\mathbf{X}^\top \mathbf{D} \mathbf{X}]^{-1}\nabla_{\thetav^{(t)}}\riske $$
 Fisher scoring: $$\thetav^{(t+1)}=\thetav^{(t)} - \E[\mathbf{X}^\top \mathbf{D} \mathbf{X}]^{-1}\nabla_{\thetav^{(t)}}\riske $$
+
+Note that the Hessian does not depend on the $y^{(i)}$ explicitly but only depends on $\E[y^{(i)}]=\pi^{(i)}$. Thus the expectation of the observed Hessian w.r.t. $y^{(i)}\sim P(y^{(i)}|\xv^{(i)},\thetav)$ coincides with $\nabla^2_{\thetav}\riske(\thetav)$ itself.
 \end{vbframe}
+
 
 \begin{vbframe}{Generalized linear models}
 $y|\xv=\xv$ belongs to an \textbf{exponential family} with density:
