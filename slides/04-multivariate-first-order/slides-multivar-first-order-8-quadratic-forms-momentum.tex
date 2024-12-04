@@ -21,7 +21,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Recap: Momentum update}
+\begin{vbframe}{Momentum update}
 
 \begin{eqnarray*}
  \boldsymbol{\nu}^{[ t+1 ] } &=& \varphi \boldsymbol{\nu}^{[ t ] } + \alpha \nabla f(\xv^{[ t ] }) \\
@@ -39,9 +39,9 @@ for the quadratic form.
 
 \end{vbframe}
 
-\begin{vbframe}{Recap: Dynamics of momentum}
-
-Changing the basis as before with $\boldsymbol{w}^{[ t ] } = \bm{V}^\top (\xv^{[ t ] } - \xv^\ast)$ and $\boldsymbol{u}^{[ t ] } = \bm{V} \boldsymbol{\nu}^{[ t ] }$, we get the following set of equations, where each component acts independently, although $w_i^{[ t ] }$ and $u_i^{[ t ] }$ are coupled: 
+\begin{vbframe}{Dynamics of momentum}
+\begin{footnotesize}
+Change basis as before with $\boldsymbol{w}^{[ t ] } = \bm{V}^\top (\xv^{[ t ] } - \xv^\ast)$ and $\boldsymbol{u}^{[ t ] } = \bm{V} \boldsymbol{\nu}^{[ t ] }$, again each component acts independently, but $w_i^{[ t ] }$ and $u_i^{[ t ] }$ are coupled: 
 
 \begin{eqnarray*}
 	u_i^{[ t+1 ] } &=& \varphi u_i^{[ t ] } + \alpha \lambda_i w_i^{[ t ] }, \\
@@ -67,9 +67,17 @@ w_i^{[ t+1 ] }
 \end{pmatrix}
 \end{equation*}
 
-and invert the matrix on the LHS: 
+inverting the the matrix on the LHS, and unravel the recursion:
+
 
 \begin{equation*}
+\begin{pmatrix}
+	1 & 0 \\
+	1 & 1 
+\end{pmatrix}^{-1} =\begin{pmatrix}
+	1 & 0 \\
+	-1 & 1 
+\end{pmatrix}  \text{  ;  }
 \begin{pmatrix}
 		u_i^{[ t+1 ] } \\
 		w_i^{[ t+1 ] }
@@ -84,11 +92,15 @@ and invert the matrix on the LHS:
 	u_i^{0} \\
 	w_i^{0}
 \end{pmatrix}
+
 \end{equation*}
+
+\end{footnotesize}
 
 \framebreak
 
-Taking a $2 \times 2$ matrix to the $t^{th}$ power reduces to a formula involving the eigenvalues of $R$, $\sigma_1$ and $\sigma_2$:
+Taking a $2 \times 2$ matrix to the $t^{th}$ power can be expressed via its eigenvalues, 
+$\sigma_1$ and $\sigma_2$, where $R_j = \frac{R - \sigma_j I}{\sigma_1 - \sigma_2}$:
 
 $$
 R^t=\begin{cases}
@@ -97,17 +109,41 @@ R^t=\begin{cases}
 \end{cases}
 $$
 
-where $R_j = \frac{R - \sigma_j I}{\sigma_1 - \sigma_2}$.
 
 
-\vspace*{1.5cm}	
-In contrast to GD, where we got one geometric series, we have two coupled series with real or complex values.
+
+
+\begin{itemize}
+\item Careful, R is not symmetric, so the EVs can be complex
+\item In contrast to GD, where we got one geometric series, we have two coupled series with real or complex values
+\end{itemize}
+
+
+\framebreak
+
+The eigenvalues of an arbitrary 2x2 matrix are: 
+$$ A =\begin{pmatrix} a & b \\ c & d \end{pmatrix} \qquad
+\lambda_{1,2} =  \frac{\trace(A)  \pm \sqrt{ \trace(A)^2 -  4\det(A)}}{2}
+$$
+
+For us this is :
+$$
+\sigma_{1,2} =  \frac{1+\phi-\alpha \lambda_i \pm \sqrt{ (1+\phi-\alpha \lambda_i)^2  -  4\phi }}{2}
+$$
+
+\begin{itemize}
+ \item We need both $|\sigma_1|,|\sigma_2| \leq 1$ for convergence
+ \item For the complex case this reduces to $2 \sqrt{\phi}$, which is surprisingly independent of $\alpha$ and $\lambda_i$
+\item For the real case we cannot simplify 
+
+\end{itemize}
 
 \framebreak
 \begin{figure}
 	\includegraphics[width=0.5\textwidth, keepaspectratio]{figure_man/momentum_convergence.png} \\
 	\begin{footnotesize} 
-		The achieved convergence rate is therefore the slowest of the two, $\text{max} \{|\sigma_1|, |\sigma_2| \}$. Each region shows a different convergence behavior. 
+		Convergence rate is the slowest of $\text{max} \{|\sigma_1|, |\sigma_2| \}$.\\
+        Each region shows different convergence behavior. 
 	\end{footnotesize}
 \end{figure}
 
@@ -165,31 +201,54 @@ In contrast to GD, where we got one geometric series, we have two coupled series
 \end{figure}
 
 \framebreak
+
 \begin{itemize}
-	\item Finally, we investigate the role of $\varphi$. 
-	\item We can think of gradient descent with momentum as a damped harmonic oscillator: a weight on a spring. We pull the weight down and study the path back to the equilibrium in phase space (looking at the position and the velocity). 
-	\item Depending on the choice of $\varphi$, the rate of return to the equilibrium position is affected. 
+\item If we combine all conditions for convergence, we can see: 
+$$ 0 < \alpha \lambda_i < 2  + 2\phi  \qquad \text{ for } \qquad 0 \leq \phi < 1$$
+\item Comparing this with the results from before ($\phi=0$), we see that we gain a stepsize factor of 2 before we diverge!
+\item Can obtain global convergence rate by optimizing over $\alpha$ and $\phi$
+\item More involved, see blogpost for details
+\item We get $\alpha = \left(\frac{2}{\sqrt{\lambda_1} + \sqrt{\lambda_n}}\right)^2 $
+ and $\phi = \left(\frac{\sqrt{\lambda_n} - \sqrt{\lambda_1}}{\sqrt{\lambda_n} + \sqrt{\lambda_1}} \right)^2 $
+\item Results in convergence rate of $\frac{\sqrt{\kappa}-1}{\sqrt{\kappa}+1}$
 \end{itemize}
-
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/phasespace_underdamping.png} 
-\end{figure}
-
 \framebreak
 
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_damping.png} 
-	\begin{footnotesize}
-		 
-		Left: If $\varphi$ is too large, we are underdamping. The spring oscillates back and forth and misses the optimum. 
-		
-		Middle: The best value of $\varphi$ lies in the middle. 
-		
-		Right: If $\varphi$ is too small, we are overdamping, meaning that the spring experiences too much friction and stops before reaching the equilibrium. 
-	\end{footnotesize}
-\end{figure}
+\begin{itemize}
 
+\item Compared to GD with $\frac{\kappa-1}{\kappa+1}$ this is much better as the condition is rooted
+
+\item Of course, this would in principle require knowledge of the EVs $\lambda_i$
+\item But we can derive simple rule-of-thump: for poorly conditioned problems, the stepsize is approximately twice that of GD and $\phi$ close to 1
+\item So we want to set $\phi$ to a high value and then still pick the highest $\alpha$ which still converges
+\end{itemize}
 \end{vbframe}
+% \framebreak
+% \begin{itemize}
+% 	\item Finally, we investigate the role of $\varphi$. 
+% 	\item We can think of gradient descent with momentum as a damped harmonic oscillator: a weight on a spring. We pull the weight down and study the path back to the equilibrium in phase space (looking at the position and the velocity). 
+% 	\item Depending on the choice of $\varphi$, the rate of return to the equilibrium position is affected. 
+% \end{itemize}
+
+% \begin{figure}
+% 	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/phasespace_underdamping.png} 
+% \end{figure}
+
+% \framebreak
+
+% \begin{figure}
+% 	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/momentum_damping.png} 
+% 	\begin{footnotesize}
+		 
+% 		Left: If $\varphi$ is too large, we are underdamping. The spring oscillates back and forth and misses the optimum. 
+		
+% 		Middle: The best value of $\varphi$ lies in the middle. 
+		
+% 		Right: If $\varphi$ is too small, we are overdamping, meaning that the spring experiences too much friction and stops before reaching the equilibrium. 
+% 	\end{footnotesize}
+% \end{figure}
+
+
 
 
 \endlecture

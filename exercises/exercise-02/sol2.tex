@@ -240,25 +240,25 @@
                           \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_1\partial \mathbf{x}} + \frac{\partial\mathbf{v}}{\partial x_1}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} \\
                           \vdots \\
                           \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_d\partial \mathbf{x}} + \frac{\partial\mathbf{v}}{\partial x_d}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}}
-                         \end{pmatrix}
+                         \end{pmatrix}^\top
                          +
                          \begin{pmatrix}
                            \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_1\partial \mathbf{x}} + \frac{\partial\mathbf{u}}{\partial x_1}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} \\
                            \vdots \\
                            \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_d\partial \mathbf{x}} + \frac{\partial\mathbf{u}}{\partial x_d}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}}
-                         \end{pmatrix} \\
+                         \end{pmatrix}^\top \\
       &= \begin{pmatrix}
             \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_1\partial \mathbf{x}} \\
             \vdots \\
             \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_d\partial \mathbf{x}}
-         \end{pmatrix}
+         \end{pmatrix}^\top
          + \frac{\partial \mathbf{u}}{\partial \mathbf{x}} \left(\frac{\partial \mathbf{v}}{\partial \mathbf{x}}\right)^\top
          + \frac{\partial \mathbf{v}}{\partial \mathbf{x}} \left(\frac{\partial \mathbf{u}}{\partial \mathbf{x}}\right)^\top
          + \begin{pmatrix}
             \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_1\partial \mathbf{x}} \\
             \vdots \\
             \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_d\partial \mathbf{x}} 
-           \end{pmatrix}
+           \end{pmatrix}^\top
     \end{align*}
 \end{enumerate}
 }
