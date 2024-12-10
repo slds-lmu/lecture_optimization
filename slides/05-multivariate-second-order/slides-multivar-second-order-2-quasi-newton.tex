@@ -163,7 +163,7 @@ $$
 Instead of Rank 1 updates, the \textbf{BFGS} procedure (published simultaneously in 1970 by Broyden, Fletcher, Goldfarb and Shanno) uses rank 2 modifications of the form
 
 $$
-\bm{A}^{[t]} + \beta \bm{u}^{[t]}(\bm{u}^{[t]})^{\top} + \beta \bm{v}^{[t]}(\bm{v}^{[t]})^{\top}
+\bm{A}^{[t]} + \beta_1 \bm{u}^{[t]}(\bm{u}^{[t]})^{\top} + \beta_2 \bm{v}^{[t]}(\bm{v}^{[t]})^{\top}
 $$
 
 with $\bm{s}^{[t]} := \bm{x}^{[t+1]} - \bm{x}^{[t]}$
@@ -171,8 +171,8 @@ with $\bm{s}^{[t]} := \bm{x}^{[t+1]} - \bm{x}^{[t]}$
 \begin{itemize}
   \item $\bm{u}^{[t]} = \nabla f(\bm{x}^{[t+1]}) - \nabla f(\bm{x}^{[t]})$
   \item $\bm{v}^{[t]} = \bm{A}^{[t]} \bm{s}^{[t]}$
-  \item $\beta = \frac{1}{(\bm{u}^{[t]})^\top (\bm{s}^{[t]})}$
-  \item $\beta = - \frac{1}{(\bm{s}^{[t]})^\top \bm{A}^{[t]} \bm{s}^{[t]}}$
+  \item $\beta_1 = \frac{1}{(\bm{u}^{[t]})^\top (\bm{s}^{[t]})}$
+  \item $\beta_2 = - \frac{1}{(\bm{s}^{[t]})^\top \bm{A}^{[t]} \bm{s}^{[t]}}$
 \end{itemize}
 
 The resulting matrices $\bm{A}^{[t]}$ are positive definite and the corresponding quasi-newton update directions $\bm{d}^{[t]}$ are actual descent directions.
