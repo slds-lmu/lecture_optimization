@@ -43,8 +43,8 @@ Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control 
 \vspace{-0.4cm}
 GD with medium $\alpha=2\cdot10^{-3}$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_med_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_coef_med.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_reg_med_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_reg_coef_med.pdf}\\
             \begin{footnotesize}
                 Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers.
             \end{footnotesize}
@@ -56,8 +56,8 @@ All variants converge to global min. \textbf{Momentum} accelerates optimization 
 \vspace{-0.4cm}
 GD with medium $\alpha=2\cdot10^{-3}$ and bad conditioning (corr. features):
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_med_lr_corr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_coef_med_corr.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_reg_med_lr_corr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_reg_coef_med_corr.pdf}\\
             \begin{footnotesize}
                 Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers.
             \end{footnotesize}
@@ -72,8 +72,8 @@ Moderately bad \textbf{conditioning slows down optim} severely! Only \textbf{mom
 \vspace{-0.4cm}
 GD with (too small) $\alpha=3\cdot10^{-4}$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_small_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_coef_small.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_reg_small_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_reg_coef_small.pdf}\\
             \begin{footnotesize}
                 Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers.
             \end{footnotesize}
@@ -85,8 +85,8 @@ Only two \textbf{momentum} variants come close to global min in $t_{\text{max}}=
 \vspace{-0.5cm}
 GD with large $\alpha=1.5$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_large_lr_iters.pdf} \\
-             \includegraphics[width=0.7\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_reg_coef_large.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_reg_large_lr_iters.pdf} \\
+             \includegraphics[width=0.7\textwidth]{figure_man/simu_linmod/GD_reg_coef_large.pdf}\\
             \begin{footnotesize}
                 Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers.
             \end{footnotesize}
@@ -101,8 +101,8 @@ Super fast convergence in $<20$ steps. \textbf{Decay} here accelerates optim whi
 \vspace{-0.4cm}
 SGD with medium $\alpha=2\cdot10^{-3}$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_reg_med_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_reg_coef_med.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_reg_med_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_reg_coef_med.pdf}\\
             \begin{footnotesize}
                 %Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
@@ -115,8 +115,8 @@ SGD with medium $\alpha=2\cdot10^{-3}$ and indep. features:
 \vspace{-0.4cm}
 SGD with medium $\alpha=2\cdot10^{-3}$ and bad conditioning (corr. features):
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_reg_med_lr_corr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_reg_coef_med_corr.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_reg_med_lr_corr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_reg_coef_med_corr.pdf}\\
             \begin{footnotesize}
                 Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
@@ -130,8 +130,8 @@ Bad conditioning slows down and destabilizes SGD optimization compared to indep.
 \vspace{-0.4cm}
 SGD with small $\alpha=3\cdot10^{-4}$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_reg_small_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_reg_coef_small.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_reg_small_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_reg_coef_small.pdf}\\
             \begin{footnotesize}
                 Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
@@ -145,8 +145,8 @@ Only momentum variants close to optimum in $t_{\text{max}}=10000$. Decay again w
 \vspace{-0.4cm}
 SGD with large $\alpha=1 \cdot 10^{-2}$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_reg_large_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_reg_coef_large.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_reg_large_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_reg_coef_large.pdf}\\
             \begin{footnotesize}
                 Irreducible error due to additive noise is $\sigma=1$
             \end{footnotesize}
@@ -246,8 +246,8 @@ Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control 
 \vspace{-0.4cm}
 GD with medium $\alpha=0.25$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_med_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_med.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_log_med_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_log_coef_med.pdf}\\
             \begin{footnotesize}
             Dotted lines indicate global minimizers.
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$ 
@@ -261,8 +261,8 @@ and \textbf{decay} slows down optimization. \textbf{GD+mom} performs best.
 \vspace{-0.4cm}
 GD with medium $\alpha=0.25$ and bad conditioning (corr. features):
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_med_lr_corr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_med_corr.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_log_med_lr_corr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_log_coef_med_corr.pdf}\\
             \begin{footnotesize}
             Dotted lines indicate global minimizers.
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$
@@ -277,8 +277,8 @@ Moderately bad conditioning slows down optim slightly and affects ERM solutions.
 \vspace{-0.4cm}
 GD with small $\alpha=0.025$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_small_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_small.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_log_small_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_log_coef_small.pdf}\\
             \begin{footnotesize}
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
@@ -292,8 +292,8 @@ No method converges in $t_{\text{max}}=10000$, as small updates keep the process
 \vspace{-0.5cm}
 GD with large $\alpha=10$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_large_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_large.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_log_large_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/GD_log_coef_large.pdf}\\
             \begin{footnotesize}
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
@@ -309,8 +309,8 @@ Super fast convergence for momentum around $30$ steps. Coefficient paths show ``
 \vspace{-0.4cm}
 SGD with medium $\alpha=0.03$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_med_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_coef_med.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_log_med_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_log_coef_med.pdf}\\
             \begin{footnotesize}
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
@@ -323,8 +323,8 @@ Under SGD dynamics become more noisy. \textbf{Momentum} accelerates while \textb
 \vspace{-0.4cm}
 SGD with medium $\alpha=5\cdot10^{-2}$ and bad conditioning (corr. features):
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_med_lr_corr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_coef_med_corr.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_log_med_lr_corr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_log_coef_med_corr.pdf}\\
             \begin{footnotesize}
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
@@ -338,8 +338,8 @@ Only SGD and SGD+mom converge in $t_{\text{max}}=10000$. Decay slows down while 
 \vspace{-0.4cm}
 SGD with small $\alpha=3\cdot10^{-4}$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_small_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_coef_small.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_log_small_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_log_coef_small.pdf}\\
             \begin{footnotesize}
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
@@ -353,8 +353,8 @@ No method converges since lr is too small. Decay makes it even worse.
 \vspace{-0.4cm}
 SGD with large $\alpha=0.3$ and indep. features:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_large_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/SGD_log_coef_large.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_log_large_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu_linmod/SGD_log_coef_large.pdf}\\
             \begin{footnotesize}
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$
             \end{footnotesize}
@@ -383,7 +383,7 @@ For a more realistic application, we compare optimizers on training an NN on sub
 \vspace{-0.3cm}
 Mini-batch SGD with $\alpha \in \{0.01, 0.1\}$ for 100 epochs (5000 iterations):
 \begin{figure}
-            \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_compar.pdf} \\
+            \includegraphics[width=1.0\textwidth]{figure_man/simu_mnist/SGD_compar.pdf} \\
             %\begin{footnotesize}
             %    Irreducible error due to additive noise is $\sigma=1$
             %\end{footnotesize}
@@ -404,7 +404,7 @@ $\Rightarrow$ no generalization benefit for medium $\alpha$\\
 \vspace{-0.2cm}
 Why is it not a good idea to use GD in most DL applications? SGD is much faster. Compare runtime of mini-batch SGD (batch size=$100$) with GD (constant $\alpha=0.01$ without momentum for $t_{\text{max}}=5000$ iterations):
 \begin{figure}
-            \includegraphics[width=1.0\textwidth]{slides/04-multivariate-first-order/figure_man/simu_mnist/SGD_GD_compar.pdf} \\
+            \includegraphics[width=1.0\textwidth]{figure_man/simu_mnist/SGD_GD_compar.pdf} \\
             %\begin{footnotesize}
             %    Irreducible error due to additive noise is $\sigma=1$
             %\end{footnotesize}
