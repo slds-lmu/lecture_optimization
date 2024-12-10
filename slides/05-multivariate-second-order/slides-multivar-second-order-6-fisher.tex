@@ -150,19 +150,19 @@ Note that the Hessian does not depend on the $y^{(i)}$ explicitly but only depen
 
 
 \begin{vbframe}{Generalized linear models}
-$y|\xv=\xv$ belongs to an \textbf{exponential family} with density:
+$y|\xv$ belongs to an \textbf{exponential family} with density:
 $$ p(y|\delta, \phi) = exp \left\{ \frac{y\delta-b(\delta)}{a(\phi)} + c(y,\phi) \right\}, $$
 where $\delta$ is the natural parameter and $\phi > 0$ is the dispersion parameter.\\
-We often take $a_i(\phi) = \frac{\phi}{w_i}$, where $\phi$ is a positive constant, and $w_i$ is the weight.
+We often take $a_i(\phi) = \frac{\phi}{w_i}$, with $\phi$ a pos. constant, and $w_i$ is a weight.
 
 \lz
 
-Generalized linear models (GLMs) relate the conditional mean $\mu(x)=\E[y|\xv]$ of $Y$ to a linear predictor $\eta$ via a 
+Generalized linear models (GLMs) relate the conditional mean $\mu(\xv)=\E[y|\xv]$ of $y$ to a linear predictor $\eta$ via a 
 strictly increasing link function $g(\mu)=\eta=\xv^\top\theta$.\\
 
 \lz
 
-Notice that mean $\mu=b'(\delta)=g^{-1}(\eta)$, variance $Var(Y|\xv)=a(\phi)b''(\delta)$, \\
+One can show that mean $\mu = \mu(\xv)=b'(\delta)=g^{-1}(\eta)$, variance $Var(y|\xv)=a(\phi)b''(\delta)$, where\\
 $$\frac{\partial{b(\delta)}}{\partial{\theta}}
 =\frac{\partial{b(\delta)}}{\partial{\delta}}\frac{\partial{\delta}}{\partial{\mu}}\frac{\partial{\mu}}{\partial{\eta}}\frac{\partial{\eta}}{\partial{\theta}}
 =\mu \frac{1}{b''(\delta)} \frac{1}{g'(\mu)} \xv$$
@@ -205,7 +205,7 @@ Fisher scoring:
 
 For canonical link where $\eta = g(\mu) = \xv^\top\theta$, the second and third term of Hessian vanishes and Hessian coincides with Fisher information matrix.\\
 \lz
-This will now be a convex problem with Fisher scoring equal to Newton's method.
+This will now be a convex problem with Fisher scoring equal to Newton's method.\\
 \lz
 There are also hybrid algorithms that start out with IRLS which is easier to initialize, and switch over to Newton-Raphson after some iterations.
 

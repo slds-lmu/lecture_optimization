@@ -213,7 +213,7 @@
 \begin{enumerate}
   \item We compute both expressions and compare the results.
     \begin{align*}
-      \E_{\xv, y}[ \nabla_{\thetab}[ (\thetab^\top\xv -  y)^2] ] &= \E_{\xv,y}[ 2 \xv \xv^\top - 2 \xv y ] \\
+      \E_{\xv, y}[ \nabla_{\thetab}[ (\thetab^\top\xv -  y)^2] ] &= \E_{\xv,y}[ 2 \xv \xv^\top \thetab - 2 \xv y ] \\
       &= \E_\xv \E_{y|\xv}[ 2 \xv \xv^\top \thetab - 2 \xv y ] \\
       &= \E_\xv[ 2\xv \xv^\top \thetab - 2\xv\xv^\top \thetab^* ] \\
       &= 2\bm{\Sigma}_\xv(\thetab - \thetab^*)
