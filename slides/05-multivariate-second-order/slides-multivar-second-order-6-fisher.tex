@@ -185,8 +185,8 @@ $\mathbf{G}$ is a diagonal matrix with element $g'(\mu^{(i)})$.\\
 \begin{align*}
 -\nabla^2 \logl_{\theta}(\delta, \phi)
   & = \sumin \frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\
-  & - \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(g''(\mu^{(i)})/g'(\mu^{(i)}))}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\ 
-  & + \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(\partial{b''(\delta)[g'(\mu^{(i)})]^2}/\partial{\mu^{(i)}})}{[b''(\delta)]^2[g'(\mu^{(i)})]^4}\xv^{(i)}{\xv^{(i)}}^\top
+  & + \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(b''(\delta)g''(\mu^{(i)})/g'(\mu^{(i)}))}{[b''(\delta)g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\ 
+  & + \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(b'''(\delta)/b''(\delta))}{[b''(\delta)g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top
 \end{align*}
 
 $$\E[-\nabla^2 \logl_{\theta}(\delta, \phi)] = \sumin \frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top = \mathbf{X}^\top \mathbf{W} \mathbf{X}$$
@@ -203,13 +203,13 @@ Fisher scoring:
 
 \lz
 
-For canonical link where $\eta = g(\mu) = \xv^\top\theta$, the second and third term of Hessian vanishes and Hessian coincides with Fisher information matrix.\\
-\lz
+For canonical link where $\eta = \delta \;(= g(\mu) = \xv^\top\theta$), the second and third term of Hessian cancel each other out and Hessian coincides with Fisher information matrix since$$\frac{\partial{\eta}}{\partial{\delta}} = 1 \Rightarrow b''(\delta) = \frac{1}{g'(\mu^{(i)})} \Rightarrow  \frac{b'''(\delta)}{b''(\delta)} = -   \frac{g''(\mu^{(i)})}{[g'(\mu^{(i)})]^2}.$$\\
 This will now be a convex problem with Fisher scoring equal to Newton's method.\\
 \lz
 There are also hybrid algorithms that start out with IRLS which is easier to initialize, and switch over to Newton-Raphson after some iterations.
 
 \end{vbframe}
+
 
 \endlecture
 \end{document}
