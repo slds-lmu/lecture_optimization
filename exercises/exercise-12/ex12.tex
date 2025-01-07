@@ -206,40 +206,26 @@
 \begin{document}
 % !Rnw weave = knitr
 
-\kopfsl{12}{Derivative free optimization and evolutionary strategies}
+\kopfsl{12}{Derivative Free Optimization}
 
-\aufgabe{Coordinate descent}{
-
-
+\aufgabe{Coordinate Descent I}{
 Minimize Ridge regression, i.e.,
 $$\min_{\bm{\theta}}\frac{1}{2} \Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + \frac{\lambda}{2} \Vert\bm{\theta}\Vert^2_2$$
-for $\lambda \geq 0$ via coordinate descent under the assumption that $\mathbf{X}^\top \mathbf{X} = \mathbf{I}_p$.
+for $\lambda \geq 0$ via coordinate descent under the assumption that $\mathbf{X}^\top \mathbf{X} = \mathbf{I}_d$.
 }
 
-\aufgabe{CMA-ES}{
 
-Assume we have drawn the current population $\mathbf{x}_{1:\lambda}$ from the bivariate Gaussian distribution 
-$\mathcal{N}(\mathbf{m}^{[0]}, \mathbf{C}^{[0]})$ with $\mathbf{m}^{[0]} = (1, 1)^\top, \mathbf{C}^{[0]} = \mathbf{I},$ such that \\
-\begin{tabular}{ |c|c|c|c| } 
- \hline
-Id & $x_1$ & $x_2$ & Fitness value \\ 
-\hline
-1 & 1.14 &  0.24 & 0.67\\ 
-2 & 1.54 &  -0.86& 0.41\\ 
-3 & 2.1 & 2.16 & 0.09\\ 
-4 &  1.5 & 2.69 & 0.09\\ 
-5 &  1.25& 0.51 & 0.47\\ 
-6 & 0.92 &  2.19 & 0.15\\ 
- \hline
-\end{tabular}
-
-We want to do a simplified CMA-ES update step:
-\begin{itemize}
-\item Assume the parent number $\mu = 3.$
-\item Find $\mathbf{m}^{[1]}$ by updating $\mathbf{m}^{[0]}$ in the mean weighted\footnote{Simply scale the fitness values such that they sum up to one.} direction of $\mathbf{x}_{1:\mu}$ with stepsize $0.5$.
-\item Compute $\mathbf{C}_\mu$, the (unweighted) sample covariance of $\mathbf{x}_{1:\mu}$ w.r.t. $\mathbf{m}^{[0]},$ and compute 
-$$\mathbf{C}^{[1]} = (1-c)\cdot\mathbf{C}^{[0]} + c\cdot\mathbf{C}_\mu$$ 
-with $c = 0.1$.
-\end{itemize}
+\aufgabe{Coordinate Descent II}{
+Consider the function
+$$g: \mathbb{R}^2 \rightarrow \mathbb{R}, (x_{1}, x_{2}) \mapsto |x_{1} - x_{2}| + 0.1 (x_{1} + x_{2}).$$
+\begin{enumerate}
+\item Perform one round of coordinate descent starting from an arbitrary point $(x_{1}, x_{2})$.
+      Show that after updating $x_{1}$ (while fixing $x_{2}$) and then updating $x_{2}$ (while fixing $x_{1}$)
+      the algorithm arrives at a point where $x_{1} = x_{2}$ and terminates.
+      That is, show that coordinate descent will not move beyond the first iteration.
+\item Show that the global infimum of $g$ is $-\infty$.
+      Conclude that coordinate descent fails to find the true minimizer for this function.
+\end{enumerate}
 }
+
 \end{document}

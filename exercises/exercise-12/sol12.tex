@@ -206,35 +206,56 @@
 \begin{document}
 % !Rnw weave = knitr
 
-\kopfsl{12}{Derivative free optimization and evolutionary strategies}
+\kopfsl{12}{Derivative Free Optimization}
 
-\loesung{Coordinate descent}{
-
+\loesung{Coordinate Descent I}{
 
 \begin{equation*}
 \begin{split}
-\mathcal{R}_\text{emp}(\bm{\theta}) &= \frac{1}{2} \Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + \frac{1}{2} \Vert\bm{\theta}\Vert^2_2 = \frac{1}{2}\mathbf{y}^\top\mathbf{y}-\mathbf{y}^\top\mathbf{X}\bm{\theta} + \frac{1}{2}\bm{\theta}^\top\bm{\theta} + \frac{\lambda}{2}\bm{\theta}^\top\bm{\theta} \\
-&=\frac{1}{2}\mathbf{y}^\top\mathbf{y}-\sum^p_{j=1}\mathbf{y}^\top\mathbf{X}_j\theta_j + \frac{1}{2}(1 + \lambda)\bm{\theta}^\top\bm{\theta} \\
-\frac{\partial \mathcal{R}_\text{emp}}{\theta_j} &= (1 + \lambda)\theta_j -\mathbf{y}^\top\mathbf{X}_j \overset{!}{=} 0 \\
-&\Rightarrow \theta_j^* = \frac{\mathbf{y}^\top\mathbf{X}_j}{1 + \lambda}
+\mathcal{R}_\text{emp}(\bm{\theta}) &= \frac{1}{2} \Vert\mathbf{X}\bm{\theta} - \mathbf{y}\Vert^2_2 + \frac{\lambda}{2} \Vert\bm{\theta}\Vert^2_2 = \frac{1}{2}\mathbf{y}^\top\mathbf{y}-\mathbf{y}^\top\mathbf{X}\bm{\theta} + \frac{1}{2}\bm{\theta}^\top\bm{\theta} + \frac{\lambda}{2}\bm{\theta}^\top\bm{\theta} \\
+&=\frac{1}{2}\mathbf{y}^\top\mathbf{y}-\sum^d_{j=1}\mathbf{y}^\top\mathbf{x}_j\theta_j + \frac{1}{2}(1 + \lambda)\bm{\theta}^\top\bm{\theta} \\
+\frac{\partial \mathcal{R}_\text{emp}}{\theta_j} &= (1 + \lambda)\theta_j -\mathbf{y}^\top\mathbf{x}_j \overset{!}{=} 0 \\
+&\Rightarrow \theta_j^* = \frac{\mathbf{y}^\top\mathbf{x}_j}{1 + \lambda}
 \end{split}
 \end{equation*}
 
 }
 
-\loesung{CMA-ES}{
+\loesung{Coordinate Descent II}{
+\begin{enumerate}
+  \item Update $x_{1}$ whle fixing $x_{2}$:
+    We fix $x_{2} = c$ (constant).
+    The function then states as $$g(x_{1}, c) = |x_{1} - c| + 0.1 (x_{1} + c).$$
+    We want to choose $x_{1}$ to minimize this.
+    Due to the absolute value, there are two cases.
+    \begin{enumerate}
+      \item Case 1: $x_{1} \ge c$:
+        Then $|x_{1} - c| = x_{1} - c$.
+        So $g(x_{1}, c) = (x_{1} - c) + 0.1 x_{1} + 0.1 c = 1.1 x_{1} - 0.9 c$.
+        As a function of $x_{1}$ this is strictly increasing (derivative of $1.1 > 0$).
+        Therefore, the minimizer given $x_{1} \ge c$ is at the left boundary, i.e., $x_{1} = c$.
+      \item Case 2: $x_{1} < c$:
+        Then $|x_{1} - c| = c - x_{1}$.
+        So $g(x_{1}, c) = (c - x_{1}) + 0.1 x_{1} + 0.1 c = 1.1 c - 0.9 x_{1}$.
+        As a function of $x_{1}$ this is strictly decreasing (derivative of $-0.9 < 0$).
+        Thereore, the minimizer given $x_{1} < c$ is at the right boundary, i.e., $x_{1} = c$.
+    \end{enumerate}
+    In both cases, the best choice is $x_{1}^{*} = c$.
+    Note that $x_{2}$ was fixed to be $c$, i.e., the function is minimized exactly when $x_{1} = x_{2}$.\\
+    After updating $x_{1}$ while holding $x_{2}$ constant, we arrive at $(x_{1}^{[1]}, x_{2}^{[0]}) = (x_{2}^{[0]}, x_{2}^{[0]})$.\\
 
-Pick $\mu = 3$ parents with highest fitness values, i.e.,
-$\text{Id} = 1,2,5$ which we denote with $\mathbf{x}_{1:\mu}$
-and respective weights $w_i = \frac{f_i}{\sum^\mu_{i=1}f_i} \approx (0.432, 0.265, 0.303)$. \\
-\begin{equation*}
-\begin{split}
-\mathbf{m}^{[1]} &= \mathbf{m}^{[0]} + 0.5 \sum^3_{i=1} w_i(\mathbf{x}_i - \mathbf{m}^{[0]}) \approx (1.05, 0.84)^\top \\
-\mathbf{C}_\mu &= \frac{1}{3-1} \sum^3_{i=1}(\mathbf{x}_i - \mathbf{m}^{[0]}))(\mathbf{x}_i - \mathbf{m}^{[0]}))^\top  \\
-& \approx \begin{pmatrix} 0.187 & -0.617 \\ -0.617 & 2.139 \end{pmatrix} \\
-\mathbf{C}^{[1]} &= 0.9\cdot\mathbf{I}_3 + 0.1\cdot\mathbf{C}_\mu \\
-&\approx \begin{pmatrix} 0.919 & -0.062 \\ -0.062 & 1.114 \end{pmatrix}
-\end{split}
-\end{equation*}
+    Update $x_{2}$ while fixing $x_{1}$:
+    We now fix $x_{1} = c$ (constant).
+    The function then states as $$g(c, x_{2}) = |c - x_{2}| + 0.1 (c + x_{2}).$$
+    Note that $g$ is symmetric in its arguments, therefore based on the first analysis, we conclude that again $x_{2}^{*} = c$.\\
+    After updating $x_{2}$ while holding $x_{1}$ constant, we arrive at $(x_{1}^{[1]}, x_{2}^{[1]}) = (x_{1}^{[1]}, x_{1}^{[1]}) = (x_{2}^{[0]}, x_{2}^{[0]})$.\\
+
+    We observe that coordinate updates will set the respective coordinate to the value of the other constant held coordinate value and once the algorithm arrives at $x_{1} = x_{2} = c$, neither coordinate update will move the point.
+
+  \item Along the diagonal $x_{1} = x_{2} = t$, the function simplifies to $$g(t, t) = |t - t| + 0.1 (t + t) = 0.2 t.$$
+    As $t \rightarrow - \infty$, $0.2 t \rightarrow - \infty$, hence the infimum of $g$ is $- \infty$.
+    No finite $(x_{1}, x_{2})$ can achieve that inifimum, i.e., there is no global mnimizer, but the values of $g$ can be made arbitrarly negative by letting $x_{1}$, $x_{2}$ be arbitrarly negative.
+
+\end{enumerate}
 }
 \end{document}
