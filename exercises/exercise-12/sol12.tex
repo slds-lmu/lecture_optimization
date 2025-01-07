@@ -206,7 +206,7 @@
 \begin{document}
 % !Rnw weave = knitr
 
-\kopfsl{12}{Derivative Free Optimization}
+\kopfsl{12}{Derivative Free Optimization and Evolutionary Strategies}
 
 \loesung{Coordinate Descent I}{
 
@@ -254,8 +254,23 @@
 
   \item Along the diagonal $x_{1} = x_{2} = t$, the function simplifies to $$g(t, t) = |t - t| + 0.1 (t + t) = 0.2 t.$$
     As $t \rightarrow - \infty$, $0.2 t \rightarrow - \infty$, hence the infimum of $g$ is $- \infty$.
-    No finite $(x_{1}, x_{2})$ can achieve that inifimum, i.e., there is no global mnimizer, but the values of $g$ can be made arbitrarly negative by letting $x_{1}$, $x_{2}$ be arbitrarly negative.
+    No finite $(x_{1}, x_{2})$ can achieve that inifimum, i.e., there is no global minimizer, but the values of $g$ can be made arbitrarly negative by letting $x_{1}$, $x_{2}$ be arbitrarly negative.
 
 \end{enumerate}
+}
+
+\loesung{CMA-ES}{
+Pick $\mu = 3$ parents with highest fitness values, i.e.,
+$\text{Id} = 1,2,5$ which we denote with $\mathbf{x}_{1:\mu}$
+and respective weights $w_i = \frac{f_i}{\sum^\mu_{i=1}f_i} \approx (0.432, 0.265, 0.303)$. \\
+\begin{equation*}
+\begin{split}
+\mathbf{m}^{[1]} &= \mathbf{m}^{[0]} + 0.5 \sum^3_{i=1} w_i(\mathbf{x}_i - \mathbf{m}^{[0]}) \approx (1.140, 0.515)^\top \\
+\mathbf{C}_\mu &= \frac{1}{3-1} \sum^3_{i=1}(\mathbf{x}_i - \mathbf{m}^{[0]}))(\mathbf{x}_i - \mathbf{m}^{[0]}))^\top  \\
+& \approx \begin{pmatrix} 0.187 & -0.617 \\ -0.617 & 2.139 \end{pmatrix} \\
+\mathbf{C}^{[1]} &= 0.9\cdot\mathbf{I}_d + 0.1\cdot\mathbf{C}_\mu \\
+&\approx \begin{pmatrix} 0.919 & -0.062 \\ -0.062 & 1.114 \end{pmatrix}
+\end{split}
+\end{equation*}
 }
 \end{document}
