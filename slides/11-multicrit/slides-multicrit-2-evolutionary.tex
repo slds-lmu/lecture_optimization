@@ -29,7 +29,7 @@
 }{%
   Evolutionary Approaches    % lecture title
 }{%
-  figure_man/expedia-5-1.pdf % optional title image path
+  figure_man/NSGA2_steps.png % optional title image path
 }{%
   \item EMOAs and population-based approach
   \item NSGA-II
@@ -40,6 +40,8 @@
 \begin{vbframe}{A-posteriori methods and evolutionary algorithms}
 
 Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over time to approximate the Pareto front.
+
+\vspace{-0.6cm}
 
 \begin{columns}
 \begin{column}{0.3\textwidth}
@@ -80,10 +82,9 @@ Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over
 \end{column}
 \end{columns}
 
-\bigskip
-\begin{itemize}
+\begin{itemize}{\small
 \item Population-based search approximates a whole Pareto set in one run.
-\item The main steps (initialize, select, vary, survive, repeat) mirror standard EAs but must handle multiple objectives.
+\item The main steps (initialize, select, vary, survive, repeat) mirror standard EAs but must handle multiple objectives.}
 \end{itemize}
 
 \end{vbframe}
@@ -93,7 +94,7 @@ Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over
 
 \begin{algorithm2e}[H]
 \SetAlgoLined         % or \DontPrintSemicolon, whichever style you prefer
-\caption{Basic EA template loop (algo2e style)}
+\caption{Basic EA template loop}
 %\KwCommentSty{}       % optional: adjust comment style if you like
 
 % If you want input / output placeholders, you can do:
@@ -140,25 +141,23 @@ The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by
 % -------------------------------------------------------------------
 \begin{vbframe}{NSGA-II: non-dominated sorting (I)}
 
-NDS partitions a population into fronts 
-\[
-  \mathcal{F}_1 \prec \mathcal{F}_2 \prec \mathcal{F}_3 \prec \dots
-\]
-\begin{itemize}
-\item $\mathcal{F}_1$ is the set of non-dominated points.
-\item $\mathcal{F}_2$ is then dominated only by $\mathcal{F}_1$.
-\item $\mathcal{F}_3$ is dominated only by $\mathcal{F}_1 \cup \mathcal{F}_2$.
-\item And so on.
-\end{itemize}
+NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{F}_2 \prec \mathcal{F}_3 \prec ... $.
 
 \begin{columns}
 \begin{column}{0.4\textwidth}
-We can compute these layers by iteratively removing each front from the current set.
+\begin{itemize}{\small
+    \item $\mathcal{F}_1$ is non-dominated, 
+      each $\xx \in \mathcal{F}_2$ is dominated, but only by points in $\mathcal{F}_1$, 
+      each $\xx \in \mathcal{F}_3$ is dominated, but only by points in $\mathcal{F}_1$ and $\mathcal{F}_2$, 
+      and so on. 
+    \item We can easily compute the partitioning by computing all non-dominated points  $\mathcal{F}_1$,
+        removing them, then computing the next layer of non-dominated points $\mathcal{F}_2$, and so on.}
+\end{itemize}
 \end{column}
 
 \begin{column}{0.6\textwidth}
 \begin{center}
-\includegraphics[width=0.9\textwidth]{slides/11-multicrit/figure_man/NSGA2_NDS.png}
+\includegraphics[width = 0.9\textwidth]{slides/11-multicrit/figure_man/NSGA2_NDS.png}
 \end{center}
 \end{column}
 \end{columns}
@@ -307,13 +306,11 @@ $t \gets 0$\;
 %  \end{center}
 %\end{algorithm}
 
-\bigskip
-\begin{itemize}
+\begin{itemize}\setlength{\itemsep}{0.3em}{\footnotesize
 \item As soon as we exceed size $\mu+1$, remove the worst HV contributor from the \emph{last front}.
 \item That way, each iteration keeps exactly $\mu$ individuals.
-\item Ranking is primarily by front membership; hypervolume contribution is the tiebreak.
+\item Ranking is primarily by front membership; hypervolume contrib. is the tiebreak.}
 \end{itemize}
-
 \end{vbframe}
 
 % -------------------------------------------------------------------

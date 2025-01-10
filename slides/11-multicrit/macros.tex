@@ -43,16 +43,16 @@
 %--------HPO parameter macros-----------
 
 % Parameter Configuration Space
-\newcommand{\pcs}[0]{\pmb{\Lambda}}
+\newcommand{\pcs}[0]{\pmb{\mathcal{X}}}
 
 % ???
 \newcommand{\bx}[0]{\conf}
 
 % Parameter Configuration
-\newcommand{\conf}[0]{\pmb{\lambda}}
+\newcommand{\conf}[0]{\pmb{x}}
 
 % Final Configuration
-\newcommand{\finconf}[0]{\pmb{\hat{\lambda}}}
+\newcommand{\finconf}[0]{\pmb{\hat{x}}}
 
 % Configuration corresponding to a given iteration -- better use \iter!
 \newcommand{\confI}[1]{{\conf}^{(#1)}}
@@ -78,8 +78,8 @@
 \newcommand{\loss}[0]{L}
 %\newcommand{\risk}{\mathcal{R}}
 %\newcommand{\riske}{\mathcal{R}_{\text{emp}}}
-\newcommand{\cost}[0]{c}
-\newcommand{\costI}[1]{c^{(#1)}}
+\newcommand{\cost}[0]{f}
+\newcommand{\costI}[1]{f^{(#1)}}
 
 % Gaussian Process
 \newcommand{\gp}{\mathcal{G}}
@@ -116,7 +116,7 @@
 \newcommand{\bonextsample}{\confI{\bocount}}
 
 % Single hyperparameter
-\newcommand{\hyperparam}{\lambda}
+\newcommand{\hyperparam}{\bf{x}}
 
 % Single hyperparameter within a hyperparameter configuration
 \newcommand{\hyperparami}[1][i]{{\hyperparam}_#1}
