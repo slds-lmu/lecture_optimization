@@ -1,0 +1,397 @@
+\documentclass[11pt,compress,t,notes=noshow,xcolor=table]{beamer}
+
+\usepackage{algorithm}
+\usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
+%\usepackage[boxed,vlined]{algorithm2e}
+\usepackage{comment}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-mbo}
+\input{slides/11-multicrit/macros}
+
+%\newcommand{\a}[0]{\mathbf{a}}
+%\newcommand{\y}[0]{\mathbf{y}}
+\newcommand{\q}[0]{\mathbf{q}}
+
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+% Example: adjust the title meta as you see fit
+\titlemeta{%
+  Multi-criteria Optimization % Chunk title
+}{%
+  Bayesian Optimization % Lecture title
+}{%
+  figure_man/example_parego_spam.png % Relative path to some title page image (optional)
+}{%
+  \item Single-criteria recap
+  \item Multi-criteria introduction
+  \item Scalarization vs. HV-based methods
+}
+
+% -------------------------------------------------------------------
+% Start of adapted slides
+% -------------------------------------------------------------------
+
+\begin{vbframe}{Recap: Bayesian Optimization}
+
+\begin{block}{Advantages of BO}
+\begin{itemize}
+  \item Sample efficient
+  \item Can handle noise
+  \item Native incorporation of priors
+  \item Does not require gradients
+  \item Theoretical guarantees
+\end{itemize}
+\end{block}
+
+We will now extend BO to multiple cost functions.
+
+\framebreak
+
+\vspace{-0.2cm}
+\begin{center}
+\begin{minipage}{0.95\textwidth}
+\begin{algorithm2e}[H]
+\caption*{Bayesian optimization loop}
+\SetKwInOut{Require}{Require}
+\SetKwInOut{Result}{Result}
+
+\Require{Search space $\pcs$, cost function $\cost$, acquisition function $\acq$, 
+         predictive model $\surro$, maximal number of function evaluations $\bobudget$}
+\Result{Best configuration $\finconf$ (based on $\dataset$ or $\surro$)}
+
+Initialize data $\iter[0]{\dataset}$ with initial observations\;
+\For{$\bocount \gets 1$ \KwTo $\bobudget$}{
+  Fit predictive model $\iter[\bocount]{\surro}$ on $\iter[\bocount-1]{\dataset}$\;
+
+  Select next query point:
+  %\[
+    $\bonextsample 
+      \;\in\; 
+      \argmax_{\conf \in \pcs}
+        \acq\!\Bigl(\conf;\,\iter[\bocount-1]{\dataset},\;\iter[\bocount]{\surro}\Bigr)$
+  %\]
+
+  Query $\bonextobs$\;
+
+  Update data:
+  \[
+    \iter[\bocount]{\dataset}
+      \;\leftarrow\; 
+      \iter[\bocount-1]{\dataset}
+        \;\cup\;\{\langle \bonextsample,\;\bonextobs \rangle \}
+  \]
+}
+\end{algorithm2e}
+\end{minipage}
+\end{center}
+
+
+\end{vbframe}
+
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Multi-Criteria Bayesian Optimization}
+
+\textbf{Goal}: Extend Bayesian optimization to multiple cost functions
+
+\[
+\min_{\conf \in \pcs}  \cost(\conf)
+\quad \Leftrightarrow \quad
+\min_{\conf \in \pcs} \bigl(\cost_1(\conf), \cost_2(\conf), \dots, \cost_m(\conf)\bigr).
+\]
+
+\medskip
+
+There are two basic approaches:
+
+\begin{enumerate}
+  \item Simplify the problem by scalarizing the cost functions, or
+  \item define acquisition functions for multiple cost functions.
+\end{enumerate}
+
+\end{vbframe}
+
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Scalarization}
+
+\textbf{Idea:} Aggregate all cost functions
+
+\[
+\min_{\conf \in \pcs} \sum_{i = 1}^m w_i \cost_i(\conf)
+\quad\quad
+\text{with} \quad w_i \ge 0
+\]
+
+\begin{itemize}
+  \item \textbf{Obvious problem:} How to choose $w_1, \dots, w_m$?
+    \begin{itemize}
+      \item Expert knowledge?
+      \item Systematic variation?
+      \item Random variation?
+    \end{itemize}
+  \item If expert knowledge is not available a-priori, we need to ensure that 
+        different trade-offs between cost functions are explored.
+  \item Simplifies multi-criteria optimization problem to single-objective 
+        $\longrightarrow$ standard Bayesian optimization can be used without 
+        adapting the general algorithm.
+\end{itemize}
+
+\end{vbframe}
+
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Scalarization: ParEGO~\litw{\href{https://www.cs.bham.ac.uk/~jdk/parego/ParEGO-TR3.pdf}{Knowles. 2006}}}
+
+Scalarize the cost functions using the augmented Tchebycheff norm / achievement function
+
+\[
+c = \max_{i=1,\dots,m}\bigl(w_i \cost_i(\conf)\bigr) 
+    + \rho \sum_{i=1}^m w_i \cost_i(\conf),
+\]
+
+\begin{itemize}
+  \item The weights $w \in W$ are drawn from
+    \[
+      W = 
+        \bigl\{ w = (w_1, \dots, w_m) \,\big|\,
+                \sum_{i=1}^m w_i = 1,\, w_i = \tfrac{l}{s},\, l \in \{0,\dots,s\}
+        \bigr\},
+    \]
+    with $\lvert W \rvert = \binom{s+m-1}{m-1}$.
+  \item New weights are drawn in every BO iteration.
+  \item $\rho$ is a small parameter (e.g. 0.05).
+  \item $s$ controls how many distinct weight vectors exist.
+\end{itemize}
+
+\end{vbframe}
+
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Why the Tchebycheff norm?}
+
+\begin{center}
+\includegraphics[scale=0.08]{slides/11-multicrit/figure_man/parego_viz.png}
+\end{center}
+
+%\[
+$\qquad c = \max_{i=1,\dots,m}\bigl(w_i \cost_i(\conf)\bigr) 
+    + \rho \sum_{i=1}^m w_i \cost_i(\conf)$,
+%\]
+\begin{scriptsize}
+\begin{itemize}
+  \item The norm consists of two components:
+    \begin{itemize}
+      \item $\max_{i}\bigl(w_i \cost_i(\conf)\bigr)$ 
+            considers only the maximum weighted cost.
+      \item $\sum_{i} w_i\cost_i(\conf)$ is the weighted sum of all costs.
+    \end{itemize}
+  \item $\rho$ controls the trade-off between these parts.
+  \item By randomizing the weights $w$ in each iteration (and keeping $\rho$ small), 
+        extreme points in single cost functions can be explored.
+  \item One can prove that every solution of this scalarized problem is 
+        Pareto-optimal.
+\end{itemize}
+\end{scriptsize}
+
+\end{vbframe}
+
+
+% -------------------------------------------------------------------
+\begin{vbframe}{ParEGO Algorithm}
+\vspace{-0.5cm}
+
+\begin{center}
+\begin{minipage}{0.95\textwidth}
+\begin{algorithm}[H]
+    \setcounter{AlgoLine}{0}
+    \SetKwInOut{Require}{Require}
+    \SetKwInOut{Result}{Result}
+
+    \Require{{\small Search space $\pcs$,
+             cost function $\cost$,
+             acquisition function $\acq$, predictive model $\surro$,
+             maximal number of function evaluations $\bobudget$, $\rho$, $l$, $s$}}
+    \Result{Best configuration $\finconf$
+            (according to $\dataset$ or $\surro$)}
+
+    Initialize data $\iter[0]{\dataset}$ with initial observations\;
+
+    \For{$\bocount=1$ \KwTo $\bobudget$}{
+        Sample $w \in W = \bigl\{(w_1,\dots,w_m) \,\mid\, 
+                                \sum w_i=1,\, w_i=\tfrac{l}{s},
+                                l \in \{0,\dots,s\}\bigr\}$\;
+
+        Compute scalarization:
+        %\[
+          $c^{(t)} = \max_{i}\bigl(w_i \cost_i(\conf)\bigr) 
+                    + \rho \sum_{i}w_i\cost_i(\conf)$
+        %\]
+
+        Fit predictive model $\iter[\bocount]{\surro}$ on 
+            $\iter[\bocount-1]{\dataset}$\;
+
+        Select next query point:
+        %\[
+          $\bonextsample \in \argmax_{\conf \in \pcs} 
+            \acq(\conf; \iter[\bocount-1]{\dataset}, \iter[\bocount]{\surro})$
+        %\]
+
+        Query $\bonextobs$\;
+
+        Update data: 
+        \[
+           \iter[\bocount]{\dataset} \leftarrow \iter[\bocount-1]{\dataset}
+             \cup \{\langle \bonextsample, \bonextobs \rangle\}
+        \]
+    }
+	\caption*{ParEGO loop}
+\end{algorithm}
+\end{minipage}
+\end{center}
+
+
+
+\end{vbframe}
+
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Hypervolume based Acquisition Functions}
+
+\textbf{Idea:} Define acquisition function that directly models the contribution to the dominated hypervolume (HV):
+
+%\[
+$\max(0, \; S(\mathcal{P} \cup \conf, R) \;-\; S(\mathcal{P}, R))$
+%\]
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{slides/11-multicrit/figure_man/hv_contribution.pdf}
+\end{center}
+
+\vspace{-0.8cm}
+
+\begin{itemize}
+  \item Fit $m$ single-objective surrogate models $\surro_1, \dots, \surro_m$.
+  \item Acquisition function uses all surrogate models simultaneously.
+  \item Still a single-objective optimization problem (of acquisition itself).
+\end{itemize}
+
+\end{vbframe}
+
+
+% -------------------------------------------------------------------
+\begin{vbframe}{S-Metric Selection-based EGO}
+
+Using the Lower Confidence Bound $u_{\text{LCB},1}(\conf),\dots,u_{\text{LCB},m}(\conf)$,
+one can form an \emph{optimistic} estimate of the hypervolume contribution:
+
+\begin{center}
+\includegraphics[width=0.8\textwidth]{slides/11-multicrit/figure_man/hv_contribution_2.pdf}
+\end{center}
+
+\textbf{Problem:} HV-contribution can be zero across large regions where the lower confidence bound is already dominated.
+\begin{itemize}
+  \item Large zero-plateaus make optimization of the acquisition harder.
+  \item SMS-EGO adds an adaptive penalty in such dominated regions.
+\end{itemize}
+
+\medskip
+
+This method is referred to as
+\textbf{SMS-EGO}~\lit{\href{https://doi.org/10.1007/978-3-540-87700-4_78}{Ponweiser et al. 2008}}.
+
+\end{vbframe}
+
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Further Hypervolume Acquisition Functions}
+
+\textbf{Expected Hypervolume Improvement (EHI)} 
+\lit{\href{https://doi.org/10.1016/j.swevo.2018.10.007}{Yang et al. 2019}}:
+
+\[
+u_{EI, \mathcal{H}}(\conf) 
+  = \int_{-\infty}^{\infty} p\bigl(\cost \mid \conf\bigr)
+    \times \bigl[\,
+        S(\mathcal{P} \cup \conf, R) \;-\; S(\mathcal{P}, R)
+    \bigr]\; d\cost
+\]
+
+\begin{itemize}
+  \item Direct extension of $u_{EI}$ to the hypervolume criterion.
+  \item $p(\cost \mid \conf)$ is the joint predictive density of all surrogate models at $\conf$.
+  \item With independent GPs per objective, this factorizes over $m$ univariate normals.
+  \item Exact integral feasible for $m \le 3$, else simulation-based.
+\end{itemize}
+
+\medskip
+Further HV-based acquisitions:
+\begin{itemize}
+  \item \textbf{Stepwise Uncertainty Reduction (SUR)} w.r.t.\ the probability of improvement.
+  \item \textbf{Expected Maximin Improvement (EMI)} w.r.t.\ the $\epsilon$-indicator.
+\end{itemize}
+
+\end{vbframe}
+
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Hypervolume based BO Algorithm}
+
+\begin{center}
+\begin{minipage}{0.8\textwidth}
+\begin{algorithm}[H]
+    \setcounter{AlgoLine}{0}
+    \SetKwInOut{Require}{Require}
+    \SetKwInOut{Result}{Result}
+
+    \Require{Search space $\pcs$,
+             cost function $\cost$,
+             acquisition function $\acq$, 
+             predictive model(s) $\surro_1,\dots,\surro_m$,
+             maximal number of function evaluations $\bobudget$}
+    \Result{Best configuration $\finconf$}
+
+    Initialize data $\iter[0]{\dataset}$ with initial observations\;
+
+    \For{$\bocount=1$ \KwTo $\bobudget$}{
+        Fit predictive models 
+        $\iter[\bocount]{\surro_1}, \dots, \iter[\bocount]{\surro_m}$
+        on $\iter[\bocount-1]{\dataset}$\;
+
+        Select next query point:\\
+        %\[
+          $\bonextsample \in \argmax_{\conf \in \pcs}
+            \acq\!\Bigl(
+              \conf;\,
+              \iter[\bocount-1]{\dataset},\,
+              \iter[\bocount]{\surro_1},\dots,\iter[\bocount]{\surro_m}
+            \Bigr)$
+        %\]
+
+        Query $\bonextobs$\;
+
+        Update data: 
+        \[
+          \iter[\bocount]{\dataset} \leftarrow \iter[\bocount-1]{\dataset}
+           \cup \{\langle \bonextsample,\bonextobs\rangle\}
+        \]
+    }
+	\caption*{Hypervolume-based Bayesian optimization loop}
+\end{algorithm}
+\end{minipage}
+\end{center}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+% End of adapted slides
+% -------------------------------------------------------------------
+
+\endlecture
+\end{document}

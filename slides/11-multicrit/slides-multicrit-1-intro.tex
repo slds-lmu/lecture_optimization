@@ -1,0 +1,433 @@
+\documentclass[11pt,compress,t,notes=noshow,xcolor=table]{beamer}
+
+\usepackage{algorithm}
+\usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
+%\usepackage[boxed,vlined]{algorithm2e}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-mbo}
+\input{slides/11-multicrit/macros}
+
+% -- Macros from original code --------------------------------------
+\newcommand{\xx}{\conf}     % x of the optimizer
+\newcommand{\xxi}[1][i]{\lambda_{#1}} % i-th component of xx
+\newcommand{\XX}{\pcs}     % search space / domain of f
+\newcommand{\f}{\cost}     % objective function
+\newcommand{\yy}{\cost}    % outcome of objective function
+% -------------------------------------------------------------------
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+% Example adaptation of the old \title / \subtitle to the new style:
+\titlemeta{%
+  Multi-criteria Optimization % chunk title
+}{%
+  Introduction              % lecture title
+}{%
+  figure_man/expedia-5-1.pdf % example path to a title image (optional)
+}{%
+  \item What is multi-criteria optimization?
+  \item Motivating examples
+  \item Pareto optimality
+}
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Introductory example}
+
+Often we want to solve optimization problems concerning several goals.
+
+\bigskip
+\textbf{General applications:}
+\begin{itemize}
+\item Medicine: maximum effect, but minimum side effect of a drug.
+\item Finances: maximum return, but minimum risk of an equity portfolio.
+\item Production planning: maximum revenue, but minimum costs.
+\item Booking a hotel: maximum rating, but minimum costs.
+\end{itemize}
+
+\bigskip
+\textbf{In machine learning:}
+\begin{itemize}
+\item Sparse models: maximum predictive performance, but minimal number of features.
+\item Fast models: maximum predictive performance, but short prediction time.
+\item ...
+\end{itemize}
+
+\framebreak
+
+\textbf{Example}: Choose the best hotel by maximizing ratings subject to a maximum price per night.
+
+\bigskip
+\textbf{Problems}:
+\begin{itemize}
+ \item The result depends on how we select the maximum price; different price bounds give different solutions.
+ \item We could also choose a minimum rating and optimize the price.
+ \item The more objectives we include, the harder it gets to fix cutoffs like these.
+\end{itemize}
+
+\bigskip
+\textbf{Goal}: Find a more general approach to solve multi-criteria problems.
+
+\begin{center}
+\includegraphics[width=0.35\linewidth]{slides/11-multicrit/figure_man/booking1.png}
+\quad
+\includegraphics[width=0.35\linewidth]{slides/11-multicrit/figure_man/booking2.png}
+\end{center}
+
+When booking a hotel: find the hotel with
+\begin{itemize}
+\item minimum price per night (\textbf{costs}), and
+\item maximum user rating (\textbf{performance}).
+\end{itemize}
+
+\begin{footnotesize}
+Since our standard is to minimize objectives, we often minimize negative ratings.
+\end{footnotesize}
+
+\framebreak
+
+The objectives often conflict with each other:
+\begin{itemize}
+\item Lower price $\to$ usually lower hotel rating.
+\item Better rating $\to$ usually higher price.
+\end{itemize}
+
+Example: (negative) average rating by hotel guests (1--5) vs.\ average price per night (excerpt).
+
+\bigskip
+\begin{center}
+\includegraphics[width=0.8\textwidth]{slides/11-multicrit/figure_man/expedia-1-1.pdf}
+\end{center}
+
+\framebreak
+
+Often, objectives are not directly comparable (different scales):
+\begin{itemize}
+  \item Left: A hotel with rating 4 for 89~Euro 
+        \((\textcolor{green}{\cost^{(1)}} = (89, -4.0))\) 
+        is clearly better than a hotel for 108~Euro with the same rating
+        \((\textcolor{red}{\cost^{(2)}} = (108, -4.0))\).
+  \item Right: How to decide if 
+        \(\textcolor{orange}{\cost^{(1)}}=(89, -4.0)\) is better or worse than 
+        \(\textcolor{orange}{\cost^{(2)}}=(95, -4.5)\)?
+  \item How much is one \emph{rating point} worth?
+\end{itemize}
+
+\begin{center}
+\includegraphics[scale=1]{slides/11-multicrit/figure_man/expedia-2-1.pdf}
+\end{center}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Definition: multi-criteria optimization problem}
+
+A \textbf{multi-criteria optimization problem} is defined by
+\[
+\min_{\conf \in \pcs}  \cost(\conf) 
+\;\;\Leftrightarrow\;\;
+\min_{\conf \in \pcs} 
+\bigl(\cost_1(\conf), \cost_2(\conf), \dots, \cost_m(\conf)\bigr),
+\]
+with \(\pcs \subset \mathbb{R}^n\) and a multi-criteria objective function
+\(\cost: \pcs \to \mathbb{R}^m,\; m \ge 2.\)
+
+\begin{itemize}
+\item \textbf{Goal:} minimize multiple target functions simultaneously.
+\item \((\cost_1(\conf), \dots, \cost_m(\conf))^\top\) maps each candidate 
+      \(\conf\) into the objective space \(\mathbb{R}^m\).
+\item Typically no single best solution exists, as the objectives are often 
+      in conflict and cannot be totally ordered in \(\mathbb{R}^m\).
+\item W.l.o.g.\ we always minimize.
+\item Also called multi-objective optimization, Pareto optimization, etc.
+\end{itemize}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Pareto sets and Pareto optimality}
+
+\textbf{Definition:}
+
+Given 
+\[
+\min_{\conf \in \pcs} 
+   \bigl(\cost_1(\conf), \dots, \cost_m(\conf)\bigr), 
+\quad \cost_i: \pcs \to \mathbb{R}.
+\]
+
+\begin{itemize}
+  \item A candidate \(\conf^{(1)}\) \textbf{(Pareto-)dominates} \(\conf^{(2)}\) 
+        if \(\cost(\conf^{(1)}) \prec \cost(\conf^{(2)})\), i.e.:
+    \begin{enumerate}
+      \item \(\cost_i(\conf^{(1)}) \le \cost_i(\conf^{(2)})\) for all \(i\),
+      \item \(\cost_j(\conf^{(1)}) < \cost_j(\conf^{(2)})\) for at least one \(j\).
+    \end{enumerate}
+    \item A candidate \(\optconf\) not dominated by any other candidate is 
+          \textbf{Pareto optimal}.
+    \item The set of all Pareto optimal candidates is the \textbf{Pareto set} 
+          \(\mathcal{P} = \{\conf \in \pcs \mid \nexists \,\tilde{\conf} :
+               \cost(\tilde{\conf}) \prec \cost(\conf)\}\).
+    \item \(\mathcal{F} = \cost(\mathcal{P})\), the \textbf{Pareto front}, 
+          is the image of that set in objective space.
+\end{itemize}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\begin{vbframe}{How to define optimality?}
+
+Let \(\cost = (\text{price}, -\text{rating})\). Some comparisons are clear:
+
+\bigskip
+\begin{itemize}
+  \item The candidate 
+        \(\textcolor{green}{\cost^{(1)}}=(89,-4.0)\)
+        dominates 
+        \(\textcolor{red}{\cost^{(2)}}=(108,-4.0)\). 
+        That is, \(\textcolor{green}{\cost^{(1)}}\) is at least as good 
+        in every dimension, and strictly better in one dimension.
+        Hence 
+\[
+\textcolor{red}{\cost^{(2)}} \prec \textcolor{green}{\cost^{(1)}}.
+\]
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=0.5\linewidth]{slides/11-multicrit/figure_man/expedia-3-1.pdf}
+\end{center}
+
+\framebreak
+
+{\small
+But for
+\(\textcolor{orange}{\cost^{(1)}}=(89,-4.0)\) 
+and 
+\(\textcolor{orange}{\cost^{(2)}}=(95,-4.5)\)
+we cannot say any is strictly better.
+
+\bigskip
+\begin{itemize}\setlength{\itemsep}{0.1em}
+  \item We call these \textbf{incomparable} (or \emph{equivalent} in the Pareto sense):
+\[
+\textcolor{orange}{\cost^{(1)}} 
+   \not\prec 
+\textcolor{orange}{\cost^{(2)}} 
+\quad\text{and}\quad
+\textcolor{orange}{\cost^{(2)}} 
+   \not\prec 
+\textcolor{orange}{\cost^{(1)}}.
+\]
+\item All such non-dominated points form the \textbf{Pareto front}.
+\end{itemize}
+}
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{slides/11-multicrit/figure_man/expedia-4-1.pdf}
+
+
+\includegraphics[width=0.6\linewidth]{slides/11-multicrit/figure_man/expedia-5-1.pdf}
+\end{center}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Example: One objective function}
+
+We consider 
+\[
+\min_{\conf} \cost(\conf) = (\conf - 1)^2, 
+\quad 0 \le \conf \le 3.
+\]
+The optimum is at \(\optconf = 1\).
+
+%\bigskip
+\begin{center}
+\includegraphics[width=0.5\textwidth]{slides/11-multicrit/figure_man/graph1.png}
+\end{center}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Example: Two target functions}
+
+We extend the above problem to two objectives 
+\(\cost_1(\conf) = (\conf - 1)^2\) 
+and 
+\(\cost_2(\conf) = 3(\conf - 2)^2\). Thus
+\[
+  \min_{\conf} \cost(\conf) 
+    = \bigl(\cost_1(\conf),\, \cost_2(\conf)\bigr),
+  \quad 0 \le \conf \le 3.
+\]
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{slides/11-multicrit/figure_man/graph2.png}
+\end{center}
+
+\framebreak
+
+Visualizing both objectives:
+$\bigl(\cost_1(\conf), \;\cost_2(\conf)\bigr)
+$
+for all \(\conf \in [0,3]\) in the objective space:
+
+\begin{center}
+\includegraphics[width=0.45\textwidth]{slides/11-multicrit/figure_man/graph3.png}
+\end{center}
+
+The Pareto front is shown in green. You cannot move \emph{left} of it without 
+worsening one of the objectives.
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\begin{vbframe}{A-priori vs. A-posteriori}
+
+\begin{itemize}
+\item The Pareto set is a set of equally valid solutions.
+\item Often, we only want a \textbf{single} solution in practice.
+\item Without extra info, there is no unique best solution: one must choose 
+      based on further criteria (cost constraints, business preference, etc.).
+\end{itemize}
+
+\bigskip
+Two overall strategies:
+\begin{itemize}
+\item \textbf{A-priori approach}: incorporate user preferences \emph{before} the optimization.
+\item \textbf{A-posteriori approach}: first find (an approximation of) the entire Pareto set, 
+      then let the user choose.
+\end{itemize}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\begin{vbframe}{A-priori procedure}
+
+\textbf{Example: Weighted total}
+
+\textbf{Prior knowledge}: 
+``One rating point is worth 50~Euro to this customer.'' 
+
+Hence we optimize
+\[
+\min_{\text{Hotel}} \text{(Price)} \;-\; 50 \times \text{(Rating)}.
+\]
+
+\begin{center}
+\includegraphics[width=0.75\textwidth]{slides/11-multicrit/figure_man/expedia-9-1.pdf}
+\end{center}
+
+Alternatively, a weighted sum: 
+\(\min_{\conf} \sum_{i=1}^m w_i \cost_i(\conf)\).
+
+\framebreak
+
+\textbf{Example: Lexicographic method}
+
+\textbf{Prior knowledge}: The rating is more important than the price. 
+Hence we optimize the rating first, then the price among those best ratings:
+
+\begin{center}
+\includegraphics[width=1\textwidth]{slides/11-multicrit/figure_man/expedia-10-1.pdf}
+\end{center}
+
+\framebreak
+
+Lexicographic approach in general:
+
+\[
+\begin{aligned}
+\yy_1^* &= \min_{\conf \in \pcs} \;\cost_1(\conf),\\
+\yy_2^* &= \min_{\substack{\conf \in \pcs:\\ \cost_1(\conf)=\yy_1^*}} \;\cost_2(\conf),\\
+\yy_3^* &= \min_{\substack{\conf \in \pcs:\\ \cost_1(\conf)=\yy_1^*,\,\cost_2(\conf)=\yy_2^*}} 
+          \;\cost_3(\conf),\\
+&\quad\vdots
+\end{aligned}
+\]
+
+But different orderings yield different solutions.
+
+\framebreak
+
+\textbf{Summary (a-priori)}:
+\begin{itemize}
+\item Implicit assumption: single-objective optimization is “easy.”
+\item We get only \emph{one} solution, which depends strongly on the chosen weighting/order/etc.
+\item Varying these parameters systematically can produce several solutions, 
+      but may miss large parts of the non-dominated set.
+\end{itemize}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\begin{vbframe}{A-posteriori procedure}
+
+A-posteriori methods aim to
+\begin{itemize}
+  \item find \emph{all} optimal candidates (or a good approximation of them),
+  \item let the user pick a single solution based on personal preferences or 
+        additional info (e.g.\ hotel location).
+\end{itemize}
+Hence, a-posteriori methods are more general.
+
+\framebreak
+
+\textbf{Example}: 
+All Pareto-optimal hotels are shown on the left. 
+User then picks from that subset on the right, based on hidden preferences 
+(location, brand loyalty, etc.):
+
+\bigskip
+\begin{center}
+\includegraphics[scale=1]{slides/11-multicrit/figure_man/expedia-11-1.pdf}
+\end{center}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Evaluation of solutions}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+A common measure for the performance of a set of candidates 
+\(\mathcal{P}\subset\pcs\) is the \textbf{dominated hypervolume}:
+\[
+S(\mathcal{P},R) 
+  = \Lambda\Bigl(
+      \bigcup_{\tilde{\conf}\in \mathcal{P}} 
+         \{\;\conf \;\mid\; 
+              \tilde{\conf}\prec \conf \prec R
+         \}
+    \Bigr),
+\]
+where \(\Lambda(\cdot)\) is the Lebesgue measure.
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{slides/11-multicrit/figure_man/dominated_hypervolume.png}
+\end{center}
+\end{column}
+\end{columns}
+
+\framebreak
+
+\begin{itemize}
+\item HV is measured w.r.t.\ the reference point \(R\), often chosen so each 
+      component is a known “worst” (upper bound) for that objective.
+\item HV is also called the \textbf{S-metric}.
+\item Its computation is \(\mathcal{O}(n^{m-1})\) in the number of points 
+      and dimension \(m\).
+\item Efficient algorithms exist for small \(m\). 
+      In ML, we rarely exceed \(m=3\) in practice.
+\end{itemize}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\endlecture
+\end{document}
