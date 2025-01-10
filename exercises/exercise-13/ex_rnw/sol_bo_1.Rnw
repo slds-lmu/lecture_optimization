@@ -1,0 +1,51 @@
+We start with
+$$
+a_{\text{EI}}(\xv) = \E_{y}(\max\{\fmin - y, 0\}) = \int_{-\infty}^{\infty} \max\{\fmin - y, 0\} p(y) dy.
+$$
+Observe that
+$$\max\{\fmin - y, 0\} = 
+  \begin{cases}
+    \fmin - y, & \text{if } y < \fmin,\\
+    0,         & \text{otherwise}.
+  \end{cases}
+$$
+All contributions for $y \ge \fmin$ are zero.
+Therefore, we can additively decompose the integral and it simplifies to
+$$
+a_{\text{EI}}(\xv) = \int_{-\infty}^{\fmin} \left(\fmin - y\right) p(y) dy.
+$$
+
+$$
+\begin{aligned}
+\alpha_{\text{EI}}(\xv) &= \int_{-\infty}^{\fmin}\left(\fmin -y\right) p(y) dy \\
+	&= \int_{-\infty}^{\fmin}\left(\fmin - y\right) \frac{1}{\sqrt{2 \pi \sh(\xv)^2}} \exp \left(-\frac{\left(y-\fh(\xv)\right)^2}{2 \sh(\xv)^2}\right) d y\\
+	&= \int_{-\infty}^{z}\left(\fmin-\fh(\xv)-u \sh(\xv)\right) \frac{1}{\sqrt{2 \pi \sh(\xv)^2}} \exp \left(-\frac{u^2}{2}\right)\sh(\xv) d u~\left(\text {Def. } u:=\frac{y-\fh(\xv)}{\sh(\xv)}, \frac{d u}{d y}=\frac{1}{\sh(\xv)}, z \coloneqq \frac{\fmin-\fh(\xv)}{\sh(\xv)}\right) \\
+	&= \int_{-\infty}^{z}\left(\fmin-\fh(\xv)-u \sh(\xv)\right) \phi(u) d u \\
+	&= \int_{-\infty}^{z}\left(\fmin-\fh(\xv)\right) \phi(u) d u - \int_{-\infty}^{z}\left(u \sh(\xv)\right) \phi(u) d u
+\end{aligned}
+$$
+
+
+Note that
+$$
+\Phi(z)=\int_{-\infty}^{z} \phi(u) d u
+$$ by definition.\\
+
+Therefore, regarding the first integral:
+$$
+\int_{-\infty}^{z}\left(\fmin-\fh(\xv)\right) \phi(u) d u = \left(\fmin - \fh(\xv)\right) \Phi(z) = z \sh(\xv) \Phi(z).
+$$
+
+Regarding the second integral we use the identity
+$$
+\int_{-\infty}^z u \phi(u) d u = - \phi(z).
+$$
+
+Putting both together we obtain:
+$$
+\begin{aligned}
+\alpha_{\text{EI}}(\xv) &= z \sh(\xv) \Phi(z)-\sh(\xv)(-\phi(z)) \\
+	&= z \sh(\xv) \Phi(z)+\sh(\xv) \phi(z)\\
+	&= \left(\fmin - \fh(\xv)\right) \Phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right) + \sh(\xv) \phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right).
+\end{aligned}
+$$

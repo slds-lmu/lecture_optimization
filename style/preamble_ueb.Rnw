@@ -23,6 +23,7 @@
 \usepackage{bm}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{mathtools}
 
 
 \input{../../style/common}

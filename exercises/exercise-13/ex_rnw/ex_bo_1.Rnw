@@ -1,0 +1,16 @@
+Derive the closed form expression of the Expected Improvement:
+$$a_{\text{EI}}(\xv) = \left(\fmin-\fh(\xv)\right) \Phi \left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right) + \sh(\xv) \phi\left(\frac{\fmin-\fh(\xv)}{\sh(\xv)}\right).$$
+Assume that $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$.\\
+
+Hints:
+\begin{itemize}
+  \item For notational clarity, let's introduce $y$ for the random variable $Y(\xv)$ and $p(y) \coloneqq P(Y | \xv, \Dt) = \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$ for its probability density function.
+  \item Start with $a_{\text{EI}}(\xv) = \E_{y}(\max\{\fmin - y, 0\}) = \int_{-\infty}^{\infty} \max\{\fmin - y, 0\} p(y) dy$.
+  \item Decompose the integral additively depending on whether $y < \fmin$ or $y \ge \fmin$ to get rid of the maximum operator.
+  \item It is helpful to substitute $y$ by $u \coloneqq \frac{y - \fh(\xv)}{\sh(\xv)}$ which implies that $y = u \sh(\xv) + \fh(\xv)$.
+    This allows you to work with standard normal distributions.
+    Note however, that this implies performing a change of variable within the integral.
+  \item Denote the standard normal probability density function by $\phi(z) = \frac{1}{\sqrt{2\pi}} \exp{(\frac{-z^{2}}{2})}$ and the standard normal cumulative distribution function
+    by $\Phi(z) = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{z} \exp{(\frac{-u^{2}}{2})} du$.
+  \item There is a useful identity: $\int_{-\infty}^{z} u \phi(u) du = - \phi(z)$.
+\end{itemize}

@@ -1,0 +1,13 @@
+We want to implement our own BO algorithm using a Gaussian Process (GP) as surrogate model and Expected Improvement as acquisition function.
+Our goal is to minimize the following univariate function:
+$$f: [0, 1] \rightarrow \mathbb{R}, x \mapsto 2x \cdot \sin(14x).$$
+We start with an initial design of 4 points sampled uniformly at random.
+
+\begin{enumerate}
+  \item Write down the BO algorithm in pseudocode style.
+  \item Implement the algorithm.
+    For the GP you can for example use the \texttt{DiceKriging} package (see \texttt{?DiceKriging::km}).
+    Use an RBF kernel.
+    Optimize the Expected Improvement via a univariate method such as Brent's method (see \texttt{?optimize}).
+    Use your BO algorithm to minimize $f$ and terminate after 10 function evaluations in total.
+\end{enumerate}

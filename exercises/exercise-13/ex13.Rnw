@@ -1,0 +1,23 @@
+% !Rnw weave = knitr
+
+<<setup-child, include = FALSE>>=
+library('knitr')
+knitr::set_parent("../../style/preamble_ueb.Rnw")
+@
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/ml-mbo}
+
+\kopfsl{13}{Bayesian Optimization}
+
+\aufgabe{Expected Improvement}{
+	<<child="ex_rnw/ex_bo_1.Rnw">>=
+	@
+}
+
+\aufgabe{BO Loop}{
+	<<child="ex_rnw/ex_bo_2.Rnw">>=
+	@
+}
+

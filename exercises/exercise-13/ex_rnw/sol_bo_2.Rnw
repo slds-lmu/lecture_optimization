@@ -1,0 +1,46 @@
+\begin{enumerate}
+  \item Let $\mathcal{D}$ be the initial design consisting of $(x^{[1]}, y^{[1]}), \ldots, (x^{[4]}, y^{[4]})$.
+    Set $t$ to $4$.\\
+    
+    While $t < 10$:
+    \begin{enumerate}
+      \item Fit surrogate model on $\mathcal{D}$.
+      \item Optimize the Expected Improvement $a_{\text{EI}}(x)$ to obtain a new point $x^{[t+1]} \coloneqq \argmax_{x \in [0, 1]} a_{\text{EI}}(x)$.
+      \item Evaluate $x^{[t+1]}$ and update design data $\mathcal{D} = \mathcal{D} \cup \{(x^{[t+1]}, f(x^{[t+1]}))\}$.
+      \item Set $t$ to $t + 1$.
+    \end{enumerate}
+    
+    Return $x$ that minimizes $f(x)$ in $\mathcal{D}$: $\argmin_{(x, y) \in \mathcal{D}} y$.
+  \item
+    <<bo_loop, eval=FALSE>>=
+    library(DiceKriging)
+    set.seed(0308)
+    f = function(x) 2*x * sin(14*x)
+    initial_x = runif(4, min = 0, max = 1)
+    initial_y = f(initial_x)
+    design = data.frame(x = initial_x, y = initial_y)
+    t = 4
+
+    ei = function(x, current_fmin, current_gp) {
+      gp_prediction = predict(current_gp, newdata = data.frame(x = x), type="SK")
+      gp_mean = gp_prediction$mean
+      gp_sd = gp_prediction$sd
+      diff = (current_fmin - gp_mean)
+      z = diff / gp_sd
+      diff * pnorm(z) + gp_sd * dnorm(z)
+    }
+
+
+    while (t < 10) {
+      gp = km(design = design[, 1L, drop = FALSE], response = design[, 2L],
+	covtype = "gauss", nugget = 1e-8)
+      fmin = min(design$y)
+      x_new = optimize(f = ei, interval = c(0, 1), maximum = TRUE,
+	current_fmin = fmin, current_gp = gp)$maximum
+      design = rbind(design, data.frame(x = x_new, y = f(x_new)))
+      t = t + 1
+    }
+
+    design[which.min(design$y), ]
+    @
+\end{enumerate}
