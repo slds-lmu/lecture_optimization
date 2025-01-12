@@ -89,10 +89,11 @@ Again, we want to train a \textit{spam detector} on the popular Spam dataset%
     \item Acquisition: Confidence Bound ($\alpha=2$)
     \item Budget: 100 evaluations
   \end{itemize}
-  \item Tuning is done on a training holdout, and the hyperparameter configs on the estimated Pareto front are validated on an external test set.
+  \item Tuning is done on a training holdout, and the hyperparameter configs on the estimated Pareto front are validated on external test set.
 \end{itemize}
 \end{column}
 \end{columns}
+\vspace{0.1cm}
 {\footnotesize The threshold $t$ could also be optimized post-hoc separately.}
 
 \end{vbframe}
@@ -112,7 +113,7 @@ Again, we want to train a \textit{spam detector} on the popular Spam dataset%
   \end{tabular}
 \end{itemize}
 \end{column}
-\begin{column}{0.5\textwidth}
+\begin{column}{0.55\textwidth}
 \begin{figure}
 \includegraphics[width=\textwidth]{slides/11-multicrit/figure_man/example_parego_spam.png}
 \end{figure}
@@ -125,7 +126,7 @@ Again, we want to train a \textit{spam detector} on the popular Spam dataset%
 \begin{vbframe}{ROC Optimization - Result II}
 
 \begin{columns}
-\begin{column}{0.45\textwidth}
+\begin{column}{0.42\textwidth}
 Validate configurations on the estimated Pareto front:
 \begin{itemize}
   \item The performance changes slightly on a new holdout set.
@@ -138,10 +139,11 @@ Validate configurations on the estimated Pareto front:
   \end{tabular}
 \end{itemize}
 \end{column}
-\begin{column}{0.5\textwidth}
+\begin{column}{0.8\textwidth}
+\vspace{-0.3cm}
 \begin{figure}
-\includegraphics[width=0.8\textwidth]{slides/11-multicrit/figure_man/example_parego_spam_outer.png}\\
-\includegraphics[width=0.8\textwidth]{slides/11-multicrit/figure_man/example_parego_spam_outer_pareto.png}
+\includegraphics[width=0.52\textwidth]{slides/11-multicrit/figure_man/example_parego_spam_outer.png}\\
+\includegraphics[width=0.52\textwidth]{slides/11-multicrit/figure_man/example_parego_spam_outer_pareto.png}
 \end{figure}
 \end{column}
 \end{columns}

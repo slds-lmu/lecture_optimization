@@ -149,10 +149,10 @@ There are two basic approaches:
 % -------------------------------------------------------------------
 \begin{vbframe}{Scalarization: ParEGO~\litw{\href{https://www.cs.bham.ac.uk/~jdk/parego/ParEGO-TR3.pdf}{Knowles. 2006}}}
 
-Scalarize the cost functions using the augmented Tchebycheff norm / achievement function
+Scalarize the cost functions using the augmented Chebychev norm / achievement function
 
 \[
-c = \max_{i=1,\dots,m}\bigl(w_i \cost_i(\conf)\bigr) 
+f = \max_{i=1,\dots,m}\bigl(w_i \cost_i(\conf)\bigr) 
     + \rho \sum_{i=1}^m w_i \cost_i(\conf),
 \]
 
@@ -181,7 +181,7 @@ c = \max_{i=1,\dots,m}\bigl(w_i \cost_i(\conf)\bigr)
 \end{center}
 
 %\[
-$\qquad c = \max_{i=1,\dots,m}\bigl(w_i \cost_i(\conf)\bigr) 
+$\qquad f = \max_{i=1,\dots,m}\bigl(w_i \cost_i(\conf)\bigr) 
     + \rho \sum_{i=1}^m w_i \cost_i(\conf)$,
 %\]
 \begin{scriptsize}

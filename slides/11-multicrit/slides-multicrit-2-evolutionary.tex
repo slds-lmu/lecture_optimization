@@ -74,10 +74,11 @@ Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over
 \end{figure}
 \end{center}
 \end{column}
-    
+\hspace{0.2cm}
 \begin{column}{0.7\textwidth}
 \begin{center}
-\includegraphics[width=0.9\textwidth]{slides/11-multicrit/figure_man/NSGA2_steps.png}
+\vspace{0.7cm}
+\includegraphics[width=0.98\textwidth]{slides/11-multicrit/figure_man/NSGA2_steps.png}
 \end{center}
 \end{column}
 \end{columns}
@@ -156,6 +157,7 @@ NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{
 \end{column}
 
 \begin{column}{0.6\textwidth}
+\vspace{0.3cm}
 \begin{center}
 \includegraphics[width = 0.9\textwidth]{slides/11-multicrit/figure_man/NSGA2_NDS.png}
 \end{center}
@@ -209,19 +211,19 @@ Right: better spread.
 \begin{column}{0.55\textwidth}
 \textbf{Crowding distance}:
 
-For each objective $c_j$:
+For each objective $f_j$:
 \begin{itemize}
-\item Sort points by $c_j$ (in ascending order).
-\item Normalize $c_j$ values to [0, 1].
-\item “Border” points (lowest/highest $c_j$) get infinite distance (ensuring they always survive if possible).
-\item For internal points, distance is difference in $c_j$-values between next neighbors.
+\item Sort points by $f_j$ (in ascending order).
+\item Normalize $f_j$ values to [0, 1].
+\item “Border” points (lowest/highest $f_j$) get infinite distance (ensuring they always survive if possible).
+\item For internal points, distance is difference in $f_j$-values between next neighbors.
 \end{itemize}
 Then sum (or average) across all $m$ objectives to get the final crowding score.
 \end{column}
 
 \begin{column}{0.45\textwidth}
 \begin{center}
-\includegraphics[width=0.7\textwidth]{slides/11-multicrit/figure_man/NSGA2_CS2.png}
+\includegraphics[width=0.95\textwidth]{slides/11-multicrit/figure_man/NSGA2_CS2.png}
 \medskip
 
 \begin{footnotesize}
