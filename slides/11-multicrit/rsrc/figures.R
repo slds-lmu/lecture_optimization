@@ -12,7 +12,7 @@ ggsave(p, filename = "../figure_man/graph1.png", height = 2, width = 2)
 fun1 = function(x) (x - 1)^2
 fun2 = function(x) 3 * (x - 2)^2
 p = ggplot(data.frame(x = c(0, 3)), aes(x)) + stat_function(fun = fun1) + stat_function(fun = fun2, color = "blue")
-p = p + theme_bw() +  ylab("f") + xlab(expression(lambda))
+p = p + theme_bw() +  ylab("f") + xlab(expression(x))
 
 ggsave(p, filename = "../figure_man/graph2.png", height = 2, width = 2)
 
