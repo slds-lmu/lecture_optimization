@@ -242,10 +242,10 @@ we cannot say any is strictly better.}
 
 We consider 
 \[
-\min_{\conf} \cost(\conf) = (\conf - 1)^2, 
-\quad 0 \le \conf \le 3.
+\min_{x} \cost(x) = (x - 1)^2, 
+\quad 0 \le x \le 3.
 \]
-The optimum is at \(\optconf = 1\).
+The optimum is at \(x^* = 1\).
 
 %\bigskip
 \begin{center}
@@ -258,13 +258,13 @@ The optimum is at \(\optconf = 1\).
 \begin{vbframe}{Example: Two target functions}
 
 We extend the above problem to two objectives 
-\(\cost_1(\conf) = (\conf - 1)^2\) 
+\(\cost_1(x) = (x - 1)^2\) 
 and 
-\(\cost_2(\conf) = 3(\conf - 2)^2\). Thus
+\(\cost_2(x) = 3(x - 2)^2\). Thus
 \[
-  \min_{\conf} \cost(\conf) 
-    = \bigl(\cost_1(\conf),\, \cost_2(\conf)\bigr),
-  \quad 0 \le \conf \le 3.
+  \min_{x} \cost(x) 
+    = \bigl(\cost_1(x),\, \cost_2(x)\bigr),
+  \quad 0 \le x \le 3.
 \]
 
 \begin{center}
@@ -274,9 +274,9 @@ and
 \framebreak
 
 Visualizing both objectives:
-$\bigl(\cost_1(\conf), \;\cost_2(\conf)\bigr)
+$\bigl(\cost_1(x), \;\cost_2(x)\bigr)
 $
-for all \(\conf \in [0,3]\) in the objective space:
+for all \(x \in [0,3]\) in the objective space:
 
 \begin{center}
 \includegraphics[width=0.45\textwidth]{slides/11-multicrit/figure_man/graph3.png}
