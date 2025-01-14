@@ -277,10 +277,10 @@ Here, also a result of well-calibrated uncertainty $\sh(\xv)$ of our GP.
 \begin{frame}{Discussion}
 
 \begin{itemize}
-  \item Under some mild conditions: BO with a GP as SM and EI is a \textbf{global optimizer}, i.e., convergence to the \textbf{global} (!) optimum is guaranteed given unlimited budget
-  \item Cannot be proven for the PI or the LCB
-  \item In theory, this suggests choosing the EI as ACQF
-  \item In practice, LCB works quite well, and EI generates a very multi-modal landscape
+  \item Under some mild conditions: BO with a GP as SM and EI is a \textbf{global optimizer}, i.e., convergence to the \textbf{global} (!) optimum is guaranteed given unlimited budget (\href{https://dl.acm.org/doi/pdf/10.5555/1953048.2078198}{Bull 2011})
+  \item Cannot be proven for the PI or the vanilla LCB
+  \item LCB can be proven to converge in a similar manner if the mean-variance trade-off parameter is chosen adaptively and ``correctly'' (\href{https://icml.cc/Conferences/2010/papers/422.pdf}{Srinivas et al. 2010})
+  \item In practice, both LCB and EI work quite well
 \end{itemize}
 
 \vspace*{0.3cm}
