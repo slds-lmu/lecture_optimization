@@ -1,0 +1,319 @@
+\documentclass[a4paper]{article}
+\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+
+
+
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+\usepackage{a4wide,paralist}
+\usepackage{amsmath, amssymb, xfrac, amsthm}
+\usepackage{dsfont}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{framed}
+\usepackage{multirow}
+\usepackage{bytefield}
+\usepackage{csquotes}
+\usepackage[breakable, theorems, skins]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{cancel}
+\usepackage{bm}
+\usepackage{mathtools}
+
+
+\input{../../style/common}
+
+\tcbset{enhanced}
+
+\DeclareRobustCommand{\mybox}[2][gray!20]{%
+	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+	\fi
+}
+
+\DeclareRobustCommand{\myboxshow}[2][gray!20]{%
+%	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+%	\fi
+}
+
+
+%exercise numbering
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{\roman{enumii}}
+\renewcommand\labelenumi{\theenumi}
+
+
+\font \sfbold=cmssbx10
+
+\setlength{\oddsidemargin}{0cm} \setlength{\textwidth}{16cm}
+
+
+\sloppy
+\parindent0em
+\parskip0.5em
+\topmargin-2.3 cm
+\textheight25cm
+\textwidth17.5cm
+\oddsidemargin-0.8cm
+\pagestyle{empty}
+
+\newcommand{\kopf}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in Machine Learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfic}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in Machine Learning \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfsl}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in Machine Learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newenvironment{allgemein}
+	{\noindent}{\vspace{1cm}}
+
+\newcounter{aufg}
+\newenvironment{aufgabe}[1]
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}: #1}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newcounter{loes}
+\newenvironment{loesung}[1]
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}: #1}\\ \noindent}
+	{\bigskip}
+	
+\newenvironment{bonusaufgabe}
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}*\footnote{This
+	is a bonus exercise.}:}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newenvironment{bonusloesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}*:}\\\noindent}
+	{\bigskip}
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/ml-mbo.tex}
+
+\begin{document}
+% !Rnw weave = knitr
+
+\kopfsl{13}{Bayesian Optimization}
+
+\aufgabe{Expected Improvement}{
+
+We start with
+$$
+a_{\text{EI}}(\xv) = \E_{y}(\max\{\fmin - y, 0\}) = \int_{-\infty}^{\infty} \max\{\fmin - y, 0\} p(y) dy.
+$$
+Observe that
+$$\max\{\fmin - y, 0\} = 
+  \begin{cases}
+    \fmin - y, & \text{if } y < \fmin,\\
+    0,         & \text{otherwise}.
+  \end{cases}
+$$
+All contributions for $y \ge \fmin$ are zero.
+Therefore, we can additively decompose the integral and it simplifies to
+$$
+a_{\text{EI}}(\xv) = \int_{-\infty}^{\fmin} \left(\fmin - y\right) p(y) dy.
+$$
+
+$$
+\begin{aligned}
+\alpha_{\text{EI}}(\xv) &= \int_{-\infty}^{\fmin}\left(\fmin -y\right) p(y) dy \\
+	&= \int_{-\infty}^{\fmin}\left(\fmin - y\right) \frac{1}{\sqrt{2 \pi \sh(\xv)^2}} \exp \left(-\frac{\left(y-\fh(\xv)\right)^2}{2 \sh(\xv)^2}\right) d y\\
+	&= \int_{-\infty}^{z}\left(\fmin-\fh(\xv)-u \sh(\xv)\right) \frac{1}{\sqrt{2 \pi \sh(\xv)^2}} \exp \left(-\frac{u^2}{2}\right)\sh(\xv) d u~\left(\text {Def. } u:=\frac{y-\fh(\xv)}{\sh(\xv)}, \frac{d u}{d y}=\frac{1}{\sh(\xv)}, z \coloneqq \frac{\fmin-\fh(\xv)}{\sh(\xv)}\right) \\
+	&= \int_{-\infty}^{z}\left(\fmin-\fh(\xv)-u \sh(\xv)\right) \phi(u) d u \\
+	&= \int_{-\infty}^{z}\left(\fmin-\fh(\xv)\right) \phi(u) d u - \int_{-\infty}^{z}\left(u \sh(\xv)\right) \phi(u) d u
+\end{aligned}
+$$
+
+
+Note that
+$$
+\Phi(z)=\int_{-\infty}^{z} \phi(u) d u
+$$ by definition.\\
+
+Therefore, regarding the first integral:
+$$
+\int_{-\infty}^{z}\left(\fmin-\fh(\xv)\right) \phi(u) d u = \left(\fmin - \fh(\xv)\right) \Phi(z) = z \sh(\xv) \Phi(z).
+$$
+
+Regarding the second integral we use the identity
+$$
+\int_{-\infty}^z u \phi(u) d u = - \phi(z).
+$$
+
+Putting both together we obtain:
+$$
+\begin{aligned}
+\alpha_{\text{EI}}(\xv) &= z \sh(\xv) \Phi(z)-\sh(\xv)(-\phi(z)) \\
+	&= z \sh(\xv) \Phi(z)+\sh(\xv) \phi(z)\\
+	&= \left(\fmin - \fh(\xv)\right) \Phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right) + \sh(\xv) \phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right).
+\end{aligned}
+$$
+}
+
+\aufgabe{BO Loop}{
+
+\begin{enumerate}
+  \item Let $\mathcal{D}$ be the initial design consisting of $\{(x^{[1]}, y^{[1]}), \ldots, (x^{[4]}, y^{[4]})\}$.
+    Set $t$ to $4$.\\
+    While $t < 10$:
+    \begin{enumerate}
+      \item Fit surrogate model on $\mathcal{D}$.
+      \item Optimize the Expected Improvement $a_{\text{EI}}(x)$ to obtain a new point $x^{[t+1]} \coloneqq \argmax_{x \in [0, 1]} a_{\text{EI}}(x)$.
+      \item Evaluate $x^{[t+1]}$ and update design data $\mathcal{D} = \mathcal{D} \cup \{(x^{[t+1]}, f(x^{[t+1]}))\}$.
+      \item Set $t$ to $t + 1$.
+    \end{enumerate}
+    Return $x$ that minimizes $f(x)$ in $\mathcal{D}$: $\argmin_{(x, y) \in \mathcal{D}} y$.
+  \item
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hldef{(DiceKriging)}
+\hlkwd{set.seed}\hldef{(}\hlnum{0308}\hldef{)}
+\hldef{f} \hlkwb{=} \hlkwa{function}\hldef{(}\hlkwc{x}\hldef{)} \hlnum{2}\hlopt{*}\hldef{x} \hlopt{*} \hlkwd{sin}\hldef{(}\hlnum{14}\hlopt{*}\hldef{x)}
+\hldef{initial_x} \hlkwb{=} \hlkwd{runif}\hldef{(}\hlnum{4}\hldef{,} \hlkwc{min} \hldef{=} \hlnum{0}\hldef{,} \hlkwc{max} \hldef{=} \hlnum{1}\hldef{)}
+\hldef{initial_y} \hlkwb{=} \hlkwd{f}\hldef{(initial_x)}
+\hldef{design} \hlkwb{=} \hlkwd{data.frame}\hldef{(}\hlkwc{x} \hldef{= initial_x,} \hlkwc{y} \hldef{= initial_y)}
+\hldef{t} \hlkwb{=} \hlnum{4}
+
+\hldef{ei} \hlkwb{=} \hlkwa{function}\hldef{(}\hlkwc{x}\hldef{,} \hlkwc{current_fmin}\hldef{,} \hlkwc{current_gp}\hldef{) \{}
+  \hldef{gp_prediction} \hlkwb{=} \hlkwd{predict}\hldef{(current_gp,} \hlkwc{newdata} \hldef{=} \hlkwd{data.frame}\hldef{(}\hlkwc{x} \hldef{= x),} \hlkwc{type}\hldef{=}\hlsng{"SK"}\hldef{)}
+  \hldef{gp_mean} \hlkwb{=} \hldef{gp_prediction}\hlopt{$}\hldef{mean}
+  \hldef{gp_sd} \hlkwb{=} \hldef{gp_prediction}\hlopt{$}\hldef{sd}
+  \hldef{diff} \hlkwb{=} \hldef{(current_fmin} \hlopt{-} \hldef{gp_mean)}
+  \hldef{z} \hlkwb{=} \hldef{diff} \hlopt{/} \hldef{gp_sd}
+  \hldef{diff} \hlopt{*} \hlkwd{pnorm}\hldef{(z)} \hlopt{+} \hldef{gp_sd} \hlopt{*} \hlkwd{dnorm}\hldef{(z)}
+\hldef{\}}
+
+
+\hlkwa{while} \hldef{(t} \hlopt{<} \hlnum{10}\hldef{) \{}
+  \hldef{gp} \hlkwb{=} \hlkwd{km}\hldef{(}\hlkwc{design} \hldef{= design[,} \hlnum{1L}\hldef{,} \hlkwc{drop} \hldef{=} \hlnum{FALSE}\hldef{],} \hlkwc{response} \hldef{= design[,} \hlnum{2L}\hldef{],}
+        \hlkwc{covtype} \hldef{=} \hlsng{"gauss"}\hldef{,} \hlkwc{nugget} \hldef{=} \hlnum{1e-8}\hldef{)}
+  \hldef{fmin} \hlkwb{=} \hlkwd{min}\hldef{(design}\hlopt{$}\hldef{y)}
+  \hldef{x_new} \hlkwb{=} \hlkwd{optimize}\hldef{(}\hlkwc{f} \hldef{= ei,} \hlkwc{interval} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{0}\hldef{,} \hlnum{1}\hldef{),} \hlkwc{maximum} \hldef{=} \hlnum{TRUE}\hldef{,}
+        \hlkwc{current_fmin} \hldef{= fmin,} \hlkwc{current_gp} \hldef{= gp)}\hlopt{$}\hldef{maximum}
+  \hldef{design} \hlkwb{=} \hlkwd{rbind}\hldef{(design,} \hlkwd{data.frame}\hldef{(}\hlkwc{x} \hldef{= x_new,} \hlkwc{y} \hldef{=} \hlkwd{f}\hldef{(x_new)))}
+  \hldef{t} \hlkwb{=} \hldef{t} \hlopt{+} \hlnum{1}
+\hldef{\}}
+
+\hldef{design[}\hlkwd{which.min}\hldef{(design}\hlopt{$}\hldef{y), ]}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{enumerate}
+}
+\end{document}
