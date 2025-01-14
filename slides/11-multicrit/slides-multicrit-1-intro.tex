@@ -124,61 +124,6 @@ Often, objectives are not directly comparable (different scales):
 \end{vbframe}
 
 % -------------------------------------------------------------------
-\begin{vbframe}{Definition: multi-criteria optimization problem}
-
-A \textbf{multi-criteria optimization problem} is defined by
-\[
-\min_{\conf \in \pcs}  \cost(\conf) 
-\;\;\Leftrightarrow\;\;
-\min_{\conf \in \pcs} 
-\bigl(\cost_1(\conf), \cost_2(\conf), \dots, \cost_m(\conf)\bigr),
-\]
-with \(\pcs \subset \mathbb{R}^n\) and a multi-criteria objective function
-\(\cost: \pcs \to \mathbb{R}^m,\; m \ge 2.\)
-
-\begin{itemize}
-\item \textbf{Goal:} minimize multiple target functions simultaneously.
-\item \((\cost_1(\conf), \dots, \cost_m(\conf))^\top\) maps each candidate 
-      \(\conf\) into the objective space \(\mathbb{R}^m\).
-\item Typically no single best solution exists, as the objectives are often 
-      in conflict and cannot be totally ordered in \(\mathbb{R}^m\).
-\item W.l.o.g.\ we always minimize.
-\item Also called multi-objective optimization, Pareto optimization, etc.
-\end{itemize}
-
-\end{vbframe}
-
-% -------------------------------------------------------------------
-\begin{vbframe}{Pareto sets and Pareto optimality}
-
-\textbf{Definition:}
-
-Given 
-\[
-\min_{\conf \in \pcs} 
-   \bigl(\cost_1(\conf), \dots, \cost_m(\conf)\bigr), 
-\quad \cost_i: \pcs \to \mathbb{R}.
-\]
-
-\begin{itemize}
-  \item A candidate \(\conf^{(1)}\) \textbf{(Pareto-)dominates} \(\conf^{(2)}\) 
-        if \(\cost(\conf^{(1)}) \prec \cost(\conf^{(2)})\), i.e.:
-    \begin{enumerate}
-      \item \(\cost_i(\conf^{(1)}) \le \cost_i(\conf^{(2)})\) for all \(i\),
-      \item \(\cost_j(\conf^{(1)}) < \cost_j(\conf^{(2)})\) for at least one \(j\).
-    \end{enumerate}
-    \item A candidate \(\optconf\) not dominated by any other candidate is 
-          \textbf{Pareto optimal}.
-    \item The set of all Pareto optimal candidates is the \textbf{Pareto set} 
-          \(\mathcal{P} = \{\conf \in \pcs \mid \nexists \,\tilde{\conf} :
-               \cost(\tilde{\conf}) \prec \cost(\conf)\}\).
-    \item \(\mathcal{F} = \cost(\mathcal{P})\), the \textbf{Pareto front}, 
-          is the image of that set in objective space.
-\end{itemize}
-
-\end{vbframe}
-
-% -------------------------------------------------------------------
 \begin{vbframe}{How to define optimality?}
 
 Let \(\cost = (\text{price}, -\text{rating})\). Some comparisons are clear:
@@ -236,6 +181,63 @@ we cannot say any is strictly better.}
     \end{columns}
 
 \end{vbframe}
+
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Definition: multi-criteria optimization}
+
+A \textbf{multi-criteria optimization problem} is defined by
+\[
+\min_{\conf \in \pcs}  \cost(\conf) 
+\;\;\Leftrightarrow\;\;
+\min_{\conf \in \pcs} 
+\bigl(\cost_1(\conf), \cost_2(\conf), \dots, \cost_m(\conf)\bigr),
+\]
+with \(\pcs \subset \mathbb{R}^n\) and a multi-criteria objective function
+\(\cost: \pcs \to \mathbb{R}^m,\; m \ge 2.\)
+
+\begin{itemize}
+\item \textbf{Goal:} minimize multiple target functions simultaneously.
+\item \((\cost_1(\conf), \dots, \cost_m(\conf))^\top\) maps each candidate 
+      \(\conf\) into the objective space \(\mathbb{R}^m\).
+\item Typically no single best solution exists, as the objectives are often 
+      in conflict and cannot be totally ordered in \(\mathbb{R}^m\).
+\item W.l.o.g.\ we always minimize.
+\item Also called multi-objective optimization, Pareto optimization, etc.
+\end{itemize}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Pareto sets and Pareto optimality}
+
+\textbf{Definition:}
+
+Given 
+\[
+\min_{\conf \in \pcs} 
+   \bigl(\cost_1(\conf), \dots, \cost_m(\conf)\bigr), 
+\quad \cost_i: \pcs \to \mathbb{R}.
+\]
+
+\begin{itemize}
+  \item A candidate \(\conf^{(1)}\) \textbf{(Pareto-)dominates} \(\conf^{(2)}\) 
+        if \(\cost(\conf^{(1)}) \prec \cost(\conf^{(2)})\), i.e.:
+    \begin{enumerate}
+      \item \(\cost_i(\conf^{(1)}) \le \cost_i(\conf^{(2)})\) for all \(i\),
+      \item \(\cost_j(\conf^{(1)}) < \cost_j(\conf^{(2)})\) for at least one \(j\).
+    \end{enumerate}
+    \item A candidate \(\optconf\) not dominated by any other candidate is 
+          \textbf{Pareto optimal}.
+    \item The set of all Pareto optimal candidates is the \textbf{Pareto set} 
+          \(\mathcal{P} = \{\conf \in \pcs \mid \nexists \,\tilde{\conf} :
+               \cost(\tilde{\conf}) \prec \cost(\conf)\}\).
+    \item \(\mathcal{F} = \cost(\mathcal{P})\), the \textbf{Pareto front}, 
+          is the image of that set in objective space.
+\end{itemize}
+
+\end{vbframe}
+
 
 % -------------------------------------------------------------------
 \begin{vbframe}{Example: One objective function}
@@ -354,8 +356,8 @@ Lexicographic approach in general:
 
 But different orderings yield different solutions.
 
-\framebreak
-
+%\framebreak
+{\small
 \textbf{Summary (a-priori)}:
 \begin{itemize}
 \item Implicit assumption: single-objective optimization is “easy.”
@@ -363,7 +365,7 @@ But different orderings yield different solutions.
 \item Varying these parameters systematically can produce several solutions, 
       but may miss large parts of the non-dominated set.
 \end{itemize}
-
+}
 \end{vbframe}
 
 % -------------------------------------------------------------------
@@ -400,14 +402,14 @@ A common measure for the performance of a set of candidates
 \(\mathcal{P}\subset\pcs\) is the \textbf{dominated hypervolume}:
 \[
 S(\mathcal{P},R) 
-  = \Lambda\Bigl(
+  = \lambda\Bigl(
       \bigcup_{\tilde{\conf}\in \mathcal{P}} 
          \{\;\conf \;\mid\; 
               \tilde{\conf}\prec \conf \prec R
          \}
     \Bigr),
 \]
-where \(\Lambda(\cdot)\) is the Lebesgue measure.
+where \(\lambda(\cdot)\) is the Lebesgue measure.
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{center}
