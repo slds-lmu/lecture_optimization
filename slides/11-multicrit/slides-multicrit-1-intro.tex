@@ -85,7 +85,7 @@ When booking a hotel: find the hotel with
 \end{itemize}
 
 \begin{footnotesize}
-Since our standard is to minimize objectives, we often minimize negative ratings.
+Since our standard is to minimize objectives, we minimize negative ratings.
 \end{footnotesize}
 
 \framebreak
@@ -96,7 +96,7 @@ The objectives often conflict with each other:
 \item Better rating $\to$ usually higher price.
 \end{itemize}
 
-Example: (negative) average rating by hotel guests (1--5) vs.\ average price per night (excerpt).
+Example: (negative) average rating by hotel guests (1--5) vs.\ average price per night.
 
 \bigskip
 \begin{center}
@@ -105,11 +105,12 @@ Example: (negative) average rating by hotel guests (1--5) vs.\ average price per
 
 \framebreak
 
-Often, objectives are not directly comparable (different scales):
+{\footnotesize
+We cannot directly establish a total order on the objective space:
 \begin{itemize}
   \item Left: A hotel with rating 4 for 89~Euro 
         \((\textcolor{green}{\cost^{(1)}} = (89, -4.0))\) 
-        is clearly better than a hotel for 108~Euro with the same rating
+        is better than a hotel for 108~Euro with the same rating
         \((\textcolor{red}{\cost^{(2)}} = (108, -4.0))\).
   \item Right: How to decide if 
         \(\textcolor{orange}{\cost^{(1)}}=(89, -4.0)\) is better or worse than 
@@ -121,41 +122,27 @@ Often, objectives are not directly comparable (different scales):
 \includegraphics[scale=1]{slides/11-multicrit/figure_man/expedia-2-1.pdf}
 \end{center}
 
+\vspace{-0.1cm}
+
+Let \(\cost = (\text{price}, -\text{rating})\). The candidate 
+\(\textcolor{green}{\cost^{(1)}}=(89,-4.0)\)
+dominates 
+\(\textcolor{red}{\cost^{(2)}}=(108,-4.0)\). 
+That is, \(\textcolor{green}{\cost^{(1)}}\) is at least as good 
+in every dimension, and strictly better in one dimension.
+Hence $\textcolor{red}{\cost^{(2)}} \prec \textcolor{green}{\cost^{(1)}}$. But for
+\(\textcolor{orange}{\cost^{(1)}}=(89,-4.0)\) and \(\textcolor{orange}{\cost^{(2)}}=(95,-4.5)\)
+we cannot say any is strictly better.
+
+
+}
+
+
 \end{vbframe}
 
 % -------------------------------------------------------------------
 \begin{vbframe}{How to define optimality?}
 
-Let \(\cost = (\text{price}, -\text{rating})\). Some comparisons are clear:
-
-\bigskip
-\begin{itemize}
-  \item The candidate 
-        \(\textcolor{green}{\cost^{(1)}}=(89,-4.0)\)
-        dominates 
-        \(\textcolor{red}{\cost^{(2)}}=(108,-4.0)\). 
-        That is, \(\textcolor{green}{\cost^{(1)}}\) is at least as good 
-        in every dimension, and strictly better in one dimension.
-        Hence 
-\[
-\textcolor{red}{\cost^{(2)}} \prec \textcolor{green}{\cost^{(1)}}.
-\]
-\end{itemize}
-
-\begin{center}
-\includegraphics[width=0.5\linewidth]{slides/11-multicrit/figure_man/expedia-3-1.pdf}
-\end{center}
-
-
-
-{\small
-But for
-\(\textcolor{orange}{\cost^{(1)}}=(89,-4.0)\) 
-and 
-\(\textcolor{orange}{\cost^{(2)}}=(95,-4.5)\)
-we cannot say any is strictly better.}
-
-\framebreak
 
 \begin{itemize}\setlength{\itemsep}{0.1em}
   \item We call these \textbf{incomparable} (or \emph{equivalent} in the Pareto sense):
@@ -284,8 +271,7 @@ for all \(x \in [0,3]\) in the objective space:
 \includegraphics[width=0.45\textwidth]{slides/11-multicrit/figure_man/graph3.png}
 \end{center}
 
-The Pareto front is shown in green. You cannot move \emph{left} of it without 
-worsening one of the objectives.
+The Pareto front is shown in green. 
 
 \end{vbframe}
 
@@ -314,20 +300,19 @@ Two overall strategies:
 
 \textbf{Example: Weighted total}
 
+$$ \min_{\conf} \sum_{i=1}^m w_i \cost_i(\conf) $$
+
 \textbf{Prior knowledge}: 
 ``One rating point is worth 50~Euro to this customer.'' 
 
-Hence we optimize
 \[
 \min_{\text{Hotel}} \text{(Price)} \;-\; 50 \times \text{(Rating)}.
 \]
-
+\vspace{-0.2cm}
 \begin{center}
-\includegraphics[width=0.75\textwidth]{slides/11-multicrit/figure_man/expedia-9-1.pdf}
+\includegraphics[width=0.6\textwidth]{slides/11-multicrit/figure_man/expedia-9-1.pdf}
 \end{center}
 
-Alternatively, a weighted sum: 
-\(\min_{\conf} \sum_{i=1}^m w_i \cost_i(\conf)\).
 
 \framebreak
 
@@ -341,9 +326,10 @@ Hence we optimize the rating first, then the price among those best ratings:
 \end{center}
 
 \framebreak
-
+\vspace{-0.3cm}
 Lexicographic approach in general:
 
+{\small
 \[
 \begin{aligned}
 \yy_1^* &= \min_{\conf \in \pcs} \;\cost_1(\conf),\\
@@ -353,24 +339,28 @@ Lexicographic approach in general:
 &\quad\vdots
 \end{aligned}
 \]
+}
 
 But different orderings yield different solutions.
 
 %\framebreak
-{\small
+{\footnotesize
 \textbf{Summary (a-priori)}:
-\begin{itemize}
+\vspace{-0.1cm}
+\begin{itemize}\setlength{\itemsep}{0.7em}
 \item Implicit assumption: single-objective optimization is “easy.”
 \item We get only \emph{one} solution, which depends strongly on the chosen weighting/order/etc.
-\item Varying these parameters systematically can produce several solutions, 
-      but may miss large parts of the non-dominated set.
+\item Varying these parameters systematically can produce several solutions, but may miss large parts of the non-dominated set.
 \end{itemize}
 }
+
+
 \end{vbframe}
 
 % -------------------------------------------------------------------
 \begin{vbframe}{A-posteriori procedure}
 
+{\footnotesize
 A-posteriori methods aim to
 \begin{itemize}
   \item find \emph{all} optimal candidates (or a good approximation of them),
@@ -378,17 +368,18 @@ A-posteriori methods aim to
         additional info (e.g.\ hotel location).
 \end{itemize}
 Hence, a-posteriori methods are more general.
+}
+%\framebreak
 
-\framebreak
-
+{\footnotesize
 \textbf{Example}: 
 All Pareto-optimal hotels are shown on the left. 
 User then picks from that subset on the right, based on hidden preferences 
 (location, brand loyalty, etc.):
-
-\bigskip
+}
+%\bigskip
 \begin{center}
-\includegraphics[scale=1]{slides/11-multicrit/figure_man/expedia-11-1.pdf}
+\includegraphics[scale=0.8]{slides/11-multicrit/figure_man/expedia-11-1.pdf}
 \end{center}
 
 \end{vbframe}
@@ -398,7 +389,7 @@ User then picks from that subset on the right, based on hidden preferences
 
 \begin{columns}
 \begin{column}{0.5\textwidth}
-A common measure for the performance of a set of candidates 
+{\footnotesize A common measure for the performance of a set of candidates 
 \(\mathcal{P}\subset\pcs\) is the \textbf{dominated hypervolume}:
 \[
 S(\mathcal{P},R) 
@@ -409,17 +400,21 @@ S(\mathcal{P},R)
          \}
     \Bigr),
 \]
-where \(\lambda(\cdot)\) is the Lebesgue measure.
+where \(\lambda(\cdot)\) is the Lebesgue measure and R a pre-specified reference point every point in the set must dominate}
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{center}
-\includegraphics[width=0.8\textwidth]{slides/11-multicrit/figure_man/dominated_hypervolume.png}
+\includegraphics[width=0.6\textwidth]{slides/11-multicrit/figure_man/dominated_hypervolume.png}
 \end{center}
 \end{column}
 \end{columns}
 
-\framebreak
+% add here sentence about reference point
+% "and R is a pre-specified reference point and every point in the set must dominate it" (such as maximum +1 of all objectives
 
+%\framebreak
+
+{\footnotesize
 \begin{itemize}
 \item HV is measured w.r.t.\ the reference point \(R\), often chosen so each 
       component is a known “worst” (upper bound) for that objective.
@@ -429,6 +424,7 @@ where \(\lambda(\cdot)\) is the Lebesgue measure.
 \item Efficient algorithms exist for small \(m\). 
       In ML, we rarely exceed \(m=3\) in practice.
 \end{itemize}
+}
 
 \end{vbframe}
 
