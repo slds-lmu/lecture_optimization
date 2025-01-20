@@ -140,7 +140,7 @@ Validate configurations on the estimated Pareto front:
 \end{itemize}
 \end{column}
 \begin{column}{0.8\textwidth}
-\vspace{-0.3cm}
+\vspace{-0.2cm}
 \begin{figure}
 \includegraphics[width=0.52\textwidth]{slides/11-multicrit/figure_man/example_parego_spam_outer.png}\\
 \includegraphics[width=0.52\textwidth]{slides/11-multicrit/figure_man/example_parego_spam_outer_pareto.png}
@@ -202,7 +202,7 @@ Validate configurations on the estimated Pareto front:
 \begin{vbframe}{Efficient Models - Example: Feature Selection II}
 
 \textbf{Idea}: \emph{Multi-Objective Hyperparameter Tuning and Feature Selection using Filter Ensembles}
-\lit{\href{https://arxiv.org/pdf/1912.12912.pdf}{Binder et al. 2020}}.
+\citelink{BINDER2020MULTI}.
 
 \begin{itemize}
   \item Pre-calculate multiple \emph{feature-filter} rank vectors.
@@ -255,13 +255,13 @@ Validate configurations on the estimated Pareto front:
 \begin{vbframe}{Efficient Models - Example: FLOPS}
 
 \textbf{Goal}: Optimize \emph{accuracy} vs. \emph{FLOPS} (floating-point ops) \\
-\lit{\href{https://arxiv.org/pdf/1904.09035.pdf}{Wang et al.\ 2019}}.
+\citelink{WANG2019EVOLVING}.
 
 \bigskip
 Data: CIFAR-10 (image classification).
 
 \bigskip
-Learner: \emph{DenseNet}~\lit{\href{https://arxiv.org/pdf/1608.06993.pdf}{Huang et al.\ 2018}}:
+Learner: \emph{DenseNet}\citelink{HUANG2017DENSELY}:
 \begin{itemize}
   \item 4 dense blocks, each with multiple convolution layers that feed into each other.
   \item Blocks connected by convolution + max-pooling layers.
