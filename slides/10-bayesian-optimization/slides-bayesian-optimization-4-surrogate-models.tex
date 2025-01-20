@@ -48,7 +48,7 @@ Depending on the application:
 \begin{vbframe}{Gaussian Process}
 
 
-Posterior predictive distribution for test point $\xv \in \mathcal{S}$:
+Posterior predictive distribution for test point $\xv \in \mathcal{S}$ under zero mean:
 \begin{eqnarray*}
   Y(\xv) ~|~ \xv, \Dt \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)
 \end{eqnarray*}
@@ -61,7 +61,11 @@ with
 \includegraphics[width = 0.3\textwidth]{figure_man/bayesian_loop_sm_normal.png}
 \end{center}
 
-Kernel method, based on kernel / Gram matrix $\bm{K} := \left(k(\xvsi, \xvsi[j])\right)_{i,j}$ 
+\begin{tiny}
+Note: $\xv$ here denotes the test input. $k(\xv) \coloneqq (k(\xv, \xvsi[1]), \ldots, k(\xv, \xvsi[t]))^\top$.
+$\bm{y} \coloneqq (y^{[1]}, \ldots, y^{[t]})^\top$.\\
+Kernel / Gram matrix $\bm{K} \coloneqq \left(k(\xvsi, \xvsi[j])\right)_{i,j}$ where $i, j \in \{1, \ldots, t\}.$ 
+\end{tiny}
 \framebreak
 
 
