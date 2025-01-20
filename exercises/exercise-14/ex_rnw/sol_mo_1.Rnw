@@ -1,0 +1,54 @@
+\begin{enumerate}
+\item
+  \begin{itemize}
+    \item $\mathbf{f}^{(1)} = (10, 5)$ e.g., dominated by $\mathbf{f}^{(4)} = (6, 4)$.
+    \item $\mathbf{f}^{(2)} = (7, 8)$ e.g., dominated by $\mathbf{f}^{(3)} = (4, 6)$.
+    \item $\mathbf{f}^{(3)}$ not dominated.
+    \item $\mathbf{f}^{(4)}$ not dominated.
+    \item $\mathbf{f}^{(5)}$ not dominated.
+    \item $\mathbf{f}^{(6)}$ not dominated.
+  \end{itemize}
+  $\rightarrow$ the set of Pareto optimal solutions is $\mathcal{P} = \{\mathbf{f}^{(3)}, \mathbf{f}^{(4)}, \mathbf{f}^{(5)}, \mathbf{f}^{(6)}\}$.
+\item
+<<pareto_plot, echo=TRUE, out.width="75%">>=
+library(ggplot2)
+
+solutions = data.frame(f1 = c(10, 7, 4, 6, 9, 3), f2 = c(5, 8, 6, 4, 3, 7), id = 1:6)
+solutions$pareto_optimal = c(FALSE, FALSE, TRUE, TRUE, TRUE, TRUE)
+
+ggplot(aes(x = f1, y = f2, colour = pareto_optimal), data = solutions) +
+  geom_step(data = solutions[solutions$pareto_optimal == TRUE, ],
+	    direction = "hv", colour = "black") +
+  geom_point() +
+  geom_text(aes(x = f1, y = f2, label = id),
+	    nudge_x = 0.25, nudge_y = 0.25, show.legend = FALSE) +
+  geom_point(aes(x = f1, y = f1), colour = "black", data = data.frame(f1 = 15, f2 = 15)) +
+  labs(x = expression(f[1]), y = expression(f[2]), colour = "Pareto Optimal") +
+  theme_minimal()
+@
+\item We can simply compute the area slices under each segment and sum them up.\\
+  For the four rectangles from left to right:
+  \begin{itemize}
+    \item $(4-3) \cdot (15-7) = 8$
+    \item $(6-4) \cdot (15-6) = 18$
+    \item $(9-6) \cdot (15-4) = 33$
+    \item $(15-9) \cdot (15-3) = 72$
+  \end{itemize}
+  $\rightarrow S(\mathcal{P}, R) = 8+18+33+72 = 131$.
+\item We start with the first front of non-dominated solutions $\mathcal{F}_{1} = \{\mathbf{f}^{(3)}, \mathbf{f}^{(4)}, \mathbf{f}^{(5)}, \mathbf{f}^{(6)}\}$.
+  After dropping these solutions, $\mathbf{f}^{(1)}$ and $\mathbf{f}^{(2)}$ remain. Neither of these solutions dominates the other solution.
+  Therefore $\mathcal{F}_{2} = \{\mathbf{f}^{(1)}, \mathbf{f}^{(2)}\}$.
+\item Crowding distance is always computed within a front. From (d) we have that $\mathbf{f}^{(3)} \in \mathcal{F}_{1}$.
+  We start with the first dimension, $f_{1}$.\\
+  First, sort the values by $f_{1}$: $(3,7),(4,6),(6,4),(9,3)$.
+  $(3, 7)$ and $(9, 3)$ are outermost and get an infinite partial distance for the $f_{1}$ dimension.
+  Normalize the values by the minimum of $3$ and maximum of $9$ among the four points.
+  For the point $\mathbf{f}^{(3)}$ (new index of $i = 2$) we compute:
+  $$\mathrm{CD}_{1}(\mathbf{f}^{(3)}) = \frac{(f_{1}^{(i+1)} - f_{1}^{(i-1)})}{(f_{1}^{(\mathrm{max})} - f_{1}^{(\mathrm{min})})} = \frac{(6 - 3)}{(9 - 3)} = 0.5.$$
+  For the second dimension, $f_{2}$, we analogously obtain:
+  $$\mathrm{CD}_{2}(\mathbf{f}^{(3)}) = \frac{(f_{2}^{(i+1)} - f_{2}^{(i-1)})}{(f_{2}^{(\mathrm{max})} - f_{2}^{(\mathrm{min})})} = \frac{(7 - 4)}{(7 - 3)} = 0.75.$$
+  $\rightarrow$ the total crowding distance is (when taking the sum) $0.5 + 0.75 = 1.25$.
+\item We know from (c) that the total dominated hypervolume is $S(\mathcal{P}, R) = 131$.
+  To compute the hypervolume contribution of $\mathbf{f}^{(5)}$, we compute the hypervolume of $\mathcal{P} \setminus \mathbf{f}^{(5)}$ and substract it.
+  Similar computations as in (c) but now for $\mathcal{P} \setminus \mathbf{f}^{(5)}$ yield $S(\mathcal{P} \setminus \mathbf{f}^{(5)}, R) = 125$. Therefore $\mathbf{f}^{(5)}$ has a hypervolume contribution of $131 - 125 = 6$.
+\end{enumerate}
