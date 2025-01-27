@@ -1,20 +1,20 @@
-Analyse a Multi-Objective Optimization problem with the following six solutions in objective space:
+Analyse a Multi-Objective Optimization problem with the following six points and values in objective space:
 \begin{align*}
-\mathbf{f}^{(1)} &= (10, 5)\\
-\mathbf{f}^{(2)} &= (7, 8)\\
-\mathbf{f}^{(3)} &= (4, 6)\\
-\mathbf{f}^{(4)} &= (6, 4)\\
-\mathbf{f}^{(5)} &= (9, 3)\\
-\mathbf{f}^{(6)} &= (3, 7)
+\mathbf{x}^{(1)} ~ \text{with} ~ \mathbf{f}^{(1)} &= (10, 5)\\
+\mathbf{x}^{(2)} ~ \text{with} ~ \mathbf{f}^{(2)} &= (7, 8)\\
+\mathbf{x}^{(3)} ~ \text{with} ~ \mathbf{f}^{(3)} &= (4, 6)\\
+\mathbf{x}^{(4)} ~ \text{with} ~ \mathbf{f}^{(4)} &= (6, 4)\\
+\mathbf{x}^{(5)} ~ \text{with} ~ \mathbf{f}^{(5)} &= (9, 3)\\
+\mathbf{x}^{(6)} ~ \text{with} ~ \mathbf{f}^{(6)} &= (3, 7)
 \end{align*}
 
 \begin{enumerate}
-\item Determine which of these solutions are Pareto optimal.
-\item For the Pareto optimal solutions, sketch the objective space and indicate the Pareto front.
+\item Determine which of these points are Pareto optimal (find $\mathcal{P}$).
+\item Sketch the objective space and indicate the Pareto front $f(\mathcal{P})$.
 \item Assume a reference point $R = (15, 15)$. Calculate the dominated hypervolume of the Pareto optimal points.
 \item Perform non-dominated sorting.
-\item Compute the crowding distance of the point with the solution $\mathbf{f}^{(3)}$.
-\item Compute the hypervolume contribution of the point with the solution $\mathbf{f}^{(5)}$. Again, assume a reference point $R = (15, 15)$.
+\item Compute the crowding distance of the point $\mathbf{x}^{(3)}$ with the solution $\mathbf{f}^{(3)}$.
+\item Compute the hypervolume contribution of the point $\mathbf{x}^{(5)}$ with the solution $\mathbf{f}^{(5)}$. Again, assume a reference point $R = (15, 15)$.
 \end{enumerate}
 
 Note: We want to minimize both objectives $f_{1}, f_{2}$.

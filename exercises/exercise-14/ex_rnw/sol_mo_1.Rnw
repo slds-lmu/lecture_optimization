@@ -1,14 +1,14 @@
 \begin{enumerate}
 \item
   \begin{itemize}
-    \item $\mathbf{f}^{(1)} = (10, 5)$ e.g., dominated by $\mathbf{f}^{(4)} = (6, 4)$.
-    \item $\mathbf{f}^{(2)} = (7, 8)$ e.g., dominated by $\mathbf{f}^{(3)} = (4, 6)$.
-    \item $\mathbf{f}^{(3)}$ not dominated.
-    \item $\mathbf{f}^{(4)}$ not dominated.
-    \item $\mathbf{f}^{(5)}$ not dominated.
-    \item $\mathbf{f}^{(6)}$ not dominated.
+    \item $\mathbf{x}^{(1)}$ with $\mathbf{f}^{(1)} = (10, 5)$ e.g., dominated by $\mathbf{x}^{(4)}$ with $\mathbf{f}^{(4)} = (6, 4)$.
+    \item $\mathbf{x}^{(2)}$ with $\mathbf{f}^{(2)} = (7, 8)$ e.g., dominated by $\mathbf{x}^{(3)}$ with $\mathbf{f}^{(3)} = (4, 6)$.
+    \item $\mathbf{x}^{(3)}$ with $\mathbf{f}^{(3)}$ not dominated.
+    \item $\mathbf{x}^{(4)}$ with $\mathbf{f}^{(4)}$ not dominated.
+    \item $\mathbf{x}^{(5)}$ with $\mathbf{f}^{(5)}$ not dominated.
+    \item $\mathbf{x}^{(6)}$ with $\mathbf{f}^{(6)}$ not dominated.
   \end{itemize}
-  $\rightarrow$ the set of Pareto optimal solutions is $\mathcal{P} = \{\mathbf{f}^{(3)}, \mathbf{f}^{(4)}, \mathbf{f}^{(5)}, \mathbf{f}^{(6)}\}$.
+  $\rightarrow$ the set of Pareto optimal points is $\mathcal{P} = \{\mathbf{x}^{(3)}, \mathbf{x}^{(4)}, \mathbf{x}^{(5)}, \mathbf{x}^{(6)}\}$.
 \item
 <<pareto_plot, echo=TRUE, out.width="75%">>=
 library(ggplot2)
@@ -35,20 +35,20 @@ ggplot(aes(x = f1, y = f2, colour = pareto_optimal), data = solutions) +
     \item $(15-9) \cdot (15-3) = 72$
   \end{itemize}
   $\rightarrow S(\mathcal{P}, R) = 8+18+33+72 = 131$.
-\item We start with the first front of non-dominated solutions $\mathcal{F}_{1} = \{\mathbf{f}^{(3)}, \mathbf{f}^{(4)}, \mathbf{f}^{(5)}, \mathbf{f}^{(6)}\}$.
-  After dropping these solutions, $\mathbf{f}^{(1)}$ and $\mathbf{f}^{(2)}$ remain. Neither of these solutions dominates the other solution.
-  Therefore $\mathcal{F}_{2} = \{\mathbf{f}^{(1)}, \mathbf{f}^{(2)}\}$.
-\item Crowding distance is always computed within a front. From (d) we have that $\mathbf{f}^{(3)} \in \mathcal{F}_{1}$.
+\item We start with the first front of non-dominated solutions $\mathcal{F}_{1} = \{\mathbf{x}^{(3)}, \mathbf{x}^{(4)}, \mathbf{x}^{(5)}, \mathbf{x}^{(6)}\}$.
+  After dropping these solutions, $\mathbf{x}^{(1)}$ and $\mathbf{x}^{(2)}$ remain. Neither of these solutions dominates the other solution.
+  Therefore $\mathcal{F}_{2} = \{\mathbf{x}^{(1)}, \mathbf{x}^{(2)}\}$.
+\item Crowding distance is always computed within a front. From (d) we have that $\mathbf{x}^{(3)} \in \mathcal{F}_{1}$.
   We start with the first dimension, $f_{1}$.\\
   First, sort the values by $f_{1}$: $(3,7),(4,6),(6,4),(9,3)$.
   $(3, 7)$ and $(9, 3)$ are outermost and get an infinite partial distance for the $f_{1}$ dimension.
   Normalize the values by the minimum of $3$ and maximum of $9$ among the four points.
-  For the point $\mathbf{f}^{(3)}$ (new index of $i = 2$) we compute:
-  $$\mathrm{CD}_{1}(\mathbf{f}^{(3)}) = \frac{(f_{1}^{(i+1)} - f_{1}^{(i-1)})}{(f_{1}^{(\mathrm{max})} - f_{1}^{(\mathrm{min})})} = \frac{(6 - 3)}{(9 - 3)} = 0.5.$$
+  For the point $\mathbf{x}^{(3)}$ (new index of $i = 2$) we compute:
+  $$\mathrm{CD}_{1}(\mathbf{x}^{(3)}) = \frac{(f_{1}^{(i+1)} - f_{1}^{(i-1)})}{(f_{1}^{(\mathrm{max})} - f_{1}^{(\mathrm{min})})} = \frac{(6 - 3)}{(9 - 3)} = 0.5.$$
   For the second dimension, $f_{2}$, we analogously obtain:
-  $$\mathrm{CD}_{2}(\mathbf{f}^{(3)}) = \frac{(f_{2}^{(i+1)} - f_{2}^{(i-1)})}{(f_{2}^{(\mathrm{max})} - f_{2}^{(\mathrm{min})})} = \frac{(7 - 4)}{(7 - 3)} = 0.75.$$
+  $$\mathrm{CD}_{2}(\mathbf{x}^{(3)}) = \frac{(f_{2}^{(i+1)} - f_{2}^{(i-1)})}{(f_{2}^{(\mathrm{max})} - f_{2}^{(\mathrm{min})})} = \frac{(7 - 4)}{(7 - 3)} = 0.75.$$
   $\rightarrow$ the total crowding distance is (when taking the sum) $0.5 + 0.75 = 1.25$.
 \item We know from (c) that the total dominated hypervolume is $S(\mathcal{P}, R) = 131$.
-  To compute the hypervolume contribution of $\mathbf{f}^{(5)}$, we compute the hypervolume of $\mathcal{P} \setminus \mathbf{f}^{(5)}$ and substract it.
-  Similar computations as in (c) but now for $\mathcal{P} \setminus \mathbf{f}^{(5)}$ yield $S(\mathcal{P} \setminus \mathbf{f}^{(5)}, R) = 125$. Therefore $\mathbf{f}^{(5)}$ has a hypervolume contribution of $131 - 125 = 6$.
+  To compute the hypervolume contribution of $\mathbf{x}^{(5)}$, we compute the hypervolume of $\mathcal{P} \setminus \mathbf{x}^{(5)}$ and substract it.
+  Similar computations as in (c) but now for $\mathcal{P} \setminus \mathbf{x}^{(5)}$ yield $S(\mathcal{P} \setminus \mathbf{x}^{(5)}, R) = 125$. Therefore $\mathbf{x}^{(5)}$ has a hypervolume contribution of $131 - 125 = 6$.
 \end{enumerate}
