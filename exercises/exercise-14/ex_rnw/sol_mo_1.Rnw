@@ -49,6 +49,6 @@ ggplot(aes(x = f1, y = f2, colour = pareto_optimal), data = solutions) +
   $$\mathrm{CD}_{2}(\mathbf{x}^{(3)}) = \frac{(f_{2}^{(i+1)} - f_{2}^{(i-1)})}{(f_{2}^{(\mathrm{max})} - f_{2}^{(\mathrm{min})})} = \frac{(7 - 4)}{(7 - 3)} = 0.75.$$
   $\rightarrow$ the total crowding distance is (when taking the sum) $0.5 + 0.75 = 1.25$.
 \item We know from (c) that the total dominated hypervolume is $S(\mathcal{P}, R) = 131$.
-  To compute the hypervolume contribution of $\mathbf{x}^{(5)}$, we compute the hypervolume of $\mathcal{P} \setminus \mathbf{x}^{(5)}$ and substract it.
-  Similar computations as in (c) but now for $\mathcal{P} \setminus \mathbf{x}^{(5)}$ yield $S(\mathcal{P} \setminus \mathbf{x}^{(5)}, R) = 125$. Therefore $\mathbf{x}^{(5)}$ has a hypervolume contribution of $131 - 125 = 6$.
+  To compute the hypervolume contribution of $\mathbf{x}^{(5)}$, we compute the hypervolume of $\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}$ and substract it.
+  Similar computations as in (c) but now for $\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}$ yield $S(\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}, R) = 125$. Therefore $\mathbf{x}^{(5)}$ has a hypervolume contribution of $131 - 125 = 6$.
 \end{enumerate}
