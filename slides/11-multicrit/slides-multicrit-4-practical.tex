@@ -86,7 +86,7 @@ Again, we want to train a \textit{spam detector} on the popular Spam dataset%
   \item Optimizer: multi-criteria Bayesian optimization
   \begin{itemize}
     \item ParEGO with $\rho=0.05$, $s=100000$
-    \item Acquisition: Confidence Bound ($\alpha=2$)
+    \item Acquisition: Confidence Bound ($\tau=2.0$)
     \item Budget: 100 evaluations
   \end{itemize}
   \item Tuning is done on a training holdout, and the hyperparameter configs on the estimated Pareto front are validated on external test set.
