@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------------------
+# univariate optimization
+
+# FIG: plot newton method process
+# ------------------------------------------------------------------------------
+
 newton = function(f = function(x) sin(x) * -1, a = 2, b = 5, q = 0.5, tol = .Machine$double.eps^0.5, maxiter = 1000, plot.i) {
  if (f(a) * f(b) > 0) 
    stop("no root within interval!")
@@ -44,23 +50,23 @@ newton = function(f = function(x) sin(x) * -1, a = 2, b = 5, q = 0.5, tol = .Mac
  # return(rval)
 }
 
-png('figure_man/newton1.png', width = 480, height = 320)
+png('../figure_man/newton1.png', width = 480, height = 320)
 newton(plot.i = 1)
 dev.off()
 
-png('figure_man/newton2.png', width = 480, height = 320)
+png('../figure_man/newton2.png', width = 480, height = 320)
 newton(plot.i = 2)
 dev.off()
 
-png('figure_man/newton3.png', width = 480, height = 320)
+png('../figure_man/newton3.png', width = 480, height = 320)
 newton(plot.i = 3)
 dev.off()
 
-png('figure_man/newton4.png', width = 480, height = 320)
+png('../figure_man/newton4.png', width = 480, height = 320)
 newton(plot.i = 4)
 dev.off()
 
-png('figure_man/newton5.png', width = 480, height = 320)
+png('../figure_man/newton5.png', width = 480, height = 320)
 newton(plot.i = 5)
 dev.off()
 

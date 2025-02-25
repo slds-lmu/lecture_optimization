@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------------------
+# bayesian optimization
+
+# FIG: perform Bayesian optimization for a multi-objective function.
+# ------------------------------------------------------------------------------
+
 library(bbotk)
 library(data.table)
 library(mlr3mbo)
@@ -7,6 +13,9 @@ library(ggplot2)
 library(patchwork)
 
 set.seed(123)
+
+# ------------------------------------------------------------------------------
+
 objective = ObjectiveRFunDt$new(
  fun = function(xdt) data.table(y1 = xdt$x^2, y2 = (xdt$x - 2) ^ 2),
  domain = ps(x = p_dbl(lower = -1, upper = 3)),
@@ -93,8 +102,9 @@ yscal = Reduce("+", mult)
 yscal = do.call(pmax, mult) + 0.05 * yscal  # augmented Tchebycheff function
 data[, y_scal := yscal]
 
-surrogate = srlrn(lrn("regr.km", covtype = "matern5_2", optim.method = "BFGS", nugget.stability = 10^-8), archive = instance$archive)
-surrogate$y_cols = "y_scal"
+surrogate = srlrn(lrn("regr.km", covtype = "matern5_2", optim.method = "BFGS", nugget.stability = 10^-8), 
+                  archive = instance$archive)
+surrogate$cols_y = "y_scal"
 acq_function = acqf("ei", surrogate = surrogate)
 acq_function$surrogate$update()
 prediction = surrogate$predict(grid)

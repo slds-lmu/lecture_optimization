@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------------------
+# mathematical concepts
+
+# FIG: plot eigen-vectors of quadratic form
+# ------------------------------------------------------------------------------
 v1 = c(1, -1) / sqrt(2)
 v2 = c(1, 1) / sqrt(2)
 l1 = 3
@@ -23,7 +28,7 @@ z <- outer(x, y, FUN = function(x, y) {
   })
 })
 
-png("quadr-eigenv.png", width = 400, height = 400)
+png("../figure_man/quadr-eigenv.png", width = 400, height = 400)
 
 par(xaxt = "n", yaxt = "n", mar = c(0, 0, 0, 0))
 contour(x, y, z, drawlabels = FALSE, nlevels = 6)
@@ -42,3 +47,4 @@ arrows(0, 0, l2 * v2[1], l2 * v2[2], length = 0.15, col = "orange", lwd = 3)
 
 points(0, 0, col = "blue", pch = 19, cex = 2)
 
+dev.off()

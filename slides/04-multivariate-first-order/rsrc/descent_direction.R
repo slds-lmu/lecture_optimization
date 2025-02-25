@@ -1,10 +1,16 @@
+# ------------------------------------------------------------------------------
+# multivariate first order
+
+# FIG: plot descent direction
+# ------------------------------------------------------------------------------
+
 library(ggplot2)
 library(gridExtra)
 library(BBmisc)
 
 theme_set(theme_bw())
 
-# Helper functions
+# ------------------------------------------------------------------------------
 
 compute_grid_data = function(xrange, yrange, fun) {
 
@@ -58,5 +64,6 @@ p = p + annotate("text", x = x[1] + 0.6, y = x[2] - 0.8, colour = "red", label =
 temp <- paste("270")
 p = p + annotate("text", x = x[1] - 0.2, y = x[2] + 0.8, colour = "red", label = temp, parse = TRUE, size = 2)
 
-ggsave(filename = "figure_man/descent_direction.pdf", p, width = 3, height = 3)
+p
+ggsave(filename = "../figure_man/descent_direction.pdf", p, width = 3, height = 3)
 

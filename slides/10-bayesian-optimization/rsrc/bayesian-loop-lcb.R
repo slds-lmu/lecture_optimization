@@ -1,3 +1,11 @@
+# ------------------------------------------------------------------------------
+# bayesian optimization
+
+# FIG: perform Bayesian Optimization using the Lower Confidence Bound (LCB).
+#     visualize how the surrogate model, confidence intervals, 
+#     and acquisition function evolve over iterations.
+# ------------------------------------------------------------------------------
+
 library(bbotk)
 library(data.table)
 library(mlr3mbo)
@@ -6,6 +14,9 @@ library(ggplot2)
 library(patchwork)
 
 set.seed(123)
+
+# ------------------------------------------------------------------------------
+
 objective = ObjectiveRFunDt$new(
  fun = function(xdt) data.table(y = 2 * xdt$x * sin(14 * xdt$x)),
  domain = ps(x = p_dbl(lower = 0, upper = 1)),
@@ -58,7 +69,8 @@ cb = ggplot(aes(x = x, y = cb), data = grid) +
   ylab(expression(paste("LCB, ", tau, " = 1"))) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/bayesian_loop_lcb_0.png"), plot = g / cb, width = 5, height = 4)
+g / cb
+ggsave("../figure_man/bayesian_loop_lcb_0.png", plot = g / cb, width = 5, height = 4)
 
 set(grid, j = "y_min", value = prediction$mean - 5 * prediction$se)
 set(grid, j = "y_max", value = prediction$mean + 5 * prediction$se)
@@ -87,7 +99,8 @@ cb = ggplot(aes(x = x, y = cb), data = grid) +
   ylab(expression(paste("LCB, ", tau, " = 5"))) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/bayesian_loop_lcb_1.png"), plot = g / cb, width = 5, height = 4)
+g / cb
+ggsave("../figure_man/bayesian_loop_lcb_1.png", plot = g / cb, width = 5, height = 4)
 
 set(grid, j = "y_min", value = prediction$mean - 10 * prediction$se)
 set(grid, j = "y_max", value = prediction$mean + 10 * prediction$se)
@@ -116,5 +129,6 @@ cb = ggplot(aes(x = x, y = cb), data = grid) +
   ylab(expression(paste("LCB, ", tau, " = 10"))) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/bayesian_loop_lcb_2.png"), plot = g / cb, width = 5, height = 4)
+g / cb
+ggsave("../figure_man/bayesian_loop_lcb_2.png", plot = g / cb, width = 5, height = 4)
 

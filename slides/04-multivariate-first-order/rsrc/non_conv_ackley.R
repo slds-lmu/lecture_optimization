@@ -1,6 +1,12 @@
-# Optimization WiSe 22/23
-# Chapter 4.5
-# Plot (non-)converging gradient descent for ackley
+# ------------------------------------------------------------------------------
+# multivariate first order
+
+# FIG: plot (non-)converging gradient descent for ackley
+# ------------------------------------------------------------------------------
+
+library(rootSolve) #gradient()
+
+# ------------------------------------------------------------------------------
 
 #https://www.sfu.ca/~ssurjano/Code/ackleyr.html
 ackley <- function(xx, a=20, b=0.2, c=2*pi) {
@@ -22,9 +28,6 @@ y.grid <- seq(-2,1.7,length=n.grid)
 design.grid <- expand.grid(x.grid, y.grid)
 response.grid <- apply(design.grid, 1, ackley)
 z.grid <- matrix(response.grid, n.grid, n.grid)
-
-
-library(rootSolve) #gradient()
 
 create_point <- function(x0) {
   neggrad <- -gradient(ackley, x0)
@@ -69,6 +72,7 @@ y_values <- rbind(y_start, y_values)
 
 # create plot
 plot.new()
+png('../figure_man/nonconv_ackley_plot.png', width = 480, height = 320)
 contour(x.grid,y.grid,z.grid,40)
 
 for (starting_point in 1:nrow(starting_points)) {
@@ -90,26 +94,26 @@ for (starting_point in 1:nrow(starting_points)) {
 }
 
 
-title("(Non-)Converging GD for ackley function")
 legend(-1.5, -1.1, legend=c(paste0("starting point: ", starting_points[1,1],", ",starting_points[1,2]),
                             paste0("starting point: ", starting_points[2,1],", ",starting_points[2,2]),
                             paste0("starting point: ", starting_points[3,1],", ",starting_points[3,2]),
                             paste0("starting point: ", starting_points[4,1],", ",starting_points[4,2])),
          col=c("green", "red", "orange", "blue"), lty=1, cex=0.8)
 
-
+dev.off()
 
 ######
+png('../figure_man/nonconv_ackley_path.png', width = 480, height = 320)
 i=1
 plot(1, type="n", xlab="Steps", ylab="y", xlim=c(1,max(steps)), ylim=c(0,max(y_start)))
 for (line in 1:ncol(y_values)) {
   lines(y_values[,i], pch=16, col=colors[i])
   i <- i+1
 }
-title("(Non-)Converging GD for ackley function")
 legend(33.7, 4.75, legend=c(paste0("alpha=", alpha[1], ", steps=",steps[1]),
                          paste0("alpha=", alpha[2], ", steps=",steps[2]),
                          paste0("alpha=", alpha[3], ", steps=",steps[3]),
                          paste0("alpha=", alpha[4], ", steps=",steps[4])),
        col=c("green", "red", "orange", "blue"), lty=1, cex=0.8)
+dev.off()
 

@@ -1,7 +1,17 @@
+# ------------------------------------------------------------------------------
+# multivariate first order
+
+# FUNC: 
+#   (1) grad - Computes Numerical Gradients.
+#   (2) optim0 - 3D Surface Plot with Color Mapping.
+#   (3) persp2 - Simple Gradient-Based Optimization.
+#   (4) sd_plot - 3D Surface & Contour Plot for Optimization Path.
+# ------------------------------------------------------------------------------
+
 grad = function(..., FUN, eps = .Machine$double.eps^0.5,
                 type = c("centered", "forward")) {
   type = match.arg(type)
-
+  
   gfun = switch(type,
                 "forward" = function(vars, j) {
                   vars2 = vars
@@ -17,14 +27,14 @@ grad = function(..., FUN, eps = .Machine$double.eps^0.5,
                   return((f1 - f2) / (2 * eps))
                 }
   )
-
+  
   vars = list(...)
   k = length(vars)
   rval = NULL
   for(j in 1:k) {
     rval = cbind(rval, gfun(vars, j))
   }
-
+  
   if(length(vars) < 2)
     rval = drop(rval)
   else
@@ -44,7 +54,7 @@ persp2 = function(x, y, z, col = terrain_hcl, ...) {
 
 ####################################################################################################
 optim0 = function(..., FUN, tol = 1e-08,
-  maxit = 100, maximum = TRUE, alpha = 1) {
+                  maxit = 100, maximum = TRUE, alpha = 1) {
   rval = list()
   start = list(...)
   i = 1
@@ -52,7 +62,7 @@ optim0 = function(..., FUN, tol = 1e-08,
   while(do & (i < maxit)) {
     f0 = do.call(FUN, start) * if(maximum) -1 else 1
     d = as.numeric(-1 * do.call(grad, c(start, "FUN" = FUN)) *
-        if(maximum) -1 else 1)
+                     if(maximum) -1 else 1)
     start2 = start
     for(j in seq_along(start))
       start2[[j]] = start[[j]] + alpha * d[j]
@@ -72,7 +82,7 @@ sd_plot = function(col = terrain_hcl, theta = 40, phi = 40, xlab = "x", ylab = "
   par(mar = rep(0, 4))
   require("colorspace")
   pmat = persp2(x, y, z, theta = theta, phi = phi, ticktype = "detailed",
-    xlab = xlab, ylab = ylab, zlab = "", col = col, lwd = 0.5)
+                xlab = xlab, ylab = ylab, zlab = "", col = col, lwd = 0.5)
   for(j in seq_along(p)) {
     t3d = trans3d(p[[j]][[1]], p[[j]][[2]], do.call(foo, p[[j]]), pmat)
     if(j > 1) {
@@ -94,6 +104,4 @@ sd_plot = function(col = terrain_hcl, theta = 40, phi = 40, xlab = "x", ylab = "
   }
   invisible(NULL)
 }
-
-
 

@@ -1,13 +1,21 @@
-library(ggplot2)
+# ------------------------------------------------------------------------------
+# optimization problems
 
+# FIG: plot 2 examples of linear regression
+# ------------------------------------------------------------------------------
+
+library(ggplot2)
+library(plotly)
 theme_set(theme_bw())
+
+# ------------------------------------------------------------------------------
 
 x = runif(20, 0, 5)
 df = data.frame(x = x, y = x + rnorm(20))
 
 p = ggplot() + geom_point(data = df, aes(x = x, y = y)) + geom_abline(intercept = 0, slope = 1, colour = "blue", lty = 2)
 p
-ggsave("figure_man/ml_linreg_example_1.pdf", p, width = 3, height = 2.5)
+ggsave("../figure_man/ml_linreg_example_1.pdf", p, width = 3, height = 2.5)
 
 
 fun = function(theta) {
@@ -20,10 +28,8 @@ grid$l2_loss = apply(grid, 1, fun)
 p = ggplot() + stat_contour_filled(data = grid, aes(x = theta0, y = theta1, z = l2_loss)) + xlab(expression(theta[0])) + ylab(expression(theta[1]))    
 p = p + geom_point(data = data.frame(x = 0, y = 1), aes(x = x, y = y), colour = "orange")
 p = p + guides(fill = "none")
+p
 ggsave("../figure_man/ml_linreg_example_2.pdf", p, width = 3, height = 2)
-
-library(plotly)
-
 
 fun = function(theta0, theta1) {
 	yh = theta0 + theta1 * df$x

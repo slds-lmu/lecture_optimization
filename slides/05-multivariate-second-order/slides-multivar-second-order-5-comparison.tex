@@ -89,8 +89,8 @@ Comparison of Newton-Raphson, relaxed NR and GD+momentum:
 \vspace{-0.3cm}
 Recall comparison of GD variants on log. reg. in last chapter:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_med_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_med.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/GD_log_med_lr_iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/GD_log_coef_med.pdf}\\
             \begin{footnotesize}
             Dotted lines indicate global minimizers.
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$ 
@@ -105,8 +105,8 @@ Recall comparison of GD variants on log. reg. in last chapter:
 \vspace{-0.4cm}
 Let's run GD vs. NR for \textbf{$1000$ steps} (independent features):
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_indep_1000iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_coef_1000indep.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu-newton/NR_GD_log_indep_1000iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu-newton/NR_GD_log_coef_1000indep.pdf}\\
             \begin{footnotesize}
             Dotted lines indicate global minimizers.
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$ 
@@ -120,8 +120,8 @@ Let's run GD vs. NR for \textbf{$1000$ steps} (independent features):
 \vspace{-0.4cm}
 Let's run the same configuration only for \textbf{$50$ steps} to see clearer picture:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_indep_50iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_coef_50indep.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu-newton/NR_GD_log_indep_50iters.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu-newton/NR_GD_log_coef_50indep.pdf}\\
             \begin{footnotesize}
             Dotted lines indicate global minimizers.
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$ 
@@ -136,7 +136,7 @@ Let's run the same configuration only for \textbf{$50$ steps} to see clearer pic
 {\small Clearly, NR makes more progress than GD per iteration. OTOH Newton steps are much more expensive than GD updates\\
 $\Rightarrow$ How do NR and GD compare wrt runtime instead of iterations (50 steps)?}
 \begin{figure}
-            \includegraphics[width=1.0\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_runtime_comparison.pdf} \\
+            \includegraphics[width=1.0\textwidth]{figure_man/simu-newton/NR_GD_runtime_comparison.pdf} \\
             %\begin{footnotesize}
             %    Irreducible error due to additive noise is $\sigma=1$
             %\end{footnotesize}
@@ -150,8 +150,8 @@ $\Rightarrow$ How do NR and GD compare wrt runtime instead of iterations (50 ste
 \vspace{-0.4cm}
 In case of correlated features the results are very similar:
 \begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_indep_50iters_corr.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_coef_50indep_corr.pdf}\\
+            \includegraphics[width=0.8\textwidth]{figure_man/simu-newton/NR_GD_log_indep_50iters_corr.pdf} \\
+             \includegraphics[width=0.8\textwidth]{figure_man/simu-newton/NR_GD_log_coef_50indep_corr.pdf}\\
             \begin{footnotesize}
             Dotted lines indicate global minimizers.
                 %Dashed line in test loss indicates irreducible error due to $\sigma=1$ 
@@ -166,7 +166,7 @@ Previous conclusions on runtime comparison for independent features carry over t
 \bigskip
 
 \begin{figure}
-            \includegraphics[width=1.0\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_runtime_comparison_corr.pdf} \\
+            \includegraphics[width=1.0\textwidth]{figure_man/simu-newton/NR_GD_runtime_comparison_corr.pdf} \\
             %\begin{footnotesize}
             %    Irreducible error due to additive noise is $\sigma=1$
             %\end{footnotesize}

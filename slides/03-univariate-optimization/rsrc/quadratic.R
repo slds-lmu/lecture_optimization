@@ -1,15 +1,17 @@
-# Optimization, WiSe 22/23
-# Chapter 3.1 Univariate - brent
-# Plots for: Quadratic interpolation
+# ------------------------------------------------------------------------------
+# univariate optimization
 
+# FIG: plot quadratic interpolation process
+# ------------------------------------------------------------------------------
 
 library(ggplot2)
 library(latex2exp)
 library(grid)
 library(gridExtra)
 
+source("helper.R")
 
-source("./helper.R")
+# ------------------------------------------------------------------------------
 
 interpolate = function(fun, xl, xr, xb) {
   fl = fun(xl)
@@ -99,7 +101,7 @@ quadratic.interpolation = function(a, b, fun, max.iter = 10) {
 
     g = grid_arrange_shared_legend(p1, p2, p3, ncol = 3)
     
-    ggsave(paste("figure_man/quadratic", iter, ".pdf", sep = ""), g, width = 9, height = 4)
+    ggsave(paste("../figure_man/quadratic", iter+1, ".pdf", sep = ""), g, width = 9, height = 4)
 
     int = interpolate(fun = fun, xl = d["xleft", "x"], xr = d["xright", "x"], xb = d["xbest", "x"])
 

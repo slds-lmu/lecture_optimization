@@ -1,3 +1,13 @@
+# ------------------------------------------------------------------------------
+# multivariate second order
+
+# FUNC: 
+#   (1) grad - Computes Numerical Gradients.
+#   (2) optim0 - 3D Surface Plot with Color Mapping.
+#   (3) persp2 - Simple Gradient-Based Optimization.
+#   (4) sd_plot - 3D Surface & Contour Plot for Optimization Path.
+# ------------------------------------------------------------------------------
+
 grad = function(..., FUN, eps = .Machine$double.eps^0.5,
                 type = c("centered", "forward")) {
   type = match.arg(type)

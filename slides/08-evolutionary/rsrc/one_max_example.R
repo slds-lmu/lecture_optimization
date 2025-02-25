@@ -1,12 +1,15 @@
-### Optimization WS22/23
-### Chapter 8 Evolutionary algorithms
-### Section 8.1
-### source: https://github.com/jakobbossek/ecr2/blob/master/vignettes/introduction.Rmd
+# ------------------------------------------------------------------------------
+# evolutionary algorithms
+
+# FIG: plot example of one-max
+# ------------------------------------------------------------------------------
 
 library(ecr)
 library(ggplot2)
 library(smoof)
 library(reshape2)
+
+# ------------------------------------------------------------------------------
 
 d = 15
 ps = makeParamSet(makeDiscreteVectorParam("x", len = d, values = c(0, 1)))
@@ -82,9 +85,6 @@ p = p + expand_limits(x=c(0, 17))
 p = p + geom_text(data=unique_sum, aes(x=16, y=iteration, label=sum), show.legend = FALSE)
 p = p + theme_bw()
 
-ggsave("figure_man/one_max_example.pdf", p, width = 7, height = 4)
-
-
-
-
+p
+ggsave("../figure_man/one_max_example.pdf", p, width = 7, height = 4)
 

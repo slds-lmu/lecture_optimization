@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------------------
+# multivariate first order
+
+# FIG: plot (non-)converging gradient descent for ackley
+# ------------------------------------------------------------------------------
+
 library(rgl)
 library(ggplot2)
 library(mlr3)
@@ -9,6 +15,8 @@ library(plot3D)
 library(data.table)
 
 set.seed(1234)
+
+# ------------------------------------------------------------------------------
 
 f = function(x1, x2) x1^2 + x2^2 # + 2 * x1 * x2# (x1^2 + x2 -11)^2  + (x1 + x2^2 - 7)^2 
 
@@ -23,7 +31,7 @@ data_table <- as.data.table(data)
 data_task <- as_task_regr(data, target='y')
 
 # Plot original task 
-pdf("figure_man/sgd_NN_0.pdf", 5, 5, colormodel = "cmyk")
+pdf("../figure_man/sgd_NN_0.pdf", 5, 5, colormodel = "cmyk")
 par(mfrow = c(1, 1))
 
 x1_scale = seq(-5, 5, 1)
@@ -91,7 +99,7 @@ train_model = function(task, task_predict = NULL, epochs, epochs_max = NULL, bat
   }
 
 
-  pdf(paste0("figure_man/sgd_NN_", epochs, "_surface_", batchsize,".pdf"), 5, 5, colormodel = "cmyk")
+  pdf(paste0("../figure_man/sgd_NN_", epochs, "_surface_", batchsize,".pdf"), 5, 5, colormodel = "cmyk")
 
   persp3D(x = x1_scale, y = x2_scale, z = z, xlab = "x1", ylab = "x2", zlab = "y",
       expand = 0.5, d = 2, phi = 10, theta = -60, resfac = 2,
@@ -119,5 +127,6 @@ for (batchs in c(0.2, 0.5, 0.8, 1)) {
   p = p + ylim(c(0, 400))
   p = p + annotate("text",label=paste0("Batch size: ",batchs, "*N"), x=50, y=10)
   print(p)
-  ggsave(filename = paste0("figure_man/sgd_NN_300_history_",batchs,".pdf"), p, width = 4, height = 3)
+  ggsave(filename = paste0("../figure_man/sgd_NN_300_history_",batchs,".pdf"), p, width = 4, height = 3)
 }
+

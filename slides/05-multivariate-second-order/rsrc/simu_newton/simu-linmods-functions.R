@@ -1,9 +1,17 @@
-# This script contains functions for generating synthetic data for linear and logistic regression models,
-# implementing optimization algorithms with various enhancements, and plotting the results.
-# The focus is on comparing different optimization methods and observing their effects on model training
-# under varying conditions, such as different condition numbers of the feature matrix.
+# ------------------------------------------------------------------------------
+# multivariate second order
 
-# Load libraries
+# FUNC: 
+#   (1) Functions for generating synthetic data for linear and 
+#     logistic regression models, implementing optimization 
+#     algorithms with various enhancements, 
+#     and plotting the results.
+#   (2) The focus is on comparing different optimization methods 
+#     and observing their effects on model training
+#     under varying conditions, 
+#     such as different condition numbers of the feature matrix.
+# ------------------------------------------------------------------------------
+
 library(MASS)
 library(ggplot2)
 library(gridExtra)
@@ -13,6 +21,8 @@ library(grid)
 library(reshape2)
 
 set.seed(123)
+
+# ------------------------------------------------------------------------------
 
 # Function to compute condition number
 compute_condition_number <- function(X) {
@@ -873,3 +883,4 @@ plot_runtime_comparison <- function(loss_histories, test_loss_histories, l2_diff
   
   return(combined_plot)
 }
+

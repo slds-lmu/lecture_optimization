@@ -1,5 +1,10 @@
-# This script contains functions for generating synthetic data for logistic regression models,
-# implementing Newton-Raphson and GD optimization and plotting the results.
+# ------------------------------------------------------------------------------
+# multivariate second order
+
+# FUNC: 
+#   Functions for generating synthetic data for logistic regression models,
+#   implementing Newton-Raphson and GD optimization and plotting the results.
+# ------------------------------------------------------------------------------
 
 # Load required libraries
 library(MASS)
@@ -21,9 +26,11 @@ if (current_file == "") {
 setwd(dirname(current_file))
 
 # Create 'figure_man' directory
-if (!dir.exists("../figure_man/simu_newton/")) {
-  dir.create("../figure_man/simu_newton/")
+if (!dir.exists("../../figure_man/simu-newton/")) {
+  dir.create("../../figure_man/simu-newton/")
 }
+
+# ------------------------------------------------------------------------------
 
 # newton-raphson step size
 nr_step = 0.7
@@ -81,9 +88,9 @@ pl <- plot_optimization_results(
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
 # Save as PNG/PDF
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_indep_50iters.png", plot = pl, width = 15, 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_indep_50iters.png", plot = pl, width = 15, 
        height = 5, dpi = 300)
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_indep_50iters.pdf", plot = pl, 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_indep_50iters.pdf", plot = pl, 
        width = 15, height = 5, device = cairo_pdf)
 print(pl)
 
@@ -95,9 +102,9 @@ pl_coef <- plot_coef_paths(
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
 # Save the coefficient paths plot
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_coef_50indep.png", 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_coef_50indep.png", 
        plot = pl_coef, width = 15, height = 4, dpi = 300)
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_coef_50indep.pdf", 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_coef_50indep.pdf", 
        plot = pl_coef, width = 15, height = 4, device = cairo_pdf)
 
 plot(pl_coef)
@@ -113,9 +120,9 @@ pl_runtime <- plot_runtime_comparison(
 )
 
 # Save the runtime comparison plot
-ggsave(filename = "../figure_man/simu_newton/NR_GD_runtime_comparison.png", 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_runtime_comparison.png", 
        plot = pl_runtime, width = 15, height = 6, dpi = 300)
-ggsave(filename = "../figure_man/simu_newton/NR_GD_runtime_comparison.pdf", 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_runtime_comparison.pdf", 
        plot = pl_runtime, width = 15, height = 6, device = cairo_pdf)
 
 print(pl_runtime)
@@ -162,9 +169,9 @@ pl <- plot_optimization_results(
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
 # Save as PNG/PDF
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_indep_1000iters.png", plot = pl, width = 15, 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_indep_1000iters.png", plot = pl, width = 15, 
        height = 5, dpi = 300)
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_indep_1000iters.pdf", plot = pl, 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_indep_1000iters.pdf", plot = pl, 
        width = 15, height = 5, device = cairo_pdf)
 print(pl)
 
@@ -176,9 +183,9 @@ pl_coef <- plot_coef_paths(
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
 # Save the coefficient paths plot
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_coef_1000indep.png", 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_coef_1000indep.png", 
        plot = pl_coef, width = 15, height = 4, dpi = 300)
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_coef_1000indep.pdf", 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_coef_1000indep.pdf", 
        plot = pl_coef, width = 15, height = 4, device = cairo_pdf)
 
 plot(pl_coef)
@@ -225,9 +232,9 @@ pl <- plot_optimization_results(
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
 # Save as PNG/PDF
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_indep_50iters_corr.png", plot = pl, width = 15, 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_indep_50iters_corr.png", plot = pl, width = 15, 
        height = 5, dpi = 300)
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_indep_50iters_corr.pdf", plot = pl, 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_indep_50iters_corr.pdf", plot = pl, 
        width = 15, height = 5, device = cairo_pdf)
 print(pl)
 
@@ -239,9 +246,9 @@ pl_coef <- plot_coef_paths(
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
 # Save the coefficient paths plot
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_coef_50indep_corr.png", 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_coef_50indep_corr.png", 
        plot = pl_coef, width = 15, height = 4, dpi = 300)
-ggsave(filename = "../figure_man/simu_newton/NR_GD_log_coef_50indep_corr.pdf", 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_log_coef_50indep_corr.pdf", 
        plot = pl_coef, width = 15, height = 4, device = cairo_pdf)
 
 plot(pl_coef)
@@ -257,9 +264,10 @@ pl_runtime <- plot_runtime_comparison(
 )
 
 # Save the runtime comparison plot
-ggsave(filename = "../figure_man/simu_newton/NR_GD_runtime_comparison_corr.png", 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_runtime_comparison_corr.png", 
        plot = pl_runtime, width = 15, height = 6, dpi = 300)
-ggsave(filename = "../figure_man/simu_newton/NR_GD_runtime_comparison_corr.pdf", 
+ggsave(filename = "../../figure_man/simu-newton/NR_GD_runtime_comparison_corr.pdf", 
        plot = pl_runtime, width = 15, height = 6, device = cairo_pdf)
 
 print(pl_runtime)
+

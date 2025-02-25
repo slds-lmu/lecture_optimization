@@ -1,7 +1,15 @@
+# ------------------------------------------------------------------------------
+# multicrit
+
+# DATA: benchmark result data.
+# ------------------------------------------------------------------------------
+
 library(mlr)
 library(mlrMBO)
 library(batchtools)
 library(checkmate)
+
+# ------------------------------------------------------------------------------
 
 lrn = makeLearner("classif.svm", predict.type = "response") 
 tsk = spam.task
@@ -13,9 +21,11 @@ make_mbo_multi_control = function(multi_method) {
   mbo_ctrl = setMBOControlMultiObj(mbo_ctrl, method = multi_method)
   if (multi_method == "dib") {
     mbo_ctrl = setMBOControlInfill(mbo_ctrl, crit = crit.dib1)
+    
   }
   makeTuneMultiCritControlMBO(n.objectives = 2, mbo.control = mbo_ctrl)
 }
+
 
 tune_ctrls = list(
   grid = makeTuneMultiCritControlGrid(resolution = ceiling(sqrt(n_evals))),
@@ -29,6 +39,7 @@ ps = makeParamSet(
   makeNumericParam("cost", lower = -3, upper = 3, trafo = function(x) 10^x),
   makeNumericParam("gamma", lower = -3, upper = 3, trafo = function(x) 10^x)
 )
+
 
 rsmp_tuning = makeResampleDesc("CV", iters = 5)
 rsmp_outer = makeResampleDesc("CV", iters = 10)

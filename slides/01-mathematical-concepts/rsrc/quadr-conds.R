@@ -1,4 +1,11 @@
+# ------------------------------------------------------------------------------
+# mathematical concepts
+
+# FIG: contour plot for quadratic form with different eigenvalues
+# ------------------------------------------------------------------------------
+library(ggplot2)
 library(plotly)
+# ------------------------------------------------------------------------------
 
 W <- cbind(c(1, 1), c(1, -1)) / sqrt(2)
 
@@ -41,3 +48,7 @@ fig <- subplot(fig1, fig2, fig3) %>%
     width = 1200,
     height = 400
   )
+
+
+htmlwidgets::saveWidget(fig, "../figure_man/quadr-conds.html", selfcontained = TRUE)
+

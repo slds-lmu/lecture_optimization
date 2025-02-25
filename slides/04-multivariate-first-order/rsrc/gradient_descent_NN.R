@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------------------
+# multivariate first order
+
+# FIG: plot gradient descent of branin
+# ------------------------------------------------------------------------------
+
 library(rgl)
 library(ggplot2)
 library(mlr3)
@@ -5,9 +11,11 @@ library(viridis)
 library(plot3D)
 library(data.table)
 
-source("rsrc/NN_helpers.R")
+source("NN_helpers.R")
 
 set.seed(1234)
+
+# ------------------------------------------------------------------------------
 
 # ORIGINAL DATASET AND TASK 
 f = function(x1, x2) x1^2 + x2^2 # + 2 * x1 * x2# (x1^2 + x2 -11)^2  + (x1 + x2^2 - 7)^2 
@@ -33,7 +41,7 @@ for(i in 1:length(x1_scale)) {
 }
 
 # Plot original task 
-pdf("figure_man/gradient_descent_NN_0.pdf", 5, 5, colormodel = "cmyk")
+pdf("../figure_man/gradient_descent_NN_0.pdf", 5, 5, colormodel = "cmyk")
 par(mfrow = c(1, 1))
 
 persp3D(x = x1_scale, y = x2_scale, z = z, xlab = "x1", ylab = "x2", zlab = "y",
@@ -60,7 +68,7 @@ for (mom in c(0, 0.5)) {
   p = p + ylim(c(0, 130)) 
   p = p + annotate("text",label=paste0("Momentum: ",mom), x=50, y=10)
   print(p)
-  ggsave(filename = paste0("figure_man/gradient_descent_NN_300_history_",mom,".pdf"), p, width = 4, height = 3)
+  ggsave(filename = paste0("../figure_man/gradient_descent_NN_300_history_",mom,".pdf"), p, width = 4, height = 3)
 }
 
 
@@ -82,9 +90,9 @@ p = ggplot(data = df, aes(x = epoch, y = loss, colour = bs_fraction)) + geom_lin
 # p = p + ylim(c(0, 130)) 
 p = p + theme_bw() + ggtitle("SGD with different batch sizes")
 p
-ggsave(filename = "figure_man/gradient_descent_NN_SGD_vs_no_SGD.pdf", width = 5, height = 3)
+ggsave(filename = "../figure_man/gradient_descent_NN_SGD_vs_no_SGD.pdf", width = 5, height = 3)
 
-ggsave(filename = "figure_man/gradient_descent_NN_SGD_vs_no_SGD_2.pdf", width = 5, height = 3)
+ggsave(filename = "../figure_man/gradient_descent_NN_SGD_vs_no_SGD_2.pdf", width = 5, height = 3)
 
 
 ## DIFFERENT OPTIMIZERS 
@@ -106,5 +114,5 @@ p = ggplot(data = df, aes(x = log(epoch), y = loss, colour = optimizer)) + geom_
 # p = p + ylim(c(0, 130)) 
 p = p + theme_bw() + ggtitle("Different optimizers")
 p
-ggsave(filename = "figure_man/gradient_descent_NN_ADAM_SGD_RMS_ADAGRAD.pdf", width = 5, height = 3)
+ggsave(filename = "../figure_man/gradient_descent_NN_ADAM_SGD_RMS_ADAGRAD.pdf", width = 5, height = 3)
 
