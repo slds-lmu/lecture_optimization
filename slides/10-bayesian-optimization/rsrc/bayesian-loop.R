@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------------------
+# bayesian optimization
+
+# FIG: perform Bayesian Optimization (BO) using Expected Improvement (EI). 
+# ------------------------------------------------------------------------------
+
 library(bbotk)
 library(data.table)
 library(mlr3mbo)
@@ -6,6 +12,9 @@ library(ggplot2)
 library(patchwork)
 
 set.seed(123)
+
+# ------------------------------------------------------------------------------
+
 objective = ObjectiveRFunDt$new(
  fun = function(xdt) data.table(y = 2 * xdt$x * sin(14 * xdt$x)),
  domain = ps(x = p_dbl(lower = 0, upper = 1)),
@@ -33,7 +42,7 @@ g = ggplot() +
   ylim(c(-2, 2.2)) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/bayesian_loop_ee.png"), plot = g, width = 5, height = 4)
+ggsave("../figure_man/bayesian_loop_ee.png", plot = g, width = 5, height = 4)
 
 surrogate = srlrn(lrn("regr.km", covtype = "matern5_2", optim.method = "BFGS"), archive = instance$archive)
 acq_function = acqf("ei", surrogate = surrogate)
@@ -61,7 +70,7 @@ g = ggplot(aes(x = x, y = y), data = grid) +
   ylim(c(-2, 2.2)) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/bayesian_loop_sm.png"), plot = g, width = 5, height = 4)
+ggsave("../figure_man/bayesian_loop_sm.png", plot = g, width = 5, height = 4)
 
 # intial design + surrogate prediction + best
 g = ggplot(aes(x = x, y = y), data = grid) +
@@ -74,7 +83,7 @@ g = ggplot(aes(x = x, y = y), data = grid) +
   ylim(c(-2, 2.2)) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/bayesian_loop_sm_fmin.png"), plot = g, width = 5, height = 4)
+ggsave("../figure_man/bayesian_loop_sm_fmin.png", plot = g, width = 5, height = 4)
 
 # intial design + surrogate prediction + normal
 ei_argmax_normal = data.table(y = seq(-2, 2.2, by = 0.01))
@@ -92,7 +101,7 @@ g = ggplot(aes(x = x, y = y), data = grid) +
   ylim(c(-2, 2.2)) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/bayesian_loop_sm_normal.png"), plot = g, width = 5, height = 4)
+ggsave("../figure_man/bayesian_loop_sm_normal.png", plot = g, width = 5, height = 4)
 
 # intial design + surrogate prediction + best + normal
 ei_argmax_normal = data.table(y = seq(-2, 2.2, by = 0.01))
@@ -112,7 +121,7 @@ g = ggplot(aes(x = x, y = y), data = grid) +
   ylim(c(-2, 2.2)) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/bayesian_loop_sm_normal_fmin.png"), plot = g, width = 5, height = 4)
+ggsave("../figure_man/bayesian_loop_sm_normal_fmin.png", plot = g, width = 5, height = 4)
 
 # initial design + surrogate prediction + arg max of ei + ei
 
@@ -147,7 +156,7 @@ ei = ggplot(aes(x = x, y = ei), data = grid) +
   ylab("EI") +
   theme_minimal()
 
-ggsave(file.path("../figure_man/bayesian_loop_1.png"), plot = g / ei, width = 5, height = 4)
+ggsave("../figure_man/bayesian_loop_1.png", plot = g / ei, width = 5, height = 4)
 
 old_ei_argmax = ei_argmax
 
@@ -182,7 +191,7 @@ for (i in 2:6) {
     ylab("EI") +
     theme_minimal()
   
-  ggsave(file.path(sprintf("../figure_man/bayesian_loop_%i.png", i)), plot = g / ei, width = 5, height = 4)
+  ggsave(sprintf("../figure_man/bayesian_loop_%i.png", i), plot = g / ei, width = 5, height = 4)
 
   old_ei_argmax = ei_argmax
   

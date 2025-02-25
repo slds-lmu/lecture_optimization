@@ -1,8 +1,9 @@
-# Optimization WiSe 22/23
-# Chapter 2.1 Other optimization problems
-# Plot Logistic Regression with and without Regularization
+# ------------------------------------------------------------------------------
+# optimization problems
 
-# TASK 
+# FIG: plot logistic regression with (l1, l2) and without regularization
+# ------------------------------------------------------------------------------
+
 set.seed(314)
 
 library(mlr3)
@@ -10,6 +11,8 @@ library(glmnet)
 library(data.table)
 library(ggplot2)
 library(ggnewscale)
+
+# DATA -------------------------------------------------------------------------
 
 ### Calculate Bernoulli / Log Loss
 calc_log_loss <- function(theta, X, y, lambda=0, alpha = 1){
@@ -42,6 +45,8 @@ y <- rbinom(n,1,pr)
 df <- mydf
 df$y <- y
 
+# PLOT -------------------------------------------------------------------------
+
 plot_elasticnet = function(data, grid, alpha, lambda) {
 
   # Fit LogReg with and without regularization
@@ -72,8 +77,8 @@ plot_elasticnet = function(data, grid, alpha, lambda) {
 
 p = plot_elasticnet(df, grid, 1, 0)
 p = p + ggtitle(expression(paste("Unregularized ", R[emp]))) 
-
-ggsave(paste0("figure_man/logreg-0.pdf"), p, width = 4, height = 3)
+p
+ggsave("../figure_man/logreg-0.pdf", p, width = 4, height = 3)
 
 ### Helper grid for Loss calculation
 b1 <- seq(-0.25,0.5,length.out = 100)
@@ -88,7 +93,7 @@ for (alpha in c(0, 0.5, 1)) {
     p = p + ggtitle(bquote("Reg. risk with  " ~ lambda ~ "=" ~ .(lambda) ~ ", " ~ alpha ~ "=" ~ .(alpha))) 
     p = p + theme(legend.position="none")
 
-    ggsave(paste0("figure_man/logreg-", alpha, "-", lambda, ".pdf"), p, width = 3.5, height = 3.5)
+    ggsave(paste0("../figure_man/logreg-", alpha, "-", lambda, ".pdf"), p, width = 3.5, height = 3.5)
 
   } 
 }

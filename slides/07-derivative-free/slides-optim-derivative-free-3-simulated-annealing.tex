@@ -12,7 +12,7 @@
   }{% Lecture title  
   Simulated Annealing
   }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/sa-iter3_probabilities
+  figure_man/himmelblau-iter3_probabilities
   }{
     \item Motivation
     \item Metropolis algorithm
@@ -50,7 +50,7 @@
 
 \begin{figure}
     \centering
-    \includegraphics[height=0.4\textheight,keepaspectratio]{figure_man/local-search.png}
+    \includegraphics[height=0.4\textheight,keepaspectratio]{figure_man/metropolis-local-search.png}
     \caption*{
         \footnotesize
         Simple stochastic local search: Acceptance (green) and rejection range (red)}
@@ -281,8 +281,8 @@ Choosing neighborhood:
 
 % \begin{center}
 %     \centering
-%     \includegraphics[width=0.54\textwidth]{figure_man/sa-himmelblauFun3D.png}
-%     \includegraphics[width=0.3\textwidth]{figure_man/sa-himmelblauFun2D.pdf}
+%     \includegraphics[width=0.54\textwidth]{figure_man/himmelblau-Fun3D.png}
+%     \includegraphics[width=0.3\textwidth]{figure_man/himmelblau-Fun2D.pdf}
 % \end{center}
 
 % Perform $100$ iterations of simulated annealing:
@@ -299,13 +299,13 @@ Choosing neighborhood:
 % \begin{frame}{Example: simulated annealing}
 
 % \begin{figure}
-%   \includegraphics<1>[width=0.9\textwidth]{figure_man/sa-iter1.pdf}%
-%   \includegraphics<2>[width=0.9\textwidth]{figure_man/sa-iter2.pdf}%
-%   \includegraphics<3>[width=0.9\textwidth]{figure_man/sa-iter3.pdf}%
-%   \includegraphics<4>[width=0.9\textwidth]{figure_man/sa-iter4.pdf}%
-%   \includegraphics<5>[width=0.9\textwidth]{figure_man/sa-iter5.pdf}%
-%   \includegraphics<6>[width=0.9\textwidth]{figure_man/sa-iter6.pdf}%
-%   \includegraphics<7>[width=0.9\textwidth]{figure_man/sa-iter7.pdf}
+%   \includegraphics<1>[width=0.9\textwidth]{figure_man/himmelblau-iter1.pdf}%
+%   \includegraphics<2>[width=0.9\textwidth]{figure_man/himmelblau-iter2.pdf}%
+%   \includegraphics<3>[width=0.9\textwidth]{figure_man/himmelblau-iter3.pdf}%
+%   \includegraphics<4>[width=0.9\textwidth]{figure_man/himmelblau-iter4.pdf}%
+%   \includegraphics<5>[width=0.9\textwidth]{figure_man/himmelblau-iter5.pdf}%
+%   \includegraphics<6>[width=0.9\textwidth]{figure_man/himmelblau-iter6.pdf}%
+%   \includegraphics<7>[width=0.9\textwidth]{figure_man/himmelblau-iter7.pdf}
 %   \caption*{
 %     \scriptsize
 %     \textbf{Left:} Contours of Himmelblau function.
@@ -323,7 +323,7 @@ Choosing neighborhood:
 % \end{itemize}
 
 % \only<3>{
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-iter1.png}
+%   \includegraphics[width=0.49\textwidth]{figure_man/himmelblau-iter1.png}
 %   \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter1.png}\\
 
 %   \begin{itemize}
@@ -332,7 +332,7 @@ Choosing neighborhood:
 %   \end{itemize}}%
 
 % \only<4>{
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-iter1.png}
+%   \includegraphics[width=0.49\textwidth]{figure_man/himmelblau-iter1.png}
 %   \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter1.png}\\
 
 %   \begin{itemize}
@@ -340,7 +340,7 @@ Choosing neighborhood:
 %   \end{itemize}}%
 
 % \only<4>{
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-iter1.png}
+%   \includegraphics[width=0.49\textwidth]{figure_man/himmelblau-iter1.png}
 %   \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter1.png}\\
 
 %   \begin{itemize}
@@ -348,7 +348,7 @@ Choosing neighborhood:
 %   \end{itemize}}%
 
 % \only<4>{
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-iter1.png}
+%   \includegraphics[width=0.49\textwidth]{figure_man/himmelblau-iter1.png}
 %   \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter1.png}\\
 
 %   \begin{itemize}
@@ -356,21 +356,21 @@ Choosing neighborhood:
 %   \end{itemize}}%
 
 
-% %\only<3>{\includegraphics[height = 5cm, width=5.5cm]{figure_man/sa-iter2.png}}%
+% %\only<3>{\includegraphics[height = 5cm, width=5.5cm]{figure_man/himmelblau-iter2.png}}%
 % %\only<3>{\includegraphics[height = 5cm, width=5.5cm]{figure_man/sa-probs-iter2.png}%
 %  % \begin{itemize}
 %   %      \item Left: new point
 %    %     \item Right: probability of acceptance $P = \exp(-\frac{\Delta f}{T})$ regarding the new point
 %   %\end{itemize}}%
 
-% \only<3>{\includegraphics[width=0.49\textwidth]{figure_man/sa-iter50.png}
+% \only<3>{\includegraphics[width=0.49\textwidth]{figure_man/himmelblau-iter50.png}
 %           \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter50.png}\\
 
 %           \begin{itemize}
 %           \item Left: temperature at the beginning constantly high; points scatter strongly (exploration)
 %           \item Right: Downgrading of the acceptance probability still clearly visible (contour lines can still be clearly differentiated)
 %           \end{itemize}}%
-% \only<4>{\includegraphics[width=0.49\textwidth]{figure_man/sa-iter100.png}
+% \only<4>{\includegraphics[width=0.49\textwidth]{figure_man/himmelblau-iter100.png}
 %           \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter100.png}\\
 
 %           \begin{itemize}

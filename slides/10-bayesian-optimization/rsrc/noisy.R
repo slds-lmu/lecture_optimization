@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------------------
+# bayesian optimization
+
+# FIG: perform Bayesian optimization while considering noisy function evaluations.
+# ------------------------------------------------------------------------------
+
 library(bbotk)
 library(data.table)
 library(mlr3mbo)
@@ -6,6 +12,9 @@ library(ggplot2)
 library(patchwork)
 
 set.seed(123)
+
+# ------------------------------------------------------------------------------
+
 objective = ObjectiveRFunDt$new(
  fun = function(xdt) data.table(y = 2 * xdt$x * sin(14 * xdt$x)),
  domain = ps(x = p_dbl(lower = 0, upper = 1)),

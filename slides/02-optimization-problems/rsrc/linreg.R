@@ -1,14 +1,16 @@
-# Optimization WiSe 22/23
-# Chapter 2.1 Other optimization problems
-# Plot Logistic Regression with and without Regularization
+# ------------------------------------------------------------------------------
+# optimization problems
 
-# TASK 
+# FIG: plot logistic regression with (l1, l2) and without regularization
+# ------------------------------------------------------------------------------
 set.seed(314)
 
 library(data.table)
 library(ggplot2)
 library(ggnewscale)
 library(ggpubr)
+
+# DATA -------------------------------------------------------------------------
 
 ### Calculate Bernoulli / Log Loss
 calc_l2_loss <- function(theta, X, y, lambda=0, alpha = 1){
@@ -38,6 +40,8 @@ mydf <- data.frame(
 y <- 2*mydf$x1 + 3*mydf$x2 + rnorm(n, sd = 0.5)
 df <- mydf
 df$y <- y
+
+# PLOT -------------------------------------------------------------------------
 
 plot_elasticnet = function(data, grid, alpha, lambda) {
 
@@ -78,5 +82,5 @@ p3 = plot_elasticnet(df, grid, lambda = 200, alpha = 0)
 p3 = p3 + ggtitle(expression(paste("Ridge"))) 
 
 p = ggarrange(p1, p2, p3, ncol=3, nrow=1, common.legend = TRUE, legend="right")
-
-ggsave(paste0("figure_man/linreg.pdf"), p, width = 8, height = 3)
+p
+ggsave("../figure_man/linreg.pdf", p, width = 8, height = 3)

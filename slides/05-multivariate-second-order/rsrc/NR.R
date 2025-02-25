@@ -1,11 +1,15 @@
-### Lecture: Optimizaiton, WiSe22/23
-### Section 5.1 Newton-Raphson
-### Plot Newton-Raphson vs GD
+# ------------------------------------------------------------------------------
+# multivariate second order
+
+# FIG: plot Newton-Raphson vs GD
+# ------------------------------------------------------------------------------
 
 options(warn = 1)
 library(ggplot2)
 
 source("../../vistool/optimvis.R")
+
+# ------------------------------------------------------------------------------
 
 #https://www.sfu.ca/~ssurjano/Code/ackleyr.html
 ackley <- function(xx, a=20, b=0.2, c=2*pi) {
@@ -47,11 +51,11 @@ optimGD$optimize(objGD)
 # Visualization
 visNR = Visualizer$new(obj = objNR, run_archs = list(objNR$archive, objGD$archive), x1lim = c(-2, 2), x2lim = c(-1, 3))
 
-png(file="figure_man/NR_1.png",width=400, height=350)
+png(file="../figure_man/NR_1.png",width=400, height=350)
 visNR$plot_y_trace()
 dev.off()
 
-png(file="figure_man/NR_2.png",width=400, height=350)
+png(file="../figure_man/NR_2.png",width=400, height=350)
 visNR$plot_rbase_contour(20)
 dev.off()
 

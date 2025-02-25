@@ -1,19 +1,34 @@
-# Vizualization of NSGAII
+# ------------------------------------------------------------------------------
+# multicrit
+
+# FIG: Vizualization of NSGAII
+#    (1) Steps: evolution of the population at iterations 1, 3, and 10.
+#    (2) NDS: Displays the population split into non-dominated fronts 
+#             using different colors, with dashed lines connecting points 
+#             within each front for visual separation.
+#    (3) CS1: Points in Pareto front with the smallest and largest crowding dist.
+#    (4) CS2: Demonstrates regions of the Pareto front with colored boxes 
+#             highlighting specific crowding distances, showing how diversity 
+#             in the solution space is maintained.
+# ------------------------------------------------------------------------------
 
 library(smoof)
 library(ggplot2)
 library(ecr)
 library(gridExtra)
 library(grid)
+set.seed(666)
+
+# ------------------------------------------------------------------------------
 
 # viz in objective space 2 crit
 plotObjectiveSpace2Crit = function(smoof.fun) {
   des = generateRandomDesign(n = 10000L, par.set = getParamSet(smoof.fun))
   des.eval = apply(des, 1, smoof.fun)
   des.eval.df = data.frame(t(des.eval))
-  names(des.eval.df) = c("c1", "c2")
+  names(des.eval.df) = c("x1", "x2")
   
-  p = ggplot() + geom_point(data = des.eval.df, aes(x = c1, y = c2), size = 0.7, color = "grey", alpha = 0.2)
+  p = ggplot() + geom_point(data = des.eval.df, aes(x = x1, y = x2), size = 0.7, color = "grey", alpha = 0.2)
   
   p = p + theme_bw()
   return(p)
@@ -35,7 +50,6 @@ LAMBDA = 20L
 mutator = setup(mutPolynomial, eta = 25, p = 0.2, lower = lower, upper = upper)
 recombinator = setup(recSBX, eta = 15, p = 0.7, lower = lower, upper = upper)
 
-set.seed(1)
 res = ecr(fitness.fun = fn, lower = lower, upper = upper, mu = MU, lambda = LAMBDA, representation = "float", survival.strategy = "plus", 
   parent.selector = selSimple, mutator = mutator, 
   recombinator = recombinator, survival.selector = selNondom, 
@@ -52,8 +66,8 @@ for (i in c(1, 3, 5, 10)) {
 }
 
 g = grid.arrange(p1, p3, p10, ncol = 3)
-
-ggsave(grid.draw(g), file = "images/NSGA2_steps.png", width = 8, height = 4)
+g
+ggsave(g, file = "../figure_man/NSGA2_steps.png", width = 8, height = 4)
 
 
 # non-dominated sorting
@@ -69,11 +83,14 @@ popdf$Front = factor(sorted$ranks, ordered = TRUE, levels = ranks)
 
 pl = p + geom_point(data = popdf[popdf$Front %in% ranks, ], aes(x = X1, y = X2, colour = Front)) 
 pl = pl + geom_line(data = popdf[popdf$Front %in% ranks, ], aes(x = X1, y = X2, colour = Front), lty = 2)
-ggsave(pl, file = "images/NSGA2_NDS.png", width = 4, height = 3)
+pl
+ggsave(pl, file = "../figure_man/NSGA2_NDS.png", width = 4, height = 3)
 
 
 # Crowd Sort - Example 1
-F3 = popdf[which(popdf$Front == rank_max), ]
+front_plot = 3
+F3 = popdf[which(popdf$Front == front_plot), ]
+row.names(F3) <- seq_len(nrow(F3))
 cd = computeCrowdingDistance(t(as.matrix(F3[, c("X1", "X2")])))
 
 pl = p + geom_point(data = F3, aes(x = X1, y = X2), alpha = 0.3)
@@ -88,7 +105,7 @@ pl2 = pl2
 
 g = grid.arrange(pl1, pl2, ncol = 2)
 
-ggsave(grid.draw(g), file = "images/NSGA2_CS1.png", width = 6, height = 3)
+ggsave(g, file = "../figure_man/NSGA2_CS1.png", width = 6, height = 3)
 
 
 cdo = order(cd, decreasing = TRUE)[c(5, length(cd)-1)]
@@ -107,8 +124,8 @@ pl1 = pl1 + theme(legend.position = "none")
 pl1 = pl1 + geom_line(data = F3, aes(x = X1, y = X2), lty = 2)
 pl1 = pl1 + geom_rect(data = cuboids, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, colour = point, fill = point), alpha = 0.2)
 pl1 = pl1 + geom_point(data = cuboids, aes(x = x, y = y, colour = point, fill = point), size = 3)
-
-ggsave(pl1, file = "images/NSGA2_CS2.png", width = 3, height = 3)
+pl1
+ggsave(pl1, file = "../figure_man/NSGA2_CS2.png", width = 3, height = 3)
 
 
 

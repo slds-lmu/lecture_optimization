@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------------------
+# multivariate first order
+
+# FIG: plot bisection method process
+# ------------------------------------------------------------------------------
+
 library(knitr)
 library(microbenchmark)
 library(snow)
@@ -5,8 +11,9 @@ library(colorspace)
 library(ggplot2)
 library(zoo)
 library(gridExtra)
-source("rsrc/functions.R")
 
+source("functions.R")
+# ------------------------------------------------------------------------------
 
 f = function(x) - x^3 + 6 * x^2 - 9 * x + 2
 tangent = function(x) - 9 * x + 2
@@ -35,4 +42,5 @@ plot = plot + geom_text(aes(x = 1, y = -1, label = "Armijo rule holds"), color =
 plot = plot + xlab(expression(alpha)) + ylab("y")
 plot = plot + xlim(c(0, 4)) + ylim(c(-2, 3)) + theme_bw()
 
-ggsave(filename = paste0("figure_man/armijo.pdf"), plot, width = 6, height = 4)
+plot
+ggsave("../figure_man/armijo.pdf", plot, width = 6, height = 4)

@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------------------
+# bayesian optimization
+
+# FIG: perform Bayesian optimization for a 2D function using the Expected Improvement (EI).
+# ------------------------------------------------------------------------------
+
 library(bbotk)
 library(data.table)
 library(mlr3mbo)
@@ -6,6 +12,9 @@ library(ggplot2)
 library(patchwork)
 
 set.seed(123)
+
+# ------------------------------------------------------------------------------
+
 objective = ObjectiveRFunDt$new(
  fun = function(xdt) data.table(y = cos(xdt$x1 - xdt$x2)),
  domain = ps(x1 = p_dbl(lower = 0, upper = 10), x2 = p_dbl(lower = 0, upper = 10)),

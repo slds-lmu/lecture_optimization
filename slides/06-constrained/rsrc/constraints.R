@@ -1,4 +1,12 @@
-#### Linear constraints plot
+# ------------------------------------------------------------------------------
+# constrained
+
+# FIG: plot linear constraints
+# ------------------------------------------------------------------------------
+
+library(ggplot2)
+
+# ------------------------------------------------------------------------------
 
 # a functions that draws a circle
 circle = function(center = c(0,0), diameter = 2, npoints = 100){
@@ -22,8 +30,7 @@ plot = plot + geom_abline(intercept = 2, slope = -1, color = "#666666", size = 1
 plot = plot + geom_abline(intercept = 3, slope = -1, color = "#666666", size = 1) + geom_text(label ="- x[1] - x[2] == -3", x = 2, y = 1.5, parse = TRUE, color = "#666666")
 plot = plot + geom_segment(aes(x = 1.5, y = 1.5, xend = 1, yend = 1), colour = "#999999", arrow = arrow(length = unit(0.03, "npc")), lwd = .5)
 plot
-ggsave("figure_man/constraints_violated.pdf")
-
+ggsave("../figure_man/constraints_violated.pdf")
 
 # second plot for satisfied constraints
 dat = circle()
@@ -39,7 +46,7 @@ plot = plot + geom_abline(intercept = 1, slope = -1, size = 1) + geom_text(label
 plot = plot + geom_segment(aes(x = 0, y = 0, xend = .5, yend = .5), arrow = arrow(length = unit(0.03, "npc")), lwd = .5)
 
 plot
-ggsave("figure_man/constraints_satisfied.pdf")
+ggsave("../figure_man/constraints_satisfied.pdf")
 
 
 # second plot for satisfied constraints
@@ -64,5 +71,5 @@ plot = plot + geom_text(x = 1, y = 0.7, label = "- nabla~f(x)", parse = TRUE)
 
 
 plot
-ggsave("figure_man/constraints_opt.pdf")
+ggsave("../figure_man/constraints_opt.pdf")
 

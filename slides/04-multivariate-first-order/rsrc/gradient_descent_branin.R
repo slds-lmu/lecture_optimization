@@ -1,18 +1,19 @@
-# Optimization WiSe 22/23
-# Chapter 4.1 
-# Plot gradient descent
+# ------------------------------------------------------------------------------
+# multivariate first order
+
+# FIG: plot gradient descent of branin
+# ------------------------------------------------------------------------------
 
 library(DiceKriging) # Mod. branin function: https://www.sfu.ca/~ssurjano/Code/braninr.html
+library(rootSolve) #gradient()
 
+# ------------------------------------------------------------------------------
 
 n.grid <- 20
 x.grid <- y.grid <- seq(0,1,length=n.grid)
 design.grid <- expand.grid(x.grid, y.grid)
 response.grid <- apply(design.grid, 1, branin)
 z.grid <- matrix(response.grid, n.grid, n.grid)
-
-
-library(rootSolve) #gradient()
 
 create_point <- function(x0) {
   neggrad <- -gradient(branin, x0)
@@ -56,9 +57,8 @@ y_values <- data.frame(matrix(ncol=nrow(starting_points), nrow=max(steps)))
 y_values <- rbind(y_start, y_values)
 
 # create plot
-
 plot.new()
-pdf(file = "figure_man/gradient_descent_branin.pdf",   # The directory you want to save the file in
+pdf(file = "../figure_man/gradient_descent_branin.pdf",   # The directory you want to save the file in
     width = 5.5, # The width of the plot in inches
     height = 5) # The height of the plot in inches
 
@@ -87,7 +87,7 @@ dev.off()
 
 
 ######
-pdf(file = "figure_man/gradient_descent_branin2.pdf",   # The directory you want to save the file in
+pdf(file = "../figure_man/gradient_descent_branin2.pdf",   # The directory you want to save the file in
     width = 5.5, # The width of the plot in inches
     height = 5) # The height of the plot in inches
 

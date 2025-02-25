@@ -1,3 +1,10 @@
+# ------------------------------------------------------------------------------
+# multicrit
+
+# DATA: implement a multi-objective hyperparameter optimization of 
+#     an SVM classifier on the Spam dataset using the ParEGO approach.
+# ------------------------------------------------------------------------------
+
 library(mlr)
 library(mlrMBO)
 library(checkmate)
@@ -6,6 +13,9 @@ library(data.table)
 library(ggplot2)
 library(parallelMap)
 set.seed(1)
+
+# ------------------------------------------------------------------------------
+
 tsk = spam.task
 #tsk = sonar.task
 n_evals = 100
@@ -152,7 +162,7 @@ g = g + labs(
 if (interactive()) {
   print(g)
 }
-ggsave("../images/example_parego_spam.png", g, height = 5, width = 6)
+ggsave("../figure_man/example_parego_spam.png", g, height = 5, width = 6)
 
 emoa::dominated_hypervolume(points = t(as.matrix(opdf[tuner == "rs", .(fpr,1-tpr)])), ref = c(1,1))
 # 0.9586348
@@ -174,7 +184,7 @@ g = g + labs(title = "Tuning Validation: SVM on spam dataset", subtitle = "posit
 if (interactive()) {
   print(g)
 }
-ggsave("../images/example_parego_spam_outer.png", g, height = 5, width = 6)
+ggsave("../figure_man/example_parego_spam_outer.png", g, height = 5, width = 6)
 
 # outer pareto
 
@@ -193,7 +203,7 @@ g = g + labs(title = "Tuning Validation: SVM on spam dataset", subtitle = "posit
 if (interactive()) {
   print(g)
 }
-ggsave("../images/example_parego_spam_outer_pareto.png", g, height = 5, width = 6)
+ggsave("../figure_man/example_parego_spam_outer_pareto.png", g, height = 5, width = 6)
 
 
 

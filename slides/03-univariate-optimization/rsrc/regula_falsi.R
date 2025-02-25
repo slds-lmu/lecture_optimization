@@ -1,7 +1,13 @@
+# ------------------------------------------------------------------------------
+# univariate optimization
+
+# FIG: plot secant method process
+# ------------------------------------------------------------------------------
+
 x = seq(3, 5.5, length = 200)
 f = function(x) sin(x) * -1 - 0.3
 
-png('figure_man/regula_falsi.png', width = 480, height = 320)
+png('../figure_man/regula_falsi.png', width = 480, height = 320)
 
 plot(f(x) ~ x, type = "l")
 x1 = 3.2; x2 = 5.3
