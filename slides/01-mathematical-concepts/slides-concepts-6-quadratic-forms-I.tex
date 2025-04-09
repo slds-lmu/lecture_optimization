@@ -137,7 +137,7 @@ Therefore, $q(\xv) = \tilde q(\xv)$ with $\tilde q(\xv) = \xv^T \tilde \Amat \xv
         \vspace{-0.5\baselineskip}
         
         \begin{equation*}
-            \nabla q(\xv) = \left(\Amat^T + \Amat\right) \xv + \bm{b} = 2 \Amat \xv + \bm{b} \in \R^d
+            \nabla q(\xv) = (\left(\Amat^T + \Amat\right) \xv + \bm{b})^T = (2 \Amat \xv + \bm{b})^T \in \R^{1\times d}
         \end{equation*}
 
         \vspace{-0.25\baselineskip}
@@ -145,7 +145,7 @@ Therefore, $q(\xv) = \tilde q(\xv)$ with $\tilde q(\xv) = \xv^T \tilde \Amat \xv
         Derivative in direction $\bm{v}\in \R^d$ is (by chain rule)
     
         \begin{equation*}
-            \frac{\text{d}q(\xv + h \cdot \bm{v})}{\text{d}h}~\bigg\rvert_{h = 0} = \nabla q(\xv + h \bm{v})^T \bm{v}~\bigg\rvert_{h = 0} = \nabla q(\xv)^T \bm{v}.
+            \frac{\text{d}q(\xv + h \cdot \bm{v})}{\text{d}h}~\bigg\rvert_{h = 0} = \nabla q(\xv + h \bm{v}) \bm{v}~\bigg\rvert_{h = 0} = \nabla q(\xv)\bm{v}.
         \end{equation*}
 
     \vspace{0.5\baselineskip}
@@ -179,8 +179,8 @@ Since $\Amat$ has full rank, there exists a \textit{unique} stationary point~$\x
 \vspace{-\baselineskip}
 
 \begin{align*}
-    \nabla q(\xv^\ast) &= 0 \\
-    2 \Amat \xv^\ast + \bm{b} &= 0 \\
+    \nabla q(\xv^\ast) &= \boldsymbol{0}^T \\
+    (2 \Amat \xv^\ast + \bm{b})^\top &= \boldsymbol{0}^T \\
     \xv^\ast &= -\frac{1}{2} \Amat^{-1} \bm{b}.
 \end{align*}  
 
@@ -207,12 +207,12 @@ Since $\Amat$ has full rank, there exists a \textit{unique} stationary point~$\x
 \begin{itemize}
     \item Recall: $\bm{v}_0$ spans null space of~$\Amat$, i.e., $\Amat(\alpha\bm{v}_0) = 0$ for each~$\alpha\in\R$
     \item $\implies$ $\Amat(\xv + \alpha\bm{v}_0) = \Amat\xv$
-    \item Since $\nabla q(\xv) = 2\Amat\xv + \bm{b}$:
+    \item Since $\nabla q(\xv) = (2\Amat\xv + \bm{b})^T$:
         
         \vspace{-0.5\baselineskip}
         
         \begin{equation*}
-            \nabla q(\xv+\alpha\bm{v}_0) = 2\Amat(\xv+\alpha\bm{v}_0)+\bm{b} = 2\Amat\xv+\bm{b} = \nabla q(\xv)
+            \nabla q(\xv+\alpha\bm{v}_0) = (2\Amat(\xv+\alpha\bm{v}_0)+\bm{b})^T = (2\Amat\xv+\bm{b})^T = \nabla q(\xv)
         \end{equation*}
     \item $\implies$ $q$ has infinitely many stationary points along line $\xv^\ast+\alpha\bm{v}_0$
     \item Since $\mathbf{H} = 2\Amat$, kind of stationary point not changing along~$\bm{v}_0$
