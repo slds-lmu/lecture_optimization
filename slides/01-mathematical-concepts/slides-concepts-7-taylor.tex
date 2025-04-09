@@ -91,19 +91,19 @@ with the $k$-th \textbf{Taylor polynomial} $T_{k}$ and a \textbf{remainder term}
 
 \textbf{Taylor's theorem (1st order)}: For $f\in\mathcal{C}^1$, it holds that
 \begin{equation*}
-    f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a})}_{T_1(\xv, \bm{a})} + R_1(\xv,\bm{a}).
+    f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a})}_{T_1(\xv, \bm{a})} + R_1(\xv,\bm{a}).
 \end{equation*}
 
 
 \begin{footnotesize}
     \textbf{Example: } $\fx = \sin(2x_1) + \cos(x_2)$, $\bm{a} = (1, 1)^T$.
-    Since $\nabla \fx = \begin{pmatrix}2\cos(2x_1) \\ -\sin(x_2)\end{pmatrix}$,
+    Since $\nabla \fx = \left(2\cos(2x_1), -\sin(x_2)\right)$,
 
     \vspace{-0.7\baselineskip}
 
     \begin{align*}
-        \fx &= T_1(\xv) + R_1(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a}) + R_1(\xv, \bm{a})\\
-        &= \sin(2) + \cos(1) + (2 \cos(2), - \sin(1))^T\begin{pmatrix} x_1 - 1 \\ x_2 - 1\end{pmatrix} + R_1(\xv, \bm{a})
+        \fx &= T_1(\xv) + R_1(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a}) + R_1(\xv, \bm{a})\\
+        &= \sin(2) + \cos(1) + (2 \cos(2), - \sin(1))\begin{pmatrix} x_1 - 1 \\ x_2 - 1\end{pmatrix} + R_1(\xv, \bm{a})
     \end{align*}
 \end{footnotesize}
 
@@ -126,7 +126,7 @@ with the $k$-th \textbf{Taylor polynomial} $T_{k}$ and a \textbf{remainder term}
 
 \textbf{Taylor's theorem (2nd order)}: If $f \in \mathcal{C}^2$, it holds that
 \begin{equation*}
-    f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^T\bm{H}(\bm{a})(\xv - \bm{a})}_{T_2(\xv, \bm{a})} + R_2(\xv,\bm{a})
+    f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^T\bm{H}(\bm{a})(\xv - \bm{a})}_{T_2(\xv, \bm{a})} + R_2(\xv,\bm{a})
 \end{equation*}
 
 
@@ -168,7 +168,7 @@ with the $k$-th \textbf{Taylor polynomial} $T_{k}$ and a \textbf{remainder term}
     \end{column}
 \end{columns}
 
-Consider $T_2(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a})^T (\xv-\bm{a}) + \frac{1}{2}(\xv-\bm{a})^T H (\bm{a})(\xv-\bm{a})$.
+Consider $T_2(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a}) (\xv-\bm{a}) + \frac{1}{2}(\xv-\bm{a})^T H (\bm{a})(\xv-\bm{a})$.
 The first/second/third term ensures the values/slopes/curvatures of~$T_2$ and~$f$ match at~$\bm{a}$.
 
 \end{vbframe}
@@ -223,7 +223,7 @@ and therefore
 \begin{align*}
     T_1(\xv,\bm{a}) &= \frac{f(\bm{a})}{1} \cdot 1 + \frac{\partial f(\bm{a})}{\partial x_1} (x_1 - a_1) + \frac{\partial f(\bm{a})}{\partial x_2} (x_2 - a_2) \\
     &= f(\bm{a}) + \begin{pmatrix}\frac{\partial f(\bm{a})}{\partial x_1} \\ \frac{\partial f(\bm{a})}{\partial x_2}\end{pmatrix}^T \begin{pmatrix}x_1 - a_1 \\ x_2 - a_2\end{pmatrix} \\
-    &= f(\bm{a}) + \nabla f(\bm{a})^T (\xv - \bm{a}).
+    &= f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a}).
 \end{align*}
 
 \end{vbframe}

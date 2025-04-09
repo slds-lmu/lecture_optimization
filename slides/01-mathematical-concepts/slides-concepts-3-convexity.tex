@@ -139,7 +139,7 @@ Prove convexity via \textbf{gradient}:
     \begin{gather*}
         \textnormal{$f$ (strictly) convex} \\
         \Longleftrightarrow \\
-        f(\yv) \overset{(>)}{\geq} f(\xv) + \nabla f(\xv)^T (\yv-\xv) \textnormal{ for all $\xv,\yv\in\mathcal{S}$ (s.t. $\xv \not= \yv$)}
+        f(\yv) \overset{(>)}{\geq} f(\xv) + \nabla f(\xv) (\yv-\xv) \textnormal{ for all $\xv,\yv\in\mathcal{S}$ (s.t. $\xv \not= \yv$)}
     \end{gather*}
 
 
@@ -195,7 +195,7 @@ Prove convexity via \textbf{Hessian}:
 % \framebreak
 
 \begin{footnotesize}
-\textbf{Example:} $f(\xv) = x_1^2 + x_2^2 - 2x_1x_2$, $\nabla f(\xv) = \begin{pmatrix}2x_1 - 2x_2 \\ 2x_2 - 2x_1\end{pmatrix}$, $H(\xv) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}.
+\textbf{Example:} $f(\xv) = x_1^2 + x_2^2 - 2x_1x_2$, $\nabla f(\xv) = \begin{pmatrix}2x_1 - 2x_2 \\ 2x_2 - 2x_1\end{pmatrix}^T$, $H(\xv) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}.
 $
 
 \begin{center}
