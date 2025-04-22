@@ -11,12 +11,18 @@
 nospeakermargin.tex
 speakermargin.tex
 
+# latex-math subcomponents we don't need here
+latex-math/latex-math.pdf
+latex-math/latex-math.Rmd
+latex-math/.github
+
 #--------------------------------------------#
 #  Intermediate output (slides, exercises)   #
 #--------------------------------------------#
 
 # The only slide PDF output in this repo should be in slides-pdf
 # include both slides-xyz (i2ml) and slideXY- / tXY- (iml) formats
+slides/*/*slides*.pdf
 slides/*/slides*.pdf
 slides/*/t*.pdf
 
@@ -38,6 +44,7 @@ exercises/*/.ipynb_checkpoints/
 *.fls
 *.log
 *.nav
+*.dvi
 *.out
 *.snm
 *.toc
@@ -47,6 +54,7 @@ exercises/*/.ipynb_checkpoints/
 **.pax # pdfannotextractor / pax
 *.pax
 **.bbl
+**.bbl-SAVE-ERROR
 **.blg
 **.bcf
 **.bcf-SAVE-ERROR
@@ -55,6 +63,8 @@ exercises/*/.ipynb_checkpoints/
 #----------------------------------------------------------#
 #  Editor-specific stuff that should generally be ignored  #
 #----------------------------------------------------------#
+
+.vscode/
 
 # vim swap files
 # http://stratus3d.com/blog/2018/06/03/stop-excluding-editor-temp-files-in-gitignore/
@@ -85,4 +95,3 @@ code-demos/code_demo_limo.R
 #  OS-specific temp/preview files   #
 #-----------------------------------#
 *.DS_Store
-
