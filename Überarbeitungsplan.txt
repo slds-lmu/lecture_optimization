@@ -5,6 +5,16 @@ Erst einmal nur bis Chapter 5 (Second Order stuff).
 Kapitel nacheinander abarbeiten.
 - Change of Plans: Focus on chapters 1, 4 & 5
 
+
+-------------------------------------------------------------
+Für rate of convergence:
+
+- Deisenroth zitiert https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf
+
+- ich glaube die bisherigen Folien basieren auf https://bookdown.org/rdpeng/advstatcomp/rates-of-convergence.html
+
+-------------------------------------------------------------
+
 Spezifisch:
 - kleine Fehler direkt korrigieren (im Vorschlagmodus)
 - kleine Verständnis/Vollständigkeits issues direkt vorschlagen

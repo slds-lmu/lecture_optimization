@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\newcommand{\deriv}{d}
 
 \title{Optimization in Machine Learning}
 
@@ -114,7 +115,7 @@ Source: \href{https://github.com/jermwatt/machine_learning_refined}{jermwatt/mac
     \item Specifically, the vector of partial derivatives is called the \textbf{gradient}:
         \begin{equation*}
         \nabla_{\xv} f \text{ or }   \nabla f := 
-            \left(\frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, \ldots, \frac{\partial f}{\partial x_d}\right)
+            \left(\frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, \ldots, \frac{\partial f}{\partial x_d}\right)\quad\text{({\small note that this is a row vector!})}
         \end{equation*}
     \item This gradient of $f$ can be used to linearly approximate $f$:
     $$
@@ -153,15 +154,15 @@ NB: Some people require that $||\bm{v}|| = 1$. Then, we can identify $D_{\bm{v}}
 
 \end{vbframe}
 
-\begin{vbframe}{Properties of the gradient}
+\begin{vbframe}{Important properties of the gradient}
 
-\begin{itemize}
-	\item \textbf{Orthogonal} to level curves/surfaces of a function
+\begin{enumerate}
+	\item \textbf{Orthogonal} to level curves/surfaces of a function\,\\
 	% \item The normal vector describing the tangent plane is has $n + 1$ components, the first $n$ correspond to $\nabla f$ and the $(n + 1)-$th has the value $-1$
-	\item Points in direction of \textbf{greatest increase} of $f$
+	\item Points in direction of \textbf{greatest increase} of $f$\end{enumerate}
 	\begin{center}
-		\includegraphics[width = 0.4\textwidth]{figure_man/gradient3.png} \includegraphics[width = 0.4\textwidth]{figure_man/gradient.png}
-	\end{center}
+		\includegraphics[width = 0.45\textwidth]{figure_man/gradient3.png} \\\includegraphics[width = 0.45\textwidth]{figure_man/gradient.png}
+	\end{center}\begin{comment}
 	\begin{footnotesize}
     	\textbf{Proof}: Let $\bm{v}$ be a vector with $\|\bm{v}\|=1$ and $\theta$ the angle between $\bm{v}$ and $\nabla \fx$.
         \begin{equation*}
@@ -174,8 +175,31 @@ NB: Some people require that $||\bm{v}|| = 1$. Then, we can identify $D_{\bm{v}}
 
         Analogous: Negative gradient $- \nabla \fx$ points in direction of greatest \textit{de}crease
 	\end{footnotesize}
+	\end{comment}
+\framebreak
+\begin{itemize}\setlength{\itemsep}{0.5\baselineskip}
+    \item To prove 1, consider that a \emph{level curve} of a function $f: \mathcal{S}\subseteq \R^d \to \R$ is any parametrized, differentiable curve (see \emph{implicit function theorem}) $x(t)$, $t\in\mathcal{T}\subseteq\R_{\geq 0}$ so that $f(x(t))=c$ for some constant $c$.
+    \item \textbf{Proof of 1.}: Consider a point $x_0\in\R^d$ so that $f(x_0)=c$ and $\exists t_0\in\mathcal{T}:\; x(t_0)=x_0$.\\\bigskip
+    To prove orthogonality, we want to show $\langle\nabla_{\xv}f(x_0),\frac{\deriv x}{\deriv t}(t_0)\rangle=0$.\\
+    Note that\begin{align*}
+        \left\langle\nabla_{\xv}f(x_0),\frac{\deriv x}{\deriv t}(t_0)\right\rangle&=\nabla_{\xv}f(x(t_0))\frac{\deriv x}{\deriv t}(t_0)\\
+        \text{\footnotesize By the chain rule, see slide-set ``Matrix Calculus''}&=\frac{\deriv\, (f\circ x)}{\deriv t}(t_0)
+    \end{align*}
+    Since $f\circ x$ is a constant function in $t$, the derivative will always equal zero and so $\frac{\deriv\, (f\circ x)}{\deriv t}(t_0)=0$, proving the statement.
 \end{itemize}
+\framebreak
+\begin{itemize}\setlength{\itemsep}{0.5\baselineskip}
+    \item \textbf{Proof of 2.}: Let $\bm{v}$ be a vector with $\|\bm{v}\|=1$ and $\theta$ the angle between $\bm{v}$ and $\nabla \fx$.
+        \begin{equation*}
+            D_{\bm{v}}\fx = \nabla \fx \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
+        \end{equation*}
+    	by the cosine formula for dot products and $\|\bm{v}\| = 1$.
+        $\cos(\theta)$ is maximal if $\theta = 0$, hence if $\bm{v}$ and $\nabla \fx$ point in the same direction.
 
+    	\item (Alternative proof: Apply Cauchy-Schwarz to $\nabla \fx \bm{v}$ and look for equality.)
+
+        \item Analogous: Negative gradient $- \nabla \fx$ points in direction of greatest \textit{de}crease
+\end{itemize}
 \framebreak
 
 \begin{figure}
@@ -204,6 +228,7 @@ For vector-valued function~$f:\subseteq \R^d\longrightarrow\R^m,\; \xv\mapsto(f_
         \frac{\partial f_m(\xv)}{\partial x_1} & \cdots & \frac{\partial f_m(\xv)}{\partial x_d}
 	\end{pmatrix}
 \end{equation*}
+We will mainly use the $\nabla f$ notation.
 
 \begin{itemize}
     \item Jacobian gives best linear approximation of distorted volumes
@@ -242,7 +267,7 @@ Let $f\in\mathcal{C}^1$ and~$\xv_0\in\mathcal{S}\subseteq \R^d$.
 
 \begin{vbframe}{Hessian Matrix}
 
-For real-valued function $f:\mathcal{S}\subseteq \R^d \to \R$, the \textbf{Hessian} matrix $H:\mathcal{S}\subseteq \R^d \to \R^{d \times d}$ contains all their second derivatives (if they exist):
+For real-valued function $f:\mathcal{S}\subseteq \R^d \to \R$, the \textbf{Hessian} matrix $\nabla^2:\mathcal{S}\subseteq \R^d \to \R^{d \times d}$ contains all their second derivatives (if they exist):
 
 \begin{equation*}
 \nabla^2 \fx = \left(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\right)_{i,j=1,\ldots,d}
@@ -256,14 +281,14 @@ For real-valued function $f:\mathcal{S}\subseteq \R^d \to \R$, the \textbf{Hessi
 \textbf{Example}: Let $f(\xv) = \sin(x_1) \cdot \cos(2x_2)$.
 Then:
 \begin{equation*}
-    H(\xv) = \begin{pmatrix}
+    \nabla^2 \fx = \begin{pmatrix}
         -\cos(2x_2)\cdot\sin(x_1) & -2\cos(x_1)\cdot\sin(2x_2) \\
         -2\cos(x_1)\cdot\sin(2x_2) & -4\cos(2x_2)\cdot\sin(x_1)
     \end{pmatrix}
 \end{equation*}
 
 \begin{itemize}
-    \item If $f\in\mathcal{C}^2$, then $H$ is symmetric
+    \item If $f\in\mathcal{C}^2$, then $\nabla^2 f$ is symmetric
     \item Many local properties (geometry, convexity, critical points) are encoded by the Hessian and its spectrum ($\rightarrow$ later)
 \end{itemize}
 
@@ -279,7 +304,7 @@ Then:
 \textbf{Example} (previous slide)\textbf{:}
 For $\bm{a}=(-\pi/2,0)^T$, we have
 \begin{equation*}
-    H(\bm{a}) = \begin{pmatrix}
+    \nabla^2 f(\bm{a}) = \begin{pmatrix}
         1 & 0 \\ 0 & 4
     \end{pmatrix}
 \end{equation*}

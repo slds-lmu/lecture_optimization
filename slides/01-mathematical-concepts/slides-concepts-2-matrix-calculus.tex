@@ -65,6 +65,30 @@
     \end{itemize}
 \end{vbframe}
 
+\begin{vbframe}{Derivatives of scalar-valued functions}
+        \vspace{0.5\baselineskip}
+        \begin{table}
+            \centering
+            \begin{tabular}{c||c|c|c}
+                 Type & scalar $x$ & vector $\xv$ & matrix $\mathbf{X}$ \\ \hline\hline
+                 scalar $y$ & $\deriv y / \deriv x$ & \cellcolor{customblue}$\deriv y / \deriv\xv$ & \cellcolor{customblue}$\deriv y / \deriv\mathbf{X}$ \\ \hline
+                 vector $\yv$ & $\deriv\yv / \deriv x$ & $\deriv\yv / \deriv\xv$ & -- \\ \hline
+                 matrix $\mathbf{Y}$ & $\deriv\mathbf{Y} / \deriv x$ & -- & --
+            \end{tabular}
+        \end{table}\,\\
+        \begin{itemize}
+        \item $\deriv y / \deriv\xv$ is the gradient from the previous slide deck\\[\baselineskip]
+            \item When the input is a matrix the concept remains the same, i.e. for $y= f:\R^{m\times n}\longrightarrow\R,\; \mathbf{X}\mapsto f(\mathbf{X})$
+$$
+\frac{\deriv y}{\deriv\bm{X}}= \left(\begin{array}{ccc}
+\dfrac{\partial f}{\partial x_{11}} & \cdots & \dfrac{\partial f}{\partial x_{1 n}} \\
+\vdots & \ddots & \vdots \\
+\dfrac{\partial f}{\partial x_{m 1}} & \cdots & \dfrac{\partial f }{\partial x_{m n}}
+\end{array}\right) \in \mathbb{R}^{m \times n}
+$$
+        \end{itemize}
+\end{vbframe}
+
 
 \begin{vbframe}{Derivatives: Univariate and Jacobian}
         \vspace{0.5\baselineskip}
@@ -83,29 +107,7 @@
         \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Derivatives of scalar-valued functions}
-        \vspace{0.5\baselineskip}
-        \begin{table}
-            \centering
-            \begin{tabular}{c||c|c|c}
-                 Type & scalar $x$ & vector $\xv$ & matrix $\mathbf{X}$ \\ \hline\hline
-                 scalar $y$ & $\deriv y / \deriv x$ & \cellcolor{customblue}$\deriv y / \deriv\xv$ & \cellcolor{customblue}$\deriv y / \deriv\mathbf{X}$ \\ \hline
-                 vector $\yv$ & $\deriv\yv / \deriv x$ & $\deriv\yv / \deriv\xv$ & -- \\ \hline
-                 matrix $\mathbf{Y}$ & $\deriv\mathbf{Y} / \deriv x$ & -- & --
-            \end{tabular}
-        \end{table}\,\\
-        \begin{itemize}
-        \item $\deriv y / \deriv\xv$ is the gradient from the previous slide deck\\[\baselineskip]
-            \item When the input is a matrix the concept remains the same, i.e. for $y= f:\R\longrightarrow\R^{m\times n},\; \mathbf{X}\mapsto f(\mathbf{X})$
-$$
-\frac{\deriv y}{\deriv\xv}= \left(\begin{array}{ccc}
-\dfrac{\partial f}{\partial x_{11}} & \cdots & \dfrac{\partial f}{\partial x_{1 n}} \\
-\vdots & \ddots & \vdots \\
-\dfrac{\partial f}{\partial x_{m 1}} & \cdots & \dfrac{\partial f }{\partial x_{m n}}
-\end{array}\right) \in \mathbb{R}^{m \times n}
-$$
-        \end{itemize}
-\end{vbframe}
+
 
 \begin{vbframe}{Derivatives of functions with scalars as inputs}
        % \vspace{0.5\baselineskip}
@@ -121,7 +123,7 @@ $$
         \begin{itemize}
         \item  Here, for univariate $f_{ij}:\R\rightarrow\R$, $\yv$ ($n=1$) or $\mathbf{Y}$ ($n>1$) are equal to a function $f: \R\longrightarrow\R^{m\times n}, x\mapsto \big(f_{ij}(x)\big)_{i=1,\dots,m;\,j=1,\dots,n}$ and the derivatives are, respectively given by $$
         \frac{\deriv\yv}{\deriv x}=\begin{pmatrix}
-            \dfrac{\partial f_{1}}{\partial x}\\\vdots\\ \dfrac{\partial f_{1´m}}{\partial x}
+            \dfrac{\partial f_{1}}{\partial x}\\\vdots\\ \dfrac{\partial f_{m}}{\partial x}
         \end{pmatrix}\in\R^m;\quad
         \frac{\deriv\mathbf{Y}}{\deriv x}=\left(\begin{array}{ccc}
 \dfrac{\partial f_{11}}{\partial x} & \cdots & \dfrac{\partial f_{1 n}}{\partial x} \\
@@ -141,17 +143,17 @@ $$
   \textbf{Key Rules:}\\
   
   \begin{itemize}
+      \item \textbf{Sum:} 
+      \[
+      \frac{\deriv}{\deriv \boldsymbol{x}}\bigl(f+g\bigr)=\frac{\deriv f}{\deriv \boldsymbol{x}}+\frac{\deriv g}{\deriv \boldsymbol{x}}
+      \]
     \item \textbf{Product:} 
       \[
-      \frac{\partial}{\partial \boldsymbol{x}}\bigl(fg\bigr)=\frac{\partial f}{\partial \boldsymbol{x}}\,g+f\,\frac{\partial g}{\partial \boldsymbol{x}}
-      \]
-    \item \textbf{Sum:} 
-      \[
-      \frac{\partial}{\partial \boldsymbol{x}}\bigl(f+g\bigr)=\frac{\partial f}{\partial \boldsymbol{x}}+\frac{\partial g}{\partial \boldsymbol{x}}
+      \frac{\deriv}{\deriv \boldsymbol{x}}\bigl(fg\bigr)=\frac{\deriv f}{\deriv \boldsymbol{x}}\,g+f\,\frac{\deriv g}{\deriv \boldsymbol{x}}
       \]
     \item \textbf{Chain:} 
       \[
-      \frac{\partial}{\partial \boldsymbol{x}}\Bigl((f\circ g)(\boldsymbol{x})\Bigr)=\dfrac{\partial}{\partial \boldsymbol{x}}(f(g(\boldsymbol{x})))=\frac{\partial f}{\partial g}\,\frac{\partial g}{\partial \boldsymbol{x}}
+      \frac{\deriv}{\deriv \boldsymbol{x}}\Bigl((f\circ g)(\boldsymbol{x})\Bigr)=\dfrac{\deriv}{\deriv \boldsymbol{x}}(f(g(\boldsymbol{x})))=\frac{\deriv f}{\deriv g}\,\frac{\deriv g}{\deriv \boldsymbol{x}}
       \]
   \end{itemize}
 \end{vbframe}
@@ -163,7 +165,7 @@ $$
     \item  we have functions $\boldsymbol{g}: S\subseteq\mathbb{R}^n \rightarrow \mathbb{R}^m$ and $\boldsymbol{f}: T\subseteq\mathbb{R}^m \rightarrow \mathbb{R}^{\ell}$
     \item $\boldsymbol{a} \in S$ is a point such that $\boldsymbol{g}(\boldsymbol{a}) \in T$ $\Rightarrow$ $\boldsymbol{f} \circ \boldsymbol{g}(\boldsymbol{x})=\boldsymbol{f}(\boldsymbol{g}(\boldsymbol{x}))$ is well-defined for all $\boldsymbol{x}$ close to $\boldsymbol{a}$
 \end{itemize}
-\item Then, if $\boldsymbol{g}$ is differentiable at $\boldsymbol{a}$ and $\boldsymbol{f}$ is differentiable at $\boldsymbol{g}(\boldsymbol{a})$ $\Rightarrow\boldsymbol{f} \circ \boldsymbol{g}$ is differentiable at $\boldsymbol{a}$, and the derivative $\dfrac{\partial \boldsymbol f}{\partial \boldsymbol g} \dfrac{\partial \boldsymbol g}{\partial \boldsymbol{x}}$, is equal to
+\item Then, if $\boldsymbol{g}$ is differentiable at $\boldsymbol{a}$ and $\boldsymbol{f}$ is differentiable at $\boldsymbol{g}(\boldsymbol{a})$ $\Rightarrow\boldsymbol{f} \circ \boldsymbol{g}$ is differentiable at $\boldsymbol{a}$, and the derivative $\dfrac{\deriv \boldsymbol f}{\deriv \boldsymbol g} \dfrac{\deriv \boldsymbol g}{\deriv \boldsymbol{x}}$, is equal to
 \begin{align*}
 \nabla_{\boldsymbol{a}} \boldsymbol{f} \circ \boldsymbol{g}\;\hat{=}\;\boldsymbol{J}_{\boldsymbol{f} \circ \boldsymbol{g}}(\boldsymbol{a})=\boldsymbol{J}_{\boldsymbol{f}}(\boldsymbol{g}(\boldsymbol{a}))\boldsymbol{J}_ {\boldsymbol{g}}(\boldsymbol{a})\;\hat{=}\;\nabla_{\boldsymbol{g}(\boldsymbol{a})}{\boldsymbol{f}}\;\nabla_{\boldsymbol{a}} {\boldsymbol{g}}\in\R^{l\times n}
 \end{align*}
@@ -177,6 +179,22 @@ $$
 \end{itemize}
 \end{frame}
 
+\begin{vbframe}{Helpful Calculation Rules}
+Let $\boldsymbol{a}$, $\boldsymbol{b}$ denote vectors, $\boldsymbol{X}$, $\boldsymbol{A}$ matrices, and $f(\boldsymbol{X})^{-1}$ the inverse of $f(\boldsymbol{X})$ if it exists. 
+ \begin{itemize}
+    \item $ \frac{\deriv \boldsymbol{x}^{\top} \boldsymbol{a}}{\deriv \boldsymbol{x}}=\boldsymbol{a}^{\top}$, $\frac{\deriv \boldsymbol{a}^{\top} \boldsymbol{x}}{\deriv \boldsymbol{x}}=\boldsymbol{a}^{\top}$
+    \item $\frac{\deriv\boldsymbol{X}\boldsymbol{a}}{\deriv\boldsymbol{a}} = \boldsymbol{X}$, $\frac{\deriv\boldsymbol{a}^T\boldsymbol{X}}{\deriv\boldsymbol{a}} = \boldsymbol{X}^T$
+    \item $\frac{\deriv \boldsymbol{a}^{\top} \boldsymbol{X} \boldsymbol{b}}{\deriv \boldsymbol{X}}=\boldsymbol{a} \boldsymbol{b}^{\top}$
+    \item $\frac{\deriv \boldsymbol{x}^{\top} \boldsymbol{A} \boldsymbol{x}}{\deriv \boldsymbol{x}}=\boldsymbol{x}^{\top}\left(\boldsymbol{A}+\boldsymbol{A}^{\top}\right)$
+    \item For a symmetric matrix $\boldsymbol{W}$, $\frac{\deriv}{\deriv \boldsymbol{s}}(\boldsymbol{x}-\boldsymbol{A} \boldsymbol{s})^{\top} \boldsymbol{W}(\boldsymbol{x}-\boldsymbol{A} \boldsymbol{s})=-2(\boldsymbol{x}-\boldsymbol{A} \boldsymbol{s})^{\top} \boldsymbol{W} \boldsymbol{A}$
+    \item $\frac{\deriv}{\deriv \boldsymbol{X}} \boldsymbol{f}(\boldsymbol{X})^{\top}=\left(\frac{\deriv \boldsymbol{f}(\boldsymbol{X})}{\deriv \boldsymbol{X}}\right)^{\top}$
+    \item $\frac{\deriv}{\deriv \boldsymbol{X}} \boldsymbol{f}(\boldsymbol{X})^{-1}=-\boldsymbol{f}(\boldsymbol{X})^{-1} \frac{\deriv \boldsymbol{f}(\boldsymbol{X})}{\deriv \boldsymbol{X}} \boldsymbol{f}(\boldsymbol{X})^{-1}$
+    \item $\frac{\deriv \boldsymbol{a}^{\top} \boldsymbol{X}^{-1} \boldsymbol{b}}{\deriv \boldsymbol{X}}=-\left(\boldsymbol{X}^{-1}\right)^{\top} \boldsymbol{a} \boldsymbol{b}^{\top}\left(\boldsymbol{X}^{-1}\right)^{\top}$
+    \end{itemize}  \,\\
+    {\small\textbf{Note:} to compute take gradients of matrices
+with respect to vectors (or other matrices) we need \emph{tensors}, see chapter 5.4 of \href{https://mml-book.github.io/book/mml-book.pdf}{\textcolor{blue}{Deisenroth}} for more.}
+\end{vbframe}
+
 \begin{vbframe}{Example: Logistic Regression I}
 \begin{itemize}    \setlength{\itemsep}{0.5\baselineskip}
     \item Let's say, for data in $\R^{n\times m}$ we're trying to minimize the risk in logistic regression by finding the gradient for negative log loss:
@@ -188,10 +206,9 @@ where $
 $\\[5pt] with 
 $f(\theta,\xv)=\theta^{\top} \xv$ and $s(x)=\frac{1}{1+\exp (-x)}$.
 \item[$\Rightarrow$] We want to find \begin{align*}
-\nabla_\theta -\ell (\theta)=-\nabla_\theta \ell (\theta)&=-\sumin y^{(i)} \log (s(f(\theta^{(i)},\xv^{(i)}))+(1-y) \log (1-s(f(\theta^{(i)},\xv^{(i)}))\\
-&=-[y \log (s(f(\theta,\xv))+(1-y) \log (1-s(f(\theta,\xv))]
+\nabla_\theta -\ell (\theta)=-\nabla_\theta \ell (\theta)&=-\sumin\underbrace{ y^{(i)} \log (s(f(\theta,\xv^{(i)}))+(1-y^{(i)}) \log (1-s(f(\theta,\xv^{(i)}))}_{=:y \log (s_i)+(1-y_i) \log (1-s_i)}
 \end{align*}
-\item Define $h:=-[y \log (s)+(1-y) \log (1-s)]$ 
+\item Define $h_i:=-[y \log (s_i)+(1-y_i) \log (1-s_i)]$  and $f_i:=\theta^{\top} \xv^{(i)}$
 \end{itemize}
 \end{vbframe}
 
@@ -199,19 +216,47 @@ $f(\theta,\xv)=\theta^{\top} \xv$ and $s(x)=\frac{1}{1+\exp (-x)}$.
 \begin{itemize}    \setlength{\itemsep}{0.5\baselineskip}
 \item We can now directly apply the Chain Rule:
 $$
-\nabla_\theta -\ell (\theta)=\nabla_\theta h\circ s \circ f=\frac{\partial h}{\partial s} \frac{\partial s}{\partial f} \frac{\partial f}{\partial \theta}
+-\nabla_\theta \ell (\theta)=\sumin\nabla_\theta h_i\circ s_i \circ f_i=\sumin\frac{\deriv h_i}{\deriv s_i} \frac{\deriv s_i}{\deriv f_i} \frac{\deriv f_i}{\deriv \theta}
 $$
-    \item Given that $$\frac{\partial h}{\partial s}=\frac{1-y}{1-s}-\frac{y}{s};\quad\frac{\partial s}{\partial f}=s(f)\big(1-s(f)\big);\quad\frac{\partial f}{\partial \theta}=\xv^\top$$
-    \item we get \begin{align*}
-        \nabla_\theta -\ell (\theta)=\frac{\partial h}{\partial s} \frac{\partial s}{\partial f} \frac{\partial f}{\partial \theta}&= \left[\frac{1-y}{1-s(f(\theta,\xv))}-\frac{y}{s(f(\theta,\xv))}\right] \cdot \left[s(f(\theta,\xv))(1-s(f(\theta,\xv)))\right]\xv^\top\\
-        &=\Big((s(f(\theta,\xv))-y)\xv_1,\dots,s(f(\theta,\xv))-y)\xv_m\Big)\in\R^{1\times m}
+    \item Given that, $\forall i\in\{1,\dots,n\}$ $$\frac{\deriv h_i}{\deriv s_i}=\frac{1-y_i}{1-s_i}-\frac{y_i}{s_i};\quad\frac{\deriv s_i}{\deriv f_i}=s(f_i)\big(1-s_i(f_i)\big);\quad\frac{\deriv f_i}{\deriv \theta}=\left(\xv^{(i)}\right)^\top$$
+    \item we get that $-\nabla_\theta \ell (\theta)=\sumin\frac{\deriv h_i}{\deriv s_i} \frac{\deriv s_i}{\deriv f_i} \frac{\deriv f_i}{\deriv \theta}$  equals\begin{align*}
+        &\sumin \left[\frac{1-y^{(i)}}{1-s(f(\theta, \xv^{(i)}))}-\frac{y^{(i)}}{s(f(\theta, \xv^{(i)}))}\right] \cdot \left[s(f(\theta, \xv^{(i)}))(1-s(f(\theta, \xv^{(i)})))\right] \left(\xv^{(i)}\right)^\top\\
+        =&\sumin\left(s\left(f\left(\theta,\xv^{(i)}\right)\right)-y^{(i)}\right)\left(\xv^{(i)}\right)^\top\in\R^{1\times m}
     \end{align*}
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Helpful Calculation Rules}
-    
+\begin{vbframe}{Example: Logistic Regression -- Different Notation}
+This example highlights how using Leibniz notation can make things easier.\\
+Alternatively, we could write this example out as follows:
+\begin{itemize}
+    \item Given the sum rule, it suffices to find the derivative of 
+\[
+-[y \log (s(f(\theta,\xv))+(1-y) \log (1-s(f(\theta,\xv))]
+\]
+\item Define $h(y,z):=-[y \log (z)+(1-y) \log (1-z)]$.
+\item Now, what we are looking for is 
+\[
+\nabla_\theta h(y,\cdot)\circ s \circ f(\cdot,\xv).
+\]
+where $f$ is a function from $\R^p$ to $\R$ and both $h$ and $s$ are functions from $\R$ to $\R$
+$\Longrightarrow$ by the chain rule
+$$
+\nabla_\theta h(y,\cdot)\circ s \circ f(\cdot,\xv)=\frac{\deriv h}{\deriv s} \frac{\deriv s}{\deriv f} \frac{\deriv f}{\deriv \theta}\in\R^{1\times p}.
+$$
+\end{itemize}\framebreak
+\begin{itemize}
+    \item Using the fact that $$\frac{\partial h}{\partial z}=\frac{1-y}{1-z}-\frac{y}{z};\quad\frac{\partial s}{\partial x}=s(x)\big(1-s(x)\big);\quad\frac{\partial f}{\partial \theta}=\xv$$ we get \begin{align*}
+   [\nabla_\theta h(y,\cdot)\circ s \circ f(\cdot,\xv)]_j&=\left[\frac{1-y}{1-s(f(\theta,\xv))}-\frac{y}{s(f(\theta,\xv))}\right] \cdot \left[s(f(\theta,\xv))(1-s(f(\theta,\xv)))\right]\cdot \frac{\partial f}{\partial\theta_j}\\
+   &=(s(f(\theta,\xv))-y)\xv_j
+\end{align*}
+$\Longrightarrow \nabla_\theta h(y,\cdot)\circ s \circ f(\cdot,\xv)=(s(f(\theta,\xv))-y)\xv^\top$
+\item Plugging this back into the original sum term we get $$
+-\nabla_\theta \ell (\theta)=\sumin\left(s\left(f\left(\theta,\xv^{(i)}\right)\right)-y^{(i)}\right)\left(\xv^{(i)}\right)^\top\in\R^{1\times m},
+$$ the same as before.
+\end{itemize}
 \end{vbframe}
+
 
 \begin{comment}
 \begin{vbframe}{Numerator layout}
@@ -237,7 +282,7 @@ $$
         \end{align*}
 \end{itemize}
 
-\end{vbframe}\end{comment}
+\end{vbframe}
 
 \begin{vbframe}{Scalar-by-vector}
 
@@ -314,7 +359,7 @@ Compute $\nabla f(\xv)$ at $\xv^\ast = \mathbf{0}$:
 \end{enumerate}
 
 \end{vbframe}
-
+\end{comment}
 
 
 
