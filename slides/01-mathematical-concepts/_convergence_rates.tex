@@ -1,0 +1,256 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+
+\newcommand{\deriv}{d}
+\usepackage{mdframed}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+  Mathematical Concepts 
+  }{
+Convergence Rates
+  }{
+  figure_man/optimization_steps.jpeg
+  }{
+    \item Rate of convergence
+    \item Order of convergence
+    \item Convergence in function $f$
+
+}
+\begin{vbframe}{Convergence to a target}
+
+In the following, we will discuss numerical algorithms defined via a sequence of points $(\xv^{[t]})_{t \in\N}$. 
+
+
+\begin{center}
+  \includegraphics[width=0.9\textwidth, keepaspectratio]{figure_man/optimization_steps.jpeg} \\
+  \begin{footnotesize}
+    Credits to \emph{Towards Data Science, Coding Deep Learning for Beginners}.
+  \end{footnotesize}
+\end{center}
+
+\framebreak 
+
+
+%The goal of an optimization procedure is to provide a sequence of points $\xv^{[t]}$ which converges to the true (global) optimum $\xv^\ast$:
+
+
+\lz
+
+%We distinguish between 
+
+\begin{itemize}
+  \item We are usually not only interested in \textbf{whether} the sequence converges, i.e.
+  $$
+  \xv^{[t]} \to \xv^\ast \quad \text{ for } t \to \infty
+  $$
+  but also \textbf{how fast}, i.e. $$
+  \|\xv^{[t+1]}- \xv^\ast\|\in\mathcal{O}\left(\textcolor{blue}{\textbf{???}}\right)
+  $$
+  \item In other words: how does the error decay with the number of algorithm steps? 
+  \item Some typical examples of numerical algorithms of interest include:\begin{itemize}
+      \item \textbf{Optimization Algorithms} ($\xv^\ast$ is the optimum), e.g. gradient descent
+      \item \textbf{Numerical Integration (Quadrature)} ($\xv^\ast$ is the true integral value), e.g. Trapezoidal Rule, Simpson's Rule
+      \item \textbf{Series Expansions / Approximations} ($\xv^\ast$ is the true function), e.g. Taylor approximation
+  \end{itemize}
+\end{itemize}
+
+
+
+\framebreak
+\vspace*{1cm}
+\begin{center}
+  \includegraphics[width=0.5\textwidth, keepaspectratio]{figure_man/convergence-speed.png} \\
+  \begin{footnotesize}
+    How fast do different algorithms converge to the optimal value (convergence in $f$, see later slides). Credits to \emph{V. Cevher et al, 2019, Convex Optimization for Big Data}.
+  \end{footnotesize}
+\end{center}
+
+\end{vbframe}
+
+\begin{vbframe}{Convergence Rates} 
+
+Let $(\xv^{[t]})_{t \in\N}$ be a sequence. We commonly consider three different types of convergence rates:%, see also \textcolor{blue}{Deuflhard, Numerical Mathematics I}. 
+
+\begin{itemize}
+  \item \textbf{Linear Convergence:}  there exists $c\in(0,1)$, such that
+    $$ \lim_{t \rightarrow \infty} \sup\frac{\|\xv^{[t+1]}- \xv^\ast\|}{\|\xv^{[t]}- \xv^\ast\|}
+        = c\quad \Leftrightarrow \quad\|\xv^{[t+1]}- \xv^\ast\|\in\mathcal{O}\left(\|\xv^{[t]}- \xv^\ast\|\right)$$
+  \item \textbf{Convergence of order $\bm{p}$:} convergence of $(\xv^{[t]})_{t \in\N}$ to $\xv^\ast$ is of order $p>1$ if there exists a $c>0$, such that
+    $$ \displaystyle \lim_{t \rightarrow \infty}\sup \frac{\|\xv^{[t+1]}- \xv^\ast\|}{\|\xv^{[t]}- \xv^\ast\|^p}
+        = c \quad \Leftrightarrow \quad \|\xv^{[t+1]}- \xv^\ast\|\in\mathcal{O}\left(\|\xv^{[t]}- \xv^\ast\|^p\right)$$\,\\
+\item \textbf{Superlinear Convergence:}
+  $$\displaystyle \lim_{t \rightarrow \infty} \sup\frac{\|\xv^{[t+1]}- \xv^\ast\|}{\|\xv^{[t]}- \xv^\ast\|} = 0 \quad \Leftrightarrow \quad\|\xv^{[t+1]}- \xv^\ast\|\in o\left(\|\xv^{[t]}- \xv^\ast\|\right)$$
+\end{itemize}
+
+\begin{comment}
+\begin{itemize}
+  \item \textbf{Linear Convergence:}  there exists $c\in(0,1)$, such that
+    $$ \|\xv^{[t+1]}- \xv^\ast\| \leq c\|\xv^{[t]}-\xv^\ast\| $$
+
+    \item \textbf{Superlinear Convergence:} there is a sequence $c^{[t]} \to 0, c^{[t]}\ge 0 $, such that
+  $$ \|\xv^{[t+1]}- \xv^\ast\| \leq c^{[t]}\|\xv^{[t]}-\xv^\ast\| $$
+
+  \item \textbf{Convergence of order $p$:} convergence of $(\xv^{[t]})_{t \in\N}$ to $\xv^\ast$ is of order $p>1$ if there exists a $c>0$, such that
+    $$ \|\xv^{[t+1]}-\xv^\ast\| \leq c\|\xv^{[t]}-\xv^\ast\|^p $$
+\end{itemize}
+\end{comment}
+
+\framebreak
+
+\begin{itemize}
+    \item[$\Rightarrow$] $c$ is the \emph{\bfseries rate of convergence}\\[10pt]
+    \item[$\Rightarrow$] $p$ is the \emph{\bfseries order of convergence}\\[5pt]
+    For $p=2$, we call the convergence \emph{quadratic};\\ with linear convergence the order is is $p=1$\\[20pt]
+    
+\item Obviously Higher orders and faster rates of convergence are better 
+
+\end{itemize}
+
+
+\end{vbframe}
+
+\begin{comment}
+\begin{vbframe}{Rate of Convergence in terms of big O}
+%Let $(\xv^{[t]})_{t \in\N}$ be a sequence. An alternative definition for rates of convergence is: 
+From the previous definitions of convergence rates, it immediately follows that
+\begin{itemize}
+  \item \textbf{Linear convergence} implies  $\displaystyle \lim_{t \rightarrow \infty} \frac{\|\xv^{[t+1]}- \xv^\ast\|}{\|\xv^{[t]}- \xv^\ast\|}
+        \leq c<\infty. $\\[5pt]
+        $\Rightarrow\quad \|\xv^{[t+1]}- \xv^\ast\|\in\mathcal{O}\left(\|\xv^{[t]}- \xv^\ast\|\right)$\\[10pt]
+  \item \textbf{Convergence of order $\bm{p}$} implies  $\displaystyle \lim_{t \rightarrow \infty} \frac{\|\xv^{[t+1]}- \xv^\ast\|}{\|\xv^{[t]}- \xv^\ast\|^p}
+        \leq c <\infty. $\\[5pt]
+        $\Rightarrow\quad \|\xv^{[t+1]}- \xv^\ast\|\in\mathcal{O}\left(\|\xv^{[t]}- \xv^\ast\|^p\right)$\\[10pt]
+  \item \textbf{Superlinear convergence} implies  $\displaystyle \lim_{t \rightarrow \infty} \frac{\|\xv^{[t+1]}- \xv^\ast\|}{\|\xv^{[t]}- \xv^\ast\|} = 0. $\\[5pt]
+        $\Rightarrow\quad \|\xv^{[t+1]}- \xv^\ast\|\in o\left(\|\xv^{[t]}- \xv^\ast\|\right)$
+  \end{itemize}
+\end{vbframe}
+
+
+
+\begin{vbframe}{Alternative Definition}
+Sometimes you will find the following alternative definitions of convergence rates. While the first two differ slightly from the previous definitions, {\bfseries the statements in Big O notation remain the same!}\\
+
+\begin{itemize}
+  \item \textbf{Linear Convergence:}  there exists $c\in(0,1)$, such that
+
+    $$ \lim_{t \rightarrow \infty} \sup\frac{\|\xv^{[t+1]}- \xv^\ast\|}{\|\xv^{[t]}- \xv^\ast\|}
+        = c$$
+
+  \item \textbf{Convergence of order $p$:} convergence of $(\xv^{[t]})_{t \in\N}$ to $\xv^\ast$ is of order $p>1$ if there exists a $c>0$, such that
+
+    $$ \displaystyle \lim_{t \rightarrow \infty}\sup \frac{\|\xv^{[t+1]}- \xv^\ast\|}{\|\xv^{[t]}- \xv^\ast\|^p}
+        = c $$\,\\
+\item \textbf{Superlinear Convergence:}
+  $\displaystyle \lim_{t \rightarrow \infty} \sup\frac{\|\xv^{[t+1]}- \xv^\ast\|}{\|\xv^{[t]}- \xv^\ast\|} = 0$
+\end{itemize}
+
+\end{vbframe}
+\end{comment}
+
+\begin{vbframe}{examples rate of convergence}
+
+\begin{itemize}
+  \item $a^{[0]} = 1, a^{[1]} = \frac12, a^{[2]}  = \frac14, a^{[3]}  = \frac18,
+  a^{[t]}  = \frac1{2^t} \Rightarrow a^\ast = 0$
+
+  \lz
+
+  $(a^{[t]} )_{t \in \N}$ converges linearly with rate $c=\frac12$, since
+
+  $$
+    \lim_{t \rightarrow \infty} \frac{\|\frac1{2^{t+1}}-0\|}{\|\frac1{2^t}- 0\|}
+    = \lim_{t \rightarrow \infty} \frac{\frac1{2^{t+1}}}{\frac1{2^t}}
+    = \lim_{t \rightarrow \infty} \frac12 = \frac12 = c
+  $$
+
+  \item $b^{[0]}  = \frac12, b^{[1]}  = \frac14, b^{[2]}  = \frac1{16}, b^{[3]}  = \frac1{256},
+  b^{[t]}  = \frac1{{2^2}^t} \Rightarrow b^\ast = 0$
+
+  \lz
+
+  $(b^{[t]} )_{t \in \N}$ converges quadratically ($p=2$), because
+\end{itemize}
+
+\begin{footnotesize}
+$$
+  \lim_{t \rightarrow \infty} \frac{\|\frac1{2^{2^{t+1}}}-0\|}{\|\frac1{2^{2^t}}- 0\|^2}
+= \lim_{t \rightarrow \infty} \frac{  \frac1{2^{2^{t+1}}}}{\left(\frac1{2^{2^t}}\right)^2}
+= \lim_{t \rightarrow \infty} \frac{  \frac1{2^{2^t \cdot 2}}}{\left(\frac1{2^{2^t}}\right)^2}
+= \lim_{t \rightarrow \infty} \frac{\left(\frac1{2^{2^t}}\right)^2}{\left(\frac1{2^{2^t}}\right)^2}
+= \lim_{t \rightarrow \infty} 1 = 1 > 0
+$$
+\end{footnotesize}
+
+\begin{comment}
+\framebreak
+
+The sequences
+$$
+x^{[t]} = 1 + 0.5^t, \quad y^{[t]} = 1 + t^{-t}, \quad z^{[t]} = 1 + 0.5^{2^t}
+$$
+converge to $\xv^\star = y^\star = z^\star = 1$ for $t \rightarrow \infty$.
+\begin{eqnarray*}
+\frac{|x^{[t + 1]]} - x^\ast|}{|x^{[t]} - x^\ast|} &=& \frac{1 + 0.5^{t + 1} - 1}{1 + 0.5^t - 1} = 0.5 \\
+\frac{|y^{[t + 1]} - y^\ast|}{|y^{[t]} - y^\ast|} &=& \frac{t^{-t}}{(t + 1)^{t + 1}} =
+\frac{1}{t + 1} \left(\frac{1}{1 + \frac{1}{t}}\right)^t \rightarrow 0 \\
+\frac{|z^{[i + 1]} - z^\ast|}{|z^{[t]} - z^\ast|^2} &=& \frac{0.5^{2^{t + 1}}}{\left( 0.5^{2^t} \right)^2} = 1
+\end{eqnarray*}
+\end{comment}
+\end{vbframe}
+
+\begin{vbframe}{Convergence in a function}
+
+\begin{itemize}
+  \item Instead of convergence of $(\xv^{[t]})_{t \in\N}$, we will often be interested in the convergence of function values when we apply $f$, i.e.
+  $$
+  f(\xv^{[t]} ) \to f(\xv^\ast) \quad \text{ for } t \to \infty
+  $$\\[10pt]
+  \item The previous definitions of convergence rates equivalently apply to convergence in $f(\xv)$. \\[10pt]
+  \item Note that if $f$ is continuous, and $\xv^{[t]} \to \xv^\ast$,  $f(\xv^{[t]} )$ will converge to $f(\xv^\ast)$ .
+  \item However, the rate and order of convergence may differ between $\xv^{[t]} \to \xv^\ast$ and $f(\xv^{[t]} ) \to f(\xv^\ast)$.
+  \end{itemize}
+
+%Convergence in $f(\xv)$ is often much easier to prove mathematically. 
+    
+\end{vbframe}
+\begin{vbframe}{Example: Gradient Descent for $x^2$}
+\begin{itemize}
+  \item We want to solve $\min_{x\in\mathbb R} f(x) \quad \text{ with } \quad f(x) = x^2$
+  \item Clearly, $\xv^\ast=f(\xv^\ast)=0$.
+   \item \textbf{The algorithm:}   For chosen stepsize $\alpha$, $\xv^{[t+1]}$ is defined as
+    \[
+    \xv^{[t+1]} := \xv^{[t]} - \alpha \nabla f(\xv^{[t]})         
+    \] 
+    \item \textbf{For this example, we choose $\alpha=0.25$ and initialize at $\xv^{[0]}=1$.}\\[20pt]
+        \item We have \begin{align*}
+        \xv^{[t+1]}= \xv^{[t]}-0.25\cdot 2\xv^{[t]} =0.5\xv^{[t]}=0.5\|\xv^{[t]}-0\|=  0.5\|\xv^{[t]}-\xv^\ast\|
+        \end{align*}
+    \item Since $\xv^{[t]}$ is divided by two in each step, starting at $1$, it follows that $\xv^{[t]}=0.5^t$
+    \end{itemize}
+    \framebreak
+    \begin{itemize}
+        \item For $\xv^{[t]} \to \xv^\ast$ (also called \emph{convergence in the parameter space}) we get
+        \begin{align*}
+            \|\xv^{[t+1]}- \xv^\ast\| = 0.5^{t+1}=0.5\cdot0.5^t=0.5\|\xv^{[t]}-\xv^\ast\| 
+        \end{align*}
+        so \textbf{linear convergence at rate $\bm{0.5}$} and $\|\xv^{[t+1]}- \xv^\ast\|\in\mathcal{O}\left(0.5^t\right)$\\[15pt]
+        \item For $f(\xv^{[t]} ) \to f(\xv^\ast)$ (also called \emph{convergence in the objective space}) we get
+                \begin{align*}
+            \|f(\xv^{[t+1]})- \xv^\ast\| &= f(0.5^{t+1})=0.5^{2(t+1)}\\&=0.5^2\cdot0.5^{2t}=0.25\cdot f(0.5^t)\\
+            &=0.25\|f(\xv^{[t]})-f(\xv^\ast)\| 
+        \end{align*}so \textbf{linear convergence, but at rate $\bm{0.25}$} and $\|f(\xv^{[t+1]})- f(\xv^\ast)\|\in\mathcal{O}\left(0.25^{t}\right)$
+        
+    \end{itemize}
+\end{vbframe}
+
+\endlecture
+
+\end{document}
