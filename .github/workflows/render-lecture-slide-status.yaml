@@ -14,6 +14,11 @@ on:
         description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
         required: false
         default: false
+      cache-version:
+        type: string
+        description: 'Cache version identifier, increment to invalidate cache'
+        required: false
+        default: '1'
   push:
     # Activate on pushes to both the main or master branches (inconsistently used across lecture repos)
     branches: [main, master]
@@ -78,8 +83,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.r-cache.outputs.dir }}
-          key: ${{ runner.os }}-r-${{inputs.cache-version }}-${{ hashFiles('scripts/install_r_deps.R') }}
-          restore-keys: ${{ runner.os }}-r-${{inputs.cache-version }}-
+          key: ${{ runner.os }}-r-${{ inputs.cache-version || '1' }}-${{ hashFiles('DESCRIPTION') }}
+          restore-keys: |
+            ${{ runner.os }}-r-${{ inputs.cache-version || '1' }}-
+            ${{ runner.os }}-r-
 
       # Setting up the lecture checking requirements:
       # 1) R packages
@@ -91,8 +98,8 @@ jobs:
           make install-tex
           tlmgr list --only-installed
       # 3) Installing diff-pdf and diff-pdf-visually (only automated for ubuntu so far)
-      - name: Install diff-pdf and diff-pdf-visually
-        run: make install-tools-ubuntu
+      # - name: Install diff-pdf and diff-pdf-visually
+      #   run: make install-tools-ubuntu
 
       - name: Install the service package
         run: make install-service
@@ -104,10 +111,15 @@ jobs:
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
 
-      # Run the main thing: compiles slides, checks against slides-pdf/*, renderes Rmd -> html site with results
+      # Run the main thing: compiles slides, checks against slides-pdf/*, renders Rmd -> html site with results
       # Resulting output is in ./_site
+      # Before we add the lecture dir (e.g. "lecture_sl") to the include_lectures file to
+      # ensure that we do not accidentally skip this lecture, as this file is usually used
+      # to specify lecture for which `make site` should do something
       - name: Check slides and build HTML overview
-        run: make
+        run: |
+          echo $(basename $PWD) > include_lectures
+          make site
 
       # Deploy using this rather than JamesIves/github-pages-deploy-action, as this supports pushing
       # orphan branches. Since we're adding a bunch of PDFs, we really want to avoid a bloated branch history
@@ -117,3 +129,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./_site
           force_orphan: true
+          
+
+      # Helper script generates exit status 1 if at least one slide failed to compile
+      - name: Generate exit code based on check status
+        run: |
+          ./inst/check_status.R
