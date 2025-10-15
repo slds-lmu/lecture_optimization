@@ -162,20 +162,21 @@ NB: Some people require that $||\bm{v}|| = 1$. Then, we can identify $D_{\bm{v}}
 	\item Points in direction of \textbf{greatest increase} of $f$\end{enumerate}
 	\begin{center}
 		\includegraphics[width = 0.45\textwidth]{figure_man/gradient3.png} \\\includegraphics[width = 0.45\textwidth]{figure_man/gradient.png}
-	\end{center}\begin{comment}
-	\begin{footnotesize}
-    	\textbf{Proof}: Let $\bm{v}$ be a vector with $\|\bm{v}\|=1$ and $\theta$ the angle between $\bm{v}$ and $\nabla \fx$.
-        \begin{equation*}
-            D_{\bm{v}}\fx = \nabla \fx \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
-        \end{equation*}
-    	by the cosine formula for dot products and $\|\bm{v}\| = 1$.
-        $\cos(\theta)$ is maximal if $\theta = 0$, hence if $\bm{v}$ and $\nabla \fx$ point in the same direction.
+	% \end{center}\begin{comment}
+	% \begin{footnotesize}
+ %    	\textbf{Proof}: Let $\bm{v}$ be a vector with $\|\bm{v}\|=1$ and $\theta$ the angle between $\bm{v}$ and $\nabla \fx$.
+ %        \begin{equation*}
+ %            D_{\bm{v}}\fx = \nabla \fx \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
+ %        \end{equation*}
+ %    	by the cosine formula for dot products and $\|\bm{v}\| = 1$.
+ %        $\cos(\theta)$ is maximal if $\theta = 0$, hence if $\bm{v}$ and $\nabla \fx$ point in the same direction.
 
-    	(Alternative proof: Apply Cauchy-Schwarz to $\nabla \fx \bm{v}$ and look for equality.)
+ %    	(Alternative proof: Apply Cauchy-Schwarz to $\nabla \fx \bm{v}$ and look for equality.)
 
-        Analogous: Negative gradient $- \nabla \fx$ points in direction of greatest \textit{de}crease
-	\end{footnotesize}
-	\end{comment}
+ %        Analogous: Negative gradient $- \nabla \fx$ points in direction of greatest \textit{de}crease
+	% \end{footnotesize}
+	% \end{comment}
+\end{center}
 \framebreak
 \begin{itemize}\setlength{\itemsep}{0.5\baselineskip}
     \item To prove 1, consider that a \emph{level curve} of a function $f: \mathcal{S}\subseteq \R^d \to \R$ is any parametrized, differentiable curve (see \emph{implicit function theorem}) $x(t)$, $t\in\mathcal{T}\subseteq\R_{\geq 0}$ so that $f(x(t))=c$ for some constant $c$.
@@ -236,7 +237,7 @@ We will mainly use the $\nabla f$ notation.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.4\textwidth]{figure_man/Jacobian.png}
+    \includegraphics[width=0.3\textwidth]{figure_man/Jacobian.png}
     \caption*{\footnotesize Source: Wikipedia}
 \end{figure}
 

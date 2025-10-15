@@ -42,7 +42,7 @@
                  matrix $\mathbf{Y}$ & $\deriv\mathbf{Y} / \deriv x$ & -- & --
             \end{tabular}
         \end{table}
-        \item This notation is also reffered to as \emph{Leibniz Notation}
+        \item This notation is also referred to as \emph{Leibniz notation}
 \end{itemize}
 \end{vbframe}
 
@@ -109,7 +109,7 @@ $$
 
 
 
-\begin{vbframe}{Derivatives of functions with scalars as inputs}
+\begin{vbframe}{Deriv. of functions with scalar inputs}
        % \vspace{0.5\baselineskip}
         \begin{table}
             \centering
@@ -208,13 +208,13 @@ $f(\theta,\xv)=\theta^{\top} \xv$ and $s(x)=\frac{1}{1+\exp (-x)}$.
 \item[$\Rightarrow$] We want to find \begin{align*}
 \nabla_\theta -\ell (\theta)=-\nabla_\theta \ell (\theta)&=-\sumin\underbrace{ y^{(i)} \log (s(f(\theta,\xv^{(i)}))+(1-y^{(i)}) \log (1-s(f(\theta,\xv^{(i)}))}_{=:y \log (s_i)+(1-y_i) \log (1-s_i)}
 \end{align*}
-\item Define $h_i:=-[y \log (s_i)+(1-y_i) \log (1-s_i)]$  and $f_i:=\theta^{\top} \xv^{(i)}$
+\item $s_i = s(f_i)$; $h_i:=-[y_i \log (s_i)+(1-y_i) \log (1-s_i)]$; $f_i:=\theta^{\top} \xv^{(i)}$
 \end{itemize}
 \end{vbframe}
 
 \begin{vbframe}{Example: Logistic Regression II}
 \begin{itemize}    \setlength{\itemsep}{0.5\baselineskip}
-\item We can now directly apply the Chain Rule:
+\item We can now directly apply the chain rule:
 $$
 -\nabla_\theta \ell (\theta)=\sumin\nabla_\theta h_i\circ s_i \circ f_i=\sumin\frac{\deriv h_i}{\deriv s_i} \frac{\deriv s_i}{\deriv f_i} \frac{\deriv f_i}{\deriv \theta}
 $$
@@ -226,7 +226,7 @@ $$
 \end{itemize}
 \end{vbframe}
 
-\begin{vbframe}{Example: Logistic Regression -- Different Notation}
+\begin{vbframe}{Ex: Log. Regr. -- Alternative Notation}
 This example highlights how using Leibniz notation can make things easier.\\
 Alternatively, we could write this example out as follows:
 \begin{itemize}
@@ -246,7 +246,7 @@ $$
 $$
 \end{itemize}\framebreak
 \begin{itemize}
-    \item Using the fact that $$\frac{\partial h}{\partial z}=\frac{1-y}{1-z}-\frac{y}{z};\quad\frac{\partial s}{\partial x}=s(x)\big(1-s(x)\big);\quad\frac{\partial f}{\partial \theta}=\xv$$ we get \begin{align*}
+    \item Using the fact that $$\frac{\deriv h}{\deriv z}=\frac{1-y}{1-z}-\frac{y}{z};\quad\frac{\deriv s}{\deriv x}=s(x)\big(1-s(x)\big);\quad\frac{\deriv f}{\deriv \theta}=\xv$$ we get \begin{align*}
    [\nabla_\theta h(y,\cdot)\circ s \circ f(\cdot,\xv)]_j&=\left[\frac{1-y}{1-s(f(\theta,\xv))}-\frac{y}{s(f(\theta,\xv))}\right] \cdot \left[s(f(\theta,\xv))(1-s(f(\theta,\xv)))\right]\cdot \frac{\partial f}{\partial\theta_j}\\
    &=(s(f(\theta,\xv))-y)\xv_j
 \end{align*}
