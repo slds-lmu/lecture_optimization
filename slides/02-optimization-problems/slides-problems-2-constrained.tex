@@ -1,13 +1,8 @@
 \documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
 \input{../../style/preamble}
-\input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
-
-\newcommand{\slvec}{\left(\zeta^{(1)}, \zeta^{(n)}\right)} % slack variable vector
-\newcommand{\sli}[1][i]{\zeta^{(#1)}} % i-th slack variable
-\newcommand{\scptxi}{\scp{\thetav}{\xi}} % scalar prodct of theta and xi
-\newcommand{\alphav}{\bm{\alpha}} % vector alpha (bold) (basis fun coefficients)
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
 
 \title{Optimization in Machine Learning}
 
@@ -26,213 +21,171 @@
     \item Soft-margin SVM 
 }
 
-\begin{vbframe}{Constrained Optimization Problem }
-
+\begin{frame2}{Constrained Optimization Problem}
 $$
 \min_{\xv \in \mathcal{S}} \fx, \text{ with } f: \; \mathcal{S} \to \R.
 $$
 
-\begin{itemize}
-	\item \textbf{Constrained}, if domain $\mathcal{S}$ is restricted: $\mathcal{S} \textcolor{blue}{\subsetneq} \R^d.$
-
+\begin{itemizeL}
+\item \textbf{Constrained}, if domain $\mathcal{S}$ is restricted: $\mathcal{S} \textcolor{blue}{\subsetneq} \R^d.$
 \item \textbf{Convex} if $f$ convex function and $\mathcal{S}$ convex set
-
-	\item Typically $\mathcal{S}$ is defined via functions called \textbf{constraints}
-	$$
-		\mathcal{S}:= \{\xv \in \R^d ~|~ g_i(\xv) \le 0, h_j(\xv) = 0 ~\forall~ i, j\}, \text{ where }
-	$$ 
-
-\begin{itemize}
+\item Typically $\mathcal{S}$ is defined via functions called \textbf{constraints}
+$$
+\mathcal{S}:= \{\xv \in \R^d ~|~ g_i(\xv) \le 0, h_j(\xv) = 0 ~\forall~ i, j\}, \text{ where }
+$$
+\begin{itemizeS}
 \item $g_i: \R^d \to \R, i = 1, ..., k$ are called inequality constraints,
 \item $h_j: \R^d \to \R, j = 1, ..., l$ are called equality constraints.
-\end{itemize}
+\end{itemizeS}
+\end{itemizeL}
 
-\end{itemize}
+\spacer
 
-\lz 
-
-Equivalent formulation: 
-\begin{eqnarray*}
-\min && f(\mathbf{x})  \\
-\text{such that} && g_i(\mathbf{x}) \le 0 \qquad \text{for } i=1,\ldots,k  \\
- && h_j(\mathbf{x}) = 0 \qquad \text{for } j=1,\ldots,l. 
-\end{eqnarray*}
-
-\end{vbframe}
-
-
-\begin{vbframe}{Linear program (LP)}
-
-\vspace*{-0.3cm}
-
-\begin{itemize}
-	\item $f$ linear s.t. linear constraints. Standard form: 
-	\vspace*{-0.2cm}
-	\begin{eqnarray*}
-	\min_{\xv \in \R^d} && \bm{c}^\top\xv\\
-	\text{s.t. } && \bm{A}\xv \ge \bm{b} \\
-	&& \xv \ge 0
-	\end{eqnarray*}
-	for $\bm{c}\in \R^d, \bm{A} \in \R^{k \times d}$ and $\bm{b} \in \R^k$. 
-
-	\begin{figure}
-		\includegraphics[width=0.25\textwidth]{figure_man/simplex_iter1.png} ~~~ \includegraphics[width=0.25\textwidth]{figure_man/simplex.png} \\
-		\begin{footnotesize}
-		Visualization of constraints of 2D and 3D linear program (Source right figure: Wikipedia). 
-		\end{footnotesize}
-	\end{figure}
-\end{itemize}
-\end{vbframe}
+Equivalent formulation:
+$$
+\begin{aligned}
+\min \quad & f(\mathbf{x})  \\
+ext{such that} \quad & g_i(\mathbf{x}) \le 0 && \text{for } i=1,\ldots,k \\
+& h_j(\mathbf{x}) = 0 && \text{for } j=1,\ldots,l.
+\end{aligned}
+$$
+\end{frame2}
 
 
-\begin{vbframe}{Quadratic program (QP)}
+\begin{framei}{Linear program (LP)}
+\item $f$ linear s.t. linear constraints. Standard form:
+$$
+\begin{aligned}
+\min_{\xv \in \R^d} \quad & \bm{c}^\top \xv \\
+ext{s.t. } \quad & \bm{A}\xv \ge \bm{b} \\
+& \xv \ge 0
+\end{aligned}
+$$
+for $\bm{c}\in \R^d, \bm{A} \in \R^{k \times d}$ and $\bm{b} \in \R^k$.
 
-\begin{itemize}
-	\item $f$ quadratic form s.t. linear constraints. Standard form: 
-	\vspace*{-0.3cm}
-	\begin{eqnarray*}
-	\min_{\xv \in \R^d} && \frac{1}{2} \xv^\top \bm{A} \xv + \bm{b}^\top \xv 
-	+ c \\
-	\text{s.t. } && \bm{E}\xv \le \bm{f} \\
-	 && \bm{G}\xv = \bm{h} \\
-	\end{eqnarray*}
-	$\bm{A} \in \R^{d \times d}, \bm{b} \in \R^d, c \in \R$, $\bm{E} \in \R^{k \times d}, \bm{f} \in \R^k$, $\bm{G} \in \R^{l \times d}$, $\bm{h} \in \R^l$. 
-\end{itemize}
+\vfill
 
-%\vspace*{-0.8cm}
-	\begin{figure}
-		\includegraphics[width=0.3\textwidth]{figure_man/quadratic-programm.jpeg} \\
-		\begin{footnotesize}
-		Visualization of quadratic objective (dashed) over linear constraints (grey). Source: Ma, Signal Processing Optimization Techniques, 2015. 
-		\end{footnotesize}
-	\end{figure}
-
-% \begin{footnotesize}
-% $\leq$ and $\geq$ to be understood component-wise. 
-
-% \end{footnotesize}
-
-\end{vbframe}
-
-\begin{vbframe}{Convex program (CP)}
-
-\begin{itemize}
-	\item $f$ convex, convex inequality constraints, linear equality constraints. Standard form: 
-	\vspace*{-0.2cm}
-	\begin{eqnarray*}
-	\min_{\xv \in \R^d} && \fx\\
-	\text{s.t. } && g_i(\xv) \le 0, i = 1, ..., k \\
-	&& \bm{A}\xv = \bm{b}
-	\end{eqnarray*}
-	for $\bm{A} \in \R^{l \times d}$ and $\bm{b} \in \R^l$. 
-\end{itemize}
-
-\begin{figure}
-	\includegraphics[width=0.8\textwidth]{figure_man/cp_example.jpg} \\
-	\begin{footnotesize}
-	Convex program (left) vs. nonconvex program (right). Source: Mathworks.
-	\end{footnotesize}
-\end{figure}
-\vspace*{-0.6cm}
+\splitVCC[0.5]{
+\imageC[0.8]{figure_man/simplex_iter1.png}
+}{
+\imageC[0.8]{figure_man/simplex.png}
+\spacer
+\begin{footnotesize}
+Visualization of constraints of 2D and 3D linear program (Source right figure: Wikipedia).
+\end{footnotesize}
+}
+\end{framei}
 
 
-% \begin{itemize}
-% \item \textbf{Box-constrained}:
+\begin{framei}{Quadratic program (QP)}
+\item $f$ quadratic form s.t. linear constraints. Standard form:
+$$
+\begin{aligned}
+\min_{\xv \in \R^d} \quad & \frac{1}{2} \xv^\top \bm{A} \xv + \bm{b}^\top \xv + c \\
+ext{s.t. } \quad & \bm{E}\xv \le \bm{f} \\
+& \bm{G}\xv = \bm{h}
+\end{aligned}
+$$
+$\bm{A} \in \R^{d \times d}, \bm{b} \in \R^d, c \in \R$, $\bm{E} \in \R^{k \times d}, \bm{f} \in \R^k$, $\bm{G} \in \R^{l \times d}$, $\bm{h} \in \R^l$.
 
-% $$
-% \mathcal{S} = \{\xv \in \R^d: x_i^l \leq x_i \leq x_i^u \text{ for all } i\}
-% $$
-% \item
-% \textbf{Linear or non-linear constraints}
-% \begin{eqnarray*}
-% \mathcal{S} = \{\xv \in \R^d: g(\xv) \le 0;  h(\xv) = 0\}
-% \end{eqnarray*}
-% We call $g(\xv)\le 0$ an inequality constraint, and $h(\xv) = 0 $ an equality constraint. 
+\vfill
 
-% \end{itemize}
-\end{vbframe}
+\imageC[0.6]{figure_man/quadratic-programm.jpeg}
+\begin{footnotesize}
+Visualization of quadratic objective (dashed) over linear constraints (grey). Source: Ma, Signal Processing Optimization Techniques, 2015.
+\end{footnotesize}
+\end{framei}
+
+\begin{framei}{Convex program (CP)}
+\item $f$ convex, convex inequality constraints, linear equality constraints. Standard form:
+$$
+\begin{aligned}
+\min_{\xv \in \R^d} \quad & \fx \\
+ext{s.t. } \quad & g_i(\xv) \le 0, i = 1, ..., k \\
+& \bm{A}\xv = \bm{b}
+\end{aligned}
+$$
+for $\bm{A} \in \R^{l \times d}$ and $\bm{b} \in \R^l$.
+
+\vfill
+
+\imageC[0.8]{figure_man/cp_example.jpg}
+\begin{footnotesize}
+Convex program (left) vs. nonconvex program (right). Source: Mathworks.
+\end{footnotesize}
+\end{framei}
 
 
-\begin{vbframe}{Further types}
+\begin{frame2}{Further types}
+\splitVCC[0.58]{
+\imageC[0.8]{figure_man/classes_optimization_problems.png}
+}{
+Quadratically constrained linear program (QCLP) and quadratically constrained quadratic program (QCQP).
+}
+\end{frame2}
 
-\begin{columns}[T] % align columns
-	\begin{column}{.58\textwidth}
-		\begin{center}
-			\includegraphics[width=0.8\textwidth]{figure_man/classes_optimization_problems.png} 
-		\end{center}
-	\end{column}
-	\begin{column}{.38\textwidth} \vspace*{1.5cm}
-		Quadratically constrained linear program (QCLP) and quadratically constrained quadratic program (QCQP). 
-	\end{column}
-\end{columns}
+\begin{frame2}{Example 1: Unit circle}
+$$
+\begin{aligned}
+\min \quad & f(x_1, x_2) = x_1 + x_2 \\
+ext{s.t. } \quad & h(x_1,x_2) = x_1^2 + x_2^2 - 1 = 0
+\end{aligned}
+$$
 
+\vfill
 
+\imageC[0.3]{figure_man/unit_circle.png}
 
-\end{vbframe}
+$f, h$ smooth. Problem $\textbf{not convex}$ ($\mathcal{S}$ is not a convex set).
 
-\begin{vbframe}{Example 1: Unit circle}
-
-\vspace*{-0.5cm} 
-
-\begin{eqnarray*}
-  \min && f(x_1, x_2) = x_1 + x_2 \\
-  \text{s.t. } && h(x_1,x_2) = x_1^2 + x_2^2 - 1 = 0
-\end{eqnarray*}
-
-\begin{center}
-  \includegraphics[height=0.3\textwidth, keepaspectratio]{figure_man/unit_circle.png} \\
-\end{center}
-
-$f, h$ smooth. Problem $\textbf{not convex}$ ($\mathcal{S}$ is not a convex set). 
-
-\lz 
+\spacer
 
 \begin{footnotesize}
-\textbf{Note: } If the constraint is replaced by $g(x_1, x_2) = x_1^2 + x_2^2 - 1 \le 0$, the problem is a convex program, even a quadratically constrained linear program (QCLP). 
+\textbf{Note: } If the constraint is replaced by $g(x_1, x_2) = x_1^2 + x_2^2 - 1 \le 0$, the problem is a convex program, even a quadratically constrained linear program (QCLP).
 \end{footnotesize}
 
-\end{vbframe}
+\end{frame2}
 
-\begin{vbframe}{Example 2: Maximum likelihood}
-
+\begin{frame2}{Example 2: Maximum likelihood}
 \textbf{Experiment}: Draw $m$ balls from a bag with balls of $k$ different colors.
-Color $j$ has a probability of $p_j$ of being drawn. 
+Color $j$ has a probability of $p_j$ of being drawn.
 
-\lz 
+\spacer
 
-The probability to realize the outcome $\xv = (x_1, ..., x_k)$, $x_j$ being the number of balls drawn in color $j$, is: 
+The probability to realize the outcome $\xv = (x_1, ..., x_k)$, $x_j$ being the number of balls drawn in color $j$, is:
 
 $$
-	f(\xv, m, \bm{p}) = \begin{cases} \frac{m!}{x_1! \cdots x_k!} \cdot p_1^{x_1} \cdots p_k^{x_k} & \text{ if } \sum_{i = 1}^k x_i = m \\ 0 & \text{ otherwise}\end{cases}
+f(\xv, m, \bm{p}) = \begin{cases} \frac{m!}{x_1! \cdots x_k!} \cdot p_1^{x_1} \cdots p_k^{x_k} & \text{ if } \sum_{i = 1}^k x_i = m \\ 0 & \text{ otherwise}\end{cases}
 $$
-The parameters $p_j$ are subject to the following constraints: 
+The parameters $p_j$ are subject to the following constraints:
 
-\begin{eqnarray*}
-	0 \le p_j \le 1 && \text{ for all } i \\
-	 \sum_{j = 1}^m p_j = 1. &&
-\end{eqnarray*}
+$$
+\begin{aligned}
+0 \le p_j \le 1 && \text{ for all } i \\
+\sum_{j = 1}^m p_j = 1. &&
+\end{aligned}
+$$
+\end{frame2}
 
-\framebreak 
+\begin{frame2}{Example 2: Maximum likelihood}
+For a fixed $m$ and a sample $\D = \left(\xi[1], ..., \xi[n]\right)$, where $\sum_{j = 1}^k \xi[i]_j = m$ for all $i = 1, ..., n$, the negative log-likelihood is:
 
-For a fixed $m$ and a sample $\D = \left(\xi[1], ..., \xi[n]\right)$, where $\sum_{j = 1}^k \xi[i]_j = m$ for all $i = 1, ..., n$, the negative log-likelihood is: 
+$$
+\begin{aligned}
+- \ell(\bm{p}) &= - \log \left(\prod_{i = 1}^n  \frac{m!}{\xi_1! \cdots \xi_k!} \cdot p_1^{\xi_1} \cdots p_k^{\xi_k}    \right) \\
+&= \sumin \left[- \log(m!) + \sum_{j = 1}^k \log(\xi_j!) - \sum_{j = 1}^k \xi_j \log(p_j)\right] \\
+&\propto - \sumin \sum_{j = 1}^k \xi_j \log(p_j)
+\end{aligned}
+$$
 
-
-\begin{eqnarray*}
-	- \ell(\bm{p}) &=& - \log \left(\prod_{i = 1}^n  \frac{m!}{\xi_1! \cdots \xi_k!} \cdot p_1^{\xi_1} \cdots p_k^{\xi_k}    \right) \\
-	&=& \sumin \left[- \log(m!) + \sum_{j = 1}^k \log(\xi_j!) - \sum_{j = 1}^k \xi_j \log(p_j)\right] \\
-	&\propto& - \sumin \sum_{j = 1}^k \xi_j \log(p_j) 
-\end{eqnarray*}
-
-$f, g, h$ are smooth.\\\textbf{Convex program}: convex$^{(*)}$ objective + box/linear constraints). 
+$f, g, h$ are smooth.\\\textbf{Convex program}: convex$^{(*)}$ objective + box/linear constraints).
 
 \vfill
 \begin{footnotesize}
-${(*)}$: $\log$ is concave, $- \log $ is convex, and the sum of convex functions is convex. 
+${(*)}$: $\log$ is concave, $- \log $ is convex, and the sum of convex functions is convex.
 \end{footnotesize}
 
-\end{vbframe}
-
-
+\end{frame2}
 
 
 % \begin{vbframe}{Example 1.1: Maximum Likelihood Estimation: Poisson Distribution}
@@ -299,245 +252,179 @@ ${(*)}$: $\log$ is concave, $- \log $ is convex, and the sum of convex functions
 
 % \end{vbframe}
 
-\begin{vbframe}{Example 3: Ridge regression}
-		
-Ridge regression can be formulated as regularized ERM: 
+\begin{frame2}{Example 3: Ridge regression}
+Ridge regression can be formulated as regularized ERM:
 
-\begin{eqnarray*}  
-	\thetah_{\text{Ridge}} &=& \argmin_{\thetav} \left\{ \sumin \left(\yi - \thetav^\top\xv\right)^2 + \lambda ||\thetav||_2^2 \right\}
-\end{eqnarray*}
+$$
+\thetah_{\text{Ridge}} = \argmin_{\thetav} \left\{ \sumin \left(\yi - \thetav^\top\xv\right)^2 + \lambda ||\thetav||_2^2 \right\}
+$$
 
-Equivalently it can be written as constrained optimization problem: 
+Equivalently it can be written as constrained optimization problem:
 
-\vspace*{-0.2cm}
-\begin{columns}[T] % align columns
-	\begin{column}{.48\textwidth}
-		\begin{eqnarray*}
-			\min_{\thetav} && \sum_{i = 1}^n \left(\thetav^\top \xi - \yi\right)^2 \\
-			\text{s.t. } && \|\thetav\|_2 \le t
-		\end{eqnarray*}
-		
-		%We are looking for the best SSE with $\thetav$ that lies within a $t$-ball around $0$. 
-	\end{column}
+\splitVCC[0.48]{
+$$
+\begin{aligned}
+\min_{\thetav} \quad & \sum_{i = 1}^n \left(\thetav^\top \xi - \yi\right)^2 \\
+	ext{s.t. } \quad & \|\thetav\|_2 \le t
+\end{aligned}
+$$
+}{
+\imageC[0.45]{figure_man/ridge.png}
+}
 
-	\begin{column}{.48\textwidth}
-		\begin{center}
-			\includegraphics[width=0.45\textwidth, keepaspectratio]{figure_man/ridge.png} 
-		\end{center}
-	\end{column}
-\end{columns}
+\spacer
 
-\vspace*{0.2cm}
+$f, g$ smooth. \textbf{Convex program} (convex objective, quadratic constraint).
 
-$f, g$ smooth. \textbf{Convex program} (convex objective, quadratic constraint). 
-
-\end{vbframe}
+\end{frame2}
 	
-\begin{vbframe}{Example 4: LASSO Regression}
-	
-Lasso regression can be formulated as regularized ERM: 
+\begin{frame2}{Example 4: LASSO Regression}
+Lasso regression can be formulated as regularized ERM:
 
-\begin{eqnarray*}  
-		\thetah_{\text{Lasso}} &=&  \argmin_{\thetav} \left\{ \sumin \left(\yi - \thetav^\top\xv\right)^2 + \lambda ||\thetav||_1 \right\} 
-\end{eqnarray*}
+$$
+\thetah_{\text{Lasso}} =  \argmin_{\thetav} \left\{ \sumin \left(\yi - \thetav^\top\xv\right)^2 + \lambda ||\thetav||_1 \right\}
+$$
 
-Equivalently it can be written as constrained optimization problem: 
+Equivalently it can be written as constrained optimization problem:
 
-	\vspace*{-0.2cm}
-	\begin{columns}[T] % align columns
-		\begin{column}{.48\textwidth}
-			\begin{eqnarray*}
-				\min_{\thetav} && \sum_{i = 1}^n \left(\thetav^\top \xi - \yi\right)^2 \\
-				\text{s.t. } && \|\thetav\|_1 \le t
-			\end{eqnarray*}
-		\end{column}
+\splitVCC[0.48]{
+$$
+\begin{aligned}
+\min_{\thetav} \quad & \sum_{i = 1}^n \left(\thetav^\top \xi - \yi\right)^2 \\
+\text{s.t. } \quad & \|\thetav\|_1 \le t
+\end{aligned}
+$$
+}{
+\imageC[0.45]{figure_man/lasso.png}
+}
 
-		\begin{column}{.48\textwidth}
-			\begin{center}
-				\includegraphics[width=0.45\textwidth, keepaspectratio]{figure_man/lasso.png} 
-			\end{center}
-		\end{column}
-	\end{columns}	
+\spacer
 
-\vspace*{0.2cm}
+$f$ smooth, $g$ \textbf{not smooth}. Still \textbf{convex program}.
 
-$f$ smooth, $g$ \textbf{not smooth}. Still \textbf{convex program}. 
+\end{frame2}
 
-\end{vbframe}
-
-\begin{vbframe}{Example 5: Support Vector Machines} 
-
-The SVM problem can be formulated in $3$ equivalent ways: two primal, and one dual one (we will see later what "dual" means). 
+\begin{frame2}{Example 5: Support Vector Machines}
+The SVM problem can be formulated in $3$ equivalent ways: two primal, and one dual one (we will see later what "dual" means).
 
 \begin{footnotesize}
-	Here, we only discuss the nature of the optimization problems. A more thorough statistical derivation of SVMs is given in ``Supervised learning''. 
+Here, we only discuss the nature of the optimization problems. A more thorough statistical derivation of SVMs is given in ``Supervised learning''.
 \end{footnotesize}
 
-\vspace*{0.3cm}
+\spacer
 
 \textbf{Formulation 1 (primal): } ERM with Hinge loss
 
 $$
-	\sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \|\thetav\|_2^2, \quad f^{(i)} := \thetav^\top \xi
+\sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \|\thetav\|_2^2, \quad f^{(i)} := \thetav^\top \xi
 $$
 
-\vspace*{-0.3cm}
+\vfill
 
-\begin{columns}[T] % align columns
-	\begin{column}{.58\textwidth}
-		\begin{figure}
-			\begin{center}
-				\includegraphics[width=0.8\textwidth]{figure_man/hinge.pdf}
-			\end{center}
-			% See hinge_vs_l2.R
-		\end{figure}
-	\end{column}
-	\begin{column}{.38\textwidth} \vspace*{1.5cm}
-		\begin{footnotesize}
-		Unconstrained, convex problem with non-smooth objective
-		\end{footnotesize}
-	\end{column}
-\end{columns}
+\imageC[0.6]{figure_man/hinge.pdf}
+\begin{footnotesize}
+Unconstrained, convex problem with non-smooth objective
+\end{footnotesize}
+\end{frame2}
 
-\framebreak 
-
+\begin{frame2}{Example 5: Support Vector Machines}
 \textbf{Formulation 2 (primal): } Geometric formulation
 
-\begin{itemize}
-	\item Find decision boundary which separates classes with \textbf{maximum} safety distance
-	\item Distance to points closest to decision boundary (\enquote{safety margin $\gamma$}) should be \textbf{maximized}
-\end{itemize}
+\begin{itemizeL}
+\item Find decision boundary which separates classes with \textbf{maximum} safety distance
+\item Distance to points closest to decision boundary (\enquote{safety margin $\gamma$}) should be \textbf{maximized}
+\end{itemizeL}
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[width=0.4\textwidth]{figure_man/svm-example.pdf}
-	\end{center}
-\end{figure}
+\vfill
 
-\end{vbframe}
+\imageC[0.4]{figure_man/svm-example.pdf}
+\end{frame2}
 
-\begin{frame}{Example 5: Support Vector Machines} 
+\begin{frame2}{Example 5: Support Vector Machines}
+\textbf{Formulation 2 (primal): } Geometric formulation
 
-	\only<1>{
+$$
+\begin{aligned}
+\min\limits_{\thetav, \theta_0} \quad & \frac{1}{2} \|\thetav\|^2 \\
+\text{s.t.} \quad & \yi  \left( \scp{\thetav}{\xi} + \theta_0 \right) \ge 1 \quad \forall\, i \in \nset
+\end{aligned}
+$$
 
-	\textbf{Formulation 2 (primal): } Geometric formulation
-
-	\vspace*{-0.5cm}
-
-	\begin{eqnarray*}
-		& \min\limits_{\thetav, \thetav_0} & \frac{1}{2} \|\thetav\|^2 \\ % + C   \sum_{i=1}^n \sli \\
-		& \text{s.t.} & \,\, \yi  \left( \scp{\thetav}{\xi} + \theta_0 \right) \geq 1 \quad \forall\, i \in \nset
-		% & \text{and} & \,\, \sli \geq 0 \quad \forall\, i \in \nset.\\
-	\end{eqnarray*}
-
-	\begin{columns}[T] % align columns
-		\begin{column}{.58\textwidth}
-			\begin{figure}
-				\begin{center}
-					\includegraphics[width=0.6\textwidth]{figure_man/svm_geometry.png}
-				\end{center}
-				% Taken from here https://github.com/slds-lmu/lecture_i2ml/tree/master/figure
-			\end{figure}
-		\end{column}
-		\begin{column}{.38\textwidth} \vspace*{1.5cm}
-			\begin{footnotesize}
-			Maximize safety margin $\gamma$. No point is allowed to violate safety margin constraint. 
-			\end{footnotesize}
-		\end{column}
-	\end{columns}
-
-	}
-
-	\only<2>{
-
-	\textbf{Formulation 2 (primal): } Geometric formulation (soft constraints)
-
-	\vspace*{-0.5cm}
-
-	\begin{eqnarray*}
-		& \min\limits_{\thetav, \thetav_0,\sli} & \frac{1}{2} \|\thetav\|^2 + \textcolor{violet}{C   \sum_{i=1}^n \sli} \\
-		& \text{s.t.} & \,\, \yi  \left( \scp{\thetav}{\xi} + \theta_0 \right) \geq 1 \textcolor{violet}{- \sli} \quad \forall\, i \in \nset,\\
-		& \text{and} & \,\, \textcolor{violet}{\sli \geq 0 \quad \forall\, i \in \nset.}\\
-	\end{eqnarray*}
-
-\vspace*{-1cm}
-
-	\begin{columns}[T] % align columns
-		\begin{column}{.58\textwidth}
-			\begin{figure}
-				\begin{center}
-					\includegraphics[width=0.6\textwidth]{figure_man/boundary_with_violations.png}
-				\end{center}
-				% Taken from here https://github.com/slds-lmu/lecture_i2ml/tree/master/figure
-			\end{figure}
-		\end{column}
-		\begin{column}{.38\textwidth} \vspace*{1.5cm}
-			\begin{footnotesize}
-			Maximize safety margin $\gamma$. Margin \textcolor{violet}{violations are allowed, but are minimized}. 
-			\end{footnotesize}
-		\end{column}
-	\end{columns}
-	}
-
-	The problem is a \textbf{QP}: Quadratic objective with linear constraints.  
-
-
-\end{frame}	
-
-
-%	\begin{frame}{Example 6: Support Vector Machines} 
-%		
-%		Mathematically, the support vector machine problem corresponds to the following optimization problem: 
-%		
-%		\begin{eqnarray*}
-%			& \max\limits_{\thetav, \theta_0} & \gamma \\
-%			& \text{s.t.} & \,\, d_f\left(\xi, \yi\right) \ge \gamma \quad \text{for all } i \in \{1, ..., n\}
-%		\end{eqnarray*}
-%		\pause
-%		This is a convex quadratic program based on geometric intuition, but hard to optimize.
-%		
-%		\begin{center}
-%			\includegraphics[width=2.5cm]{figure_man/svm_example.pdf} \\
-%		\end{center}
-%	\end{frame}	
-
-
-\begin{frame}{Example 5: Support Vector Machines}
-
+\splitVCC[0.58]{
+\imageC[0.6]{figure_man/svm_geometry.png}
+}{
 \begin{footnotesize}
-\textbf{Formulation 3 (dual): } Dualizing the primal formulation 
-\begin{eqnarray*}
-	& \max\limits_{\alphav \in \R^n} & \sum_{i=1}^n \alpha_i - \frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\yi y^{(j)} \scp{\xi}{\xv^{(j)}} \\
-	& \text{s.t. } & 0 \le \alpha_i \le C \quad \forall\, i \in \nset, \quad \sum_{i=1}^n \alpha_i \yi = 0
-\end{eqnarray*}
+Maximize safety margin $\gamma$. No point is allowed to violate safety margin constraint.
+\end{footnotesize}
+}
+\end{frame2}
+
+\begin{frame2}{Example 5: Support Vector Machines}
+\textbf{Formulation 2 (primal): } Geometric formulation (soft constraints)
+
+$$
+\begin{aligned}
+\min\limits_{\thetav, \theta_0, \zeta^{(i)}} \quad & \frac{1}{2} \|\thetav\|^2 + \textcolor{violet}{C   \sum_{i=1}^n \zeta^{(i)}} \\
+\text{s.t.} \quad & \yi  \left( \scp{\thetav}{\xi} + \theta_0 \right) \ge 1 \textcolor{violet}{- \zeta^{(i)}} \quad \forall\, i \in \nset, \\
+\text{and} \quad & \textcolor{violet}{\zeta^{(i)} \ge 0 \quad \forall\, i \in \nset.}
+\end{aligned}
+$$
+
+\splitVCC[0.58]{
+\imageC[0.6]{figure_man/boundary_with_violations.png}
+}{
+\begin{footnotesize}
+Maximize safety margin $\gamma$. Margin \textcolor{violet}{violations are allowed, but are minimized}.
+\end{footnotesize}
+}
+
+\spacer
+
+The problem is a \textbf{QP}: Quadratic objective with linear constraints.
+
+\end{frame2}
+
+\begin{frame2}{Example 5: Support Vector Machines}
+\begin{footnotesize}
+\textbf{Formulation 3 (dual): } Dualizing the primal formulation
+$$
+\begin{aligned}
+\max\limits_{\bm{\alpha} \in \R^n} \quad & \sum_{i=1}^n \alpha_i - \frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\yi y^{(j)} \scp{\xi}{\xv^{(j)}} \\
+\text{s.t. } \quad & 0 \le \alpha_i \le C \quad \forall\, i \in \nset, \quad \sum_{i=1}^n \alpha_i \yi = 0
+\end{aligned}
+$$
 \end{footnotesize}
 
-
-\vspace*{-0.5cm}
+\spacer
 
 \begin{footnotesize}
 \textit{Matrix notation:}
-\begin{eqnarray*}
-	& \max\limits_{\alphav \in \R^n} & \bm{\alpha}^\top \bm{1} - \frac{1}{2} \bm{\alpha}^\top ~ \text{diag}(\bm{y}) ~ \Xmat^\top \Xmat ~ \text{diag}(\bm{y})~\bm{\alpha} \\
-	& \text{s.t. } & 0 \le \alpha_i \le C \quad \forall\, i \in \nset, \quad \bm{\alpha}^\top \bm{y} = 0
-\end{eqnarray*}
+$$
+\begin{aligned}
+\max\limits_{\bm{\alpha} \in \R^n} \quad & \bm{\alpha}^\top \bm{1} - \frac{1}{2} \bm{\alpha}^\top \text{diag}(\bm{y}) \Xmat^\top \Xmat \text{diag}(\bm{y})\bm{\alpha} \\
+\text{s.t. } \quad & 0 \le \alpha_i \le C \quad \forall\, i \in \nset, \quad \bm{\alpha}^\top \bm{y} = 0
+\end{aligned}
+$$
 
 \textit{Kernelization:}
 Replace dot product between $\xv$'s with $\bm{K}_{ij} = k(\xi, \xi[j])$, where $k(\cdot,\cdot)$ is a positive definite kernel function ($\Rightarrow$ $\bm{K}$ positive semi-definite).
 \end{footnotesize}
 
+\spacer
+
 \begin{footnotesize}
-\begin{eqnarray*}
-	& \max\limits_{\alphav \in \R^n} & \bm{\alpha}^\top \bm{1} - \frac{1}{2} \bm{\alpha} ~ \text{diag}(\bm{y}) ~ \bm{K} ~ \text{diag}(\bm{y})~\bm{\alpha} \\
-	& \text{s.t. } & 0 \le \alpha_i \le C \quad \forall\, i \in \nset, \quad \bm{\alpha}^\top \bm{y} = 0
-\end{eqnarray*}
+$$
+\begin{aligned}
+\max\limits_{\bm{\alpha} \in \R^n} \quad & \bm{\alpha}^\top \bm{1} - \frac{1}{2} \bm{\alpha}^\top \text{diag}(\bm{y}) \bm{K} \text{diag}(\bm{y})\bm{\alpha} \\
+\text{s.t. } \quad & 0 \le \alpha_i \le C \quad \forall\, i \in \nset, \quad \bm{\alpha}^\top \bm{y} = 0
+\end{aligned}
+$$
 
-\vspace*{0.2cm}
+\spacer
 
-This is QP with a single affine equality constraint and $n$ box constraints. 
+This is QP with a single affine equality constraint and $n$ box constraints.
 \end{footnotesize}
-
-\end{frame}
+\end{frame2}
 
 % \begin{frame}{Example 5: Support Vector Machines}
 % When applying the kernel trick to the dual (soft-margin) SVM problem by replacing $\scp{\xi}{\xv^{(j)}}$ by kernels $k(\xi, \xv^{(j)})$, we get the non-linear SVM:
@@ -550,7 +437,6 @@ This is QP with a single affine equality constraint and $n$ box constraints.
 % \pause
 % This is still a constrained convex quadratic problem, because $\bm{K} \in \R^{n \times n}$ is positive semi-definite. 
 % \end{frame}
-
 
 \endlecture
 \end{document}
