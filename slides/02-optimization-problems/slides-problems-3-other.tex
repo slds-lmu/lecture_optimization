@@ -21,71 +21,32 @@
     \item Multi-objective    
 }
 
-\begin{framei}{Other classes of optimization problems}
-\item \textbf{So far}: \enquote{nice} (un)constrained problems:
-\begin{itemizeL}
+\begin{frame2}{Other classes of optimization problems}
+\textbf{So far}: \enquote{nice} (un)constrained problems:
+\begin{itemize}
 \item Problem defined on continuous domain $\mathcal{S}$
 \item Analytical objectives (and constraints)
-\end{itemizeL}
-\item \textbf{Other characteristics}:
-\begin{itemizeL}
+\end{itemize}
+\textbf{Other characteristics}:
+\begin{itemize}
 \item Discrete domain $\mathcal{S}$
 \item $f$ \textbf{black-box}: Objective not available in analytical form\\computer program to evaluate
 \item $f$ \textbf{noisy}: Objective can be queried but evaluations are noisy $\fx = f_{\text{true}}(\xv) + \eps, \quad \eps \sim F$
 \item $f$ \textbf{expensive}: Single query takes time / resources
 \item $f$ multi-objective: $\fx: \mathcal{S} \to \R^m$, $\fx = \left(f_1(\xv), ..., f_m(\xv)\right)$
-\end{itemizeL}
-\item These make the problem typically much harder to solve!
-\end{framei}
+\end{itemize}
+These make the problem typically much harder to solve!
+\end{frame2}
 
 
 \begin{frame2}{Example 1: Best subset selection}
-
-% Let $\D = \left(\left(\xi, \yi\right)\right)_{i = 1, ..., n}$ where $\xi = \left(\xi_1, ..., \xi_d\right) \in \Xspace$. Fit LM based on the best subset of the $d$ features. 
-
-% \vspace*{-0.5cm}
-% \begin{eqnarray*}
-% 	\min_{\bm{s} \in \{0, 1\}^d, \thetav \in \Theta} \left(\yi - \thetav^\top ~\text{diag}(\bm{s})~\xi\right)^2 \\
-% \end{eqnarray*}
-
-% \vspace*{-0.5cm}
-
-% $\bm{s}_j \in \{0, 1\}$ indicates whether feature $j$ is used in the model.
-
-% \lz 
-
-% \begin{footnotesize}
-% \textbf{Example:} $d = 3$, $\bm{s} = (1, 1, 0)$ results in LM only using features 1 and 2:
-
-% \begin{eqnarray*}
-% 	\thetav^\top \begin{pmatrix} 1 & 0 & 0 \\
-% 	0 & 1 & 0 \\
-% 	0 & 0 & 0 
-% 	\end{pmatrix} \xi = (\thetav_1, \thetav_2, 0) \xi = \thetav_1 \xi_1 + \thetav_2 \xi_2
-% \end{eqnarray*}
-
-% $\bm{s}$ can take $2^d$ possible values: 
-
-% \begin{itemize}
-% 	\item $d = 3$: 8 possible values
-% 	\item $d = 10$: 1024 possible values
-% 	\item $d = 100$: $1.3 \times 10^{30}$ possible values	
-% \end{itemize}
-
-% \end{footnotesize}
-
-
-
-% \framebreak 
-
 Let {\footnotesize $\D = \left(\left(\xi, \yi\right)\right)_{1 \le i \le n}$, $\xi \in \R^p$}. Fit LM based on best feature subset.
-
 $$
 \min_{\thetav \in \Theta} \left(\yi - \thetav^\top \xi\right)^2, ||\thetav||_{0} \leq k
 $$
-
-\splitVTT[0.55]{
-	extbf{Problem characteristics}:
+\spacer
+\splitV[0.55]{
+\textbf{Problem characteristics}:
 \begin{itemizeL}
 \item White-box: Objective available in analytical form
 \item Discrete: $\mathcal{S}$ is mixed continuous and discrete
@@ -94,52 +55,38 @@ $$
 \spacer
 The problem is even \textbf{NP-hard} (Bin et al., 1997, The Minimum Feature Subset Selection Problem)!
 }{
-\image{figure_man/subset_selection.png}
-\spacer
-{\footnotesize Source: RPubs, Subset Selection Methods}
+\image[1][https://rpubs.com/davoodastaraky/subset]{figure_man/subset_selection.png}
 }
-
-% $\bm{s}_j \in \{0, 1\}$ indicates whether feature $j$ is used in the model.
-
 \end{frame2}
 
 
-	
 \begin{frame2}{Example 2: Wrapper Feature selection}
-
 Subset sel. can be generalized to any learner $\ind$ using only features $\bm{s}$:
-
 $$
 \min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}),
 $$
 $\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resampling splits $\mathcal{J}$
-
 \spacer
-
-\splitVTT[0.55]{
-	extbf{Problem characteristics}:
-\begin{itemizeL}
+\splitV[0.55]{
+\textbf{Problem characteristics}:
+\begin{itemize}
 \item black box\\{\footnotesize eval by program}
 \item $\mathcal{S}$ is discrete / binary
 \item expensive\\{\footnotesize 1 eval: 1 or multiple ERM(s)!}
 \item noisy\\{\footnotesize uses data / resampling}
 \item NB: Less features can be better in prediction (overfitting)
-\end{itemizeL}
+\end{itemize}
 }{
 \image{figure_man/feature_subset_selection.png}
 }
-
 \end{frame2}
 
+
 % \begin{vbframe}{Example 3: Feature sel. (constrained)}
-
 % With prior knowledge / preferences on max. number of features $k$:
-
 % \begin{eqnarray*}
 % \min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}), \quad \sum\nolimits_{i = 1}^p s_i \le k, 
 % \end{eqnarray*}
-
-
 % \begin{figure}[!tbp]
 %   \centering
 %   \begin{minipage}[b]{0.5\textwidth}
@@ -150,12 +97,8 @@ $\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resamplin
 %     \includegraphics[width =\textwidth]{figure_man/subsetsize.png}
 %   \end{minipage}
 % \end{figure}
-
-
 % \framebreak
-
 % \lz 
-
 % \textbf{Problem characteristics}:
 % \begin{itemize}
 % 	\item Black-box: Objective not available in analytical form
@@ -164,60 +107,49 @@ $\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resamplin
 % 	\item Noisy: Function evaluations depend on resampling	
 % 	\item Expensive (depending on training time of learner $\ind$)
 % \end{itemize}
-
 % \lz 
-
 % Complexity of the problem is reduced with $k$: Lower $k$ $\to$ less possible values for $\bm{s}$. 
-
 % \end{vbframe}
 
 
-
 \begin{frame2}{Example 3: Feature sel. (multiobjective)}
-
 Feature selection is usually inherently multi-objective,
 with model sparsity as a 2nd trade-off target:
-
 $$
 \min_{\textbf{s} \in \{0, 1\}^p} \left(\widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}), \sum\nolimits_{i = 1}^p s_i\right).
 $$
 
 $\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resampling splits $\mathcal{J}$
-
 \spacer
-
-\splitVTT[0.45]{
-\begin{itemizeL}
+\splitV[0.45]{
+\begin{itemize}
 \item Multiobjective
 \item black box\\{\footnotesize eval by program}
 \item S is discrete / binary
 \item expensive\\{\footnotesize 1 eval: 1 or multiple ERM(s)!}
 \item noisy\\{\footnotesize uses data / resampling}
-\end{itemizeL}
+\end{itemize}
 }{
 \image{figure_man/pareto.png}
 }
-
 \end{frame2}
 
-\begin{frame2}{Example 4: Hyperparameter optimization}
-\begin{itemizeL}
+
+\begin{framei}{Example 4: Hyperparameter optimization}
 \item Learner $\ind$ usually configurable by hyperparameters $\lamv \in \Lambda$.
 \item Find best HP configuration $\lamv^\ast$
 $$
 \lamv^\ast \in \argmin\nolimits_{\lamv \in \Lambda} c(\lamv) = \argmin \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \lamv)
 $$
 $\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resampling splits $\mathcal{J}$
-\end{itemizeL}
-
 \spacer
-
-\splitVTT[0.6]{
+\splitV[0.6]{
 \image{figure_man/hpo_loop_1.png}
 }{
 \image[1][https://ceur-ws.org/Vol-2846/paper22.pdf]{figure_man/landscapes2.jpg}
 }
-\end{frame2}
+\end{framei}
+
 
 \begin{frame2}{Example 4: Hyperparameter optimization}
 Solving
@@ -225,43 +157,34 @@ $$
 \lamv^\ast \in \argmin_{\lamv \in \Lambda} c(\lamv)
 $$
 is very challenging:
-
-\splitVTT[0.6]{
-\begin{itemizeL}
+\splitV{
+\begin{itemize}
 \item $c$ black box\\{\footnotesize eval by progrmm}
 \item expensive\\{\footnotesize 1 eval: 1 or multiple ERM(s)!}
 \item noisy\\{\footnotesize uses data / resampling}
 \item the search space $\Lambda$ might be mixed\\{\footnotesize continuous, integer, categ. or hierarchical}
-\end{itemizeL}
+\end{itemize}
 }{
 \image[1][https://ceur-ws.org/Vol-2846/paper22.pdf]{figure_man/landscapes2.jpg}
 }
-% The problem is an \textbf{expensive black-box optimization} problem. 
 \end{frame2}
-
 
 
 \begin{frame2}{More black-box problems}
 Black-box problems from engineering: \textbf{oil well placement}
-
 \spacer
-
-\splitVTT[0.65]{
-\begin{itemizeL}
+\splitV[0.65]{
+\begin{itemize}
 \item The goal is to determine the optimal locations and operation parameters for wells in oil reservoirs
 \item Basic premise: achieving maximum revenue from oil while minimizing operating costs
 \item In addition, the objective function is subject to complex combinations of geological, economical, petrophysical and fluiddynamical constraints
 \item Each function evaluation requires several computationally expensive reservoir simulations while taking uncertainty in the reservoir description into account
-\end{itemizeL}
+\end{itemize}
 }{
-\image[0.9][https://doi.org/10.1007/s13202-019-0710-1]{figure_man/oil_well_problem.jpg}
-\spacer
+\image[0.9][https://doi.org/10.1007/s13202-019-0710-1]{figure_man/oil_well_problem.jpg}\\
 {\footnotesize Oil saturation at various depths with possible location of wells.}
 }
-
 \end{frame2}
-	
-
 
 \endlecture
 \end{document}

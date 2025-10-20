@@ -31,6 +31,7 @@ with objective function
 $$
 f: \mathcal{S} \to \R.
 $$
+The problem is called
 \begin{itemize}
 \item \textbf{unconstrained}, if the domain $\mathcal{S}$ is not restricted:
 \item[] $$ \mathcal{S} = \R^d $$
@@ -40,56 +41,59 @@ $$
 \end{itemize}
 \end{frame2}
 
-\begin{framei}{Note: A Convention in Optimization}
+
+\begin{framei}[sep=L]{Note: A Convention in Optimization}
 \item W.l.o.g., we always \textbf{minimize} functions $f$.
 \item Maximization results from minimizing $-f$.
 \vfill
-\splitV[0.48]
+\splitV[0.5]
 {
-\imageC[0.9]{figure_man/ml_poisson_example_2.pdf}
+\imageC[1]{figure_man/ml_poisson_example_2.pdf}
 }
 {
-\imageC[0.9]{figure_man/ml_poisson_example_3.pdf}
+\imageC[1]{figure_man/ml_poisson_example_3.pdf}
 }
 \item The solution to maximizing $f$ (left) is equivalent to the solution to minimizing $f$ (right).
 \end{framei}
 
+
 \begin{framei}{Example 1: Maximum Likelihood}
-\item $\D = \left(\xi[1], ..., \xi[n]\right) \overset{\text{i.i.d.}}{\sim} f(\xv ~|~ \mu, \sigma)$ with $\sigma = 1$
-\item[] $$ f(\xv ~|~ \mu, \sigma) = \frac{1}{\sqrt{2 \pi \sigma^{2}}}~\exp\left(\frac{-(\xv-\mu)^{2}}{2\sigma^{2}}\right) $$
+\item $\D = \left(\xi[1], ..., \xi[n]\right) \overset{\text{i.i.d.}}{\sim} f(\xv ~|~ \mu, \sigma)$ with $\sigma = 1$:
+$$ f(\xv ~|~ \mu, \sigma) = \frac{1}{\sqrt{2 \pi \sigma^{2}}}~\exp\left(\frac{-(\xv-\mu)^{2}}{2\sigma^{2}}\right) $$
 \item \textbf{Goal:} Find $\mu \in \R$ which makes observed data most likely.
-\vfill
-\imageC[0.55]{figure_man/ml_normal_example_dnorm.pdf}
+\imageC[0.5]{figure_man/ml_normal_example_dnorm.pdf}
 \end{framei}
+
 
 \begin{framei}{Example 1: Maximum Likelihood}
 \item \textbf{Likelihood:}
-\item[] $$ \mathcal{L}(\mu~|~\D)= \prod_{i=1}^{n} f\left(\xi~|~\mu, 1\right) = (2\pi)^{-n/2}\exp\left(-\frac{1}{2} \sum_{i=1}^{n} (\xi-\mu)^{2} \right) $$
+$$ \mathcal{L}(\mu~|~\D)= \prod_{i=1}^{n} f\left(\xi~|~\mu, 1\right) = (2\pi)^{-n/2}\exp\left(-\frac{1}{2} \sum_{i=1}^{n} (\xi-\mu)^{2} \right) $$
 \item \textbf{Neg. log-likelihood:}
-\item[] $$ - \ell(\mu, \D) = - \log \mathcal{L}(\mu~|~\D) = \frac{n}{2} \log(2\pi) + \frac{1}{2} \sum_{i=1}^{n} (\xi-\mu)^{2} $$
-\vfill
-\imageC[0.55]{figure_man/ml_normal_example_negloglike_nooptim.pdf}
+$$ - \ell(\mu, \D) = - \log \mathcal{L}(\mu~|~\D) = \frac{n}{2} \log(2\pi) + \frac{1}{2} \sum_{i=1}^{n} (\xi-\mu)^{2} $$
+\imageC[0.4]{figure_man/ml_normal_example_negloglike_nooptim.pdf}
 \end{framei}
 
+
 \begin{framei}{Example 1: Maximum Likelihood}
-\item $$ \min_{\mu \in \R} - \ell(\mu, \D). $$
+\item[] $$ \min_{\mu \in \R} - \ell(\mu, \D). $$
 \item can be solved analytically (setting the first deriv. to $0$) since it is a quadratic form:
-\item[] $$ -\frac{\partial \ell(\mu, \D)}{\partial \mu} = \sumin \left(\xi - \mu\right) = 0 \quad \Leftrightarrow \quad \hat \mu = \frac{1}{n} \sumin \xi $$
-\vfill
-\imageC[0.55]{figure_man/ml_normal_example_negloglike.pdf}
+$$ -\frac{\partial \ell(\mu, \D)}{\partial \mu} = \sumin \left(\xi - \mu\right) = 0 \quad \Leftrightarrow \quad \hat \mu = \frac{1}{n} \sumin \xi $$
+\imageC[0.4]{figure_man/ml_normal_example_negloglike.pdf}
 \end{framei}
 
-\begin{framei}{Example 1: Maximum Likelihood}
+
+\begin{framei}[sep=L]{Example 1: Maximum Likelihood}
 \item \textbf{Note: } The problem was \textbf{smooth}, \textbf{univariate}, \textbf{unconstrained}, \textbf{convex}.
 \item If we had optimized for $\sigma$ as well
-\item[] $$ \min_{\mu \in \R, \sigma \in \R^+} - \ell(\mu, \D). $$
+$$ \min_{\mu \in \R, \sigma \in \R^+} - \ell(\mu, \D). $$
 \item (instead of assuming it is known) the problem would have been:
 \begin{itemize}
 \item bivariate (optimize over $(\mu, \sigma)$)
 \item constrained ($\sigma > 0$)
 \end{itemize}
-\item[] $$ \min_{\mu \in \R, \sigma \in \R^+} - \ell(\mu, \D). $$
+$$ \min_{\mu \in \R, \sigma \in \R^+} - \ell(\mu, \D). $$
 \end{framei}
+
 
 \begin{framei}{Example 2: Normal regression}
 \item Assume (multivariate) data $\D = \Dset$ and we want to fit a linear function to it
@@ -98,106 +102,107 @@ $$
 \imageC[0.6]{figure_man/ml_linreg_example_1.pdf}
 \end{framei}
 
+
 \begin{framei}{Example 2: Least Squares linear regr.}
 \item Find param vector $\thetav$ that minimizes SSE / risk with L2 loss
-\item[] $$ \min_{\thetav \in \R^d} \sumin \left(\thetav^\top \xi - \yi\right)^2 $$
+$$ \min_{\thetav \in \R^d} \sumin \left(\thetav^\top \xi - \yi\right)^2 $$
 \vfill
-\splitV
-{
-\imageC[0.95]{figure_man/ml_linreg_example_1.pdf}
-}
-{
-\imageC[0.95]{figure_man/ml_linreg_example_2.pdf}
+\splitV{
+\imageC[0.9]{figure_man/ml_linreg_example_1.pdf}
+}{
+\imageC[1]{figure_man/ml_linreg_example_2.pdf}
 }
 \item \textbf{Smooth}, \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex} problem
 \item Quadratic form
 \item Analytic solution: $\thetav = (\Xmat^\top \Xmat)^{-1}\Xmat^\top \bm{y}$, where $\Xmat$ is design matrix
 \end{framei}
 
+
 \begin{framei}{Risk Minimization in ML}
 \item In the above example, if we exchange
-\item[] $$ \min_{\thetav \in \R^d} \sum_{i = 1}^n \textcolor{violet}{\left(\textcolor{cyan}{\thetav^\top \xi} - \yi\right)^2} $$
+$$ \min_{\thetav \in \R^d} \sum_{i = 1}^n \textcolor{violet}{\left(\textcolor{cyan}{\thetav^\top \xi} - \yi\right)^2} $$
 \item the linear model $\textcolor{cyan}{\thetav^\top \xv}$ by an arbitrary model $\textcolor{cyan}{\fxt}$
 \item the L2-loss $\textcolor{violet}{\left(\fxt - y\right)^2}$ by any loss $\textcolor{violet}{\Lxy}$
 \item we arrive at general \textbf{empirical risk minimization} (ERM)
-\item[] $$ \risket = \sumin L\left(\yi, \fxit\right) = \textrm{min}! $$
+$$ \risket = \sumin L\left(\yi, \fxit\right) = \textrm{min}! $$
 \item Usually, we add a regularizer to counteract overfitting:
-\item[] $$ \riskrt =  \sumin L\left(\yi, \fxit\right) + \lambda J(\thetav) = \textrm{min}! $$
+$$ \riskrt =  \sumin L\left(\yi, \fxit\right) + \lambda J(\thetav) = \textrm{min}! $$
 \end{framei}
 
-\begin{framei}{Risk Minimization in ML}
-\item ML models usually consist of the following components:
-\item[] $\textbf{ML} = \underbrace{\textbf{Hypothesis Space + Risk + Regularization}}_{\text{Formulating the optimization problem}} + \underbrace{\textbf{Optimization}}_{\text{Solving it}}$
+
+\begin{framei}[sep=L]{Risk Minimization in ML}
+\item ML models usually consist of the following components:\\
+\begin{small}$\textbf{ML} = \underbrace{\textbf{Hypothesis Space + Risk + Regularization}}_{\text{Formulating the optimization problem}} + \underbrace{\textbf{Optimization}}_{\text{Solving it}}$\end{small}
 \item \textbf{Hypothesis Space:} Parametrized function space
 \item \textbf{Risk:} Measure prediction errors on data with loss $L$
 \item \textbf{Regularization:} Penalize model complexity
 \item \textbf{Optimization:} Practically minimize risk over parameter space
 \end{framei}
 
+
 \begin{framei}[fs=footnotesize]{Example 3: Regularized LM}
 \item ERM with L2 loss, LM, and L2 regularization term:
-\item[] $$ \riskrt = \sumin \left(\thetav^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetav\|_2^2 \quad \text{(Ridge regr.)} $$
+$$ \riskrt = \sumin \left(\thetav^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetav\|_2^2 \quad \text{(Ridge regr.)} $$
 \item Problem \textbf{multivariate}, \textbf{unconstrained}, \textbf{smooth}, \textbf{convex} and has analytical solution $\thetav = (\Xmat^\top \Xmat + \lambda \bm{I})^{-1}\Xmat^\top \bm{y}$.
 \item ERM with L2-loss, LM, and L1 regularization:
-\item[] $$ \riskrt = \sumin \left(\thetav^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetav\|_1 \quad \text{(Lasso regr.)} $$
+$$ \riskrt = \sumin \left(\thetav^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetav\|_1 \quad \text{(Lasso regr.)} $$
 \item The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex}, but \textcolor{violet}{\textbf{not smooth}}.
 \vfill
-\imageC[0.8]{figure_man/linreg.pdf}
+\imageC[0.9]{figure_man/linreg.pdf}
 \end{framei}
+
 
 \begin{framei}{Example 4: (Regularized) Log. Regression}
 \item For $y \in \{0, 1\}$ (classification), logistic regression minimizes log / Bernoulli / cross-entropy loss over data
-\item[] $$ \risket = \sumin \left(-\yi \cdot \thetav^\top\xi + \log(1 + \exp\left(\thetav^\top\xi\right)\right) $$
+$$ \risket = \sumin \left(-\yi \cdot \thetav^\top\xi + \log(1 + \exp\left(\thetav^\top\xi\right)\right) $$
 \item Multivariate, unconstrained, smooth, convex, not analytically solvable.
 \vfill
 \imageC[0.55]{figure_man/logreg-0.pdf}
 \end{framei}
 
+
 \begin{framei}[fs=footnotesize]{Example 4: (Regularized) Log. Regression}
 \item Elastic net regularization is a combination of L1 and L2 regularization
-\item[] $$ \frac{1}{2n} \sumin \Lxyit + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \lambda \geq 0, \alpha \in [0,1] $$
+$$ \frac{1}{2n} \sumin \Lxyit + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \lambda \geq 0, \alpha \in [0,1] $$
 \vfill
-\splitVThree
-{
+\splitVThree{
 \imageC[0.85]{figure_man/logreg-0-0.1.pdf}\par
 \imageC[0.85]{figure_man/logreg-0-1.pdf}
-}
-{
+}{
 \imageC[0.85]{figure_man/logreg-0.5-0.1.pdf}\par
 \imageC[0.85]{figure_man/logreg-0.5-1.pdf}
-}
-{
+}{
 \imageC[0.85]{figure_man/logreg-1-0.1.pdf}\par
 \imageC[0.85]{figure_man/logreg-1-1.pdf}
 }
 \item The higher $\lambda$, the closer to the origin, L1 shrinks coeffs exactly to 0.
 \end{framei}
 
+
 \begin{framei}{Example 4: (Regularized) Log. Regression}
 \item[] $$ \frac{1}{2n} \sumin \Lxyit + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \lambda \geq 0, \alpha \in [0,1] $$
+\spacer
 \item \textbf{Problem characteristics}:
-  \begin{itemizeL}
-  \item Multivariate
-  \item Unconstrained
-  \item If $\alpha = 0$ (Ridge) problem is smooth; not smooth otherwise
-  \item Convex since $L$ convex and both L1 and L2 norm are convex
-  \end{itemizeL}
+\begin{itemize}
+\item Multivariate
+\item Unconstrained
+\item If $\alpha = 0$ (Ridge) problem is smooth; not smooth otherwise
+\item Convex since $L$ convex and both L1 and L2 norm are convex
+\end{itemize}
 \end{framei}
+
 
 \begin{framei}{Example 5: Linear SVM}
 \item $\D = \left(\left(\xi, \yi\right)\right)_{i = 1, ..., n}$ with $\yi \in \{-1, 1\}$ (classification)
 \item $\fxt = \thetav^\top \xv \in \R$ scoring classifier: Predict $1$ if $\fxt > 0$ and $-1$ otherwise.
 \item ERM with LM, hinge loss, and L2 regularization:
-\item[] $$ \riskrt = \sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \thetav^\top \thetav, \quad f^{(i)} := \thetav^\top \xi $$
+$$ \riskrt = \sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \thetav^\top \thetav, \quad f^{(i)} := \thetav^\top \xi $$
 \vfill
-\splitVThree
-{
+\splitVThree{
 \imageC[0.95]{figure_man/svm_geometry.png}
-}
-{
+}{
 \imageC[0.95]{figure_man/hinge.pdf} % See hinge_vs_l2.R
-}
-{
+}{
 \begin{itemizeM}[small]
 \item \textbf{This is one formulation of the linear SVM.}
 \item Problem is: \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex}, but \textcolor{violet}{\textbf{not smooth}}.
@@ -205,7 +210,8 @@ $$
 }
 \end{framei}
 
-\begin{framei}[fs=footnotesize]{Example 5: Linear SVM}
+
+\begin{framei}[fs=small]{Example 5: Linear SVM}
 \item Understanding hinge loss $\Lxy = \max\left(1 - y\cdot f, 0\right)$
 \item[] \begin{tabular}{ c | c | c | c | c }
 $\mathbf{y}$ & $\fx$ &  \textbf{Correct pred.?}  & $\Lxy$ & \textbf{Reason for costs}  \\ \hline
@@ -217,53 +223,49 @@ $\mathbf{y}$ & $\fx$ &  \textbf{Correct pred.?}  & $\Lxy$ & \textbf{Reason for c
  $- 1$ & $(- \infty, -1)$ &  Y & $0$ & -- \\
 \end{tabular}
 \vfill
-\splitV
-{
+\splitV{
 \imageC[0.7]{figure_man/svm_geometry.png}
-}
-{
+}{
 \imageC[0.9]{figure_man/hinge.pdf} % See hinge_vs_l2.R
 }
 \end{framei}
 
+
 \begin{framei}{Example 6: Kernelized SVM}
 \item \textbf{Kernelized} formulation of the primal$^{(*)}$ SVM problem:
-\item[] $$ \min_{\thetav}\sumin L\left(\yi, \bm{K}_i^\top ~\thetav\right) + \lambda \thetav^\top \bm{K} \thetav $$
-\item with $k(\cdot, \cdot)$ pos. def. kernel function, and $\bm{K}_{ij} := k(\xi, \xi[j])$, $n \times n$ psd kernel matrix, $\bm{K}_i$ $i$-th column of $K$.
+$$ \min_{\thetav}\sumin L\left(\yi, \bm{K}_i^\top ~\thetav\right) + \lambda \thetav^\top \bm{K} \thetav $$
+with $k(\cdot, \cdot)$ pos. def. kernel function, and $\bm{K}_{ij} := k(\xi, \xi[j])$, $n \times n$ psd kernel matrix, $\bm{K}_i$ $i$-th column of $K$.
 \vfill
-\splitV[0.6]
-{
+\splitV[0.6]{
 \begin{itemizeM}
 \item allows introducing nonlinearity through projection into higher-dim. feature space
 \item without changing problem characteristics (convexity!)
 \end{itemizeM}
-}
-{
+}{
 \imageC[0.6]{figure_man/nonlinear-svm-c.pdf} % https://github.com/slds-lmu/lecture_i2ml/blob/master/figure_man/kernels/nonlinear-svm-c.pdf
-}
+} \spacer
+\begin{small}
 \item[] $^{(*)}$ There is also a dual formulation to the problem (comes later!)
+\end{small}
 \end{framei}
+
 
 \begin{framei}{Example 6: Neural network}
 \item Normal loss, but complex $f$ defined as computational feed-forward graph. Complexity of optimization problem
-\item[] $$ \text{arg} \min_{\thetav} \riskrt, $$
+$$ \text{arg} \min_{\thetav} \riskrt, $$
 \item so smoothness (maybe) or convexity (usually no) is influenced by loss, neuron function, depth, regularization, etc.
 \vfill
-\splitVThree
-{
-\imageC[0.8]{figure_man/ml_landscape.jpg}
+\splitVThree{
+\imageC[1][https://arxiv.org/pdf/1712.09913.pdf]{figure_man/ml_landscape.jpg}
+}{
+\imageC[1]{figure_man/newrep_n_f.png}
+}{
+\imageC[1]{figure_man/log_reg.png} % Last one taken from Intro to DL, 1.04
 }
-{
-\imageC[0.8]{figure_man/newrep_n_f.png}
-}
-{
-\imageC[0.8]{figure_man/log_reg.png} % Last one taken from Intro to DL, 1.04
-}
-\item Loss landscapes of ML problems. Left: Deep learning model ResNet-56, right: Logistic regression with cross-entropy loss
-\item Source: \url{https://arxiv.org/pdf/1712.09913.pdf}
+\begin{center} \begin{small}
+Loss landscapes of ML problems. Left: Deep learning model ResNet-56, right: Logistic regression with cross-entropy loss
+\end{small} \end{center}
 \end{framei}
 
-
 \endlecture
-
 \end{document}
