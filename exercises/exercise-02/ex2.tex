@@ -148,7 +148,7 @@
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
 	{\sf\bf Optimization in Machine Learning \hfill Exercise sheet #1\\
-	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2025/2026}
 \end{minipage}
 \vspace{.05cm}
 \hrule
@@ -160,7 +160,7 @@
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
 	{\sf\bf Optimization in Machine Learning \hfill Live Session #1\\
-	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2025/2026}
 \end{minipage}
 \vspace{.05cm}
 \hrule
@@ -172,7 +172,7 @@
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
 	{\sf\bf Optimization in Machine Learning \hfill Exercise sheet #1\\
-	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2025/2026}
 \end{minipage}
 \vspace{.05cm}
 \hrule
@@ -208,21 +208,29 @@
 
 \kopfsl{2}{Mathematical Concepts 2}
 
-\aufgabe{Matrix Calculus}{
+\aufgabe{Convexity}{
 
-Let $\mathbf{x}, \mathbf{c} \in \R^d, \mathbf{u},\mathbf{v}: \R^d \rightarrow \R^d,  \mathbf{u},\mathbf{v} \in \mathcal{C}^2, \mathbf{Y}: \R^d \rightarrow \R^{d\times d}$
+Consider two convex functions $f, g: \R \to \R.$ 
+
+\begin{enumerate}
+\item Show that $f+g:\R \to \R, x \mapsto f(x) + g(x)$ is convex.
+\item Now, assume that g is additionally non-decreasing, i.e., $g(y) \geq g(x) \; \forall x \in \R, \forall y \in \R$ with $y > x.$ Show that $g \circ f$ is convex.
+\end{enumerate}
+}
+
+\aufgabe{Taylor polynomials}{
+
+Consider the bivariate function $f: \R^2 \to \R, (x_1, x_2) \mapsto \exp(\pi \cdot x_1) - \sin(\pi \cdot x_2) + \pi \cdot x_1 \cdot x_2$
+
+%
 \begin{enumerate}
 	%
-	\item Compute $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}}$
-	\item Compute $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert_2}{\partial
-	\mathbf{x}}$
-	\item Compute $\frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}}$
-	\item Show that $\frac{\partial \mathbf{Y}^\top \mathbf{u}}{\partial\mathbf{x}} = \begin{pmatrix}	\mathbf{y}_1^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} + \mathbf{u}^\top \frac{\partial  \mathbf{y}_1}{\partial \mathbf{x}} \\ \vdots \\
-\mathbf{y}_d^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} + \mathbf{u}^\top \frac{\partial  \mathbf{y}_d}{\partial \mathbf{x}}
-\end{pmatrix}$  where $\mathbf{y}_i:\R^d\rightarrow\R^d, i= 1,\dots,d$ are the column vectors of  $\mathbf{Y}.$
-	\item Compute $\frac{\partial^2 \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}\partial\mathbf{x}^\top}$ \\
-	\textit{Hint:} use c), d)
-	
+	\item Compute the gradient of $f$ for an arbitrary $\mathbf{x}$.
+	\item Compute the Hessian of $f$ for an arbitrary $\mathbf{x}$.	
+	\item State the first order taylor polynomial $T_{1, \mathbf{a}}(\mathbf{x})$ expanded around the point $\mathbf{a} = (0,1)$.	
+	\item State the second order taylor polynomial $T_{2,\mathbf{a}}(\mathbf{x})$ expanded around the point $\mathbf{a} = (0,1)$.
+	\item Determine if $T_{2,\mathbf{a}}$ is a convex function.
+	% \item Let $\tilde{\mathbf{x}} = (0.1, 1.1).$ Compute $f(\tilde{\mathbf{x}}), T_{1,\mathbf{a}}(\tilde{\mathbf{x}}), T_{2,\mathbf{a}}(\tilde{\mathbf{x}})$. What do you observe? \item How can you explain your observation in (e)?
 \end{enumerate}
 }
 

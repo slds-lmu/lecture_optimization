@@ -1,0 +1,266 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+% \usepackage{graphicx}
+
+
+\title{Optimization in Machine Learning}
+
+
+\begin{document}
+
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  Mathematical Concepts 
+  }{% Lecture title  
+  Taylor Approximation
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/Taylor2D/Taylor2D_1st100.png
+  }{
+    \item Taylor's theorem (univariate)
+    \item Taylor series (univariate)
+    \item Taylor's theorem (multivariate)
+    \item Taylor series (multivariate)
+}
+
+
+\begin{frame2}{Taylor approximations: Overview}
+
+\begin{itemizeM}
+    \item To optimize (find minima and maxima) it can be extremely helpful to approximate nonlinear functions locally 
+    \item We can use \textbf{Taylor polynomials} to approximate functions and
+    \item \textbf{Taylor's theorem} provides us with the tools to estimate the error of this approximation $\implies$ helpful for analyzing optimization algorithms
+    \item Some functions can locally or even globally equal their \textbf{Taylor series}, i.e. the limit of Taylor polynomials
+\end{itemizeM}
+
+\splitVCC[0.4]
+{\imageC{figure_man/taylor_univariate.png}}
+{\imageC{figure_man/Taylor2D/Taylor2D_2nd-100.png}}
+
+\end{frame2}
+
+
+\begin{framei}{Taylor approximations: Motivation}
+
+    \item Since the geometry of linear and quadratic functions is very well understood we will often want to use those for approximations
+    \item For example, we recall from previous chapters that for a function $f: \mathcal{S}\subseteq \R^d \to \R$
+    $$
+    f(\xv+\mathbf{h})=f(\xv)+\nabla_{\xv}\fx \mathbf{h}+o(\mathbf{h})
+    $$
+    \item You might also often see an approximation via the gradient and Hessian of a function:
+    $$
+    f(\xv+\mathbf{h})\approx f(\xv)+\nabla_{\xv}\fx \mathbf{h}+\frac{1}{2}\mathbf{h}^\top \nabla^2_{\xv}\fx \mathbf{h}
+    $$
+    \item In fact, $f(\xv)+\nabla_{\xv}\fx \mathbf{h}$ and $f(\xv)+\nabla_{\xv}\fx \mathbf{h}+\frac{1}{2}\mathbf{h}^\top \nabla^2_{\xv}\fx\mathbf{h}$ are, respectively, the first and second \textbf{Taylor polynomial of $f$ at $\xv$}, evaluated at $\xv+\mathbf{h}$
+    
+\end{framei}
+
+
+\begin{frame2}{Taylor polynomials}
+\begin{itemizeM}
+    \item Idea: Find a polynomial that locally behaves like a function $f$ at point $\bm{a}$, i.e. matches $f$’s value ($f$), slope ($f'$), curvature ($f''$), etc.
+    \item[$\Leftrightarrow$] Find polynomial so that 
+    $$
+    f(x)\approx T_k(x,\bm{a})\quad \text{for all $x$ near $\bm{a}$} 
+    $$
+    where $k$ denotes the highest order of derivative of $f$ used in $T_k$
+    \item Wording: We ``\textit{expand~$f$ (via Taylor) around~$\bm{a}$}''
+\end{itemizeM}\,
+
+\textbf{Definition of Taylor polynomial (univariate):} 
+Let $I \subseteq \R$ be an open interval and $f \in \mathcal{C}^k(I,\R)$.
+For each $a,x \in I$, the $k$th order Taylor polynomial for $f$ at $a$ is defined as
+
+$$
+T_k(x,a):=\sum_{j=0}^k \frac{f^{(j)}(a)}{j!}(x-a)^j
+$$
+
+\end{frame2}
+
+
+\begin{frame2}{Multivariate Taylor polynomials}
+For the multivariate version, we need a concise way to express derivatives and powers involving several variables
+\begin{itemizeM}
+  \item A \textbf{multi-index} is a vector       $
+        \bm{\alpha} = (\alpha_1, \alpha_2, \dots, \alpha_d) \in \mathbb{N}^d.
+        $
+
+  \item Its \textbf{order} is the sum of its components:
+        $
+        |\bm{\alpha}| = \alpha_1 + \alpha_2 + \cdots + \alpha_d.
+        $
+
+  \item Partial derivative is written as
+        $
+        D^{\bm{\alpha}} f = \dfrac{\partial^{|\bm{\alpha}|} f}{\partial x_1^{\alpha_1} \cdots \partial x_d^{\alpha_d}}
+        $
+
+  \item Factorials generalize componentwise:
+        $
+        \bm{\alpha}! = \alpha_1! \, \alpha_2! \cdots \alpha_d!.
+        $
+
+    \item For $\xv,\,\bm{a}\in\R^d$: $
+        (\xv - \bm{a})^{\bm{\alpha}} = (x_1 - a_1)^{\alpha_1} \cdots (x_d - a_d)^{\alpha_d}.
+        $
+\end{itemizeM}
+
+\textbf{Definition of Taylor polynomial (multivariate):} Let $I$ be an open subset of $\R^n$ and $f \in \mathcal{C}^k(I,\R)$.
+For each $\bm{a},\xv \in I$, the $k$th order Taylor polynomial for $f$ at $\bm{a}$ is defined as
+
+$$
+T_k(\xv, \bm{a}):=\sum_{|\bm{\alpha}| \le k} \frac{D^{\bm{\alpha}} f(\bm{a})}{{\bm{\alpha}}!} (\xv - \bm{a})^{\bm{\alpha}}
+$$
+\end{frame2}
+
+
+\begin{frame2}{Multivariate Taylor polynomial identities}
+
+For $f \in \mathcal{C}^k(I,\R)$ as before, we will often use the following identities: \begin{itemizeM}
+    \item $T_1(\xv,\bm{a})=f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a})$
+    \item $T_2(\xv,\bm{a})=f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^T\bm{H}(\bm{a})(\xv - \bm{a})$
+\end{itemizeM}
+({\footnotesize Which squares with the notation of the motivation slide by setting $\bm{a}\hat{=}\xv$ and $\xv\hat{=}\xv+\bm{h}$})\\\,
+
+\textbf{Example: Specifically deriving $T_1$ for bivariate~$f$ ($d=2$)}\\\,
+
+    \begin{tabular}{c|c||c|c|c|c}
+        $\alpha_1$ & $\alpha_2$ & $|\bm{\alpha}|$ & $D^{\bm{\alpha}} f$ & $\bm{\alpha}!$ & $(\xv-\bm{a})^{\bm{\alpha}}$ \\ \hline\hline
+        0 & 0 & 0 & $f$                         & 1 & 1          \\ \hline
+        1 & 0 & 1 & $\partial f / \partial x_1$ & 1 & $x_1-a_1$  \\ \hline
+        0 & 1 & 1 & $\partial f / \partial x_2$ & 1 & $x_2-a_2$
+    \end{tabular} and, therefore
+
+\begin{align*}
+    T_1(\xv,\bm{a}) &= \frac{f(\bm{a})}{1} \cdot 1 + \frac{\partial f(\bm{a})}{\partial x_1} (x_1 - a_1) + \frac{\partial f(\bm{a})}{\partial x_2} (x_2 - a_2) \\
+    &= f(\bm{a}) + \begin{pmatrix}\frac{\partial f(\bm{a})}{\partial x_1} \\ \frac{\partial f(\bm{a})}{\partial x_2}\end{pmatrix}^T \begin{pmatrix}x_1 - a_1 \\ x_2 - a_2\end{pmatrix} = f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a})
+\end{align*}
+
+\end{frame2}
+
+
+\begin{framei}{Taylor's theorem}
+    \item[] \textbf{General version for both univariate and multivariate functions:}
+
+    Let $I$ be an open subset of $\R^n$, $n\in\N_{>0}$, and $f \in \mathcal{C}^k(I,\R)$.
+    There exists a function $R_k:I\times I\rightarrow \R$ so that for each $\bm{a},\xv \in I$
+    $$
+    R_k(\xv, \bm{a}) = \littleo(\|\xv-\bm{a}\|^k) \text{ as } \xv \to \bm{a}
+    $$
+    and 
+    $$
+    f(\xv) =T_k(\xv, \bm{a})+ R_k(\xv, \bm{a})
+    $$\,\\
+
+    \item $R_k(\xv, \bm{a})$ is called \textbf{remainder term} and different specific forms have been established
+    \item However, we will usually focus on the property $R_k(\xv, \bm{a}) = \littleo(\|\xv-\bm{a}\|^k) \text{ as } \xv \to \bm{a}$ or upper bounds derived for specific function classes when analyzing optimization algorithms
+\end{framei}
+
+
+\begin{framei}{Remainder Terms in Taylor Approximation}
+
+    \item In the univariate case, a typical representation is \textbf{Lagrange form} of the remainder: For $f \in \mathcal{C}^{k+1}(I,\R)$, $\eta = \gamma a + (1-\gamma)x, \, \gamma\in[0,1]$
+    $$
+    f(\xv) =T_k(\xv, \bm{a})+ \underbrace{\frac{1}{(k+1)!} f^{(k+1)}(\eta)(x-a)^{k+1}}_{R_k(x, a)}
+    $$
+    \textcolor{red}{
+    \item Do we need additional info like upper bound for bounded functions?
+    \item Do we need the explicit form for the multivariate case? (Not even in Königsberger Analysis 2)
+    }
+\end{framei}
+
+
+\begin{framei}{Taylor series}
+
+    \item For $f \in \mathcal{C}^\infty$, there might exist an open ball~$B_r(\bm{a})$ with radius~$r>0$ around~$\bm{a}$ such that the \textbf{Taylor series}
+        $$        
+        T_\infty(\xv,\bm{a})=\begin{cases}
+            \sum_{k=0}^{\infty} \frac{f^{(k)}(a)}{k!}(x-a)^k&\text{if $f$ is univariate}\\[10pt]
+            \sum_{|\bm{\alpha}| \geq 0} \frac{D^{\bm{\alpha}} f(\bm{a})}{{\bm{\alpha}}!} (\xv - \bm{a})^{\bm{\alpha}}&\text{if $f$ is multivariate}
+        \end{cases}
+        $$
+    converges to~$f$ on~$B_r(\bm{a})$
+    \item If such an open Ball exists for all $\bm{a}$ in the domain of $f$, $f$ is called an \textbf{analytic function}
+    \item Even if Taylor series converges, it might not converge to~$f$
+    \item Upper bound $R = \sup \left\lbrace r \;|\; \textnormal{Taylor series converges on } B_r(\bm{a}) \right\rbrace$ is called the radius of convergence of Taylor series around~$\bm{a}$
+    \item If~$R>0$ and~$f$ analytic, Taylor series converges absolutely and uniformly to~$f$ on compact sets inside~$B_R(\bm{a})$
+    \item No general convergence behaviour on boundary of~$B_R(\bm{a})$
+
+\end{framei}
+
+
+\begin{frame2}{Examples of analytic functions}
+    For analytic functions the remainder term eventually vanishes, i.e.
+    $R_k(\xv, \bm{a}) \rightarrow 0$ as $k \rightarrow \infty$ for all $\xv \in B_r(\bm{a})$.\\\,
+
+    Important examples are\begin{itemizeM}
+        \item Polynomials
+        \item Exponential function ($\exp$)
+        \item Trigonometric functions ($\sin$, $\cos$)
+    \end{itemizeM}\,\\
+    And important rules are \begin{itemizeM}
+       \item Any analytic function of a polynomial is again an analytic function
+       \item Analytic functions are closed under sum and product \\(due to the properties of series)
+       \item The derivative of an analytic function is again an analytic function
+    \end{itemizeM}\,\\
+    \textbf{One specific example: } $f:\R^2\longrightarrow \R$ $\xv \mapsto \sin(2x_1) + \cos(x_2)$
+\end{frame2}
+
+
+\begin{frame2}{Example: Taylor Approximation of $\fx = \sin(2\MakeLowercase{x}_1) + \cos(\MakeLowercase{x}_2)$ at $\bm{\MakeLowercase{a}} = (1, 1)^T$}
+\,\\
+\begin{footnotesize}
+\textbf{1st order}: we know that
+    $
+    f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a})}_{T_1(\xv, \bm{a})} + R_1(\xv,\bm{a})
+    $
+and since  $\nabla \fx = \left(2\cos(2x_1), -\sin(x_2)\right)$,
+
+    \begin{align*}
+        \fx &= T_1(\xv) + R_1(\xv, \bm{a}) = f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a}) + R_1(\xv, \bm{a})\\
+        &= \sin(2) + \cos(1) + (2 \cos(2), - \sin(1))\begin{pmatrix} x_1 - 1 \\ x_2 - 1\end{pmatrix} + R_1(\xv, \bm{a})
+    \end{align*}
+\end{footnotesize}
+
+\vspace*{-0.5\baselineskip}
+
+\splitVCC{
+\imageC{figure_man/Taylor2D/Taylor2D_1st100.png}}
+{\imageC{figure_man/Taylor2D/Taylor2D_1st301.png}}
+
+
+\end{frame2}
+
+\begin{frame2}{Example: Taylor Approximation of $\fx = \sin(2\MakeLowercase{x}_1) + \cos(\MakeLowercase{x}_2)$ at $\bm{\MakeLowercase{a}} = (1, 1)^T$}
+\,\\
+\begin{footnotesize}
+\textbf{2nd order}: we know that
+    $$
+    f(\xv) = \underbrace{f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a}) + \frac{1}{2}(\xv - \bm{a})^T\bm{H}(\bm{a})(\xv - \bm{a})}_{T_2(\xv, \bm{a})} + R_2(\xv,\bm{a})
+    $$
+    and since $H(\xv) = \begin{pmatrix} -4 \sin(2x_1) & 0 \\ 0 & -\cos(x_2) \end{pmatrix}$,
+    $$
+        \fx = T_1(\xv, \bm{a}) + \frac{1}{2}\begin{pmatrix}x_1 - 1 \\ x_2 - 1 \end{pmatrix}^T \begin{pmatrix} -4 \sin(2) & 0 \\ 0 & -\cos(1) \end{pmatrix} \begin{pmatrix}x_1 - 1 \\ x_2 - 1 \end{pmatrix} + R_2(\xv, \bm{a})
+    $$
+\end{footnotesize}
+
+\vspace*{-0.5\baselineskip}
+
+\splitVCC
+    {
+        \imageC{figure_man/Taylor2D/Taylor2D_2nd-100.png}
+    }
+    {
+        \imageC{figure_man/Taylor2D/Taylor2D_2nd-301.png}
+    }
+
+\end{frame2}
+
+
+
+
+
+\endlecture
+
+\end{document}
