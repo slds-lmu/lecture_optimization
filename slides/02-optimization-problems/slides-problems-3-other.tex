@@ -21,158 +21,72 @@
     \item Multi-objective    
 }
 
-\begin{vbframe}{Other classes of optimization problems}
-
-\textbf{So far}: \enquote{nice} (un)constrained problems: 
-
+\begin{frame2}{Other classes of optimization problems}
+\textbf{So far}: \enquote{nice} (un)constrained problems:
 \begin{itemize}
-	\item Problem defined on continuous domain $\mathcal{S}$
-	\item Analytical objectives (and constraints)
+\item Problem defined on continuous domain $\mathcal{S}$
+\item Analytical objectives (and constraints)
 \end{itemize}
-
-\lz 
-
-\textbf{Other characteristics}: 
+\textbf{Other characteristics}:
 \begin{itemize}
-	\item Discrete domain $\mathcal{S}$
-	\item $f$ \textbf{black-box}: Objective not available in analytical form;\\computer program to evaluate
-	\item $f$ \textbf{noisy}: Objective can be queried but evaluations are noisy $\fx = f_{\text{true}}(\xv) + \eps, \quad \eps \sim F$
-	\item $f$ \textbf{expensive}: Single query takes time / resources
-	\item $f$ multi-objective: $\fx: \mathcal{S} \to \R^m$, $\fx = \left(f_1(\xv), ..., f_m(\xv)\right)$
+\item Discrete domain $\mathcal{S}$
+\item $f$ \textbf{black-box}: Objective not available in analytical form\\computer program to evaluate
+\item $f$ \textbf{noisy}: Objective can be queried but evaluations are noisy $\fx = f_{\text{true}}(\xv) + \eps, \quad \eps \sim F$
+\item $f$ \textbf{expensive}: Single query takes time / resources
+\item $f$ multi-objective: $\fx: \mathcal{S} \to \R^m$, $\fx = \left(f_1(\xv), ..., f_m(\xv)\right)$
 \end{itemize}
-
-\lz 
-
 These make the problem typically much harder to solve!
-
-\end{vbframe}
-
-
-\begin{vbframe}{Example 1: Best subset selection}
-
-% Let $\D = \left(\left(\xi, \yi\right)\right)_{i = 1, ..., n}$ where $\xi = \left(\xi_1, ..., \xi_d\right) \in \Xspace$. Fit LM based on the best subset of the $d$ features. 
-
-% \vspace*{-0.5cm}
-% \begin{eqnarray*}
-% 	\min_{\bm{s} \in \{0, 1\}^d, \thetav \in \Theta} \left(\yi - \thetav^\top ~\text{diag}(\bm{s})~\xi\right)^2 \\
-% \end{eqnarray*}
-
-% \vspace*{-0.5cm}
-
-% $\bm{s}_j \in \{0, 1\}$ indicates whether feature $j$ is used in the model.
-
-% \lz 
-
-% \begin{footnotesize}
-% \textbf{Example:} $d = 3$, $\bm{s} = (1, 1, 0)$ results in LM only using features 1 and 2:
-
-% \begin{eqnarray*}
-% 	\thetav^\top \begin{pmatrix} 1 & 0 & 0 \\
-% 	0 & 1 & 0 \\
-% 	0 & 0 & 0 
-% 	\end{pmatrix} \xi = (\thetav_1, \thetav_2, 0) \xi = \thetav_1 \xi_1 + \thetav_2 \xi_2
-% \end{eqnarray*}
-
-% $\bm{s}$ can take $2^d$ possible values: 
-
-% \begin{itemize}
-% 	\item $d = 3$: 8 possible values
-% 	\item $d = 10$: 1024 possible values
-% 	\item $d = 100$: $1.3 \times 10^{30}$ possible values	
-% \end{itemize}
-
-% \end{footnotesize}
+\end{frame2}
 
 
-
-% \framebreak 
-
-Let \begin{footnotesize}$\D = \left(\left(\xi, \yi\right)\right)_{1 \le i \le n}$, $\xi \in \R^p$\end{footnotesize}. Fit LM based on best feature subset. 
-
-\vspace*{-0.5cm}
-
-\begin{eqnarray*}
-	% \min_{\bm{s} \in \{0, 1\}^d, \thetav \in \Theta} \left(\yi - \thetav^\top ~\text{diag}(\bm{s})~\xi\right)^2\\
-	\min_{\thetav \in \Theta} \left(\yi - \thetav^\top\xi\right)^2, ||\thetav||_{0} \leq k\\
-\end{eqnarray*}
-
-\vspace*{-0.5cm}
-
-% $\bm{s}_j \in \{0, 1\}$ indicates whether feature $j$ is used in the model.
-
-\begin{wrapfigure}{r}{0.5\textwidth}
-	\includegraphics[width=0.5\textwidth]{figure_man/subset_selection.png}
-    \caption{\begin{footnotesize}Source: RPubs, Subset Selection Methods\end{footnotesize}}
-    \label{fig:wrapfig}
-\end{wrapfigure}
-
+\begin{frame2}{Example 1: Best subset selection}
+Let {\footnotesize $\D = \left(\left(\xi, \yi\right)\right)_{1 \le i \le n}$, $\xi \in \R^p$}. Fit LM based on best feature subset.
+$$
+\min_{\thetav \in \Theta} \left(\yi - \thetav^\top \xi\right)^2, ||\thetav||_{0} \leq k
+$$
+\spacer
+\splitV[0.55]{
 \textbf{Problem characteristics}:
-\begin{itemize}
-	\item White-box: Objective available in analytical form
-	\item Discrete: $\mathcal{S}$ is mixed continuous and discrete
-	\item Constrained
-\end{itemize}
-
+\begin{itemizeL}
+\item White-box: Objective available in analytical form
+\item Discrete: $\mathcal{S}$ is mixed continuous and discrete
+\item Constrained
+\end{itemizeL}
+\spacer
 The problem is even \textbf{NP-hard} (Bin et al., 1997, The Minimum Feature Subset Selection Problem)!
+}{
+\image[1][https://rpubs.com/davoodastaraky/subset]{figure_man/subset_selection.png}
+}
+\end{frame2}
 
 
-\end{vbframe}
-
-
-	
-\begin{vbframe}{Example 2: Wrapper Feature selection}
-
+\begin{frame2}{Example 2: Wrapper Feature selection}
 Subset sel. can be generalized to any learner $\ind$ using only features $\bm{s}$:
-
-\vspace*{-0.4cm}
-
-\begin{eqnarray*}
-	\min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}),
-\end{eqnarray*}
+$$
+\min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}),
+$$
 $\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resampling splits $\mathcal{J}$
-
-\vspace*{0.3cm}
-
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
+\spacer
+\splitV[0.55]{
 \textbf{Problem characteristics}:
 \begin{itemize}
-%\item Single-Objective
-\item black box \\
-\begin{footnotesize}eval by program\end{footnotesize}
+\item black box\\{\footnotesize eval by program}
 \item $\mathcal{S}$ is discrete / binary
-\item expensive \\
-\begin{footnotesize}
-1 eval: 1 or multiple ERM(s)!
-\end{footnotesize}
-\item noisy \\
-\begin{footnotesize}
-uses data / resampling
-\end{footnotesize}
+\item expensive\\{\footnotesize 1 eval: 1 or multiple ERM(s)!}
+\item noisy\\{\footnotesize uses data / resampling}
 \item NB: Less features can be better in prediction (overfitting)
 \end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{center}
-\includegraphics[width=1\textwidth]{figure_man/feature_subset_selection.png}
-\end{center}
-\end{column}
-\end{columns}
+}{
+\image{figure_man/feature_subset_selection.png}
+}
+\end{frame2}
 
-
-
-\end{vbframe}
 
 % \begin{vbframe}{Example 3: Feature sel. (constrained)}
-
 % With prior knowledge / preferences on max. number of features $k$:
-
 % \begin{eqnarray*}
 % \min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}), \quad \sum\nolimits_{i = 1}^p s_i \le k, 
 % \end{eqnarray*}
-
-
 % \begin{figure}[!tbp]
 %   \centering
 %   \begin{minipage}[b]{0.5\textwidth}
@@ -183,12 +97,8 @@ uses data / resampling
 %     \includegraphics[width =\textwidth]{figure_man/subsetsize.png}
 %   \end{minipage}
 % \end{figure}
-
-
 % \framebreak
-
 % \lz 
-
 % \textbf{Problem characteristics}:
 % \begin{itemize}
 % 	\item Black-box: Objective not available in analytical form
@@ -197,153 +107,84 @@ uses data / resampling
 % 	\item Noisy: Function evaluations depend on resampling	
 % 	\item Expensive (depending on training time of learner $\ind$)
 % \end{itemize}
-
 % \lz 
-
 % Complexity of the problem is reduced with $k$: Lower $k$ $\to$ less possible values for $\bm{s}$. 
-
 % \end{vbframe}
 
 
-
-\begin{vbframe}{Example 3: Feature sel. (multiobjective)}
-
+\begin{frame2}{Example 3: Feature sel. (multiobjective)}
 Feature selection is usually inherently multi-objective,
 with model sparsity as a 2nd trade-off target:
+$$
+\min_{\textbf{s} \in \{0, 1\}^p} \left(\widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}), \sum\nolimits_{i = 1}^p s_i\right).
+$$
 
-  \begin{eqnarray*}
-    \min_{\textbf{s} \in \{0, 1\}^p} \left(\widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}), \sum\nolimits_{i = 1}^p s_i\right). 
-\end{eqnarray*}
-
-$\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resampling splits $\mathcal{J}$ 
-
-
-\begin{columns}
-\begin{column}{0.4\textwidth}
+$\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resampling splits $\mathcal{J}$
+\spacer
+\splitV[0.45]{
 \begin{itemize}
 \item Multiobjective
-\item black box \\
-\begin{footnotesize}eval by program\end{footnotesize}
+\item black box\\{\footnotesize eval by program}
 \item S is discrete / binary
-\item expensive \\
-\begin{footnotesize}
-1 eval: 1 or multiple ERM(s)!
-\end{footnotesize}
-\item noisy \\
-\begin{footnotesize}
-uses data / resampling
-\end{footnotesize}
+\item expensive\\{\footnotesize 1 eval: 1 or multiple ERM(s)!}
+\item noisy\\{\footnotesize uses data / resampling}
 \end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{center}
-\includegraphics{figure_man/pareto.png}
-\end{center}
-\end{column}
-\end{columns}
+}{
+\image{figure_man/pareto.png}
+}
+\end{frame2}
 
-\end{vbframe}
 
-\begin{vbframe}{Example 4: Hyperparameter optimization}
+\begin{framei}{Example 4: Hyperparameter optimization}
+\item Learner $\ind$ usually configurable by hyperparameters $\lamv \in \Lambda$.
+\item Find best HP configuration $\lamv^\ast$
+$$
+\lamv^\ast \in \argmin\nolimits_{\lamv \in \Lambda} c(\lamv) = \argmin \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \lamv)
+$$
+$\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resampling splits $\mathcal{J}$
+\spacer
+\splitV[0.6]{
+\image{figure_man/hpo_loop_1.png}
+}{
+\image[1][https://ceur-ws.org/Vol-2846/paper22.pdf]{figure_man/landscapes2.jpg}
+}
+\end{framei}
 
-\begin{itemize}
-	%\item ML learning algorithm is also called \textbf{inducer} $\ind$.
-	\item Learner $\ind$ usually configurable by hyperparameters $\lamv \in \Lambda$. 
-	\item Find best HP configuration $\lamv^\ast$ 
-	$$
-	\lamv^\ast \in \argmin\nolimits_{\lamv \in \Lambda} c(\lamv) = \argmin \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \lamv)
-	$$
-	$\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resampling splits $\mathcal{J}$ 
-\end{itemize}
 
-\vspace*{-0.2cm}
-
-\begin{columns}
-\begin{column}{0.6\textwidth}
-
-\begin{figure}[h]
-	\centering
-	\includegraphics{figure_man/hpo_loop_1.png}
-\end{figure}
-\end{column}
-\begin{column}{0.4\textwidth}
-		\begin{center}
-\includegraphics{figure_man/landscapes2.jpg}
-\begin{tiny}{XGBoost HP landscape; source: \url{ceur-ws.org/Vol-2846/paper22.pdf}}\end{tiny}
-\end{center}
-\end{column}
-\end{columns}
-
-\framebreak 
-		
-Solving 
-\vspace*{-0.2cm}
+\begin{frame2}{Example 4: Hyperparameter optimization}
+Solving
 $$
 \lamv^\ast \in \argmin_{\lamv \in \Lambda} c(\lamv)
 $$
-
-is very challenging:  
-\vspace*{-0.2cm} 
-\begin{columns}
-	\begin{column}{0.6\textwidth}
-	\begin{itemize}
-		\item $c$ black box \\
-		\begin{footnotesize}eval by progrmm\end{footnotesize}
-		\item expensive \\
-		\begin{footnotesize}
-		1 eval: 1 or multiple ERM(s)!
-		\end{footnotesize}
-		\item noisy \\
-		\begin{footnotesize}
-		uses data / resampling
-		\end{footnotesize}
-  		\item the search space $\Lambda$ might be mixed 
-		\begin{footnotesize}
-		continuous, integer, categ. or hierarchical
-		\end{footnotesize}
-	\end{itemize}
-	\end{column}
- 	\begin{column}{0.35\textwidth}
-		\begin{center}
-			\includegraphics[width = 1.0\textwidth]{figure_man/landscapes2.jpg}
-\begin{tiny}{XGBoost HP landscape; source: \url{ceur-ws.org/Vol-2846/paper22.pdf}}\end{tiny}
-		\end{center}
-  \end{column}
-\end{columns}
-% \vspace*{0.2cm}
-% The problem is an \textbf{expensive black-box optimization} problem. 
-\end{vbframe}
+is very challenging:
+\splitV{
+\begin{itemize}
+\item $c$ black box\\{\footnotesize eval by progrmm}
+\item expensive\\{\footnotesize 1 eval: 1 or multiple ERM(s)!}
+\item noisy\\{\footnotesize uses data / resampling}
+\item the search space $\Lambda$ might be mixed\\{\footnotesize continuous, integer, categ. or hierarchical}
+\end{itemize}
+}{
+\image[1][https://ceur-ws.org/Vol-2846/paper22.pdf]{figure_man/landscapes2.jpg}
+}
+\end{frame2}
 
 
-
-\begin{vbframe}{More black-box problems}
-
+\begin{frame2}{More black-box problems}
 Black-box problems from engineering: \textbf{oil well placement}
-\vspace*{-0.1cm}
-\begin{columns}
-	\begin{column}{0.65\textwidth}
-		\begin{itemize}
-			\item The goal is to determine the optimal locations and operation parameters for wells in oil reservoirs
-			\item Basic premise: achieving maximum revenue from oil while minimizing operating costs
-			\item In addition, the objective function is subject to complex combinations of geological, economical, petrophysical and fluiddynamical constraints 
-			\item Each function evaluation requires several computationally expensive reservoir simulations while taking uncertainty in the reservoir description into account 
-		\end{itemize}
-	\end{column}
-	\begin{column}{0.35\textwidth}
-		\begin{center}
-			\includegraphics{figure_man/oil_well_problem.jpg}
-			\begin{footnotesize}
-				Oil saturation at various depths with possible location of wells.
-				\newline
-				\tiny{Source: \url{https://doi.org/10.1007/s13202-019-0710-1}}
-			\end{footnotesize}
-		\end{center}
-	\end{column}
-\end{columns}
-
-\end{vbframe}
-	
-
+\spacer
+\splitV[0.65]{
+\begin{itemize}
+\item The goal is to determine the optimal locations and operation parameters for wells in oil reservoirs
+\item Basic premise: achieving maximum revenue from oil while minimizing operating costs
+\item In addition, the objective function is subject to complex combinations of geological, economical, petrophysical and fluiddynamical constraints
+\item Each function evaluation requires several computationally expensive reservoir simulations while taking uncertainty in the reservoir description into account
+\end{itemize}
+}{
+\image[0.9][https://doi.org/10.1007/s13202-019-0710-1]{figure_man/oil_well_problem.jpg}\\
+{\footnotesize Oil saturation at various depths with possible location of wells.}
+}
+\end{frame2}
 
 \endlecture
 \end{document}
