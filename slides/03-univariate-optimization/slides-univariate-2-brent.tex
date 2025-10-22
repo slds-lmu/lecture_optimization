@@ -4,179 +4,77 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
+\newcommand{\xleft}{x_{\text{left}}} % x_left
+\newcommand{\xright}{x_{\text{right}}} %x_right
+\newcommand{\xnew}{x_{\text{new}}} % x_new
+\newcommand{\xbest}{x_{\text{best}}} % x_best
+\newcommand{\fleft}{f_{\text{left}}} % f_left
+\newcommand{\fright}{f_{\text{right}}} %f_right
+\newcommand{\fnew}{f_{\text{new}}} % f_new
+\newcommand{\fbest}{f_{\text{best}}} % f_best
+\newcommand{\xii}{x^{(i)}} % x^(i)
+
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Univariate optimization
-  }{% Lecture title  
-  Brent's method
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/quadratic-title.png
-  }{
-    \item Quadratic interpolation
-    \item Brent's procedure
+\titlemeta{
+Univariate optimization
+}{
+Brent's method
+}{
+figure_man/quadratic-title.png
+}{
+\item Quadratic interpolation
+\item Brent's procedure
 }
-
-
 
 \begin{frame}{Quadratic Interpolation}
-
-Similar to golden ratio procedure but select $x^{\text{new}}$ differently: $x^{\text{new}}$ as minimum of a parabola fitted through 
-
-$$(x^{\text{left}}, f^{\text{left}}), (x^{\text{best}}, f^{\text{best}}), (x^{\text{right}}, f^{\text{right}}).$$ 
-
-
+Similar to golden ratio procedure but select $\xnew$ differently: $\xnew$ as minimum of fitted parabola through 
+$$(\xleft, \fleft), (\xbest, \fbest), (\xright, \fright)$$ 
 \foreach \i in {1, 2, 3, 4, 5}{
-  \only<\i>{
-  \begin{center}
-  \includegraphics{figure_man/quadratic\i.pdf} \\
-  \begin{footnotesize}
-    Left: Fit parabola (dashed) and propose minimum (red) as new point. Middle: Switch / not switch with $x^{\text{best}}$. Right: New interval. 
-  \end{footnotesize}
-  \end{center}
-  }
-}
-
+\only<\i>{
+\image{figure_man/quadratic\i.pdf}
+Left: Fit parabola (dashed) and propose minimum (red) as new point. Middle: Switch / not switch with $\xbest$. Right: New interval. 
+}}
 \end{frame}
 
-
-%Code für Erzeugung der Bilder in Ordner figure_man/quadr_int für animation
-% <<echo = FALSE>>=
-% min_func = function(x) cos(x) + 3 *  x^2 + 3*exp(x)
-%
-% plot_quad = function(minfunc, left = -2.5, right = 2.5, best = -1, max_it = 3, ...) {
-%   l = left
-%   r = right
-%
-%   parab = function(x) A * x^2 + B * x + C
-%
-%   iter = 1
-%   curve(minfunc, from = l-0.5, to = r+0.5, ylab = "f(x)", ...)
-%   abline(v = c(left, best, right), lty = 2)
-%   points(c(left, best, right), minfunc(c(left, best, right)), pch = 15)
-%   axis(3, at = c(left, best, right),
-%          labels = c(expression("x"[left]), expression("x"[best]),expression("x"[right])), las = 3, cex.axis = 1.5)
-%   while (iter <= max_it + 1) {
-%     curve(minfunc, from = l-0.5, to = r+0.5, ylab = "f(x)", ...)
-%     fl = min_func(left)
-%     fr = min_func(right)
-%     fb = min_func(best)
-%
-%     denom = (left - best) * (left - right) * (best - right)
-%     A = (right * (fb - fl) + best * (fl - fr) + left * (fr - fb)) / denom
-%     B = (right^2 * (fl - fb) + best^2 * (fr - fl) + left^2 * (fb - fr)) / denom
-%     C = (best * right * (best - right) * fl + right * left * (right - left) * fb +
-%            left * best * (left - best) * fr) / denom
-%     xnew = - B / (2 * A)
-%
-%     points(seq(l - 0.5, r + 0.5, length.out=100),
-%            parab(seq(l - 0.5, r + 0.5, length.out=100)), type = "l", lty = 2)
-%     abline(v = c(left, best, xnew, right), lty = 2)
-%     points(c(left, best, xnew, right), minfunc(c(left, best, xnew, right)),
-%            pch = 15)
-%     axis(3, at = c(left, best, xnew, right),
-%          labels=c(expression("x"[left]), expression("x"[best]),
-%                   expression("x"[new]), expression("x"[right])), las = 3, cex.axis = 1.5)
-%
-%     if (minfunc(xnew) < minfunc(best)) {
-%       store = xnew
-%       xnew = best
-%       best = store
-%     }
-%     if (best < xnew) {right = xnew}
-%     if (best > xnew) {left = xnew}
-%
-%     curve(minfunc, from = l-0.5, to = r+0.5, ylab = "f(x)", ...)
-%     abline(v = c(left, best, right), lty = 2)
-%     points(c(left, best, right), minfunc(c(left, best, right)),
-%            pch = 15)
-%     axis(3, at = c(left, best, right),
-%          labels=c(expression("x'"[left]), expression("x'"[best]),
-%                   expression("x'"[right])), las = 3, cex.axis = 1.5)
-%     iter = iter + 1
-%   }
-% }
-% plot_quad(min_func, l = -2.5, r = 2.5, best = 0, max_it = 3, ylim = c(-10, 90))
-% @
-
-% \begin{frame}[t,fragile]{Quadratische Interpolation Beispiel}
-% \begin{center}
-%   \only<1>{\includegraphics[width=0.8\textwidth]{figure_man/quadr_int/pic-1.png}}
-%   \only<2>{\includegraphics[width=0.8\textwidth]{figure_man/quadr_int/pic-2.png}}
-%   \only<3>{\includegraphics[width=0.8\textwidth]{figure_man/quadr_int/pic-3.png}}
-%   \only<4>{\includegraphics[width=0.8\textwidth]{figure_man/quadr_int/pic-4.png}}
-%   \only<5>{\includegraphics[width=0.8\textwidth]{figure_man/quadr_int/pic-5.png}}
-% \end{center}
-%
-%   % \animategraphics[poster=first,autoplay,loop,width=0.65\textwidth]{1}{figure_man/quadr_int/pic-}{1}{9}
-% \end{frame}
-
-
-\begin{vbframe}{Quadratic interpolation comments}
-\begin{itemize}
+\begin{framei}[sep=L]{Quadratic interpolation comments}
 \item Quadratic interpolation \textbf{not robust}. The following may happen:
-\begin{itemize}
-\item Algorithm suggests the same $x^{\text{new}}$ in each step,
-\item $x^{\text{new}}$ outside of search interval,
+\begin{itemizeL}
+\item Algorithm suggests same $\xnew$ in each step
+\item $\xnew$ outside of search interval
 \item Parabola degenerates to line and no real minimum exists 
-%(if 3 points are collinear).
-\end{itemize}
-\item Algorithm must then abort, finding a global minimum is not guaranteed.
-% \item In practice, extensively tested numerical libraries should be used.
-\end{itemize}
-\end{vbframe}
+\end{itemizeL}
+\item Algorithm must then abort, finding a global minimum is not guaranteed
+\end{framei}
 
-\begin{vbframe}{Brent's method}
-
-\begin{itemize}
-  \item Brent proposed an algorithm (1973) that alternates between golden ratio search and quadratic interpolation as follows: 
-  \begin{itemize}
-    \item Quadratic interpolation step acceptable if: (i) $x^{\text{new}}$ falls within $[x^{\text{left}}, x^{\text{right}}]$ (ii) $x^{\text{new}}$ sufficiently far away from  $x^{\text{best}}$ \\
-    \begin{footnotesize}(Heuristic: Less than half of movement of step before last) 
-    \end{footnotesize}
-    % https://mil.ufl.edu/nechyba/www/__eel6825.f2003/course_materials/t11.neural_networks/papers/nric_ch10.1-2.pdf
-    \item Otherwise: Proposal via golden ratio
-  \end{itemize}
-  \item Benefit: Fast convergence (quadratic interpolation), unstable steps (e.g. parabola degenerated) stabilized by golden ratio search
-  \item Convergence guaranteed if the function $f$ has a local minimum
-  \item Used in R-function \texttt{optimize()}
-\end{itemize}
+\begin{framei}[sep=L]{Brent's method}
+\item Brent's algorithm (1973) alternates between golden ratio search and quadratic interpolation as follows: 
+\begin{itemizeM}
+\item Quadratic interpolation step acceptable if:\\ 
+(i) $\xnew$ falls within $[\xleft, \xright]$\\ 
+(ii) $\xnew$ sufficiently far away from  $\xbest$ \\
+{\footnotesize (Heuristic: Less than half of the movement of step before last)} 
+\item Otherwise: proposal via golden ratio
+\end{itemizeM}
+\item Benefit: fast convergence (quadratic interpolation), unstable steps stabilized by golden ratio search
+\item Convergence guaranteed if function $f$ has local min
+\item Used in R-function \texttt{optimize()}
+\end{framei}
 
 
-% \begin{itemize}
-% \item Zunächst wird Suchintervall durch Goldenen Schnitt solange verkleinert, bis Zielfunktion durch Parabel an den letzten 3 Evaluationspunkten gut approximiert wird.
-% \item Dann weitere Suche durch Quadratische Interpolation, Ausnutzen der schnelleren Konvergenz.
-% \item Bei frühzeitiger Terminierung, erneut Goldener Schnitt.
-% \end{itemize}
-% Dieses Verfahren wird \textbf{Brent'sche Methode} genannt. Funktioniert sehr gut, da sich alle (zweimal stetig diff'baren) Funktionen in einer $\epsilon$ Umgebung um das globale Minimum gut durch eine quadratische Funktion approximieren lassen (vgl. Taylorreihe).
-\end{vbframe}
-
-
-\begin{vbframe}{Example: MLE Poisson}
-
-\begin{itemize}
-    \item Poisson density: $f(k ~|~ \lambda) := \P(x = k) = \frac{\lambda^k \cdot \exp(-\lambda)}{k!}$
-    \item Negative log-likelihood for $n$ observations:
-        \begin{equation*}
-        - \ell(\lambda, \mathcal{D}) = - \log \prod_{i = 1}^n  f\left(x^{(i)} ~|~ \lambda\right) =  - \sum_{i = 1}^n \log f\left(x^{(i)} ~|~ \lambda\right) 
-        \end{equation*}
-\end{itemize}
-
-\vspace{-\baselineskip}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.7\textwidth]{figure_man/poisson.pdf}
-    \caption*{\footnotesize GR and Brent converge to minimum at $x^\ast \approx 1$. \\
-        \textbf{But:} GR needs $\approx 45$ it., Brent only needs $\approx 15$ it. for same tolerance.}
-\end{figure}
-
-\end{vbframe}
+\begin{framei}{Example: MLE Poisson}
+\item Poisson density: $f(k|\lambda) := \P(x = k) = \frac{\lambda^k \cdot \exp(-\lambda)}{k!}$
+\item Negative log-likelihood for $n$ samples:
+\begin{equation*}
+- \ell(\lambda, \mathcal{D}) = - \log \prodin  f(\xii | \lambda) =  - \sumin \log f(\xii | \lambda) 
+\end{equation*}
+\imageC[0.7]{figure_man/poisson.pdf}
+GR and Brent converge to global min at $x^\ast \approx 1$ \\
+But GR needs $\approx 45$ iters, Brent only $\approx 15$ for same tolerance
+\end{framei}
 
 \endlecture
 
 \end{document}
-
-

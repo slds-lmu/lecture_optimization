@@ -292,4 +292,47 @@ Second condition: If $\E(\mathbf{X}) = \mathbf{0}, \E(\mathbf{Y}) = \mathbf{0}$ 
 	
 \end{enumerate}
 }
+
+\loesung{Optimality in 1d}{
+Let $f: [-1,2] \rightarrow \R, x \mapsto \exp(x^3 - 2x^2)$
+\begin{enumerate}
+	%
+	\item $f'(x) = \exp(x^3 - 2x^2)\cdot(3x^2 - 4x)$
+	\item 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
+
+\hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{exp}\hlstd{(x}\hlopt{^}\hlnum{3} \hlopt{-} \hlnum{2}\hlopt{*}\hlstd{x}\hlopt{^}\hlnum{2}\hlstd{)}
+\hlstd{df} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{f}\hlstd{(x)} \hlopt{*} \hlstd{(}\hlnum{3}\hlopt{*}\hlstd{x}\hlopt{^}\hlnum{2} \hlopt{-} \hlnum{4}\hlopt{*}\hlstd{x)}
+
+\hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{x} \hlstd{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.005}\hlstd{)),} \hlkwd{aes}\hlstd{(x))} \hlopt{+}
+  \hlkwd{geom_function}\hlstd{(}\hlkwc{fun} \hlstd{= f,} \hlkwd{aes}\hlstd{(}\hlkwc{linetype} \hlstd{=} \hlstr{"f"}\hlstd{))} \hlopt{+}
+  \hlkwd{geom_function}\hlstd{(}\hlkwc{fun} \hlstd{= df,} \hlkwd{aes}\hlstd{(}\hlkwc{linetype} \hlstd{=} \hlstr{"f'"}\hlstd{))}    \hlopt{+}
+  \hlkwd{scale_linetype_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{"Function"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.5\linewidth]{figure/1d-plot-1} 
+\end{knitrout}
+	\item $f$ is continuously differentiable $\Rightarrow$ candidates can only be stationary points and boundary points. \\
+	Find stationary points, i.e., points where \\ 
+	$f'(x) = 0 \iff  \underbrace{\exp(x^3 - 2x^2)}_{>0}\cdot(3x^2 - 4x) = 0 \iff 3x^2 - 4x = 0 \iff x(3x - 4) = 0 .$ \\
+	$\Rightarrow x_1 = 0, x_2 = 4/3.$
+	The other candidates are boundary points, i.e., $x_3 = -1, x_4 = 2.$
+	\item $f''(x) = \exp(x^3 - 2x^2)\cdot(3x^2 - 4x)^2 + \exp(x^3 - 2x^2)\cdot(6x - 4)$ \\
+	\item $f''(x_1) = \exp(0)\cdot(- 4) < 0$ \\
+	  $\Rightarrow x_1$ is a local maximum \\[\baselineskip]
+	  $f''(x_2) = \exp((4/3)^3 - 2(4/3)^2)\cdot(4) > 0$ \\
+	  $\Rightarrow x_2$ is a local minimum. \\[\baselineskip]
+	  The boundary points $x_3$ and $x_4$ are not considered as \textit{local} optima.
+	\item $f(x_1) = \exp(0) = 1$ \\
+	 $f(x_2) = \exp((4/3)^3 - 2(4/3)^2) \approx 0.3057$ \\
+	  $f(x_3) = \exp(-3) \approx 0.05$ \\
+	  $f(x_4) = \exp(0) = 1$ \\
+	  $\Rightarrow x_1, x_4$ are global maxima.
+	  $x_3$ is global minimum.
+	
+\end{enumerate}
+}
 \end{document}

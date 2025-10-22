@@ -25,8 +25,9 @@
 \begin{vbframe}{Definition local and global minimum}
 Given $\mathcal{S} \subseteq \R^d$, $f: \mathcal{S} \to \R$:
 \begin{itemize}
+    \item Let $B_\eps(\xv)$ be an \enquote{$\epsilon$}-ball around $\xv$
     \item $f$ has \textbf{global minimum} in $\xv^\ast \in \mathcal{S}$, if $f(\xv^\ast) \leq \fx$ for all $\xv \in \mathcal{S}$
-    \item $f$ has a \textbf{local minimum} in $\xv^\ast\in\mathcal{S}$, if $\eps>0$ exists s.t. $f(\xv^\ast) \leq \fx$ for all $\xv \in B_\eps(\xv^\ast)$ (\enquote{$\epsilon$}-ball around $\xv^\ast$).
+    \item $f$ has a \textbf{local minimum} in $\xv^\ast\in\mathcal{S}$, if $\eps>0$ exists s.t. $f(\xv^\ast) \leq \fx$ for all $\xv \in B_\eps(\xv^\ast) \cap \mathcal{S}$
 \end{itemize}
 
 \vspace*{-0.3cm}

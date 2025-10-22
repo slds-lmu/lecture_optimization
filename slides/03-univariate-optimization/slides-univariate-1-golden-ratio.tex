@@ -3,319 +3,198 @@
 \input{../../style/preamble}\input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
+\newcommand{\xleft}{x_{\text{left}}} % x_left
+\newcommand{\xright}{x_{\text{right}}} %x_right
+\newcommand{\xnew}{x_{\text{new}}} % x_new
+\newcommand{\xbest}{x_{\text{best}}} % x_best
+
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Univariate optimization
-  }{% Lecture title  
-  Golden ratio
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/golden-ratio-6.png
-  }{
-    \item Simple nesting procedure
-    \item Golden ratio 
+\titlemeta{
+Univariate optimization
+}{
+Golden ratio
+}{
+figure_man/golden-ratio-6.png
+}{
+\item Simple nesting procedure
+\item Golden ratio 
 }
 
-\begin{vbframe}{Univariate Optimization}
-
-Let $f: \R \to \R$. 
-
+\begin{frame2}{univariate Optimization}
+Let $f: \R \to \R$ (search starts over interval $(\xleft,\xright)$ in practice)\\
 \lz 
+\textbf{Goal}: Iteratively improve eval points. Assume function $-f$ is unimodal. Will not rely on gradients, so this also works for black-box problems.
+\imageC{figure_man/golden-ratio-0.png}
+\end{frame2}
 
-\textbf{Goal}: Iteratively improve eval points. Assume function is unimodal. Will not rely on gradients, so this also works for black-box problems.
-
-\vspace*{-0.2cm} 
-
-\begin{figure}
-  \includegraphics{figure_man/golden-ratio-0.png}
-\end{figure}
-
-\end{vbframe}
-
-\begin{frame}{Simple nesting procedure}
-
-Let $f: \R \to \R$. 
-
+\begin{frame}{simple nesting procedure}
+Let $f: \R \to \R$\\
 \lz 
-
-
 \only<1>{
-  Always maintain three points: left, right, and current best.
-
-  \vspace*{0.2cm} 
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-1.png}
-  \end{figure}
+Always maintain three points: left, right, and current best
+\vspace*{0.2cm} 
+\image{figure_man/golden-ratio-1.png}
 }
-
 \only<2>{
-  Propose random point in interval. 
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-2.png}
-  \end{figure}
-
-  \vfill
-
-  \begin{footnotesize}
-    NB: Later we will define the optimal choice for a new proposal.
-  \end{footnotesize}  
+Propose random point in interval 
+\image{figure_man/golden-ratio-2.png}
+\begin{scriptsize}
+NB: Later we will define the optimal choice for a new proposal
+\end{scriptsize}  
 }
-
 \only<3>{
-  Compare proposal against current best. 
-
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-3.png}
-  \end{figure}
+Compare proposal against current best
+\image{figure_man/golden-ratio-3.png}
 }
-
 \only<4>{
-  If it is better: proposal becomes current best.
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-4.png}
-  \end{figure}
+If it is better: proposal becomes current best
+\image{figure_man/golden-ratio-4.png}
 }
-
 \only<5>{
-  New search interval: around current best. 
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-5.png}
-  \end{figure}
+New search interval: around current best 
+\image{figure_man/golden-ratio-5.png}
 }
-
 \only<6>{
-  Propose a random point.   
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-6.png}
-  \end{figure}
+Propose a random point  
+\image{figure_man/golden-ratio-6.png}
 }
-
 \only<7>{
-  Compare proposal against current best. 
-
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-7.png}
-  \end{figure}
+Compare proposal against current best
+\image{figure_man/golden-ratio-7.png}
 }
-
 \only<8>{
-  If it is better: proposal becomes current best.
-
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-8.png}
-  \end{figure}
+If it is better: proposal becomes current best
+\image{figure_man/golden-ratio-8.png}
 }
-
 \only<9>{
-  New search interval: around current best. 
-
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-9.png}
-  \end{figure}
+New search interval: around current best
+\image{figure_man/golden-ratio-9.png}
 }
-
-
 \only<10>{
-  Propose a random point.   
-
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-10.png}
-  \end{figure}
+Propose a random point
+\image{figure_man/golden-ratio-10.png}
 }
-
 \only<11>{
-  Compare proposal against current best. 
-
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-11.png}
-  \end{figure}
+Compare proposal against current best 
+\image{figure_man/golden-ratio-11.png}
 }
-
 \only<12>{
-  If it is better: proposal becomes current best.
-
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-12.png}
-  \end{figure}
+If it is better: proposal becomes current best
+\image{figure_man/golden-ratio-12.png}
 }
-
 \only<13>{
-  New search interval: around current best. 
-
-  \begin{figure}
-    \includegraphics{figure_man/golden-ratio-13.png}
-  \end{figure}
+New search interval: around current best
+\image{figure_man/golden-ratio-13.png}
 }
-
-
 \end{frame}
 
-\begin{vbframe}{Simple nesting procedure}
-
-\begin{itemize}
-\item\textbf{Initialization}: Search interval  $(x^{\text{left}}, x^{\text{right}})$, $x^{\text{left}} < x^{\text{right}}$
-\item Choose $x^{\text{best}}$ randomly.
+\begin{framei}{simple nesting procedure}
+\item Initialization: Search interval  $(\xleft, \xright)$, $\xleft < \xright$
+\item Choose $\xbest$ randomly
 \item For $t = 0, 1, 2, ...$
 \begin{itemize}
-    \item Choose $x^{\text{new}}$ randomly in $[x^{\text{left}}, x^{\text{right}}]$
-    \item If $f(x^{\text{new}}) < f(x^{\text{best}})$:
-    \begin{itemize}
-        \item $x^{\text{best}} \leftarrow x^{\text{new}}$
-    \end{itemize}
-    \item New interval: Points around $x^{\text{best}}$
-\end{itemize}
-\end{itemize}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=1\textwidth]{figure_man/golden-ratio-summary.png}  
-\end{figure}
-
-\end{vbframe}
-
-
-\begin{vbframe}{Golden ratio}
-
-\textbf{Key question:} How can $x^{\text{new}}$ be chosen better than randomly? 
-
+\item Choose $\xnew$ randomly in $[\xleft, \xright]$
+\item If $f(\xnew) < f(\xbest)$:
 \begin{itemize}
-    \item \textbf{Insight 1: } Always in bigger subinterval to maximize reduction.
-    \item \textbf{Insight 2: } $x^{new}$ symmetrically to $x^{best}$ for uniform reduction. 
+\item $\xbest \leftarrow \xnew$
 \end{itemize}
+\item New interval: points around $\xbest$
+\end{itemize}
+\image{figure_man/golden-ratio-summary.png}
+\end{framei}
 
-\begin{figure}
-\includegraphics[width=0.8\textwidth]{figure_man/goldensec-0.png}
-\end{figure}
+\begin{frame2}{golden ratio}
+Key question: How can $\xnew$ be chosen better than randomly? 
+\begin{itemizeM}
+\item Insight 1: Always in bigger subinterval to maximize reduction
+\item Insight 2: $\xnew$ symmetrically to $\xbest$ for uniform reduction
+\end{itemizeM}
+\imageC[1.0]{figure_man/goldensec-0.png}
+\vspace{-1cm}
+Consider two hypothetical outcomes for $\xnew$: $f_{new, a}$ and $f_{new, b}$
+\end{frame2}
 
-\vspace*{-0.5cm}
+\begin{frame2}{golden ratio}
+If outcome is $f_{new, a}$, $\xbest$ remains best and we search around $\xbest$: $$[\xleft, \xnew]$$
+\vfill
+\imageC[1.0]{figure_man/goldensec-1.png}
+\end{frame2}
 
-Consider two hypothetical outcomes $x^{\text{new}}$: $f_{new, a}$ and $f_{new, b}$. 
+\begin{frame2}{golden ratio}
+If $f_{new, b}$ is outcome, $\xnew$ becomes best point and search around $\xnew$: $$[\xbest, \xright]$$
+\vfill
+\imageC[1.0]{figure_man/goldensec-3.png}
+\end{frame2}
 
-\framebreak
+\begin{frame2}{golden ratio}
+For uniform reduction the two potential intervals must be equal-sized: 
+\begin{align*}
+b := \xright - \xbest = \xnew - \xleft
+\end{align*}
+\vfill
+\imageC[1.0]{figure_man/goldensec-3.png}
+\end{frame2}
 
-If $f_{new, a}$ is the outcome, $x_{best}$ stays best and we search around $x_{best}$ : 
-
-$$
-    [x_{left}, x_{new}]
-$$
-
-\begin{figure}
-\includegraphics[width=0.8\textwidth]{figure_man/goldensec-1.png}\\
-\end{figure}
-
-\framebreak 
-
-If $f_{new, b}$ is outcome, $x_{new}$ becomes best point and search around $x_{new}$ : 
-
-$$
-    [x_{best}, x_{right}] 
-$$
-
-\begin{figure}
-\includegraphics[width=0.8\textwidth]{figure_man/goldensec-2.png}\\
-\end{figure}
-
-\framebreak 
-
-For uniform reduction, require the two potential intervals equal sized: 
-
-\begin{eqnarray*}
-    b := x_{right} - x_{best} = x_{new} - x_{left}
-\end{eqnarray*}
-
-\begin{figure}
-\includegraphics[width=0.8\textwidth]{figure_man/goldensec-3.png}\\
-\end{figure}
-
-\framebreak 
-
+\begin{frame2}{golden ratio}
 One iteration ahead: require again the intervals to be of same size. 
+$$c := \xbest - \xleft = \xright - \xnew$$
+\vfill
+\imageC[1.0]{figure_man/goldensec-4.png}
+\end{frame2}
 
-\begin{eqnarray*}
-    c := x_{best} - x_{left} = x_{right} - x_{new}
-\end{eqnarray*}
-
-\begin{figure}
-\includegraphics[width=0.8\textwidth]{figure_man/goldensec-4.png}\\
-\end{figure}
-
-\framebreak 
-
+\begin{frame2}{golden ratio}
 To summarize, we require: 
-
 \begin{eqnarray*}
-    a &=& x^{right}-x^{left}, \\
-    b &=& x_{right} - x_{best} = x_{new} - x_{left} \\
-    c &=& x_{best} - x_{left} = x_{right} - x_{new}
+a &=& \xright-\xleft, \\
+b &=& \xright - \xbest = \xnew - \xleft \\
+c &=& \xbest - \xleft = \xright - \xnew
 \end{eqnarray*}
+\vfill
+\imageC[0.5]{figure_man/goldensec.png}
+\end{frame2}
 
-\vspace*{-0.3cm}
-
-\begin{figure}
-\includegraphics[width=0.3\textwidth]{figure_man/goldensec.png}\\
-\end{figure}
-
-\framebreak 
-
-\begin{itemize}
-\item We require the same percentage improvement in each iteration
+\begin{framei}{golden ratio}
+\item We require same percentage improvement in each iteration
 \item For $\varphi$ reduction factor of interval sizes ($a$ to $b$, and $b$ to $c$)
-
-$$
-\varphi := \frac{b}{a} = \frac{c}{b}
-$$
-$$
-\varphi^2 = \frac{b}{a} \cdot \frac{c}{b} = \frac{c}{a}
-$$
-
+$$\varphi := \frac{b}{a} = \frac{c}{b}$$
+$$\varphi^2 = \frac{b}{a} \cdot \frac{c}{b} = \frac{c}{a}$$
 \item Divide $a = b + c$ by $a$:
 \begin{eqnarray*}
 \frac{a}{a} &=& \frac{b}{a} + \frac{c}{a} \\
 1 &=& \varphi + \varphi^2 \\
 0 &=& \varphi^2 + \varphi - 1
 \end{eqnarray*}
-\item Unique positive solution is $\varphi = \frac{\sqrt{5}-1}{2} \approx 0.618$.
+\item Unique positive solution is $\varphi = \frac{\sqrt{5}-1}{2} \approx 0.618$
+\end{framei}
 
-\framebreak
-
-\item With $x^{\text{new}}$ we always go $\varphi$ percentage points into the interval. 
-\item Given $x^{left}$ and $x^{right}$ it follows
+\begin{framei}[fs=normalsize,sep=L]{golden ratio}
+\item With $\xnew$ we always go $\varphi$ percentage points into the interval
+\item Given $\xleft$ and $\xright$ it follows
 \begin{eqnarray*}
-x^{best}&=&x^{right}-\varphi(x^{right}-x^{left})\\
-&=&x^{left}+(1-\varphi)(x^{right}-x^{left})
+\xbest&=&\xright-\varphi(\xright-\xleft)\\
+&=&\xleft+(1-\varphi)(\xright-\xleft)
 \end{eqnarray*}
 and due to symmetry
 \begin{eqnarray*}
-x^{new}&=& x^{left}+\varphi(x^{right}-x^{left})\\ &=& x^{right}-(1-\varphi)(x^{right}-x^{left}).
+\xnew&=& \xleft+\varphi(\xright-\xleft)\\ &=& \xright-(1-\varphi)(\xright-\xleft).
 \end{eqnarray*}
-\end{itemize}
+\end{framei}
 
-\framebreak 
-
-Termination criterion:
-
-  \begin{itemize}
-    \item A reasonable choice is the absolute error, i.e. the width of the last interval:
-    $$
-    |x^{best}-x^{new}| < \tau
-    $$
-    \item In practice, more complicated termination criteria are usually applied, for example in \emph{Numerical Recipes in C, 2017}
-
-    $$
-    |x^{right}-x^{left}| \le \tau (|x^{best}| + |x^{new}|)
-    $$
-
-    is proposed as a termination criterion.
-
+\begin{framei}[sep=L]{golden ratio}
+\item Some termination criterion has to be chosen 
+\item A reasonable choice is the absolute error, i.e. the width of the last interval:
+$$|\xbest-\xnew| < \tau$$
+\item In practice, more complicated termination criteria are usually applied, e.g. \emph{Numerical Recipes in C} \furtherreading{TEUCH92} proposes
+$$|\xright-\xleft| \le \tau (|\xbest| + |\xnew|)$$
+as a termination criterion
 % (Schranke für Breite des Suchintervalls in Abhängigkeit der Größenordnung des Minimums):
 % $$
-% |x^{right}-x^{left}| < \tau(1+|x^{best}|)
+% |\xright-\xleft| < \tau(1+|\xbest|)
 % $$
-\end{itemize}
-
-\end{vbframe}
+\end{framei}
 
 \endlecture
 
