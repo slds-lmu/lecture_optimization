@@ -4,15 +4,15 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-\newcommand{\xleft}{x_{\text{left}}} % x_left
-\newcommand{\xright}{x_{\text{right}}} %x_right
-\newcommand{\xnew}{x_{\text{new}}} % x_new
-\newcommand{\xbest}{x_{\text{best}}} % x_best
-\newcommand{\fleft}{f_{\text{left}}} % f_left
-\newcommand{\fright}{f_{\text{right}}} %f_right
-\newcommand{\fnew}{f_{\text{new}}} % f_new
-\newcommand{\fbest}{f_{\text{best}}} % f_best
-\newcommand{\xii}{x^{(i)}} % x^(i)
+\newcommand{\xleft}{x_{\text{left}}} 
+\newcommand{\xright}{x_{\text{right}}} 
+\newcommand{\xnew}{x_{\text{new}}} 
+\newcommand{\xbest}{x_{\text{best}}} 
+\newcommand{\fleft}{f_{\text{left}}} 
+\newcommand{\fright}{f_{\text{right}}} 
+\newcommand{\fnew}{f_{\text{new}}} 
+\newcommand{\fbest}{f_{\text{best}}} 
+\newcommand{\xii}{x^{(i)}} 
 
 \title{Optimization in Machine Learning}
 
@@ -50,7 +50,7 @@ Left: Fit parabola (dashed) and propose minimum (red) as new point. Middle: Swit
 \end{framei}
 
 \begin{framei}[sep=L]{Brent's method}
-\item Brent's algorithm (1973) alternates between golden ratio search and quadratic interpolation as follows: 
+\item Brent's algorithm \furtherreading{BRENT1973} alternates between golden ratio search and quadratic interpolation as follows: 
 \begin{itemizeM}
 \item Quadratic interpolation step acceptable if:\\ 
 (i) $\xnew$ falls within $[\xleft, \xright]$\\ 
