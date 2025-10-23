@@ -8,6 +8,8 @@
 \newcommand{\xnew}{x_{\text{new}}} % x_new
 \newcommand{\xbest}{x_{\text{best}}} % x_best
 
+\usepackage{textpos}
+
 \title{Optimization in Machine Learning}
 
 \begin{document}
@@ -24,7 +26,7 @@ figure_man/golden-ratio-6.png
 }
 
 \begin{frame2}{univariate Optimization}
-Let $f: \R \to \R$ (search starts over interval $(\xleft,\xright)$ in practice)\\
+Let $f: \R \to \R$ (search over interval $(\xleft,\xright)$ in practice)\\
 \lz 
 \textbf{Goal}: Iteratively improve eval points. Assume function $-f$ is unimodal. Will not rely on gradients, so this also works for black-box problems.
 \imageC{figure_man/golden-ratio-0.png}
@@ -35,59 +37,81 @@ Let $f: \R \to \R$\\
 \lz 
 \only<1>{
 Always maintain three points: left, right, and current best
-\vspace*{0.2cm} 
-\image{figure_man/golden-ratio-1.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-1.png}
+\end{textblock*}
 }
 \only<2>{
-Propose random point in interval 
-\image{figure_man/golden-ratio-2.png}
-\begin{scriptsize}
-NB: Later we will define the optimal choice for a new proposal
-\end{scriptsize}  
+Propose random interval point (def. optimal new proposal later)
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-2.png}
+\end{textblock*} 
 }
 \only<3>{
 Compare proposal against current best
-\image{figure_man/golden-ratio-3.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-3.png}
+\end{textblock*} 
 }
 \only<4>{
 If it is better: proposal becomes current best
-\image{figure_man/golden-ratio-4.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-4.png}
+\end{textblock*} 
 }
 \only<5>{
 New search interval: around current best 
-\image{figure_man/golden-ratio-5.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-5.png}
+\end{textblock*} 
 }
 \only<6>{
 Propose a random point  
-\image{figure_man/golden-ratio-6.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-6.png}
+\end{textblock*} 
 }
 \only<7>{
 Compare proposal against current best
-\image{figure_man/golden-ratio-7.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-7.png}
+\end{textblock*} 
 }
 \only<8>{
 If it is better: proposal becomes current best
-\image{figure_man/golden-ratio-8.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-8.png}
+\end{textblock*} 
 }
 \only<9>{
 New search interval: around current best
-\image{figure_man/golden-ratio-9.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-9.png}
+\end{textblock*} 
 }
 \only<10>{
 Propose a random point
-\image{figure_man/golden-ratio-10.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-10.png}
+\end{textblock*} 
 }
 \only<11>{
 Compare proposal against current best 
-\image{figure_man/golden-ratio-11.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-11.png}
+\end{textblock*} 
 }
 \only<12>{
 If it is better: proposal becomes current best
-\image{figure_man/golden-ratio-12.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-12.png}
+\end{textblock*} 
 }
 \only<13>{
 New search interval: around current best
-\image{figure_man/golden-ratio-13.png}
+\begin{textblock*}{\linewidth}(0cm,0cm) 
+\image[1]{figure_man/golden-ratio-13.png}
+\end{textblock*} 
 }
 \end{frame}
 
@@ -131,9 +155,9 @@ If $f_{new, b}$ is outcome, $\xnew$ becomes best point and search around $\xnew$
 
 \begin{frame2}{golden ratio}
 For uniform reduction the two potential intervals must be equal-sized: 
-\begin{align*}
+\begin{equation*}
 b := \xright - \xbest = \xnew - \xleft
-\end{align*}
+\end{equation*}
 \vfill
 \imageC[1.0]{figure_man/goldensec-3.png}
 \end{frame2}
