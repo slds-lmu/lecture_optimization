@@ -1,29 +1,32 @@
-library(ggplot2)
+set.seed(1L)
+library(vistool)
+options(vistool.theme = vistool_theme(
+  palette = "plasma"
+))
 
-theme_set(theme_bw())
+loss_l2_classif = LossFunction$new(
+	id = "l2_margin",
+	label = "L2 Loss",
+	task_type = "classif",
+	fun = function(r) r^2
+)
+loss_hinge = lss("hinge")
+loss_zero_one = lss("zero-one")
 
-f1 = function(x) x^2
-f2 = function(x) {
-	ifelse(x > 1, 0, 1 - x)
-}
-f3 = function(x) {
-	ifelse(x > 0, 0, 1)
-}
+vis_losses = as_visualizer(
+	list(loss_hinge, loss_l2_classif, loss_zero_one),
+	input_type = "score",
+	n_points = 1500L
+)
 
-df = data.frame(x = seq(-2, 2, by = 0.01))
-df$L2 = f1(df$x)
-df$Hinge = f2(df$x)
-df$ZeroOne = f3(df$x)
+plot_losses = vis_losses$plot(
+	x_limits = c(-2, 2),
+	y_limits = c(0, 4)
+)
 
-df = reshape::melt(df, id.vars = "x")
-names(df) = c("x", "Loss", "y")
-p = ggplot(data = df, aes(x = x, y = y, colour = Loss)) + geom_line()
+ggplot2::ggsave("../figure/hinge_vs_l2.png", plot_losses, width = 3, height = 2)
 
-ggsave("figure_man/hinge_vs_l2.pdf", p, width = 3, height = 2)
+vis_hinge = as_visualizer(loss_hinge)
+plot_hinge = vis_hinge$plot()
 
-
-p = ggplot(data = df[df$Loss == "Hinge", ], aes(x = x, y = y, colour = Loss)) + geom_line()
-p = p + xlab("yf(x)") + ylab("L(y, f(x))")
-
-ggsave("figure_man/hinge.pdf", p, width = 3, height = 2)
-
+ggplot2::ggsave("../figure/hinge.png", plot_hinge, width = 3, height = 2)
