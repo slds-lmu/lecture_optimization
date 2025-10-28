@@ -9,11 +9,11 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+\titlemeta{
   First order methods
-  }{% Lecture title  
+  }{ 
   Gradient descent
-  }{% Relative path to title page image: Can be empty but must not start with slides/
+  }{
   figure_man/linesearch.png
   }{
     \item Iterative Descent / Line Search
@@ -24,256 +24,140 @@
 }
 
 
-\begin{vbframe}{Iterative Descent}
-
-	Let $f$ be the height of a mountain depending on the geographic coordinates $(x_1, x_2)$
-	\vspace*{-0.1cm}
-	$$
-	f: \R^2 \to \R, \quad f(x_1, x_2) = y.
-	$$
-	
-	\textbf{Goal}: Reach the valley
-
-	$$
-	\argmin_\xv f(\xv)
-	$$
-	
-	\textbf{Central idea}: Repeat
-	\vspace*{-0.15cm}
-	\begin{columns}
-		\begin{column}{0.58\textwidth}
-			\begin{enumerate}
-				\item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d} \in \R^d$ 
-			  	\item Move along $\mathbf{d}$ until $f$ \glqq sufficiently\grqq{} reduces (\textbf{step size control}) and update location
-			\end{enumerate}
-		\end{column}
-		\begin{column}{0.4\textwidth}
-			\begin{center}
-			\includegraphics[width = 0.8\textwidth]{figure_man/linesearch.png}
-			\hspace{2cm} \begin{footnotesize} "Walking down the hill, towards the valley." \end{footnotesize}\\
-			\end{center}
-		\end{column}
-	\end{columns}
-	
-\end{vbframe}
-
-\begin{vbframe}{Iterative Descent}
-
-	Let $f: \R^d \to \R$ continuously differentiable.
-	
-	\lz
-	
-	\textbf{Definition:} $\mathbf{d}\in \R^d$ is a \textbf{descent direction} in $\xv$ if
-	$$
-	D_\mathbf{d} f(\xv) = \nabla f(\xv) ^T \mathbf{d} < 0 \text{ (neg. directional derivative)}
-	$$
-
-	\begin{figure}
-		\includegraphics[width = 0.4\textwidth]{figure_man/descent_direction.pdf} \\
-		\begin{footnotesize}
-			Angle between $\nabla \fx$ and $\mathbf{d}$ must be $\in (90^{\circ}, 270^{\circ})$. 
-		\end{footnotesize}
-	\end{figure}
-
-	% \framebreak 
-
-	% \begin{figure}
-	% 	\includegraphics[textwidth]{figure_man/branin_dirderiv.jpg} \\
-	% 	\begin{footnotesize}
- %            Scaled directional derivatives in various directions as well as gradient and negative gradient.
- %            Colors indicate if ascending or descending.
-	% 	\end{footnotesize}
-	% \end{figure}
-
-	\framebreak
-	
-	\begin{algorithm}[H]
-	  \caption{Iterative Descent / Line search}
-	  \begin{algorithmic}[1]
-	  \State Starting point $\xv^{[0]} \in \R^d$
-	  \While {Stopping criterion not met}
-	    \State Calculate a descent direction $\mathbf{d}^{[t]}$ for current $\xv^{[t]}$
-	    \State Find $\alpha^{[t]}$ s.t. $f(\xv^{[t + 1]}) < f(\xv^{[t]})$ for $\xv^{[t + 1]} = \xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}$
-	   .
-	    \State Update $\xv^{[t + 1]} = \xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}$
-	  \EndWhile
-	  \end{algorithmic}
-	\end{algorithm}
-	\vspace*{-0.2cm}
-	\begin{tiny}
-		NB: Terminology is sometimes ambiguous: ``line search'' can refer to Step 4 (selecting the step size that decreases $f(\xv)$) and can mean umbrella term for iterative descent algorithms. \par
-	\end{tiny}
-
-	\lz 
-
-	Key questions: 
-	\begin{itemize}
-		\item How to choose $\mathbf{d}^{[t]}$ (now)
-		\item How to choose $\alpha^{[t]}$ (later)
-	\end{itemize}
-
-\end{vbframe}
-
-%%%
-
-\begin{vbframe}{Gradient Descent}
-
-	Properties of gradient: 
-
-	\begin{itemize}
-		\item $\nabla \fx$: direction of greatest increase
-		\item $- \nabla \fx$: direction of greatest decrease
-	\end{itemize}
-
-	\vspace*{0.3cm}
-
-	Using $\mathbf{d} = - \nabla \fx$ is called \textbf{gradient descent}. 
-
-	\begin{center}
-		\includegraphics[width = 0.8\textwidth]{figure_man/example-descent1.png} \\
-		\begin{footnotesize}
-			GD for $f(x_1, x_2) = - \sin(x_1) \cdot \frac{1}{2\pi} \exp\left( (x_2 - \pi / 2)^2 \right)$ with sensibly chosen step size $\alpha^{[t]}$. 
-		\end{footnotesize}
-	\end{center}
-
-
-\end{vbframe}
-
-\begin{vbframe}{GD and Multimodal functions}
-
-Outcome will depend on start point.
-
-\vspace{0.5\baselineskip}
-
-\begin{figure}
-	\includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_branin.pdf} \includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_branin2.pdf}\\
-	\vspace*{-0.3cm}
-	\begin{footnotesize}
-		$100$ iters of GD with const $\alpha = 10^{-4}$.
-	\end{footnotesize}
-\end{figure}
-
-\end{vbframe}
-
-%%%
-
-
-\begin{vbframe}{Optimize LS linear regression with GD}
-
-	\begin{footnotesize}
-
-	Let $\D = \Dset$ and minimize 
-
-	$$
-		\risket = \sumin \left(\thetav^\top \xi - \yi\right)^2
-	$$
-	\textbf{NB: } For illustration, we use GD even though closed-form solution exists. GD-like (more adv.) approaches like this MIGHT make sense for large data, though.
-	\end{footnotesize}
-	
-	\begin{footnotesize}
-	\begin{eqnarray*}
-	\textbf{Gradient: } && \nabla_{\thetav}\riske(\thetav) =  \frac{\partial \riske(\thetav)}{\partial
-	\thetav} = - \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetav^{\top} \xv^{(i)}\right) \xv^{(i)} \\
-	% \textbf{GD Update: } && \thetatn \leftarrow \thetat + \alpha^{[t]} \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetav^{[t]\top} \xv^{(i)}\right) \xv^{(i)}
-	\end{eqnarray*}
-	\end{footnotesize}
-
-	% $\alpha^{[t]}$ also called \textbf{learning rate} in context of ERM.
-
-	\vspace*{-0.5cm}
-
-	\begin{center}
-	\includegraphics[width=0.8\textwidth]{figure_man/gradient_descent_lm.pdf}
-	\end{center}
-
-\end{vbframe}
-
-\begin{vbframe}{ERM for NN with GD}
-
-Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize 
-
-\vspace*{-0.3cm}
-
-$$
-	\risket = \sumin \left(\fxt - \yi\right)^2
-$$
-
+\begin{framei}{Iterative Descent}
+\item Let $f$ be the height of a mountain depending on the geographic coordinates $(x_1, x_2)$
 \vspace*{-0.1cm}
+$$f: \R^2 \to \R, \quad f(x_1, x_2) = y.$$
+\item \textbf{Goal}: Reach the valley
+$$\argmin_\xv f(\xv)$$
+\item \textbf{Central idea}: Repeat
+\vspace*{-0.15cm}
+\splitVCC[0.6]{
+\begin{enumerate}
+\item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d} \in \R^d$ 
+\item Move along $\mathbf{d}$ until $f$ \glqq sufficiently\grqq{} reduces (\textbf{step size control}) and update location
+\end{enumerate}}
+{\imageC{figure_man/linesearch.png}
+\begin{footnotesize} "Walking down the hill, towards the valley." \end{footnotesize}}
+\end{framei}
 
-where $\fxt$ is a neural network with 2 hidden layers (2 units each). 
-
-\vspace*{-1.5cm}
-
+\begin{framei}{Iterative Descent}
+\item Let $f: \R^d \to \R$ continuously differentiable.
+\item \textbf{Definition:} $\mathbf{d}\in \R^d$ is a \textbf{descent direction} in $\xv$ if
+$$D_\mathbf{d} f(\xv) = \nabla f(\xv) ^T \mathbf{d} < 0 \text{ (neg. directional derivative)}$$
 \begin{figure}
-	\includegraphics[width=0.6\textwidth]{figure_man/gradient_descent_NN_0.pdf}
-\end{figure}
-
-\framebreak 
-
-After $10$ iters of GD: 
-
-\begin{figure}
-	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_10_surface.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history.pdf}
-\end{figure}
-
-\framebreak 
-
-After $100$ iters of GD: 
-
-\begin{figure}
-	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_100_surface.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history.pdf}
-\end{figure}
-
-\framebreak 
-
-After $300$ iters of GD (note the zig-zag-behavior after iter. 200):
-
-\begin{figure}
-	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_300_surface.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history.pdf}
-\end{figure}
-\end{vbframe}
-
-\begin{vbframe}{GD for ERM: Pseudoresiduals}
-
+\imageC[0.4]{figure_man/descent_direction.pdf}
 \begin{footnotesize}
-
-Gradient for ERM problem: 
-
-\vspace*{-0.5cm}
-
-\begin{eqnarray*}
-- \pd{\risket}{\thetav} &=& - \pd{\sumin \Lxyit}{\thetav}= - \sumin \underbrace{\pd{\Lxyi}{f}}_{\text{pseudo residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetav}
-\end{eqnarray*}
-
-\vspace*{-0.5cm}
-
-\begin{itemize}
-	\item \textbf{pseudo residuals} tell us how to distort $\fxi$ to achieve greatest decrease of $\Lxyi$ (best pointwise update)
-	\item $\pd{\fxit}{\thetav}$ tells us how to modify $\thetav$ accordingly and wiggle model output
-	\item GD step sums up these modifications across all observations $i$
-\end{itemize}
-
-\begin{minipage}[b]{0.45\textwidth}
-  \textbf{NB:} Pseudo-residuals 
-  $\tilde{r}\left( f \right)$ 
-  match usual residuals for L2 loss:
-  \begin{align*}
-  \pd{\Lxy}{f} & = \frac{1}{2} \left. \pd{(y - f)^2}{f} \right|_{f = \fx}\\ 
-                   & = y - \fx
-  \end{align*}
-\end{minipage}%
-\begin{minipage}[b]{0.05\textwidth}
-   \phantom{foo}
-\end{minipage}
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width=0.9\textwidth]{figure_man/pseudo_residual_1.png}
-  % Taken from lecture_sl, chapter advriskmin
-\end{minipage}
-
+Angle between $\nabla \fx$ and $\mathbf{d}$ must be $\in (90^{\circ}, 270^{\circ})$. 
 \end{footnotesize}
+\end{figure}
+\end{framei}
 
+\begin{frame2}{Iterative Descend}
+\begin{algorithm}[H]
+\caption{Iterative Descent / Line search}
+\begin{algorithmic}[1]
+\State Starting point $\xv^{[0]} \in \R^d$
+\While {Stopping criterion not met}
+\State Calculate a descent direction $\mathbf{d}^{[t]}$ for current $\xv^{[t]}$
+\State Find $\alpha^{[t]}$ s.t. $f(\xv^{[t + 1]}) < f(\xv^{[t]})$ for $\xv^{[t + 1]} = \xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}$.
+\State Update $\xv^{[t + 1]} = \xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+\vspace*{-0.2cm}
+\begin{tiny}
+NB: Terminology is sometimes ambiguous: ``line search'' can refer to Step 4 (selecting the step size that decreases $f(\xv)$) and can mean umbrella term for iterative descent algorithms. \par
+\end{tiny}\vfill
+Key questions: 
+\begin{itemizeM}
+\item How to choose $\mathbf{d}^{[t]}$ (now)
+\item How to choose $\alpha^{[t]}$ (later)
+\end{itemizeM}
+\end{frame2}
 
-\end{vbframe}
+\begin{framei}{Gradient Descent}
+\item Properties of gradient: 
+\begin{itemizeS}
+\item $\nabla \fx$: direction of greatest increase
+\item $- \nabla \fx$: direction of greatest decrease
+\end{itemizeS}
+\vfill
+\item Using $\mathbf{d} = - \nabla \fx$ is called \textbf{gradient descent}. 
+\imageC[0.8]{figure_man/example-descent1.png}
+\begin{center}\begin{footnotesize}
+GD for $f(x_1, x_2) = - \sin(x_1) \cdot \frac{1}{2\pi} \exp\left( (x_2 - \pi / 2)^2 \right)$ with sensibly chosen step size $\alpha^{[t]}$. 
+\end{footnotesize}\end{center}
+\end{framei}
+
+\begin{framei}{GD and Multimodal functions}
+\item[] Outcome will depend on start point.
+\vfill
+\splitVCC{
+\imageC{figure_man/gradient_descent_branin.pdf}}
+{\imageC{figure_man/gradient_descent_branin2.pdf}}
+\begin{center}\begin{footnotesize}
+$100$ iters of GD with const $\alpha = 10^{-4}$.
+\end{footnotesize}\end{center}
+\end{framei}
+
+\begin{framei}[fs=footnotesize]{Optimize LS linear regression with GD}
+\item Let $\D = \Dset$ and minimize 
+$$\risket = \sumin \left(\thetav^\top \xi - \yi\right)^2$$
+\textbf{NB: } For illustration, we use GD even though closed-form solution exists. GD-like (more adv.) approaches like this MIGHT make sense for large data, though.
+\item\textbf{Gradient: } $$\nabla_{\thetav}\riske(\thetav) =  \frac{\partial \riske(\thetav)}{\partial
+\thetav} = - \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetav^{\top} \xv^{(i)}\right) \xv^{(i)}$$ 
+\imageC[0.8]{figure_man/gradient_descent_lm.pdf}
+\end{framei}
+
+\begin{framei}{ERM for NN with GD}
+\item Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize 
+$$\risket = \sumin \left(\fxt - \yi\right)^2$$
+where $\fxt$ is a neural network with 2 hidden layers (2 units each). 
+\vspace{-0.7cm}
+\imageC[0.6]{figure_man/gradient_descent_NN_0.pdf}
+\end{framei}
+
+\begin{framei}{ERM for NN with GD}
+\item[] After $10$ iters of GD:
+\splitVCC{
+\imageC{figure_man/gradient_descent_NN_10_surface.pdf}}
+{\imageC{figure_man/gradient_descent_NN_300_history.pdf}}
+\end{framei}
+
+\begin{framei}{ERM for NN with GD}
+\item[] After $100$ iters of GD: 
+\splitVCC{
+\imageC{figure_man/gradient_descent_NN_100_surface.pdf}} 
+{\imageC{figure_man/gradient_descent_NN_300_history.pdf}}
+\end{framei}
+
+\begin{framei}{ERM for NN with GD}
+\item[] After $300$ iters of GD (note the zig-zag-behavior after iter. 200):
+\splitVCC{
+\imageC{figure_man/gradient_descent_NN_300_surface.pdf}}
+{\imageC{figure_man/gradient_descent_NN_300_history.pdf}}
+\end{framei}
+
+\begin{framei}[fs=footnotesize]{GD for ERM: Pseudoresiduals}
+\item Gradient for ERM problem: 
+$$
+- \pd{\risket}{\thetav} = - \pd{\sumin \Lxyit}{\thetav}= - \sumin \underbrace{\pd{\Lxyi}{f}}_{\text{pseudo residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetav}
+$$
+\item \textbf{pseudo residuals} tell us how to distort $\fxi$ to achieve greatest decrease of $\Lxyi$ (best pointwise update)
+\item $\pd{\fxit}{\thetav}$ tells us how to modify $\thetav$ accordingly and wiggle model output
+\item GD step sums up these modifications across all observations $i$
+\splitVCC{
+\textbf{NB:} Pseudo-residuals 
+$\tilde{r}\left( f \right)$ 
+match usual residuals for L2 loss:
+\begin{align*}
+\pd{\Lxy}{f} & = \frac{1}{2} \left. \pd{(y - f)^2}{f} \right|_{f = \fx}\\ 
+& = y - \fx
+\end{align*}
+}
+{\imageC{figure_man/pseudo_residual_1.png}}
+\end{framei}
 
 
 \endlecture
