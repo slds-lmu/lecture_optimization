@@ -8,19 +8,19 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Optimization Problems
-  }{% Lecture title  
-  Unconstrained problems
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/logreg-0.5-1.pdf
-  }{
-    \item Definition
-    \item Max. likelihood 
-    \item Linear regression
-    \item Regularized risk minimization
-    \item SVM
-    \item Neural network
+\titlemeta{
+Optimization Problems
+}{
+Unconstrained problems
+}{
+figure/logreg-0.5-1.png
+}{
+\item Definition
+\item Max. likelihood 
+\item Linear regression
+\item Regularized risk minimization
+\item SVM
+\item Neural network
 }
 
 \begin{frame2}{Unconstrained optimization problem}
@@ -99,7 +99,7 @@ $$ \min_{\mu \in \R, \sigma \in \R^+} - \ell(\mu, \D). $$
 \item Assume (multivariate) data $\D = \Dset$ and we want to fit a linear function to it
 \item[] $$ y = \fx = \thetav^\top \xv $$
 \vfill
-\imageC[0.6]{figure_man/ml_linreg_example_1.pdf}
+\imageC[0.6]{figure/ml_linreg_example_1.png}
 \end{framei}
 
 
@@ -108,9 +108,9 @@ $$ \min_{\mu \in \R, \sigma \in \R^+} - \ell(\mu, \D). $$
 $$ \min_{\thetav \in \R^d} \sumin \left(\thetav^\top \xi - \yi\right)^2 $$
 \vfill
 \splitV{
-\imageC[0.9]{figure_man/ml_linreg_example_1.pdf}
+\imageC[0.9]{figure/ml_linreg_example_1.png}
 }{
-\imageC[1]{figure_man/ml_linreg_example_2.pdf}
+\imageC[1]{figure/ml_linreg_example_2.png}
 }
 \item \textbf{Smooth}, \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex} problem
 \item Quadratic form
@@ -148,7 +148,7 @@ $$ \riskrt = \sumin \left(\thetav^\top \xi - \yi\right)^2  + \lambda \cdot \|\th
 $$ \riskrt = \sumin \left(\thetav^\top \xi - \yi\right)^2  + \lambda \cdot \|\thetav\|_1 \quad \text{(Lasso regr.)} $$
 \item The problem is still \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex}, but \textcolor{violet}{\textbf{not smooth}}.
 \vfill
-\imageC[0.9]{figure_man/linreg.pdf}
+\imageC[0.9]{figure/linreg.png}
 \end{framei}
 
 
@@ -157,7 +157,7 @@ $$ \riskrt = \sumin \left(\thetav^\top \xi - \yi\right)^2  + \lambda \cdot \|\th
 $$ \risket = \sumin \left(-\yi \cdot \thetav^\top\xi + \log(1 + \exp\left(\thetav^\top\xi\right)\right) $$
 \item Multivariate, unconstrained, smooth, convex, not analytically solvable.
 \vfill
-\imageC[0.55]{figure_man/logreg-0.pdf}
+\imageC[0.55]{figure/logreg-0.png}
 \end{framei}
 
 
@@ -166,14 +166,14 @@ $$ \risket = \sumin \left(-\yi \cdot \thetav^\top\xi + \log(1 + \exp\left(\theta
 $$ \frac{1}{2n} \sumin \Lxyit + \lambda \left[\frac{1-\alpha}{2}\|\theta\|^{2}_{2} + \alpha\|\theta\|_{1}\right], \lambda \geq 0, \alpha \in [0,1] $$
 \vfill
 \splitVThree{
-\imageC[0.85]{figure_man/logreg-0-0.1.pdf}\par
-\imageC[0.85]{figure_man/logreg-0-1.pdf}
+\imageC[0.85]{figure/logreg-0-0.1.png}\par
+\imageC[0.85]{figure/logreg-0-1.png}
 }{
-\imageC[0.85]{figure_man/logreg-0.5-0.1.pdf}\par
-\imageC[0.85]{figure_man/logreg-0.5-1.pdf}
+\imageC[0.85]{figure/logreg-0.5-0.1.png}\par
+\imageC[0.85]{figure/logreg-0.5-1.png}
 }{
-\imageC[0.85]{figure_man/logreg-1-0.1.pdf}\par
-\imageC[0.85]{figure_man/logreg-1-1.pdf}
+\imageC[0.85]{figure/logreg-1-0.1.png}\par
+\imageC[0.85]{figure/logreg-1-1.png}
 }
 \item The higher $\lambda$, the closer to the origin, L1 shrinks coeffs exactly to 0.
 \end{framei}
@@ -201,7 +201,7 @@ $$ \riskrt = \sumin \max\left(1 - \yi f^{(i)}, 0\right) + \lambda \thetav^\top \
 \splitVThreeCustom[0.27]{0.40}{0.33}{
 \imageC[1]{figure_man/svm_geometry.png}
 }{
-\imageC[1]{figure_man/hinge.pdf} % See hinge_vs_l2.R
+\imageC[1]{figure/hinge.png} % See hinge_vs_l2.R
 }{
 \begin{itemizeM}[small]
 \item \textbf{This is one formulation of the linear SVM.}
@@ -226,7 +226,7 @@ $\mathbf{y}$ & $\fx$ &  \textbf{Correct pred.?}  & $\Lxy$ & \textbf{Reason for c
 \splitV{
 \imageC[0.7]{figure_man/svm_geometry.png}
 }{
-\imageC[0.9]{figure_man/hinge.pdf} % See hinge_vs_l2.R
+\imageC[0.9]{figure/hinge.png} % See hinge_vs_l2.R
 }
 \end{framei}
 
