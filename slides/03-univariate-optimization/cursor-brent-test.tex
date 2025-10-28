@@ -1,0 +1,199 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  Univariate optimization
+  }{% Lecture title  
+  Golden ratio
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/golden-ratio-6.png
+  }{
+    \item Simple nesting procedure
+    \item Golden ratio 
+}
+
+\begin{framei}{Univariate Optimization}
+  \item Let $f: \R \to \R$
+  \item \textbf{Goal}: Iteratively improve eval points
+  \item Assume function is unimodal
+  \item Will not rely on gradients, so this also works for black-box problems
+  \vfill
+  \imageC[0.8]{figure_man/golden-ratio-0.png}
+\end{framei}
+
+\begin{frame}{Simple nesting procedure}
+\only<1>{
+  Always maintain three points: left, right, and current best.
+  \vfill
+  \imageC{figure_man/golden-ratio-1.png}
+}
+
+\only<2>{
+  Propose random point in interval.
+  \imageC{figure_man/golden-ratio-2.png}
+  \vfill
+  \begin{footnotesize}
+    NB: Later we will define the optimal choice for a new proposal.
+  \end{footnotesize}
+}
+
+\only<3>{
+  Compare proposal against current best.
+  \imageC{figure_man/golden-ratio-3.png}
+}
+
+\only<4>{
+  If it is better: proposal becomes current best.
+  \imageC{figure_man/golden-ratio-4.png}
+}
+
+\only<5>{
+  New search interval: around current best.
+  \imageC{figure_man/golden-ratio-5.png}
+}
+
+\only<6>{
+  Propose a random point.
+  \imageC{figure_man/golden-ratio-6.png}
+}
+
+\only<7>{
+  Compare proposal against current best.
+  \imageC{figure_man/golden-ratio-7.png}
+}
+
+\only<8>{
+  If it is better: proposal becomes current best.
+  \imageC{figure_man/golden-ratio-8.png}
+}
+
+\only<9>{
+  New search interval: around current best.
+  \imageC{figure_man/golden-ratio-9.png}
+}
+
+\only<10>{
+  Propose a random point.
+  \imageC{figure_man/golden-ratio-10.png}
+}
+
+\only<11>{
+  Compare proposal against current best.
+  \imageC{figure_man/golden-ratio-11.png}
+}
+
+\only<12>{
+  If it is better: proposal becomes current best.
+  \imageC{figure_man/golden-ratio-12.png}
+}
+
+\only<13>{
+  New search interval: around current best.
+  \imageC{figure_man/golden-ratio-13.png}
+}
+\end{frame}
+
+\begin{framei}{Simple nesting procedure}
+  \item \textbf{Initialization}: Search interval $(x^{\text{left}}, x^{\text{right}})$
+  \item $x^{\text{left}} < x^{\text{right}}$
+  \item Choose $x^{\text{best}}$ randomly
+  \item For $t = 0, 1, 2, ...$
+  \item Choose $x^{\text{new}}$ randomly in $[x^{\text{left}}, x^{\text{right}}]$
+  \item If $f(x^{\text{new}}) < f(x^{\text{best}})$: $x^{\text{best}} \leftarrow x^{\text{new}}$
+  \item New interval: Points around $x^{\text{best}}$
+  \vfill
+  \imageC{figure_man/golden-ratio-summary.png}
+\end{framei}
+
+
+\begin{framei}{Golden ratio}
+  \item \textbf{Key question:} How can $x^{\text{new}}$ be chosen better than randomly?
+  \item \textbf{Insight 1:} Always in bigger subinterval to maximize reduction
+  \item \textbf{Insight 2:} $x^{new}$ symmetrically to $x^{best}$ for uniform reduction
+  \vfill
+  \imageC[0.8]{figure_man/goldensec-0.png}
+  \vfill
+  \item Consider two hypothetical outcomes $x^{\text{new}}$: $f_{new, a}$ and $f_{new, b}$
+\end{framei}
+
+\begin{framei}{Golden ratio}
+  \item If $f_{new, a}$ is the outcome, $x_{best}$ stays best
+  \item We search around $x_{best}$:
+  \item $$[x_{left}, x_{new}]$$
+  \vfill
+  \imageC[0.8]{figure_man/goldensec-1.png}
+\end{framei}
+
+\begin{framei}{Golden ratio}
+  \item If $f_{new, b}$ is outcome, $x_{new}$ becomes best point
+  \item We search around $x_{new}$:
+  \item $$[x_{best}, x_{right}]$$
+  \vfill
+  \imageC[0.8]{figure_man/goldensec-2.png}
+\end{framei}
+
+\begin{framei}{Golden ratio}
+  \item For uniform reduction, require the two potential intervals equal sized
+  \item $b := x_{right} - x_{best} = x_{new} - x_{left}$
+  \vfill
+  \imageC[0.8]{figure_man/goldensec-3.png}
+\end{framei}
+
+\begin{framei}{Golden ratio}
+  \item One iteration ahead: require again the intervals to be of same size
+  \item $c := x_{best} - x_{left} = x_{right} - x_{new}$
+  \vfill
+  \imageC[0.8]{figure_man/goldensec-4.png}
+\end{framei}
+
+\begin{framei}{Golden ratio}
+  \item To summarize, we require:
+  \item $a = x^{right}-x^{left}$
+  \item $b = x_{right} - x_{best} = x_{new} - x_{left}$
+  \item $c = x_{best} - x_{left} = x_{right} - x_{new}$
+  \vfill
+  \imageC[0.3]{figure_man/goldensec.png}
+\end{framei}
+
+\begin{framei}{Golden ratio}
+  \item We require the same percentage improvement in each iteration
+  \item For $\varphi$ reduction factor of interval sizes
+  \item $a$ to $b$, and $b$ to $c$
+  \item $$\varphi := \frac{b}{a} = \frac{c}{b}$$
+  \item $$\varphi^2 = \frac{b}{a} \cdot \frac{c}{b} = \frac{c}{a}$$
+  \item Divide $a = b + c$ by $a$:
+  \item $\frac{a}{a} = \frac{b}{a} + \frac{c}{a}$
+  \item $1 = \varphi + \varphi^2$
+  \item $0 = \varphi^2 + \varphi - 1$
+  \item Unique positive solution is $\varphi = \frac{\sqrt{5}-1}{2} \approx 0.618$
+\end{framei}
+
+\begin{framei}{Golden ratio}
+  \item With $x^{\text{new}}$ we always go $\varphi$ percentage points into the interval
+  \item Given $x^{left}$ and $x^{right}$ it follows
+  \item $x^{best} = x^{right}-\varphi(x^{right}-x^{left}) = x^{left}+(1-\varphi)(x^{right}-x^{left})$
+  \item and due to symmetry
+  \item $x^{new} = x^{left}+\varphi(x^{right}-x^{left}) = x^{right}-(1-\varphi)(x^{right}-x^{left})$
+\end{framei}
+
+\begin{framei}{Golden ratio}
+  \item Termination criterion:
+  \item A reasonable choice is the absolute error
+  \item I.e. the width of the last interval:
+  \item $|x^{best}-x^{new}| < \tau$
+  \item In practice, more complicated termination criteria are usually applied
+  \item For example in \emph{Numerical Recipes in C, 2017}:
+  \item $|x^{right}-x^{left}| \le \tau (|x^{best}| + |x^{new}|)$
+  \item is proposed as a termination criterion
+\end{framei}
+
+\endlecture
+
+\end{document}
