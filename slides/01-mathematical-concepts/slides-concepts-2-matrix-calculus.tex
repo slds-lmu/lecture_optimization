@@ -206,7 +206,7 @@ where $
 $\\[5pt] with 
 $f(\theta,\xv)=\theta^{\top} \xv$ and $s(x)=\frac{1}{1+\exp (-x)}$.
 \item[$\Rightarrow$] We want to find \begin{align*}
-\nabla_\theta -\ell (\theta)=-\nabla_\theta \ell (\theta)&=-\sumin\underbrace{ y^{(i)} \log (s(f(\theta,\xv^{(i)}))+(1-y^{(i)}) \log (1-s(f(\theta,\xv^{(i)}))}_{=:y \log (s_i)+(1-y_i) \log (1-s_i)}
+\nabla_\theta -\ell (\theta)=-\nabla_\theta \ell (\theta)&=-\sumin\underbrace{ y^{(i)} \log (s(f(\theta,\xv^{(i)}))+(1-y^{(i)}) \log (1-s(f(\theta,\xv^{(i)}))}_{=:y_i \log (s_i)+(1-y_i) \log (1-s_i)}
 \end{align*}
 \item $s_i = s(f_i)$; $h_i:=-[y_i \log (s_i)+(1-y_i) \log (1-s_i)]$; $f_i:=\theta^{\top} \xv^{(i)}$
 \end{itemize}
