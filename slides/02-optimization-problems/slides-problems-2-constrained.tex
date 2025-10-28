@@ -24,38 +24,29 @@ figure_man/classes_optimization_problems.png
 
 \begin{frame2}{Constrained Optimization Problem}
 $$
-\min_{\xv \in \mathcal{S}} \fx, \text{ with } f: \; \mathcal{S} \to \R.
+\min_{\xv \in \mathcal{S}} \fx, \text{ with } f: \; \mathcal{S} \to \R
 $$
 \begin{itemize}
-\item \textbf{Constrained}, if domain $\mathcal{S}$ is restricted: $\mathcal{S} \textcolor{blue}{\subsetneq} \R^d.$
+\item \textbf{Constrained}, if domain $\mathcal{S}$ is restricted: $\mathcal{S} \textcolor{blue}{\subsetneq} \R^d$
 \item \textbf{Convex} if $f$ convex function and $\mathcal{S}$ convex set
-\item Typically $\mathcal{S}$ is defined via functions called \textbf{constraints}
-$$
-\mathcal{S}:= \{\xv \in \R^d ~|~ g_i(\xv) \le 0, h_j(\xv) = 0 ~\forall~ i, j\}, \text{ where }
-$$
-\begin{itemize}
-\item $g_i: \R^d \to \R, i = 1, ..., k$ are called inequality constraints,
-\item $h_j: \R^d \to \R, j = 1, ..., l$ are called equality constraints.
-\end{itemize}
+\item Typically, $\mathcal{S}$ defined via ineq. and eq. constraint functions
 \end{itemize}
 \spacer
-Equivalent formulation:
 $$
 \begin{aligned}
 \min \quad & f(\mathbf{x})  \\
-ext{such that} \quad & g_i(\mathbf{x}) \le 0 && \text{for } i=1,\ldots,k \\
+\text{such that} \quad & g_i(\mathbf{x}) \le 0 && \text{for } i=1,\ldots,k \\
 & h_j(\mathbf{x}) = 0 && \text{for } j=1,\ldots,l.
 \end{aligned}
 $$
 \end{frame2}
-
 
 \begin{framei}{Linear program (LP)}
 \item $f$ linear s.t. linear constraints. Standard form:
 $$
 \begin{aligned}
 \min_{\xv \in \R^d} \quad & \bm{c}^\top \xv \\
-ext{s.t. } \quad & \bm{A}\xv \ge \bm{b} \\
+\text{s.t. } \quad & \bm{A}\xv \ge \bm{b} \\
 & \xv \ge 0
 \end{aligned}
 $$
@@ -76,7 +67,7 @@ Visualization of constraints of 2D and 3D linear program.
 $$
 \begin{aligned}
 \min_{\xv \in \R^d} \quad & \frac{1}{2} \xv^\top \bm{A} \xv + \bm{b}^\top \xv + c \\
-ext{s.t. } \quad & \bm{E}\xv \le \bm{f} \\
+\text{s.t. } \quad & \bm{E}\xv \le \bm{f} \\
 & \bm{G}\xv = \bm{h}
 \end{aligned}
 $$
@@ -135,8 +126,10 @@ $f, h$ smooth. Problem $\textbf{not convex}$ ($\mathcal{S}$ is not a convex set)
 \begin{frame2}{Example 2: Maximum likelihood}
 \textbf{Experiment}: Draw $m$ balls from a bag with balls of $k$ different colors.
 Color $j$ has a probability of $p_j$ of being drawn.
-\spacer
-The probability to realize the outcome $\xv = (x_1, ..., x_k)$, $x_j$ being the number of balls drawn in color $j$, is:
+
+\vfill
+
+Probability to get outcome $\xv = (x_1, ..., x_k)$, with $x_j$ = number of balls drawn in color $j$:
 $$
 f(\xv, m, \bm{p}) = \begin{cases} \frac{m!}{x_1! \cdots x_k!} \cdot p_1^{x_1} \cdots p_k^{x_k} & \text{ if } \sum_{i = 1}^k x_i = m \\ 0 & \text{ otherwise}\end{cases}
 $$
@@ -144,7 +137,7 @@ The parameters $p_j$ are subject to the following constraints:
 $$
 \begin{aligned}
 0 \le p_j \le 1 && \text{ for all } i \\
-\sum_{j = 1}^m p_j = 1. &&
+\sum_{j = 1}^m p_j = 1 &&
 \end{aligned}
 $$
 \end{frame2}
@@ -159,10 +152,10 @@ $$
 &\propto - \sumin \sum_{j = 1}^k \xi_j \log(p_j)
 \end{aligned}
 $$
-$f, g, h$ are smooth.\\\textbf{Convex program}: convex$^{(*)}$ objective + box/linear constraints).
+$f, g, h$ are smooth.\\\textbf{Convex program}: convex$^{(*)}$ objective + box/linear constraints
 \vfill
 \begin{footnotesize}
-${(*)}$: $\log$ is concave, $- \log $ is convex, and the sum of convex functions is convex.
+${(*)}$: $\log$ is concave, $- \log $ is convex, and the sum of convex functions is convex
 \end{footnotesize}
 \end{frame2}
 

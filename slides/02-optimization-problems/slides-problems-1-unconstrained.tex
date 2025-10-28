@@ -1,5 +1,9 @@
 \documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
+
+% FIXME: this chapter is partially bullshit. we should distribute these problem definitions to the chapters where they are actually used
+
+
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
@@ -29,22 +33,21 @@ $$
 $$
 with objective function
 $$
-f: \mathcal{S} \to \R.
+f: \mathcal{S} \to \R
 $$
 The problem is called
 \begin{itemize}
-\item \textbf{unconstrained}, if the domain $\mathcal{S}$ is not restricted:
-\item[] $$ \mathcal{S} = \R^d $$
+\item \textbf{unconstrained}, if $\mathcal{S} = \R^d $
 \item \textbf{smooth} if $f$ is at least $\in \mathcal{C}^1$
-\item \textbf{univariate} if $d = 1$, and \textbf{multivariate} if $d > 1$.
-\item \textbf{convex} if $f$ convex function and $\mathcal{S}$ convex set
+\item \textbf{univariate} if $d = 1$, and \textbf{multivariate} if $d > 1$
+\item \textbf{convex} if $f$ convex function (on convex $\R^d$)
 \end{itemize}
 \end{frame2}
 
 
 \begin{framei}[sep=L]{Note: A Convention in Optimization}
 \item W.l.o.g., we always \textbf{minimize} functions $f$.
-\item Maximization results from minimizing $-f$.
+\item Maximization is handled by minimizing $-f$
 \vfill
 \splitV[0.5]
 {
@@ -53,14 +56,13 @@ The problem is called
 {
 \imageC[1]{figure_man/ml_poisson_example_3.pdf}
 }
-\item The solution to maximizing $f$ (left) is equivalent to the solution to minimizing $f$ (right).
 \end{framei}
 
 
 \begin{framei}{Example 1: Maximum Likelihood}
 \item $\D = \left(\xi[1], ..., \xi[n]\right) \overset{\text{i.i.d.}}{\sim} f(\xv ~|~ \mu, \sigma)$ with $\sigma = 1$:
 $$ f(\xv ~|~ \mu, \sigma) = \frac{1}{\sqrt{2 \pi \sigma^{2}}}~\exp\left(\frac{-(\xv-\mu)^{2}}{2\sigma^{2}}\right) $$
-\item \textbf{Goal:} Find $\mu \in \R$ which makes observed data most likely.
+\item \textbf{Goal:} Find $\mu \in \R$ which makes observed data most likely
 \imageC[0.5]{figure_man/ml_normal_example_dnorm.pdf}
 \end{framei}
 
@@ -76,22 +78,17 @@ $$ - \ell(\mu, \D) = - \log \mathcal{L}(\mu~|~\D) = \frac{n}{2} \log(2\pi) + \fr
 
 \begin{framei}{Example 1: Maximum Likelihood}
 \item[] $$ \min_{\mu \in \R} - \ell(\mu, \D). $$
-\item can be solved analytically (setting the first deriv. to $0$) since it is a quadratic form:
+\item can be solved analytically (setting the first deriv. to $0$) since it is a quadratic function:
 $$ -\frac{\partial \ell(\mu, \D)}{\partial \mu} = \sumin \left(\xi - \mu\right) = 0 \quad \Leftrightarrow \quad \hat \mu = \frac{1}{n} \sumin \xi $$
 \imageC[0.4]{figure_man/ml_normal_example_negloglike.pdf}
 \end{framei}
 
 
 \begin{framei}[sep=L]{Example 1: Maximum Likelihood}
-\item \textbf{Note: } The problem was \textbf{smooth}, \textbf{univariate}, \textbf{unconstrained}, \textbf{convex}.
-\item If we had optimized for $\sigma$ as well
-$$ \min_{\mu \in \R, \sigma \in \R^+} - \ell(\mu, \D). $$
-\item (instead of assuming it is known) the problem would have been:
-\begin{itemize}
-\item bivariate (optimize over $(\mu, \sigma)$)
-\item constrained ($\sigma > 0$)
-\end{itemize}
-$$ \min_{\mu \in \R, \sigma \in \R^+} - \ell(\mu, \D). $$
+\item Was: \textbf{smooth}, \textbf{univariate}, \textbf{unconstrained}, \textbf{convex}
+\item If we had optimized for $\sigma$ as well (instead of assuming it as fixed)
+$$ \min_{\mu \in \R, \sigma \in \R^+} - \ell(\mu, \D) $$
+\item The problem would have been bivariate and constrained
 \end{framei}
 
 
@@ -113,7 +110,7 @@ $$ \min_{\thetav \in \R^d} \sumin \left(\thetav^\top \xi - \yi\right)^2 $$
 \imageC[1]{figure/ml_linreg_example_2.png}
 }
 \item \textbf{Smooth}, \textbf{multivariate}, \textbf{unconstrained}, \textbf{convex} problem
-\item Quadratic form
+\item Quadratic function
 \item Analytic solution: $\thetav = (\Xmat^\top \Xmat)^{-1}\Xmat^\top \bm{y}$, where $\Xmat$ is design matrix
 \end{framei}
 
