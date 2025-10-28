@@ -2,228 +2,121 @@
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Mathematical Concepts 
-  }{% Lecture title  
-  Quadratic functions I
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/quadratic_functions_2D_example_1_1.png
-  }{
-    \item Definition of quadratic forms
-    \item Gradient, Hessian
-    \item Optima
+\titlemeta{
+Mathematical Concepts 
+}{
+Quadratic forms I
+}{
+figure_man/quadratic_functions_2D_example_1_1.png
+}{
+\item Definition of quadratic functions
+\item Gradient, Hessian
+\item Optima
 }
 
-\begin{vbframe}{Univariate Quadratic Functions}
+\begin{framei}{Univariate quadratic}
+\item Quadratic function $q: \R \to \R$
+$$ q(x) = a x^2 + b x + c,\quad a \ne 0 $$
+\imageC[0.35]{figure_man/quadratic_functions_1D.png}
+\item Left: $q_1(x) = x^2$. Right: $q_2(x) = - x^2$
+\end{framei}
 
-Consider a \textbf{quadratic function} $q: \R \to \R$
-
-$$
-q(x) = a \cdot x^2 + b \cdot x + c, \qquad a \ne 0.
-$$
-
-% We will set $b, c = 0$ to keep things simple. 
-
-% Include a pic of a quadratic form 
-\begin{figure}
-    \includegraphics[height=0.3\textwidth, keepaspectratio]{figure_man/quadratic_functions_1D.png} \\
-    \caption*{A quadratic function $q_1(x) = x^2$ (\textbf{left}) and $q_2(x) = - x^2$ (\textbf{right}).}
-\end{figure}
-
-\framebreak 
-
-Basic properties: 
-
-\begin{itemize}
-    \item \textbf{Slope} of tangent at point $(x, q(x))$ is given by $q'(x) = 2 \cdot a \cdot x + b$
-        \begin{figure}
-            \includegraphics[height=0.2\textwidth, keepaspectratio]{figure_man/quadratic_functions_1D_derivative.png} \\
-        \end{figure}
-    \item \textbf{Curvature} of $q$ is given by $q''(x) = 2\cdot a$. 
-        \begin{figure}
-            \includegraphics[height=0.2\textwidth, keepaspectratio]{figure_man/quadratic_functions_1D_curvature.png} \\
-            \caption*{\footnotesize $q_1 = x^2$ (orange), $q_2 = 2 x^2$ (green), $q_3 (x) = - x^2$ (blue), $q_4 = - 3 x^2$ (magenta)}
-        \end{figure}
-
-    \framebreak
-    
-    \item \textbf{Convexity/Concavity}:
-        \begin{itemize}
-            \setlength{\itemindent}{-0.5cm}
-            \item $a > 0$: $q$~convex, bounded from below, unique global \textbf{minimum}
-            \item $a < 0$: $q$~concave, bounded from above, unique global \textbf{maximum}
-        \end{itemize}
-    
-    \item \textbf{Optimum}~$x^\ast$:
-        \vspace{-0.5\baselineskip}
-        \begin{equation*}
-            q'(x^\ast) = 0 \quad\Leftrightarrow \quad 2ax^\ast + b = 0 \quad \Leftrightarrow \quad x^\ast = \frac{-b}{2a}  	
-        \end{equation*}
-\end{itemize}
-
-\vspace{-0.5\baselineskip}
-
-\begin{figure}
-    \centering
-    \includegraphics[height=0.3\textwidth, keepaspectratio]{figure_man/quadratic_functions_1D.png}
-    \caption*{\textbf{Left:} $q_1(x) = x^2$ (convex).
-        \textbf{Right:} $q_2(x) = - x^2$ (concave).}
-\end{figure}
-
-\end{vbframe}
+\begin{framei}{Univariate: basic properties}
+\item Slope at $(x, q(x))$: $$ q'(x) = 2 a x + b $$
+\imageC[0.25]{figure_man/quadratic_functions_1D_derivative.png}
+\item Curvature: $$ q''(x) = 2 a $$
+\imageC[0.25]{figure_man/quadratic_functions_1D_curvature.png}
+%\item $q_1 = x^2$ (orange), $q_2 = 2 x^2$ (green), $q_3 = - x^2$ (blue), $q_4 = - 3 x^2$ (magenta)
+\item $a > 0$: $q$ convex, bounded from below, unique global minimum
+\item $a < 0$: $q$ concave, bounded from above, unique global maximum
+\item Optimum $\xs$
+$$ q'(x) = 0 \;\Leftrightarrow\; 2 a x + b = 0 \;\Rightarrow\; \xs = \frac{-b}{2 a} $$\\
+as 2nd derivative: $q''(\xs) = 2 a \ne 0$ 
+\end{framei}
   
-\begin{vbframe}{Multivariate Quadratic Functions}
+\begin{framei}{Multivariate quadratic}
+\item $q: \R^d \to \R$
+$$ q(\xv) = \xv^T \A \xv + \bv^T \xv + c $$
+\item with $\A \in \R^{d \times d}$ full rank, $\bv \in \R^d$, $c \in \R$
+\vfill
+\splitV{
+\imageC[0.9]{figure_man/quadratic_functions_2D_example_1_1.png}
+}{
+\imageC[0.9]{figure_man/quadratic_functions_2D_example_1_2.png}
+}
+\end{framei}
 
-A quadratic function $q: \R^d \to \R$ has the following form: 
-
-\begin{equation*}
-    q(\xv) = \xv^T \Amat \xv + \bm{b}^T \xv + c
-\end{equation*}
-
-with $\bm{A} \in \R^{d \times d}$ full-rank matrix, $\bm{b} \in \R^d$, $c \in \R$. % To also keep things simple here, we will set $\bm{b}$ and $c$ to zero.
-
-\vspace{0.5\baselineskip}
-
-\begin{figure}
-    \includegraphics[height=0.4\textwidth,width=0.4\textwidth]{figure_man/quadratic_functions_2D_example_1_1.png} ~~ \includegraphics[height=0.4\textwidth,width=0.4\textwidth]{figure_man/quadratic_functions_2D_example_1_2.png} \\
-\end{figure}
-
-\framebreak
-
-W.l.o.g., assume $\Amat$ \textbf{symmetric}, i.e., $\Amat^T = \Amat$.
-
-\vspace{0.5\baselineskip}
-
-If~$\Amat$ not symmetric, there is always a symmetric matrix $\tilde \Amat$ s.t. 
-
-\vspace*{-0.5\baselineskip}
-
-\begin{equation*}
-    q(\xv) = \xv^T \Amat \xv = \xv^T \tilde \Amat \xv = \tilde q(\xv).
-\end{equation*}
-
-\textbf{Justification}: We write
-
-\begin{equation*}
-    q(\xv) = \xv^T \Amat \xv = \frac{1}{2} \xv^T \underbrace{(\Amat + \Amat^T)}_{\tilde \Amat_1} \xv + \frac{1}{2} \xv^T \underbrace{(\Amat - \Amat^T)}_{\tilde \Amat_2} \xv
-\end{equation*}
-
-with $\tilde \Amat_1$ symmetric, $\tilde \Amat_2$ anti-symmetric (i.e., $\tilde \Amat_2^T = - \tilde \Amat_2$). Since $\xv^T \Amat^T \xv$ is a scalar, it is equal to its transpose: 
-
-\vspace*{-1.25\baselineskip}
-
+\begin{framei}{Symmetrization}
+\item W.l.o.g. assume $\A$ symmetric, i.e., $\A^T = \A$
+\item If $\A$ not symmetric, there exists symmetric $\tilde \A$ with $$ q(\xv) = \xv^T \A \xv = \xv^T \tilde \A \xv =: \tilde q(\xv) $$
+\item Justification
+$$ q(\xv) = \xv^T \A \xv = \tfrac12 \xv^T \underbrace{(\A + \A^T)}_{\tilde \A_1} \xv + \tfrac12 \xv^T \underbrace{(\A - \A^T)}_{\tilde \A_2} \xv $$
+\item $\tilde \A_1$ symmetric, $\tilde \A_2$ anti-symmetric ($\tilde \A_2^T = - \tilde \A_2$)
+\item Since $\xv^T \A^T \xv$ is a scalar, equal to its transpose
 \begin{align*}
-    \xv^T (\Amat - \Amat^T) \xv &=  \xv^T \Amat \xv - \xv^T \Amat^T \xv =  \xv^T \Amat \xv - \left(\xv^T \Amat^T \xv\right)^T \\
-    &= \xv^T \Amat \xv - \xv^T \Amat \xv  = 0.
+\xv^T (\A - \A^T) \xv &= \xv^T \A \xv - \xv^T \A^T \xv = \xv^T \A \xv - (\xv^T \A^T \xv)^T \\
+                      &= \xv^T \A \xv - \xv^T \A \xv = 0
 \end{align*}
+\item Therefore $\tilde q(\xv) = \xv^T \tilde \A \xv$ with $\tilde \A = \tilde \A_1/2$
+\end{framei}
 
-Therefore, $q(\xv) = \tilde q(\xv)$ with $\tilde q(\xv) = \xv^T \tilde \Amat \xv$ with $\tilde \Amat = \tilde \Amat_1/2$. 
-
-\end{vbframe}
-
-\begin{vbframe}{Gradient and Hessian}
-    
-\begin{itemize}
-    \item The \textbf{gradient} of~$q$ is
-    
-        \vspace{-0.5\baselineskip}
-        
-        \begin{equation*}
-            \nabla q(\xv) = (\left(\Amat^T + \Amat\right) \xv + \bm{b})^T = (2 \Amat \xv + \bm{b})^T \in \R^{1\times d}
-        \end{equation*}
-
-        \vspace{-0.25\baselineskip}
-    
-        Derivative in direction $\bm{v}\in \R^d$ is (by chain rule)
-    
-        \begin{equation*}
-            \frac{\text{d}q(\xv + h \cdot \bm{v})}{\text{d}h}~\bigg\rvert_{h = 0} = \nabla q(\xv + h \bm{v}) \bm{v}~\bigg\rvert_{h = 0} = \nabla q(\xv)\bm{v}.
-        \end{equation*}
-
-    \vspace{0.5\baselineskip}
-
-    \item The \textbf{Hessian} of~$q$ is
-        
-        \vspace{-0.5\baselineskip}
-        
-        \begin{equation*}
-            \nabla^2 q(\xv) = \left(\bm{A}^T + \bm{A}\right) = 2 \Amat =: \mathbf{H} \in \R^{d \times d}
-        \end{equation*}    
-        
-        Curvature in direction of $\bm{v}\in \R^d$ is (by chain rule)
-
-        \vspace{-0.5\baselineskip}
-        
-        \begin{equation*}
-            \frac{\text{d}^2 q(\xv + h \cdot \bm{v})}{\text{d} h^2}~\bigg\rvert_{h = 0}
-            % = \frac{\text{d}\left[\nabla q(\xv + h \bm{v})^T\bm{v}\right]}{\text{d} h}~\bigg\rvert_{h = 0}
-            = \bm{v}^T \nabla^2 q(\xv + h \bm{v}) \bm{v}~\bigg\rvert_{h = 0} = \bm{v}^T \mathbf{H} \bm{v}.
-        \end{equation*}
-\end{itemize}
-
-\end{vbframe}
+\begin{framei}{Gradient and Hessian}
+\item $q: \R^d \to \R$
+$$ q(\xv) = \xv^T \A \xv + \bv^T \xv + c $$
+\item Gradient
+$$ \nabla q(\xv) = ((\A^T + \A) \xv + \bv)^T $$
+\item Under assumed symmetry: $\nabla q(\xv) = (2 \A \xv + \bv)^T$
+\item Directional derivative: $\nabla q(\xv)\, \vv $
+\item Hessian
+$$ \nabla^2 q(\xv) = (\A^T + \A) = 2 \A =: \H \in \R^{d \times d} $$
+\item Under assumed symmetry: $\H = 2 \A$
+\item Directional curvature: $\vv^T \H \vv $
+\end{framei}
 
 
-\begin{vbframe}{Optimum}
-
-Since $\Amat$ has full rank, there exists a \textit{unique} stationary point~$\xv^\ast$ (minimum, maximum, or saddle point):
-
-\vspace{-\baselineskip}
-
+\begin{framei}{Optimum}
+\item $q: \R^d \to \R$
+$$ q(\xv) = \xv^T \A \xv + \bv^T \xv + c $$
+\item Since $\A$ full rank, unique stationary point $\xvs$ (min, max, or saddle)
 \begin{align*}
-    \nabla q(\xv^\ast) &= \boldsymbol{0}^T \\
-    (2 \Amat \xv^\ast + \bm{b})^\top &= \boldsymbol{0}^T \\
-    \xv^\ast &= -\frac{1}{2} \Amat^{-1} \bm{b}.
-\end{align*}  
+\nabla q(\xvs)      &= \boldsymbol{0}^T \\
+(2 \A \xvs + \bv)^T &= \boldsymbol{0}^T \\
+\xvs                &= -\tfrac{1}{2} \A^{-1} \bv
+\end{align*}
+\item $q(\xvs) = c - \frac12 \bv^T \A^{-1} \bv$
+\vfill
+\imageC[1]{figure_man/minmaxsaddle.png}
+\item Left: $\A$ pos. def. \quad Middle: $\A$ neg. def. \quad Right: $\A$ indefinite
+\end{framei}
 
-\vspace{-0.5\baselineskip}
+\begin{framei}[fs=footnotesize]{Optima: rank-deficient case}
+\item $q: \R^d \to \R$
+$$ q(\xv) = \xv^T \A \xv + \bv^T \xv + c $$
+\item Assume $\A$ symmetric now
+\item For stationary points to exist, we need : $\nabla q(\xv) = 2 \A \xv + \bv = 0$
+\item This implies we need $\bv \in range(\A)$, let's assume this is the case
+\item Let $\xv_p$ be stationary, so $2 \A \xv_p = -\bv$
+\item Then any point in affine space $\xv_p + ker(\A)$ is also stationary, with same function value and same Hessian (as it is constant)
+\imageC[0.35]{figure_man/convex-example.png}
+\end{framei}0
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{figure_man/minmaxsaddle.png}
-    \caption*{
-        \footnotesize
-        \textbf{Left:} $\Amat$ positive definite.
-        \textbf{Middle:} $\Amat$ negative definite.
-        \textbf{Right:} $\Amat$ indefinite.}
-\end{figure}
 
-\end{vbframe}
-
-\begin{vbframe}{Optima: Rank-deficient case}
-
-\footnotesize
-
-\textbf{Example:} Assume~$\Amat$ is \textbf{not} full rank but has a zero eigenvalue with eigenvector~$\bm{v}_0$.
-
-\begin{itemize}
-    \item Recall: $\bm{v}_0$ spans null space of~$\Amat$, i.e., $\Amat(\alpha\bm{v}_0) = 0$ for each~$\alpha\in\R$
-    \item $\implies$ $\Amat(\xv + \alpha\bm{v}_0) = \Amat\xv$
-    \item Since $\nabla q(\xv) = (2\Amat\xv + \bm{b})^T$:
-        
-        \vspace{-0.5\baselineskip}
-        
-        \begin{equation*}
-            \nabla q(\xv+\alpha\bm{v}_0) = (2\Amat(\xv+\alpha\bm{v}_0)+\bm{b})^T = (2\Amat\xv+\bm{b})^T = \nabla q(\xv)
-        \end{equation*}
-    \item $\implies$ $q$ has infinitely many stationary points along line $\xv^\ast+\alpha\bm{v}_0$
-    \item Since $\mathbf{H} = 2\Amat$, kind of stationary point not changing along~$\bm{v}_0$
-\end{itemize}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.35\textwidth]{figure_man/convex-example.png}
-\end{figure}
-
-\end{vbframe}
+\begin{framei}[fs=footnotesize]{Optima: rank-deficient case}
+\item All affine spaces of form $\xv_p + ker(\A)$ for diff. valid $\xv_p$ are the same
+\item Any stationary point must be in $\xv_p + ker(\A)$
+\item So $\xv_p + ker(\A)$ are all the stationary points, with same curvature
+\item If $\A \succeq 0$, they are all minima
+\item If $\A \preceq 0$, they are all maxima
+\item If $\A$ is indefinite, they are all saddle points
+\imageC[0.35]{figure_man/convex-example.png}
+\end{framei}
+  
 
 \endlecture
 

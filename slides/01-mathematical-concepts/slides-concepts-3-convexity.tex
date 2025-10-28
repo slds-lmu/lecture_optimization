@@ -2,7 +2,6 @@
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
 \usepackage[export]{adjustbox}
 
 
@@ -11,265 +10,129 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Mathematical Concepts 
-  }{% Lecture title  
-  Convexity
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/convex.png
-  }{
-    \item Convex sets
-    \item Convex functions
+%FIXME: maybe rather use x, xtilde here
+%FIXME: do a macro for "equivalent"
+% macro for C1, C2
+
+
+% Local macros for boldface x_1 and x_2 used in this chunk only
+\newcommand{\xv}{\bm{x}}
+\newcommand{\yv}{\bm{y}}
+\renewcommand{\S}{\mathcal{S}}
+
+\titlemeta{
+Mathematical Concepts 
+}{
+Convexity
+}{
+figure_man/convex.png
+}{
+\item Convex sets
+\item Convex functions
 }
 
 
-\begin{vbframe}{Convex sets}
-
-A set of $\mathcal{S} \subseteq \R^d$ is \textbf{convex}, if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$ the following holds:
-
-$$
-\xv + t (\mathbf{y} - \xv) \in \mathcal{S}
-$$
-
-Intuitively: Connecting line between any $\xv, \bm{y} \in \mathcal{S}$ lies completely in $\mathcal{S}$.
-
-\begin{center}
-    \includegraphics[width=0.2\textwidth]{figure_man/convex.png}~~~\includegraphics[width=0.2\textwidth]{figure_man/concave.png} \\
-    \footnotesize{
-        \textbf{Left:} convex set.
-        \textbf{Right:} not convex. (Source: Wikipedia)}
-\end{center}
-
-\end{vbframe}
-
-\begin{vbframe}{Convex functions}
-
-Let $f: \mathcal{S} \to \R$, $\mathcal{S}$ convex.
-$f$ is \textbf{convex} if for all $\xv, \mathbf{y} \in \mathcal{S}$ and all $t \in [0, 1]$
-
-\vspace{-0.5\baselineskip}
-
-\begin{equation*}
-    f(\xv + t(\mathbf{y} - \xv)) \le \fx + t(f(\mathbf{y}) - \fx).
-\end{equation*}
-
-Intuitively: Connecting line lies above function.
-
-\begin{center}
-    \includegraphics[width = 0.4\textwidth, keepaspectratio]{figure_man/convexity_1.pdf}~~~\includegraphics[width = 0.40\textwidth, keepaspectratio]{figure_man/convexity_2.pdf} \\
-    \footnotesize{
-        \textbf{Left:} Strictly convex function.
-        \textbf{Right:} Convex, but not strictly. }
-\end{center}
-
-\textbf{Strictly convex} if \enquote{$<$} instead of \enquote{$\le$}. \textbf{Concave} (strictly) if the inequality holds with \enquote{$\ge$} (\enquote{$>$}), respectively.
-
-\vspace*{0.2cm}
-
-\textbf{Note:} $f$ (strictly) concave $\Leftrightarrow$ $-f$ (strictly) convex.
-
-
-
-\end{vbframe}
-
-\begin{vbframe}{Examples}
-
-\textbf{Convex function:} $f(x) = |x|$
-
-\begin{footnotesize}
-    \textbf{Proof:}
-
-    \vspace*{-0.75cm}
-
-    \begin{align*}
-        f\left(x + t(y - x)\right) &= |x + t(y - x)| = |(1 - t) x + t \cdot y| \\
-        & \le |(1 - t) x| + |t \cdot y| = (1 - t) |x| + t |y| \\
-        &= |x| + t \cdot (|y| - |x|) = f(x) + t \cdot (f(y) - f(x))
-    \end{align*}
-    % https://sboyles.github.io/teaching/ce377k/convexity.pdf
-\end{footnotesize}
-
-\textbf{Concave function}: $f(x) = \log(x)$
-
-\vspace*{0.2cm}
-
-\textbf{Neither nor}: $f(x) = \exp(-x^2)$ (but log-concave)
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.45\textwidth]{figure_man/conv_conc_functions.png}
-\end{figure}
-
-\end{vbframe}
-
-
-\begin{vbframe}{Operations preserving convexity}
-
-\begin{itemize}
-    \item \textbf{Nonnegatively weighted summation:} Weights $w_1,\ldots,w_n\geq0$, convex functions $f_1,\ldots,f_n$:
-        $w_1f_1 + \cdots + w_nf_n$ also convex \\
-        In particular: Sum of convex functions also convex
-    \item \textbf{Composition:} $g$ convex, $f$ linear: $h = g \circ f$ also convex
-
-        \begin{footnotesize}
-            \textbf{Proof:}
-            \begin{align*}
-                h(\xv + t(\yv-\xv)) &= g(f(\xv + t(\yv-\xv))) \\
-                &= g(f(\xv) + t(f(\yv) - f(\xv))) \\
-                &\leq g(f(\xv)) + t(g(f(\yv)) - g(f(\xv))) \\
-                &= h(\xv) + t(h(\yv) - h(\xv))
-            \end{align*}
-        \end{footnotesize}
-    \item \textbf{Elementwise maximization:} $f_1,\ldots,f_n$ convex functions: $g(\xv) = \max\left\lbrace f_1(\xv),\ldots,f_n(\xv) \right\rbrace$ also convex
-\end{itemize}
-
-\end{vbframe}
-
-
-\begin{vbframe}{First order condition}
-Prove convexity via \textbf{gradient}:
-
-
-
-    Let $f$ be differentiable.
-
-    \vspace{-\baselineskip}
-
-    \begin{gather*}
-        \textnormal{$f$ (strictly) convex} \\
-        \Longleftrightarrow \\
-        f(\yv) \overset{(>)}{\geq} f(\xv) + \nabla f(\xv) (\yv-\xv) \textnormal{ for all $\xv,\yv\in\mathcal{S}$ (s.t. $\xv \not= \yv$)}
-    \end{gather*}
-
-
-\vspace{-0.2cm}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.4\linewidth]{figure_man/conv-first-order-cond.png}
-\end{figure}
-
-\end{vbframe}
-
-
-\begin{vbframe}{Second order condition}
-
-% Matrix~$A$ is \textbf{positive (semi)definite} (p.(s.)d.) if $\bm{v}^T A \bm{v} \overset{(\geq)}{>} 0$ for all $\bm{v}\not=0.$
-
-% \medskip
-
-% \textbf{Notation:} $A \overset{(\succcurlyeq)}{\succ} 0$ for~$A$ p.(s.)d. and $B \overset{(\succcurlyeq)}{\succ} A$ if $B-A \overset{(\succcurlyeq)}{\succ} 0$
-
-% \lz
-
-Prove convexity via \textbf{Hessian}. 
-Let $f \in \mathcal{C}^2$ and $H(\xv)$ be its Hessian.
-
-\lz
-
-$f$ convex $\Longleftrightarrow$ 
-$H(\xv)$ psd $\forall \xv$ $\Longleftrightarrow$ 
-$H(\xv) \succcurlyeq 0 \quad \forall \xv$
-
-\lz
-
-$f$ strictly convex $\Longleftrightarrow$ 
-$H(\xv)$ is pd for all $\xv \in \mathcal{S}$ $\Longleftrightarrow$ 
-$H(\xv) \succ 0 \quad \forall \xv$
-
-
-%$H(\xv) \overset{(\succ)}{\succcurlyeq} 0 for all $\xv \in \mathcal{S}$
-
-
-    % \begin{gather*}
-    %     \textnormal{$f$ (strictly) convex} \Longleftrightarrow H(\xv) \overset{(\succ)}{\succcurlyeq} 0 \textnormal{ for all $\xv \in \mathcal{S}$}
-    % \end{gather*}
-
-\lz \lz
-
-To check global convexity, we can either check the direct definition of psd, by showing that $v^T H(\xv) v \geq 0$ for all $\bm{v} \in \R^d$ everywhere\\
-or equivalently: \\
-by checking that all EVs $\lambda_i$ of $H(\xv)$ are have $\lambda_i \geq 0$  for all $x \in S$; 
-
-\framebreak
-
-% Weiterhin können folgende Implikationen für convexe Funktionen festgestellt werden:
-% \medskip
-% \begin{itemize}
-% \item $f$ convex $\Rightarrow$ Subniveaumenge $S_1 = \{x|f(x) < a\}$ und $S_2 = \{x|f(x) \leq a \}$ bilden convexe Mengen, $a\in \R$.
-% \item umgekehrte Implikation \textbf{nicht} notwendigerweise erfüllt.
-
-% \end{itemize}
-% \framebreak
-
-\begin{footnotesize}
-
-\textbf{Example:} $f(\xv) = x_1^2 + x_2^2 - 2x_1x_2$, $\nabla f(\xv) = \begin{pmatrix}2x_1 - 2x_2 \\ 2x_2 - 2x_1\end{pmatrix}^T$, $H(\xv) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}
-$
-
-\begin{center}
-  \includegraphics[width = 0.3\textwidth]{figure_man/convex-example.png}
-\end{center}
-
-%<<echo=FALSE, size = "footnotesize">>=
-%foo = function(x, y) {
-%  x^2 + y^2 - 2 * x * y
-%}
-%x = seq(-4, 6, length = 40); y = x
-%z = outer(x, y, FUN = foo)
-%persp2(x, y, z, theta = 30, phi = 30)
-%@
-
-$f$ is convex since $H(\xv)$ is p.s.d. for all $\xv\in\mathcal{S}$:
-
+\begin{framei}{Convex sets}
+\item Set $\S \subseteq \R^d$ is convex, if $\forall \xv, \yv \in \S$ and $\forall t \in [0, 1]$:
+$\xv + t (\yv - \xv) \in \S$
+\item Intuition: Line between any $\xv, \yv \in \S$ lies entirely in $\S$
+\item Left: convex set; Right: not convex. (Source: Wikipedia)
+\splitV{
+\imageC[0.45]{figure_man/convex.png}
+}{
+\imageC[0.45]{figure_man/concave.png}
+}
+\end{framei}
+
+\begin{framei}{Convex functions}
+\item Let $f: \S \to \R$, $\S$ convex
+\item $f$ is convex if $\forall \xv, \yv \in \S$ and $\forall t \in [0, 1]$:
+$$ f(\xv + t(\yv - \xv)) \le f(\xv) + t(f(\mathbf{y}) - f(\xv)) $$
+\item Intuition: Connecting line for any $\xv, \yv \in \S$ above function $f$
+\splitV{
+\imageC[0.48]{figure_man/convexity_1.pdf}
+}{
+\imageC[0.48]{figure_man/convexity_2.pdf}
+}
+Left: Strictly convex function; Right: Convex, but not strictly
+\item Strictly convex if $<$ instead of $\le$
+\item Concave (strictly) if inequality holds with $\ge$ ($>$)
+\item NB: $f$ (strictly) concave $\Leftrightarrow$ $-f$ (strictly) convex
+\end{framei}
+
+\begin{framei}{Some Examples}
+\item Convex: $f(x) = |x|$\\
 \begin{align*}
-    \mathbf{v}^T\begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}\mathbf{v} &= \mathbf{v}^T \begin{pmatrix} 2v_1 - 2v_2 \\ -2v_1 + 2v_2\end{pmatrix} = 2v_1^2 - 2v_1v_2 -2v_1v_2 + 2v_2^2 \\
-    &= 2v_1^2 - 4v_1v_2 + 2v_2^2 = 2 (v_1 - v_2)^2 \ge 0
+f\left(x + t(y - x)\right) &= |x + t(y - x)| = |(1 - t) x + t \cdot y| \\
+& \le |(1 - t) x| + |t \cdot y| = (1 - t) |x| + t |y| \\
+&= |x| + t \cdot (|y| - |x|) = f(x) + t \cdot (f(y) - f(x))
 \end{align*}
-
-% So the function $f$ is convex and every local minimum is also a global minimum.
-
-\end{footnotesize}
-
-\end{vbframe}
-
-
-\begin{vbframe}{Convex functions in optimization}
-
-\begin{itemize}
-    \item For a convex function, every local optimum is also a global one \\
-        $\Rightarrow$ No need for involved global optimizers, local ones are enough
-    \item A strictly convex function has at most one optimal point
-    \item Example for strictly convex function without optimum: $\exp$ on $\R$
-\end{itemize}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.9\textwidth]{figure_man/convexity_3.pdf}
-    \caption*{\footnotesize
-        \textbf{Left:} Strictly convex; exactly one local minimum, which is also global.
-        \textbf{Middle:} Convex, but not strictly; all local optima are also global ones but not unique.
-        \textbf{Right:} Not convex.}
-\end{figure}
-
-\framebreak
+% https://sboyles.github.io/teaching/ce377k/convexity.pdf
+\item Concave: $f(x) = \log(x)$\\
+\item Neither: $f(x) = \exp(-x^2)$ (but log-concave)
+\imageC[0.45]{figure_man/conv_conc_functions.png}
+\end{framei}
 
 
-    {\large \enquote{... in fact, the great watershed in optimization isn't between linearity and nonlinearity, but convexity and nonconvexity.}}
+\begin{framei}{Operations preserving convexity}  
+\item Nonnegatively weighted summation:\\
+For $w_1,\ldots,w_n\geq0$ and convex $f_1,\ldots,f_n$:\\
+$w_1f_1 + \cdots + w_nf_n$ is convex \\
+So: Sum of convex functions is also convex
+\item Composition: $g$ convex, $f$ linear: $h = g \circ f$ is also convex:
+\begin{align*}
+h(\xv + t(\yv-\xv)) &= g(f(\xv + t(\yv-\xv))) \\
+&= g(f(\xv) + t(f(\yv) - f(\xv))) \\
+&\leq g(f(\xv)) + t(g(f(\yv)) - g(f(\xv))) \\
+&= h(\xv) + t(h(\yv) - h(\xv))
+\end{align*}
+\item Element-wise maximization: $f_1,\ldots,f_n$ convex functions: $g(\xv) = \max\left\lbrace f_1(\xv),\ldots,f_n(\xv) \right\rbrace$ is also convex
+\end{framei}
 
-    \medskip
 
-    -- R. Tyrrell Rockafellar. \textit{SIAM Review}, 1993.
+\begin{framei}{First order condition}
+\item For differentiable $f$, useful characterisation via gradient
+\item $f$ convex \\
+$\Longleftrightarrow$ \\
+$f(\yv) \geq f(\xv) + \nabla f(\xv) (\yv-\xv)$ for all $\xv \ne \yv \in \S$
+\imageC[0.4]{figure_man/conv-first-order-cond.png}
+\item Strictly convex if $>$ instead of $\ge$
+\end{framei}
 
 
-\vspace{-0.5\baselineskip}
+\begin{framei}{Second order condition}
+\item For $f \in \mathcal{C}^2$: can characterize convexity via Hessian
+\item $f$ convex $\Longleftrightarrow$ $H(\xv)$ psd for $\xv \in \S$ $\forall \xv \in \S$
+\item $f$ strictly convex if $H(\xv)$ pd $\forall \xv \in \S$
+\lz
+\item To check global convexity, either verify the direct definition of psd by showing that $\bm{v}^T H(\xv) \bm{v} \geq 0$ for all $\bm{v} \in \R^d$ and all $\xv$,\\
+or, equivalently, check that all eigenvalues $\lambda_i$ of all $H(\xv)$ satisfy $\lambda_i \geq 0$ for all $\xv \in \mathcal{S}$
+\end{framei}
 
-\begin{figure}
-    \centering
-    \frame{\includegraphics[height=0.55\textheight,keepaspectratio]{figure_man/rockafellar-siam-rev.png}}
-\end{figure}
+\begin{framei}{Second order condition}
+\item Example:
+$$f(\xv) = x_1^2 + x_2^2 - 2x_1x_2; \quad 
+\nabla f(\xv) = \begin{pmatrix}2x_1 - 2x_2 \\ 2x_2 - 2x_1\end{pmatrix}^T; \quad 
+H(\xv) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}$$
+\imageC[0.3]{figure_man/convex-example.png}
+\item $f$ is convex since $H(\xv)$ is p.s.d. for all $\xv\in\mathcal{S}$:
+\begin{align*}
+\mathbf{v}^T\begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}\mathbf{v} &= 2v_1^2 - 2v_1v_2 -2v_1v_2 + 2v_2^2 \\
+&= 2v_1^2 - 4v_1v_2 + 2v_2^2 = 2 (v_1 - v_2)^2 \ge 0
+\end{align*}
+\end{framei}
 
-\end{vbframe}
+
+\begin{framei}{Convex functions in optimization}
+\item Will see later:  
+\item For a convex function, every local optimum is also a global one \\
+$\Rightarrow$ No need for involved global optimizers, local ones are enough
+\item A strictly convex function has at most one optimal point
+
+\item \enquote{... in fact, the great watershed in optimization isn't between linearity and nonlinearity, but convexity and nonconvexity.}\\
+-- R. Tyrrell Rockafellar. \textit{SIAM Review}, 1993
+\imageC[0.55]{figure_man/rockafellar-siam-rev.png}
+\end{framei}
 
 \endlecture
 \end{document}
