@@ -4,14 +4,15 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
+\newcommand{\vb}{\mathbf{v}} 
+
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-}{% Lecture title  
+\titlemeta{}{
 Nelder-Mead method
-}{% Relative path to title page image: Can be empty but must not start with slides/
+}{
 figure_man/Nelder04.png
 }{
 \item General idea 
@@ -20,252 +21,135 @@ figure_man/Nelder04.png
 \item Examples
 }
 
-
-\begin{vbframe}{Nelder-Mead Method}
-
-\begin{itemize}
+\begin{framei}{Nelder-Mead method}
 \item Derivative-free method $\Rightarrow$ heuristic
 \item Generalization of bisection in $d$-dimensional space
 \item Based on $d$-simplex, defined by $d + 1$ points:
 \begin{itemize}
-\small
 \item $d = 1$ interval
 \item $d = 2$ triangle
 \item $d = 3$ tetrahedron
 \item $\cdots$
 \end{itemize}
-\end{itemize}
+\end{framei}
 
-\framebreak
-
-A version of the \textbf{Nelder-Mead} method:
-
-\medskip
-
-\textbf{Initialization:} Choose $d + 1$ random, affinely independent points $\mathbf{v}_i$ ($\mathbf{v}_i$ are vertices: corner points of the simplex/polytope).
-
-\medskip
-
+\begin{frame2}{nelder-mead method}
+A version of the Nelder-Mead method:\\
+\lz
+Initialization: choose $d + 1$ random, affinely independent points $\vb_i$\\ ($\vb_i$ are vertices: corner points of the simplex/polytope)
+\lz
 \begin{enumerate}
-\item \textbf{Order}: Order points according to ascending function values
-$$
-f(\mathbf{v}_1) \leq f(\mathbf{v}_2) \leq \ldots \leq f(\mathbf{v}_d) \leq f(\mathbf{v}_{d + 1}).
-$$
-with $\mathbf{v}_1$ best point, $\mathbf{v}_{d + 1}$ worst point.
-
-\begin{figure}
-\includegraphics[width = 0.5\linewidth]{figure_man/Nelder01.png}
-\end{figure}
-
-\item Compute \textbf{centroid} without worst point
-$$
-\bar{\mathbf{v}} = \frac{1}{d} \sum_{i = 1}^d \mathbf{v}_i.
-$$
-
-\begin{figure}
-\includegraphics[width = 0.43\linewidth]{figure_man/Nelder02.png} ~~~ \includegraphics[width = 0.43\linewidth]{figure_man/Nelder03.png}
-\end{figure}
-
-\framebreak
-
-\item \textbf{Reflection:} Compute reflection point
-$$
-\mathbf{v}_r = \bar{\mathbf{v}} + \rho (\bar{\mathbf{v}} - \mathbf{v}_{d + 1}),
-$$
-with $\rho > 0$.
-Compute $f(\mathbf{v}_r)$.
-
-\vspace{\baselineskip}
-
-\begin{figure}
-\includegraphics[width = 0.43\linewidth]{figure_man/Nelder04.png} 
-\end{figure}
-
-\vspace{\baselineskip}
-
-\textbf{Note:} Default value for reflection coefficient: $\rho = 1$
-
-\framebreak
-
-\small
-Distinguish three cases:
-
-\begin{itemize}
-\small
-\item \textbf{Case 1:} $f(\mathbf{v}_1) \leq f(\mathbf{v}_r) < f(\mathbf{v}_d)$
-
-\medskip
-
-$\Rightarrow$ Accept $\mathbf{v}_r$ and discard $\mathbf{v}_{d + 1}$
-\end{itemize}
-
-
-\medskip
-
-\begin{minipage}{0.57\textwidth}
-\begin{itemize}
-\small
-\item \textbf{Case 2:} $f(\mathbf{v}_r) < f(\mathbf{v}_1)$
-
-\medskip
-
-$\Rightarrow$ \textbf{Expansion:} 
-\begin{equation*}
-\mathbf{v}_e = \bar{\mathbf{v}} + \chi (\mathbf{v}_{r} - \bar{\mathbf{v}}), \quad \chi > 1.
-\end{equation*}
-
-We discard $\mathbf{v}_{d + 1}$ and accept the better of $\mathbf{v}_r$ and $\mathbf{v}_e$.
-\end{itemize}
-\end{minipage}
-\begin{minipage}{0.35\textwidth}
-\begin{center}
-\includegraphics[width = 1\linewidth]{figure_man/Nelder06.png}
-\end{center}
-\end{minipage}
-
-\vspace{\baselineskip}
-
-\textbf{Note:} Default value for expansion coefficient: $\chi = 2$
-
-\framebreak
-
-\begin{itemize}
-\small
-\item \textbf{Case 3:} $f(\mathbf{v}_r) \ge f(\mathbf{v}_d)$
-
-\medskip
-
-$\Rightarrow$ \textbf{Contraction:}
-\begin{equation*}
-\mathbf{v}_c = \bar{\mathbf{v}} + \gamma (\mathbf{v}_{d + 1} - \bar{\mathbf{v}})
-\end{equation*}
-with $0 < \gamma \le 1/2$.
-
-\begin{itemize}
-\item If $f(\mathbf{v}_c) < f(\mathbf{v}_{d + 1})$, accept $\mathbf{v}_c$.
-\item Otherwise, shrink \textbf{entire} simplex (\textbf{Shrinking}):
-\begin{equation*}
-\mathbf{v}_{i} = \mathbf{v}_1 + \sigma (\mathbf{v}_{i} - \mathbf{v}_{1}) \quad \forall i
-\end{equation*}
-\end{itemize}
-
-\medskip
-
-\textbf{Note:} Default values for contraction and shrinking coefficient: $\gamma = \sigma = 1/2$
-\end{itemize}
-
-\item \textbf{Repeat} all steps until stopping criterion met.
-
+\item[1.] Order points according to ascending function values
+$$f(\vb_1) \leq f(\vb_2) \leq \ldots \leq f(\vb_d) \leq f(\vb_{d + 1})$$
+with $\vb_1$ best point, $\vb_{d + 1}$ worst point
 \end{enumerate}
+\imageC[0.5]{figure_man/Nelder01.png}
+\end{frame2}
 
-\end{vbframe}
+\begin{frame2}{nelder-mead method}
+\begin{enumerate}
+\item[2.] Compute centroid without worst point
+$$\bar{\vb} = \frac{1}{d} \sum_{i = 1}^d \vb_i.$$
+\end{enumerate}
+\splitV{\imageC[0.98]{figure_man/Nelder02.png}}{\imageC[0.98]{figure_man/Nelder03.png}}
+\end{frame2}
 
-\begin{vbframe}{Nelder-Mead}
-\small
+\begin{frame2}{nelder-mead method}
+\begin{enumerate}
+\item[3.] Reflection: compute reflection point
+$$\vb_r = \bar{\vb} + \rho (\bar{\vb} - \vb_{d + 1}),$$
+with $\rho > 0$.
+Compute $f(\vb_r)$.
+\end{enumerate}
+\imageC[0.43]{figure_man/Nelder04.png} 
+\lz
+Note: Default value for reflection coefficient: $\rho = 1$
+\end{frame2}
 
-\textbf{Advantages:}
+\begin{frame2}{nelder-mead method}
+Distinguish three cases:\\
+\begin{itemizeL}
+\item Case 1: $f(\vb_1) \leq f(\vb_r) < f(\vb_d)$
+\lz
+$\Rightarrow$ Accept $\vb_r$ and discard $\vb_{d + 1}$
+\end{itemizeL}
+\lz
+\splitVCC[0.57]{
+\begin{itemizeS}
+\item Case 2: $f(\vb_r) < f(\vb_1)$
+$\Rightarrow$ Expansion: 
+$$\vb_e = \bar{\vb} + \chi (\vb_{r} - \bar{\vb}), \quad \chi > 1$$
+We discard $\vb_{d + 1}$ and accept the better of $\vb_r$ and $\vb_e$
+\end{itemizeS}
+}{\imageC[1]{figure_man/Nelder06.png}}\\
+\lz
+Note: default value for expansion coefficient: $\chi = 2$
+\end{frame2}
+
+\begin{frame2}{nelder-mead method}
+\begin{itemize}
+\item Case 3: $f(\vb_r) \ge f(\vb_d)$
+$\Rightarrow$ Contraction:
+$$\vb_c = \bar{\vb} + \gamma (\vb_{d + 1} - \bar{\vb})$$
+with $0 < \gamma \le 1/2$
+\begin{itemize}
+\item If $f(\vb_c) < f(\vb_{d + 1})$, accept $\vb_c$
+\item Otherwise, shrink entire simplex (Shrinking):
+$$\vb_{i} = \vb_1 + \sigma (\vb_{i} - \vb_{1}) \quad \forall i$$
+\end{itemize}
+Note: default values for contraction and shrinking coefficients $\gamma = \sigma = 1/2$
+\end{itemize}
+\begin{enumerate}
+\item[4.] Repeat all steps until stopping criterion met
+\end{enumerate}
+\end{frame2}
+
+\begin{frame2}{nelder-mead summary}
+Advantages:
 \begin{itemize}
 \item No gradients needed
-\item Robust, often works well for non-differentiable functions.
+\item Robust, often works well for non-differentiable functions
 \end{itemize}
-\textbf{Drawbacks:}
+Drawbacks:
 \begin{itemize}
 \item Relatively slow (not applicable in high dimensions)
-\item Not each step improves solution, only mean of corner values is reduced.
-\item No guarantee for convergence to local optimum / stationary point.
+\item Not each step improves, only mean of corner values is reduced
+\item No guarantee for convergence to local optimum / stationary point
 \end{itemize}
-
-\textbf{Visualization:}
+Visualization:
 \begin{center}
 \url{http://www.benfrederickson.com/numerical-optimization/}
 \end{center}
-
-\vspace{0.3cm}
-\textbf{Note:} Nelder-Mead is default method of \texttt{R} function \texttt{optim()}.
-If gradient is available and cheap, L-BFGS is preferred.
-
-\end{vbframe}
+\lz
+Note: Nelder-Mead is default method of \texttt{R} function \texttt{optim()}\\
+If gradient is available and cheap, L-BFGS is preferred
+\end{frame2}
 
 
-\begin{frame}{Nelder-Mead Visualization in 2D}
-
+\begin{frame2}{Nelder-Mead Visualization in 2D}
 $$\min_\xv f(x_1,x_2) = x_1^{2} + x_2^{2} + x_1\cdot \sin x_2 + x_2 \cdot \sin x_1 $$ 
+\only<1>{\imageC[0.9]{figure_man/nm_animation2d_1.PNG}}
+\only<2>{\imageC[0.9]{figure_man/nm_animation2d_2.PNG}}
+\only<3>{\imageC[0.9]{figure_man/nm_animation2d_3.PNG}}
+\only<4>{\imageC[0.9]{figure_man/nm_animation2d_4.PNG}}
+\end{frame2}
 
-
-\only<1>{\includegraphics{figure_man/nm_animation2d_1.PNG}}
-\only<2>{\includegraphics{figure_man/nm_animation2d_2.PNG}}
-\only<3>{\includegraphics{figure_man/nm_animation2d_3.PNG}}
-\only<4>{\includegraphics{figure_man/nm_animation2d_4.PNG}}
-
-\end{frame}
-
-
-
-\begin{vbframe}{Nelder-Mead vs. GD}
+\begin{frame2}{Nelder-Mead vs. GD}
 %% http://www.benfrederickson.com/numerical-optimization/
-\vspace*{-0.5cm}
-\begin{figure}
-\centering
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_1.PNG}
-\end{minipage}\hfill
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_2.PNG}
-\end{minipage}
-\end{figure}
-\begin{figure}
-\centering
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_3.PNG}
-\end{minipage}\hfill
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_4.PNG}
-\end{minipage}
-\end{figure}
-
-\begin{footnotesize}
-Nelder-Mead in multiple dimensions:
+\splitVCC{\imageC[0.85]{figure_man/nm_gd_cities_1.PNG}}{\imageC[0.85]{figure_man/nm_gd_cities_2.PNG}}
+\splitVCC{\imageC[0.85]{figure_man/nm_gd_cities_3.PNG}}{\imageC[0.85]{figure_man/nm_gd_cities_4.PNG}}
+{\footnotesize Nelder-Mead in multiple dimensions:
 Organize points (US cities) to keep predefined mutual distances.
 For 10 cities, gradient descent (top) converges well for a suitable learning rate.
-Nelder-Mead (bottom) fails to converge, even after many iterations.
-\end{footnotesize}
+Nelder-Mead (bottom) fails to converge, even after many iterations.}
+\end{frame2}
 
-
-\framebreak
-\vspace*{-0.8cm}
-\begin{figure}
-\centering
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_5.PNG}
-\end{minipage}\hfill
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_6.PNG}
-\end{minipage}
-\end{figure}
-\begin{figure}
-\centering
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_7.PNG}
-\end{minipage}\hfill
-\begin{minipage}{0.45\textwidth}
-\centering
-\includegraphics[width = 0.8\linewidth]{figure_man/nm_gd_cities_8.PNG}
-\end{minipage}
-\end{figure}
-\vspace*{0.5cm}
-\begin{footnotesize}
-Even for only 5 cities, Nelder-Mead (bottom) performs poorly.
-However, gradient descent (top) still works.
-\end{footnotesize}
-
-\end{vbframe}
+\begin{frame2}{Nelder-Mead vs. GD}
+\splitVCC{\imageC[0.85]{figure_man/nm_gd_cities_5.PNG}}{\imageC[0.85]{figure_man/nm_gd_cities_6.PNG}}
+\splitVCC{\imageC[0.85]{figure_man/nm_gd_cities_7.PNG}}{\imageC[0.85]{figure_man/nm_gd_cities_8.PNG}}
+{\footnotesize Even for only 5 cities, Nelder-Mead (bottom) performs poorly\\
+However, gradient descent (top) still works}
+\end{frame2}
 
 
 \endlecture
