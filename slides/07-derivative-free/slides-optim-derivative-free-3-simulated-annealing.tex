@@ -8,388 +8,80 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  }{% Lecture title  
-  Simulated Annealing
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/sa-iter3_probabilities
-  }{
-    \item Motivation
-    \item Metropolis algorithm
-    \item Simulated Annealing
+\titlemeta{}{
+Simulated Annealing
+}{
+figure_man/sa-iter3_probabilities
+}{
+\item Motivation
+\item Metropolis algorithm
+\item Simulated Annealing
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Introduction}
-\textbf{Heuristics} for the optimization of complex (multivariate, non-linear, non-convex) objective functions \\
-\lz
+\begin{framei}[fs=normalsize,sep=L]{Introduction}
+\item Heuristics for optimization of complex objectives\\ (multivariate, non-linear, non-convex)
+\item Procedure for finding good solutions to complex problems
+\item Does not guarantee optimal/best result (global optimum), but usually good solutions
+\item Goal for complex optimization problems: avoid \enquote{getting stuck} in local optima
+\item Often used for difficult discrete problems as well
+\item Local search strategy with random option to accept worse values
+\end{framei}
 
-\begin{itemize}
-\item Procedure for finding good solutions to complex problems.
-\item Does not guarantee optimal/best result (global optimum), but usually good solutions.
-\item Goal for complex optimization problems: avoid \enquote{getting stuck} in local optima.
-\item Is often used for difficult discrete problems as well.
-\item Local search strategy with random option to accept worse values.
-\end{itemize}
-
-\end{vbframe}
-
-\begin{vbframe}{Simple stochastic local search}
-\vspace{-0.2cm}
-\begin{small}
-\begin{itemize}
+\begin{framei}{Simple stochastic local search}
 \item Given is a multivariate objective function $f(\xv)$
 \item Define a local neighborhood area $V(\xv)$ for a given $\xv$
-\item Sample proposal $\xv^{[t+1]}$ uniformly at random from neighborhood $V(\xv^{[t]})$
+\item Sample proposal $\xv^{[t+1]}$ uniformly at random from $V(\xv^{[t]})$
 \item Calculate $f(\xv^{[t+1]})$
-\item If $\Delta f = f(\xv^{[t+1]}) - f(\xv^{[t]}) < 0$, $\xv^{[t+1]}$ is accepted as new solution, otherwise a new proposal from neighborhood is sampled.
-\end{itemize}
-\end{small}
-
-\vspace{-\baselineskip}
-
+\item If $\Delta f = f(\xv^{[t+1]}) - f(\xv^{[t]}) < 0$, $\xv^{[t+1]}$ is accepted as new solution, otherwise a new proposal from neighborhood is sampled
 \begin{figure}
-    \centering
-    \includegraphics[height=0.4\textheight,keepaspectratio]{figure_man/local-search.png}
-    \caption*{
-        \footnotesize
-        Simple stochastic local search: Acceptance (green) and rejection range (red)}
+\imageC[0.68]{figure_man/local-search.png}
+\caption*{stoch. local search: acceptance range in green and rejection in red}
 \end{figure}
-\vspace{-0.5cm}
-%\begin{figure}
-%<<echo=FALSE, fig.height=4.25>>=
-%int = seq(0,4, length.out = 500)
-%f = function(x) x^1.1 * sin(x-2) + 1 - 2.5*sin(3*x-1.5)
-%plot(int, f(int), type="l", xlab = "", ylab = "f(x)", xaxt="n")
-%x = 2.5
-%rad = 0.5
-%lines(c(x, x), c(-3, f(x)), lty = 2)
-%area = seq(x - rad, x+rad, length.out=200)
-%col_vec = c("red", "green")
-%points(area, rep(f(x), 200), col = col_vec[(f(area)<f(x))+1], pch=15, cex=0.5)
-
-%x = 2.8
-%rad = 0.5
-%lines(c(x, x), c(-3, f(x)), lty = 2)
-%area = seq(x - rad, x+rad, length.out=200)
-%col_vec = c("red", "green")
-%points(area, rep(f(x), 200), col = col_vec[(f(area)<f(x))+1], pch=15, cex=0.5)
+\end{framei}
 
 
-%lines(c(3.05,3.05), c(-3, f(3.05)), lty=2)
-%axis(1, c(2.5, 2.8, 3.05), labels = c(expression(x[0]), expression(x[1]), expression(x[2])),tick=F)
-%@
-%\caption{local search; green: acceptance range, red: rejection range}
-%\end{figure}
-\end{vbframe}
-
-\begin{vbframe}{Metropolis algorithm}
-\begin{itemize}
-\item Simple stochastic local search strongly depends on $\xv^{[0]}$ and the neighborhood. \\
-    $\Rightarrow$ Danger of ending up in local minima
+\begin{framei}{Metropolis algorithm}
+\item Simple stochastic local search strongly depends on $\xv^{[0]}$ and the neighborhood \\
+$\Rightarrow$ Danger of ending up in local minima
 \item \textbf{Idea:} allow worse candidates with some probability
 \item \textbf{Metropolis:} accept candidates from previous rejection range ($\Delta f > 0$) with probability $\P(\text{accept} \,|\, \Delta f) = \exp(-\Delta f / T)$
 \item $T$ denotes \enquote{temperature}
-\end{itemize}
-
-\vspace{-\baselineskip}
-
 \begin{figure}
-    \centering
-    \includegraphics[height=0.35\textheight,keepaspectratio]{figure_man/metropolis-algorithm.png}
-    \caption*{
-        \footnotesize
-        Simulated annealing: Colors correspond to $\P(\text{accept})$
-    }
+\imageC[0.9]{figure_man/metropolis-algorithm.png}
+\caption*{
+\footnotesize
+Simulated annealing: Colors correspond to $\P(\text{accept})$}
 \end{figure}
+\end{framei}
 
-%\begin{figure}
-%<<echo=FALSE, fig.height=4.25>>=
-%PDelta = function(Delta_f, Temp) {
-%  ret = exp(- Delta_f / (Temp))
-%  ret[ret>1] = 1
-%  ret
-%}
+\begin{framei}{Metopolis algorithm}
+\item Parameter $T$ describes temperature/progress of the system
+\item High temperatures correspond to high probability of accepting worse $\xv$
+\item Local minima can be escaped, but no convergence can be achieved at \textit{constant} temperature
+\item We come across an important principle of optimization: \textbf{exploration (high T) vs. exploitation (low T)}
+\lz
+\imageC[0.6]{figure_man/metropolis-algorithm2.png}
+\end{framei}
 
+\begin{framei}{Simulated Annealing}
+\item Start with high temperature to explore whole space
+\item Slowly reduce temperature to converge \\
+$\Rightarrow$ Sequence of descending temperatures $T^{[t]}, t \in \N$
+\item Procedure is called simulated annealing
+\item Temperature is often kept constant several iterations in a row to explore the space, then multiplied by coefficient $0<c<1$: 
+$$T^{[t+1]} = c \cdot T^{[t]}$$
+\item Other strategies possible, for example: 
+$$T^{[t]} = T^{[0]} \left( 1 - \frac{t}{t_{\text{max}}} \right)$$
+\item Many different strategies for choosing neighborhood\\
+Strongly depends on objective function
+\end{framei}
 
-%layout(matrix(1:2, nrow = 1), width = c(5,1.5), height = rep(1,2))
-
-
-%int = seq(0,4, length.out = 500)
-%f = function(x) x^1.1 * sin(x-2) + 1 - 2.5*sin(3*x-1.5)
-%plot(int, f(int), type="l", xlab = "", ylab = "f(x)", xaxt="n")
-%x = 2.5
-%rad = 0.5
-%lines(c(x, x), c(-3, f(x)), lty = 2)
-%area = seq(x - rad, x+rad, length.out=200)
-%col_vec = c("yellow", "green")
-
-%rbPal <- colorRampPalette(c('red','orange', "yellow", "green"))
-%col_smooth <- rbPal(50)[as.numeric(cut(seq(0,1,0.02),breaks = 50))]
-
-%points(area, rep(f(x), 200),
-%       col = col_smooth[findInterval(PDelta(f(area)-f(x), Temp=3), seq(0,1,0.02))],
-%       pch=15, cex=0.5)
-
-%x = 2.75
-%rad = 0.5
-%lines(c(x, x), c(-3, f(x)), lty = 2)
-%area = seq(x - rad, x+rad, length.out=200)
-%col_vec = c("orange", "green")
-%points(area, rep(f(x), 200),
-%       col = col_smooth[findInterval(PDelta(f(area)-f(x), Temp=1.5), seq(0,1,0.02))],
-%       pch=15, cex=0.5)
-%x = 2.3
-%rad = 0.5
-%lines(c(x, x), c(-3, f(x)), lty = 2)
-%area = seq(x - rad, x+rad, length.out=200)
-%points(area, rep(f(x), 200),
-%       col = col_smooth[findInterval(PDelta(f(area)-f(x), Temp=0.15), seq(0,1,0.02))],
-%       pch=15, cex=0.5)
-
-%x = 1.81
-%rad = 0.5
-%lines(c(x, x), c(-3, f(x)), lty = 2)
-%area = seq(x - rad, x+rad, length.out=200)
-%points(area, rep(f(x), 200),
-%       col = col_smooth[findInterval(PDelta(f(area)-f(x), Temp=0.15), seq(0,1,0.02))],
-%       pch=15, cex=0.5)
-
-%axis(1, c(2.5, 2.75, 2.3, 1.83), labels = c(expression(x[0]), expression(x[1]), expression(x[2]) , expression(x[3])),tick=F)
-
-%#legend
-%legend_image <- as.raster(matrix(col_smooth, ncol=1))
-%plot(c(0,1),c(0,1), type = 'n', axes = F, xlab = '', ylab = '', main = "")
-%rasterImage(legend_image, 0, 0, 1, 1)
-%axis(2, at = seq(0, 1, l = 6), labels = seq(1, 0, l = 6), tick = T, las=1,
-%     lwd = 0, lwd.ticks = 1)
-%@
-%\caption{Simulated Annealing schematic, colors: P(acceptance)}
-%\end{figure}
-
-\framebreak
-
-\begin{small}
-    \begin{itemize}
-        \item Parameter $T$ describes temperature/progress of the system
-        \item High temperatures correspond to high probability of accepting worse $\xv$
-        % \item Atomical analogue: atoms of the system can move more freely
-        \item Local minima can be escaped, but no convergence can be achieved at \textit{constant} temperature
-        \item We come across an important principle of optimization:
-            \vspace{-0.5\baselineskip}
-            \begin{center}
-                \textbf{exploration (high T) vs. exploitation (low T)}
-            \end{center}
-    \end{itemize}
-\end{small}
-\vspace{-0.3cm}
-\begin{center}
-\includegraphics[width=0.6\textwidth]{figure_man/metropolis-algorithm2.png}
-\end{center}
-
-
-%\begin{figure}
-%<<echo=FALSE>>=
-%library("RColorBrewer")
-%Delta = seq(-5, 50, length.out= 500)
-
-%colvec = brewer.pal(5, "Accent")
-%plot(Delta, PDelta(Delta, 250), type = "l", ylim = c(-0.1,1.3), xlab = expression(Delta[f]), ylab = "P(Acceptance)", col = colvec[1], lwd = 2, yaxt="n")
-%axis(2, seq(0,1, by=.2))
-%abline(h=c(0,1), lty = 2)
-%lines(c(0,0), c(0,1), lty=2)
-%points(Delta, PDelta(Delta, 125), type = "l", col = colvec[2], lwd = 2)
-%points(Delta, PDelta(Delta, 50), type = "l", lwd = 2, col = colvec[3])
-%points(Delta, PDelta(Delta, 10), type = "l", lwd = 2,col = colvec[4])
-%points(Delta, PDelta(Delta, 2), type = "l", lwd = 2, col = colvec[5])
-%legend("top", paste("T =", c(250,125,50,10,2)), fill=colvec, ncol=5)
-%@
-%\caption{Representation of acceptance probability}
-%\end{figure}
-%Representation of acceptance probability
-
-\end{vbframe}
-
-\begin{vbframe}{Simulated Annealing}
-\begin{itemize}
-    \item Start with high temperature to \textbf{explore} whole space
-    \item Slowly reduce temperature to converge \\
-        $\Rightarrow$ Sequence of descending temperatures $T^{[t]}, t \in \N$
-    \item Procedure is called \textbf{simulated annealing}
-    \item Temperature is often kept constant several iterations in a row to explore the space, then multiplied by coefficient $0<c<1$:
-        \begin{equation*}
-            T^{[t+1]} = c \cdot T^{[t]}
-        \end{equation*}
-    \item Other strategies possible, for example:
-        \begin{equation*}
-            T^{[t]} = T^{[0]} \left( 1 - \frac{t}{t_{\text{max}}} \right)
-        \end{equation*}
-\end{itemize}
-
-Choosing neighborhood:
-
-\begin{itemize}
-    \item Many different strategies.
-        Strongly depends on objective function.
-\end{itemize}
-
-% \framebreak
-% Choosing parameters:
-
-% \begin{itemize}
-% \item Temperature $T$: for any optimization problem, the initial temperature can be the average of a number of random function values.
-% \vspace{0.1cm}
-% \item Temperature coefficient $c$: typically between 0.6 and 0.9 ($c<1$)
-% \vspace{0.1cm}
-% \item Iterations at the same temperature: typically between 50-100
-% \vspace{0.1cm}
-% \item Range $\gamma$: defines area around $\xv^{[t]}$ in which next candidate solution set $\xv^{[t+1]}$ is searched (depends strongly on objective function)
-% \end{itemize}
-
-\end{vbframe}
-
-% \begin{vbframe}{Simulated Annealing: Algorithmus}
-% \begin{algorithm}[H]
-%   \begin{footnotesize}
-%   \begin{center}
-%   \caption{Simulated Annealing}
-%    \begin{algorithmic}[1]
-%     \State Generiere zufällige Startlösung $x$
-%     \State Setze $x_{best} = x$
-%     \State Wähle eine monoton fallende Folge von positiven Temperaturwerten $(T_{k})_{k \in N}$
-%     \State Wähle Minimale Tmperatur $T_{min}$ als Abbruchkriterium
-%     \State Setze $k = 1$
-%        \While{$T_{k} >  T_{min}$}
-%         \State Wähle in Umgebung von x einen zufälligen Punkt $x_{new}$ aus
-%         \If{$f(x_{new}) < f(x)$}  {setze $x = x_{new}$}
-%         \ElsIf{
-%         {{setze $x = x_{new}$ mit Wahrscheinlichkeit $exp(- \frac{f(x_{new})-f(x)}{T_k})$}}}
-%         \EndIf
-%         \If{$f(x) < f(x_{best})$} {update $x_{best} = x$}
-%         \EndIf
-%         \State $k = k + 1$
-%       \EndWhile
-%     \end{algorithmic}
-%     \end{center}
-%     \end{footnotesize}
-% \end{algorithm}
-% \end{vbframe}
-
-% \begin{frame}{Example: simulated annealing}
-
-% \textbf{Himmelblau function:}
-
-% \begin{center}
-%     \centering
-%     \includegraphics[width=0.54\textwidth]{figure_man/sa-himmelblauFun3D.png}
-%     \includegraphics[width=0.3\textwidth]{figure_man/sa-himmelblauFun2D.pdf}
-% \end{center}
-
-% Perform $100$ iterations of simulated annealing:
-% \begin{itemize}
-%     \footnotesize
-%     \item Sample new candidates $\xv^{[t+1]}$ from a normal distribution ($\sigma = 1.5$) around $\xv^{[t]}$
-%     \item Initial temperature $T^{[0]} = 200$
-%     \item Constant temperature for first $50$ iterations
-%     \item Afterwards, temperature drops by a factor of $c = 0.8$ in each iteration
-% \end{itemize}
-
-% \end{frame}
-
-% \begin{frame}{Example: simulated annealing}
-
-% \begin{figure}
-%   \includegraphics<1>[width=0.9\textwidth]{figure_man/sa-iter1.pdf}%
-%   \includegraphics<2>[width=0.9\textwidth]{figure_man/sa-iter2.pdf}%
-%   \includegraphics<3>[width=0.9\textwidth]{figure_man/sa-iter3.pdf}%
-%   \includegraphics<4>[width=0.9\textwidth]{figure_man/sa-iter4.pdf}%
-%   \includegraphics<5>[width=0.9\textwidth]{figure_man/sa-iter5.pdf}%
-%   \includegraphics<6>[width=0.9\textwidth]{figure_man/sa-iter6.pdf}%
-%   \includegraphics<7>[width=0.9\textwidth]{figure_man/sa-iter7.pdf}
-%   \caption*{
-%     \scriptsize
-%     \textbf{Left:} Contours of Himmelblau function.
-%     \textbf{Right:} Acceptance probability $\P(\text{accept})$.
-%     }
-% \end{figure}
-
-% \vspace{-\baselineskip}
-
-% \begin{itemize}
-%       \item Blue dot is current point
-%       \item Orange dot is new candidate
-%       \item In the beginning, almost each point is accepted (exploration)
-%       \item<4> Later: More points are rejected.
-% \end{itemize}
-
-% \only<3>{
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-iter1.png}
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter1.png}\\
-
-%   \begin{itemize}
-%         \item Left: The point $\xv^{[2]} = (x,y)$ was sampled in iteration 2, and accepted. 
-%         \item Right: Acceptance probability $P = \exp(-\frac{\Delta f}{T})$ for $\xv^{[2]} = (x,y)$ is $m$. 
-%   \end{itemize}}%
-
-% \only<4>{
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-iter1.png}
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter1.png}\\
-
-%   \begin{itemize}
-%         \item Left: We repeat the procedure for $50$ iterations without changing the temperature.  
-%   \end{itemize}}%
-
-% \only<4>{
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-iter1.png}
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter1.png}\\
-
-%   \begin{itemize}
-%         \item The next 50 iterations are performed with a temperature of $T = 160$. We see that the sampled points focus more around the (local) optima of the function
-%   \end{itemize}}%
-
-% \only<4>{
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-iter1.png}
-%   \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter1.png}\\
-
-%   \begin{itemize}
-%         \item After 100 iterations, the temperature would change again. But we stop here. 
-%   \end{itemize}}%
-
-
-% %\only<3>{\includegraphics[height = 5cm, width=5.5cm]{figure_man/sa-iter2.png}}%
-% %\only<3>{\includegraphics[height = 5cm, width=5.5cm]{figure_man/sa-probs-iter2.png}%
-%  % \begin{itemize}
-%   %      \item Left: new point
-%    %     \item Right: probability of acceptance $P = \exp(-\frac{\Delta f}{T})$ regarding the new point
-%   %\end{itemize}}%
-
-% \only<3>{\includegraphics[width=0.49\textwidth]{figure_man/sa-iter50.png}
-%           \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter50.png}\\
-
-%           \begin{itemize}
-%           \item Left: temperature at the beginning constantly high; points scatter strongly (exploration)
-%           \item Right: Downgrading of the acceptance probability still clearly visible (contour lines can still be clearly differentiated)
-%           \end{itemize}}%
-% \only<4>{\includegraphics[width=0.49\textwidth]{figure_man/sa-iter100.png}
-%           \includegraphics[width=0.49\textwidth]{figure_man/sa-probs-iter100.png}\\
-
-%           \begin{itemize}
-%           \item Left: temperature has already decreased significantly, points scatter less, \enquote{solidification} begins (exploitation)
-%           \item Right: Downgrading of the acceptance probability hardly perceptible any more (contour lines can hardly be differentiated anymore)
-%           \end{itemize}}%
-
-% \end{frame}
-
-\begin{vbframe}{Analogy to metallurgy}
-    
-\begin{itemize}
-\item \textbf{Simulated annealing} draws analogy between a cooling process (e.g. a metal or liquid) and an optimization problem.
-\item If cooling of a liquid material (amount of atoms) is too fast, it solidifies in suboptimal configuration, slow cooling produces crystals with optimal structure (minimum energy stage).
+\begin{framei}[fs=normalsize,sep=L]{Analogy to metallurgy}
+\item Simulated annealing draws analogy between a cooling process (e.g. a metal or liquid) and an optimization problem.
+\item If cooling of a liquid material (amount of atoms) is too fast, it solidifies in suboptimal configuration, slow cooling produces crystals with optimal structure (minimum energy stage)
 \item Consider atoms of the liquid as a system with many degrees of freedom, analogy to optimization problem of a multivariate function
-\item Minimum energy stage corresponds to optimum of objective function.
-
-\end{itemize}
-\end{vbframe}
+\item Minimum energy stage corresponds to optimum of objective function
+\end{framei}
 
 \endlecture
 \end{document}

@@ -208,6 +208,19 @@
 
 \kopfsl{3}{Mathematical Concepts 3}
 
+\aufgabe{Optimality in d dimensions}{
+
+Let $\mathbf{X}$ be a $d$-dimensional random vector and let $\mathbf{Y}$ be a one-dimensional random vector with $\var(\mathbf{X}) = \mathbf{\Sigma}_{\mathbf{X}}$ and $\cov(\mathbf{X}, \mathbf{Y}) = \mathbf{\Sigma}_{\mathbf{X}, \mathbf{Y}} \in \R^{d \times 1}.$ Further, let $f:\R^d \rightarrow \R, \mathbf{w} \mapsto \var(\mathbf{w}^\top \mathbf{X} - \mathbf{Y})$, where $\mathbf{w} \in \R^{d}$ is non-random.
+
+\begin{enumerate}
+	\item Show that $f$ is convex.
+	\item Compute $\nabla f$ and $\nabla^2 f$
+	\item Under which condition exists a unique minimizer $\mathbf{w}^*$ of $f$. Is this a global minimum? (if it exists)
+	% \item Given the samples $(\mathbf{x}_i, y_i) \sim \P_{\mathbf{X}, \mathbf{Y}},$ 
+	% under which condition is the least squares estimator a consistent estimator of $\mathbf{w}^*$ in general?\footnote{This question is out of the scope of this lecture; however, it gives interesting insights into the entities we have computed.}
+\end{enumerate}
+}
+
 \aufgabe{Optimality in 2 dimensions}{
 
 Let $f:\R^2 \rightarrow \R, (x_1, x_2) \mapsto -\cos(x_1^2 + x_2^2 + x_1x_2)$ 
@@ -219,45 +232,32 @@ Let $f:\R^2 \rightarrow \R, (x_1, x_2) \mapsto -\cos(x_1^2 + x_2^2 + x_1x_2)$
 Now, we define the restriction of $f$ to $S_r = \{(x_1, x_2) \in \R^2|\;x_1^2 + x_2^2 + x_1x_2 < r\}$ with $r\in\R, r>0,$ i.e.,  $f_{|S_r}: S_r \rightarrow \R, (x_1, x_2) \mapsto f(x_1, x_2).$
 \begin{enumerate}
   \setcounter{enumi}{3}
-  \item Show that $f_{|S_{\overline{r}}}$ with $\overline{r} = \pi/4$ is convex.
+  \item Show that $f_{|S_{\overline{r}}}$ with $\overline{r} = \pi/4$ is convex. (\textit{Hint}: Try to frame $\nabla^2 f$ as a function of $u= x_1^2 + x_2^2 + x_1x_2$ and its derivatives. Also exploit that addition and positive scaling preserve positive definiteness.)
 	%\item Let $\mathcal{R} = \{r\in\R|\;r>0, f_{|S_r} \text{ is 
 	%convex}\}.$ Find $\overline{r} = \sup \mathcal{R}.$
-	\item Find the local minimum $\mathbf{x}^*$ of $f_{|S_{\overline{r}}}$
-	\item Is $\mathbf{x}^*$ a global minimum of $f$?
+	% \item Find the local minimum $\mathbf{x}^*$ of $f_{|S_{\overline{r}}}$
+	% \item Is $\mathbf{x}^*$ a global minimum of $f$?
 	
 \end{enumerate}
 
 
-\aufgabe{Optimality in d dimensions}{
-
-Let $\mathbf{X}$ be a $d$-dimensional random vector and let $\mathbf{Y}$ be a one-dimensional random vector with $\var(\mathbf{X}) = \mathbf{\Sigma}_{\mathbf{X}}$ and $\cov(\mathbf{X}, \mathbf{Y}) = \mathbf{\Sigma}_{\mathbf{X}, \mathbf{Y}} \in \R^{d \times 1}.$ \\
-Further, let $f:\R^d \rightarrow \R, \mathbf{w} \mapsto \var(\mathbf{w}^\top \mathbf{X} - \mathbf{Y}).$
-
-\begin{enumerate}
-	\item Show that $f$ is convex.
-	\item Compute $\nabla f$ and $\nabla^2 f$
-	\item Under which condition exists a unique minimizer $\mathbf{w}^*$ of $f$. Is this a global minimum? (if it exists)
-	\item Given the samples $(\mathbf{x}_i, y_i) \sim \P_{\mathbf{X}, \mathbf{Y}},$ 
-	under which condition is the least squares estimator a consistent estimator of $\mathbf{w}^*$ in general?\footnote{This question is out of the scope of this lecture; however, it gives interesting insights into the entities we have computed.}
-\end{enumerate}
-}
 
 
-\aufgabe{Optimality in 1d}{
+% \aufgabe{Optimality in 1d}{
 
-Let $f: [-1,2] \rightarrow \R, x \mapsto \exp(x^3 - 2x^2)$
-\begin{enumerate}
-	%
-	\item Compute $f'$
-	\item Plot $f$ and $f'$ with \texttt{R}
-	\item Find all possible candidates $x^*$ for maxima and minima. \\
-	\textit{Hint:} $\exp$ is a strictly monotone function.
-	\item Compute $f''$
-	\item Determine if the candidates are local maxima, minima or neither.
-	\item Find the global maximum and global minimum of $f$
+% Let $f: [-1,2] \rightarrow \R, x \mapsto \exp(x^3 - 2x^2)$
+% \begin{enumerate}
+% 	%
+% 	\item Compute $f'$
+% 	\item Plot $f$ and $f'$ with \texttt{R}
+% 	\item Find all possible candidates $x^*$ for maxima and minima. \\
+% 	\textit{Hint:} $\exp$ is a strictly monotone function.
+% 	\item Compute $f''$
+% 	\item Determine if the candidates are local maxima, minima or neither.
+% 	\item Find the global maximum and global minimum of $f$
 	
-\end{enumerate}
-}
+% \end{enumerate}
+% }
 
 }
 \end{document}
