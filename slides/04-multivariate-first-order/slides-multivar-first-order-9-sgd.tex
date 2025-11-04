@@ -8,313 +8,187 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  First order methods
-  }{% Lecture title  
-  SGD
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/SGD_cropped.png
-  }{
-    \item SGD
-    \item Stochasticity
-    \item Convergence
-    \item Batch size
+\titlemeta{
+First Order Methods
+}{
+Stochastic Gradient Descent
+}{
+figure_man/SGD_cropped.png
+}{
+\item Understand stochastic gradient descent
+\item Understand stochasticity and variance of SGD
+\item Know convergence properties of SGD
+\item Understand effect of batch size
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%\begin{vbframe}{Stochastic gradient descent}
-	
-%	Let us consider GD for empirical risk minimization. The updates are: 
-%	
-%	$$
-%	\thetav^{[t + 1]} = \thetav^{[t]} - \alpha \cdot \frac{1}{n} \cdot \sumin \nabla_\theta L\left(\yi, f(\xi ~|~ \thetav^{[t]})\right)
-%	$$
-%	
-%	
-%	\begin{itemize}
-%		\item Optimization algorithms that use the entire training set to compute updates in one huge step are called \textbf{batch} or \textbf{deterministic}. This is computationally very costly or often impossible. 
-%		\item \textbf{Idea:} Instead of letting the sum run over the whole dataset (\textbf{batch mode}) one can also let it run only over small subsets (\textbf{minibatches}), or only over a single example $i$. 
-%		% \item One \textbf{epoch} means one pass of the full training set.
-%		\item If the index $i$ of the training example is a random variable with uniform distribution, then its expectation is the batch gradient $\nabla_\theta \risket$
-%		\item[$\to$] We have a \textbf{stochastic}, noisy version of the batch gradient
-%		
-%		\framebreak 
-%		
-%		\item The gradient w.r.t. a single training observation is fast to compute but not reliable. It can be used simply as a computational trick to deal with large data or to operate on real streams of online data in online learning.
-%		\item In contrast, the full
-%		batch gradient is costly (or even impossible, e.g., when data does not even fit into memory) to compute, particularly in DL, but it averages out all the noise from sub-sampling.
-%		\item Minibatches are in between. The batch size decides upon the compromise
-%		between speed and averaging (smoothing).
-%		\item In summary: SGD computes an unbiased estimate of the gradient by taking the average gradient over a minibatch (or one sample) to update the parameter $\thetav$ in this direction.
-%		% \item Optimization algorithms that use only a single example at a time are called \textbf{stochastic} or \textbf{online}. This can be used simply as a computational trick to deal with large data or to operate on real streams of online data in online learning.
-%		% Those methods are called \textbf{minibatch} or \textbf{stochastic}.
-%	\end{itemize}
-	
-	
-
-	% \begin{algorithm}[H]
-	% \footnotesize
-	%   \caption{Basic SGD pseudo code}
-	%   \begin{algorithmic}[1]
-	%   \State Initialize parameter vector $\thetav^{[0]}$ 
-	%   \State Randomly shuffle data and partition into minibatches $J_1, ..., J_k$ of size $m$
-	%   \State $t \leftarrow 0$
-	%   \While{stopping criterion not met}
-	%   \State Take a minibatch $J$ of $m$ examples from training set, $J \subset \nset$
-	%       \State Compute gradient estimate: $\hat{g}^{[t]} \leftarrow \frac{1}{m} \sum_{i \in J} \nabla_\theta L(\yi, f(\xi ~|~ \thetav^{[t]}) $
-	%       \State Apply update: $\thetav^{[t]} \leftarrow \thetav^{[t-1]} - \alpha \hat{g}^{[t]}$
-	%       \State $t \leftarrow t + 1$
-	%     \EndWhile
-	%   \end{algorithmic}
-	% \end{algorithm}
-	% \begin{itemize}
-	%   \item Thus, what SGD basically does is computing an unbiased estimate of the gradient by taking the average gradients of a minibatch to update the parameter $\thetav$.
-	% \end{itemize}
-	
-	%\framebreak
-	
-
-	% \begin{itemize}
-	%   \item Thus, what SGD basically does is computing an unbiased estimate of the gradient by taking the average gradients of a minibatch to update the parameter $\thetav$.
-	% \end{itemize}
-	
-%	\framebreak
-%	
-%	\vspace*{0.5cm}
-%	\begin{itemize}
-%		\item With minibatches of size $m$, a full pass over the training set (called an \textbf{epoch}) consists of $\frac{n}{m}$ gradient updates.
-%		\item SGD and its modifications are the most used optimization algorithms for ML in general and for deep learning in particular.
-%		\item SGD (with one or a few samples per batch) updates have a high variance, even though they are unbiased. 
-%		Because of this variance, the learning rate $\alpha$ is typically much smaller than in the full-batch scenario.
-%		
-%		\framebreak 
-%		
-%		\vspace*{0.5cm}
-%		
-%		\item When the learning rate is slowly decreased, SGD converges to a local minimum.
-%		\item SGD with minibatches reduces the variance of the parameter updates and utilizes highly optimized matrix operations to efficiently compute gradients.
-%		\item Minibatch sizes are typically between 50 and 1000.
-%		\item Recent results indicate, that SGD often leads to better generalizing models then GD, and thus may perform some kind of indirect regularization.
-%	\end{itemize}
-%\end{vbframe}
-
-
-\begin{vbframe}{Stochastic gradient descent}
-
-NB: We use $g$ instead of $f$ as objective, bc. $f$ is used as model in ML. 
-
-\lz 
-
-$g: \R^d \to \R$ objective, $g$ \textbf{average over functions}: 
-
+\begin{framei}{Stochastic gradient descent}
+\item NB: We use $g$ instead of $f$ as objective, because $f$ is used as model in ML
+\item $g: \R^d \to \R$ objective, $g$ is \textbf{average over functions}:
 $$
-	g(\xv) = \frac{1}{n}\sumin g_i(\xv), \qquad g \text{ and } g_i \text{ smooth}
+g(\xv) = \frac{1}{n}\sumin g_i(\xv), \qquad g \text{ and } g_i \text{ smooth}
 $$
-
-Stochastic gradient descent (SGD) approximates the gradient 
-
-\vspace*{-0.2cm}
-
+\item Stochastic gradient descent (SGD) approximates the gradient
 \begin{eqnarray*}
-	\nabla_\xv~ g(\xv) = \frac{1}{n}\sumin \nabla_{\xv}~g_i(\xv) &:=& \mathbf{d} \quad \text{ by }\\
-	\frac{1}{\textcolor{blue}{|J|}}\sum_{i \in \textcolor{blue}{J}} \nabla_\xv~g_i(\xv) &:=& \hat{\mathbf{d}}, 
+\nabla_\xv g(\xv) = \frac{1}{n}\sumin \nabla_{\xv} g_i(\xv) &:=& \mathbf{d} \quad \text{ by }\\
+\frac{1}{\textcolor{blue}{|J|}}\sum_{i \in \textcolor{blue}{J}} \nabla_\xv g_i(\xv) &:=& \hat{\mathbf{d}}, 
 \end{eqnarray*}
+with random subset $J \subset \{1, 2, \ldots, n\}$ of gradients called \textbf{mini-batch}
+\item This is done e.g. when computing the true gradient is \textbf{expensive}
+\end{framei}
 
-with random subset $J \subset \{1, 2, ..., n\}$ of gradients called \textbf{mini-batch}. This is done e.g. when computing the true gradient is \textbf{expensive}. 
 
-\framebreak 
-
+\begin{frame2}{SGD algorithm}
 \begin{algorithm}[H]
-    \footnotesize
-    \caption{Basic SGD pseudo code}
-    \begin{algorithmic}[1]
-        \State Initialize $\xv^{[0]}$, $t = 0$ 
-        \While{stopping criterion not met}
-        \State Randomly shuffle indices and partition into minibatches $J_1, ..., J_K$ of size $m$
-        \For{$k\in\{1,...,K\}$} 
-        \State $t \leftarrow t + 1$ 
-        \State Compute gradient estimate with $J_k$: $\hat{\mathbf{d}}^{[t]} \leftarrow \frac{1}{m} \sum_{i \in J_k} \nabla_\xv g_i(\xv^{[t - 1]}) $
-        \State Apply update: $\xv^{[t]} \leftarrow \xv^{[t-1]} - \alpha \cdot \hat{\mathbf{d}}^{[t]}$
-        
-        \EndFor		
-        
-        \EndWhile
-    \end{algorithmic}
+\footnotesize
+\caption{Basic SGD pseudo code}
+\begin{algorithmic}[1]
+\State Initialize $\xv^{[0]}$, $t = 0$ 
+\While{stopping criterion not met}
+\State Randomly shuffle indices and partition into minibatches $J_1, \ldots, J_K$ of size $m$
+\For{$k\in\{1,\ldots,K\}$} 
+\State $t \leftarrow t + 1$ 
+\State Compute gradient estimate with $J_k$: $\hat{\mathbf{d}}^{[t]} \leftarrow \frac{1}{m} \sum_{i \in J_k} \nabla_\xv g_i(\xv^{[t - 1]}) $
+\State Apply update: $\xv^{[t]} \leftarrow \xv^{[t-1]} - \alpha \cdot \hat{\mathbf{d}}^{[t]}$
+\EndFor
+\EndWhile
+\end{algorithmic}
 \end{algorithm}
-
 \begin{itemize}
-    \footnotesize
-    \item Instead of drawing batches randomly we might want to go through the $g_i$ sequentially (unless $g_i$ are sorted in any way)
-    \item Updates are computed faster, but also more stochastic: 
-    \begin{itemize} 
-        \begin{footnotesize}	
-        \item In the simplest case, batch-size $m := |J_k|$ is set to $m = 1$
-        \item If $n$ is a billion, computation of update is a billion times faster
-        \item \textbf{But} (later): Convergence rates suffer from stochasticity!
-        \end{footnotesize}
-    \end{itemize} 
-\end{itemize}
-
-\end{vbframe}
-
-\begin{vbframe}{SGD in ML}
-
-In ML, we perform ERM:  
-
-$$
-    \risk(\thetav) = \frac{1}{n}\sumin \underbrace{\Lxyit}_{g_i(\thetav)}
-$$
-
+\item Instead of drawing batches randomly we might want to go through the $g_i$ sequentially (unless $g_i$ are sorted in any way)
+\item Updates are computed faster, but also more stochastic:
 \begin{itemize}
-    \item for a data set 
-    $$\D = \Dset$$
-    \item a loss function $\Lxy$, e.g., L2 loss $\Lxy = (y - \fx)^2$,
-    \item and a model class $f$, e.g., the linear model $\fxit = \thetav^\top \xv$. 
+\item In the simplest case, batch-size $m := |J_k|$ is set to $m = 1$
+\item If $n$ is a billion, computation of update is a billion times faster
+\item \textbf{But} (later): Convergence rates suffer from stochasticity!
 \end{itemize}
+\end{itemize}
+\end{frame2}
 
-\framebreak 
 
-For large data sets, computing the exact gradient 
+\begin{framei}{SGD in ML}
+\item In ML, we perform ERM:
 $$
-    \mathbf{d} = \frac{1}{n}\sum_{i=1}^n \nabla_{\thetav} \Lxyit %\quad \text{(also: score)}
-$$ 
-may be expensive or even infeasible to compute and is approximated by 
+\risk(\thetav) = \frac{1}{n}\sumin \underbrace{\Lxyit}_{g_i(\thetav)}
+$$
+\item for a data set $\D = \Dset$
+\item a loss function $\Lxy$, e.g., L2 loss $\Lxy = (y - \fx)^2$
+\item and a model class $f$, e.g., the linear model $\fxit = \thetav^\top \xv$
+\end{framei}
+
+
+
+\begin{framei}{SGD in ML}
+\item For large data sets, computing the exact gradient
+$$
+\mathbf{d} = \frac{1}{n}\sum_{i=1}^n \nabla_{\thetav} \Lxyit
+$$
+may be expensive or even infeasible to compute and is approximated by
 $$
 \hat{\mathbf{d}} = \frac{1}{m}\sum_{i \in J} \nabla_{\thetav} \Lxyit,
 $$
-    for $J \subset{1, 2, ..., n}$ random subset. 
-
-    \lz 
-    
-\textbf{NB:} Often, maximum size of $J$ technically limited by memory size.
-\end{vbframe}
+for $J \subset \{1, 2, \ldots, n\}$ random subset
+\item \textbf{NB:} Often, maximum size of $J$ technically limited by memory size
+\end{framei}
 
 
-\begin{vbframe}{Stochasticity of SGD}
+\begin{framei}{Stochasticity of SGD}
+\item[]
+\begin{figure}
+\includegraphics[width=0.8\textwidth]{figure_man/SGD.png}
+\caption*{\centering \small 
+Minimize $g(x_1, x_2) = 1.25(x_1 + 6)^2 + (x_2 - 8)^2$
+\textbf{Left:} GD, \textbf{Right:} SGD\\
+Black line shows average value across multiple runs
+(Source: Shalev-Shwartz et al., Understanding Machine Learning, 2014.)
+}
+\end{figure}
+\end{framei}
 
-	% The iterations of SGD are \textbf{stochastic}, as they depend on randomly drawn observations. % It is assumed that the above equation behaves exactly like its expectation.
-	
-	\vspace*{0.2cm}
 
-	\begin{figure}
-		\includegraphics[width=0.8\textwidth]{figure_man/SGD.png}
-        \caption*{\centering \small 
-            Minimize $g(x_1, x_2) = 1.25(x_1 + 6)^2 + (x_2 - 8)^2$.
-            
-            \textbf{Left:} GD.
-            \textbf{Right:} SGD.
-            Black line shows average value across multiple runs.
-            
-		      (Source: Shalev-Shwartz et al., Understanding Machine Learning, 2014.)
-        }
-	\end{figure}
+\begin{framei}{Stochasticity of SGD}
+\item Assume batch size $m = 1$ (statements also apply for larger batches)
+\item \textbf{(Possibly) suboptimal direction:} Approximate gradient $\hat{\mathbf{d}} = \nabla_\xv g_i(\xv)$ might point in suboptimal (possibly not even a descent!) direction
+\item \textbf{Unbiased estimate:} If $J$ drawn i.i.d., approximate gradient $\hat{\mathbf{d}}$ is an unbiased estimate of gradient $\mathbf{d} = \nabla_\xv g(\xv) = \sumin \nabla_\xv g_i(\xv)$:
+\begin{align*}
+\mathbb{E}_{i}\left[\nabla_\xv g_i(\xv)\right] &= \sumin \nabla_\xv g_i(\xv) \cdot \P(i = i) \\
+&= \sumin \nabla_\xv g_i(\xv) \cdot \frac{1}{n} = \nabla_\xv g(\xv).
+\end{align*}
+\item \textbf{Conclusion:} SGD might perform single suboptimal moves, but moves in \enquote{right direction} \textbf{on average}
+\end{framei}
 
-	\framebreak 
-
-        Assume batch size $m = 1$ (statements also apply for larger batches).
-
-	\begin{itemize}
-
-		\item \textbf{(Possibly) suboptimal direction:} Approximate gradient $\hat{\mathbf{d}} = \nabla_\xv g_i(\xv)$ might point in suboptimal (possibly not even a descent!) direction
-		\item \textbf{Unbiased estimate:} If $J$ drawn i.i.d., approximate gradient $\hat{\mathbf{d}}$ is an unbiased estimate of gradient $\mathbf{d} = \nabla_\xv g(\xv) = \sumin \nabla_\xv g_i(\xv)$: 
-
-		\vspace*{-0.5cm}
-
-		\begin{align*}
-			\mathbb{E}_{i}\left[\nabla_\xv g_i(\xv)\right] &= \sumin \nabla_\xv g_i(\xv) \cdot \P(i = i) \\
-            &= \sumin \nabla_\xv g_i(\xv) \cdot \frac{1}{n} = \nabla_\xv g(\xv).
-		\end{align*}
-	\end{itemize}
-\textbf{Conclusion:} SGD might perform single suboptimal moves, but moves in \enquote{right direction} \textbf{on average}. 
-
-\end{vbframe}
 
 \begin{frame}{Erratic behavior of SGD}
-
-\textbf{Example:} $g(\xv) = \sum_{i = 1}^5 g_i(\xv)$, $g_i$ quadratic.
-Batch size $m = 1$. 
-
+\textbf{Example:} $g(\xv) = \sum_{i = 1}^5 g_i(\xv)$, $g_i$ quadratic, batch size $m = 1$
+\vfill
 \begin{figure}
-    \includegraphics<1>[width = 0.8\textwidth]{figure_man/sgd_example_iter_1.png}
-    \includegraphics<2>[width = 0.8\textwidth]{figure_man/sgd_example_iter_2.png}
-    \includegraphics<3>[width = 0.8\textwidth]{figure_man/sgd_example_iter_3.png}
-    \includegraphics<4>[width = 0.8\textwidth]{figure_man/sgd_example_iter_4.png}
-    \includegraphics<5>[width = 0.8\textwidth]{figure_man/sgd_example_iter_5.png}
-    \only<5>{
-        \caption*{In iteration $5$, SGD performs a suboptimal move away from the minimum.}
-    }
+\includegraphics<1>[width = 0.8\textwidth]{figure_man/sgd_example_iter_1.png}
+\includegraphics<2>[width = 0.8\textwidth]{figure_man/sgd_example_iter_2.png}
+\includegraphics<3>[width = 0.8\textwidth]{figure_man/sgd_example_iter_3.png}
+\includegraphics<4>[width = 0.8\textwidth]{figure_man/sgd_example_iter_4.png}
+\includegraphics<5>[width = 0.8\textwidth]{figure_man/sgd_example_iter_5.png}
+\only<5>{
+\caption*{In iteration $5$, SGD performs a suboptimal move away from the minimum.}
+}
 \end{figure}
 \end{frame}
 
-\begin{vbframe}{Erratic behavior of SGD}
 
+\begin{framei}{Erratic behavior of SGD}
+\item[]
 \begin{figure}
-    \centering
-    \includegraphics[width=0.7\textwidth]{figure_man/sgd_example_confusion_areas.png}
-    \caption*{\centering \small
-        \textbf{Blue area}: Each $-\nabla g_i(\xv)$ points towards minimum.
-        
-        \textbf{Red area} (\enquote{confusion area}):
-        $-\nabla g_i(\xv)$ might point away from minimum and perform  a suboptimal move.
-    }
+\centering
+\includegraphics[width=0.7\textwidth]{figure_man/sgd_example_confusion_areas.png}
+\caption*{\centering \small
+\textbf{Blue area}: Each $-\nabla g_i(\xv)$ points towards minimum
+
+\textbf{Red area} (\enquote{confusion area}): $-\nabla g_i(\xv)$ might point away from minimum and perform a suboptimal move
+}
 \end{figure}
+\end{framei}
 
-\framebreak 
 
-\begin{itemize}
-    \setlength{\itemsep}{1em}
-    \item At location $\xv$, \enquote{confusion} is captured by variance of gradients
-    $$
-        \frac{1}{n}\sumin \|\nabla_\xv g_i(\xv) - \nabla_\xv g(\xv)\|^2
-    $$
-    \item If term is $0$, next step goes in gradient direction (for each $i$)
-    \item If term is small, next step \emph{likely} goes in gradient direction
-    \item If term is large, next step likely goes in direction different than gradient
-\end{itemize}
+\begin{framei}{Erratic behavior of SGD}
+\item At location $\xv$, \enquote{confusion} is captured by variance of gradients
+$$
+\frac{1}{n}\sumin \|\nabla_\xv g_i(\xv) - \nabla_\xv g(\xv)\|^2
+$$
+\item If term is $0$, next step goes in gradient direction (for each $i$)
+\item If term is small, next step \emph{likely} goes in gradient direction
+\item If term is large, next step likely goes in direction different than gradient
+\end{framei}
 
-\end{vbframe}
 
-\begin{vbframe}{Convergence of SGD}
-
-As a consequence, SGD has worse convergence properties than GD. 
-
-\medskip
-
-\textbf{But:} Can be controlled via \textbf{increasing batches} or \textbf{reducing step size}. 
-
+\begin{framei}{Convergence of SGD}
+\item As a consequence, SGD has worse convergence properties than GD
+\item \textbf{But:} Can be controlled via \textbf{increasing batches} or \textbf{reducing step size}
+\vfill
 \begin{blocki}{The larger the batch size $m$}
-    \vspace{-0.5em}
-    \item the better the approximation to $\nabla_\xv g(\xv)$
-    \item the lower the variance
-    \item the lower the risk of performing steps in the wrong direction
+\vspace{-0.5em}
+\item the better the approximation to $\nabla_\xv g(\xv)$
+\item the lower the variance
+\item the lower the risk of performing steps in the wrong direction
 \end{blocki}
-
+\vfill
 \begin{blocki}{The smaller the step size $\alpha$}
-    \vspace{-0.5em}
-    \item the smaller a step in a potentially wrong direction 
-    \item the lower the effect of high variance
+\vspace{-0.5em}
+\item the smaller a step in a potentially wrong direction
+\item the lower the effect of high variance
 \end{blocki}
+\vfill
+\item As maximum batch size is usually limited by computational resources (memory), choosing the step size is crucial
+\end{framei}
 
-As maximum batch size is usually limited by computational resources (memory), choosing the step size is crucial. 
 
-\end{vbframe}
-
-\begin{vbframe}{Effect of batch size}
-
+\begin{framei}{Effect of batch size}
+\item[]
 \begin{figure}
-    \centering
-    \includegraphics[width=0.9\textwidth]{figure_man/gradient_descent_NN_SGD_vs_no_SGD.pdf}
-    \caption*{\centering \small SGD for a NN with batch size $\in \{0.5 \%, 10 \%, 50 \%\}$ of the training data. 
-        
-        The higher the batch size, the lower the variance. 
-    }
-\end{figure} 
-
-\end{vbframe}
-
+\centering
+\includegraphics[width=0.9\textwidth]{figure_man/gradient_descent_NN_SGD_vs_no_SGD.pdf}
+\caption*{\centering \small SGD for a NN with batch size $\in \{0.5 \%, 10 \%, 50 \%\}$ of the training data\\
+The higher the batch size, the lower the variance
+}
+\end{figure}
+\end{framei}
 
 \endlecture
 \end{document}
-

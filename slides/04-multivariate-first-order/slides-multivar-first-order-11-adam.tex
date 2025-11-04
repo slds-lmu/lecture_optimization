@@ -8,239 +8,187 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  First order methods
-  }{% Lecture title  
-  Adam and friends
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/sattle_point2-50.png
-  }{
-    \item Adaptive step sizes
-    \item AdaGrad 
-    \item RMSProp
-    \item Adam
+\titlemeta{
+First order methods
+}{
+Adam and friends
+}{
+figure_man/sattle_point2-50.png
+}{
+\item Adaptive step sizes
+\item AdaGrad 
+\item RMSProp
+\item Adam
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{framei}{Adaptive step sizes}
+\item Step size is probably the most important control parameter
+\item Has strong influence on performance
+\item Natural to use different step size for each input individually and automatically adapt them
+\vfill
+\imageC[0.75]{figure_man/momentum/sgd_without_momentum.png}
+\end{framei}
 
-\begin{vbframe}{Adaptive step sizes}
-	\begin{itemize}
-		\item Step size is probably the most important control parameter
-        \item Has strong influence on performance
-		\item Natural to use different step size for each input individually and automatically adapt them
-	\end{itemize}
 
-    \vspace{-\baselineskip}
-    
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.75\textwidth]{figure_man/momentum/sgd_without_momentum.png}
-    \end{figure}
-\end{vbframe}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{vbframe}{AdaGrad}
-	\begin{itemize}
-        \setlength{\itemsep}{1em}
-		\item AdaGrad adapts step sizes by
-		scaling them inversely proportional to square root of the sum of the past squared derivatives
-		\begin{itemize}
-            \setlength{\itemsep}{0.5em}
-			\item Inputs with large derivatives get smaller step sizes
-			\item Inputs with small derivatives get larger step sizes
-		\end{itemize}
-		%\item For that reason, AdaGrad might be well suited when dealing with sparse data. 
-		\item Accumulation of squared gradients can result in premature small step sizes (Goodfellow et al., 2016)
-	\end{itemize}
-	
-	% \framebreak
-	
-	
+\begin{framei}[fs=small]{AdaGrad}
+\item AdaGrad adapts step sizes by
+scaling them inversely proportional to square root of the sum of the past squared derivatives
+\begin{itemize}
+\item Inputs with large derivatives get smaller step sizes
+\item Inputs with small derivatives get larger step sizes
+\end{itemize}
+\item Accumulation of squared gradients can result in premature small step sizes (Goodfellow et al., 2016)
+\vfill
 \begin{algorithm}[H]
-    \caption{AdaGrad}
-    \begin{algorithmic}[1]
-        \small 
-        \State \textbf{require} Global step size $\alpha$ \strut
-        \State \textbf{require} Initial parameter $\thetav$ \strut
-        \State \textbf{require} Small constant $\beta$, perhaps $10^{-7}$, for numerical stability \strut
-        \State \textbf{Initialize} gradient accumulation variable $\mathbf{r} = \mathbf{0} $
-        \While{stopping criterion not met}
-        \State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Sample minibatch of $m$ examples from the training set $\{\tilde{\xv}^{(1)},\dots,\tilde{\xv}^{(m)}\}$ \strut}
-        \State Compute gradient estimate: $\hat{\mathbf{g}} \leftarrow \frac{1}{m} \nabla_{\thetav} \sum_{i} \Lxym$
-        \State Accumulate squared gradient $\mathbf{r} \leftarrow \mathbf{r} + \hat{\mathbf{g}} \odot  \hat{\mathbf{g}}$
-        \State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Compute update: $\nabla \thetav = - \frac{\alpha}{\beta + \sqrt\mathbf{r}} \odot \hat{\mathbf{g}}$ (operations element-wise) \strut}
-        \State Apply update: $\thetav \leftarrow \thetav + \nabla\thetav$
-        \EndWhile
-    \end{algorithmic}
+\caption{AdaGrad}
+\begin{algorithmic}[1]
+\State \textbf{require} Global step size $\alpha$ \strut
+\State \textbf{require} Initial parameter $\thetav$ \strut
+\State \textbf{require} Small constant $\beta$, perhaps $10^{-7}$, for numerical stability \strut
+\State \textbf{Initialize} gradient accumulation variable $\mathbf{r} = \mathbf{0} $
+\While{stopping criterion not met}
+\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Sample minibatch of $m$ examples from the training set $\{\tilde{\xv}^{(1)},\dots,\tilde{\xv}^{(m)}\}$ \strut}
+\State Compute gradient estimate: $\hat{\mathbf{g}} \leftarrow \frac{1}{m} \nabla_{\thetav} \sum_{i} \Lxym$
+\State Accumulate squared gradient $\mathbf{r} \leftarrow \mathbf{r} + \hat{\mathbf{g}} \odot  \hat{\mathbf{g}}$
+\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Compute update: $\nabla \thetav = - \frac{\alpha}{\beta + \sqrt\mathbf{r}} \odot \hat{\mathbf{g}}$ (operations element-wise) \strut}
+\State Apply update: $\thetav \leftarrow \thetav + \nabla\thetav$
+\EndWhile
+\end{algorithmic}
 \end{algorithm}
-
+\vfill
 $\odot$: element-wise product (Hadamard)
-\end{vbframe}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{vbframe}{RMSProp}
-	\begin{itemize}
-		\item Modification of AdaGrad
-		\item Resolves AdaGrad's radically diminishing step sizes.
-		\item Gradient accumulation is replaced by exponentially weighted moving average
-		\item Theoretically, leads to performance gains in non-convex scenarios
-		\item Empirically, RMSProp is a very effective optimization algorithm.
-            Particularly, it is employed routinely by DL practitioners.
-	\end{itemize}
-	
-	\framebreak
-	
-	
-	\begin{algorithm}[H]
-		\small
-		\caption{RMSProp}
-		\begin{algorithmic}[1]
-			\State \textbf{require} Global step size $\alpha$ and decay rate $\rho \in [0, 1)$ \strut
-			\State \textbf{require} Initial parameter $\mathbf{\thetav}$ \strut
-			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{\textbf{require} Small constant $\beta$, perhaps $10^{-6}$, for numerical stability \strut}
-			\State Initialize gradient accumulation variable $\mathbf{r} = \mathbf{0} $
-			\While{stopping criterion not met}
-			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Sample minibatch of $m$ examples from the training set $\{\tilde{\xv}^{(1)},\dots,\tilde{\xv}^{(m)}\}$ \strut}
-			\State Compute gradient estimate: $\hat{\mathbf{g}} \leftarrow \frac{1}{m} \nabla_\theta \sum_{i} \Lxym$
-			\State Accumulate squared gradient $\mathbf{r} \leftarrow \rho \mathbf{r} + (1 - \rho) \hat{\mathbf{g}} \odot  \hat{\mathbf{g}}$
-			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Compute update: $\nabla\mathbf{\thetav} = - \frac{\alpha}{\beta + \sqrt\mathbf{r}} \odot \hat{\mathbf{g}}$ \strut}
-			\State Apply update: $\mathbf{\thetav} \leftarrow \mathbf{\thetav} + \nabla\mathbf{\thetav}$
-			\EndWhile
-		\end{algorithmic}
-	\end{algorithm}
-\end{vbframe}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{vbframe}{Adam}
-	\begin{itemize}
-		\item Adaptive Moment Estimation also has adaptive step sizes
-		\item Uses the 1st and 2nd moments of gradients
-		\begin{itemize}
-			\item Keeps an exponentially decaying average of past gradients (1st moment)
-			\item Like RMSProp, stores an exp-decaying avg of past squared gradients (2nd moment)
-			\item Can be seen as combo of RMSProp + momentum.
-		\end{itemize}
-		%\item Basically Adam uses the combined averages of previous gradients at different moments to give it more \enquote{persuasive power} to adaptively update the parameters.
-	\end{itemize}
-	
-	
-	\framebreak
-	
-	\begin{algorithm}[H]
-		\scriptsize 
-		\caption{Adam}
-		\begin{algorithmic}[1]
-			\State \textbf{require} Global step size $\alpha$ (suggested default: 0.001) \strut
-			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{\textbf{require} Exponential decay rates for moment estimates, $\rho_1$ and $\rho_2$ in $[0,1)$ (suggested defaults: 0.9 and 0.999 respectively)} \strut
-			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{\textbf{require} Small constant $\beta$ (suggested default $10^{-8}$) \strut}
-			\State \textbf{require} Initial parameters $\thetav$ 
-			\State Initialize time step $t = 0$
-			\State Initialize 1st and 2nd moment variables $\mathbf{s}^{[0]} = 0, \mathbf{r}^{[0]} = 0$
-			\While{stopping criterion not met}
-			\State $t \leftarrow t + 1$
-			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Sample a minibatch of $m$ examples from the training set $\{\tilde{x}^{(1)},\dots,\tilde{x}^{(m)}\}$ \strut}
-			\State Compute gradient estimate: $\hat{\mathbf{g}}^{[t]} \leftarrow \frac{1}{m} \nabla_{\thetav} \sum_{i} \Lxym$
-			\State Update biased first moment estimate: $\mathbf{s}^{[t]} \leftarrow \rho_1 \mathbf{s}^{[t-1]}  + (1 - \rho_1) \hat{\mathbf{g}}^{[t]}$
-			\State Update biased second moment estimate: $\mathbf{r}^{[t]} \leftarrow \rho_2 \mathbf{r}^{[t-1]}  + (1 - \rho_2) \hat{\mathbf{g}}^{[t]} \odot \hat{\mathbf{g}}^{[t]}$
-			\State Correct bias in first moment: $\hat{\mathbf{s}} \leftarrow \frac{\mathbf{s}^{[t]} }{1-\rho_1^t}$
-			\State Correct bias in second moment: $\hat{\mathbf{r}} \leftarrow \frac{\mathbf{r}^{[t]} }{1-\rho_2^t}$
-			\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Compute update: $\nabla\thetav = - \alpha \frac{\hat{\mathbf{s}}}{\sqrt{\hat{\mathbf{r}}} + \beta}$ \strut}
-			\State Apply update: $\thetav \leftarrow \thetav + \nabla\thetav$
-			
-			\EndWhile
-		\end{algorithmic}
-	\end{algorithm}
-	
-	
-	\framebreak
-	
-	
-	\begin{itemize}
-		\item Initializes moment variables $\mathbf{s}$ and $\mathbf{r}$ with zero $\Rightarrow$ Bias towards zero
-            \begin{equation*}
-                \E[\mathbf{s}^{[t]}] \neq \E [\hat{\mathbf{g}}^{[t]}] \quad \text{and} \quad \E[\mathbf{r}^{[t]}] \neq \E [\hat{\mathbf{g}}^{[t]} \odot \hat{\mathbf{g}}^{[t]}]
-            \end{equation*}
-            
-            \vspace{-0.75\baselineskip}
-            
-            \begin{center}
-                ($\E$ calculated over minibatches)
-            \end{center}
-		\item Indeed: Unrolling $\mathbf{s}^{[t]}$ yields
-            \begin{footnotesize}
-        		\begin{gather*}
-            		\mathbf{s}^{[0]} = 0 \\
-            		\mathbf{s}^{[1]} = \rho_1\mathbf{s}^{[0]} + (1 - \rho_1) \hat{\mathbf{g}}^{[1]} = (1 - \rho_1) \hat{\mathbf{g}}^{[1]} \\
-            		\mathbf{s}^{[2]} = \rho_1\mathbf{s}^{[1]} + (1 - \rho_1) \hat{\mathbf{g}}^{[2]} = \rho_1 (1 - \rho_1) \hat{\mathbf{g}}^{[1]} + (1 - \rho_1) \hat{\mathbf{g}}^{[2]} \\
-            		\mathbf{s}^{[3]} = \rho_1\mathbf{s}^{[2]} + (1 - \rho_1) \hat{\mathbf{g}}^{[3]} = \rho_1^2 (1 - \rho_1) \hat{\mathbf{g}}^{[1]} + \rho_1 (1 - \rho_1) \hat{\mathbf{g}}^{[2]} + (1 - \rho_1) \hat{\mathbf{g}}^{[3]}
-        		\end{gather*}
-            \end{footnotesize}
-		\item Therefore: $\mathbf{s}^{[t]}  = (1 - \rho_1) \sum_{i=1}^t \rho_1^{t - i} \hat{\mathbf{g}}^{[i]}$.
-		\item \textbf{Note:} Contributions of past $\hat{\mathbf{g}}^{[i]}$ decreases rapidly
-	\end{itemize}
-	
-	\framebreak
-	
-	
-	\begin{itemize}
-		\item We continue with
-    		\begin{footnotesize}
-        		\begin{align*}
-        		      \E [\mathbf{s}^{[t]}] &= \E [ (1 - \rho_1) \sum_{i=1}^t \rho_1^{t - i} \hat{\mathbf{g}}^{[i]}] \\
-        		      &= \E [\hat{\mathbf{g}}^{[t]}] (1 - \rho_1) \sum_{i=1}^t \rho_1^{t - i} + \zeta\\
-        		      &= \E [\hat{\mathbf{g}}^{[t]}] (1 - \rho_1^{t}) + \zeta,
-        		\end{align*}
-    		\end{footnotesize}
-      
-    		where we approximated $\hat{\mathbf{g}}^{[i]}$ by $\hat{\mathbf{g}}^{[t]}$.
-            The resulting error is put in $\zeta$ and be kept small due to the exponential weights of past gradients.
-		\item Therefore: $\mathbf{s}^{[t]}$ is a biased estimator of $\hat{\mathbf{g}}^{[t]}$
-        \item But bias vanishes for $t \to \infty$ ($\rho_1^t \rightarrow 0$)
-		\item Ignoring $\zeta$, we correct for the bias by $\hat{\mathbf{s}}^{[t]} = \frac{\mathbf{s}^{[t]}}{(1 - \rho_1^{t})}$
-		\item Analogously: $\hat{\mathbf{r}}^{[t]} = \frac{\mathbf{r}^{[t]}}{(1 - \rho_2^{t})}$
-	\end{itemize}
-\end{vbframe}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{framei}
 
 
-\frame{
-	
-	\frametitle{Comparison of optimizers: Animation}
-	\vspace{1cm}
-	\begin{figure}
-		\begin{center}
-			\vspace{-1cm}
-			\href{https://giphy.com/embed/SJVFO3IcVC0M0}{\includegraphics[width = .49\textwidth]{figure_man/sattle_point2-50.png}}
-			\href{https://giphy.com/embed/SJVFO3IcVC0M0}{\includegraphics[width = .49\textwidth]{figure_man/sattle_point2-100.png}}
-			\scriptsize{\\Credits: Dettmers (2015) and Radford}
-		\end{center}
+\begin{framei}{RMSProp}
+\item Modification of AdaGrad
+\item Resolves AdaGrad's radically diminishing step sizes
+\item Gradient accumulation is replaced by exponentially weighted moving average
+\item Theoretically, leads to performance gains in non-convex scenarios
+\item Empirically, RMSProp is a very effective optimization algorithm.
+Particularly, it is employed routinely by DL practitioners
+\end{framei}
 
-        \medskip
-  
-		\href{https://giphy.com/embed/SJVFO3IcVC0M0}{\textcolor{blue}{Comparison}} of SGD optimizers near saddle point.
-        
-        \textbf{Left:} After start.
-        \textbf{Right:} Later.
-        
-        All methods accelerate compared to vanilla SGD.
-        
-        Best is RMSProp, then AdaGrad.
-        (Adam is missing here.)
-	\end{figure}
+
+\begin{frame2}[small]{RMSProp}
+\begin{algorithm}[H]
+\caption{RMSProp}
+\begin{algorithmic}[1]
+\State \textbf{require} Global step size $\alpha$ and decay rate $\rho \in [0, 1)$ \strut
+\State \textbf{require} Initial parameter $\mathbf{\thetav}$ \strut
+\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{\textbf{require} Small constant $\beta$, perhaps $10^{-6}$, for numerical stability \strut}
+\State Initialize gradient accumulation variable $\mathbf{r} = \mathbf{0} $
+\While{stopping criterion not met}
+\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Sample minibatch of $m$ examples from the training set $\{\tilde{\xv}^{(1)},\dots,\tilde{\xv}^{(m)}\}$ \strut}
+\State Compute gradient estimate: $\hat{\mathbf{g}} \leftarrow \frac{1}{m} \nabla_\theta \sum_{i} \Lxym$
+\State Accumulate squared gradient $\mathbf{r} \leftarrow \rho \mathbf{r} + (1 - \rho) \hat{\mathbf{g}} \odot  \hat{\mathbf{g}}$
+\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Compute update: $\nabla\mathbf{\thetav} = - \frac{\alpha}{\beta + \sqrt\mathbf{r}} \odot \hat{\mathbf{g}}$ \strut}
+\State Apply update: $\mathbf{\thetav} \leftarrow \mathbf{\thetav} + \nabla\mathbf{\thetav}$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+\end{frame2}
+
+
+\begin{framei}{Adam}
+\item Adaptive Moment Estimation also has adaptive step sizes
+\item Uses the 1st and 2nd moments of gradients
+\begin{itemize}
+\item Keeps an exponentially decaying average of past gradients (1st moment)
+\item Like RMSProp, stores an exp-decaying avg of past squared gradients (2nd moment)
+\item Can be seen as combo of RMSProp + momentum
+\end{itemize}
+\end{framei}
+
+
+\begin{frame2}[scriptsize]{Adam}
+\begin{algorithm}[H]
+\caption{Adam}
+\begin{algorithmic}[1]
+\State \textbf{require} Global step size $\alpha$ (suggested default: 0.001) \strut
+\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{\textbf{require} Exponential decay rates for moment estimates, $\rho_1$ and $\rho_2$ in $[0,1)$ (suggested defaults: 0.9 and 0.999 respectively)} \strut
+\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{\textbf{require} Small constant $\beta$ (suggested default $10^{-8}$) \strut}
+\State \textbf{require} Initial parameters $\thetav$ 
+\State Initialize time step $t = 0$
+\State Initialize 1st and 2nd moment variables $\mathbf{s}^{[0]} = 0, \mathbf{r}^{[0]} = 0$
+\While{stopping criterion not met}
+\State $t \leftarrow t + 1$
+\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Sample a minibatch of $m$ examples from the training set $\{\tilde{x}^{(1)},\dots,\tilde{x}^{(m)}\}$ \strut}
+\State Compute gradient estimate: $\hat{\mathbf{g}}^{[t]} \leftarrow \frac{1}{m} \nabla_{\thetav} \sum_{i} \Lxym$
+\State Update biased first moment estimate: $\mathbf{s}^{[t]} \leftarrow \rho_1 \mathbf{s}^{[t-1]}  + (1 - \rho_1) \hat{\mathbf{g}}^{[t]}$
+\State Update biased second moment estimate: $\mathbf{r}^{[t]} \leftarrow \rho_2 \mathbf{r}^{[t-1]}  + (1 - \rho_2) \hat{\mathbf{g}}^{[t]} \odot \hat{\mathbf{g}}^{[t]}$
+\State Correct bias in first moment: $\hat{\mathbf{s}} \leftarrow \frac{\mathbf{s}^{[t]} }{1-\rho_1^t}$
+\State Correct bias in second moment: $\hat{\mathbf{r}} \leftarrow \frac{\mathbf{r}^{[t]} }{1-\rho_2^t}$
+\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Compute update: $\nabla\thetav = - \alpha \frac{\hat{\mathbf{s}}}{\sqrt{\hat{\mathbf{r}}} + \beta}$ \strut}
+\State Apply update: $\thetav \leftarrow \thetav + \nabla\thetav$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+\end{frame2}
+
+
+\begin{framei}[fs=small]{Adam: Bias in moment estimates}
+\item Initializes moment variables $\mathbf{s}$ and $\mathbf{r}$ with zero $\Rightarrow$ Bias towards zero
+$$
+\E[\mathbf{s}^{[t]}] \neq \E [\hat{\mathbf{g}}^{[t]}] \quad \text{and} \quad \E[\mathbf{r}^{[t]}] \neq \E [\hat{\mathbf{g}}^{[t]} \odot \hat{\mathbf{g}}^{[t]}]
+$$
+($\E$ calculated over minibatches)
+\item Indeed: Unrolling $\mathbf{s}^{[t]}$ yields
+\begin{footnotesize}
+\begin{gather*}
+\mathbf{s}^{[0]} = 0 \\
+\mathbf{s}^{[1]} = \rho_1\mathbf{s}^{[0]} + (1 - \rho_1) \hat{\mathbf{g}}^{[1]} = (1 - \rho_1) \hat{\mathbf{g}}^{[1]} \\
+\mathbf{s}^{[2]} = \rho_1\mathbf{s}^{[1]} + (1 - \rho_1) \hat{\mathbf{g}}^{[2]} = \rho_1 (1 - \rho_1) \hat{\mathbf{g}}^{[1]} + (1 - \rho_1) \hat{\mathbf{g}}^{[2]} \\
+\mathbf{s}^{[3]} = \rho_1\mathbf{s}^{[2]} + (1 - \rho_1) \hat{\mathbf{g}}^{[3]} = \rho_1^2 (1 - \rho_1) \hat{\mathbf{g}}^{[1]} + \rho_1 (1 - \rho_1) \hat{\mathbf{g}}^{[2]} + (1 - \rho_1) \hat{\mathbf{g}}^{[3]}
+\end{gather*}
+\end{footnotesize}
+\item Therefore: $\mathbf{s}^{[t]}  = (1 - \rho_1) \sum_{i=1}^t \rho_1^{t - i} \hat{\mathbf{g}}^{[i]}$
+\item \textbf{Note:} Contributions of past $\hat{\mathbf{g}}^{[i]}$ decreases rapidly
+\end{framei}
+
+
+\begin{framei}[fs=small]{Adam: Bias correction}
+\item We continue with
+\begin{footnotesize}
+\begin{align*}
+\E [\mathbf{s}^{[t]}] &= \E [ (1 - \rho_1) \sum_{i=1}^t \rho_1^{t - i} \hat{\mathbf{g}}^{[i]}] \\
+&= \E [\hat{\mathbf{g}}^{[t]}] (1 - \rho_1) \sum_{i=1}^t \rho_1^{t - i} + \zeta\\
+&= \E [\hat{\mathbf{g}}^{[t]}] (1 - \rho_1^{t}) + \zeta,
+\end{align*}
+\end{footnotesize}
+where we approximated $\hat{\mathbf{g}}^{[i]}$ by $\hat{\mathbf{g}}^{[t]}$.
+The resulting error is put in $\zeta$ and be kept small due to the exponential weights of past gradients
+\item Therefore: $\mathbf{s}^{[t]}$ is a biased estimator of $\hat{\mathbf{g}}^{[t]}$
+\item But bias vanishes for $t \to \infty$ ($\rho_1^t \rightarrow 0$)
+\item Ignoring $\zeta$, we correct for the bias by $\hat{\mathbf{s}}^{[t]} = \frac{\mathbf{s}^{[t]}}{(1 - \rho_1^{t})}$
+\item Analogously: $\hat{\mathbf{r}}^{[t]} = \frac{\mathbf{r}^{[t]}}{(1 - \rho_2^{t})}$
+\end{framei}
+
+
+\begin{frame2}{Comparison of optimizers: Animation}
+\vfill
+\splitV[0.49]{
+\imageC[1][https://giphy.com/embed/SJVFO3IcVC0M0]{figure_man/sattle_point2-50.png}
+}{
+\imageC[1][https://giphy.com/embed/SJVFO3IcVC0M0]{figure_man/sattle_point2-100.png}
 }
+\vfill
+\href{https://giphy.com/embed/SJVFO3IcVC0M0}{\textcolor{blue}{Comparison}} of SGD optimizers near saddle point \\
+\textbf{Left:} After start.
+\textbf{Right:} Later \\
+All methods accelerate compared to vanilla SGD \\
+Best is RMSProp, then AdaGrad (Adam is missing here)
+\vfill
+{\scriptsize Credits: Dettmers (2015) and Radford}
+\end{frame2}
 
-\begin{vbframe}{Comparison on quadratic form}
 
-\begin{figure}
-    \scalebox{0.8}{\includegraphics{figure_man/momentum/comparison_adam.png}} \\
-    SGD vs. SGD with Momentum vs. Adam on a quadratic form. 
-\end{figure} 
-
-\end{vbframe}
+\begin{frame2}{Comparison on quadratic form}
+\vfill
+\imageC[0.8]{figure_man/momentum/comparison_adam.png}
+\vfill
+SGD vs SGD with Momentum vs Adam on a quadratic form
+\end{frame2}
 
 \endlecture
 \end{document}
-
-

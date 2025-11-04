@@ -8,401 +8,222 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  First order methods
-  }{% Lecture title  
-  GD with Momentum
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/momentum_illustration_medium.png
-  }{
-    \item Recap of GD problems
-    \item Momentum definition
-    \item Unrolling formula
-    \item Examples
-    \item Nesterov
+\titlemeta{
+First order methods
+}{
+GD with Momentum
+}{
+figure_man/momentum_illustration_medium.png
+}{
+\item Recap of GD problems
+\item Momentum definition
+\item Unrolling formula
+\item Examples
+\item Nesterov
 }
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{vbframe}{Recap: Weaknesses of Gradient Descent}
-\begin{itemize}
+\begin{framei}{Recap: Weaknesses of Gradient Descent}
 \item \textbf{Zig-zagging behavior:} For ill-conditioned problems, GD moves with a zig-zag course to the optimum, since the gradient points approximately orthogonal in the shortest direction to the minimum.
 \item \textbf{Slow crawling:} may vanish rapidly close to stationary points (e.g. saddle points) and hence also slows down progress.
 \item \textbf{Trapped in stationary points:} In some functions GD converges to stationary points (e.g. saddle points) since gradient on all sides is fairly flat and the step size is too small to pass this flat part.
-\end{itemize}
-
-\lz 
-
-\textbf{Aim}: More efficient algorithms which quickly reach the minimum.
-
-\end{vbframe}
-
-% \item (Stochastic) Gradient Descent not optimal in areas with significantly stronger curvature in one direction than in the others (for example saddle point)
-% \item SGD is influenced by strong curvature of the optimization function and moves slowly towards the minimum.
+\item[\textbf{Aim}] More efficient algorithms which quickly reach the minimum.
+\end{framei}
 
 
-
-\begin{vbframe}{GD with momentum}
-
+\begin{frame2}{GD with Momentum}
+\splitV[0.55]
+{
 \begin{itemize}
-    \item \textbf{Idea:} \enquote{Velocity} $\bm{\nu}$: Increasing if successive gradients point in the same direction but decreasing if they point in opposite directions
-
-    \begin{figure}
-    	\includegraphics[width = 0.5\textwidth]{figure_man/momentum_illustration_medium.png} \\
-    	\begin{footnotesize}
-    	Source: Khandewal, \emph{GD with Momentum, RMSprop and Adam Optimizer}, 2020. 
-    	\end{footnotesize}
-    \end{figure}
-    
-    \item $\bm{\nu}$ is weighted moving average of previous gradients:
-    % \begin{eqnarray*}
-    %         \bm{\nu}_{i+1} &\leftarrow& \varphi \bm{\nu}_{i} + \underbrace{\nabla_{\bm{\theta}_i} L(y^{(j)}, f_{\bm{\theta}_i}(x^{(j)}))}_{g(\bm{\theta})} \\
-    %         \bm{\theta}_{i + 1} &\leftarrow&  \bm{\theta}_{i} - \lambda \bm{\nu}_{i+1}
-    % \end{eqnarray*}
-    \begin{align*}
-        \bm{\nu}^{[t+1]} &= \varphi \bm{\nu}^{[t]} - \alpha \nabla f(\xv^{[t]}) \\
-        \xv^{[t+1]} &= \xv^{[t]} + \bm{\nu}^{[t+1]}
-    \end{align*}
-    \item $\varphi \in [0,1)$ is additional hyperparameter
+\item \textbf{Idea:} ``Velocity'' $\bm{\nu}$: Increasing if successive gradients point in the same direction but decreasing if they point in opposite directions
+\item $\bm{\nu}$ is weighted moving average of previous gradients:
+\begin{align*}
+\bm{\nu}^{[t+1]} &= \varphi \bm{\nu}^{[t]} - \alpha \nabla f(\xv^{[t]}) \\
+\xv^{[t+1]} &= \xv^{[t]} + \bm{\nu}^{[t+1]}
+\end{align*}
+\item $\varphi \in [0,1)$ is additional hyperparameter
 \end{itemize}
-
-\framebreak
-
-\begin{itemize}
-    % \item Adaptive step size and therefore faster convergence than GD possible
-    % \item In GD: the step size is simply the gradient multiplied by the learning rate $\alpha$
-    \item Length of a single step depends on how large and aligned a sequence of gradients is
-    \item Length of a single step grows if many successive gradients point in the same direction
-    \item $\varphi$ determines how strongly previous gradients are included in $\bm{\nu}$
-    \item Common values for $\varphi$ are 0.5, 0.9 and even 0.99
-    \item In general, the larger $\varphi$ is in relation to $\alpha$, the more strongly previous gradients influence the current direction
-    \item \textbf{Special case} $\varphi = 0$: \enquote{vanilla} gradient descent
-    \item \textbf{Intuition:} GD with \enquote{short term memory} for the direction of motion
-\end{itemize}
-
-\end{vbframe}
-
-%<<eval = FALSE, echo = FALSE>>=
-%# generate base data
-%options(warn = -1)
-%x0 = seq(-3L, 3L, length.out = 200L)
-%y0 = cos(x0)
-%x1 = x0
-%y1 = y0 + rnorm(n = length(y0), sd = 0.3)
+}
+{
+\imageC[0.6]{figure_man/momentum_illustration_medium.png} %SOURCE: Khandewal, GD with Momentum, RMSprop and Adam Optimizer, 2020.
+\smallskip
+\footnotesize Source: Khandewal, \emph{GD with Momentum, RMSprop and Adam Optimizer}, 2020.
+}
+\end{frame2}
 
 
-%# generate moving average
-%ma1 = data.frame(x = x0[(1/(1-0.5)):length(x0)], y = rollapply(y1, FUN = mean, width = (1/(1-0.5))))
-%ma1 = rbind(rep(NA, length.out = 2*(200L - length(ma1$x))), ma1)
-%ma2 = data.frame(x = x0[(1/(1-0.95)):length(x0)], y = rollapply(y1, FUN = mean, width = (1/(1-0.95) + 1)))
-%ma2 = rbind(data.frame(x = rep(NA, length.out = (200L - length(ma2$x))),
-%                       y = rep(NA, length.out = (200L - length(ma2$x)))), ma2)
-%ma3 = data.frame(x = x0[(1/(1-0.99)):length(x0)], y = rollapply(y1, FUN = mean, width = (1/(1-0.99) + 1)))
-%ma3 = rbind(data.frame(x = rep(NA, length.out = (200L - length(ma3$x))),
-%                       y = rep(NA, length.out = (200L - length(ma3$x)))), ma3)
+\begin{framei}{GD with Momentum: Characteristics}
+\item Length of a single step depends on how large and aligned a sequence of gradients is
+\item Length of a single step grows if many successive gradients point in the same direction
+\item $\varphi$ determines how strongly previous gradients are included in $\bm{\nu}$
+\item Common values for $\varphi$ are 0.5, 0.9 and even 0.99
+\item In general, the larger $\varphi$ is in relation to $\alpha$, the more strongly previous gradients influence the current direction
+\item \textbf{Special case} $\varphi = 0$: ``vanilla'' gradient descent
+\item \textbf{Intuition:} GD with ``short term memory'' for the direction of motion
+\end{framei}
 
-%plotdata = data.frame(x0, y0, x1, y1, ma1x = ma1$x, ma1y = ma1$y, ma2x = ma2$x, ma2y = ma2$y,
-%                      ma3x = ma3$x, ma3y = ma3$y)
 
-%#plot data and moving average
-%plot = ggplot(data = plotdata, aes(x0, y0, color = x))
-%plot = plot + geom_line(aes(x0, y0, colour = "cos()"))
-%plot = plot + geom_point(aes(x1, y1, colour = "cos() + noise"))
-%plot = plot + xlab("x")
-%plot = plot + ylab("y")
-%plot = plot + xlim(-3, 3)
-%plot = plot + scale_colour_manual(values = c("black", "red"))
-%plot = plot + theme(legend.position = "bottom")
-%plot = plot + theme(legend.title = element_blank())
-
-%plot2 = ggplot(data = plotdata, aes(ma1x, ma1y, color = x))
-%plot2 = plot2 + geom_line(aes(ma1x, ma1y, colour = paste('phi', " = 0.5")))
-%plot2 = plot2 + geom_line(aes(ma2x, ma2y, colour = paste('phi', " = 0.95")))
-%plot2 = plot2 + geom_line(aes(ma3x, ma3y, colour = paste('phi', " = 0.99")))
-%plot2 = plot2 + geom_point(aes(x1, y1, colour = "cos() + noise"))
-%plot2 = plot2 + xlab("x")
-%plot2 = plot2 + ylab("y")
-%plot2 = plot2 + xlim(-3, 3)
-%plot2 = plot2 + scale_colour_manual(values = c("red", "green", "black", "orange", "yellow"))
-%plot2 = plot2 + theme(legend.position = "bottom")
-%plot2 = plot2 + theme(legend.title = element_blank())
-
-%grid.arrange(plot, plot2, ncol = 2)
-
-%options(warn = 0)
-%@
-
-% \scriptsize
-% \begin{itemize}
-% \item Kleines $\varphi$ (z.B. $\varphi = 0.5$) führt zu starker Fluktuation .
-% \item Großes $\varphi$ (z.B. $\varphi = 0.99$) führt zu guter Glättung jedoch Verschiebung.
-% \end{itemize}
-% $\rightarrow$ Geringe Richtungsänderung: Erhöhe durch großes $\varphi$ die Geschwindigkeit des Algorithmus.
-% \medskip
-%
-% $\rightarrow$ Starke Richtungsänderung: Verringere durch kleines $\varphi$ die Geschwindigkeit um die Krümmung besser abzubilden.
-%
-% \framebreak
-
-%\textbf{Connection of velocity, momentum and gradient:}
-%
-%We consider the momentum in iteration $t$ depending on the previous iterations:
-%
-%\vspace*{-0.5cm}
-%  \begin{eqnarray*}
-%    \bm{\nu}^{[t]} &\leftarrow& \varphi \bm{\nu}^{[t-1]} + \nabla f(\xv^{[t]}) \\
-%    \bm{\nu}^{[t-1]} &\leftarrow& \varphi \bm{\nu}^{[t-2]} + \nabla f(\xv^{[t-1]}) \\
-%    \bm{\nu}^{[t-2]} &\leftarrow& \varphi \bm{\nu}^{[t-3]} + \nabla f(\xv^{[t-2]}) \\
-%    \\
-%    \bm{\nu}^{[t]} &=& \varphi(\varphi(\varphi \bm{\nu}^{[t-3]} + \nabla f(\xv^{[t-2]})) + \nabla f(\xv^{[t-1]})) + \nabla f(\xv^{[t]})\\
-%    \bm{\nu}^{[t]} &=& \varphi^{3} \bm{\nu}^{[t-3]} + \varphi^{2} \nabla f(\xv^{[t-2]}) +\varphi \nabla f(\xv^{[t-1]}) + \nabla f(\xv^{[t]})
-%  \end{eqnarray*}
-%  \vspace*{-0.6cm}
-%\begin{itemize}
-%% \item Da $\varphi \in [0,1]$ geht die Funktion $g(\theta_{t-n}), n\in \N$ mit geringerem Gewicht in $\bm{\nu}_{t}$ ein als $g(\theta_{t-(n-1)})$.
-%\item Since $\varphi \in [0,1]$, the gradient of the iteration $t-1$ influences the velocity $\bm{\nu}^{[t]}$ more than the gradients of the previous iterations ($t-2, t-3,...$).
-%\end{itemize}
-
-%\framebreak
-
-\begin{frame}{Momentum: Analysis}
-\footnotesize
-
+\begin{frame2}[footnotesize]{Momentum: Analysis}
 \begin{equation*}
-    \begin{aligned}
-        \bm{\nu}^{[1]} &= \textcolor{blue}{\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]})} \\[0.1cm]
-        \xv^{[1]} &= \xv^{[0]} + \textcolor{blue}{\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]})} \\[0.1cm]
-        \pause
-        \bm{\nu}^{[2]} &= \textcolor{red}{\varphi \bm{\nu}^{[1]} - \alpha \nabla f(\xv^{[1]})} \\
-        &= \textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\[0.1cm]
-        \xv^{[2]} &= \xv^{[1]} +\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\[0.1cm]
-        \pause
-        \bm{\nu}^{[3]} &= \textcolor{green}{\varphi \bm{\nu}^{[2]} - \alpha \nabla f(\xv^{[2]})} \\
-        &= \textcolor{green}{\varphi} (\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})}) - \textcolor{green}{\alpha \nabla f(\xv^{[2]})} \\[0.1cm]
-        \xv^{[3]} &= \xv^{[2]} + \textcolor{green}{\varphi} (\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})}) - \textcolor{green}{\alpha \nabla f(\xv^{[2]})}  \\
-        &= \xv^{[2]} + \varphi^3\bm{\nu}^{[0]} - \varphi^2\alpha\nabla f(\xv^{[0]}) - \varphi \alpha \nabla f(\xv^{[1]}) - \alpha \nabla f(\xv^{[2]}) \\
-        &= \xv^{[2]} - \alpha(\varphi^2 \nabla f(\xv^{[0]}) + \varphi^1 \nabla f(\xv^{[1]}) + \varphi^0 \nabla f(\xv^{[2]})) + \varphi^3 \bm{\nu}^{[0]} \\
-        \pause
-        \xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j \nabla f(\xv^{[t-j]}) + \varphi^{t+1}\bm{\nu}^{[0]}
-    \end{aligned}
+\begin{aligned}
+\bm{\nu}^{[1]} &= \textcolor{blue}{\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]})} \\[0.1cm]
+\xv^{[1]} &= \xv^{[0]} + \textcolor{blue}{\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]})} \\[0.1cm]
+\bm{\nu}^{[2]} &= \textcolor{red}{\varphi \bm{\nu}^{[1]} - \alpha \nabla f(\xv^{[1]})} \\
+&= \textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\[0.1cm]
+\xv^{[2]} &= \xv^{[1]} +\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\[0.1cm]
+\bm{\nu}^{[3]} &= \textcolor{green}{\varphi \bm{\nu}^{[2]} - \alpha \nabla f(\xv^{[2]})} \\
+&= \textcolor{green}{\varphi} (\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})}) - \textcolor{green}{\alpha \nabla f(\xv^{[2]})} \\[0.1cm]
+\xv^{[3]} &= \xv^{[2]} + \textcolor{green}{\varphi} (\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})}) - \textcolor{green}{\alpha \nabla f(\xv^{[2]})}  \\
+&= \xv^{[2]} + \varphi^3\bm{\nu}^{[0]} - \varphi^2\alpha\nabla f(\xv^{[0]}) - \varphi \alpha \nabla f(\xv^{[1]}) - \alpha \nabla f(\xv^{[2]}) \\
+&= \xv^{[2]} - \alpha(\varphi^2 \nabla f(\xv^{[0]}) + \varphi^1 \nabla f(\xv^{[1]}) + \varphi^0 \nabla f(\xv^{[2]})) + \varphi^3 \bm{\nu}^{[0]} \\
+\xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j \nabla f(\xv^{[t-j]}) + \varphi^{t+1}\bm{\nu}^{[0]}
+\end{aligned}
 \end{equation*}
-\end{frame}
+\end{frame2}
 
-\begin{vbframe}{Momentum: Intuition}
+
+\begin{frame2}[footnotesize]{Momentum: Intuition}
 Suppose momentum always observes the same gradient $\nabla f(\xv^{[t]})$:
-
-\vspace{-\baselineskip}
-
 \begin{align*}
-    \footnotesize
-    \xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j  \nabla f(\xv^{[j]}) + \varphi^{t+1}\bm{\nu}^{[0]} \\
-    &= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \displaystyle\sum_{j = 0}^{t} \varphi^j + \varphi^{t+1}\bm{\nu}^{[0]} \\
-    &= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1 - \varphi^{t+1}}{1 - \varphi} + \varphi^{t+1} \bm{\nu}^{[0]} \\
-    &\to \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1}{1 - \varphi} \qquad \text{ for } t \to \infty. 
+\xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j  \nabla f(\xv^{[j]}) + \varphi^{t+1}\bm{\nu}^{[0]} \\
+&= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \displaystyle\sum_{j = 0}^{t} \varphi^j + \varphi^{t+1}\bm{\nu}^{[0]} \\
+&= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1 - \varphi^{t+1}}{1 - \varphi} + \varphi^{t+1} \bm{\nu}^{[0]} \\
+&\to \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1}{1 - \varphi} \qquad \text{ for } t \to \infty. 
 \end{align*}
-
 Momentum accelerates along $- \nabla f(\xv^{[t]})$ to terminal velocity yielding step size $\alpha / (1 - \varphi)$.
-
 \medskip
-
 \textbf{Example:} Momentum with $\varphi = 0.9$ corresponds to a tenfold increase in original step size $\alpha$ compared to vanilla gradient descent
+\end{frame2}
 
-\framebreak
 
-Vector $\bm{\nu}^{[3]}$ (for $\bm{\nu}^{[0]} = 0$): 
+\begin{frame2}[footnotesize]{Momentum: Intuition (Example)}
+Vector $\bm{\nu}^{[3]}$ (for $\bm{\nu}^{[0]} = 0$):
 \begin{align*}
-    \bm{\nu}^{[3]} &= \varphi (\varphi (\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]})) - \alpha \nabla f(\xv^{[1]})) - \alpha \nabla f(\xv^{[2]}) \\
-    &= - \varphi^2\alpha\nabla f(\xv^{[0]}) - \varphi \alpha \nabla f(\xv^{[1]}) - \alpha \nabla f(\xv^{[2]})
+\bm{\nu}^{[3]} &= \varphi (\varphi (\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]})) - \alpha \nabla f(\xv^{[1]})) - \alpha \nabla f(\xv^{[2]}) \\
+&= - \varphi^2\alpha\nabla f(\xv^{[0]}) - \varphi \alpha \nabla f(\xv^{[1]}) - \alpha \nabla f(\xv^{[2]})
 \end{align*}
- 
-\vspace*{-1.5\baselineskip}
- 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.7\textwidth]{figure_man/momentum_vectors.png} \\
-    \caption*{
-        \centering \footnotesize
-        Successive gradients pointing in same/different directions increase/decrease velocity.
-    
-        Further geometric intuitions and detailed explanations:
-        \url{https://distill.pub/2017/momentum/}
-    }
-\end{figure}
-
-\end{vbframe}
+\imageC[0.7]{figure_man/momentum_vectors.png}
+\smallskip
+\footnotesize Successive gradients pointing in same/different directions increase/decrease velocity.\\
+\footnotesize Further geometric intuitions and detailed explanations: \url{https://distill.pub/2017/momentum/}
+\end{frame2}
 
 
-\begin{vbframe}{GD with momentum: zig-zag behaviour}
-
-Consider a two-dimensional quadratic form $\fx = x_1^2/2 + 10 x_2$.
-
+\begin{frame2}{GD with Momentum: Zig-Zag Behaviour}
+Consider a two-dimensional quadratic form $\fx = x_1^2/2 + 10 x_2$.\\
 \medskip
-
 Let $\xv^{[0]} = (10, 1)^\top$ and $\alpha = 0.1$.
+\imageC[0.8]{figure_man/momentum/compare_gd_momentum.png}
+\smallskip
+\footnotesize GD shows stronger zig-zag behaviour than GD with momentum.
+\end{frame2}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{figure_man/momentum/compare_gd_momentum.png}
-    \caption*{GD shows stronger zig-zag behaviour than GD with momentum.}
-\end{figure}
 
-\framebreak
-
+\begin{frame2}{Momentum: Caution}
 \textbf{Caution:}
-
 \begin{itemize}
-    \item If momentum is too high, minimum is possibly missed
-    \item We might go back and forth around or between local minima
+\item If momentum is too high, minimum is possibly missed
+\item We might go back and forth around or between local minima
 \end{itemize}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{figure_man/momentum/comparison_momentum_overshoot.png}
-\end{figure}
-
-\end{vbframe}
+\imageC[0.8]{figure_man/momentum/comparison_momentum_overshoot.png}
+\end{frame2}
 
 
-\begin{vbframe}{GD with momentum: saddle points}
-
-Consider the two-dimensional quadratic form $f(\xv) = x_{1}^{2} - x_{2}^{2}$ with a saddle point at $(0, 0)^\top$.
-
+\begin{frame2}{GD with Momentum: Saddle Points}
+Consider the two-dimensional quadratic form $f(\xv) = x_{1}^{2} - x_{2}^{2}$ with a saddle point at $(0, 0)^\top$.\\
 \medskip
-
 Let $\xv^{[0]} = (-1/2, 10^{-3})^\top$ and $\alpha = 0.1$.
+\imageC[0.5]{figure_man/momentum/sgd_momentum_saddlepoint.png}
+\smallskip
+\footnotesize GD was slowing down at the saddle point (vanishing gradient).\\
+\footnotesize GD with momentum ``breaks out'' of the saddle point and moves on.
+\end{frame2}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\textwidth]{figure_man/momentum/sgd_momentum_saddlepoint.png}
-    \caption*{\centering
-        GD was slowing down at the saddle point (vanishing gradient).
-        
-        GD with momentum \enquote{breaks out} of the saddle point and moves on.}
-\end{figure}
 
-%\framebreak
-%
-%\textbf{Comparison of GD and GD with momentum}
-%\medskip
-%
-%  \begin{figure}
-%  \centering
-%    \includegraphics[height = 5 cm, width = 9 cm]{figure_man/gd_vs_momentum.png}
-%  \end{figure}
-%  \vspace*{-0.4cm}
-%  \begin{footnotesize}
-%  \begin{itemize}
-%  \item GD (left) requires many steps and terminates in local minimum.
-%  \item Momentum (right) terminates in global minimum.
-%  \end{itemize}
-%  \end{footnotesize}
-\end{vbframe}
-
-\begin{vbframe}{ERM for NN with GD}
-
-Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize 
-
-\vspace*{-0.3cm}
-
+\begin{frame2}{ERM for NN with GD}
+Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize
 $$
-	\risket = \sumin \left(\fxt - \yi\right)^2
+\risket = \sumin \left(\fxt - \yi\right)^2
 $$
+where $\fxt$ is a neural network with 2 hidden layers (2 units each).\\
+\medskip
+\imageC[0.6]{figure_man/gradient_descent_NN_0.pdf}
+\end{frame2}
 
-\vspace*{-0.1cm}
 
-where $\fxt$ is a neural network with 2 hidden layers (2 units each). 
+\begin{frame2}{ERM for NN with GD: 10 Iterations}
+After $10$ iters of GD:
+\splitV[0.55]
+{
+\imageC[1]{figure_man/gradient_descent_NN_10_surface_0.5.pdf}
+}
+{
+\imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
+}
+\end{frame2}
 
-\vspace*{-1.5cm}
 
-\begin{figure}
-	\includegraphics[width=0.6\textwidth]{figure_man/gradient_descent_NN_0.pdf}
-\end{figure}
+\begin{frame2}{ERM for NN with GD: 100 Iterations}
+After $100$ iters of GD:
+\splitV[0.55]
+{
+\imageC[1]{figure_man/gradient_descent_NN_100_surface_0.5.pdf}
+}
+{
+\imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
+}
+\end{frame2}
 
-\framebreak 
 
-After $10$ iters of GD: 
-
-\begin{figure}
-	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_10_surface_0.5.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history_0.5.pdf} 
-\end{figure}
-
-\framebreak 
-
-After $100$ iters of GD: 
-
-\begin{figure}
-	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_100_surface_0.5.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
-\end{figure}
-
-\framebreak 
-
+\begin{frame2}{ERM for NN with GD: 300 Iterations}
 After $300$ iters of GD:
+\splitV[0.55]
+{
+\imageC[1]{figure_man/gradient_descent_NN_300_surface_0.5.pdf}
+}
+{
+\imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
+}
+\end{frame2}
 
-\begin{figure}
-	\includegraphics[width=0.55\textwidth]{figure_man/gradient_descent_NN_300_surface_0.5.pdf} ~~ \includegraphics[width=0.4\textwidth]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
-\end{figure}
 
-\framebreak
-\begin{center}
-    Gradient Descent with and without momentum
-\end{center}
+\begin{frame2}{Gradient Descent with and without Momentum}
+\centering Gradient Descent with and without momentum
+\medskip
+\splitVCC[0.5]
+{
+\imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
+}
+{
+\imageC[1]{figure_man/gradient_descent_NN_300_history_0.pdf}
+}
+\end{frame2}
 
-\begin{figure}
-    \includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_NN_300_history_0.5.pdf} ~~
-	\includegraphics[width=0.45\textwidth]{figure_man/gradient_descent_NN_300_history_0.pdf}
-\end{figure}
 
-\end{vbframe}
-
-\begin{vbframe}{Nesterov accelerated gradient}
-
+\begin{frame2}{Nesterov Accelerated Gradient}
 \begin{itemize}
-    \item Slightly modified version: \textbf{Nesterov accelerated gradient}
-    \item Stronger theoretical convergence guarantees for convex functions
-    \item Avoid moving back and forth near optima
+\item Slightly modified version: \textbf{Nesterov accelerated gradient}
+\item Stronger theoretical convergence guarantees for convex functions
+\item Avoid moving back and forth near optima
 \end{itemize}
-
-\vspace{-\baselineskip}
-
 \begin{align*}
-    \bm{\nu}^{[t+1]} &= \varphi \bm{\nu}^{[t]} - \alpha \nabla f(\textcolor{orange}{\xv^{[t]} + \varphi \bm{\nu}^{[t]}}) \\
-    \xv^{[t+1]} &= \xv^{[t]} + \bm{\nu}^{[t+1]}
+\bm{\nu}^{[t+1]} &= \varphi \bm{\nu}^{[t]} - \alpha \nabla f(\textcolor{orange}{\xv^{[t]} + \varphi \bm{\nu}^{[t]}}) \\
+\xv^{[t+1]} &= \xv^{[t]} + \bm{\nu}^{[t+1]}
 \end{align*}
-
-\begin{figure}
-    \centering
-    \includegraphics[width = 0.8\textwidth]{figure_man/nesterov.jpeg}
-    \caption*{\centering \small
-        Nesterov momentum update evaluates gradient at the "look-ahead" position.
-    
-        (Source: \url{https://cs231n.github.io/neural-networks-3/})
-    }
-\end{figure}
-
-\end{vbframe}
+\imageC[0.8]{figure_man/nesterov.jpeg}
+\smallskip
+\footnotesize Nesterov momentum update evaluates gradient at the ``look-ahead'' position.\\
+\footnotesize Source: \url{https://cs231n.github.io/neural-networks-3/}
+\end{frame2}
 
 
-\begin{vbframe}{Momentum vs. Nesterov}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{figure_man/nesterov_momentum.png}
-    \caption*{\centering \small
-        GD with momentum (\textbf{left}) vs. GD with Nesterov momentum (\textbf{right}).
-
-        Near minima, momentum makes a large step due to gradient history.
-        
-        Nesterov momentum \enquote{looks ahead} and reduces effect of gradient history.
-        
-        (Source: Chandra, 2015)
-    }
-\end{figure}
-
-\end{vbframe}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame2}{Momentum vs. Nesterov}
+\imageC[0.8]{figure_man/nesterov_momentum.png}
+\smallskip
+\footnotesize GD with momentum (\textbf{left}) vs. GD with Nesterov momentum (\textbf{right}).\\
+\footnotesize Near minima, momentum makes a large step due to gradient history.\\
+\footnotesize Nesterov momentum ``looks ahead'' and reduces effect of gradient history.\\
+\footnotesize Source: Chandra, 2015.
+\end{frame2}
 
 \endlecture
 \end{document}
-

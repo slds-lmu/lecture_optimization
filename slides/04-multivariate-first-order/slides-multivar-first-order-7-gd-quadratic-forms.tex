@@ -8,189 +8,113 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  First order methods
-  }{% Lecture title  
-  GD on quadratic forms
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/gd.png
-  }{
-    \item Eigendecomposition of\\quadratic forms
-    \item GD steps in eigenspace
+\titlemeta{
+First order methods
+}{
+GD on quadratic forms
+}{
+figure_man/gd.png
+}{
+\item Eigendecomposition of\\quadratic forms
+\item GD steps in eigenspace
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{framei}{Quadratic forms \& GD}
+\item We consider the quadratic function $q(\xv) = \xv^T \Amat \xv - \mathbf{b}^T \xv$
+\item We assume that the Hessian $\mathbf{H} = 2 \Amat$ has full rank
+\item We assume $q$ is convex, so $\Amat$ is psd
+\item The optimal solution is $\xv^\ast = \frac{1}{2} \Amat^{-1} \mathbf{b}$
+\item With $\nabla q(\xv) = 2 \Amat \xv - \mathbf{b}$, gradient descent iterates as
+\vfill
+$$
+\xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})
+$$
+\vfill
+\imageC[0.5][http://doi.org/10.23915/distill.00006]{figure_man/gd.png} % SOURCE: Distill "Why Momentum Really Works" (2017)
+\end{framei}
 
-\begin{vbframe}{Quadratic forms \& GD}
 
-\begin{itemize}
-	\item We consider the quadratic function $q(\xv) = \xv^\top \Amat \xv - \mathbf{b}^\top \xv$. 
-    \item We assume that Hessian $\mathbf{H} = 2 \Amat$ has full rank
-\item We assume $q$ is convex, so A psd.
-		\item Optimal solution is $\xv^\ast = \frac{1}{2} \Amat^{-1} \mathbf{b}$ 
-	\item As $\nabla q(\xv) = 2 \Amat \xv - \mathbf{b}$, iterations of gradient descent are
-\end{itemize}
+\begin{framei}{Eigendecomposition of quadratic forms}
+\item We want to work in the coordinate system induced by $q$
+\item \textbf{Recall:} That system is given by the eigenvectors of $\mathbf{H} = 2\Amat$
+\item Eigendecomposition: $\Amat = \mathbf{V} \bm{\Lambda} \mathbf{V}^T$
+\item $\mathbf{V}$ contains eigenvectors $\mathbf{v}_i$ and $\bm{\Lambda} = \text{diag}(\lambda_1, \dots, \lambda_n)$ stores eigenvalues
+\item Change of basis: $\mathbf{w}^{[t]} = \mathbf{V}^T (\xv^{[t]} - \xv^\ast)$
+\vfill
+\imageC[0.45]{figure_man/gd_eigenspace.png}
+\end{framei}
 
-\vspace{-0.5\baselineskip}
 
-\begin{equation*}
-    \xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})
-\end{equation*}
+\begin{framei}{GD steps in eigenspace}
+\item With $\mathbf{w}^{[t]} = \mathbf{V}^T (\xv^{[t]} - \xv^\ast)$, a single GD step starts with
+$$
+\xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})
+$$
+\item This becomes
+$$
+\mathbf{w}^{[t+1]} = \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}
+$$
+\end{framei}
 
-\vspace{-\baselineskip}
 
-\begin{figure}
-	\includegraphics[height=0.3\textwidth, keepaspectratio]{figure_man/gd.png}
-    \caption*{\centering \footnotesize
-        The following slides follow the blog post "Why Momentum Really Works", Distill, 2017.
-        \url{http://doi.org/10.23915/distill.00006}}
-\end{figure}
-
-\end{vbframe}
-
-\begin{vbframe}{Eigendecomposition of quadratic forms}
-
-\begin{itemize}
-    \setlength{\itemsep}{0.5em}
-    \item We want to work in the coordinate system given by $q$
-    \item \textbf{Recall:} Coordinate system is given by the eigenvectors of $\mathbf{H} = 2\Amat$
-    \item Eigendecomposition of $\Amat = \mathbf{V} \bm{\Lambda} \mathbf{V}^\top$
-    \item $\mathbf{V}$ contains eigenvectors $\mathbf{v}_i$ and $\bm{\Lambda} = \text{diag}(\lambda_1, ..., \lambda_n)$ eigenvalues
-    \item Change of basis: $\mathbf{w}^{[t]} = \mathbf{V}^\top (\xv^{[t]} - \xv^\ast)$
-\end{itemize}
-
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/gd_eigenspace.png} \\
-\end{figure}
-
-\end{vbframe}
-
-\begin{vbframe}{GD steps in eigenspace}
-
-With $\mathbf{w}^{[t]} = \mathbf{V}^\top (\xv^{[t]} - \xv^\ast)$, a single GD step
-
-\begin{equation*}
-    \xv^{[t + 1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})
-\end{equation*}
-becomes
-\begin{equation*}
-    \mathbf{w}^{[t+1]} = \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}.
-\end{equation*}
-
-\framebreak
-
-\textbf{Proof} (for $\mathbf{w}^{[t+1]} = \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}$)\textbf{:}
-
-\begin{itemize}
-    \item A single GD step means
-        \begin{equation*}
-            \xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})
-        \end{equation*}
-    \item Then:
-        \begin{align*}
-            \mathbf{V}^\top (\xv^{[t+1]} - \xv^\ast) &= \mathbf{V}^\top (\xv^{[t]} - \xv^\ast) - \alpha \mathbf{V}^\top (2 \Amat \xv^{[t]} - \mathbf{b}) \\
-            \mathbf{w}^{[t+1]} &= \mathbf{w}^{[t]} - \alpha \mathbf{V}^\top (2 \Amat \xv^{[t]} - \mathbf{b}) \\
-            \mathbf{w}^{[t+1]} &= \mathbf{w}^{[t]} - \alpha \mathbf{V}^\top (2 \Amat (\xv^{[t]} - \xv^\ast) + \underbrace{2 \Amat \xv^\ast - \mathbf{b}}_{=0}) \\
-            &= \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{V}^\top (\xv^{[t]} - \xv^\ast) \\
-            &= \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}
-        \end{align*}
-\end{itemize}
-\end{vbframe}
-
-\begin{vbframe}{GD steps in eigenspace}
-
-Therefore:
-
-\vspace{-\baselineskip}
-
+\begin{framei}[fs=small]{GD steps in eigenspace: proof}
+\item A single GD step satisfies $\xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})$
+\item Multiplying with $\mathbf{V}^T$ and subtracting $\xv^\ast$ yields
 \begin{align*}
-    w_i^{[t+1]} &= w_i^{[t]} - 2 \alpha \lambda_i w_i^{[t]} \\
-    &= (1 - 2 \alpha \lambda_i) w_i^{[t]} \\
-    &= \cdots \\
-    &= (1 - 2 \alpha \lambda_i)^{t+1} w_i^{[0]}
+\mathbf{V}^T (\xv^{[t+1]} - \xv^\ast) &= \mathbf{V}^T (\xv^{[t]} - \xv^\ast) - \alpha \mathbf{V}^T (2 \Amat \xv^{[t]} - \mathbf{b}) \\
+\mathbf{w}^{[t+1]} &= \mathbf{w}^{[t]} - \alpha \mathbf{V}^T (2 \Amat (\xv^{[t]} - \xv^\ast) + \underbrace{2 \Amat \xv^\ast - \mathbf{b}}_{=0}) \\
+&= \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{V}^T (\xv^{[t]} - \xv^\ast) \\
+&= \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}
 \end{align*}
-
-\framebreak
-
-\end{vbframe}
-
-\begin{vbframe}{GD error in original space}
-
-\begin{itemize}
-    \setlength{\itemsep}{1em}
-    \item Move back to \textbf{original space}:
-        \begin{equation*}
-            \xv^{[t]} - \xv^\ast = \mathbf{V} \mathbf{w}^{[t]} = \sum_{i = 1}^{d} (1 - 2 \alpha \lambda_i)^t w_i^{[0]} \mathbf{v}_i 
-        \end{equation*}
-    \item This gives us the difference in x-space in closed form
-    \item The difference vector is written in the eigen-basis, the initial error components $w^{[0]}_i$ decay with rate $1 - 2 \alpha \lambda_i$,
-    \item The smaller this term (in abs value), the faster we decay, the closer to 1, the slower we are
-    \item For most step-sizes, eigenvectors with largest eigenvalues converge fastest. Works especially well in the first iterations.
-\end{itemize}
-
-\framebreak
-
-We can also analyze the regret in y-space:
-
-\begin{equation*}
-    q(\xv^{[t]}) - q(\xv^\ast) = \frac{1}{2} \sum_{i}^{d} (1 - 2 \alpha \lambda_i)^{2t} \lambda_i (w_i^{[0]})^2
-\end{equation*}
-
-\begin{itemize}
-       
-    \item This is not hard to show, formulas become only somewhat lengthy
-    \item Rates become somewhat equalized at the end
-
-\end{itemize}
+\end{framei}
 
 
-\begin{figure}
-	\includegraphics[height=0.35\textwidth, keepaspectratio]{figure_man/gd_conv.png} \\
-\end{figure}
+\begin{frame2}{GD steps in eigenspace}
+Therefore, for each coordinate $i$:
+\begin{align*}
+w_i^{[t+1]} &= w_i^{[t]} - 2 \alpha \lambda_i w_i^{[t]} \\
+&= (1 - 2 \alpha \lambda_i) w_i^{[t]} \\
+&= (1 - 2 \alpha \lambda_i)^{t+1} w_i^{[0]}.
+\end{align*}
+\end{frame2}
 
 
+\begin{framei}{GD error in original space}
+\item Move back to the original space:
+$$
+\xv^{[t]} - \xv^\ast = \mathbf{V} \mathbf{w}^{[t]} = \sum_{i = 1}^{d} (1 - 2 \alpha \lambda_i)^t w_i^{[0]} \mathbf{v}_i
+$$
+\item This gives the difference in $\xv$-space in closed form
+\item The difference vector is written in the eigenbasis, initial error components $w_i^{[0]}$ decay with rate $1 - 2 \alpha \lambda_i$
+\item Smaller absolute values yield faster decay; values close to $1$ slow convergence
+\item Eigenvectors with larger eigenvalues typically converge fastest, especially early on
+\end{framei}
 
 
+\begin{framei}{GD regret}
+\item We can also analyze the regret in $y$-space:
+$$
+q(\xv^{[t]}) - q(\xv^\ast) = \frac{1}{2} \sum_{i = 1}^{d} (1 - 2 \alpha \lambda_i)^{2t} \lambda_i (w_i^{[0]})^2
+$$
+\item This is straightforward to derive; formulas only become slightly lengthy
+\item Rates become more similar once the slow modes dominate
+\vfill
+\imageC[0.45]{figure_man/gd_conv.png}
+\end{framei}
 
 
-%\framebreak
-
-%The considerations above already gave some guidance on how to choose the optimal step size $\alpha$. In order to converge, $| 1 - \alpha \lambda_i| $ must be strictly less than $1$. 
-
-%\begin{itemize}
-%	\item use eigenvectors of $A$
-%	\item GD in closed form 
-%	\item decomposing the error, plot with convergence
-%	\item choosing step size, show dependence on condition number 
-%	\item maybe with example of polynomial regression
-%\end{itemize}
-\end{vbframe}
-
-\begin{vbframe}{Optimal Stepsize}
-
-\begin{itemize}
-
-
-\item In order to converge, must have all : $ | 1 - 2 \alpha \lambda_i| < 1$ 
-
-\item So for all stepsizes $0  < \alpha \lambda_i < 1 $
-
-\item Overall rate determined by slowest error component: 
-$$ \max \limits_{i = 1, \ldots n} | 1 - 2 \alpha \lambda_i| =  \max (| 1 - 2 \alpha \lambda_1|, | 1 - 2 \alpha \lambda_n| )$$
-
-\item Minimized for $ \alpha = \frac{1} {\lambda_1 + \lambda_n}$
-
-\item Optimal rate 
-$\frac{\lambda_n / \lambda_1 - 1}{\lambda_n / \lambda_1 + 1}  $
-
-\item We again see that convergence is determined by condition $$\kappa = \frac{\lambda_n}{\lambda_1}$$
-
-\item $\kappa=1$ Is ideal, convergence in 1 step
-
-\end{itemize}
-\end{vbframe}
-
+\begin{framei}{Optimal step size}
+\item Convergence requires $|1 - 2 \alpha \lambda_i| < 1$ for all $i$
+\item Therefore $0 < \alpha \lambda_i < 1$
+\item The slowest component governs the rate:
+$$
+\max_{i = 1, \dots, n} |1 - 2 \alpha \lambda_i| = \max(|1 - 2 \alpha \lambda_1|, |1 - 2 \alpha \lambda_n|)
+$$
+\item The optimum occurs at $\alpha = \frac{1}{\lambda_1 + \lambda_n}$
+\item The optimal rate equals $\frac{\lambda_n / \lambda_1 - 1}{\lambda_n / \lambda_1 + 1}$
+\item Convergence is driven by the condition number $\kappa = \frac{\lambda_n}{\lambda_1}$
+\item $\kappa = 1$ is ideal and yields convergence in one step
+\end{framei}
 
 \endlecture
 \end{document}
-
