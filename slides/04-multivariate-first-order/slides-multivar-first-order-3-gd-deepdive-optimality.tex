@@ -11,15 +11,15 @@
 \begin{document}
 
 \titlemeta{
-  Deep dive
-  }{  
-  Gradient descent and optimality
-  }{
-  figure_man/gdes_1.png
-  }{
-    \item Convergence of GD
-    \item Proof strategy and tools
-    \item Descent lemma
+Deep dive
+}{
+Gradient descent and optimality
+}{
+figure_man/gdes_1.png
+}{
+\item Convergence of GD
+\item Proof strategy and tools
+\item Descent lemma
 }
 
 \begin{framei}[sep=L]{Setting}
@@ -28,6 +28,7 @@
 \vfill
 \imageC[0.6]{figure_man/gdes_1.png}
 \end{framei}
+
 
 \begin{framei}{Setting}
 \item\textbf{Assumptions:}
@@ -47,6 +48,7 @@ In other words: GD converges with rate $\mathcal{O}(1/k)$.
 \end{framed}
 \end{framei}
 
+
 \begin{frame2}{Proof strategy}
 \begin{enumerate}
 \item Show that $f(\xv^{[t]})$ \textbf{strictly decreases} with each iteration $t$
@@ -62,6 +64,7 @@ $$f(\xv^{[t+1]}) - f(\xv^\ast) \leq \frac{1}{2 \alpha} \left( \|\xv^{[t]}-\xv^\a
 \end{enumerate}
 \end{frame2}
 
+
 \begin{framei}{Main tool}
 \item\textbf{Recall:} First order condition of convexity
 \begin{framed}\centering
@@ -70,6 +73,7 @@ $$f(\yv) \geq \fx + \nabla \fx^\top (\yv - \xv)$$
 \imageC[0.4]{../01-mathematical-concepts/figure_man/conv-first-order-cond.png}
 \end{framed}
 \end{framei}
+
 
 \begin{framei}{Descent lemma}
 \item\textbf{Recall:} $\nabla f$ Lipschitz $\implies$ $\nabla^2 \fx \preccurlyeq L \cdot \mathbf{I}$ for all $\xv$
@@ -84,6 +88,7 @@ $$f(\yv) \geq \fx + \nabla \fx^\top (\yv - \xv)$$
 \item\textbf{Now:} One GD step with step size $\alpha \leq 1/L$:
 $$\xv \leftarrow \xv^{[t+1]} = \xv^{[t]} - \alpha \nabla f\left(\xv^{[t]}\right)$$
 \end{framei}
+
 
 \begin{framei}[fs=small]{Descent lemma}
 \item[] \begin{align*}
@@ -103,6 +108,7 @@ f(\xv^{[t+1]}) &\leq f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top(\xv^{[t+1]} - \xv^{
 \end{itemizeS}
 \end{framei}
 
+
 \begin{framei}{One step error bound}
 \item Again, first order condition of convexity gives 
 $$f(\xv^{[t]}) - f(\xv^\ast) \leq  \nabla f(\xv^{[t]})^\top (\xv^{[t]} - \xv^\ast).$$
@@ -117,6 +123,7 @@ f(\xv^{[t+1]}) - f(\xv^\ast) &\leq f(\xv^{[t]})  - \frac{\alpha}{2}\|\nabla f(\x
 \item\textbf{Note:} Line 3 $\to$ 4 is hard to see (just expand line 4).
 \end{framei}
 
+
 \begin{framei}{Finalization}
 \item Summing over iterations yields
 \begin{align*}
@@ -129,7 +136,7 @@ k ( f(\xv^{[k]}) - f(\xv^\ast)) &\leq \sum_{t=1}^{k} [f(\xv^{[t]}) - f(\xv^\ast)
 \begin{framed}
 $$f(\xv^{[t+1]}) - f(\xv^\ast) \leq \frac{\| \xv^{[0]} - \xv^\ast \|^2}{2\alpha k}$$
 \end{framed}
-\end{framei}	
+\end{framei}
 
 \endlecture
 \end{document}
