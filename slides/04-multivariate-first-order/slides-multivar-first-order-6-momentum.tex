@@ -26,12 +26,13 @@ figure_man/momentum_illustration_medium.png
 \item \textbf{Zig-zagging behavior:} For ill-conditioned problems, GD moves with a zig-zag course to the optimum, since the gradient points approximately orthogonal in the shortest direction to the minimum.
 \item \textbf{Slow crawling:} may vanish rapidly close to stationary points (e.g. saddle points) and hence also slows down progress.
 \item \textbf{Trapped in stationary points:} In some functions GD converges to stationary points (e.g. saddle points) since gradient on all sides is fairly flat and the step size is too small to pass this flat part.
-\item[\textbf{Aim}] More efficient algorithms which quickly reach the minimum.
+\spacer
+\item[] \textbf{Aim:} More efficient algorithms which quickly reach the minimum.
 \end{framei}
 
 
 \begin{frame2}{GD with Momentum}
-\splitV[0.55]
+\splitV[0.48]
 {
 \begin{itemize}
 \item \textbf{Idea:} ``Velocity'' $\bm{\nu}$: Increasing if successive gradients point in the same direction but decreasing if they point in opposite directions
@@ -44,7 +45,7 @@ figure_man/momentum_illustration_medium.png
 \end{itemize}
 }
 {
-\imageC[0.6]{figure_man/momentum_illustration_medium.png} %SOURCE: Khandewal, GD with Momentum, RMSprop and Adam Optimizer, 2020.
+\imageC[1]{figure_man/momentum_illustration_medium.png} %SOURCE: Khandewal, GD with Momentum, RMSprop and Adam Optimizer, 2020.
 \smallskip
 \footnotesize Source: Khandewal, \emph{GD with Momentum, RMSprop and Adam Optimizer}, 2020.
 }
@@ -89,8 +90,8 @@ Suppose momentum always observes the same gradient $\nabla f(\xv^{[t]})$:
 &= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1 - \varphi^{t+1}}{1 - \varphi} + \varphi^{t+1} \bm{\nu}^{[0]} \\
 &\to \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1}{1 - \varphi} \qquad \text{ for } t \to \infty. 
 \end{align*}
-Momentum accelerates along $- \nabla f(\xv^{[t]})$ to terminal velocity yielding step size $\alpha / (1 - \varphi)$.
-\medskip
+Momentum accelerates along $- \nabla f(\xv^{[t]})$ to terminal velocity yielding step size $\alpha / (1 - \varphi)$.\\
+\spacer
 \textbf{Example:} Momentum with $\varphi = 0.9$ corresponds to a tenfold increase in original step size $\alpha$ compared to vanilla gradient descent
 \end{frame2}
 
@@ -102,9 +103,11 @@ Vector $\bm{\nu}^{[3]}$ (for $\bm{\nu}^{[0]} = 0$):
 &= - \varphi^2\alpha\nabla f(\xv^{[0]}) - \varphi \alpha \nabla f(\xv^{[1]}) - \alpha \nabla f(\xv^{[2]})
 \end{align*}
 \imageC[0.7]{figure_man/momentum_vectors.png}
-\smallskip
-\footnotesize Successive gradients pointing in same/different directions increase/decrease velocity.\\
-\footnotesize Further geometric intuitions and detailed explanations: \url{https://distill.pub/2017/momentum/}
+\spacer
+\begin{footnotesize}
+Successive gradients pointing in same/different directions increase/decrease velocity.\\
+Further geometric intuitions and detailed explanations: \url{https://distill.pub/2017/momentum/}
+\end{footnotesize}
 \end{frame2}
 
 
@@ -132,10 +135,12 @@ Let $\xv^{[0]} = (10, 1)^\top$ and $\alpha = 0.1$.
 Consider the two-dimensional quadratic form $f(\xv) = x_{1}^{2} - x_{2}^{2}$ with a saddle point at $(0, 0)^\top$.\\
 \medskip
 Let $\xv^{[0]} = (-1/2, 10^{-3})^\top$ and $\alpha = 0.1$.
-\imageC[0.5]{figure_man/momentum/sgd_momentum_saddlepoint.png}
-\smallskip
-\footnotesize GD was slowing down at the saddle point (vanishing gradient).\\
-\footnotesize GD with momentum ``breaks out'' of the saddle point and moves on.
+\imageC[0.7]{figure_man/momentum/sgd_momentum_saddlepoint.png}
+\spacer
+\begin{footnotesize}
+GD was slowing down at the saddle point (vanishing gradient).\\
+GD with momentum ``breaks out'' of the saddle point and moves on.
+\end{footnotesize}
 \end{frame2}
 
 
@@ -145,84 +150,71 @@ $$
 \risket = \sumin \left(\fxt - \yi\right)^2
 $$
 where $\fxt$ is a neural network with 2 hidden layers (2 units each).\\
-\medskip
-\imageC[0.6]{figure_man/gradient_descent_NN_0.pdf}
+\imageC[0.59]{figure_man/gradient_descent_NN_0.pdf}
 \end{frame2}
 
 
 \begin{frame2}{ERM for NN with GD: 10 Iterations}
 After $10$ iters of GD:
-\splitV[0.55]
-{
+\splitV[0.55]{
 \imageC[1]{figure_man/gradient_descent_NN_10_surface_0.5.pdf}
-}
-{
-\imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
-}
+}{
+\imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}}
 \end{frame2}
 
 
 \begin{frame2}{ERM for NN with GD: 100 Iterations}
 After $100$ iters of GD:
-\splitV[0.55]
-{
+\splitV[0.55]{
 \imageC[1]{figure_man/gradient_descent_NN_100_surface_0.5.pdf}
-}
-{
-\imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
-}
+}{
+\imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}}
 \end{frame2}
 
 
 \begin{frame2}{ERM for NN with GD: 300 Iterations}
 After $300$ iters of GD:
-\splitV[0.55]
-{
+\splitV[0.55]{
 \imageC[1]{figure_man/gradient_descent_NN_300_surface_0.5.pdf}
-}
-{
-\imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
-}
+}{
+\imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}}
 \end{frame2}
 
 
 \begin{frame2}{Gradient Descent with and without Momentum}
 \centering Gradient Descent with and without momentum
 \medskip
-\splitVCC[0.5]
-{
+\splitVCC[0.5]{
 \imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
-}
-{
-\imageC[1]{figure_man/gradient_descent_NN_300_history_0.pdf}
-}
+}{
+\imageC[1]{figure_man/gradient_descent_NN_300_history_0.pdf}}
 \end{frame2}
 
 
-\begin{frame2}{Nesterov Accelerated Gradient}
-\begin{itemize}
+\begin{framei}{Nesterov Accelerated Gradient}
 \item Slightly modified version: \textbf{Nesterov accelerated gradient}
 \item Stronger theoretical convergence guarantees for convex functions
 \item Avoid moving back and forth near optima
-\end{itemize}
 \begin{align*}
 \bm{\nu}^{[t+1]} &= \varphi \bm{\nu}^{[t]} - \alpha \nabla f(\textcolor{orange}{\xv^{[t]} + \varphi \bm{\nu}^{[t]}}) \\
 \xv^{[t+1]} &= \xv^{[t]} + \bm{\nu}^{[t+1]}
 \end{align*}
 \imageC[0.8]{figure_man/nesterov.jpeg}
-\smallskip
-\footnotesize Nesterov momentum update evaluates gradient at the ``look-ahead'' position.\\
-\footnotesize Source: \url{https://cs231n.github.io/neural-networks-3/}
-\end{frame2}
+\vfill
+\begin{footnotesize}  
+Nesterov momentum update evaluates gradient at the ``look-ahead'' position.\\
+Source: \url{https://cs231n.github.io/neural-networks-3/}
+\end{footnotesize}
+\end{framei}
 
 
-\begin{frame2}{Momentum vs. Nesterov}
+\begin{frame2}[fs=footnotesize]{Momentum vs. Nesterov}
 \imageC[0.8]{figure_man/nesterov_momentum.png}
-\smallskip
-\footnotesize GD with momentum (\textbf{left}) vs. GD with Nesterov momentum (\textbf{right}).\\
-\footnotesize Near minima, momentum makes a large step due to gradient history.\\
-\footnotesize Nesterov momentum ``looks ahead'' and reduces effect of gradient history.\\
-\footnotesize Source: Chandra, 2015.
+\vfill
+GD with momentum (\textbf{left}) vs. GD with Nesterov momentum (\textbf{right}).\\
+Near minima, momentum makes a large step due to gradient history.\\
+Nesterov mom. ``looks ahead'' and reduces effect of gradient history.\\
+Source: Chandra, 2015.
 \end{frame2}
 
 \endlecture

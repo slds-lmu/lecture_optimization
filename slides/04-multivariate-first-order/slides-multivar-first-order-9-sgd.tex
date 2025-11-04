@@ -9,9 +9,9 @@
 \begin{document}
 
 \titlemeta{
-First Order Methods
+First order methods
 }{
-Stochastic Gradient Descent
+SGD
 }{
 figure_man/SGD_cropped.png
 }{
@@ -93,15 +93,13 @@ for $J \subset \{1, 2, \ldots, n\}$ random subset
 
 \begin{framei}{Stochasticity of SGD}
 \item[]
-\begin{figure}
-\includegraphics[width=0.8\textwidth]{figure_man/SGD.png}
-\caption*{\centering \small 
+\imageC[0.8]{figure_man/SGD.png}
+\begin{small} \begin{center}
 Minimize $g(x_1, x_2) = 1.25(x_1 + 6)^2 + (x_2 - 8)^2$
 \textbf{Left:} GD, \textbf{Right:} SGD\\
 Black line shows average value across multiple runs
 (Source: Shalev-Shwartz et al., Understanding Machine Learning, 2014.)
-}
-\end{figure}
+\end{center} \end{small}
 \end{framei}
 
 
@@ -120,30 +118,22 @@ Black line shows average value across multiple runs
 \begin{frame}{Erratic behavior of SGD}
 \textbf{Example:} $g(\xv) = \sum_{i = 1}^5 g_i(\xv)$, $g_i$ quadratic, batch size $m = 1$
 \vfill
-\begin{figure}
-\includegraphics<1>[width = 0.8\textwidth]{figure_man/sgd_example_iter_1.png}
-\includegraphics<2>[width = 0.8\textwidth]{figure_man/sgd_example_iter_2.png}
-\includegraphics<3>[width = 0.8\textwidth]{figure_man/sgd_example_iter_3.png}
-\includegraphics<4>[width = 0.8\textwidth]{figure_man/sgd_example_iter_4.png}
-\includegraphics<5>[width = 0.8\textwidth]{figure_man/sgd_example_iter_5.png}
-\only<5>{
-\caption*{In iteration $5$, SGD performs a suboptimal move away from the minimum.}
-}
-\end{figure}
+\only<1>{\image[0.8]{figure_man/sgd_example_iter_1.png}}
+\only<2>{\image[0.8]{figure_man/sgd_example_iter_2.png}}
+\only<3>{\image[0.8]{figure_man/sgd_example_iter_3.png}}
+\only<4>{\image[0.8]{figure_man/sgd_example_iter_4.png}}
+\only<5>{\image[0.8]{figure_man/sgd_example_iter_5.png}\\}
+\only<5>{\small In iteration $5$, SGD performs a suboptimal move away from the minimum.}
 \end{frame}
 
 
 \begin{framei}{Erratic behavior of SGD}
 \item[]
-\begin{figure}
-\centering
-\includegraphics[width=0.7\textwidth]{figure_man/sgd_example_confusion_areas.png}
-\caption*{\centering \small
-\textbf{Blue area}: Each $-\nabla g_i(\xv)$ points towards minimum
-
+\imageC[0.7]{figure_man/sgd_example_confusion_areas.png}
+\begin{center}\begin{small}
+\textbf{Blue area}: Each $-\nabla g_i(\xv)$ points towards minimum\\
 \textbf{Red area} (\enquote{confusion area}): $-\nabla g_i(\xv)$ might point away from minimum and perform a suboptimal move
-}
-\end{figure}
+\end{small} \end{center}
 \end{framei}
 
 
@@ -163,31 +153,27 @@ $$
 \item \textbf{But:} Can be controlled via \textbf{increasing batches} or \textbf{reducing step size}
 \vfill
 \begin{blocki}{The larger the batch size $m$}
-\vspace{-0.5em}
 \item the better the approximation to $\nabla_\xv g(\xv)$
 \item the lower the variance
 \item the lower the risk of performing steps in the wrong direction
 \end{blocki}
 \vfill
 \begin{blocki}{The smaller the step size $\alpha$}
-\vspace{-0.5em}
 \item the smaller a step in a potentially wrong direction
 \item the lower the effect of high variance
 \end{blocki}
 \vfill
-\item As maximum batch size is usually limited by computational resources (memory), choosing the step size is crucial
+As maximum batch size is usually limited by computational resources (memory), choosing the step size is crucial
 \end{framei}
 
 
 \begin{framei}{Effect of batch size}
 \item[]
-\begin{figure}
-\centering
-\includegraphics[width=0.9\textwidth]{figure_man/gradient_descent_NN_SGD_vs_no_SGD.pdf}
-\caption*{\centering \small SGD for a NN with batch size $\in \{0.5 \%, 10 \%, 50 \%\}$ of the training data\\
+\imageC[0.9]{figure_man/gradient_descent_NN_SGD_vs_no_SGD.pdf}
+\begin{center}\begin{small}
+SGD for a NN with batch size $\in \{0.5 \%, 10 \%, 50 \%\}$ of the training data\\
 The higher the batch size, the lower the variance
-}
-\end{figure}
+\end{small}\end{center}
 \end{framei}
 
 \endlecture
