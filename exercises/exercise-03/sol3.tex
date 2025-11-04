@@ -253,7 +253,7 @@ This system of linear equations has a unique solution if $\Sigma_{\mathbf{X}}$ i
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/1d-plot-1} 
 \end{knitrout}
-\item $\nabla f = (\sin(x_1^2 + x_2^2 + x_1x_2)(2x_1 + x_2), \sin(x_1^2 + x_2^2 + x_1x_2)(2x_2 + x_1))^\top$
+\item $\nabla f = (\sin(x_1^2 + x_2^2 + x_1x_2)(2x_1 + x_2), \sin(x_1^2 + x_2^2 + x_1x_2)(2x_2 + x_1))$
 \item $\nabla^2 f = \begin{pmatrix} \cos(u)(2x_1 + x_2)^2 + 2\sin(u) & \cos(u)(2x_1 + x_2)(2x_2 + x_1) + \sin(u) \\ 
  \cos(u)(2x_1 + x_2)(2x_2 + x_1) + \sin(u) & \cos(u)(2x_2 + x_1)^2 + 2\sin(u)\end{pmatrix}$ with $u = x_1^2 + x_2^2 + x_1x_2.$
 \item Let $u: \R^2 \rightarrow \R, (x_1, x_2) \mapsto x_1^2 + x_2^2 + x_1x_2$, such that $f(\mathbf{x}) = - \cos(u(\mathbf{x}))$. \\
@@ -269,7 +269,7 @@ This system of linear equations has a unique solution if $\Sigma_{\mathbf{X}}$ i
   \begin{equation*}
     \nabla^2 f(\mathbf{x}) = \underbrace{\cos(u(\mathbf{x}))}_{> 0} \underbrace{\nabla u(\mathbf{x}) \nabla u(\mathbf{x})^\top}_{\text{p.s.d.}} + \underbrace{\sin(u(\mathbf{x}))}_{\geq 0} \underbrace{\nabla^2 u(\mathbf{x})}_{\text{p.d.}}.
   \end{equation*}
-  $\Rightarrow \nabla^2 f(\mathbf{x})$ is positive semi-definite. \\
+  $\Rightarrow \nabla^2 f(\mathbf{x})$ is positive semi-definite for all $\mathbf{x} \in S_{\bar{r}}$. \\
   $\Rightarrow f_{|S_{\overline{r}}}$ is convex.
 %\item For $\mathbf{x} \in S_{\bar{r}}$, it holds that $\nabla f(\mathbf{x}) = \underbrace{\sin(u(\mathbf{x}))}_{\ge 0} \nabla u(\mathbf{x})$ and thus $$\nabla f(\mathbf{x}) = \mathbf{0} \iff \nabla u(\mathbf{x}) = \mathbf{0} \iff \mathbf{x} = \mathbf{0}.$$
 % \item For $\mathbf{x} \in S_{\bar{r}}$, we have

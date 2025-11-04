@@ -85,7 +85,7 @@ Visualization of quadratic objective (dashed) over linear constraints (grey). So
 $$
 \begin{aligned}
 \min_{\xv \in \R^d} \quad & \fx \\
-ext{s.t. } \quad & g_i(\xv) \le 0, i = 1, ..., k \\
+\text{s.t. } \quad & g_i(\xv) \le 0, i = 1, ..., k \\
 & \bm{A}\xv = \bm{b}
 \end{aligned}
 $$
@@ -111,7 +111,7 @@ Quadratically constrained linear program (QCLP) and quadratically constrained qu
 $$
 \begin{aligned}
 \min \quad & f(x_1, x_2) = x_1 + x_2 \\
-ext{s.t. } \quad & h(x_1,x_2) = x_1^2 + x_2^2 - 1 = 0
+\text{s.t. } \quad & h(x_1,x_2) = x_1^2 + x_2^2 - 1 = 0
 \end{aligned}
 $$
 \imageC[0.5]{figure_man/unit_circle.png}
@@ -214,7 +214,7 @@ Equivalently it can be written as constrained optimization problem:
 $$
 \begin{aligned}
 \min_{\thetav} \quad & \sum_{i = 1}^n \left(\thetav^\top \xi - \yi\right)^2 \\
-	ext{s.t. } \quad & \|\thetav\|_2 \le t
+	\text{s.t. } \quad & \|\thetav\|_2^2 \le t
 \end{aligned}
 $$
 }{
