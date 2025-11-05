@@ -285,8 +285,8 @@ for \textbf{Lagrange function} (or \textbf{Lagrangian}) $\mathcal{L}(\xv, \beta)
 Indeed:
 \begin{equation*}
     \begin{pmatrix}
-        \nabla_\xv \mathcal{L}(\xv, \beta) \\
-        \nabla_\beta \mathcal{L}(\xv, \beta)
+        \nabla_{\xv} \mathcal{L}(\xv, \beta) \\
+        \nabla_{\beta} \mathcal{L}(\xv, \beta)
     \end{pmatrix}
     = \begin{pmatrix}
         \nabla f(\xv) + \beta \nabla h(\xv) \\
@@ -471,10 +471,10 @@ If $\xv$ \textbf{satisfies} inequality constraint ($g(\xv) \le 0$):
 Combining yields \textbf{original formulation}:
 
 \begin{equation*}
-	\min_\xv \max_{\alpha \ge 0} \mathcal{L}(\xv, \alpha) =
+	\min_{\xv} \max_{\alpha \ge 0} \mathcal{L}(\xv, \alpha) =
     \begin{cases}
         \infty & \text{if } g(\xv) > 0 \\
-        \min_\xv f(\xv) & \text{if }  g(\xv) \le 0
+        \min_{\xv} f(\xv) & \text{if }  g(\xv) \le 0
     \end{cases}
 \end{equation*}
 
