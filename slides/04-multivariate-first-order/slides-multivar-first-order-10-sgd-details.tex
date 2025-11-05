@@ -23,7 +23,7 @@ figure_man/SGD_cropped.png
 \begin{framei}{SGD with constant step size}
 \item Example: SGD with constant step size
 \vfill
-\imageC[0.9]{figure_man/sgd_example_erratic_behavior.png}
+\image[]{figure_man/sgd_example_erratic_behavior.png}
 \vfill
 \item Fast convergence of SGD initially
 \item Erratic behavior later (variance too big)
@@ -119,7 +119,6 @@ Note that even for the linear model and quadratic loss, where a closed form solu
 \While{stopping criterion not met}
 \State Sample mini-batch of $m$ examples
 \State Compute gradient estimate $\nabla \hat{g}(\xv)$ using mini-batch
-%$\leftarrow  \frac{1}{m} \nabla_{\bm{x}} \sum_{i} \Lxyit$
 \State Compute velocity update: $\bm{\nu} \leftarrow \varphi \bm{\nu} - \alpha \nabla \hat{g}(\xv)$
 \State Apply update: $\bm{x} \leftarrow \bm{x} + \bm{\nu}$
 \EndWhile

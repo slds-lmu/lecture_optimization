@@ -30,7 +30,7 @@ figure_man/sattle_point2-50.png
 \end{framei}
 
 
-\begin{framei}[fs=small]{AdaGrad}
+\begin{framei}[fs=footnotesize]{AdaGrad}
 \item AdaGrad adapts step sizes by
 scaling them inversely proportional to square root of the sum of the past squared derivatives
 \begin{itemize}
@@ -38,8 +38,8 @@ scaling them inversely proportional to square root of the sum of the past square
 \item Inputs with small derivatives get larger step sizes
 \end{itemize}
 \item Accumulation of squared gradients can result in premature small step sizes (Goodfellow et al., 2016)
-\vfill
 \begin{algorithm}[H]
+\footnotesize
 \caption{AdaGrad}
 \begin{algorithmic}[1]
 \State \textbf{require} Global step size $\alpha$ \strut
@@ -49,29 +49,24 @@ scaling them inversely proportional to square root of the sum of the past square
 \While{stopping criterion not met}
 \State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Sample minibatch of $m$ examples from the training set $\{\tilde{\xv}^{(1)},\dots,\tilde{\xv}^{(m)}\}$ \strut}
 \State Compute gradient estimate: $\hat{\mathbf{g}} \leftarrow \frac{1}{m} \nabla_{\thetav} \sum_{i} \Lxym$
-\State Accumulate squared gradient $\mathbf{r} \leftarrow \mathbf{r} + \hat{\mathbf{g}} \odot  \hat{\mathbf{g}}$
-\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Compute update: $\nabla \thetav = - \frac{\alpha}{\beta + \sqrt\mathbf{r}} \odot \hat{\mathbf{g}}$ (operations element-wise) \strut}
+\State Accumulate squared gradient $\mathbf{r} \leftarrow \mathbf{r} + \hat{\mathbf{g}} \odot  \hat{\mathbf{g}}$ where $\odot$: element-wise product %(Hadamard)
+\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Compute update: $\nabla \thetav = - \frac{\alpha}{\beta + \sqrt\mathbf{r}} \odot \hat{\mathbf{g}}$ \strut}
 \State Apply update: $\thetav \leftarrow \thetav + \nabla\thetav$
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
-\vfill
-$\odot$: element-wise product (Hadamard)
 \end{framei}
 
 
-\begin{framei}{RMSProp}
+\begin{framei}[fs=footnotesize]{RMSProp}
 \item Modification of AdaGrad
 \item Resolves AdaGrad's radically diminishing step sizes
 \item Gradient accumulation is replaced by exponentially weighted moving average
 \item Theoretically, leads to performance gains in non-convex scenarios
 \item Empirically, RMSProp is a very effective optimization algorithm.
 Particularly, it is employed routinely by DL practitioners
-\end{framei}
-
-
-\begin{frame2}[small]{RMSProp}
-\begin{algorithm}[H]
+\vspace{-0.5em}\begin{algorithm}[H]
+\footnotesize
 \caption{RMSProp}
 \begin{algorithmic}[1]
 \State \textbf{require} Global step size $\alpha$ and decay rate $\rho \in [0, 1)$ \strut
@@ -87,7 +82,7 @@ Particularly, it is employed routinely by DL practitioners
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
-\end{frame2}
+\end{framei}
 
 
 \begin{framei}{Adam}
@@ -101,8 +96,9 @@ Particularly, it is employed routinely by DL practitioners
 \end{framei}
 
 
-\begin{frame2}[scriptsize]{Adam}
+\begin{frame2}{Adam}
 \begin{algorithm}[H]
+\scriptsize
 \caption{Adam}
 \begin{algorithmic}[1]
 \State \textbf{require} Global step size $\alpha$ (suggested default: 0.001) \strut
@@ -173,7 +169,7 @@ The resulting error is put in $\zeta$ and be kept small due to the exponential w
 \imageC[1][https://giphy.com/embed/SJVFO3IcVC0M0]{figure_man/sattle_point2-100.png}
 }
 \vfill
-\href{https://giphy.com/embed/SJVFO3IcVC0M0}{\textcolor{blue}{Comparison}} of SGD optimizers near saddle point \\
+\textbf{Comparison} of SGD optimizers near saddle point \\
 \textbf{Left:} After start.
 \textbf{Right:} Later \\
 All methods accelerate compared to vanilla SGD \\
@@ -184,9 +180,7 @@ Best is RMSProp, then AdaGrad (Adam is missing here)
 
 
 \begin{frame2}{Comparison on quadratic form}
-\vfill
-\imageC[0.8]{figure_man/momentum/comparison_adam.png}
-\vfill
+\image{figure_man/momentum/comparison_adam.png}
 SGD vs SGD with Momentum vs Adam on a quadratic form
 \end{frame2}
 

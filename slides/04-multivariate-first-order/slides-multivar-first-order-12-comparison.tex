@@ -35,23 +35,17 @@ figure_man/linesearch.png
 
 \begin{framei}[fs=small]{Lin-Reg (GD + med step size, default case)}
 \item GD with medium $\alpha=2\cdot10^{-3}$ and indep. features:
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/GD_reg_med_lr_iters.pdf}
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/GD_reg_coef_med.pdf}
-\vfill
+\imageC[0.7]{figure_man/simu_linmod/GD_reg_med_lr_iters.pdf}
+\imageC[0.75]{figure_man/simu_linmod/GD_reg_coef_med.pdf}
 \item Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers
 \item All variants converge to global min. \textbf{Momentum} accelerates optimization and \textbf{decay} slows down optimization under that step size
 \end{framei}
 
 
-\begin{framei}[fs=small]{Lin-Reg (GD + corr. features)}
+\begin{framei}[fs=footnotesize]{Lin-Reg (GD + corr. features)}
 \item GD with medium $\alpha=2\cdot10^{-3}$ and bad conditioning (corr. features):
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/GD_reg_med_lr_corr_iters.pdf}
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/GD_reg_coef_med_corr.pdf}
-\vfill
+\imageC[0.7]{figure_man/simu_linmod/GD_reg_med_lr_corr_iters.pdf}
+\imageC[0.75]{figure_man/simu_linmod/GD_reg_coef_med_corr.pdf}
 \item Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers
 \item Moderately bad \textbf{conditioning slows down optim} severely! Only \textbf{momentum} w/o decay comes close to global min
 \item \textbf{Momentum} causes ``overshooting'' of some coefs. Corr. features cause corr. global minimizers
@@ -60,24 +54,18 @@ figure_man/linesearch.png
 
 \begin{framei}[fs=small]{Lin-Reg (GD + small step size)}
 \item GD with (too small) $\alpha=3\cdot10^{-4}$ and indep. features:
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/GD_reg_small_lr_iters.pdf}
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/GD_reg_coef_small.pdf}
-\vfill
+\imageC[0.7]{figure_man/simu_linmod/GD_reg_small_lr_iters.pdf}
+\imageC[0.75]{figure_man/simu_linmod/GD_reg_coef_small.pdf}
 \item Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers
 \item Only two \textbf{momentum} variants come close to global min in $t_{\text{max}}=10000$
 \item \textbf{Decay} worsens performance as $\alpha$ was already too low
 \end{framei}
 
 
-\begin{framei}[fs=small]{Lin-Reg (GD + large step size)}
+\begin{framei}[fs=footnotesize]{Lin-Reg (GD + large step size)}
 \item GD with large $\alpha=1.5$ and indep. features:
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/GD_reg_large_lr_iters.pdf}
-\vfill
-\imageC[0.7]{figure_man/simu_linmod/GD_reg_coef_large.pdf}
-\vfill
+\imageC[0.7]{figure_man/simu_linmod/GD_reg_large_lr_iters.pdf}
+\imageC[0.75]{figure_man/simu_linmod/GD_reg_coef_large.pdf}
 \item Irreducible error due to additive noise is $\sigma=1$. Dotted lines indicate global minimizers
 \item Super fast convergence in $<20$ steps
 \item \textbf{Decay} here accelerates optim while \textbf{momentum} becomes slow and unstable
@@ -87,11 +75,8 @@ figure_man/linesearch.png
 
 \begin{framei}[fs=small]{Lin-Reg (SGD + med step size)}
 \item SGD with medium $\alpha=2\cdot10^{-3}$ and indep. features:
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/SGD_reg_med_lr_iters.pdf}
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/SGD_reg_coef_med.pdf}
-\vfill
+\imageC[0.7]{figure_man/simu_linmod/SGD_reg_med_lr_iters.pdf}
+\imageC[0.75]{figure_man/simu_linmod/SGD_reg_coef_med.pdf}
 \item \textbf{Momentum} accelerates optim initially but is eventually outperformed by other variants
 \item \textbf{Momentum+decay} is both fast initially and has small final error
 \item \textbf{Decay} performs best overall but is slowest initially
@@ -100,26 +85,25 @@ figure_man/linesearch.png
 
 \begin{framei}[fs=small]{Lin-Reg (SGD + large step size)}
 \item SGD with large $\alpha=1 \cdot 10^{-2}$ and indep. features:
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/SGD_reg_large_lr_iters.pdf}
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/SGD_reg_coef_large.pdf}
-\vfill
+\imageC[0.7]{figure_man/simu_linmod/SGD_reg_large_lr_iters.pdf}
+\imageC[0.75]{figure_man/simu_linmod/SGD_reg_coef_large.pdf}
 \item Irreducible error due to additive noise is $\sigma=1$
 \item High variance in SGD dynamics
 \item \textbf{Momentum} becomes unstable while \textbf{decay} (necessary to eliminate noise) performs best and is fastest
 \end{framei}
 
 
-\begin{framei}[fs=small]{Digression: solving OLS with QR Decomp.}
+\begin{framei}[fs=footnotesize]{Digression: solving OLS with QR Decomp.}
 \item Solving linear least squares via (S)GD is rarely done in practice
 \item But inversion of $\bm{X}^{\top}\bm{X}$ is numerically unstable and to be avoided
 \item A standard numerical approach applies \textbf{QR Decomposition}:
+\begin{itemize}
 \item Factorize \( \bm{X} \in \mathbb{R}^{n \times p} \) as \( \bm{X} = \bm{Q}\bm{R} \), where \( \bm{Q} \in \mathbb{R}^{n \times p} \) (thin form) so that $\bm{Q}^{\top}\bm{Q}=\bm{I}$ and \( \bm{R} \in \mathbb{R}^{p \times p} \) is upper triangular
 \item Purpose: replace solving \( \bm{\thetah} = (\bm{X}^{\top} \bm{X})^{-1} \bm{X}^{\top} \bm{y} \) with a more numerically stable method by avoiding direct inversion
 \item The QR decomposition can be computed using Gram-Schmidt orthogonalization or Householder transformations
-\vfill
-\item[\textbf{Steps}:]
+\end{itemize}
+\item \textbf{Steps}:
+\begin{itemize}
 \item Decompose \( \bm{X} \) into \( \bm{Q} \) and \( \bm{R} \)
 \item Compute \( \bm{Q}^{\top} \bm{y} \)
 \item Solve triangular system \( \bm{R} \bm{\thetah} = \bm{Q}^{\top} \bm{y} \) via \textbf{back substitution}
@@ -131,6 +115,7 @@ $$
 $$
 \bm{R}^{\top}\bm{R} \hat{\thetav} = \bm{R}^{\top} \bm{Q}^{\top} \bm{y} \iff \bm{R} \hat{\thetav} = \bm{Q}^{\top} \bm{y}
 $$
+\end{itemize}
 \end{framei}
 
 
@@ -156,7 +141,8 @@ b_p
 \end{bmatrix}
 $$
 \vfill
-\item[\textbf{Steps for Back Substitution}:]
+\item \textbf{Steps for Back Substitution}:
+\begin{itemize}
 \item Start with the last equation (1 unknown):
 $
 \thetah_p = \frac{b_p}{r_{pp}}
@@ -171,11 +157,12 @@ $
 $
 \vfill
 \item Back substitution leverages triangular structure of $\bm{R}$, moving upward from the last row and inserting already known values of $\bm{\thetah}$ as we go
+\end{itemize}
 \end{framei}
 
 
 \begin{framei}{(S)GD for logistic regression}
-\item Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control on simulated data:
+\item[] Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control on simulated data:
 \vfill
 \item Logistic regression (log loss) with same simulation setup as for linear regression
 \item To simulate response, we set $y^{(i)} \sim \mathcal{B}(\pi^{(i)}), \pi^{(i)} = \frac{1}{1+e^{-\left(\bm{x}^{(i)}\right)^{\top}\thetav^{\ast}}}$
@@ -188,24 +175,18 @@ $
 
 \begin{framei}[fs=small]{Log-Reg (GD + med step size)}
 \item GD with medium $\alpha=0.25$ and indep. features:
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/GD_log_med_lr_iters.pdf}
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/GD_log_coef_med.pdf}
-\vfill
+\imageC[0.7]{figure_man/simu_linmod/GD_log_med_lr_iters.pdf}
+\imageC[0.75]{figure_man/simu_linmod/GD_log_coef_med.pdf}
 \item Dotted lines indicate global minimizers
 \item All variants converge to global min
 \item \textbf{Momentum} accelerates and \textbf{decay} slows down optimization. \textbf{GD+mom} performs best
 \end{framei}
 
 
-\begin{framei}[fs=small]{Log-Reg (GD + corr. features)}
+\begin{framei}[fs=footnotesize]{Log-Reg (GD + corr. features)}
 \item GD with medium $\alpha=0.25$ and bad conditioning (corr. features):
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/GD_log_med_lr_corr_iters.pdf}
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/GD_log_coef_med_corr.pdf}
-\vfill
+\imageC[0.7]{figure_man/simu_linmod/GD_log_med_lr_corr_iters.pdf}
+\imageC[0.75]{figure_man/simu_linmod/GD_log_coef_med_corr.pdf}
 \item Dotted lines indicate global minimizers
 \item Moderately bad conditioning slows down optim slightly and affects ERM solutions
 \item Only \textbf{momentum w/o decay} converges exactly to global min in $t_{\text{max}}$
@@ -215,24 +196,18 @@ $
 
 \begin{framei}[fs=small]{Log-Reg (SGD + med step size)}
 \item SGD with medium $\alpha=0.03$ and indep. features:
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/SGD_log_med_lr_iters.pdf}
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/SGD_log_coef_med.pdf}
-\vfill
+\imageC[0.7]{figure_man/simu_linmod/SGD_log_med_lr_iters.pdf}
+\imageC[0.75]{figure_man/simu_linmod/SGD_log_coef_med.pdf}
 \item Under SGD dynamics become more noisy
 \item \textbf{Momentum} accelerates while \textbf{decay} slows down optimization
 \item Only the coefs of \textbf{momentum w/o decay} come close to global minimizers
 \end{framei}
 
 
-\begin{framei}[fs=small]{Log-Reg (SGD + large step size)}
+\begin{framei}[fs=footnotesize]{Log-Reg (SGD + large step size)}
 \item SGD with large $\alpha=0.3$ and indep. features:
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/SGD_log_large_lr_iters.pdf}
-\vfill
-\imageC[0.8]{figure_man/simu_linmod/SGD_log_coef_large.pdf}
-\vfill
+\imageC[0.7]{figure_man/simu_linmod/SGD_log_large_lr_iters.pdf}
+\imageC[0.75]{figure_man/simu_linmod/SGD_log_coef_large.pdf}
 \item \textbf{High variance} in optim dynamics
 \item Plain SGD and \textbf{Momentum} become unstable and oscillate at suboptimal loss values/diverge while \textbf{decay} (necessary to eliminate oscillations) performs best and is fastest
 \item \textbf{Momentum+decay} initially diverges but recovers once step size reduces (would converge with many more steps)
@@ -241,7 +216,6 @@ $
 
 \begin{framei}{Classification on MNIST (SGD)}
 \item For a more realistic application, we compare optimizers on training an NN on subset of MNIST image classification task
-\vfill
 \item DNN has two hidden layers with $128$ and $64$ ReLU-activated units and Kaiming normal init. The loss is cross-entropy
 \item Instead of SGD we use mini-batch SGD with $100$ images per batch
 \item For the step size schedule, we use cosine decay $\alpha^{[t]} = \alpha^{[0]} \left[(1-r_{\text{min}}) \cdot \frac{1}{2}\left(1 + \cos\left(\pi \cdot \frac{t}{t_{\text{max}}}\right)\right) + r_{\text{min}}\right]$ with final step size fraction $r_{\text{min}}=0.01$
@@ -250,12 +224,10 @@ $
 \end{framei}
 
 
-\begin{framei}[fs=small]{Classification on MNIST (SGD)}
+\begin{framei}[fs=footnotesize]{Classification on MNIST (SGD)}
 \item Mini-batch SGD with $\alpha \in \{0.01, 0.1\}$ for 100 epochs (5000 iterations):
-\vfill
-\imageC[1.0]{figure_man/simu_mnist/SGD_compar.pdf}
-\vfill
-\item[\textbf{Observations}:] (\textbf{NB}: \textcolor{green}{green}/\textcolor{cyan}{cyan} + \textcolor{blue}{blue}/\textcolor{magenta}{purple} train losses overlap but not val. acc.):
+\imageC[0.8]{figure_man/simu_mnist/SGD_compar.pdf}
+\item[] \textbf{Observations} (\textcolor{green}{green}/\textcolor{cyan}{cyan} + \textcolor{blue}{blue}/\textcolor{magenta}{purple} train losses overlap but not val. acc.):
 \item \textbf{Momentum} drastically speeds up optimization in all settings
 \item \textbf{Plain SGD}: step size decay slows optimization slightly
 \item SGD, SGD+cos and SGD+mom achieve \textbf{same} val. acc. $\Rightarrow$ no generalization benefit for medium $\alpha$
@@ -267,10 +239,8 @@ $
 \begin{framei}[fs=small]{Classification on MNIST (GD vs. SGD)}
 \item Why is it not a good idea to use GD in most DL applications? SGD is much faster
 \item Compare runtime of mini-batch SGD (batch size=$100$) with GD (constant $\alpha=0.01$ without momentum for $t_{\text{max}}=5000$ iterations):
-\vfill
-\imageC[1.0]{figure_man/simu_mnist/SGD_GD_compar.pdf}
-\vfill
-\item[\textbf{Observations}:]
+\imageC[0.9]{figure_man/simu_mnist/SGD_GD_compar.pdf}
+\item[] \textbf{Observations}:
 \item Mini-batch SGD is over an order of magnitude faster
 \item SGD generalizes better than GD despite being much faster
 \end{framei}
