@@ -106,10 +106,9 @@ $100$ iters of GD with const $\alpha = 10^{-4}$.
 
 \begin{framei}[fs=footnotesize]{Optimize LS linear regression with GD}
 \item Let $\D = \Dset$ and minimize 
-$$\risket = \sumin \left(\thetav^\top \xi - \yi\right)^2$$
+$$\risket = \sumin (\thetav^\top \xi - \yi)^2$$
 \textbf{NB: } For illustration, we use GD even though closed-form solution exists. GD-like (more adv.) approaches like this MIGHT make sense for large data, though.
-\item\textbf{Gradient: } $$\nabla_{\thetav}\riske(\thetav) =  \frac{\partial \riske(\thetav)}{\partial
-\thetav} = - \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetav^{\top} \xv^{(i)}\right) \xv^{(i)}$$ 
+\item\textbf{Gradient: } $$\nabla_{\thetav}\risket(\thetav) = \frac{\partial \risket(\thetav)}{\partial \thetav} = -2 \sumin (\yi - \thetav^{\top} \xv^{(i)}) \xv^{(i)}$$ 
 \imageC[0.8]{figure_man/gradient_descent_lm.pdf}
 \end{framei}
 

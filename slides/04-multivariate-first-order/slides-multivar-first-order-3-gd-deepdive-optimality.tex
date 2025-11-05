@@ -2,7 +2,7 @@
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \newcommand{\Hess}{\mathbf{H}}
 
@@ -37,7 +37,7 @@ figure_man/gdes_1.png
 \item Global minimum $\xv^\ast$ exists
 \item $f$ has Lipschitz gradient ($\nabla f$ does not change too fast)
 \begin{framed}
-$$\| \nabla \fx - \nabla f(\tilde{\xv}) \| \le L \|\xv - \tilde{\xv}\| \quad \text{ for all $\xv, \tilde{\xv}$}$$
+$$\| \nabla \fx - \nabla f(\xtil) \| \le L \|\xv - \xtil\| \quad \text{ for all $\xv, \xtil$}$$
 \end{framed}
 \end{itemizeM}
 \begin{framed}
@@ -76,8 +76,8 @@ $$f(\yv) \geq \fx + \nabla \fx^\top (\yv - \xv)$$
 
 
 \begin{framei}{Descent lemma}
-\item\textbf{Recall:} $\nabla f$ Lipschitz $\implies$ $\nabla^2 \fx \preccurlyeq L \cdot \mathbf{I}$ for all $\xv$
-\item This gives convexity of $g(\xv) := \frac{L}{2}\|\xv\|^2 - f(\xv)$ since $$\nabla^2 g(\xv) = L \cdot I - \nabla^2 \fx \succcurlyeq 0.$$
+\item\textbf{Recall:} $\nabla f$ Lipschitz $\implies$ $\nabla^2 \fx \preccurlyeq L \cdot \id$ for all $\xv$
+\item This gives convexity of $g(\xv) := \frac{L}{2}\|\xv\|^2 - f(\xv)$ since $$\nabla^2 g(\xv) = L \cdot \id - \nabla^2 \fx \succcurlyeq 0.$$ 
 \item First order condition of convexity of $g$ yields
 \begin{alignat*}{3}
 && g(\xv) &\geq g(\xv^{[t]}) + \nabla g(\xv^{[t]})^\top (\xv - \xv^{[t]}) \\
@@ -111,14 +111,14 @@ f(\xv^{[t+1]}) &\leq f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top(\xv^{[t+1]} - \xv^{
 
 \begin{framei}{One step error bound}
 \item Again, first order condition of convexity gives 
-$$f(\xv^{[t]}) - f(\xv^\ast) \leq  \nabla f(\xv^{[t]})^\top (\xv^{[t]} - \xv^\ast).$$
+$$f(\xv^{[t]}) - f(\xvs) \leq  \nabla f(\xv^{[t]})^\top (\xv^{[t]} - \xvs).$$
 \item This and the descent lemma yields
 \begin{align*}
-f(\xv^{[t+1]}) - f(\xv^\ast) &\leq f(\xv^{[t]})  - \frac{\alpha}{2}\|\nabla f(\xv^{[t]})\|^2  - f(\xv^\ast) \\
-&= f(\xv^{[t]})  - f(\xv^\ast)  - \frac{\alpha}{2}\|\nabla f(\xv^{[t]})\|^2 \\
-&\leq \nabla f(\xv^{[t]})^\top (\xv^{[t]}-\xv^*) - \frac{\alpha}{2}\|\nabla f(\xv^{[t]})\|^2 \\
-&= \frac{1}{2 \alpha} \left( \|\xv^{[t]}-\xv^\ast\|^2 - \| \xv^{[t]} - \xv^\ast - \alpha \nabla f(\xv^{[t]})\|^2 \right) \\
-&= \frac{1}{2 \alpha} \left( \|\xv^{[t]}-\xv^\ast\|^2 - \| \xv^{[t+1]} - \xv^\ast \|^2 \right)
+f(\xv^{[t+1]}) - f(\xvs) &\leq f(\xv^{[t]})  - \frac{\alpha}{2}\|\nabla f(\xv^{[t]})\|^2  - f(\xvs) \\
+&= f(\xv^{[t]})  - f(\xvs)  - \frac{\alpha}{2}\|\nabla f(\xv^{[t]})\|^2 \\
+&\leq \nabla f(\xv^{[t]})^\top (\xv^{[t]}-\xvs) - \frac{\alpha}{2}\|\nabla f(\xv^{[t]})\|^2 \\
+&= \frac{1}{2 \alpha} \left( \|\xv^{[t]}-\xvs\|^2 - \| \xv^{[t]} - \xvs - \alpha \nabla f(\xv^{[t]})\|^2 \right) \\
+&= \frac{1}{2 \alpha} \left( \|\xv^{[t]}-\xvs\|^2 - \| \xv^{[t+1]} - \xvs \|^2 \right)
 \end{align*}
 \item\textbf{Note:} Line 3 $\to$ 4 is hard to see (just expand line 4).
 \end{framei}
@@ -127,14 +127,14 @@ f(\xv^{[t+1]}) - f(\xv^\ast) &\leq f(\xv^{[t]})  - \frac{\alpha}{2}\|\nabla f(\x
 \begin{framei}{Finalization}
 \item Summing over iterations yields
 \begin{align*}
-k ( f(\xv^{[k]}) - f(\xv^\ast)) &\leq \sum_{t=1}^{k} [f(\xv^{[t]}) - f(\xv^\ast)]\\
-&\leq \sum_{t=1}^{k} \frac{1}{2 \alpha} \left[ \|\xv^{[t-1]}-\xv^\ast\|^2 - \| \xv^{[t]} - \xv^\ast \|^2 \right] \\
-&= \frac{1}{2 \alpha}  \left( \|\xv^{[0]}-\xv^\ast\|^2 - \| \xv^{[k]} - \xv^\ast \|^2 \right) \\
-&\leq \frac{1}{2 \alpha} \left( \|\xv^{[0]}-\xv^\ast\|^2 \right).
+k ( f(\xv^{[k]}) - f(\xvs)) &\leq \sum_{t=1}^{k} [f(\xv^{[t]}) - f(\xvs)]\\
+&\leq \sum_{t=1}^{k} \frac{1}{2 \alpha} \left[ \|\xv^{[t-1]}-\xvs\|^2 - \| \xv^{[t]} - \xvs \|^2 \right] \\
+&= \frac{1}{2 \alpha}  \left( \|\xv^{[0]}-\xvs\|^2 - \| \xv^{[k]} - \xvs \|^2 \right) \\
+&\leq \frac{1}{2 \alpha} \left( \|\xv^{[0]}-\xvs\|^2 \right).
 \end{align*}
 \item\textbf{Arguments:} Descent lemma (line~1).\\ Telescoping sum (line~2 $\to$ 3).
 \begin{framed}
-$$f(\xv^{[t+1]}) - f(\xv^\ast) \leq \frac{\| \xv^{[0]} - \xv^\ast \|^2}{2\alpha k}$$
+$$f(\xv^{[t+1]}) - f(\xvs) \leq \frac{\| \xv^{[0]} - \xvs \|^2}{2\alpha k}$$
 \end{framed}
 \end{framei}
 
