@@ -27,15 +27,14 @@ figure_man/linesearch.png
 \vspace*{-0.1cm}
 $$f: \R^2 \to \R, \quad f(x_1, x_2) = y.$$
 \item \textbf{Goal}: Reach the valley
-$$\argmin_\xv f(\xv)$$
+$$\argmin_{\xv} f(\xv)$$
 \item \textbf{Central idea}: Repeat
-\vspace*{-0.15cm}
 \splitVCC[0.6]{
 \begin{enumerate}
 \item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d} \in \R^d$ 
 \item Move along $\mathbf{d}$ until $f$ \glqq sufficiently\grqq{} reduces (\textbf{step size control}) and update location
-\end{enumerate}}
-{\imageC{figure_man/linesearch.png}
+\end{enumerate}}{
+\imageC{figure_man/linesearch.png}
 \begin{footnotesize} "Walking down the hill, towards the valley." \end{footnotesize}}
 \end{framei}
 

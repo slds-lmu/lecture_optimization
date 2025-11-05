@@ -70,7 +70,7 @@ requires evaluating full gradient
 \begin{framei}{Mini-batches}
 \item Reduce noise by increasing batch size $m$ for better approximation
 $$
-\hat{\mathbf{d}} = \frac{1}{m} \sum_{i \in J} \nabla_\xv g_i(\xv) \approx \frac{1}{n} \sumin \nabla_\xv g_i(\xv) = \mathbf{d} 
+\hat{\mathbf{d}} = \frac{1}{m} \sum_{i \in J} \nabla_{\xv} g_i(\xv) \approx \frac{1}{n} \sumin \nabla_{\xv} g_i(\xv) = \mathbf{d} 
 $$
 \item Usually, the batch size is limited by computational resources (e.g., how much data you can load into the memory)
 \vfill
