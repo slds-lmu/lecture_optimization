@@ -46,9 +46,7 @@ figure_man/momentum_illustration_medium.png
 \end{itemize}
 }
 {
-\imageC[1]{figure_man/momentum_illustration_medium.png} %SOURCE: Khandewal, GD with Momentum, RMSprop and Adam Optimizer, 2020.
-\smallskip
-\footnotesize Source: Khandewal, \emph{GD with Momentum, RMSprop and Adam Optimizer}, 2020.
+\imageC[1][https://medium.com/analytics-vidhya/momentum-rmsprop-and-adam-optimizer-5769721b4b19]{figure_man/momentum_illustration_medium.png}
 }
 \end{frame2}
 
@@ -114,10 +112,9 @@ Further geometric intuitions and detailed explanations: \url{https://distill.pub
 
 \begin{frame2}{GD with Momentum: Zig-Zag Behaviour}
 Consider a two-dimensional quadratic form $\fx = x_1^2/2 + 10 x_2$.\\
-\medskip
+\vfill
 Let $\xv^{[0]} = (10, 1)^\top$ and $\alpha = 0.1$.
 \imageC[0.8]{figure_man/momentum/compare_gd_momentum.png}
-\smallskip
 \footnotesize GD shows stronger zig-zag behaviour than GD with momentum.
 \end{frame2}
 
@@ -134,10 +131,9 @@ Let $\xv^{[0]} = (10, 1)^\top$ and $\alpha = 0.1$.
 
 \begin{frame2}{GD with Momentum: Saddle Points}
 Consider the two-dimensional quadratic form $\fx = x_{1}^{2} - x_{2}^{2}$ with a saddle point at $(0, 0)^\top$.\\
-\medskip
+\vfill
 Let $\xv^{[0]} = (-1/2, 10^{-3})^\top$ and $\alpha = 0.1$.
 \imageC[0.7]{figure_man/momentum/sgd_momentum_saddlepoint.png}
-\spacer
 \begin{footnotesize}
 GD was slowing down at the saddle point (vanishing gradient).\\
 GD with momentum ``breaks out'' of the saddle point and moves on.
@@ -183,8 +179,6 @@ After $300$ iters of GD:
 
 
 \begin{frame2}{Gradient Descent with and without Momentum}
-\centering Gradient Descent with and without momentum
-\medskip
 \splitVCC[0.5]{
 \imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
 }{
@@ -200,22 +194,20 @@ After $300$ iters of GD:
 \nuv^{[t+1]} &= \varphi \nuv^{[t]} - \alpha \nabla f(\textcolor{orange}{\xv^{[t]} + \varphi \nuv^{[t]}}) \\
 \xv^{[t+1]} &= \xv^{[t]} + \nuv^{[t+1]}
 \end{align*}
-\imageC[0.8]{figure_man/nesterov.jpeg}
+\imageC[0.8][https://cs231n.github.io/neural-networks-3/]{figure_man/nesterov.jpeg}
 \vfill
 \begin{footnotesize}  
-Nesterov momentum update evaluates gradient at the ``look-ahead'' position.\\
-Source: \url{https://cs231n.github.io/neural-networks-3/}
+Nesterov momentum update evaluates gradient at the ``look-ahead'' position.
 \end{footnotesize}
 \end{framei}
 
 
 \begin{frame2}[fs=footnotesize]{Momentum vs. Nesterov}
-\imageC[0.8]{figure_man/nesterov_momentum.png}
+\imageC[0.9][https://medium.com/data-science/learning-parameters-part-2-a190bef2d12]{figure_man/nesterov_momentum.png}
 \vfill
 GD with momentum (\textbf{left}) vs. GD with Nesterov momentum (\textbf{right}).\\
 Near minima, momentum makes a large step due to gradient history.\\
-Nesterov mom. ``looks ahead'' and reduces effect of gradient history.\\
-Source: Chandra, 2015.
+Nesterov mom. ``looks ahead'' and reduces effect of gradient history.
 \end{frame2}
 
 \endlecture

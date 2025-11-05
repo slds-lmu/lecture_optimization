@@ -22,13 +22,12 @@ figure_man/multimodal.png
 \begin{framei}{Unimodal vs. Multimodal loss surfaces}
 \item[]
 \splitV[0.52]
-{\imageC{figure_man/multimodal.png}\imageC{figure_man/difficult_vs_easy.png}}
+{\imageC{figure_man/multimodal.png}\imageC[1][https://arxiv.org/abs/1712.09913]{figure_man/difficult_vs_easy.png}}
 {\begin{itemizeM}[small]
 \item Snippet of a loss surface with many local optima
 \item In deep learning, we often find multimodal loss surfaces.
 \item \textbf{Left:} Multimodal loss surface.
 \item \textbf{Right:} (Nearly) unimodal loss surface.
-\item (Source: Hao Li et al., 2017.)
 \end{itemizeM}}
 \end{framei}
 
@@ -36,8 +35,7 @@ figure_man/multimodal.png
 \begin{framei}[fs=small]{GD: Only locally optimal moves}
 \item GD makes only \textbf{locally} optimal moves
 \item It may move away from the global optimum
-\imageC[0.7]{figure_man/local_hill.png}
-\item Source: Goodfellow et al., 2016
+\imageC[0.7][https://www.deeplearningbook.org]{figure_man/local_hill.png}
 \item Initialization on \enquote{wrong} side of the hill results in weak performance
 \item In higher dimensions, GD may move around the hill (potentially at the cost of longer trajectory and time to convergence)
 \end{framei}
@@ -45,8 +43,7 @@ figure_man/multimodal.png
 
 \begin{framei}{Local minima}
 \item \textbf{In practice:} Only local minima with high value compared to global minimium are problematic.
-\imageC[0.9]{figure_man/minima.png}
-\item Source: Goodfellow et al., 2016
+\imageC[0.9][https://www.deeplearningbook.org]{figure_man/minima.png}
 \end{framei}
 
 

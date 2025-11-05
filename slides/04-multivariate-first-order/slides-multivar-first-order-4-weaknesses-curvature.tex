@@ -23,9 +23,7 @@ figure_man/taylor_2D_quadratic.png
 \item Locally approximate smooth function by quadratic Taylor polynomial:
 $$\fx \approx f(\xtil) + \nabla f(\xtil)^\top(\xv-\xtil) +
 \frac 12(\xv-\xtil)^\top\nabla^2 f(\xtil)(\xv-\xtil)$$
-\imageC[0.5]{figure_man/taylor_2D_quadratic.png}
-\centering\footnotesize
-Source: \url{daniloroccatano.blog}.
+\imageC[0.5][https://daniloroccatano.blog]{figure_man/taylor_2D_quadratic.png}
 \end{framei}
 
 
@@ -43,10 +41,9 @@ Source: \url{daniloroccatano.blog}.
 
 \begin{framei}{Effects of curvature}
 \item Intuitively, curvature determines reliability of a GD step
-\imageC[0.8]{figure_man/curvature.png}
+\imageC[0.8][https://www.deeplearningbook.org]{figure_man/curvature.png}
 \centering\small
-Quadratic objective $f$ (blue) with gradient approximation (dashed green). \textbf{Left:} $f$ decreases faster than $\nabla f$ predicts. \textbf{Center:} $\nabla f$ predicts decrease correctly. \textbf{Right:} $f$ decreases more slowly than $\nabla f$ predicts.\\
-(Source: Goodfellow et al., 2016)
+Quadratic objective $f$ (blue) with gradient approximation (dashed green). \textbf{Left:} $f$ decreases faster than $\nabla f$ predicts. \textbf{Center:} $\nabla f$ predicts decrease correctly. \textbf{Right:} $f$ decreases more slowly than $\nabla f$ predicts.
 \end{framei}
 
 
@@ -98,8 +95,7 @@ $\Rightarrow$ \textit{Small} step sizes can be problematic.
 $$f(\xtil - \alpha \mathbf{g}) \approx f(\xtil) - \alpha \mathbf{g}^\top \mathbf{g} + \frac{1}{2} \alpha^2 \mathbf{g}^\top \H \mathbf{g}$$
 if $$\frac{1}{2} \alpha^2 \mathbf{g}^\top \H \mathbf{g} > \alpha \mathbf{g}^\top\mathbf{g} \quad \Leftrightarrow \quad \alpha > 2\frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \H \mathbf{g}}.$$
 \item Ill-conditioning in practice: Monitor gradient norm and objective
-\imageC[0.6]{figure_man/no_critical.png}
-\centering \footnotesize Source: Goodfellow et al., 2016
+\imageC[0.6][https://www.deeplearningbook.org]{figure_man/no_critical.png}
 \end{framei}
 
 
