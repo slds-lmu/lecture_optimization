@@ -1,3 +1,13 @@
+# ------------------------------------------------------------------------------
+# univariate optimization
+
+# FUNC: 
+#   grid_arrange_shared_legend - Combines multiple ggplot2 plots 
+#                                into a single figure.
+#   plot.gr - Creates a custom plot that visualizes 
+#             a function with vertical lines at key points.
+# ------------------------------------------------------------------------------
+
 grid_arrange_shared_legend = function(..., ncol = length(list(...)), nrow = 1, position = c("bottom", "right")) {
   plots = list(...)
   position <- match.arg(position)

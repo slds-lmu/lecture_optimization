@@ -1,5 +1,8 @@
+# ------------------------------------------------------------------------------
+# multivariate second order
 
-
+# FIG: fit an exponential model to a dataset using nonlinear least squares (nls)
+# ------------------------------------------------------------------------------
 
 library(knitr)
 library(microbenchmark)
@@ -8,9 +11,9 @@ library(colorspace)
 library(ggplot2)
 library(zoo)
 library(gridExtra)
-source("rsrc/functions.R")
+source("functions.R")
 
-
+# ------------------------------------------------------------------------------
 
 x = c(1, 2, 4, 5, 8)
 y = c(3, 5, 6, 13, 20)
@@ -25,4 +28,4 @@ plot = plot + geom_segment(aes(x = x, y = y, xend = x, yend = pred), color = "re
 plot = plot + theme_bw()
 plot
 
-ggsave("figure_man/squares.png", width = 4, height = 3)
+ggsave("../figure_man/squares.png", width = 4, height = 3)

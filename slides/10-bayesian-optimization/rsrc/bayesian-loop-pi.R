@@ -1,3 +1,11 @@
+# ------------------------------------------------------------------------------
+# bayesian optimization
+
+# FIG: perform Bayesian Optimization (BO) using the Probability of Improvement (PI) 
+#    iteratively select new points, and update the surrogate model 
+#    (Gaussian Process - Kriging).
+# ------------------------------------------------------------------------------
+
 library(bbotk)
 library(data.table)
 library(mlr3mbo)
@@ -6,6 +14,9 @@ library(ggplot2)
 library(patchwork)
 
 set.seed(123)
+
+# ------------------------------------------------------------------------------
+
 objective = ObjectiveRFunDt$new(
  fun = function(xdt) data.table(y = 2 * xdt$x * sin(14 * xdt$x)),
  domain = ps(x = p_dbl(lower = 0, upper = 1)),
@@ -22,7 +33,7 @@ instance$eval_batch(xdt_old)
 grid = generate_design_grid(instance$search_space, resolution = 1001L)$data
 set(grid, j = "y", value = objective$eval_dt(grid)$y)
 
-surrogate = srlrn(lrn("regr.km", covtype = "matern5_2", optim.method = "BFGS"), archive = instance$archive)
+surrogate = srlrn(lrn("regr.km", covtype = "matern5_2", optim.method = "BFGS", nugget = 1e-6), archive = instance$archive)
 acq_function = acqf("pi", surrogate = surrogate)
 
 grid = generate_design_grid(instance$search_space, resolution = 1001L)$data
@@ -45,7 +56,7 @@ g = ggplot(aes(x = y, y = d), data = pi_normal) +
   labs(x = "Y(x)", y = "Density") +
   theme_minimal()
 
-ggsave(file.path("../figure_man/bayesian_loop_pi_0.png"), plot = g, width = 5, height = 4)
+ggsave("../figure_man/bayesian_loop_pi_0.png", plot = g, width = 5, height = 4)
 
 acq_function$update()
 set(grid, j = "pi", value = acq_function$eval_dt(grid[, "x"])$acq_pi)
@@ -84,7 +95,7 @@ pi = ggplot(aes(x = x, y = pi), data = grid) +
   ylab("PI") +
   theme_minimal()
 
-ggsave(file.path("../figure_man/bayesian_loop_pi_1.png"), plot = g / pi, width = 5, height = 4)
+ggsave("../figure_man/bayesian_loop_pi_1.png", plot = g / pi, width = 5, height = 4)
 
 old_pi_argmax = pi_argmax
 
@@ -119,7 +130,7 @@ for (i in 2:9) {
     ylab("PI") +
     theme_minimal()
  
-  ggsave(file.path(sprintf("../figure_man/bayesian_loop_pi_%i.png", i)), plot = g / pi, width = 5, height = 4)
+  ggsave(sprintf("../figure_man/bayesian_loop_pi_%i.png", i), plot = g / pi, width = 5, height = 4)
 
   old_pi_argmax = pi_argmax
   

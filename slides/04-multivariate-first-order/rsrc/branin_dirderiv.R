@@ -1,8 +1,13 @@
-# Optimization WiSe 22/23
-# Chapter 1.1 Differentiation
-# Plot negative gradient
+# ------------------------------------------------------------------------------
+# multivariate first order
+
+# FIG: plot branin directional derivatives
+# ------------------------------------------------------------------------------
 
 library(DiceKriging)
+library(rootSolve) #gradient()
+
+# ------------------------------------------------------------------------------
 
 n.grid <- 20
 x.grid <- y.grid <- seq(0,1,length=n.grid)
@@ -12,7 +17,6 @@ z.grid <- matrix(response.grid, n.grid, n.grid)
 
 # Mod. branin function: https://www.sfu.ca/~ssurjano/Code/braninr.html
 
-library(rootSolve) #gradient()
 p1 <- c(0.6, 0.6)
 p1_neggrad <- -gradient(branin, p1)
 p1_grad <- gradient(branin, p1)
@@ -45,6 +49,7 @@ graddf <- data.frame(
 
 # plot point, pos. & neg. gradients and different directional derivatives
 # plot: https://rdrr.io/cran/DiceKriging/man/branin.html
+png('../figure_man/branin_dirderiv.png', width = 480, height = 320)
 plot.new()
 contour(x.grid,y.grid,z.grid,40)
 points(t(p1), pch=19, col="black")
@@ -77,4 +82,4 @@ legend("bottomleft", legend=c("2 pos. directional derivatives",
                             ">=1 neg. directional derivatives",
                             "Gradient & neg. Gradient"),
        col=c("red", "blue", "green"),adj = c(0, 0.6), lty=1, cex=0.75)
-
+dev.off()
