@@ -108,7 +108,7 @@ Black line shows average value across multiple runs
 \item \textbf{(Possibly) suboptimal direction:} Approximate gradient $\hat{\mathbf{d}} = \nabla_\xv g_i(\xv)$ might point in suboptimal (possibly not even a descent!) direction
 \item \textbf{Unbiased estimate:} If $J$ drawn i.i.d., approximate gradient $\hat{\mathbf{d}}$ is an unbiased estimate of gradient $\mathbf{d} = \nabla_\xv g(\xv) = \sumin \nabla_\xv g_i(\xv)$:
 \begin{align*}
-\mathbb{E}_{i}\left[\nabla_\xv g_i(\xv)\right] &= \sumin \nabla_\xv g_i(\xv) \cdot \P(i = i) \\
+\E_{i}\left[\nabla_\xv g_i(\xv)\right] &= \sumin \nabla_\xv g_i(\xv) \cdot \P(i = i) \\
 &= \sumin \nabla_\xv g_i(\xv) \cdot \frac{1}{n} = \nabla_\xv g(\xv).
 \end{align*}
 \item \textbf{Conclusion:} SGD might perform single suboptimal moves, but moves in \enquote{right direction} \textbf{on average}

@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -21,24 +22,24 @@ figure_man/momentum_conv_osc.png
 
 \begin{frame2}{Momentum update}
 $$
-\boldsymbol{\nu}^{[ t+1 ] } = \varphi \boldsymbol{\nu}^{[ t ] } + \alpha \nabla f(\xv^{[ t ] })
+\nuv^{[ t+1 ] } = \varphi \nuv^{[ t ] } + \alpha \nabla f(\xv^{[ t ] })
 $$
 $$
-\xv^{[ t+1 ] } = \xv^{[ t ] } - \boldsymbol{\nu}^{[ t+1 ] }
+\xv^{[ t+1 ] } = \xv^{[ t ] } - \nuv^{[ t+1 ] }
 $$
 which simplifies to
 $$
-\boldsymbol{\nu}^{[ t+1 ] } = \varphi \boldsymbol{\nu}^{[ t ] } + \alpha (\Amat \xv^{[ t ] } - b)
+\nuv^{[ t+1 ] } = \varphi \nuv^{[ t ] } + \alpha (\Amat \xv^{[ t ] } - \bv)
 $$
 $$
-\xv^{[ t+1 ] } = \xv^{[ t ] } - \boldsymbol{\nu}^{[ t+1 ] }
+\xv^{[ t+1 ] } = \xv^{[ t ] } - \nuv^{[ t+1 ] }
 $$
 for the quadratic form.
 \end{frame2}
 
 
 \begin{frame2}[fs=footnotesize]{Dynamics of momentum}
-Change basis as before with $\boldsymbol{w}^{[ t ] } = \bm{V}^\top (\xv^{[ t ] } - \xv^\ast)$ and $\boldsymbol{u}^{[ t ] } = \bm{V} \boldsymbol{\nu}^{[ t ] }$, again each component acts independently, but $w_i^{[ t ] }$ and $u_i^{[ t ] }$ are coupled:
+Change basis as before with $\wv^{[ t ] } = \V^\top (\xv^{[ t ] } - \xvs)$ and $\uv^{[ t ] } = \V \nuv^{[ t ] }$, again each component acts independently, but $w_i^{[ t ] }$ and $u_i^{[ t ] }$ are coupled:
 $$
 u_i^{[ t+1 ] } = \varphi u_i^{[ t ] } + \alpha \lambda_i w_i^{[ t ] }
 $$
@@ -131,7 +132,7 @@ $$
 \begin{frame2}[fs=footnotesize]{Momentum convergence regions}
 \imageC[0.8]{figure_man/momentum_convergence.png}
 \vfill
-Convergence rate is the slowest of $\text{max} \{|\sigma_1|, |\sigma_2| \}$.
+Convergence rate is the slowest of $\max \{|\sigma_1|, |\sigma_2| \}$.
 Each region shows different convergence behavior.
 \end{frame2}
 
@@ -178,7 +179,7 @@ When $\alpha > 1/\lambda_i$, the iterates flip sign every iteration.
 {\imageC[1]{figure_man/momentum_conv_div.png}}
 {\imageC[1]{figure_man/momentum_div.png}}
 \vfill
-If $\text{max} \{|\sigma_1|, |\sigma_2| \} > 1$, the iterates diverge.
+If $\max \{|\sigma_1|, |\sigma_2| \} > 1$, the iterates diverge.
 \end{frame2}
 
 

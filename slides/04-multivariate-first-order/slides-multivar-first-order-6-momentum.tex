@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -35,11 +36,11 @@ figure_man/momentum_illustration_medium.png
 \splitV[0.48]
 {
 \begin{itemize}
-\item \textbf{Idea:} ``Velocity'' $\bm{\nu}$: Increasing if successive gradients point in the same direction but decreasing if they point in opposite directions
-\item $\bm{\nu}$ is weighted moving average of previous gradients:
+\item \textbf{Idea:} ``Velocity'' $\nuv$: Increasing if successive gradients point in the same direction but decreasing if they point in opposite directions
+\item $\nuv$ is weighted moving average of previous gradients:
 \begin{align*}
-\bm{\nu}^{[t+1]} &= \varphi \bm{\nu}^{[t]} - \alpha \nabla f(\xv^{[t]}) \\
-\xv^{[t+1]} &= \xv^{[t]} + \bm{\nu}^{[t+1]}
+\nuv^{[t+1]} &= \varphi \nuv^{[t]} - \alpha \nabla f(\xv^{[t]}) \\
+\xv^{[t+1]} &= \xv^{[t]} + \nuv^{[t+1]}
 \end{align*}
 \item $\varphi \in [0,1)$ is additional hyperparameter
 \end{itemize}
@@ -55,7 +56,7 @@ figure_man/momentum_illustration_medium.png
 \begin{framei}{GD with Momentum: Characteristics}
 \item Length of a single step depends on how large and aligned a sequence of gradients is
 \item Length of a single step grows if many successive gradients point in the same direction
-\item $\varphi$ determines how strongly previous gradients are included in $\bm{\nu}$
+\item $\varphi$ determines how strongly previous gradients are included in $\nuv$
 \item Common values for $\varphi$ are 0.5, 0.9 and even 0.99
 \item In general, the larger $\varphi$ is in relation to $\alpha$, the more strongly previous gradients influence the current direction
 \item \textbf{Special case} $\varphi = 0$: ``vanilla'' gradient descent
@@ -66,17 +67,17 @@ figure_man/momentum_illustration_medium.png
 \begin{frame2}[footnotesize]{Momentum: Analysis}
 \begin{equation*}
 \begin{aligned}
-\bm{\nu}^{[1]} &= \textcolor{blue}{\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]})} \\[0.1cm]
-\xv^{[1]} &= \xv^{[0]} + \textcolor{blue}{\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]})} \\[0.1cm]
-\bm{\nu}^{[2]} &= \textcolor{red}{\varphi \bm{\nu}^{[1]} - \alpha \nabla f(\xv^{[1]})} \\
-&= \textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\[0.1cm]
-\xv^{[2]} &= \xv^{[1]} +\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\[0.1cm]
-\bm{\nu}^{[3]} &= \textcolor{green}{\varphi \bm{\nu}^{[2]} - \alpha \nabla f(\xv^{[2]})} \\
-&= \textcolor{green}{\varphi} (\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})}) - \textcolor{green}{\alpha \nabla f(\xv^{[2]})} \\[0.1cm]
-\xv^{[3]} &= \xv^{[2]} + \textcolor{green}{\varphi} (\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})}) - \textcolor{green}{\alpha \nabla f(\xv^{[2]})}  \\
-&= \xv^{[2]} + \varphi^3\bm{\nu}^{[0]} - \varphi^2\alpha\nabla f(\xv^{[0]}) - \varphi \alpha \nabla f(\xv^{[1]}) - \alpha \nabla f(\xv^{[2]}) \\
-&= \xv^{[2]} - \alpha(\varphi^2 \nabla f(\xv^{[0]}) + \varphi^1 \nabla f(\xv^{[1]}) + \varphi^0 \nabla f(\xv^{[2]})) + \varphi^3 \bm{\nu}^{[0]} \\
-\xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j \nabla f(\xv^{[t-j]}) + \varphi^{t+1}\bm{\nu}^{[0]}
+\nuv^{[1]} &= \textcolor{blue}{\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]})} \\[0.1cm]
+\xv^{[1]} &= \xv^{[0]} + \textcolor{blue}{\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]})} \\[0.1cm]
+\nuv^{[2]} &= \textcolor{red}{\varphi \nuv^{[1]} - \alpha \nabla f(\xv^{[1]})} \\
+&= \textcolor{red}{\varphi} \textcolor{blue}{(\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\[0.1cm]
+\xv^{[2]} &= \xv^{[1]} +\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\[0.1cm]
+\nuv^{[3]} &= \textcolor{green}{\varphi \nuv^{[2]} - \alpha \nabla f(\xv^{[2]})} \\
+&= \textcolor{green}{\varphi} (\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})}) - \textcolor{green}{\alpha \nabla f(\xv^{[2]})} \\[0.1cm]
+\xv^{[3]} &= \xv^{[2]} + \textcolor{green}{\varphi} (\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})}) - \textcolor{green}{\alpha \nabla f(\xv^{[2]})}  \\
+&= \xv^{[2]} + \varphi^3\nuv^{[0]} - \varphi^2\alpha\nabla f(\xv^{[0]}) - \varphi \alpha \nabla f(\xv^{[1]}) - \alpha \nabla f(\xv^{[2]}) \\
+&= \xv^{[2]} - \alpha(\varphi^2 \nabla f(\xv^{[0]}) + \varphi^1 \nabla f(\xv^{[1]}) + \varphi^0 \nabla f(\xv^{[2]})) + \varphi^3 \nuv^{[0]} \\
+\xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j \nabla f(\xv^{[t-j]}) + \varphi^{t+1}\nuv^{[0]}
 \end{aligned}
 \end{equation*}
 \end{frame2}
@@ -85,9 +86,9 @@ figure_man/momentum_illustration_medium.png
 \begin{frame2}[footnotesize]{Momentum: Intuition}
 Suppose momentum always observes the same gradient $\nabla f(\xv^{[t]})$:
 \begin{align*}
-\xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j  \nabla f(\xv^{[j]}) + \varphi^{t+1}\bm{\nu}^{[0]} \\
-&= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \displaystyle\sum_{j = 0}^{t} \varphi^j + \varphi^{t+1}\bm{\nu}^{[0]} \\
-&= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1 - \varphi^{t+1}}{1 - \varphi} + \varphi^{t+1} \bm{\nu}^{[0]} \\
+\xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j  \nabla f(\xv^{[j]}) + \varphi^{t+1}\nuv^{[0]} \\
+&= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \displaystyle\sum_{j = 0}^{t} \varphi^j + \varphi^{t+1}\nuv^{[0]} \\
+&= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1 - \varphi^{t+1}}{1 - \varphi} + \varphi^{t+1} \nuv^{[0]} \\
 &\to \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1}{1 - \varphi} \qquad \text{ for } t \to \infty. 
 \end{align*}
 Momentum accelerates along $- \nabla f(\xv^{[t]})$ to terminal velocity yielding step size $\alpha / (1 - \varphi)$.\\
@@ -97,9 +98,9 @@ Momentum accelerates along $- \nabla f(\xv^{[t]})$ to terminal velocity yielding
 
 
 \begin{frame2}[footnotesize]{Momentum: Intuition (Example)}
-Vector $\bm{\nu}^{[3]}$ (for $\bm{\nu}^{[0]} = 0$):
+Vector $\nuv^{[3]}$ (for $\nuv^{[0]} = 0$):
 \begin{align*}
-\bm{\nu}^{[3]} &= \varphi (\varphi (\varphi \bm{\nu}^{[0]} - \alpha \nabla f(\xv^{[0]})) - \alpha \nabla f(\xv^{[1]})) - \alpha \nabla f(\xv^{[2]}) \\
+\nuv^{[3]} &= \varphi (\varphi (\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]})) - \alpha \nabla f(\xv^{[1]})) - \alpha \nabla f(\xv^{[2]}) \\
 &= - \varphi^2\alpha\nabla f(\xv^{[0]}) - \varphi \alpha \nabla f(\xv^{[1]}) - \alpha \nabla f(\xv^{[2]})
 \end{align*}
 \imageC[0.7]{figure_man/momentum_vectors.png}
@@ -132,7 +133,7 @@ Let $\xv^{[0]} = (10, 1)^\top$ and $\alpha = 0.1$.
 
 
 \begin{frame2}{GD with Momentum: Saddle Points}
-Consider the two-dimensional quadratic form $f(\xv) = x_{1}^{2} - x_{2}^{2}$ with a saddle point at $(0, 0)^\top$.\\
+Consider the two-dimensional quadratic form $\fx = x_{1}^{2} - x_{2}^{2}$ with a saddle point at $(0, 0)^\top$.\\
 \medskip
 Let $\xv^{[0]} = (-1/2, 10^{-3})^\top$ and $\alpha = 0.1$.
 \imageC[0.7]{figure_man/momentum/sgd_momentum_saddlepoint.png}
@@ -196,8 +197,8 @@ After $300$ iters of GD:
 \item Stronger theoretical convergence guarantees for convex functions
 \item Avoid moving back and forth near optima
 \begin{align*}
-\bm{\nu}^{[t+1]} &= \varphi \bm{\nu}^{[t]} - \alpha \nabla f(\textcolor{orange}{\xv^{[t]} + \varphi \bm{\nu}^{[t]}}) \\
-\xv^{[t+1]} &= \xv^{[t]} + \bm{\nu}^{[t+1]}
+\nuv^{[t+1]} &= \varphi \nuv^{[t]} - \alpha \nabla f(\textcolor{orange}{\xv^{[t]} + \varphi \nuv^{[t]}}) \\
+\xv^{[t+1]} &= \xv^{[t]} + \nuv^{[t+1]}
 \end{align*}
 \imageC[0.8]{figure_man/nesterov.jpeg}
 \vfill

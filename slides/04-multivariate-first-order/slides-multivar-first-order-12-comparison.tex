@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -24,12 +25,12 @@ figure_man/linesearch.png
 \begin{framei}[fs=small]{Comparison of first order methods}
 \item Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control on simulated data
 \item We do not use analytical solution on purpose although one exists:
-\item Linear regression (squared loss) simulation $\bm{y} = \bm{X}\thetav^{\ast} + \bm{\varepsilon}$ with $n=500$ samples and $p=11$ features, where $\thetav^{\ast}=(-5,-4,\ldots0,\ldots,4,5)^{\top}$, $\bm{\varepsilon} \sim \mathcal{N}(\bm{0}, \bm{I})$, and $\bm{X} \sim \mathcal{N}(\bm{0}, \Sigma)$ for $\Sigma=\bm{I}$ (i.i.d. features) or $\Sigma_{i,j}=0.99^{|i-j|}$ (corr. features)
+\item Linear regression (squared loss) simulation $\yv = \Xmat\thetav^{\ast} + \epsv$ with $n=500$ samples and $p=11$ features, where $\thetav^{\ast}=(-5,-4,\ldots0,\ldots,4,5)^{\top}$, $\epsv \sim \normal(\zero, \id)$, and $\Xmat \sim \normal(\zero, \Sigma)$ for $\Sigma=\id$ (i.i.d. features) or $\Sigma_{i,j}=0.99^{|i-j|}$ (corr. features)
 \item Indep. features result in a condition number of $\approx 2.9$, whereas the corr. feature set-up produces a (moderately) bad condition number of $\approx 600$
 \item We set the momentum parameter to $0.8$ and the decay step size using schedule $\alpha^{[t]}=\alpha^{[0]} \cdot \texttt{decay}^{t/t_{\text{max}}}$ for $\texttt{decay}=0.1$
 \item For GD and SGD we use different step sizes to show that benefit of momentum/decay depends heavily on step size
-\item ERM has unique global minimizer given by $\bm{\thetah} = (\bm{X}^{\top}\bm{X})^{-1}\bm{X}^{\top} \bm{y}$
-\item We also track the optimization error $\Vert \thetav - \bm{\thetah} \Vert_2$
+\item ERM has unique global minimizer given by $\thetavh = (\Xmat^{\top}\Xmat)^{-1}\Xmat^{\top} \yv$
+\item We also track the optimization error $\Vert \thetav - \thetavh \Vert_2$
 \end{framei}
 
 
@@ -95,32 +96,32 @@ figure_man/linesearch.png
 
 \begin{framei}[fs=footnotesize]{Digression: solving OLS with QR Decomp.}
 \item Solving linear least squares via (S)GD is rarely done in practice
-\item But inversion of $\bm{X}^{\top}\bm{X}$ is numerically unstable and to be avoided
+\item But inversion of $\Xmat^{\top}\Xmat$ is numerically unstable and to be avoided
 \item A standard numerical approach applies \textbf{QR Decomposition}:
 \begin{itemize}
-\item Factorize \( \bm{X} \in \mathbb{R}^{n \times p} \) as \( \bm{X} = \bm{Q}\bm{R} \), where \( \bm{Q} \in \mathbb{R}^{n \times p} \) (thin form) so that $\bm{Q}^{\top}\bm{Q}=\bm{I}$ and \( \bm{R} \in \mathbb{R}^{p \times p} \) is upper triangular
-\item Purpose: replace solving \( \bm{\thetah} = (\bm{X}^{\top} \bm{X})^{-1} \bm{X}^{\top} \bm{y} \) with a more numerically stable method by avoiding direct inversion
+\item Factorize \( \Xmat \in \mathbb{R}^{n \times p} \) as \( \Xmat = \bm{Q}\bm{R} \), where \( \bm{Q} \in \mathbb{R}^{n \times p} \) (thin form) so that $\bm{Q}^{\top}\bm{Q}=\id$ and \( \bm{R} \in \mathbb{R}^{p \times p} \) is upper triangular
+\item Purpose: replace solving \( \thetavh = (\Xmat^{\top} \Xmat)^{-1} \Xmat^{\top} \yv \) with a more numerically stable method by avoiding direct inversion
 \item The QR decomposition can be computed using Gram-Schmidt orthogonalization or Householder transformations
 \end{itemize}
 \item \textbf{Steps}:
 \begin{itemize}
-\item Decompose \( \bm{X} \) into \( \bm{Q} \) and \( \bm{R} \)
-\item Compute \( \bm{Q}^{\top} \bm{y} \)
-\item Solve triangular system \( \bm{R} \bm{\thetah} = \bm{Q}^{\top} \bm{y} \) via \textbf{back substitution}
+\item Decompose \( \Xmat \) into \( \bm{Q} \) and \( \bm{R} \)
+\item Compute \( \bm{Q}^{\top} \yv \)
+\item Solve triangular system \( \bm{R} \thetavh = \bm{Q}^{\top} \yv \) via \textbf{back substitution}
 \vfill
-\item Why this system? Remember normal equation for least squares problem is $\bm{X}^{\top}\bm{X} \hat{\thetav} = \bm{X}^{\top}\bm{y}$. Now replace $\bm{X}=\bm{Q} \bm{R}$:
+\item Why this system? Remember normal equation for least squares problem is $\Xmat^{\top}\Xmat \thetavh = \Xmat^{\top}\yv$. Now replace $\Xmat=\bm{Q} \bm{R}$:
 $$
-\bm{X}^{\top}\bm{X} \hat{\thetav} = \bm{X}^{\top}\bm{y} \iff \bm{R}^{\top}(\bm{Q}^{\top} \bm{Q}) \bm{R}^{\top} \hat{\thetav} = \bm{R}^{\top} \bm{Q}^{\top} \bm{y}
+\Xmat^{\top}\Xmat \thetavh = \Xmat^{\top}\yv \iff \bm{R}^{\top}(\bm{Q}^{\top} \bm{Q}) \bm{R}^{\top} \thetavh = \bm{R}^{\top} \bm{Q}^{\top} \yv
 $$
 $$
-\bm{R}^{\top}\bm{R} \hat{\thetav} = \bm{R}^{\top} \bm{Q}^{\top} \bm{y} \iff \bm{R} \hat{\thetav} = \bm{Q}^{\top} \bm{y}
+\bm{R}^{\top}\bm{R} \thetavh = \bm{R}^{\top} \bm{Q}^{\top} \yv \iff \bm{R} \thetavh = \bm{Q}^{\top} \yv
 $$
 \end{itemize}
 \end{framei}
 
 
 \begin{framei}[fs=small]{Digression: solving OLS with QR Decomp.}
-\item $\bm{R} \bm{\thetah} = \bm{Q}^{\top} \bm{y}$ is a triangular system easily solvable by back substitution:
+\item $\bm{R} \thetavh = \bm{Q}^{\top} \yv$ is a triangular system easily solvable by back substitution:
 $$
 \bm{R} = \begin{bmatrix} 
 r_{11} & r_{12} & \dots & r_{1p} \\ 
@@ -128,12 +129,12 @@ r_{11} & r_{12} & \dots & r_{1p} \\
 \vdots & \vdots & \ddots & \vdots \\ 
 0 & 0 & \dots & r_{pp} 
 \end{bmatrix}, \quad 
-\bm{\thetah} = \begin{bmatrix} 
+\thetavh = \begin{bmatrix} 
 \thetah_1 \\ 
 \thetah_2 \\ 
 \vdots \\ 
 \thetah_p 
-\end{bmatrix}, \quad \bm{Q}^{\top} \bm{y} = \begin{bmatrix} 
+\end{bmatrix}, \quad \bm{Q}^{\top} \yv = \begin{bmatrix} 
 b_1 \\ 
 b_2 \\ 
 \vdots \\ 
@@ -156,7 +157,8 @@ $
 \thetah_i = \frac{b_i - \sum_{j=i+1}^p r_{ij} \thetah_j}{r_{ii}} \quad \text{for each } i = p-1, \dots, 1
 $
 \vfill
-\item Back substitution leverages triangular structure of $\bm{R}$, moving upward from the last row and inserting already known values of $\bm{\thetah}$ as we go
+\item Back substitution leverages triangular structure of $\bm{R}$, moving upward from the last row and inserting already known values of $\thetavh$ as we go
+\item[] Back substitution leverages triangular structure of $\bm{R}$, moving upward from the last row and inserting already known values of $\thetavh$ as we go
 \end{itemize}
 \end{framei}
 
@@ -165,11 +167,11 @@ $
 \item[] Comparison of (S)GD, (S)GD + momentum, and (S)GD + momentum + step size control on simulated data:
 \vfill
 \item Logistic regression (log loss) with same simulation setup as for linear regression
-\item To simulate response, we set $y^{(i)} \sim \mathcal{B}(\pi^{(i)}), \pi^{(i)} = \frac{1}{1+e^{-\left(\bm{x}^{(i)}\right)^{\top}\thetav^{\ast}}}$
+\item To simulate response, we set $y^{(i)} \sim \mathcal{B}(\pi^{(i)}), \pi^{(i)} = \frac{1}{1+e^{-(\xv^{(i)})^{\top}\thetav^{\ast}}}$
 \item We set the momentum parameter to $0.8$ and $\texttt{decay}=0.1$
 \item We again use different step sizes to illustrate benefit of momentum and decay depends on step size
-\item ERM has unique global minimizer but no closed-form solution. We can approximate $\hat{\thetav}$ using the \texttt{glm} solution (second-order optim)
-\item We also track the optimization error $\Vert \thetav - \hat{\thetav} \Vert_2$
+\item ERM has unique global minimizer but no closed-form solution. We can approximate $\thetavh$ using the \texttt{glm} solution (second-order optim)
+\item We also track the optimization error $\Vert \thetav - \thetavh \Vert_2$
 \end{framei}
 
 

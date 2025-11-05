@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -20,14 +21,14 @@ figure_man/gd.png
 }
 
 \begin{framei}{Quadratic forms \& GD}
-\item We consider the quadratic function $q(\xv) = \xv^T \Amat \xv - \mathbf{b}^T \xv$
-\item We assume that the Hessian $\mathbf{H} = 2 \Amat$ has full rank
+\item We consider the quadratic function $q(\xv) = \xv^T \Amat \xv - \bv^T \xv$
+\item We assume that the Hessian $\H = 2 \Amat$ has full rank
 \item We assume $q$ is convex, so $\Amat$ is psd
-\item The optimal solution is $\xv^\ast = \frac{1}{2} \Amat^{-1} \mathbf{b}$
-\item With $\nabla q(\xv) = 2 \Amat \xv - \mathbf{b}$, gradient descent iterates as
+\item The optimal solution is $\xvs = \frac{1}{2} \Amat^{-1} \bv$
+\item With $\nabla q(\xv) = 2 \Amat \xv - \bv$, gradient descent iterates as
 \vfill
 $$
-\xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})
+\xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \bv)
 $$
 \imageC[0.45][http://doi.org/10.23915/distill.00006]{figure_man/gd.png} % SOURCE: Distill "Why Momentum Really Works" (2017)
 \end{framei}
@@ -35,35 +36,35 @@ $$
 
 \begin{framei}{Eigendecomposition of quadratic forms}
 \item We want to work in the coordinate system induced by $q$
-\item \textbf{Recall:} That system is given by the eigenvectors of $\mathbf{H} = 2\Amat$
-\item Eigendecomposition: $\Amat = \mathbf{V} \bm{\Lambda} \mathbf{V}^T$
-\item $\mathbf{V}$ contains eigenvectors $\mathbf{v}_i$ and $\bm{\Lambda} = \text{diag}(\lambda_1, \dots, \lambda_n)$ stores eigenvalues
-\item Change of basis: $\mathbf{w}^{[t]} = \mathbf{V}^T (\xv^{[t]} - \xv^\ast)$
+\item \textbf{Recall:} That system is given by the eigenvectors of $\H = 2\Amat$
+\item Eigendecomposition: $\Amat = \V \bm{\Lambda} \V^T$
+\item $\V$ contains eigenvectors $\vv_i$ and $\bm{\Lambda} = \diag(\lambda_1, \dots, \lambda_n)$ stores eigenvalues
+\item Change of basis: $\wv^{[t]} = \V^T (\xv^{[t]} - \xvs)$
 \vfill
 \imageC[0.45]{figure_man/gd_eigenspace.png}
 \end{framei}
 
 
 \begin{framei}{GD steps in eigenspace}
-\item With $\mathbf{w}^{[t]} = \mathbf{V}^T (\xv^{[t]} - \xv^\ast)$, a single GD step starts with
+\item With $\wv^{[t]} = \V^T (\xv^{[t]} - \xvs)$, a single GD step starts with
 $$
-\xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})
+\xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \bv)
 $$
 \item This becomes
 $$
-\mathbf{w}^{[t+1]} = \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}
+\wv^{[t+1]} = \wv^{[t]} - 2 \alpha \bm{\Lambda} \wv^{[t]}
 $$
 \end{framei}
 
 
 \begin{framei}{GD steps in eigenspace: proof}
-\item A single GD step satisfies $\xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \mathbf{b})$
-\item Multiplying with $\mathbf{V}^T$ and subtracting $\xv^\ast$ yields
+\item A single GD step satisfies $\xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \bv)$
+\item Multiplying with $\V^T$ and subtracting $\xvs$ yields
 \begin{align*}
-\mathbf{V}^T (\xv^{[t+1]} - \xv^\ast) &= \mathbf{V}^T (\xv^{[t]} - \xv^\ast) - \alpha \mathbf{V}^T (2 \Amat \xv^{[t]} - \mathbf{b}) \\
-\mathbf{w}^{[t+1]} &= \mathbf{w}^{[t]} - \alpha \mathbf{V}^T (2 \Amat (\xv^{[t]} - \xv^\ast) + \underbrace{2 \Amat \xv^\ast - \mathbf{b}}_{=0}) \\
-&= \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{V}^T (\xv^{[t]} - \xv^\ast) \\
-&= \mathbf{w}^{[t]} - 2 \alpha \bm{\Lambda} \mathbf{w}^{[t]}
+\V^T (\xv^{[t+1]} - \xvs) &= \V^T (\xv^{[t]} - \xvs) - \alpha \V^T (2 \Amat \xv^{[t]} - \bv) \\
+\wv^{[t+1]} &= \wv^{[t]} - \alpha \V^T (2 \Amat (\xv^{[t]} - \xvs) + \underbrace{2 \Amat \xvs - \bv}_{=0}) \\
+&= \wv^{[t]} - 2 \alpha \bm{\Lambda} \V^T (\xv^{[t]} - \xvs) \\
+&= \wv^{[t]} - 2 \alpha \bm{\Lambda} \wv^{[t]}
 \end{align*}
 \end{framei}
 
@@ -81,7 +82,7 @@ w_i^{[t+1]} &= w_i^{[t]} - 2 \alpha \lambda_i w_i^{[t]} \\
 \begin{framei}{GD error in original space}
 \item Move back to the original space:
 $$
-\xv^{[t]} - \xv^\ast = \mathbf{V} \mathbf{w}^{[t]} = \sum_{i = 1}^{d} (1 - 2 \alpha \lambda_i)^t w_i^{[0]} \mathbf{v}_i
+\xv^{[t]} - \xvs = \V \wv^{[t]} = \sum_{i = 1}^{d} (1 - 2 \alpha \lambda_i)^t w_i^{[0]} \vv_i
 $$
 \item This gives the difference in $\xv$-space in closed form
 \item The difference vector is written in the eigenbasis, initial error components $w_i^{[0]}$ decay with rate $1 - 2 \alpha \lambda_i$
@@ -93,7 +94,7 @@ $$
 \begin{framei}{GD regret}
 \item We can also analyze the regret in $y$-space:
 $$
-q(\xv^{[t]}) - q(\xv^\ast) = \frac{1}{2} \sum_{i = 1}^{d} (1 - 2 \alpha \lambda_i)^{2t} \lambda_i (w_i^{[0]})^2
+q(\xv^{[t]}) - q(\xvs) = \frac{1}{2} \sum_{i = 1}^{d} (1 - 2 \alpha \lambda_i)^{2t} \lambda_i (w_i^{[0]})^2
 $$
 \item This is straightforward to derive; formulas only become slightly lengthy
 \item Rates become more similar once the slow modes dominate

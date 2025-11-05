@@ -115,12 +115,12 @@ Note that even for the linear model and quadratic loss, where a closed form solu
 \caption{Stochastic gradient descent with momentum}
 \begin{algorithmic}[1]
 \State \textbf{require} step size $\alpha$ and momentum $\varphi$ \strut
-\State \textbf{require} initial parameter $\bm{x}$ and initial velocity $\bm{\nu}$ \strut
+\State \textbf{require} initial parameter $\bm{x}$ and initial velocity $\nuv$ \strut
 \While{stopping criterion not met}
 \State Sample mini-batch of $m$ examples
 \State Compute gradient estimate $\nabla \hat{g}(\xv)$ using mini-batch
-\State Compute velocity update: $\bm{\nu} \leftarrow \varphi \bm{\nu} - \alpha \nabla \hat{g}(\xv)$
-\State Apply update: $\bm{x} \leftarrow \bm{x} + \bm{\nu}$
+\State Compute velocity update: $\nuv \leftarrow \varphi \nuv - \alpha \nabla \hat{g}(\xv)$
+\State Apply update: $\bm{x} \leftarrow \bm{x} + \nuv$
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
