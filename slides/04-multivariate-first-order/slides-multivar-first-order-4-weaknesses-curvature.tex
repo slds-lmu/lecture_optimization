@@ -76,7 +76,7 @@ $\Rightarrow$ \textit{Small} step sizes can be problematic.
 \begin{framei}{Curvature and step size in GD}
 \item What if $\mathbf{g}$ is not aligned with eigenvectors?
 \item Consider 2D case: Decompose $\mathbf{g}$ (black) into $\textcolor{red}{\mathbf{v}_{\text{max}}}$ and $\textcolor{blue}{\mathbf{v}_{\text{min}}}$
-\imageC[0.7]{figure_man/curvature3.png}
+\imageC[0.7]{figure/curvature_1.png}
 \item Ideally, perform \textbf{large} step along $\textcolor{blue}{\mathbf{v}_{\text{min}}}$ but \textbf{small} step along $\textcolor{red}{\mathbf{v}_{\text{max}}}$
 \item However, gradient almost only points along $\textcolor{red}{\mathbf{v}_\text{max}}$
 \end{framei}
@@ -86,7 +86,7 @@ $\Rightarrow$ \textit{Small} step sizes can be problematic.
 \item GD is not aware of curvatures and can only walk along $\mathbf{g}$
 \item Large step sizes result in ``zig-zag'' behaviour.
 \item Small step sizes result in weak performance.
-\imageC[0.8]{figure_man/big_small_stepsize.png}
+\imageC[0.8]{figure/curvature_2.png}
 \centering\footnotesize Poorly conditioned quadratic form. GD with large (red) and small (blue) step size. For both, convergence to optimum is slow.
 \end{framei}
 
