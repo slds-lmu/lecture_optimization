@@ -13,7 +13,7 @@ First order methods
 }{
 GD -- Multimodality and Saddle points
 }{
-figure_man/multimodal.png
+figure/ackley_0a.png
 }{
 \item Multimodality, GD result can be arbitrarily bad
 \item Saddle points, major problem in NN error landscapes, GD can get stuck or slow crawling
@@ -22,7 +22,8 @@ figure_man/multimodal.png
 \begin{framei}{Unimodal vs. Multimodal loss surfaces}
 \item[]
 \splitV[0.52]
-{\imageC{figure_man/multimodal.png}\imageC[1][https://arxiv.org/abs/1712.09913]{figure_man/difficult_vs_easy.png}}
+{\splitV[0.54]{\imageC[1]{figure/ackley_0a.png}}{\imageC[1]{figure/ackley_0b.png}}
+\imageC[1][https://arxiv.org/abs/1712.09913]{figure_man/difficult_vs_easy.png}}
 {\begin{itemizeM}[small]
 \item Snippet of a loss surface with many local optima
 \item In deep learning, we often find multimodal loss surfaces.
@@ -50,7 +51,7 @@ figure_man/multimodal.png
 \begin{framei}{Local minima: Sensitivity}
 \item Small differences in starting point or step size can lead to huge differences in the reached minimum or even to non-convergence
 \vfill
-\splitV[0.48]{\image{figure_man/nonconv_ackley_plot.jpg}}{\image{figure_man/nonconv_ackley_path.jpg}}
+\splitV[0.48]{\image{figure/ackley_1.png}}{\image{figure/ackley_2.png}}
 \vfill
 \item (Non-)Converging gradient descent for Ackley function
 \end{framei}
@@ -67,7 +68,7 @@ $$\bm{H} = \begin{pmatrix} 2 & 0 \\ 0 & -2 \end{pmatrix}$$
 \item Along $x_1$, curvature is positive ($\lambda_1 = 2 > 0$).
 \item Along $x_2$, curvature is negative ($\lambda_2 = -2 < 0$).
 \end{itemizeM}}
-{\imageC[0.95]{figure_man/saddlepoint.png}}
+{\imageC[0.95]{figure/saddlepoint.png}}
 \end{frame2}
 
 
