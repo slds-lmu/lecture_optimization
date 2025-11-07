@@ -22,7 +22,7 @@ figure_man/classes_optimization_problems.png
 }
 
 
-\begin{frame2}{Constrained Optimization Problem}
+\begin{framev}{Constrained Optimization Problem}
 $$
 \min_{\xv \in \mathcal{S}} \fx, \text{ with } f: \; \mathcal{S} \to \R
 $$
@@ -39,7 +39,7 @@ $$
 & h_j(\mathbf{x}) = 0 && \text{for } j=1,\ldots,l.
 \end{aligned}
 $$
-\end{frame2}
+\end{framev}
 
 \begin{framei}{Linear program (LP)}
 \item $f$ linear s.t. linear constraints. Standard form:
@@ -98,16 +98,16 @@ Convex program (left) vs. nonconvex program (right).
 \end{framei}
 
 
-\begin{frame2}{Further types}
+\begin{framev}{Further types}
 \splitVCC[0.58]{
 \imageC[0.8]{figure_man/classes_optimization_problems.png}
 }{
 Quadratically constrained linear program (QCLP) and quadratically constrained quadratic program (QCQP).
 }
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Example 1: Unit circle}
+\begin{framev}{Example 1: Unit circle}
 $$
 \begin{aligned}
 \min \quad & f(x_1, x_2) = x_1 + x_2 \\
@@ -120,10 +120,10 @@ $f, h$ smooth. Problem $\textbf{not convex}$ ($\mathcal{S}$ is not a convex set)
 \begin{footnotesize}
 \textbf{Note: } If the constraint is replaced by $g(x_1, x_2) = x_1^2 + x_2^2 - 1 \le 0$, the problem is a convex program, even a quadratically constrained linear program (QCLP).
 \end{footnotesize}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Example 2: Maximum likelihood}
+\begin{framev}{Example 2: Maximum likelihood}
 \textbf{Experiment}: Draw $m$ balls from a bag with balls of $k$ different colors.
 Color $j$ has a probability of $p_j$ of being drawn.
 
@@ -140,10 +140,10 @@ $$
 \sum_{j = 1}^m p_j = 1 &&
 \end{aligned}
 $$
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Example 2: Maximum likelihood}
+\begin{framev}{Example 2: Maximum likelihood}
 For a fixed $m$ and a sample $\D = \left(\xi[1], ..., \xi[n]\right)$, where $\sum_{j = 1}^k \xi[i]_j = m$ for all $i = 1, ..., n$, the negative log-likelihood is:
 $$
 \begin{aligned}
@@ -157,7 +157,7 @@ $f, g, h$ are smooth.\\\textbf{Convex program}: convex$^{(*)}$ objective + box/l
 \begin{footnotesize}
 ${(*)}$: $\log$ is concave, $- \log $ is convex, and the sum of convex functions is convex
 \end{footnotesize}
-\end{frame2}
+\end{framev}
 
 
 % \begin{vbframe}{Example 1.1: Maximum Likelihood Estimation: Poisson Distribution}
@@ -204,7 +204,7 @@ ${(*)}$: $\log$ is concave, $- \log $ is convex, and the sum of convex functions
 % \end{vbframe}
 
 
-\begin{frame2}{Example 3: Ridge regression}
+\begin{framev}{Example 3: Ridge regression}
 Ridge regression can be formulated as regularized ERM:
 $$
 \thetah_{\text{Ridge}} = \argmin_{\thetav} \left\{ \sumin \left(\yi - \thetav^\top\xv\right)^2 + \lambda ||\thetav||_2^2 \right\}
@@ -222,10 +222,10 @@ $$
 }
 \spacer
 $f, g$ smooth. \textbf{Convex program} (convex objective, quadratic constraint).
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Example 4: LASSO Regression}
+\begin{framev}{Example 4: LASSO Regression}
 Lasso regression can be formulated as regularized ERM:
 $$
 \thetah_{\text{Lasso}} =  \argmin_{\thetav} \left\{ \sumin \left(\yi - \thetav^\top\xv\right)^2 + \lambda ||\thetav||_1 \right\}
@@ -243,10 +243,10 @@ $$
 }
 \spacer
 $f$ smooth, $g$ \textbf{not smooth}. Still \textbf{convex program}.
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Example 5: Support Vector Machines}
+\begin{framev}{Example 5: Support Vector Machines}
 The SVM problem can be formulated in $3$ equivalent ways: two primal, and one dual one (we will see later what "dual" means).
 \begin{footnotesize}
 Here, we only discuss the nature of the optimization problems. A more thorough statistical derivation of SVMs is given in ``Supervised learning''.\\
@@ -263,10 +263,10 @@ $$
 Unconstrained, convex problem with non-smooth objective
 \end{footnotesize}
 }
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Example 5: Support Vector Machines}
+\begin{framev}{Example 5: Support Vector Machines}
 \textbf{Formulation 2 (primal): } Geometric formulation
 \begin{itemizeL}
 \item Find decision boundary which separates classes with \textbf{maximum} safety distance
@@ -274,10 +274,10 @@ Unconstrained, convex problem with non-smooth objective
 \end{itemizeL}
 \vfill
 \imageC[0.5]{figure_man/svm-example.pdf}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Example 5: Support Vector Machines}
+\begin{framev}{Example 5: Support Vector Machines}
 \textbf{Formulation 2 (primal): } Geometric formulation
 $$
 \begin{aligned}
@@ -293,10 +293,10 @@ $$
 Maximize safety margin $\gamma$. No point is allowed to violate safety margin constraint.
 \end{footnotesize}
 }
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Example 5: Support Vector Machines}
+\begin{framev}{Example 5: Support Vector Machines}
 \textbf{Formulation 2 (primal): } Geometric formulation (soft constraints)
 $$
 \begin{aligned}
@@ -314,10 +314,10 @@ Maximize safety margin $\gamma$. Margin \textcolor{violet}{violations are allowe
 }
 \spacer
 The problem is a \textbf{QP}: Quadratic objective with linear constraints.
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}[footnotesize]{Example 5: Support Vector Machines}
+\begin{framev}[fs=footnotesize]{Example 5: Support Vector Machines}
 \textbf{Formulation 3 (dual): } Dualizing the primal formulation
 $$
 \begin{aligned}
@@ -344,7 +344,7 @@ $$
 $$
 \spacer
 This is QP with a single affine equality constraint and $n$ box constraints.
-\end{frame2}
+\end{framev}
 
 % \begin{frame}{Example 5: Support Vector Machines}
 % When applying the kernel trick to the dual (soft-margin) SVM problem by replacing $\scp{\xi}{\xv^{(j)}}$ by kernels $k(\xi, \xv^{(j)})$, we get the non-linear SVM:

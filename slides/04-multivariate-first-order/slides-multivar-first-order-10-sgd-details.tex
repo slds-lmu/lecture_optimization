@@ -54,7 +54,7 @@ $$
 \end{framei}
 
 
-\begin{frame2}{Advanced step size control}
+\begin{framev}{Advanced step size control}
 \begin{blocki}{Why not Armijo-based step size control?}
 \item Backtracking line search or other approaches based on Armijo rule usually not suitable: Armijo condition 
 $$
@@ -64,7 +64,7 @@ requires evaluating full gradient
 \item But SGD is used to \emph{avoid} expensive gradient computations
 \item Research aims at finding inexact line search methods that provide better convergence behaviour, e.g., Vaswani et al., \emph{Painless Stochastic Gradient: Interpolation, Line-Search, and Convergence Rates}. NeurIPS, 2019
 \end{blocki}
-\end{frame2}
+\end{framev}
 
 
 \begin{framei}{Mini-batches}
@@ -91,7 +91,7 @@ $$
 \end{framei}
 
 
-\begin{frame2}[fs=small]{SGD and ML}
+\begin{framev}[fs=small]{SGD and ML}
 \begin{blocki}{General remarks:}
 \item SGD is a variant of GD 
 \item SGD particularly suitable for large-scale ML when evaluating gradient is too expensive / restricted by computational resources
@@ -104,7 +104,7 @@ Note that even for the linear model and quadratic loss, where a closed form solu
 \item ...
 \end{itemize}
 \end{blocki}
-\end{frame2}
+\end{framev}
 
 
 \begin{framei}[fs=small]{SGD with momentum}

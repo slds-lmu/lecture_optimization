@@ -53,7 +53,7 @@ $$
 \end{framei}
 
 
-\begin{frame2}{Taylor polynomials}
+\begin{framev}{Taylor polynomials}
 \begin{itemizeM}
     \item Idea: Find a polynomial that locally behaves like a function $f$ at point $\bm{a}$, i.e. matches $f$’s value ($f$), slope ($f'$), curvature ($f''$), etc.
     \item[$\Leftrightarrow$] Find polynomial so that 
@@ -72,10 +72,10 @@ $$
 T_k(x,a):=\sum_{j=0}^k \frac{f^{(j)}(a)}{j!}(x-a)^j
 $$
 
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Multivariate Taylor polynomials}
+\begin{framev}{Multivariate Taylor polynomials}
 For the multivariate version, we need a concise way to express derivatives and powers involving several variables
 \begin{itemizeM}
   \item A \textbf{multi-index} is a vector       $
@@ -108,10 +108,10 @@ For each $\bm{a},\xv \in I$, the $k$th order Taylor polynomial for $f$ at $\bm{a
 $$
 T_k(\xv, \bm{a}):=\sum_{|\bm{\alpha}| \le k} \frac{D^{\bm{\alpha}} f(\bm{a})}{{\bm{\alpha}}!} (\xv - \bm{a})^{\bm{\alpha}}
 $$
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Multivariate Taylor polynomial identities}
+\begin{framev}{Multivariate Taylor polynomial identities}
 
 For $f \in \mathcal{C}^k(I,\R)$ as before, we will often use the following identities: \begin{itemizeM}
     \item $T_1(\xv,\bm{a})=f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a})$
@@ -133,7 +133,7 @@ For $f \in \mathcal{C}^k(I,\R)$ as before, we will often use the following ident
     &= f(\bm{a}) + \begin{pmatrix}\frac{\partial f(\bm{a})}{\partial x_1} \\ \frac{\partial f(\bm{a})}{\partial x_2}\end{pmatrix}^T \begin{pmatrix}x_1 - a_1 \\ x_2 - a_2\end{pmatrix} = f(\bm{a}) + \nabla f(\bm{a}) (\xv - \bm{a})
 \end{align*}
 
-\end{frame2}
+\end{framev}
 
 
 \begin{framei}{Taylor's theorem}
@@ -186,7 +186,7 @@ For $f \in \mathcal{C}^k(I,\R)$ as before, we will often use the following ident
 \end{framei}
 
 
-\begin{frame2}{Examples of analytic functions}
+\begin{framev}{Examples of analytic functions}
     For analytic functions the remainder term eventually vanishes, i.e.
     $R_k(\xv, \bm{a}) \rightarrow 0$ as $k \rightarrow \infty$ for all $\xv \in B_r(\bm{a})$.\\\,
 
@@ -201,10 +201,10 @@ For $f \in \mathcal{C}^k(I,\R)$ as before, we will often use the following ident
        \item The derivative of an analytic function is again an analytic function
     \end{itemizeM}\,\\
     \textbf{One specific example: } $f:\R^2\longrightarrow \R$ $\xv \mapsto \sin(2x_1) + \cos(x_2)$
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Example: Taylor Approximation of $\fx = \sin(2\MakeLowercase{x}_1) + \cos(\MakeLowercase{x}_2)$ at $\bm{\MakeLowercase{a}} = (1, 1)^T$}
+\begin{framev}{Example: Taylor Approximation of $\fx = \sin(2\MakeLowercase{x}_1) + \cos(\MakeLowercase{x}_2)$ at $\bm{\MakeLowercase{a}} = (1, 1)^T$}
 \,\\
 \begin{footnotesize}
 \textbf{1st order}: we know that
@@ -226,9 +226,9 @@ and since  $\nabla \fx = \left(2\cos(2x_1), -\sin(x_2)\right)$,
 {\imageC{figure_man/Taylor2D_1st301.png}}
 
 
-\end{frame2}
+\end{framev}
 
-\begin{frame2}{Example: Taylor Approximation of $\fx = \sin(2\MakeLowercase{x}_1) + \cos(\MakeLowercase{x}_2)$ at $\bm{\MakeLowercase{a}} = (1, 1)^T$}
+\begin{framev}{Example: Taylor Approximation of $\fx = \sin(2\MakeLowercase{x}_1) + \cos(\MakeLowercase{x}_2)$ at $\bm{\MakeLowercase{a}} = (1, 1)^T$}
 \,\\
 \begin{footnotesize}
 \textbf{2nd order}: we know that
@@ -245,7 +245,7 @@ and since  $\nabla \fx = \left(2\cos(2x_1), -\sin(x_2)\right)$,
 \imageC{figure_man/Taylor2D_2nd-100.png}
 }{\imageC{figure_man/Taylor2D_2nd-301.png}
 }
-\end{frame2}
+\end{framev}
 
 \endlecture
 

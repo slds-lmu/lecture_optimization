@@ -32,7 +32,7 @@ figure_man/momentum_illustration_medium.png
 \end{framei}
 
 
-\begin{frame2}{GD with Momentum}
+\begin{framev}{GD with Momentum}
 \splitV[0.48]
 {
 \begin{itemize}
@@ -48,7 +48,7 @@ figure_man/momentum_illustration_medium.png
 {
 \imageC[1][https://medium.com/analytics-vidhya/momentum-rmsprop-and-adam-optimizer-5769721b4b19]{figure_man/momentum_illustration_medium.png}
 }
-\end{frame2}
+\end{framev}
 
 
 \begin{framei}{GD with Momentum: Characteristics}
@@ -62,7 +62,7 @@ figure_man/momentum_illustration_medium.png
 \end{framei}
 
 
-\begin{frame2}[footnotesize]{Momentum: Analysis}
+\begin{framev}[fs=footnotesize]{Momentum: Analysis}
 \begin{equation*}
 \begin{aligned}
 \nuv^{[1]} &= \textcolor{blue}{\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]})} \\[0.1cm]
@@ -78,10 +78,10 @@ figure_man/momentum_illustration_medium.png
 \xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j \nabla f(\xv^{[t-j]}) + \varphi^{t+1}\nuv^{[0]}
 \end{aligned}
 \end{equation*}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}[footnotesize]{Momentum: Intuition}
+\begin{framev}[fs=footnotesize]{Momentum: Intuition}
 Suppose momentum always observes the same gradient $\nabla f(\xv^{[t]})$:
 \begin{align*}
 \xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j  \nabla f(\xv^{[j]}) + \varphi^{t+1}\nuv^{[0]} \\
@@ -92,10 +92,10 @@ Suppose momentum always observes the same gradient $\nabla f(\xv^{[t]})$:
 Momentum accelerates along $- \nabla f(\xv^{[t]})$ to terminal velocity yielding step size $\alpha / (1 - \varphi)$.\\
 \spacer
 \textbf{Example:} Momentum with $\varphi = 0.9$ corresponds to a tenfold increase in original step size $\alpha$ compared to vanilla gradient descent
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}[footnotesize]{Momentum: Intuition (Example)}
+\begin{framev}[fs=footnotesize]{Momentum: Intuition (Example)}
 Vector $\nuv^{[3]}$ (for $\nuv^{[0]} = 0$):
 \begin{align*}
 \nuv^{[3]} &= \varphi (\varphi (\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]})) - \alpha \nabla f(\xv^{[1]})) - \alpha \nabla f(\xv^{[2]}) \\
@@ -103,33 +103,31 @@ Vector $\nuv^{[3]}$ (for $\nuv^{[0]} = 0$):
 \end{align*}
 \imageC[0.7]{figure_man/momentum_vectors.png}
 \spacer
-\begin{footnotesize}
 Successive gradients pointing in same/different directions increase/decrease velocity.\\
 Further geometric intuitions and detailed explanations: \url{https://distill.pub/2017/momentum/}
-\end{footnotesize}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{GD with Momentum: Zig-Zag Behaviour}
+\begin{framev}{GD with Momentum: Zig-Zag Behaviour}
 Consider a two-dimensional quadratic form $\fx = x_1^2/2 + 10 x_2$.\\
 \vfill
 Let $\xv^{[0]} = (10, 1)^\top$ and $\alpha = 0.1$.
 \imageC[0.8]{figure_man/momentum/compare_gd_momentum.png}
 \footnotesize GD shows stronger zig-zag behaviour than GD with momentum.
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Momentum: Caution}
+\begin{framev}{Momentum: Caution}
 \textbf{Caution:}
 \begin{itemize}
 \item If momentum is too high, minimum is possibly missed
 \item We might go back and forth around or between local minima
 \end{itemize}
 \imageC[0.8]{figure_man/momentum/comparison_momentum_overshoot.png}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{GD with Momentum: Saddle Points}
+\begin{framev}{GD with Momentum: Saddle Points}
 Consider the two-dimensional quadratic form $\fx = x_{1}^{2} - x_{2}^{2}$ with a saddle point at $(0, 0)^\top$.\\
 \vfill
 Let $\xv^{[0]} = (-1/2, 10^{-3})^\top$ and $\alpha = 0.1$.
@@ -138,52 +136,52 @@ Let $\xv^{[0]} = (-1/2, 10^{-3})^\top$ and $\alpha = 0.1$.
 GD was slowing down at the saddle point (vanishing gradient).\\
 GD with momentum ``breaks out'' of the saddle point and moves on.
 \end{footnotesize}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{ERM for NN with GD}
+\begin{framev}{ERM for NN with GD}
 Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize
 $$
 \risket = \sumin \left(\fxt - \yi\right)^2
 $$
 where $\fxt$ is a neural network with 2 hidden layers (2 units each).\\
 \imageC[0.59]{figure_man/gradient_descent_NN_0.pdf}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{ERM for NN with GD: 10 Iterations}
+\begin{framev}{ERM for NN with GD: 10 Iterations}
 After $10$ iters of GD:
 \splitV[0.55]{
 \imageC[1]{figure_man/gradient_descent_NN_10_surface_0.5.pdf}
 }{
 \imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{ERM for NN with GD: 100 Iterations}
+\begin{framev}{ERM for NN with GD: 100 Iterations}
 After $100$ iters of GD:
 \splitV[0.55]{
 \imageC[1]{figure_man/gradient_descent_NN_100_surface_0.5.pdf}
 }{
 \imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{ERM for NN with GD: 300 Iterations}
+\begin{framev}{ERM for NN with GD: 300 Iterations}
 After $300$ iters of GD:
 \splitV[0.55]{
 \imageC[1]{figure_man/gradient_descent_NN_300_surface_0.5.pdf}
 }{
 \imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Gradient Descent with and without Momentum}
+\begin{framev}{Gradient Descent with and without Momentum}
 \splitVCC[0.5]{
 \imageC[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}
 }{
 \imageC[1]{figure_man/gradient_descent_NN_300_history_0.pdf}}
-\end{frame2}
+\end{framev}
 
 
 \begin{framei}{Nesterov Accelerated Gradient}
@@ -202,13 +200,13 @@ Nesterov momentum update evaluates gradient at the ``look-ahead'' position.
 \end{framei}
 
 
-\begin{frame2}[fs=footnotesize]{Momentum vs. Nesterov}
+\begin{framev}[fs=footnotesize]{Momentum vs. Nesterov}
 \imageC[0.9][https://medium.com/data-science/learning-parameters-part-2-a190bef2d12]{figure_man/nesterov_momentum.png}
 \vfill
 GD with momentum (\textbf{left}) vs. GD with Nesterov momentum (\textbf{right}).\\
 Near minima, momentum makes a large step due to gradient history.\\
 Nesterov mom. ``looks ahead'' and reduces effect of gradient history.
-\end{frame2}
+\end{framev}
 
 \endlecture
 \end{document}

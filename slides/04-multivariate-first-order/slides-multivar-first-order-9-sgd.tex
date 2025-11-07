@@ -37,22 +37,22 @@ with random subset $J \subset \{1, 2, \ldots, n\}$ of gradients called \textbf{m
 \end{framei}
 
 
-\begin{frame2}{SGD algorithm}
-% \begin{algorithm}[H]
-% \footnotesize
-% \caption{Basic SGD pseudo code}
-% \begin{algorithmic}[1]
-% \State Initialize $\xv^{[0]}$, $t = 0$ 
-% \While{stopping criterion not met}
-% \State Randomly shuffle indices and partition into minibatches $J_1, \ldots, J_K$ of size $m$
-% \For{$k\in\{1,\ldots,K\}$} 
-% \State $t \leftarrow t + 1$ 
-% \State Compute gradient estimate with $J_k$: $\hat{\mathbf{d}}^{[t]} \leftarrow \frac{1}{m} \sum_{i \in J_k} \nabla_\xv g_i(\xv^{[t - 1]}) $
-% \State Apply update: $\xv^{[t]} \leftarrow \xv^{[t-1]} - \alpha \cdot \hat{\mathbf{d}}^{[t]}$
-% \EndFor
-% \EndWhile
-% \end{algorithmic}
-% \end{algorithm}
+\begin{framev}{SGD algorithm}
+\begin{algorithm}[H]
+\footnotesize
+\caption{Basic SGD pseudo code}
+\begin{algorithmic}[1]
+\State Initialize $\xv^{[0]}$, $t = 0$ 
+\While{stopping criterion not met}
+\State Randomly shuffle indices and partition into minibatches $J_1, \ldots, J_K$ of size $m$
+\For{$k\in\{1,\ldots,K\}$} 
+\State $t \leftarrow t + 1$ 
+\State Compute gradient estimate with $J_k$: $\hat{\mathbf{d}}^{[t]} \leftarrow \frac{1}{m} \sum_{i \in J_k} \nabla_{\xv} g_i(\xv^{[t - 1]}) $
+\State Apply update: $\xv^{[t]} \leftarrow \xv^{[t-1]} - \alpha \cdot \hat{\mathbf{d}}^{[t]}$
+\EndFor
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
 \begin{itemize}
 \item Instead of drawing batches randomly we might want to go through the $g_i$ sequentially (unless $g_i$ are sorted in any way)
 \item Updates are computed faster, but also more stochastic:
@@ -62,7 +62,7 @@ with random subset $J \subset \{1, 2, \ldots, n\}$ of gradients called \textbf{m
 \item \textbf{But} (later): Convergence rates suffer from stochasticity!
 \end{itemize}
 \end{itemize}
-\end{frame2}
+\end{framev}
 
 
 \begin{framei}{SGD in ML}

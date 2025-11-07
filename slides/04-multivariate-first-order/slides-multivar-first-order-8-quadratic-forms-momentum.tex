@@ -20,7 +20,7 @@ figure_man/momentum_conv_osc.png
 \item Effect of $\varphi$
 }
 
-\begin{frame2}{Momentum update}
+\begin{framev}{Momentum update}
 $$
 \nuv^{[ t+1 ] } = \varphi \nuv^{[ t ] } + \alpha \nabla f(\xv^{[ t ] })
 $$
@@ -35,10 +35,10 @@ $$
 \xv^{[ t+1 ] } = \xv^{[ t ] } - \nuv^{[ t+1 ] }
 $$
 for the quadratic form.
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}[fs=footnotesize]{Dynamics of momentum}
+\begin{framev}[fs=footnotesize]{Dynamics of momentum}
 Change basis as before with $\wv^{[ t ] } = \V^\top (\xv^{[ t ] } - \xvs)$ and $\uv^{[ t ] } = \V \nuv^{[ t ] }$, again each component acts independently, but $w_i^{[ t ] }$ and $u_i^{[ t ] }$ are coupled:
 $$
 u_i^{[ t+1 ] } = \varphi u_i^{[ t ] } + \alpha \lambda_i w_i^{[ t ] }
@@ -93,10 +93,10 @@ u_i^{0} \\
 w_i^{0}
 \end{pmatrix}
 $$
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Matrix power representation}
+\begin{framev}{Matrix power representation}
 Taking a $2 \times 2$ matrix to the $t^{th}$ power can be expressed via its eigenvalues, $\sigma_1$ and $\sigma_2$, where $R_j = \frac{R - \sigma_j I}{\sigma_1 - \sigma_2}$:
 $$
 R^t = \begin{cases}
@@ -108,10 +108,10 @@ $$
 \item Careful, R is not symmetric, so the EVs can be complex
 \item In contrast to GD, where we got one geometric series, we have two coupled series with real or complex values
 \end{itemize}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{Eigenvalues of recursion matrix}
+\begin{framev}{Eigenvalues of recursion matrix}
 The eigenvalues of an arbitrary $2 \times 2$ matrix are:
 $$
 A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}\quad \text{and}\quad
@@ -126,61 +126,61 @@ $$
 \item For the complex case this reduces to $2 \sqrt{\phi}$, which is surprisingly independent of $\alpha$ and $\lambda_i$
 \item For the real case we cannot simplify
 \end{itemize}
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}[fs=footnotesize]{Momentum convergence regions}
+\begin{framev}[fs=footnotesize]{Momentum convergence regions}
 \imageC[0.8]{figure_man/momentum_convergence.png}
 \vfill
 Convergence rate is the slowest of $\max \{|\sigma_1|, |\sigma_2| \}$.
 Each region shows different convergence behavior.
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}[fs=footnotesize]{Momentum with complex eigenvalues}
+\begin{framev}[fs=footnotesize]{Momentum with complex eigenvalues}
 \splitV[0.48]
 {\imageC[1]{figure_man/momentum_conv_ripples.png}}
 {\imageC[1]{figure_man/momentum_ripples.png}}
 \vfill
 The eigenvalues of $R$ are complex and we see low frequency ripples.
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}[fs=footnotesize]{Momentum with positive eigenvalues}
+\begin{framev}[fs=footnotesize]{Momentum with positive eigenvalues}
 \splitV[0.48]
 {\imageC[1]{figure_man/momentum_conv_mono.png}}
 {\imageC[1]{figure_man/momentum_mono.png}}
 \vfill
 Here, both eigenvalues of $R$ are positive with their norm $<1$.\\
 This behavior resembles gradient descent.
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}[fs=footnotesize]{One-step convergence}
+\begin{framev}[fs=footnotesize]{One-step convergence}
 \splitV[0.48]
 {\imageC[1]{figure_man/momentum_conv_1step.png}}
 {\imageC[1]{figure_man/momentum_1step.png}}
 \vfill
 The step size is $\alpha = 1/\lambda_i$ and $\varphi = 0$ - we converge in one step.
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}[fs=footnotesize]{Oscillating iterates}
+\begin{framev}[fs=footnotesize]{Oscillating iterates}
 \splitV[0.48]
 {\imageC[1]{figure_man/momentum_conv_osc.png}}
 {\imageC[1]{figure_man/momentum_osc.png}}
 \vfill
 When $\alpha > 1/\lambda_i$, the iterates flip sign every iteration.
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}[fs=footnotesize]{Diverging iterates}
+\begin{framev}[fs=footnotesize]{Diverging iterates}
 \splitV[0.48]
 {\imageC[1]{figure_man/momentum_conv_div.png}}
 {\imageC[1]{figure_man/momentum_div.png}}
 \vfill
 If $\max \{|\sigma_1|, |\sigma_2| \} > 1$, the iterates diverge.
-\end{frame2}
+\end{framev}
 
 
 \begin{framei}{Convergence conditions}
