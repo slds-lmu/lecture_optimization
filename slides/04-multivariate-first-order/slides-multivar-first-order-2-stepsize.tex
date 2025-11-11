@@ -2,7 +2,7 @@
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -13,7 +13,7 @@ First order methods
 }{
 Step size and optimality
 }{
-figure_man/big_small_stepsize_cropped.png
+figure/curvature_2.png
 }{
 \item Impact of step size
 \item Fixed vs. adaptive step size
@@ -34,7 +34,7 @@ figure_man/big_small_stepsize_cropped.png
 {\imageC{figure_man/stepsize_small.png}}
 {\imageC{figure_man/stepsize_large.png}}{\imageC{figure_man/stepsize_adaptive.png}}
 \begin{center}\begin{footnotesize}
-Steps of line searches for $f(\bm{x}) = 10 x_1^2 + x_2^2/2$
+Steps of line searches for $f(\xv) = 10 x_1^2 + x_2^2/2$
 \end{footnotesize}\end{center} 		
 \end{framei}
 	
@@ -53,7 +53,7 @@ GD with small constant (\textbf{red}), large constant (\textbf{green}), and dimi
 	
 \begin{framei}{Step size control: Exact Line Search}
 \item Use \textbf{optimal} step size in each iteration:
-$$ \alpha^{[t]} = \argmin_{\alpha \in \R_{\ge 0}} g(\alpha) = \argmin_{\alpha \in \R_{\ge 0}} f(\bm{x}^{[t]} + \alpha \mathbf{d}^{[t]})$$
+$$ \alpha^{[t]} = \argmin_{\alpha \in \R_{\ge 0}} g(\alpha) = \argmin_{\alpha \in \R_{\ge 0}} f(\xv^{[t]} + \alpha \mathbf{d}^{[t]})$$
 \splitVCC[0.6]
 {\item Need to solve a \textbf{univariate} optimization problem in each iteration
 $\Rightarrow$ univariate optimization methods
@@ -87,13 +87,12 @@ $$f(\xv + \alpha \mathbf{d}) \le \fx + \gamma_1 \alpha \nabla \fx^\top \mathbf{d
 \caption{Backtracking line search}
 \begin{algorithmic}[1]
 \State Choose initial step size $\alpha = \alpha_{\text{init}}$, $0 < \gamma_1 < 1$ and $0 < \tau < 1$
-\While{$f(\bm{x} + \alpha \mathbf{d}) > f(\bm{x}) + \gamma_1 \alpha \nabla f(\bm{x})^\top \mathbf{d}$}
+\While{$f(\xv + \alpha \mathbf{d}) > \fx + \gamma_1 \alpha \nabla \fx^\top \mathbf{d}$}
 \State Decrease $\alpha$: $\alpha \leftarrow \tau \cdot \alpha$
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
-\imageC[0.7]{figure_man/backtracking-example.png}
-\begin{center}\footnotesize(Source: Martins and Ning. \textit{Engineering Design Optimization}, 2021.)\end{center}
+\imageC[0.7][https://mdobook.github.io]{figure_man/backtracking-example.png}
 \end{framei}
 	
 \begin{framei}{Wolfe conditions}
@@ -107,12 +106,13 @@ $$f(\xv + \alpha \mathbf{d}) \le \fx + \gamma_1 \alpha \nabla \fx^\top \mathbf{d
 \begin{itemizeM}
 \item Fix $\gamma_2$ with $0 < \gamma_1 < \gamma_2 < 1$.
 \item $\alpha$ satisfies \textbf{sufficient curvature condition} in $\xv$ for $\mathbf{d}$ if
-$$| \nabla f(\xv + \alpha \mathbf{d})^\top \mathbf{d} | \leq \gamma_2 | \nabla f(\xv)^\top \mathbf{d} |.$$
+$$| \nabla f(\xv + \alpha \mathbf{d})^\top \mathbf{d} | \leq \gamma_2 | \nabla \fx^\top \mathbf{d} |.$$
 \end{itemizeM}
 \begin{framed}
 Armijo rule + sufficient curvature condition = \textbf{Wolfe conditions}
 \end{framed}
 \end{framei}
+
 
 \begin{framei}{Wolfe conditions}
 \item\textbf{Algorithm} for finding a Wolfe point (point satisfying Wolfe conditions):
@@ -121,12 +121,11 @@ Armijo rule + sufficient curvature condition = \textbf{Wolfe conditions}
 \item \textbf{Pinpointing:} Find Wolfe point in interval from bracketing
 \end{enumerate}
 \splitVTT
-{\imageR[0.8]{figure_man/wolfe_bracketing.png}}
-{\imageL[0.5]{figure_man/wolfe_pinpointing.png}}
-\begin{center}{\footnotesize \textbf{Left:} Bracketing.\textbf{Right:} Pinpointing. \\
-(Source: Martins and Ning. \textit{EDO}, 2021.)}
-\end{center}
+{\imageR[0.8][https://mdobook.github.io]{figure_man/wolfe_bracketing.png}}
+{\imageL[0.5][https://mdobook.github.io]{figure_man/wolfe_pinpointing.png}}
+\begin{center}{\footnotesize \textbf{Left:} Bracketing. \textbf{Right:} Pinpointing.}\end{center}
 \end{framei}
+
 
 \begin{framei}{Bracketing \& Pinpointing}
 \item\textbf{Example:}
@@ -135,10 +134,8 @@ Armijo rule + sufficient curvature condition = \textbf{Wolfe conditions}
 \item Small initial step size results in multiple bracketing steps but quick pinpointing (\textbf{right}).
 \end{itemizeM}
 \vfill
-\imageC[0.7]{figure_man/bracketing-pinpointing-example.png}
-\centering\footnotesize Source: Martins and Ning. \textit{EDO}, 2021.
+\imageC[0.8][https://mdobook.github.io]{figure_man/bracketing-pinpointing-example.png}
 \end{framei}
-   
+
 \endlecture
 \end{document}
-

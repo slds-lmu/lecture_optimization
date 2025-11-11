@@ -1,8 +1,14 @@
-### This old cim1 code generates a plot of the Pareto fronts and saves it to figure_man
+# ------------------------------------------------------------------------------
+# multicrit
+
+# FIG: generate a plot of the Pareto fronts
+# ------------------------------------------------------------------------------
 
 library(ggplot2)
 library(ggpubr)
 theme_set(theme_bw())
+
+# ------------------------------------------------------------------------------
 
 res = 100
 x_range = c(0,3)

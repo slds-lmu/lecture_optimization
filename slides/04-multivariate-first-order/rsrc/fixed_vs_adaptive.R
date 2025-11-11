@@ -1,8 +1,16 @@
+# ------------------------------------------------------------------------------
+# multivariate first order
+
+# FIG: plot influence of step size
+# ------------------------------------------------------------------------------
+
 library(ggplot2)
 library(ggpubr)
-library(rootSolve) #gradient()
+library(rootSolve)
 
 theme_set(theme_bw())
+
+# ------------------------------------------------------------------------------
 
 f = function(x, delta = 0.05) {
 	ifelse (abs(x) <= delta, 1 / 2 * x^2, delta * (abs(x) - 1 / 2 * delta))
@@ -81,6 +89,6 @@ p2 = ggplot(data = progress, aes(x = t, y = y, color = stepsize)) + geom_line()
 p2
 
 p = ggarrange(p1, p2, nrow = 1, common.legend = TRUE, legend = "right")
-
-ggsave(filename = "figure_man/fixed_vs_adaptive.pdf", p, width = 9, height = 2.5)
+p
+ggsave(filename = "../figure_man/fixed_vs_adaptive.pdf", p, width = 9, height = 2.5)
 

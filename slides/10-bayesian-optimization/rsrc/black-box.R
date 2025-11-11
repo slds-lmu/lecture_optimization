@@ -1,3 +1,10 @@
+# ------------------------------------------------------------------------------
+# bayesian optimization
+
+# FIG: perform black-box optimization for the Ackley function using 
+#   Random Search, CMA-ES and Bayesian Optimization.
+# ------------------------------------------------------------------------------
+
 library(bbotk)
 library(data.table)
 library(mlr3mbo)
@@ -6,8 +13,12 @@ library(mlr3misc)
 library(ggplot2)
 library(pammtools)
 library(patchwork)
+library(adagio)
 
 set.seed(123)
+
+# ------------------------------------------------------------------------------
+
 domain = ps(x1 = p_dbl(lower = 0, upper = 1), x2 = p_dbl(lower = 0, upper = 1))
 
 xdt_random = generate_design_random(domain, n = 100L)$data
@@ -22,7 +33,7 @@ g = ggplot(aes(x = x1, y = x2), data = xdt[method == "random"]) +
   labs(title = "Random Design", x = expression(x[1]), y = expression(x[2])) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/black_box_0.png"), plot = g, width = 5, height = 4)
+ggsave("../figure_man/black_box_0.png", plot = g, width = 5, height = 4)
 
 g = ggplot(aes(x = x1, y = x2), data = xdt[method == "gs"]) +
   geom_point(size = 3L) +
@@ -30,7 +41,7 @@ g = ggplot(aes(x = x1, y = x2), data = xdt[method == "gs"]) +
   labs(title = "Grid Design", x = expression(x[1]), y = expression(x[2])) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/black_box_1.png"), plot = g, width = 5, height = 4)
+ggsave("../figure_man/black_box_1.png", plot = g, width = 5, height = 4)
 
 objective = ObjectiveRFunDt$new(
  fun = function(xdt) data.table(y = -20.0 * exp(-0.2 * sqrt(0.5 * (xdt$x1^2 + xdt$x2^2))) - 
@@ -88,5 +99,5 @@ g = ggplot(aes(x = iter, y = mean_best, colour = method, fill = method), data = 
   theme_minimal() +
   theme(legend.position = "bottom")
 
-ggsave(file.path("../figure_man/black_box_2.png"), plot = g, width = 5, height = 4)
+ggsave("../figure_man/black_box_2.png", plot = g, width = 5, height = 4)
 

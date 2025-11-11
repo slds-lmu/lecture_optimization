@@ -26,7 +26,7 @@ figure_man/Coordinate_descent.png
 \imageC[0.42][https://en.wikipedia.org/wiki/Coordinate_descent]{figure_man/Coordinate_descent.png}
 \end{framei}
 
-\begin{frame2}{coordinate descent}
+\begin{framev}{coordinate descent}
 \begin{itemize}
 \item Minimum is determined with (exact/inexact) line search
 \item Order of dimensions can be any permutation of $\left\{1,2,\ldots,d\right\}$
@@ -40,14 +40,14 @@ f(\xv) = g(\xv) + \sum_{i=1}^d h_i(x_i),
 \item where $g$ convex differentiable and $h_i$ convex
 \end{itemize}
 \end{itemize}
-\end{frame2}
+\end{framev}
 
-\begin{frame2}{coordinate descent}
+\begin{framev}{coordinate descent}
 No convergence in general for convex functions, counterexample:
 \imageC[0.6][https://en.wikipedia.org/wiki/Coordinate_descent]{figure_man/Nonsmooth_coordinate_descent.png}
-\end{frame2}
+\end{framev}
 
-\begin{frame2}{Example: linear regression}
+\begin{framev}{Example: linear regression}
 Minimize LM with L2 loss via CD
 $$\min g(\thetav) = \min_{\thetav} \frac{1}{2}\sumin \left(y^{(i)} - \thetav^\top \xi\right)^2 = \min_{\thetav} \frac{1}{2}\|\yv - \Xmat \thetav\|^2 $$
 where $\yv \in \R^n$, $\Xmat \in \R^{n \times d}$ with columns $\xv_1, \ldots, \xv_d \in \R^n$\\
@@ -58,7 +58,7 @@ g(\thetav) &= \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav - \yv^\t
 &\overset{(*)}{=} \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav - \yv^\top \sum_{k = 1}^d \xv_k \theta_k 
 \end{align*}
 $^{(*)}$ $\Xmat \thetav = \xv_1 \theta_1 + \xv_2 \theta_2 + \cdots + \xv_d \theta_d = \sum_{k = 1}^d \xv_k \theta_k$
-\end{frame2}
+\end{framev}
 
 \begin{framei}{example: linear regression}
 \item Exact CD update in direction $j$:
@@ -67,7 +67,7 @@ $$\frac{\partial{g}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j$$
 \item Repeat this update for all $\theta_j$
 \end{framei}
 
-\begin{frame2}{Soft thresholding}
+\begin{framev}{Soft thresholding}
 Minimize LM with L2 loss and L1 regularization via CD
 $$\min_{\thetav} h(\thetav) = \min_{\thetav} \frac{1}{2}\|\yv - \Xmat \thetav\|^2 + \lambda \|\thetav\|_1$$
 Note that $h(\thetav) = \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav  - \sum_{k = 1}^d (\yv^\top \xv_k \theta_k + \lambda|\theta_k|)$\\
@@ -83,9 +83,9 @@ Then $|\theta_j| = - \theta_j$ and
 $$0 = \frac{\partial{h}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j - \lambda \qquad \Leftrightarrow \qquad \theta^\ast_{j, \text{Lasso}} = \theta^\ast_j + \lambda$$
 \item \textbf{Case 3:} $\theta_j = 0$
 \end{itemize}}
-\end{frame2}
+\end{framev}
 
-\begin{frame2}{soft thresholding}
+\begin{framev}{soft thresholding}
 We can write the solution as: 
 $$\theta^\ast_{j, \text{Lasso}} =
 \begin{cases}
@@ -98,10 +98,10 @@ This operation is called soft thresholding\\
 Coefs for which solution to unregularized problem is smaller than threshold ($|\thetav^\ast_j| < \lambda$) are shrunk to zero
 \lz
 NB: Derivation of soft thresholding operator not trivial (subgradients)
-\end{frame2}
+\end{framev}
 
 
-\begin{frame2}{CD for statistics and ML}
+\begin{framev}{CD for statistics and ML}
 Why is it being used?
 \begin{itemizeL}
 \item Easy to implement
@@ -117,7 +117,7 @@ Examples:
 \item Support Vector Machines
 \item Regression with non-convex penalties
 \end{itemizeL}
-\end{frame2}
+\end{framev}
 
 \endlecture
 \end{document}

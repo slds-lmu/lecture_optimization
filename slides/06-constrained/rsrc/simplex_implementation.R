@@ -1,4 +1,12 @@
-# Simplex algorithm Implementation
+# ------------------------------------------------------------------------------
+# constrained
+
+# FIG: simplex algorithm implementation
+# ------------------------------------------------------------------------------
+
+library(ggplot2)
+
+# ------------------------------------------------------------------------------
 
 A = matrix(c(-1, 1, 2, 1, -1, 0, 1, 2, 1, -1, 0, - 1), ncol = 2)
 b = c(0.5, 2, 2, 0.5, 0, 0)
@@ -23,7 +31,7 @@ simplex = function(A, b, cost, start) {
 
   while (end == F) {
     
-    v = t(as.vector(V[counter, c("x1", "x2")]))
+    v = as.numeric(V[counter, c("x1", "x2")])
     
     basis = which(round(A %*% v - b, 2) == 0)
     
@@ -65,17 +73,6 @@ simplex = function(A, b, cost, start) {
 V = simplex(A, b, cost, start)
 V
 
-for (i in 1:dim(V)[1]) {
-  p1 = plotPoly(A, b) + ggtitle(paste("Iteration", i))
-  p1 = p1 + geom_abline(data = V[1:i, ], aes(intercept = intercept, slope = slope), lty = 2)
-  # p1 = p1 + geom_segment(data = V[1:i, ], aes(x = x1, y = x2, xend = x1 - 0.4 * cost[1], yend = x2 - 0.4 * cost[2]), arrow = arrow(length = unit(0.03, "npc")))
-  p1 = p1 + geom_point(data = V[1:i, ], aes(x = x1, y = x2), color = "red", size = 2)
-  p1 = p1 + geom_text(data = V[1:i, ], aes(x = x1, y = x2, label = cost), hjust = - 0.2, vjust = - 1)
-  p1 = p1 + geom_segment(data = V[1:i, ], aes(x = x1old, y = x2old, xend = x1, yend = x2), color = "red", arrow = arrow(length = unit(0.03, "npc")))
-  
-  ggsave(filename = paste("figure_man/simplex_implementation/iter", i, ".png", sep = ""), p1)
-}
-
 
 # plot polyhedron
 plotPoly = function(A, b) {
@@ -83,7 +80,7 @@ plotPoly = function(A, b) {
   p = ggplot(data = data.frame(x = 0), mapping = aes(x = x)) 
   p = p + geom_point(x = 0, y = 0, size = 2, color = "green")
   
-  for (i in 1:dim(A)[1]) {s
+  for (i in 1:dim(A)[1]) {
     p = p + geom_abline(intercept = b[i] / A[i, 2], slope = - A[i, 1] / A[i, 2], color = "green")
     # p = p + geom_point(x = 0, y = b[i] / A[i, 2], color = "green", size = 2)
     # p = p + geom_point(x = b[i] / A[i, 1], y = 0, color = "green", size = 2)
@@ -135,3 +132,14 @@ plotPoly = function(A, b) {
   p
 }
 
+
+for (i in 1:dim(V)[1]) {
+  p1 = plotPoly(A, b) + ggtitle(paste("Iteration", i))
+  p1 = p1 + geom_abline(data = V[1:i, ], aes(intercept = intercept, slope = slope), lty = 2)
+  # p1 = p1 + geom_segment(data = V[1:i, ], aes(x = x1, y = x2, xend = x1 - 0.4 * cost[1], yend = x2 - 0.4 * cost[2]), arrow = arrow(length = unit(0.03, "npc")))
+  p1 = p1 + geom_point(data = V[1:i, ], aes(x = x1, y = x2), color = "red", size = 2)
+  p1 = p1 + geom_text(data = V[1:i, ], aes(x = x1, y = x2, label = cost), hjust = - 0.2, vjust = - 1)
+  p1 = p1 + geom_segment(data = V[1:i, ], aes(x = x1old, y = x2old, xend = x1, yend = x2), color = "red", arrow = arrow(length = unit(0.03, "npc")))
+  
+  ggsave(filename = paste("../figure_man/simplex_implementation/iter", i, ".png", sep = ""), p1)
+}

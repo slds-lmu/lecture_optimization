@@ -25,12 +25,12 @@ figure_man/golden-ratio-6.png
 \item Golden ratio 
 }
 
-\begin{frame2}{univariate Optimization}
+\begin{framev}{univariate Optimization}
 Let $f: \R \to \R$ (search over interval $(\xleft,\xright)$ in practice)\\
 \lz 
 \textbf{Goal}: Iteratively improve eval points. Assume function $-f$ is unimodal. Will not rely on gradients, so this also works for black-box problems.
 \imageC{figure_man/golden-ratio-0.png}
-\end{frame2}
+\end{framev}
 
 \begin{frame}{simple nesting procedure}
 Let $f: \R \to \R$\\
@@ -130,7 +130,7 @@ New search interval: around current best
 \image{figure_man/golden-ratio-summary.png}
 \end{framei}
 
-\begin{frame2}{golden ratio}
+\begin{framev}{golden ratio}
 Key question: How can $\xnew$ be chosen better than randomly? 
 \begin{itemizeM}
 \item Insight 1: Always in bigger subinterval to maximize reduction
@@ -139,37 +139,37 @@ Key question: How can $\xnew$ be chosen better than randomly?
 \imageC[1.0]{figure_man/goldensec-0.png}
 \vspace{-1cm}
 Consider two hypothetical outcomes for $\xnew$: $f_{new, a}$ and $f_{new, b}$
-\end{frame2}
+\end{framev}
 
-\begin{frame2}{golden ratio}
+\begin{framev}{golden ratio}
 If outcome is $f_{new, a}$, $\xbest$ remains best and we search around $\xbest$: $$[\xleft, \xnew]$$
 \vfill
 \imageC[1.0]{figure_man/goldensec-1.png}
-\end{frame2}
+\end{framev}
 
-\begin{frame2}{golden ratio}
+\begin{framev}{golden ratio}
 If $f_{new, b}$ is outcome, $\xnew$ becomes best point and search around $\xnew$: $$[\xbest, \xright]$$
 \vfill
 \imageC[1.0]{figure_man/goldensec-3.png}
-\end{frame2}
+\end{framev}
 
-\begin{frame2}{golden ratio}
+\begin{framev}{golden ratio}
 For uniform reduction the two potential intervals must be equal-sized: 
 \begin{equation*}
 b := \xright - \xbest = \xnew - \xleft
 \end{equation*}
 \vfill
 \imageC[1.0]{figure_man/goldensec-3.png}
-\end{frame2}
+\end{framev}
 
-\begin{frame2}{golden ratio}
+\begin{framev}{golden ratio}
 One iteration ahead: require again the intervals to be of same size. 
 $$c := \xbest - \xleft = \xright - \xnew$$
 \vfill
 \imageC[1.0]{figure_man/goldensec-4.png}
-\end{frame2}
+\end{framev}
 
-\begin{frame2}{golden ratio}
+\begin{framev}{golden ratio}
 To summarize, we require: 
 \begin{eqnarray*}
 a &=& \xright-\xleft, \\
@@ -178,7 +178,7 @@ c &=& \xbest - \xleft = \xright - \xnew
 \end{eqnarray*}
 \vfill
 \imageC[0.5]{figure_man/goldensec.png}
-\end{frame2}
+\end{framev}
 
 \begin{framei}{golden ratio}
 \item We require same percentage improvement in each iteration

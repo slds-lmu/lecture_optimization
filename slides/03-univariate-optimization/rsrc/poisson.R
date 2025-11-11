@@ -1,3 +1,11 @@
+# ------------------------------------------------------------------------------
+# univariate optimization
+
+# FIG: find the optimal Poisson parameter using two optimization methods:
+#   (1)	Golden Ratio Search
+#   (2)	Brent’s Method
+# ------------------------------------------------------------------------------
+
 library(Rmpfr)
 library(ggplot2)
 library(gridExtra)
@@ -5,6 +13,9 @@ library(latex2exp)
 library(ggpubr)
 
 set.seed(1234)
+
+# ------------------------------------------------------------------------------
+
 x = rpois(250, lambda = 1.)
 
 thetav = list()
@@ -39,5 +50,5 @@ archive = rbind(archive, data.frame(iter = 1:length(thetav), x = unlist(thetav),
 
 p = p + geom_point(data = archive, aes(x = x, y = y, colour = Method), alpha = 0.5) + theme(axis.text.y=element_blank())
 
-
-ggsave("figure_man/poisson.pdf", p, width = 4, height = 2)
+p
+ggsave("../figure_man/poisson.pdf", p, width = 4, height = 2)

@@ -1,10 +1,17 @@
+# ------------------------------------------------------------------------------
+# univariate optimization
+
+# FIG: plot golden ratio method process
+# ------------------------------------------------------------------------------
+
 library(ggplot2)
 library(latex2exp)
 library(grid)
 library(gridExtra)
 
+source("helper.R")
 
-source("rsrc/helper.R")
+# ------------------------------------------------------------------------------
 
 gr = (1 + sqrt(5)) / 2 # golden ratio
 
@@ -64,7 +71,7 @@ goldenratio = function(a, b, fun, max.iter = 10) {
     }
 
     g = grid_arrange_shared_legend(p1, p2, p3, ncol = 3)
-    ggsave(paste("figure_man/golden_ratio", iter, ".pdf", sep = ""), g, width = 9, height = 4)
+    ggsave(paste("../figure_man/golden_ratio", iter, ".pdf", sep = ""), g, width = 9, height = 4)
 
 
     d["xbest", "x"] = d["xright", "x"] - (d["xright", "x"] - d["xleft", "x"]) / gr

@@ -1,13 +1,15 @@
-# Optimization for Machine Learning
-# Chunk 1.3
-# Plot first-order condition
+# ------------------------------------------------------------------------------
+# mathematical concepts
+
+# FIG: plot first-order condition
+# ------------------------------------------------------------------------------
 
 x0 <- 0.1
 
 f1 <- function(x) { x^2 }
 f2 <- function(x) { x0^2 + 2*x0 * (x-x0) }
 
-png("conv-first-order-cond.png", width=400, height=300)
+png("../figure_man/conv-first-order-cond.png", width=400, height=300)
 
 a <- -0.3
 b <- 0.7
@@ -21,3 +23,4 @@ text(a+0.02, f1(a+0.02), "f(y)", pos=4, cex=1.5)
 text(x0+0.02, f1(0), "(x,f(x))", pos=1, cex=1.5)
 text(0.6, f2(0.4), "f(x) + f'(x)(y-x)", pos=1, cex=1.5)
 
+dev.off()

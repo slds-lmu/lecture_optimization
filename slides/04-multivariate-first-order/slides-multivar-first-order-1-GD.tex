@@ -1,6 +1,5 @@
 \documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
@@ -10,36 +9,35 @@
 \begin{document}
 
 \titlemeta{
-  First order methods
-  }{ 
-  Gradient descent
-  }{
-  figure_man/linesearch.png
-  }{
-    \item Iterative Descent / Line Search
-    \item Descent directions
-    \item GD
-    \item ERM with GD
-    \item Pseudoresiduals
+First order methods
+}{ 
+Gradient descent
+}{
+figure_man/linesearch.png
+}{
+\item Iterative Descent / Line Search
+\item Descent directions
+\item GD
+\item ERM with GD
+\item Pseudoresiduals
 }
-
 
 \begin{framei}{Iterative Descent}
 \item Let $f$ be the height of a mountain depending on the geographic coordinates $(x_1, x_2)$
 \vspace*{-0.1cm}
 $$f: \R^2 \to \R, \quad f(x_1, x_2) = y.$$
 \item \textbf{Goal}: Reach the valley
-$$\argmin_\xv f(\xv)$$
+$$\argmin_{\xv} f(\xv)$$
 \item \textbf{Central idea}: Repeat
-\vspace*{-0.15cm}
 \splitVCC[0.6]{
 \begin{enumerate}
 \item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d} \in \R^d$ 
 \item Move along $\mathbf{d}$ until $f$ \glqq sufficiently\grqq{} reduces (\textbf{step size control}) and update location
-\end{enumerate}}
-{\imageC{figure_man/linesearch.png}
+\end{enumerate}}{
+\imageC{figure_man/linesearch.png}
 \begin{footnotesize} "Walking down the hill, towards the valley." \end{footnotesize}}
 \end{framei}
+
 
 \begin{framei}{Iterative Descent}
 \item Let $f: \R^d \to \R$ continuously differentiable.
@@ -53,7 +51,8 @@ Angle between $\nabla \fx$ and $\mathbf{d}$ must be $\in (90^{\circ}, 270^{\circ
 \end{figure}
 \end{framei}
 
-\begin{frame2}{Iterative Descend}
+
+\begin{framev}{Iterative Descend}
 \begin{algorithm}[H]
 \caption{Iterative Descent / Line search}
 \begin{algorithmic}[1]
@@ -74,7 +73,8 @@ Key questions:
 \item How to choose $\mathbf{d}^{[t]}$ (now)
 \item How to choose $\alpha^{[t]}$ (later)
 \end{itemizeM}
-\end{frame2}
+\end{framev}
+
 
 \begin{framei}{Gradient Descent}
 \item Properties of gradient: 
@@ -84,31 +84,33 @@ Key questions:
 \end{itemizeS}
 \vfill
 \item Using $\mathbf{d} = - \nabla \fx$ is called \textbf{gradient descent}. 
-\imageC[0.8]{figure_man/example-descent1.png}
+\splitV{\imageC[0.9]{figure/gradient-descent-example_1.png}}{\imageC{figure/gradient-descent-example_2.png}}
 \begin{center}\begin{footnotesize}
 GD for $f(x_1, x_2) = - \sin(x_1) \cdot \frac{1}{2\pi} \exp\left( (x_2 - \pi / 2)^2 \right)$ with sensibly chosen step size $\alpha^{[t]}$. 
 \end{footnotesize}\end{center}
 \end{framei}
 
-\begin{framei}{GD and Multimodal functions}
-\item[] Outcome will depend on start point.
+
+\begin{framev}{GD and Multimodal functions}
+Outcome will depend on start point.
 \vfill
-\splitVCC{
-\imageC{figure_man/gradient_descent_branin.pdf}}
-{\imageC{figure_man/gradient_descent_branin2.pdf}}
+\splitVCC[0.63]{
+\imageC{figure/gradient-descent-franke_1.png}}
+{\imageC{figure/gradient-descent-franke_2.png}}
 \begin{center}\begin{footnotesize}
 $100$ iters of GD with const $\alpha = 10^{-4}$.
 \end{footnotesize}\end{center}
-\end{framei}
+\end{framev}
+
 
 \begin{framei}[fs=footnotesize]{Optimize LS linear regression with GD}
 \item Let $\D = \Dset$ and minimize 
-$$\risket = \sumin \left(\thetav^\top \xi - \yi\right)^2$$
+$$\risket = \sumin (\thetav^\top \xi - \yi)^2$$
 \textbf{NB: } For illustration, we use GD even though closed-form solution exists. GD-like (more adv.) approaches like this MIGHT make sense for large data, though.
-\item\textbf{Gradient: } $$\nabla_{\thetav}\riske(\thetav) =  \frac{\partial \riske(\thetav)}{\partial
-\thetav} = - \sum_{i=1}^n 2 \cdot \left(y^{(i)} - \thetav^{\top} \xv^{(i)}\right) \xv^{(i)}$$ 
+\item\textbf{Gradient: } $$\nabla_{\thetav}\risket(\thetav) = \frac{\partial \risket(\thetav)}{\partial \thetav} = -2 \sumin (\yi - \thetav^{\top} \xv^{(i)}) \xv^{(i)}$$ 
 \imageC[0.8]{figure_man/gradient_descent_lm.pdf}
 \end{framei}
+
 
 \begin{framei}{ERM for NN with GD}
 \item Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize 
@@ -118,12 +120,14 @@ where $\fxt$ is a neural network with 2 hidden layers (2 units each).
 \imageC[0.6]{figure_man/gradient_descent_NN_0.pdf}
 \end{framei}
 
+
 \begin{framei}{ERM for NN with GD}
 \item[] After $10$ iters of GD:
 \splitVCC{
 \imageC{figure_man/gradient_descent_NN_10_surface.pdf}}
 {\imageC{figure_man/gradient_descent_NN_300_history.pdf}}
 \end{framei}
+
 
 \begin{framei}{ERM for NN with GD}
 \item[] After $100$ iters of GD: 
@@ -132,12 +136,14 @@ where $\fxt$ is a neural network with 2 hidden layers (2 units each).
 {\imageC{figure_man/gradient_descent_NN_300_history.pdf}}
 \end{framei}
 
+
 \begin{framei}{ERM for NN with GD}
 \item[] After $300$ iters of GD (note the zig-zag-behavior after iter. 200):
 \splitVCC{
 \imageC{figure_man/gradient_descent_NN_300_surface.pdf}}
 {\imageC{figure_man/gradient_descent_NN_300_history.pdf}}
 \end{framei}
+
 
 \begin{framei}[fs=footnotesize]{GD for ERM: Pseudoresiduals}
 \item Gradient for ERM problem: 
@@ -159,12 +165,5 @@ match usual residuals for L2 loss:
 {\imageC{figure_man/pseudo_residual_1.png}}
 \end{framei}
 
-
 \endlecture
 \end{document}
-
-%%% 
-
-
-
-%% 

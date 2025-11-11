@@ -1,6 +1,17 @@
+# ------------------------------------------------------------------------------
+# multivariate first order
+
+# FUNC: 
+#   builds and trains a neural network using keras for regression tasks, 
+#   leveraging stochastic gradient descent (SGD) and other optimizers, 
+#   also includes 3D surface visualization of predictions.
+# ------------------------------------------------------------------------------
+
 library(keras)
 library(mlr3keras)
 library(mlr3pipelines)
+
+# ------------------------------------------------------------------------------
 
 build_model = function(optimizer, momentum, lr) {     
   model = keras_model_sequential() %>%
@@ -49,7 +60,7 @@ train_model = function(task, task_predict = NULL, epochs, optimizer = "optimizer
   }
 
   if (plot_surface) {
-    pdf(paste0("figure_man/gradient_descent_NN_", epochs, "_surface_", momentum,".pdf"), 5, 5, colormodel = "cmyk")
+    pdf(paste0("../figure_man/gradient_descent_NN_", epochs, "_surface_", momentum,".pdf"), 5, 5, colormodel = "cmyk")
 
     persp3D(x = x1_scale, y = x2_scale, z = z, xlab = "x1", ylab = "x2", zlab = "y",
         expand = 0.5, d = 2, phi = 10, theta = -60, resfac = 2,
