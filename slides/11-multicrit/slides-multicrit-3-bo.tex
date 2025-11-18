@@ -9,7 +9,7 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-mbo}
-\input{macros}
+\input{slides/11-multicrit/macros}
 
 %\newcommand{\a}[0]{\mathbf{a}}
 %\newcommand{\y}[0]{\mathbf{y}}
@@ -147,7 +147,7 @@ There are two basic approaches:
 
 
 % -------------------------------------------------------------------
-\begin{vbframe}{Scalarization: ParEGO\cite{KNOWLES2006PAREGO}}
+\begin{vbframe}{Scalarization: ParEGO\citelink{KNOWLES2006PAREGO}}
 
 Scalarize the cost functions using the augmented Chebychev norm / achievement function
 
@@ -304,7 +304,7 @@ one can form an \emph{optimistic} estimate of the hypervolume contribution:
 \medskip
 
 This method is referred to as
-\cite{PONWEISER2008MULTI}.
+\citelink{PONWEISER2008MULTI}.
 
 \end{vbframe}
 
@@ -313,7 +313,7 @@ This method is referred to as
 \begin{vbframe}{Further HV Acquisition Functions}
 
 \textbf{Expected Hypervolume Improvement (EHI)} 
-\cite{YANG2019MULTI}:
+\citelink{YANG2019MULTI}:
 
 \[
 u_{EI, \mathcal{H}}(\conf) 
