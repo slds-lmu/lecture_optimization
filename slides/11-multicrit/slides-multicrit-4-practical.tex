@@ -7,7 +7,7 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-mbo}
-\input{macros}
+\input{slides/11-multicrit/macros}
 
 %\newcommand{\a}[0]{\mathbf{a}}
 %\newcommand{\y}[0]{\mathbf{y}}
@@ -202,7 +202,7 @@ Validate configurations on the estimated Pareto front:
 \begin{vbframe}{Efficient Models - Example: Feature Selection II}
 
 \textbf{Idea}: \emph{Multi-Objective Hyperparameter Tuning and Feature Selection using Filter Ensembles}
-\cite{BINDER2020MULTI}.
+\citelink{BINDER2020MULTI}.
 
 \begin{itemize}
   \item Pre-calculate multiple \emph{feature-filter} rank vectors.
@@ -255,13 +255,13 @@ Validate configurations on the estimated Pareto front:
 \begin{vbframe}{Efficient Models - Example: FLOPS}
 
 \textbf{Goal}: Optimize \emph{accuracy} vs. \emph{FLOPS} (floating-point ops) \\
-\cite{WANG2019EVOLVING}.
+\citelink{WANG2019EVOLVING}.
 
 \bigskip
 Data: CIFAR-10 (image classification).
 
 \bigskip
-Learner: \emph{DenseNet} \cite{HUANG2017DENSELY}:
+Learner: \emph{DenseNet} \citelink{HUANG2017DENSELY}:
 \begin{itemize}
   \item 4 dense blocks, each with multiple convolution layers that feed into each other.
   \item Blocks connected by convolution + max-pooling layers.
