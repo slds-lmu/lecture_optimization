@@ -3,213 +3,194 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
 \titlemeta{
-  Second order methods
-  }{ 
-  Fisher Scoring
-  }{
-  figure_man/NR_2.png
-  }{
-    \item Fisher Scoring
-    \item Newton-Raphson vs. Fisher scoring
-    \item Logistic regression
+Second order methods
+}{ 
+Fisher Scoring
+}{
+figure_man/NR_2.png
+}{
+\item Fisher Scoring
+\item Newton-Raphson vs. Fisher scoring
+\item Logistic regression
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Recap of Newton's method}
-Second-order Taylor expansion of log-likelihood around the current iterate $\thetav^{(t)}$:
-$$\loglt \approx \logl(\thetav^{(t)}) +
-\nabla\logl(\thetav^{(t)})^\top(\thetav-\thetav^{(t)}) + 
-\frac{1}{2}(\thetav-\thetav^{(t)})^\top[\nabla^{2}\logl(\thetav^{(t)})](\thetav-\thetav^{(t)})$$
-We then differentiate w.r.t.~$\thetav$ and set the gradient to zero:
-$$\nabla\logl(\thetav^{(t)}) + [\nabla^{2}\logl(\thetav^{(t)})](\thetav-\thetav^{(t)}) = \zero$$
-Solving for $\thetav^{(t)}$ yields the pure Newton-Raphson update:
-$$\thetav^{(t+1)}=\thetav^{(t)} + [-\nabla^{2}\logl(\thetav^{(t)})]^{-1}\nabla\logl(\thetav^{(t)})$$
+\begin{framei}{Recap of Newton's method}
+\item Second-order Taylor expansion of log-likelihood around the current iterate $\thetat$:
+$$\loglt \approx \logl(\thetat) +
+\nabla\logl(\thetat)^\top(\thetav-\thetat) + 
+\frac{1}{2}(\thetav-\thetat)^\top[\nabla^{2}\logl(\thetat)](\thetav-\thetat)$$
+\item We then differentiate w.r.t.~$\thetav$ and set the gradient to zero:
+$$\nabla\logl(\thetat) + [\nabla^{2}\logl(\thetat)](\thetav-\thetat) = \zero$$
+\item Solving for $\thetav^{(t)}$ yields the pure Newton-Raphson update:
+$$\thetatn=\thetat + [-\nabla^{2}\logl(\thetat)]^{-1}\nabla\logl(\thetat)$$
+\vfill
+\item \textbf{Potential stability issue}: pure Newton-Raphson updates do not always converge. Its quadratic convergence rate is ``local'' in the sense that it requires starting close to a solution.
+\end{framei}
 
-\lz
 
-\textbf{Potential stability issue}: pure Newton-Raphson updates do not always converge. Its quadratic convergence rate is ``local'' in the sense that it requires starting close to a solution.  %are not guaranteed to be an ascent algorithm. 
-%It's equally happy to head uphill or downhill.
-\end{vbframe}
-
-\begin{vbframe}{Fisher scoring}
-Fisher’s scoring method replaces the negative \textit{observed Hessian} $-\nabla^{2}\loglt$ 
-by the Fisher information matrix, i.e., the variance of $\nabla \loglt$, which, under weak regularity conditions, equals the negative \textit{expected Hessian}
+\begin{framei}{Fisher scoring}
+\item Fisher's scoring method replaces the negative \textit{observed Hessian} $-\nabla^{2}\loglt$ by the Fisher information matrix, i.e., the variance of $\nabla \loglt$, which, under weak regularity conditions, equals the negative \textit{expected Hessian}
 $$\E[\nabla\loglt\nabla\loglt^\top]=\E[-\nabla^{2}\loglt],$$
-and is positive semi-definite under exchangeability of expectation and differentiation.\\
+and is positive semi-definite under exchangeability of expectation and differentiation
+\item \textbf{NB}: it can be shown that $\E[\nabla \logl(\thetav)]=\zero$, which provides the expression of the variance of $\nabla \logl(\thetav)$ as the expected outer product of the gradients
+\vfill
+\item Therefore the Fisher scoring iterates are given by
+$$\thetatn=\thetat+\E[-\nabla^{2}\logl(\thetat)]^{-1}\nabla\logl(\thetat)$$
+\end{framei}
 
-\textbf{NB}: it can be shown that $\E[\nabla \ell(\thetav)]=\mathbf{0}$, which provides the expression of the variance of $\nabla \ell(\thetav)$ as the expected outer product of the gradients.
 
-\lz
-
-Therefore the Fisher scoring iterates are given by
-$$\thetav^{(t+1)}=\thetav^{(t)}+\E[-\nabla^{2}\logl(\thetav^{(t)})]^{-1}\nabla\logl(\thetav^{(t)})$$
-\end{vbframe}
-
-\begin{vbframe}{Newton-Raphson vs. Fisher scoring}
-  \begin{table}[h!]
-    \centering
-    \begin{tabular}{|p{2.5cm}|p{4cm}|p{4cm}|}
-    \hline
-    \textbf{Aspect} & \textbf{Newton-Raphson} & \textbf{Fisher scoring} \\ \hline
-    Second-order Matrix & Exact negative \newline Hessian matrix & Fisher information matrix \\ \hline
-    Curvature & Exact & Approximated \\ \hline
-    Computational\newline Cost & Higher & Lower (often has a \newline simpler structure) \\ \hline
-    Convergence & Fast but potentially \newline unstable & Slower but more stable \\ \hline
-    Positive\newline Definite & Not guaranteed & Yes with\newline Fisher information \\ \hline
-    Use Case & General non-linear\newline optimization & Likelihood-based models,\newline especially GLMs \\ \hline
-    \end{tabular}
+\begin{framei}[fs=small]{Newton-Raphson vs. Fisher scoring}
+\item[]
+\begin{table}[h!]
+\centering
+\begin{tabular}{|p{2.5cm}|p{4cm}|p{4cm}|}
+\hline
+\textbf{Aspect} & \textbf{Newton-Raphson} & \textbf{Fisher scoring} \\ \hline
+Second-order Matrix & Exact negative \newline Hessian matrix & Fisher information matrix \\ \hline
+Curvature & Exact & Approximated \\ \hline
+Computational\newline Cost & Higher & Lower (often has a \newline simpler structure) \\ \hline
+Convergence & Fast but potentially \newline unstable & Slower but more stable \\ \hline
+Positive\newline Definite & Not guaranteed & Yes with\newline Fisher information \\ \hline
+Use Case & General non-linear\newline optimization & Likelihood-based models,\newline especially GLMs \\ \hline
+\end{tabular}
 \end{table}
-In many cases Newton-Raphson and Fisher scoring are equivalent (see below).
-\end{vbframe}
+\item In many cases Newton-Raphson and Fisher scoring are equivalent (see below)
+\end{framei}
 
-\begin{vbframe}{Logistic regression}
-The goal of logistic regression is to predict a binary event.
-Given $n$ observations $\left(\xi, \yi\right) \in \R^{p+1} \times \{0, 1\}$,
-$\yi |\, \xi \sim Bernoulli(\pi^{(i)})$.\\
-\lz
-We want to minimize the following risk 
+
+\begin{framei}{Logistic regression}
+\item The goal of logistic regression is to predict a binary event
+\item Given $n$ observations $\left(\xi, \yi\right) \in \R^{p+1} \times \{0, 1\}$, $\yi |\, \xi \sim Bernoulli(\pi^{(i)})$
+\item We want to minimize the following risk 
 \begin{eqnarray*}
-  \riske(\thetav)  & = & 
-  -\sum^n_{i=1} \yi\log(\pi^{(i)}) + \left(1-\yi\log(1-\pi^{(i)})\right)
+\riske(\thetav)  & = & 
+-\sumin \yi\log(\pi^{(i)}) + \left(1-\yi\right)\log(1-\pi^{(i)})
 \end{eqnarray*}
+with respect to $\thetav$, where the probabilistic classifier $\pi^{(i)} = \pixit = s\left(\fxit\right)$, the sigmoid function $s(f) = \frac{1}{1 + \exp(-f)}$ and the score $\fxit = \thx$
+\item \textbf{NB}: Note that $\frac{\partial}{\partial f} s(f) = s(f)(1-s(f))$ and $\frac{\partial \fxit}{\partial \thetav} = \left(\xi\right)^\top$
+\vfill
+\item For more details we refer to the \href{https://slds-lmu.github.io/i2ml/chapters/11_advriskmin/}{\color{blue}{i2ml}} lecture
+\end{framei}
 
-with respect to $\thetav$, 
-where the probabilistic classifier $\pi^{(i)} = \pixit = s\left(\fxit\right)$,
-the sigmoid function $s(f) = \frac{1}{1 + \exp(-f)}$ and the score $\fxit = \thx.$\\
-\lz
 
-\textbf{NB}: Note that $\frac{\partial}{\partial f} s(f) = s(f)(1-s(f))$ and $\frac{\partial \fxit}{\partial \thetav} = \left(\xi\right)^\top.$\\
-\vspace{0.3cm}
-For more details we refer to the \href{https://slds-lmu.github.io/i2ml/chapters/11_advriskmin/}{\color{blue}{i2ml}} lecture.
-
-\framebreak
-Partial derivative of empirical risk using chain rule:
-
+\begin{framei}[fs=small]{Logistic regression}
+\item Partial derivative of empirical risk using chain rule:
 {\small
 \begin{align*}
-  \frac{\partial}{\partial\thetav}\riske(\thetav) 
+\frac{\partial}{\partial\thetav}\riske(\thetav) 
 & =  
- -\sumin \frac{\partial}{\partial\pi^{(i)} }(\yi\log(\pi^{(i)})+(1-\yi)\log(1-\pi^{(i)}))\frac{\partial\pi^{(i)}}{\partial \thetav} \\
+-\sumin \frac{\partial}{\partial\pi^{(i)}}(\yi\log(\pi^{(i)})+(1-\yi)\log(1-\pi^{(i)}))\frac{\partial\pi^{(i)}}{\partial \thetav} \\
 & =  
-  -\sumin \left(\frac{\yi}{\pi^{(i)}} -  \frac{1-\yi}{1-\pi^{(i)}}\right)\frac{\partial s(\fxit)}{\partial  \fxit}\frac{\partial  \fxit}{\partial\thetav}\\
+-\sumin \left(\frac{\yi}{\pi^{(i)}} -  \frac{1-\yi}{1-\pi^{(i)}}\right)\frac{\partial s(\fxit)}{\partial  \fxit}\frac{\partial  \fxit}{\partial\thetav}\\
 & = 
-  \sumin \left(\pi^{(i)} - \yi\right)\left(\xi\right)^\top\\
+\sumin \left(\pi^{(i)} - \yi\right)\left(\xi\right)^\top\\
 & = 
-  \left(\pi(\mathbf{X}\vert\;\thetav) - \mathbf{y}\right)^\top\mathbf{X}\\
+\left(\pi(\Xmat\vert\;\thetav) - \yv\right)^\top\Xmat\\
 \end{align*}
 }
+where  $\Xmat = \left(
+{\xi[1]}^{\top}, \dots, 
+{\xi[n]}^{\top}\right)^\top \in \R^{n\times (p+1)}, \yv = \left(
+\yi[1], \dots,
+\yi[n]
+\right)^\top,$  $\pi(\Xmat\vert\;\thetav) = \left(
+\pi^{(1)}, \dots,
+\pi^{(n)}
+\right)^\top \in \R^{n}$
+\item $\nabla_{\thetav}\riske = \left(\frac{\partial}{\partial\thetav}\riske\right)^\top$
+\end{framei}
 
-where  $\mathbf{X} = \left(
-    {\xi[1]}^{\top}, \dots, 
-    {\xi[n]}^{\top}\right)^\top \in \R^{n\times (p+1)}, \mathbf{y} = \left(
-    \yi[1], \dots,
-    \yi[n]
-\right)^\top,$ \\ $\pi(\mathbf{X}\vert\;\thetav) = \left(
-    \pi^{(1)}, \dots,
-    \pi^{(n)}
-\right)^\top \in \R^{n}$.
 
-$\nabla_{\thetav}\riske = \left(\frac{\partial}{\partial\thetav}\riske\right)^\top$
-
-\framebreak
-
-The Hessian of logistic regression:
-
+\begin{framei}[fs=small]{Logistic regression}
+\item The Hessian of logistic regression:
 {\small
 \begin{align*}
-  \nabla^2_{\thetav}\riske  = \frac{\partial^2}{\partial{\thetav^\top}\partial\thetav}\riske  & =  
- \frac{\partial}{\partial{\thetav^\top}} \sumin \left(\pi^{(i)} - \yi\right)\left(\xi\right)^\top\\
- & =  
-  \sum^n_{i=1}\xi \left(\pi^{(i)}\left(1-\pi^{(i)}\right)\right)\left(\xi\right)^\top\\
-  & =  
-\mathbf{X}^\top \mathbf{D} \mathbf{X}\\
+\nabla^2_{\thetav}\riske  = \frac{\partial^2}{\partial{\thetav^\top}\partial\thetav}\riske  & =  
+\frac{\partial}{\partial{\thetav^\top}} \sumin \left(\pi^{(i)} - \yi\right)\left(\xi\right)^\top\\
+& =  
+\sumin\xi \left(\pi^{(i)}\left(1-\pi^{(i)}\right)\right)\left(\xi\right)^\top\\
+& =  
+\Xmat^\top \mathbf{D} \Xmat\\
 \end{align*}
-
-where $\mathbf{D} \in \mathbb{R}^{n\times n}$ is a diagonal matrix containing the variances of $\yi$ on the diagonals 
-$$\mathbf{D}=\text{diag}\left(\pi^{(1)}(1-\pi^{(1)}), \dots, \pi^{(n)}(1-\pi^{(n)})\right).$$
+where $\mathbf{D} \in \R^{n\times n}$ is a diagonal matrix containing the variances of $\yi$ on the diagonals 
+$$\mathbf{D}=\text{diag}\left(\pi^{(1)}(1-\pi^{(1)}), \dots, \pi^{(n)}(1-\pi^{(n)})\right)$$
 }
-
-\framebreak
-We now have
-$$\nabla_{\thetav}\riske =  \mathbf{X}^\top\left(\pi(\mathbf{X}\vert\;\thetav) - \mathbf{y}\right) $$
-$$\nabla^2_{\thetav}\riske =  \mathbf{X}^\top \mathbf{D} \mathbf{X}$$
-
-\lz
-
-Newton-Raphson: $$\thetav^{(t+1)}=\thetav^{(t)} - [\mathbf{X}^\top \mathbf{D} \mathbf{X}]^{-1}\nabla_{\thetav^{(t)}}\riske $$
-Fisher scoring: $$\thetav^{(t+1)}=\thetav^{(t)} - \E[\mathbf{X}^\top \mathbf{D} \mathbf{X}]^{-1}\nabla_{\thetav^{(t)}}\riske $$
-
-Note that the Hessian does not depend on the $y^{(i)}$ explicitly but only depends on $\E[y^{(i)}]=\pi^{(i)}$. Thus the expectation of the observed Hessian w.r.t. $y^{(i)}\sim P(y^{(i)}|\xv^{(i)},\thetav)$ coincides with $\nabla^2_{\thetav}\riske(\thetav)$ itself.
-\end{vbframe}
+\end{framei}
 
 
-\begin{vbframe}{Generalized linear models}
-$y|\xv$ belongs to an \textbf{exponential family} with density:
+\begin{framei}{Logistic regression}
+\item We now have
+$$\nabla_{\thetav}\riske =  \Xmat^\top\left(\pi(\Xmat\vert\;\thetav) - \yv\right) $$
+$$\nabla^2_{\thetav}\riske =  \Xmat^\top \mathbf{D} \Xmat$$
+\vfill
+\item Newton-Raphson: $$\thetatn=\thetat - [\Xmat^\top \mathbf{D} \Xmat]^{-1}\nabla_{\thetat}\riske $$
+\item Fisher scoring: $$\thetatn=\thetat - \E[\Xmat^\top \mathbf{D} \Xmat]^{-1}\nabla_{\thetat}\riske $$
+\vfill
+\item Note that the Hessian does not depend on the $y^{(i)}$ explicitly but only depends on $\E[y^{(i)}]=\pi^{(i)}$. Thus the expectation of the observed Hessian w.r.t. $y^{(i)}\sim P(y^{(i)}|\xv^{(i)},\thetav)$ coincides with $\nabla^2_{\thetav}\riske(\thetav)$ itself
+\end{framei}
+
+
+\begin{framei}[fs=small]{Generalized linear models}
+\item $y|\xv$ belongs to an \textbf{exponential family} with density:
 $$ p(y|\delta, \phi) = exp \left\{ \frac{y\delta-b(\delta)}{a(\phi)} + c(y,\phi) \right\}, $$
-where $\delta$ is the natural parameter and $\phi > 0$ is the dispersion parameter.\\
-We often take $a_i(\phi) = \frac{\phi}{w_i}$, with $\phi$ a pos. constant, and $w_i$ is a weight.
-
-\lz
-
-Generalized linear models (GLMs) relate the conditional mean $\mu(\xv)=\E[y|\xv]$ of $y$ to a linear predictor $\eta$ via a 
-strictly increasing link function $g(\mu)=\eta=\xv^\top\theta$.\\
-
-\lz
-
-One can show that mean $\mu = \mu(\xv)=b'(\delta)=g^{-1}(\eta)$, variance $Var(y|\xv)=a(\phi)b''(\delta)$, where\\
+where $\delta$ is the natural parameter and $\phi > 0$ is the dispersion parameter
+\item We often take $a_i(\phi) = \frac{\phi}{w_i}$, with $\phi$ a positive constant, and $w_i$ is a weight
+\vfill
+\item Generalized linear models (GLMs) relate the conditional mean $\mu(\xv)=\E[y|\xv]$ of $y$ to a linear predictor $\eta$ via a strictly increasing link function $g(\mu)=\eta=\xv^\top\theta$
+\vfill
+\item One can show that mean $\mu = \mu(\xv)=b'(\delta)=g^{-1}(\eta)$, variance $Var(y|\xv)=a(\phi)b''(\delta)$, where
 $$\frac{\partial{b(\delta)}}{\partial{\theta}}
 =\frac{\partial{b(\delta)}}{\partial{\delta}}\frac{\partial{\delta}}{\partial{\mu}}\frac{\partial{\mu}}{\partial{\eta}}\frac{\partial{\eta}}{\partial{\theta}}
 =\mu \frac{1}{b''(\delta)} \frac{1}{g'(\mu)} \xv$$
+\end{framei}
 
-\framebreak
-We can estimate $\delta$ using MLE with sample $(\xv^{(i)},y^{(i)})$ for $i=1,\ldots,n$.\\
-Take $a^{(i)}(\phi) = \frac{\phi}{w^{(i)}}$, $\phi$ is a positive constant, 
-we could ignore it since the goal is to maximize the function:\\
+
+\begin{framei}[fs=small]{Generalized linear models}
+\item We can estimate $\delta$ using MLE with sample $(\xv^{(i)},y^{(i)})$ for $i=1,\ldots,n$
+\item Take $a^{(i)}(\phi) = \frac{\phi}{w^{(i)}}$, $\phi$ is a positive constant, we could ignore it since the goal is to maximize the function:
 \begin{align*}
 \nabla \logl_{\theta}(\delta, \phi) &= \sumin \frac{w_i(y^{(i)}-\mu^{(i)})}{b''(\delta)g'(\mu^{(i)})}\xv^{(i)}\\
- &= \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})g'(\mu^{(i)})}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}\\
- &= \mathbf{X}^\top \mathbf{W} \mathbf{G} (\mathbf{Y}-\bm{\mu})
+&= \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})g'(\mu^{(i)})}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}\\
+&= \Xmat^\top \mathbf{W} \mathbf{G} (\mathbf{Y}-\bm{\mu})
 \end{align*}
-\lz
-$\mathbf{W}$ is a diagonal matrix with element $\frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}$.\\
-$\mathbf{G}$ is a diagonal matrix with element $g'(\mu^{(i)})$.\\
+\item $\mathbf{W}$ is a diagonal matrix with element $\frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}$
+\item $\mathbf{G}$ is a diagonal matrix with element $g'(\mu^{(i)})$
+\end{framei}
 
-\framebreak
 
+\begin{framei}[fs=small]{Generalized linear models}
+\item[]
 \begin{align*}
 -\nabla^2 \logl_{\theta}(\delta, \phi)
-  & = \sumin \frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\
-  & + \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(b''(\delta)g''(\mu^{(i)})/g'(\mu^{(i)}))}{[b''(\delta)g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\ 
-  & + \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(b'''(\delta)/b''(\delta))}{[b''(\delta)g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top
+& = \sumin \frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\
+& + \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(b''(\delta)g''(\mu^{(i)})/g'(\mu^{(i)}))}{[b''(\delta)g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\ 
+& + \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(b'''(\delta)/b''(\delta))}{[b''(\delta)g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top
 \end{align*}
+$$\E[-\nabla^2 \logl_{\theta}(\delta, \phi)] = \sumin \frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top = \Xmat^\top \mathbf{W} \Xmat$$
+\item Iteratively Reweighted Least Squares (IRLS) with weights $\frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}$
+\end{framei}
 
-$$\E[-\nabla^2 \logl_{\theta}(\delta, \phi)] = \sumin \frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top = \mathbf{X}^\top \mathbf{W} \mathbf{X}$$
-\lz
-Iteratively Reweighted Least Squares (IRLS) with weights $\frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}$\\
 
-\framebreak
-
-Fisher scoring:
+\begin{framei}[fs=small]{Generalized linear models}
+\item Fisher scoring:
 \begin{align*}
-\thetav^{(t+1)} &=\thetav^{(t)} + (\mathbf{X}^\top \mathbf{W} \mathbf{X})^{-1}\mathbf{X}^\top \mathbf{W} \mathbf{G} (\mathbf{Y}-\bm{\mu})\\
-& =(\mathbf{X}^\top \mathbf{W} \mathbf{X})^{-1}\mathbf{X}^\top \mathbf{W} \left(\mathbf{G} (\mathbf{Y}-\bm{\mu})+\mathbf{X}\thetav^{(t)}\right)
+\thetatn &=\thetat + (\Xmat^\top \mathbf{W} \Xmat)^{-1}\Xmat^\top \mathbf{W} \mathbf{G} (\mathbf{Y}-\bm{\mu})\\
+& =(\Xmat^\top \mathbf{W} \Xmat)^{-1}\Xmat^\top \mathbf{W} \left(\mathbf{G} (\mathbf{Y}-\bm{\mu})+\Xmat\thetat\right)
 \end{align*}
-
-\lz
-
-For canonical link where $\eta = \delta \;(= g(\mu) = \xv^\top\theta$), the second and third term of Hessian cancel each other out and Hessian coincides with Fisher information matrix since$$\frac{\partial{\eta}}{\partial{\delta}} = 1 \Rightarrow b''(\delta) = \frac{1}{g'(\mu^{(i)})} \Rightarrow  \frac{b'''(\delta)}{b''(\delta)} = -   \frac{g''(\mu^{(i)})}{[g'(\mu^{(i)})]^2}.$$\\
-This will now be a convex problem with Fisher scoring equal to Newton's method.\\
-\lz
-There are also hybrid algorithms that start out with IRLS which is easier to initialize, and switch over to Newton-Raphson after some iterations.
-
-\end{vbframe}
-
+\vfill
+\item For canonical link where $\eta = \delta \;(= g(\mu) = \xv^\top\theta$), the second and third term of Hessian cancel each other out and Hessian coincides with Fisher information matrix since
+$$\frac{\partial{\eta}}{\partial{\delta}} = 1 \Rightarrow b''(\delta) = \frac{1}{g'(\mu^{(i)})} \Rightarrow  \frac{b'''(\delta)}{b''(\delta)} = -   \frac{g''(\mu^{(i)})}{[g'(\mu^{(i)})]^2}$$
+\item This will now be a convex problem with Fisher scoring equal to Newton's method
+\vfill
+\item There are also hybrid algorithms that start out with IRLS which is easier to initialize, and switch over to Newton-Raphson after some iterations
+\end{framei}
 
 \endlecture
 \end{document}

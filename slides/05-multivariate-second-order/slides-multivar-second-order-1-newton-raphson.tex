@@ -3,250 +3,157 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Second order methods
-  }{% Lecture title  
-  Newton-Raphson
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/NR_2.png
-  }{
-    \item Newton-Raphson
-    \item Limitations
+\titlemeta{
+Second order methods
+}{
+Newton-Raphson
+}{
+figure_man/NR_2.png
+}{
+\item Newton-Raphson
+\item Limitations
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{From first to second order methods}
+\begin{framei}[sep=L]{From first to second order methods}
+\item So far: \textbf{First order methods} \\
+$\Rightarrow$ \textit{Gradient} information, i.e., first derivatives 
+\item Now: \textbf{Second order methods} \\
+$\Rightarrow$ \textit{Hessian} information, i.e., second derivatives
+\end{framei}
 
-\begin{itemize}
-    \setlength{\itemsep}{1em}
-    \item So far: \textbf{First order methods} \\
-        $\Rightarrow$ \textit{Gradient} information, i.e., first derivatives 
-    \item Now: \textbf{Second order methods} \\
-        $\Rightarrow$ \textit{Hessian} information, i.e., second derivatives
-\end{itemize}
 
-\end{vbframe}
+\begin{framei}{Newton-Raphson}
+\item \textbf{Assumption:} $f \in \CC{2}$
+\item \textbf{Aim:} Find stationary point $\xv^\ast$, i.e., $\nabla f(\xv^\ast) = \zero$
+\item \textbf{Idea:} Find root of first order Taylor approx of $\nabla f(\xv)$:
+$$
+\nabla f(\xv) \approx \nabla f(\xv^{[t]}) +
+\nabla^2 f(\xv^{[t]})(\xv - \xv^{[t]}) = \zero
+$$
+$$
+\nabla^2 f(\xv^{[t]})(\xv - \xv^{[t]}) = - \nabla f(\xv^{[t]})
+$$
+$$
+\xv^{[t+1]} = \xv^{[t]} - \left(\nabla^2 f(\xv^{[t]})\right)^{-1}\nabla f(\xv^{[t]})
+$$
+\item \textbf{Update scheme:}
+$$
+\xv^{[t+1]} = \xv^{[t]} + \mathbf{d}^{[t]}
+$$
+with $\mathbf{d}^{[t]} = - \left(\nabla^2 f(\xv^{[t]})\right)^{-1}\nabla f(\xv^{[t]})$
+\end{framei}
 
-\begin{vbframe}{Newton-Raphson}
 
-\textbf{Assumption:} $f \in \mathcal{C}^2$
-
-\medskip
-
-\textbf{Aim:} Find stationary point $\xv^\ast$, i.e., $\nabla f(\xv^\ast) = \mathbf{0}$
-
-\medskip
-
-\textbf{Idea:} Find root of first order Taylor approximation of $\nabla f(\xv)$:
-\begin{align*}
-    \nabla f(\xv) \approx \nabla f(\xv^{[t]}) +
-    \nabla^2 f(\xv^{[t]})(\xv - \xv^{[t]}) &= \mathbf{0} \\
-    \nabla^2 f(\xv^{[t]})(\xv - \xv^{[t]}) &= - \nabla f(\xv^{[t]}) \\
-    \xv^{[t+1]} &= \xv^{[t]} - \left(\nabla^2 f(\xv^{[t]})\right)^{-1}\nabla f(\xv^{[t]})
-\end{align*}
-
-\textbf{Update scheme:}
-\begin{equation*}
-    \xv^{[t+1]} = \xv^{[t]} + \mathbf{d}^{[t]}
-\end{equation*}
-with $\mathbf{d}^{[t]} = - \left(\nabla^2 f(\mathbf{ x}^{[t]})\right)^{-1}\nabla f(\xv^{[t]})$
-
-\framebreak
-
-\textbf{Note: } In practice, we get $\mathbf{d}^{[t]}$ by solving the linear system
-\begin{equation*}
-    \nabla^2 f(\xv^{[t]})\mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
-\end{equation*}
-with direct (matrix decompositions) or iterative methods. 
-
-\medskip
-
-\textbf{Relaxed/Damped Newton-Raphson:} Use step size $\alpha > 0$ with
-\begin{equation*}
-    \xv^{[t+1]} = \xv^{[t]} + \alpha \mathbf{d}^{[t]}
-\end{equation*}
+\begin{framei}{Newton-Raphson}
+\item \textbf{Note:} In practice, we get $\mathbf{d}^{[t]}$ by solving the linear system
+$$
+\nabla^2 f(\xv^{[t]})\mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
+$$
+with direct (matrix decompositions) or iterative methods
+\vfill
+\item \textbf{Relaxed/Damped Newton-Raphson:} Use step size $\alpha > 0$ with
+$$
+\xv^{[t+1]} = \xv^{[t]} + \alpha \mathbf{d}^{[t]}
+$$
 to satisfy Wolfe conditions (or just Armijo rule)
-
-% \begin{vbframe}{Newton-Raphson}
-% Der Newton-Raphson-Algorithmus benutzt als \textbf{Abstiegsrichtung}
-% $$
-% \mathbf{d}_{i} = -(\nabla^2 f(\xv_{i}))^{-1} \nabla f(\xv_{i})
-% $$
-% Dies kann auf mehrere Arten motiviert werden:
-% \begin{itemize}
-% \item Man löst die Gleichung $\nabla f(\xv) = \mathbf{0}$, indem man den Gradienten durch
-% eine Taylorreihe erster Ordnung approximiert:
-% $$
-% \nabla f(\xv) \approx \nabla f(\xv_{i}) +
-% \nabla^2 f(\xv_{i})(\xv - \xv_{i}) = \mathbf{0}.
-% $$
-% \item Man adjustiert die Richtung $-\nabla f(\xv_{i})$ vom ``steilsten Abstieg'' an die lokale
-% Krümmung $\nabla^2 f(\xv_{i})$.
-% \end{itemize}
-% Im Vergleich zum \enquote{steilsten Abstieg}: Newton-Raphson divergiert ebenfalls leicht, hat aber quadratische
-% Konvergenz nahe beim Minimum.
-
-\end{vbframe}
-
-\begin{vbframe}{Analytical example with quadratic form}
-
-\begin{equation*}
-    f(x_1, x_2) = x_1^2 + \frac{x_2^2}{2}
-\end{equation*}
-
-Update direction: $\mathbf{d}^{[t]} = -\left( \nabla^2 f(x_1^{[t]}, x_2^{[t]}) \right)^{-1} \nabla f(x_1^{[t]}, x_2^{[t]})$
-
-\begin{equation*}
-    \nabla f(x_1, x_2) = \begin{pmatrix}2x_1 \\ x_2\end{pmatrix}, \quad
-    \nabla^2 f(x_1, x_2) = \begin{pmatrix}2 & 0 \\ 0 & 1\end{pmatrix}
-\end{equation*}
-
-First step:
-\begin{align*}
-    \begin{pmatrix}
-        x_1^{[1]} \\ x_2^{[1]}
-    \end{pmatrix} &= \begin{pmatrix}
-        x_1^{[0]} \\ x_2^{[0]}
-    \end{pmatrix} + \mathbf{d}^{[0]} = \begin{pmatrix}
-        x_1^{[0]} \\ x_2^{[0]}
-    \end{pmatrix} - \begin{pmatrix}
-    1/2 &  0 \\ 0 & 1
-    \end{pmatrix} \begin{pmatrix}
-        2x_1^{[0]} \\ x_2^{[0]}
-    \end{pmatrix} \\
-    &= \begin{pmatrix}
-        x_1^{[0]} \\ x_2^{[0]}
-    \end{pmatrix} + \begin{pmatrix}
-        -x_1^{[0]} \\
-        -x_2^{[0]}
-    \end{pmatrix} = \mathbf{0}
-\end{align*}
-
-\textbf{Note:} Newton-Raphson only needs one iteration for quadratic forms
-
-\end{vbframe}
-
-\begin{vbframe}{Newton-Raphson vs. GD on Branin function}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.45\textwidth]{figure_man/NR_1.png} ~~ \includegraphics[width=0.45\textwidth]{figure_man/NR_2.png}
-    \caption*{\centering \textcolor{red}{Red}: Newton-Raphson.
-        \textcolor{green}{Green}: Gradient descent.
-        
-        Newton-Raphson has much better convergence speed here.}
-\end{figure}
-
-\end{vbframe}
-
-\begin{vbframe}{Discussion}
-
-\textbf{Advantage:}
-
-\begin{itemize}
-    \item For $f$ sufficiently smooth:
-        \begin{framed}
-            \centering
-            Newton-Raphson converges \textit{locally} quadratically \\
-            (i.e., for starting points close enough to stationary point)
-        \end{framed}
-\end{itemize}
-
-\lz
-
-\textbf{Disadvantage:}
-
-\begin{itemize}
-    \setlength{\itemsep}{1em}
-    \item For \enquote{bad} starting points:
-        \begin{framed}
-            \centering
-            Newton-Raphson may diverge
-        \end{framed}
-\end{itemize}
-
-\end{vbframe}
-
-\begin{vbframe}{Limitations}
-
-\textbf{Problem 1:} In general, $\mathbf{d}^{[t]}$ is not a descent direction
-
-\vspace*{-0.75\baselineskip}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\textwidth]{figure_man/NR_2.png}
-\end{figure}
-
-\begin{footnotesize}
-\textbf{But}: If Hessian is positive definite, $\mathbf{d}^{[t]}$ is descent direction:
-
-\begin{equation*}
-    \nabla f(\xv^{[t]})^\top \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})^\top \left(\nabla^2 f(\xv^{[t]})\right)^{-1} \nabla f(\xv^{[t]}) < 0
-\end{equation*}
-
-Near minimum, Hessian is positive definite.
-For initial steps, Hessian is often not positive definite and Newton-Raphson may give non-descending update directions
-\end{footnotesize}
-
-\framebreak
-
-\textbf{Problem 2:} Hessian can be \textbf{computationally expensive} to calculate, since descent direction $\mathbf{d}^{[t]}$ is the solution of the linear system
-\begin{equation*}
-    \nabla^2 f(\xv^{[t]}) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]}).
-\end{equation*}
-
-%can be numerically unstable.
-
-\lz
-
-\textbf{Aim}: Find quasi-second order methods not relying on exact Hessians
-\begin{itemize}
-    \item Quasi-Newton method
-    \item Gauss-Newton algorithm (for least squares)
-\end{itemize}
-
-\end{vbframe}
+\end{framei}
 
 
-% \begin{vbframe}{Newton-Raphson mit Backtracking}
-% Das Hauptproblem bei der globalen Divergenz ist, dass man auch in
-% Abstiegsrichtung das nächstgelegene Minimum überspringen kann und
-% dann $f(\xv^{(i + 1)}) > f(\xv^{(i)})$ gilt.
-% Eine zuverlässige Methode um dieses Problem zu beheben ist die {\em
-% Richtung} von $\mathbf{d}$ zu behalten, aber die Schrittweite zu reduzieren:
-% \begin{enumerate}
-% \item $\mathbf{d}$ berechnen und den vollen Schritt $\xv^{(i + 1)} = \xv^{(i)} + \mathbf{d}$
-% versuchen. Den Punkt behalten, falls $f(\xv^{(i + 1)}) < f(\xv^{(i)})$.
-% \item Falls nicht, teste Aktualisierungen mit
-% \[\xv^{(i + 1)} = \xv^{(i)} + \lambda \mathbf{d} \ \ \ \ \ \ \ \ \ \ \ 0 < \lambda < 1\]
-% mit abnehmender Schrittgröße $\lambda$ bis
-% \[f(\xv^{(i + 1)}) < f(\xv^{(i)}) - \epsilon\]
-% mit vorgegebenem $\epsilon$.
-% \end{enumerate}
-% Möglichkeiten für die Wahl von $\lambda$:
-% \begin{itemize}
-% \item Reduziere $\lambda$ um einen konstanten Faktor $c < 1$ bis Verbesserung der Lösung erzielt wurde.
-% \item Löse das eindimensionale Optimierungsproblem
-% $$
-%   \min_\lambda g(\lambda)   \mbox{ wobei }  g(\lambda) = f(\xv^{(i)} + \lambda \mathbf{d}).
-% $$
-% % wird in der Praxis eher nicht gemacht (zu zeitaufwendig).
-% \item  Minimiere quadratische Funktion basierend auf
-% $
-% g(0), g(1) \mbox{ und } g'(0)
-% $
-% (die drei Werte sind ja bekannt).
-% \end{itemize}
-% \end{vbframe}
+\begin{framei}{Analytical example with quadratic form}
+\item Consider $f(x_1, x_2) = x_1^2 + \frac{x_2^2}{2}$
+\item Update direction: $\mathbf{d}^{[t]} = -\left( \nabla^2 f(x_1^{[t]}, x_2^{[t]}) \right)^{-1} \nabla f(x_1^{[t]}, x_2^{[t]})$
+\item Gradient and Hessian:
+$$
+\nabla f(x_1, x_2) = \begin{pmatrix}2x_1 \\ x_2\end{pmatrix}, \quad
+\nabla^2 f(x_1, x_2) = \begin{pmatrix}2 & 0 \\ 0 & 1\end{pmatrix}
+$$
+\item First step:
+$$
+\begin{pmatrix}
+x_1^{[1]} \\ x_2^{[1]}
+\end{pmatrix} = \begin{pmatrix}
+x_1^{[0]} \\ x_2^{[0]}
+\end{pmatrix} + \mathbf{d}^{[0]} = \begin{pmatrix}
+x_1^{[0]} \\ x_2^{[0]}
+\end{pmatrix} - \begin{pmatrix}
+1/2 &  0 \\ 0 & 1
+\end{pmatrix} \begin{pmatrix}
+2x_1^{[0]} \\ x_2^{[0]}
+\end{pmatrix}
+$$
+$$
+= \begin{pmatrix}
+x_1^{[0]} \\ x_2^{[0]}
+\end{pmatrix} + \begin{pmatrix}
+-x_1^{[0]} \\
+-x_2^{[0]}
+\end{pmatrix} = \zero
+$$
+\item \textbf{Note:} Newton-Raphson only needs one iteration for quadratic forms
+\end{framei}
+
+
+\begin{framei}{Newton-Raphson vs. GD on Branin function}
+\item \textcolor{red}{Red}: Newton-Raphson
+\item \textcolor{green}{Green}: Gradient descent
+\item Newton-Raphson has much better convergence speed here
+\vfill
+\splitV[0.475]{
+\imageC[1]{figure_man/NR_1.png}
+}{
+\imageC[1]{figure_man/NR_2.png}
+}
+\end{framei}
+
+
+\begin{framei}[sep=L]{Discussion}
+\item[Advantage:]
+\item For $f$ sufficiently smooth:
+\begin{framed}
+\centering
+Newton-Raphson converges \textit{locally} quadratically \\
+(i.e., for starting points close enough to stationary point)
+\end{framed}
+\vfill
+\item[Disadvantage:]
+\item For \enquote{bad} starting points:
+\begin{framed}
+\centering
+Newton-Raphson may diverge
+\end{framed}
+\end{framei}
+
+
+\begin{framei}[fs=small]{Limitations}
+\item \textbf{Problem 1:} In general, $\mathbf{d}^{[t]}$ is not a descent direction
+\vfill
+\imageC[0.5]{figure_man/NR_2.png}
+\vfill
+\item \textbf{But}: If Hessian is positive definite, $\mathbf{d}^{[t]}$ is descent direction:
+$$
+\nabla f(\xv^{[t]})^\top \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})^\top \left(\nabla^2 f(\xv^{[t]})\right)^{-1} \nabla f(\xv^{[t]}) < 0
+$$
+\item Near minimum, Hessian is positive definite
+\item For initial steps, Hessian is often not positive definite and Newton-Raphson may give non-descending update directions
+\end{framei}
+
+
+\begin{framei}{Limitations}
+\item \textbf{Problem 2:} Hessian can be \textbf{computationally expensive} to calculate, since descent direction $\mathbf{d}^{[t]}$ is the solution of the linear system
+$$
+\nabla^2 f(\xv^{[t]}) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
+$$
+\vfill
+\item \textbf{Aim:} Find quasi-second order methods not relying on exact Hessians
+\item Quasi-Newton method
+\item Gauss-Newton algorithm (for least squares)
+\end{framei}
 
 \endlecture
 \end{document}
-
-
-
