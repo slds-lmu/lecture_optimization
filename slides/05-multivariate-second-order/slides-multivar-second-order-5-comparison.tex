@@ -26,15 +26,15 @@ $\Rightarrow$ \textit{Gradient} information, i.e., first derivatives
 \item Newton-Raphson: \textbf{second order method} \\
 $\Rightarrow$ \textit{Hessian} information, i.e., second derivatives
 \vfill
-\item[\textbf{Gradient Descent:}]
+\item[] \textbf{Gradient Descent:}
 $$
 \thetatn = \thetat - \alpha \nabla f(\thetat)
 $$
-\item[\textbf{Pure Newton-Raphson:}]
+\item[] \textbf{Pure Newton-Raphson:}
 $$
 \thetatn = \thetat - (\nabla^2 f(\thetat))^{-1}\nabla f(\thetat)
 $$
-\item[\textbf{Relaxed/Damped Newton-Raphson:}]
+\item[] \textbf{Relaxed/Damped Newton-Raphson:}
 $$
 \thetatn = \thetat -\alpha (\nabla^2 f(\thetat))^{-1}\nabla f(\thetat)
 $$
@@ -54,49 +54,41 @@ $$
 
 \begin{framei}{Logistic Regression (GD variants recap)}
 \item Recall comparison of GD variants on log. reg. in last chapter:
-\vfill
 \imageC[0.8]{figure_man/GD_log_med_lr_iters.pdf}
 \imageC[0.8]{figure_man/GD_log_coef_med.pdf}
 {\footnotesize Dotted lines indicate global minimizers.}
-\vfill
 \item \textbf{GD+momentum} was fastest $\Rightarrow$ now compare w/ Newton-Raphson
 \item \textbf{NB}: GD+momentum only converges after several thousand steps
 \end{framei}
 
 
-\begin{framei}{Logistic Regression (GD vs. NR)}
+\begin{framei}[fs=footnotesize]{Logistic Regression (GD vs. NR)}
 \item Let's run GD vs. NR for \textbf{$1000$ steps} (independent features):
-\vfill
-\imageC[0.8]{figure_man/simu-newton/NR_GD_log_indep_1000iters.pdf}
-\imageC[0.8]{figure_man/simu-newton/NR_GD_log_coef_1000indep.pdf}
-{\footnotesize Dotted lines indicate global minimizers.}
-\vfill
+\imageC[0.7]{figure_man/simu-newton/NR_GD_log_indep_1000iters.pdf}
+\imageC[0.7]{figure_man/simu-newton/NR_GD_log_coef_1000indep.pdf}
+Dotted lines indicate global minimizers.
 \item \textbf{NR} and \textbf{relaxed NR} $\Rightarrow$ almost instantaneous convergence (see optimization error)
 \item Using $\alpha<1$ slightly slows down \textbf{relaxed NR}
 \item \textbf{GD+mom} several orders of magnitude slower than NR
 \end{framei}
 
 
-\begin{framei}{Logistic Regression (GD vs. NR)}
+\begin{framei}[fs=footnotesize]{Logistic Regression (GD vs. NR)}
 \item Let's run the same configuration only for \textbf{$50$ steps} to see clearer picture:
-\vfill
 \imageC[0.8]{figure_man/simu-newton/NR_GD_log_indep_50iters.pdf}
 \imageC[0.8]{figure_man/simu-newton/NR_GD_log_coef_50indep.pdf}
-{\footnotesize Dotted lines indicate global minimizers.}
-\vfill
+Dotted lines indicate global minimizers.
 \item \textbf{NR} takes $\approx 10$ steps to reach same optimization error as \textbf{GD+mom} after $20,000$ steps!
 \item \textbf{Relaxed NR} with $\alpha<1$ shows no advantage here
 \end{framei}
 
 
-\begin{framei}[fs=small]{Runtime comparison (indep.)}
+\begin{framei}[fs=footnotesize]{Runtime comparison (indep.)}
 \item Clearly, NR makes more progress than GD per iteration
 \item OTOH Newton steps are much more expensive than GD updates
 \item $\Rightarrow$ How do NR and GD compare wrt runtime instead of iterations (50 steps)?
-\vfill
-\imageC[1]{figure_man/simu-newton/NR_GD_runtime_comparison.pdf}
-\vfill
-\item[\textbf{Observations:}]
+\imageC[0.9]{figure_man/simu-newton/NR_GD_runtime_comparison.pdf}
+\item[] \textbf{Observations:}
 \item \textbf{NR} steps are indeed slower than \textbf{GD} steps ($\approx 3\times$ here)
 \item But each NR step is so much better than GD ($\approx 2000 \times$) that per-iteration runtime advantage of GD becomes \textbf{irrelevant}
 \end{framei}
@@ -104,11 +96,9 @@ $$
 
 \begin{framei}{Logistic Regression (corr.)}
 \item In case of correlated features the results are very similar:
-\vfill
 \imageC[0.8]{figure_man/simu-newton/NR_GD_log_indep_50iters_corr.pdf}
 \imageC[0.8]{figure_man/simu-newton/NR_GD_log_coef_50indep_corr.pdf}
 {\footnotesize Dotted lines indicate global minimizers.}
-\vfill
 \item \textbf{NR}'s performance is unaffected by feature correlation
 \item \textbf{GD} iterates become ``warped'' compared to before
 \end{framei}
@@ -116,10 +106,8 @@ $$
 
 \begin{framei}{Runtime comparison (corr.)}
 \item Previous conclusions on runtime comparison for independent features carry over to correlated feature case:
-\vfill
-\imageC[1]{figure_man/simu-newton/NR_GD_runtime_comparison_corr.pdf}
-\vfill
-\item[\textbf{Observations:}]
+\imageC[0.95]{figure_man/simu-newton/NR_GD_runtime_comparison_corr.pdf}
+\item[] \textbf{Observations:}
 \item \textbf{NR} steps are indeed slower than \textbf{GD} steps ($\approx 4\times$ here)
 \item Overall \textbf{NR} is strongly superior to \textbf{GD} wrt optim error and speed
 \end{framei}

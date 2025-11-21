@@ -113,7 +113,7 @@ $$
 
 
 \begin{framei}[sep=L]{Discussion}
-\item[Advantage:]
+\item[] \textbf{Advantage:}
 \item For $f$ sufficiently smooth:
 \begin{framed}
 \centering
@@ -121,7 +121,7 @@ Newton-Raphson converges \textit{locally} quadratically \\
 (i.e., for starting points close enough to stationary point)
 \end{framed}
 \vfill
-\item[Disadvantage:]
+\item[] \textbf{Disadvantage:}
 \item For \enquote{bad} starting points:
 \begin{framed}
 \centering
@@ -132,9 +132,7 @@ Newton-Raphson may diverge
 
 \begin{framei}[fs=small]{Limitations}
 \item \textbf{Problem 1:} In general, $\mathbf{d}^{[t]}$ is not a descent direction
-\vfill
-\imageC[0.5]{figure_man/NR_2.png}
-\vfill
+\imageC[0.4]{figure_man/NR_2.png}
 \item \textbf{But}: If Hessian is positive definite, $\mathbf{d}^{[t]}$ is descent direction:
 $$
 \nabla f(\xv^{[t]})^\top \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})^\top \left(\nabla^2 f(\xv^{[t]})\right)^{-1} \nabla f(\xv^{[t]}) < 0
