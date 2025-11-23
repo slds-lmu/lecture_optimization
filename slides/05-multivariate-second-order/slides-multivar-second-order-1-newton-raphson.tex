@@ -14,7 +14,7 @@ Second order methods
 }{
 Newton-Raphson
 }{
-figure_man/NR_2.png
+figure/NR_2.png
 }{
 \item Newton-Raphson
 \item Limitations
@@ -99,17 +99,15 @@ $$
 \end{framei}
 
 
-\begin{framei}{Newton-Raphson vs. GD on Branin function}
-\item \textcolor{red}{Red}: Newton-Raphson
-\item \textcolor{green}{Green}: Gradient descent
-\item Newton-Raphson has much better convergence speed here
-\vfill
-\splitV[0.475]{
-\imageC[1]{figure_man/NR_1.png}
+\begin{framev}{Newton-Raphson vs. GD on Branin function}
+\splitV[0.6]{
+\imageC[1]{figure/NR_2.png}
 }{
-\imageC[1]{figure_man/NR_2.png}
+\imageC[1]{figure/NR_1.png}
 }
-\end{framei}
+\vfill
+Newton-Raphson has much better convergence speed here
+\end{framev}
 
 
 \begin{framei}[sep=L]{Discussion}
@@ -132,7 +130,7 @@ Newton-Raphson may diverge
 
 \begin{framei}[fs=small]{Limitations}
 \item \textbf{Problem 1:} In general, $\mathbf{d}^{[t]}$ is not a descent direction
-\imageC[0.4]{figure_man/NR_2.png}
+\imageC[0.6]{figure/NR_2.png}
 \item \textbf{But}: If Hessian is positive definite, $\mathbf{d}^{[t]}$ is descent direction:
 $$
 \nabla f(\xv^{[t]})^\top \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})^\top \left(\nabla^2 f(\xv^{[t]})\right)^{-1} \nabla f(\xv^{[t]}) < 0
