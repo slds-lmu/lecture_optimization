@@ -8,260 +8,114 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  }{% Lecture title  
-  Constrained Optimization
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/convex_programs.png
-  }{
-    \item Examples of constrained optimization in statistics and ML 
-    \item General definition
-    \item Hierarchy of convex constrained problems
+\titlemeta{
+Constrained Optimization
+}{
+Introduction
+}{
+figure_man/convex_programs.png
+}{
+\item Examples of constrained optimization in statistics and ML 
+\item General definition
+\item Hierarchy of convex constrained problems
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{vbframe}{Constrained Optimization in Statistics}
-
-\textbf{Example}: Maximum Likelihood Estimation
-
-\lz
-
-For data $\left(\xv^{(1)}, ..., \xv^{(n)}\right)$, we want to find the maximum likelihood estimate
-
+\begin{framei}[fs=small]{Constrained Optimization in Statistics}
+\item[Example:] Maximum Likelihood Estimation
+\item For data $(\xv^{(1)}, \ldots, \xv^{(n)})$, we want to find the MLE
 $$
 \max_\theta L(\theta) = \prod_{i = 1}^n f(\xv^{(i)}, \theta)
 $$
-
-In some cases, $\theta$ can only take \textbf{certain values}. 
-
-\lz 
-
-\begin{itemize}
-\item If $f$ is a Poisson distribution, we require the rate $\lambda$ to be non-negative, i.e. $\lambda \ge 0$
-
-  \item If $f$ is a multinomial distribution
-
-\begin{footnotesize}
-  $$
-  f(x_1, ..., x_p; n; \theta_1, ..., \theta_p) = \begin{cases} \binom{n!}{x_1! \cdot x_2! ... x_p!} \theta_1^{x_1} \cdot ... \cdot \theta_p^{x_p} & \text{if } x_1 + ... + x_p = n \\ 0 & \text{else}
-  \end{cases}
-  $$
-\end{footnotesize}
-
-  The probabilities $\theta_i$ must lie between $0$ and $1$ and add up to $1$, i.e. we require 
-  \begin{eqnarray*}
-  	0 \le \theta_i \le 1 && \text{ for all } i \\
-  	 \theta_1 + ... + \theta_p = 1. &&
-  \end{eqnarray*}
-
-\end{itemize}
-
-\end{vbframe}
-
-
-\begin{vbframe}{Constrained Optimization in ML}
-
-\begin{itemize}
-\item \textbf{Lasso regression}:
-
-\begin{eqnarray*}
-\min_{\bm{\beta}\in \R^p} && \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^T\xv^{(i)}\right)^2 \\
-\text{s.t. } && \|\bm{\beta}\|_1 \le t
-\end{eqnarray*}
-
-\item \textbf{Ridge regression}:
-
-\begin{eqnarray*}
-\min_{\bm{\beta}\in \R^p} && \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^T\xv^{(i)}\right)^2 \\
-\text{s.t. } &&\|\bm{\beta}\|_2 \le t
-\end{eqnarray*}
-\end{itemize}
-
-\begin{center}
-	\includegraphics{figure_man/lasso-ridge.png}
-\end{center}
-
-\framebreak
-
-
-\begin{itemize}
-\item \textbf{Constrained Lasso regression}:
-
-\begin{eqnarray*}
-\min_{\bm{\beta}\in \R^p} && \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^T\xv^{(i)}\right)^2 \\
-\text{s.t. } && \|\bm{\beta}\|_1 \le t\\
-             && \mathbf{C}\bm{\beta} \le \mathbf{d}\\
-             && \Amat\bm{\beta} = \mathbf{b}, 
-\end{eqnarray*}
-\end{itemize}
-
-where the matrices $\Amat\in \R^{l \times p}$ and $\mathbf{C} \in \R^{k \times p}$ have full row rank. 
-\lz 
-
-This model includes many Lasso variants as special cases, e.g., the Generalized Lasso, (sparse) isotonic regression, log-contrast regression for compositional data, etc. (see, e.g., \href{https://hua-zhou.github.io/media/pdf/GainesKimZhou08CLasso.pdf}{\beamergotobutton{Gaines et al., 2018}}). 
-
-\framebreak
-
-Remember the dual formulation of the SVM, which is a convex quadratic program with box constraints plus one linear constraint: 
-
-\begin{eqnarray*}
-	& \max\limits_{\boldsymbol{\alpha} \in \R^n} & \sum_{i=1}^n \alpha_i - \frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\yi y^{(j)} \scp{\xi}{\xv^{(j)}} \\
-	& \text{s.t. } & 0 \le \alpha_i \le C, \\
-	& \quad & \sum_{i=1}^n \alpha_i \yi = 0,
-\end{eqnarray*}
-
-% Der Manager eines Aktienportfolios möchte einen Betrag für ein Jahr so in $n$ Aktien investieren, dass
-%
-% \begin{enumerate}
-% \item die erwartete Rendite mindestens $r_0 \%$ beträgt und
-% \item gleichzeitig das Risiko minimiert wird.
-% \end{enumerate}
-%
-% Es sei $r_i$ die \textbf{erwartete Rendite} von Aktie $i$ am Jahresende. Die $r_i$ sind als (möglicherweise korrelierte) Zufallsvariablen zu verstehen und wir nehmen an
-%
-% \vspace*{-0.2cm}
-%
-% $$
-% \mathbf{r} = (r_1, ..., r_n) \sim \mathcal{N}(\mu, \Sigma).
-% $$
-%
-% Wie viel Prozent seines Kapitals in Aktie $i$ investiert wird, wird durch
-%
-% $$
-% x = (x_1, ..., x_n), ~~ \sum_i x_i = 1
-% $$
-%
-% zusammengefasst.
-%
-%
-% \framebreak
-%
-% Die Rendite am Jahresende ist dann $R(\xv) = \mathbf{r}^T \xv$.
-%
-% \lz
-%
-% Da die erwartete Mindestrendite mindestens $r_0$ sein soll, fordern wir als Nebenbedingung
-%
-% $$
-% E(\mathbf{r}^T \xv) = E(\mathbf{r}^T) \xv = \mu^T \xv \ge r_0.
-% $$
-%
-% Das Risiko, also die Varianz, wollen wir minimieren
-%
-% $$
-% \min \text{Var}(\mathbf{r}^T\xv) = \xv^T \Sigma \xv.
-% $$
-%
-% \framebreak
-%
-% Das Portfolio-Optimierungsproblem lautet dann
-%
-% \begin{eqnarray*}
-% \min && \xv^T \Sigma \xv \\
-% \text{u. d. N.} && \sum_i x_i = 1 \\
-% && x_i \ge 0 \text{ für alle } i \\
-% && \mu^T x \ge r_0
-% \end{eqnarray*}
-
-\end{vbframe}
-
-
-% \begin{vbframe}{Allgemeines restringiertes Optimierungsproblem}
-%
-% Wir betrachten ein allgemeine restringierte Optimierungsprobleme der Form
-%
-% \begin{eqnarray*}
-% &&\min_{\xv \in \R^n}  f(\xv) \\
-% \text{u. d. N. } && g_i(\xv) \le 0 \text{ für alle } i, \\
-% && h_j(\xv) = 0 \text{ für alle } j,
-% \end{eqnarray*}
-%
-% wobei
-%
-% \begin{itemize}
-% \item $f: \R^n \to \R$ Zielfunktion, die optimiert werden soll,
-% \item $g_i: \R^n \to \R$, $i \in \{1, 2, ..., m\}$ Ungleichungsnebenbedingungen,
-% \item $h_j: \R^n \to \R$, $j \in \{1, 2, ..., p\}$ Gleichungsnebenbedingungen.
-% \end{itemize}
-%
-% Der zulässige Bereich enthält dann die Punkte, für die die (Un-)Gleichungen erfüllt sind
-%
-% $$
-% \mathcal{S} := \{\xv \in \R^n: g_i(\xv) \le 0, h_j(\xv) = 0 \}
-% $$
-%
-% \end{vbframe}
-
-\begin{vbframe}{Constrained Optimization}
-
-\textbf{General definition} of a \textbf{Constrained Optimization problem}:
-
-\begin{eqnarray*}
-\min && f(\mathbf{x})  \\
-\text{such that} && g_i(\mathbf{x}) \le 0 \qquad \text{for } i=1,\ldots,k  \\
- && h_j(\mathbf{x}) = 0 \qquad \text{for } j=1,\ldots,l,
-\end{eqnarray*}
-
-\vspace*{-0.5cm}
-
-where
-
-\begin{itemize}
-\item $g_i: \R^d \to \R, i = 1, ..., k$ are inequality constraints,
-\item $h_j: \R^d \to \R, j = 1, ..., l$ are equality constraints.
-\end{itemize}
-
-\lz 
-
-The set of inputs $\xv$ that fulfill the constraints, i.e.,
-\begin{equation*}
-    \mathcal{S} := \{\xv \in \R^d ~|~ g_i(\xv) \le 0, h_j(\xv) = 0 ~\forall~ i, j\},
-\end{equation*} 
-
-is known as the \textbf{feasible set}.
-
-\end{vbframe}
-
-\begin{vbframe}{Constrained Convex Optimization}
-
-Special cases of constrained optimization problems are \textbf{convex programs}, with convex objective function $f$, convex inequality constraints $g_i$, and affine equality constraints $h_j$ (i.e. $h_j(\xv) = \Amat_j^\top \xv - \mathbf{b}_j$). 
-
-\lz 
-
-Convex programs can be categorized into 
-
-\begin{center}
-\includegraphics[width=0.4\textwidth]{figure_man/convex_programs.png}
-\end{center}
-
-\lz 
-
-\begin{itemize}
-	\item Linear program (LP): objective function $f$ and all constraints $g_i, h_j$ are linear functions
-	\item Quadratic program (QP): objective function $f$ is a quadratic form, i.e. $$
-	\fx = \frac{1}{2}\xv^\top \mathbf{Q} \xv + \mathbf{c}^\top \xv + \mathbf{d} 
+\item In some cases, $\theta$ can only take \textbf{certain values}
+\vfill
+\item If $f$ is a Poisson distribution, we require $\lambda \ge 0$
+\item If $f$ is a multinomial distribution
 $$
-for $\mathbf{Q} \in \R^{d \times d}, \mathbf{c} \in \R^d, d \in \R$, and constraints are linear.
-\end{itemize}
+f(x_1, \ldots, x_p; n; \theta_1, \ldots, \theta_p) = \begin{cases} \frac{n!}{x_1! \cdots x_p!} \theta_1^{x_1} \cdots \theta_p^{x_p} & \text{if } x_1 + \ldots + x_p = n \\ 0 & \text{else}
+\end{cases}
+$$
+\item The probabilities $\theta_i$ must lie between $0$ and $1$ and sum to $1$:
+$$
+0 \le \theta_i \le 1 \text{ for all } i \quad \text{and} \quad \theta_1 + \ldots + \theta_p = 1
+$$
+\end{framei}
 
-as well as second-order cone programs (SOCP), semidefinite programs (SDP), and cone programs (CP). 
 
-\framebreak
+\begin{framei}{Constrained Optimization in ML}
+\item \textbf{Lasso regression}:
+$$
+\min_{\bm{\beta}\in \R^p} \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^\top\xv^{(i)}\right)^2 \quad \text{s.t. } \|\bm{\beta}\|_1 \le t
+$$
+\item \textbf{Ridge regression}:
+$$
+\min_{\bm{\beta}\in \R^p} \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^\top\xv^{(i)}\right)^2 \quad \text{s.t. } \|\bm{\beta}\|_2 \le t
+$$
+\vfill
+\imageC{figure_man/lasso-ridge.png}
+\end{framei}
 
 
-SOCPs play a pivotal role in statistics and engineering and have been popularized in the seminal article by \href{http://www.seas.ucla.edu/~vandenbe/publications/socp.pdf}{\beamergotobutton{Lobo et al., 1998}}. 
-\lz 
+\begin{framei}[fs=small]{Constrained Optimization in ML}
+\item \textbf{Constrained Lasso regression}:
+$$
+\min_{\bm{\beta}\in \R^p} \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^\top\xv^{(i)}\right)^2 \quad \text{s.t. } \|\bm{\beta}\|_1 \le t, ~ \mathbf{C}\bm{\beta} \le \mathbf{d}, ~ \Amat\bm{\beta} = \mathbf{b}
+$$
+\item Matrices $\Amat\in \R^{l \times p}$ and $\mathbf{C} \in \R^{k \times p}$ have full row rank
+\item This model includes many Lasso variants as special cases, e.g., the Generalized Lasso, (sparse) isotonic regression, log-contrast regression for compositional data, etc.
+\furtherreading{GAINES2018}
+\end{framei}
 
-In ML, SDPs are at the heart of, e.g., learning kernels from data (see, e.g., \href{https://www.jmlr.org/papers/volume5/lanckriet04a/lanckriet04a.pdf}{\beamergotobutton{Lanckriet et al., 2004}}).
 
-\lz 
+\begin{framei}[fs=small]{Constrained Optimization in ML}
+\item Dual formulation of the SVM: convex QP with box constraints plus one linear constraint
+$$
+\max_{\boldsymbol{\alpha} \in \R^n} \sum_{i=1}^n \alpha_i - \frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\yi y^{(j)} \scp{\xi}{\xv^{(j)}}
+$$
+$$
+\text{s.t. } 0 \le \alpha_i \le C, \quad \sum_{i=1}^n \alpha_i \yi = 0
+$$
+\end{framei}
 
-In general, this categorization of convex optimization problem classes helps in the design of specialized \emph{optimization methods} that are tailored toward the specific type of convex optimization problem (keyword: disciplined convex programming \href{https://web.stanford.edu/~boyd/papers/disc_cvx_prog.html}{\beamergotobutton{Grant et al., 2006}}).
 
-\end{vbframe}
+\begin{framei}{Constrained Optimization}
+\item[Definition] \textbf{Constrained Optimization problem}:
+$$
+\min f(\xv) \quad \text{s.t. } g_i(\xv) \le 0 ~ (i=1,\ldots,k), \quad h_j(\xv) = 0 ~ (j=1,\ldots,l)
+$$
+\item $g_i: \R^d \to \R$ are \textbf{inequality constraints}
+\item $h_j: \R^d \to \R$ are \textbf{equality constraints}
+\vfill
+\item The \textbf{feasible set} is the set of inputs $\xv$ that fulfill the constraints:
+$$
+\mathcal{S} := \{\xv \in \R^d ~|~ g_i(\xv) \le 0, h_j(\xv) = 0 ~\forall~ i, j\}
+$$
+\end{framei}
+
+
+\begin{framei}[fs=small]{Constrained Convex Optimization}
+\item \textbf{Convex programs}: convex objective $f$, convex inequality constraints $g_i$, and affine equality constraints $h_j$ (i.e., $h_j(\xv) = \Amat_j^\top \xv - \mathbf{b}_j$)
+\vfill
+\imageC[0.4]{figure_man/convex_programs.png}
+\vfill
+\item \textbf{Linear program (LP)}: $f$ and all constraints $g_i, h_j$ are linear
+\item \textbf{Quadratic program (QP)}: $f$ is a quadratic form, constraints are linear
+$$
+\fx = \frac{1}{2}\xv^\top \mathbf{Q} \xv + \mathbf{c}^\top \xv + d \quad \text{for } \mathbf{Q} \in \R^{d \times d}, \mathbf{c} \in \R^d, d \in \R
+$$
+\item Also: second-order cone programs (SOCP), semidefinite programs (SDP), cone programs (CP)
+\end{framei}
+
+
+\begin{framei}{Constrained Convex Optimization}
+\item SOCPs play a pivotal role in statistics and engineering
+\furtherreading{LOBO1998}
+\item In ML, SDPs are at the heart of, e.g., learning kernels from data
+\furtherreading{LANCKRIET2004}
+\vfill
+\item This categorization of convex optimization problem classes helps design specialized \emph{optimization methods} tailored to specific problem types
+\item Keyword: disciplined convex programming
+\furtherreading{GRANT2006}
+\end{framei}
 
 \endlecture
 \end{document}
-
-
-
