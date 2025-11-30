@@ -26,22 +26,22 @@ figure_man/convex_programs.png
 $$
 \min f(\xv) \qquad \text{s.t. } \quad h(\xv) = 0
 $$
-\item[Idea:] Instead of $f$, optimize 2nd order Taylor approximation at point $\bm{\tilde x}$
+\item[Idea:] Instead of $f$, optimize 2nd order Taylor approximation at point $\xtil$
 $$
-\tilde f(\xv) = f(\bm{\tilde x}) +  \nabla_{x} f(\bm{\tilde x})^T (\xv- \bm{\tilde x})+ \frac{1}{2} (\xv- \bm{\tilde x})^T \nabla^2_{xx} f(\bm{\tilde x}) (\xv- \bm{\tilde x})
+\tilde f(\xv) = f(\xtil) +  \nabla_{x} f(\xtil)^T (\xv- \xtil)+ \frac{1}{2} (\xv- \xtil)^T \nabla^2_{xx} f(\xtil) (\xv- \xtil)
 $$
-\item $h$ is also replaced by its linear approximation at $\bm{\tilde x}$
+\item $h$ is also replaced by its linear approximation at $\xtil$
 $$
-\tilde h(\xv) = h(\bm{\tilde x}) + \nabla h(\bm{\tilde x})^T(\xv- \bm{\tilde x})
+\tilde h(\xv) = h(\xtil) + \nabla h(\xtil)^T(\xv- \xtil)
 $$
 \end{framei}
 
 
 \begin{framei}{Sequential quadratic programming}
-\item With $\bm{d} := (\xv- \bm{\tilde x})$ we formulate the \textbf{quadratic auxiliary problem}
+\item With $\bm{d} := (\xv- \xtil)$ we formulate the \textbf{quadratic auxiliary problem}
 \begin{align*}
-\min_{\bm{d}} \quad & \tilde f(\bm{d}) := f(\bm{\tilde x}) + \bm{d}^T \nabla_{x} f(\bm{\tilde x}) + \frac{1}{2} \bm{d}^T \nabla^2_{xx} f(\bm{\tilde x}) \bm{d} \\
-\text{s.t. } \quad & \tilde h(\bm{d}) :=  h(\bm{\tilde x}) + \nabla h(\bm{\tilde x})^T\bm{d} = 0
+\min_{\bm{d}} \quad & \tilde f(\bm{d}) := f(\xtil) + \bm{d}^T \nabla_{x} f(\xtil) + \frac{1}{2} \bm{d}^T \nabla^2_{xx} f(\xtil) \bm{d} \\
+\text{s.t. } \quad & \tilde h(\bm{d}) :=  h(\xtil) + \nabla h(\xtil)^T\bm{d} = 0
 \end{align*}
 \item Even if no optimality conditions can be formulated for the actual problem, KKT conditions apply at the optimum of this problem
 \item If $\nabla^2_{xx} f(\xv)$ is positive semidefinite, it is a \textbf{convex optimization problem}
@@ -51,16 +51,16 @@ $$
 \begin{framei}[fs=small]{Sequential quadratic programming}
 \item Using the Lagrange function
 $$
-L(\bm{d}, \bm{\beta}) = \bm{d}^T \nabla_{x} f(\bm{\tilde x}) + \frac{1}{2} \bm{d}^T \nabla^2_{xx} f(\bm{\tilde x}) \bm{d} + \bm{\beta}^T (h(\bm{\tilde x}) + \nabla h(\bm{\tilde x})^T\bm{d})
+L(\bm{d}, \bm{\beta}) = \bm{d}^T \nabla_{x} f(\xtil) + \frac{1}{2} \bm{d}^T \nabla^2_{xx} f(\xtil) \bm{d} + \bm{\beta}^T (h(\xtil) + \nabla h(\xtil)^T\bm{d})
 $$
 we formulate the KKT conditions
 \begin{itemize}
-\item $\nabla_{\bm{d}} L(\bm{d}, \bm{\beta}) = \nabla_{x} f(\bm{\tilde x}) + \nabla^2_{xx} f(\bm{\tilde x}) \bm{d} + \nabla h(\bm{\tilde x})^T\bm{\beta} = 0$
-\item $h(\bm{\tilde x}) + \nabla h(\bm{\tilde x})^T\bm{d} = 0$
+\item $\nabla_{\bm{d}} L(\bm{d}, \bm{\beta}) = \nabla_{x} f(\xtil) + \nabla^2_{xx} f(\xtil) \bm{d} + \nabla h(\xtil)^T\bm{\beta} = 0$
+\item $h(\xtil) + \nabla h(\xtil)^T\bm{d} = 0$
 \end{itemize}
 \item Or in matrix notation
 $$
-\begin{pmatrix} \nabla^2_{xx} f(\bm{\tilde x}) & \nabla h(\bm{\tilde x})^T \\ \nabla h(\bm{\tilde x}) & 0 \end{pmatrix} \begin{pmatrix} \bm{d} \\ \bm{\beta} \end{pmatrix} = - \begin{pmatrix} \nabla_{x} f(\bm{\tilde x}) \\ h(\bm{\tilde x}) \end{pmatrix}
+\begin{pmatrix} \nabla^2_{xx} f(\xtil) & \nabla h(\xtil)^T \\ \nabla h(\xtil) & 0 \end{pmatrix} \begin{pmatrix} \bm{d} \\ \bm{\beta} \end{pmatrix} = - \begin{pmatrix} \nabla_{x} f(\xtil) \\ h(\xtil) \end{pmatrix}
 $$
 \item The \textbf{quadratic subproblem} can be traced back to solving a linear system
 \end{framei}
@@ -70,7 +70,7 @@ $$
 \begin{algorithm}[H]
 \caption{SQP for problems with equality constraints}
 \begin{algorithmic}[1]
-\State Select a feasible starting point $\mathbf{x}^{(0)} \in \R^n$
+\State Select a feasible starting point $\xv^{(0)} \in \R^n$
 \While {Stop criterion not fulfilled}
 \State Solve quadratic subproblem by solving the equation
 $$\begin{pmatrix} \nabla^2_{xx} L(\xv, \bm{\mu}) & \nabla h(\xv)^T \\ \nabla h(\xv) & 0 \end{pmatrix} \begin{pmatrix} \bm{d} \\ \bm{\beta} \end{pmatrix} = - \begin{pmatrix} \nabla_{x} L(\xv, \bm{\mu}) \\ h(\xv) \end{pmatrix}$$

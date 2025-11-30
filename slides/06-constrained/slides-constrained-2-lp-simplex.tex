@@ -23,17 +23,17 @@ figure_man/convex_programs.png
 
 \begin{framei}{Linear programming}
 \item \textbf{Linear program} (LP): optimization problem with \textbf{linear} objective function + \textbf{linear} constraints
-\item[General form]
+\item General form
 $$
-\min_{\xv} \mathbf{c}^\top\xv \quad \text{s.t. } \Amat_1\xv \le \mathbf{b}_1,\ \Amat_2\xv \ge \mathbf{b}_2,\ \Amat_3\xv = \mathbf{b}_3
+\min_{\xv} \mathbf{c}^T\xv \quad \text{s.t. } \Amat_1\xv \le \mathbf{b}_1,\ \Amat_2\xv \ge \mathbf{b}_2,\ \Amat_3\xv = \mathbf{b}_3
 $$
-\item[Examples]
+\item Examples
 \splitV[0.5]{
 $$
 \min_{\xv} \|\Amat\xv-\mathbf{b}\|_1 \Leftrightarrow
 $$
 $$
-\min_{\xv,\mathbf{s}} \one^\top\mathbf{s} \quad \text{s.t. } \pm(\Amat\xv - \mathbf{b}) \le \mathbf{s}
+\min_{\xv,\mathbf{s}} \one^T\mathbf{s} \quad \text{s.t. } \pm(\Amat\xv - \mathbf{b}) \le \mathbf{s}
 $$
 }{
 $$
@@ -47,31 +47,33 @@ $$
 
 
 \begin{framei}{Linear programming: Standard Form}
-\item[Standard Form]
+\item[] Standard Form
 $$
-\min \mathbf{c}^\top\xv \quad \text{s.t. } \Amat\xv \le \mathbf{b},\ \xv \ge \zero
+\min \mathbf{c}^T\xv \quad \text{s.t. } \Amat\xv \le \mathbf{b},\ \xv \ge \zero
 $$
 \item $\Amat\xv \ge \mathbf{b} \Leftrightarrow -\Amat\xv \le -\mathbf{b}$
 \item $\Amat\xv = \mathbf{b} \Leftrightarrow \Amat\xv \le \mathbf{b},\ -\Amat\xv \le -\mathbf{b}$
 \item $\xv = \xv^+ - \xv^-$, where $\xv^+ \ge \zero,\ \xv^- \ge \zero$
-\item $\min_{\xv} \mathbf{c}^\top\xv \Leftrightarrow \min_{\xv^+, \xv^-} \begin{bmatrix} \mathbf{c}^\top & -\mathbf{c}^\top \end{bmatrix} \begin{bmatrix} \xv^+ \\ \xv^- \end{bmatrix}$
+\item $\min_{\xv} \mathbf{c}^T\xv \Leftrightarrow \min_{\xv^+, \xv^-} \begin{bmatrix} \mathbf{c}^T & -\mathbf{c}^T \end{bmatrix} \begin{bmatrix} \xv^+ \\ \xv^- \end{bmatrix}$
 \end{framei}
+
+
 \begin{framei}{Linear programming: Equality Form}
-\item[Equality Form]
+\item Equality Form
 $$
-\min \mathbf{c}^\top\xv \quad \text{s.t. } \Amat\xv = \mathbf{b},\ \xv \ge \zero
+\min \mathbf{c}^T\xv \quad \text{s.t. } \Amat\xv = \mathbf{b},\ \xv \ge \zero
 $$
 \item By introducing slack variables $\mathbf{s}$:\\
 $\Amat\xv \le \mathbf{b} \Leftrightarrow \begin{bmatrix} \Amat & \id \end{bmatrix} \begin{bmatrix} \xv \\ \mathbf{s} \end{bmatrix} = \Amat\xv + \mathbf{s} = \mathbf{b},\ \mathbf{s} \ge 0$
-\item $\min_{\xv} \mathbf{c}^\top\xv \Leftrightarrow \min_{\xv,\mathbf{s}} \begin{bmatrix} \mathbf{c}^\top & \zero^\top \end{bmatrix} \begin{bmatrix} \xv \\ \mathbf{s} \end{bmatrix}$
+\item $\min_{\xv} \mathbf{c}^T\xv \Leftrightarrow \min_{\xv,\mathbf{s}} \begin{bmatrix} \mathbf{c}^T & \zero^T \end{bmatrix} \begin{bmatrix} \xv \\ \mathbf{s} \end{bmatrix}$
 \end{framei}
 
 
-\begin{framei}[sep=L]{Geometric interpretation}
-\item[Feasible set]
-\item Points $\{\xv: \Amat_i^\top \xv = b_i\}$ form a hyperplane in $\R^n$\\
+\begin{framei}{Geometric interpretation}
+\item[] \textbf{Feasible set}
+\item Points $\{\xv: \Amat_i^T \xv = b_i\}$ form a hyperplane in $\R^n$\\
 $\Amat_i$ is perpendicular to the hyperplane and called \textbf{normal vector}
-\item Points $\{\xv: \Amat_i^\top \xv \le b_i\}$ lie on one side of the hyperplane, which form a convex half-space
+\item Points $\{\xv: \Amat_i^T \xv \le b_i\}$ lie on one side of the hyperplane, which form a convex half-space
 \item Points satisfying \textbf{all} inequalities form a \textbf{convex polytope}\\
 The intersection of convex sets is still convex
 \vfill
@@ -86,13 +88,12 @@ The intersection of convex sets is still convex
 \item Feasible set is \textbf{unbounded}
 \item Feasible set is \textbf{bounded} $\Rightarrow$ LP has at least one solution
 \end{enumerate}
-\vfill
 \imageC[0.9]{figure_man/cons-solutions-lp.png}
 \end{framei}
 
 
 \begin{framei}{Geometric interpretation}
-\item[Case 3: LP is feasible and bounded]
+\item[] \textbf{Case 3: LP is feasible and bounded}
 \item Points on the interior: never optimal, can be improved by moving along $-\mathbf{c}$
 \item Points on faces/edges: can be optimal only if the face/edge is perpendicular to $\mathbf{c}$
 \item Points on faces/edges not perpendicular to $\mathbf{c}$: can be improved by moving along $-\mathbf{c}$
@@ -140,16 +141,16 @@ Assume rows of $\Amat \in \R^{m \times n}$ are linearly independent and $m \le n
 
 \begin{framei}{Simplex algorithm}
 \item Construct a Lagrangian for the equality form:
-$$L(\xv, \bm{\mu}, \bm{\lambda}) = \mathbf{c}^\top\xv - \bm{\mu}^\top\xv - \bm{\lambda}^\top(\Amat\xv - \mathbf{b})$$
+$$L(\xv, \bm{\mu}, \bm{\lambda}) = \mathbf{c}^T\xv - \bm{\mu}^T\xv - \bm{\lambda}^T(\Amat\xv - \mathbf{b})$$
 with $\bm{\mu} \ge \zero$
-\item Optimal solution satisfies $\frac{\partial L}{\partial \xv}=0$, i.e., $\Amat^\top \bm{\lambda} + \bm{\mu} = \mathbf{c}$
+\item Optimal solution satisfies $\frac{\partial L}{\partial \xv}=0$, i.e., $\Amat^T \bm{\lambda} + \bm{\mu} = \mathbf{c}$
 \item Decompose stationarity condition into $\mathcal{B}$ and $\mathcal{V}$ components:
 $$
-\Amat^\top \bm{\lambda} + \bm{\mu} = \mathbf{c} 
+\Amat^T \bm{\lambda} + \bm{\mu} = \mathbf{c} 
 \quad \implies \quad
 \begin{cases}
-\Amat_{\mathcal{B}}^\top \bm{\lambda} + \bm{\mu}_{\mathcal{B}} = \mathbf{c}_{\mathcal{B}} \\
-\Amat_{\mathcal{V}}^\top \bm{\lambda} + \bm{\mu}_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}}
+\Amat_{\mathcal{B}}^T \bm{\lambda} + \bm{\mu}_{\mathcal{B}} = \mathbf{c}_{\mathcal{B}} \\
+\Amat_{\mathcal{V}}^T \bm{\lambda} + \bm{\mu}_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}}
 \end{cases}
 $$
 \end{framei}
@@ -159,13 +160,13 @@ $$
 \item Choose $ \bm{\mu}_{\mathcal{B}} = 0 $ to satisfy $\bm{\mu} \odot \xv = 0$, since for optimality, we need $\mu_i=0$ when $x_i > 0$
 \item Compute $ \bm{\lambda} $ from $ \mathcal{B} $:
 $$
-\Amat_{\mathcal{B}}^\top \bm{\lambda} + \underbrace{\bm{\mu}_{\mathcal{B}}}_{= 0} = \mathbf{c}_{\mathcal{B}} \quad \implies \quad \bm{\lambda} = \Amat_{\mathcal{B}}^{-\top} \mathbf{c}_{\mathcal{B}}
+\Amat_{\mathcal{B}}^T \bm{\lambda} + \underbrace{\bm{\mu}_{\mathcal{B}}}_{= 0} = \mathbf{c}_{\mathcal{B}} \quad \implies \quad \bm{\lambda} = \Amat_{\mathcal{B}}^{-T} \mathbf{c}_{\mathcal{B}}
 $$
 \item Use this to obtain:
 \begin{align*}
-\Amat_{\mathcal{V}}^\top \bm{\lambda} + \bm{\mu}_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}}\\
-\bm{\mu}_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}} - \Amat_{\mathcal{V}}^\top \bm{\lambda}\\
-\bm{\mu}_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^\top \mathbf{c}_{\mathcal{B}}
+\Amat_{\mathcal{V}}^T \bm{\lambda} + \bm{\mu}_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}}\\
+\bm{\mu}_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}} - \Amat_{\mathcal{V}}^T \bm{\lambda}\\
+\bm{\mu}_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^T \mathbf{c}_{\mathcal{B}}
 \end{align*}
 \item Knowing $ \bm{\mu}_{\mathcal{V}} $ allows us to assess optimality of the vertices\\
 If $ \bm{\mu}_{\mathcal{V}} $ contains negative components, then $\bm{\mu} \ge \zero$ is not satisfied and the vertex is suboptimal
@@ -202,24 +203,24 @@ We then swap $ p $ and $ q $ between $ \mathcal{B} $ and $ \mathcal{V} $
 \end{framei}
 
 
-\begin{framei}[fs=small]{Simplex algorithm: Effect on objective}
-\item Effect of a transition on the objective function can be computed using $x'_q$
+\begin{framei}{Simplex algorithm: Effect on objective}
+\item Effect of a transition on the obj. function can be computed using $x'_q$
 \item Objective function value at the new vertex:
 \begin{align*}
-\mathbf{c}^\top \xv' &= \mathbf{c}_{\mathcal{B}}^\top \xv'_{\mathcal{B}} + c_q x'_q \\
-&= \mathbf{c}_{\mathcal{B}}^\top \left( \xv_{\mathcal{B}} - \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} x'_q \right) + c_q x'_q \\
-&= \mathbf{c}_{\mathcal{B}}^\top \xv_{\mathcal{B}} - \mathbf{c}_{\mathcal{B}}^\top \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} x'_q + c_q x'_q \\
-&= \mathbf{c}_{\mathcal{B}}^\top \xv_{\mathcal{B}} - (c_q - \mu_q) x'_q + c_q x'_q \\
-&= \mathbf{c}^\top \xv + \mu_q x'_q
+\mathbf{c}^T \xv' &= \mathbf{c}_{\mathcal{B}}^T \xv'_{\mathcal{B}} + c_q x'_q \\
+&= \mathbf{c}_{\mathcal{B}}^T \left( \xv_{\mathcal{B}} - \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} x'_q \right) + c_q x'_q \\
+&= \mathbf{c}_{\mathcal{B}}^T \xv_{\mathcal{B}} - \mathbf{c}_{\mathcal{B}}^T \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} x'_q + c_q x'_q \\
+&= \mathbf{c}_{\mathcal{B}}^T \xv_{\mathcal{B}} - (c_q - \mu_q) x'_q + c_q x'_q \\
+&= \mathbf{c}^T \xv + \mu_q x'_q
 \end{align*}
-using $\bm{\lambda} = \Amat_{\mathcal{B}}^{-\top} \mathbf{c}_{\mathcal{B}}$ and $\Amat_{\{q\}}^\top\bm{\lambda}=c_q-\mu_q$
+using $\bm{\lambda} = \Amat_{\mathcal{B}}^{-T} \mathbf{c}_{\mathcal{B}}$ and $\Amat_{\{q\}}^T\bm{\lambda}=c_q-\mu_q$
 \end{framei}
 
 
 \begin{framei}{Simplex algorithm: Optimality condition}
-\item Choosing an entering index $q$ decreases the objective function value by
+\item Choosing an entering index $q$ decreases the obj. function value by
 $$
-\mathbf{c}^\top \xv' - \mathbf{c}^\top \xv = \mu_q x'_q
+\mathbf{c}^T \xv' - \mathbf{c}^T \xv = \mu_q x'_q
 $$
 \item The objective function decreases only if $\mu_q$ is negative
 \item To progress toward optimality, we must choose an index $q \in \mathcal{V}$ such that $\mu_q$ is negative
@@ -229,9 +230,9 @@ $$
 
 \begin{framei}[fs=small]{Simplex algorithm: Heuristics}
 \item Since there can be multiple negative entries in $\boldsymbol{\mu}_{\mathcal{V}}$, different heuristics can be used to select an entering index:
-\item \textbf{Greedy heuristic}: choose a $q$ that maximally reduces $\mathbf{c}^\top \xv$
+\item \textbf{Greedy heuristic}: choose a $q$ that maximally reduces $\mathbf{c}^T \xv$
 \item \textbf{Dantzig's rule}: choose the $q$ with the most negative entry in $\boldsymbol{\mu}$\\
-Easy to calculate, but does not guarantee the maximum reduction in $\mathbf{c}^\top \xv$\\
+Easy to calculate, but does not guarantee the maximum reduction in $\mathbf{c}^T \xv$\\
 Also sensitive to scaling of the constraints
 \item \textbf{Bland's rule}: choose the first $q$ with a negative entry in $\boldsymbol{\mu}$\\
 Tends to result in poor performance in practice when used alone\\
@@ -246,17 +247,21 @@ $\Amat_{\mathcal{V}} =
 2 & 1 & 1 & 0 \\
 -4 & 2 & 0 & 1
 \end{pmatrix},$
-$\mathbf{b} = (9, 2)^\top, \mathbf{c} = (3, -1, 0, 0)^\top$
-\textbf{Solution:}
+$\mathbf{b} = (9, 2)^T, \mathbf{c} = (3, -1, 0, 0)^T$\\
+\spacer
+\textbf{Solution:}\\
 $\mathcal{V}=\{1,2\}, \mathcal{B}=\{3, 4\}$\\
-$\xv_{\mathcal{B}} = \Amat_{\mathcal{B}}^{-1}\mathbf{b} = (9, 2)^\top$\\
+$\xv_{\mathcal{B}} = \Amat_{\mathcal{B}}^{-1}\mathbf{b} = (9, 2)^T$\\
 $\bm{\lambda} =  \Amat_{\mathcal{B}}^{-1}\mathbf{c}_{\mathcal{B}} = \zero$\\
-$\bm{\mu}_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^\top \mathbf{c}_{\mathcal{B}} = (3, -1)^\top$
+$\bm{\mu}_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^T \mathbf{c}_{\mathcal{B}} = (3, -1)^T$\\
+\spacer
 $\bm{\mu}_{\mathcal{V}}$ contains negative elements, so our current $\mathcal{B}$ is suboptimal.\\
-We will pivot on the negative one with $q=2, - \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}}=(1,2)^\top$.\\
+\spacer
+We will pivot on the negative one with $q=2, - \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}}=(1,2)^T$.\\
 This causes $x_4 = 0$, so updated $\mathcal{B}=\{2, 3\}$.\\
-In the second iteration, we find $\xv_{\mathcal{B}}=(1,8)^\top, \bm{\lambda} = (0, -\frac{1}{2})^\top, \bm{\mu}_{\mathcal{V}} = (1, \frac{1}{2})^\top$.\\
-This is optimal with no negative entry, thus we have $x^*=(0,1,8,0)^\top$
+In the second iteration, we find $\xv_{\mathcal{B}}=(1,8)^T, \bm{\lambda} = (0, -\frac{1}{2})^T, \bm{\mu}_{\mathcal{V}} = (1, \frac{1}{2})^T$.\\
+\spacer
+This is optimal with no negative entry, thus we have $x^*=(0,1,8,0)^T$
 \end{framev}
 
 \endlecture

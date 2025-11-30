@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -26,14 +27,14 @@ figure_man/convex_programs.png
 $$
 \min - x_1 - x_2 \quad \text{s.t. } x_1 + 2x_2 \le 1, \; 2x_1 + x_2 \le 1, \; x_1, x_2 \ge 0
 $$
-\imageC[0.35]{figure_man/cons-linear-pro-example.png}
+\imageC[0.60]{figure_man/cons-linear-pro-example.png}
 \end{framei}
 
 
-\begin{framei}[fs=small]{LP examples: Quantile regression}
+\begin{framei}{LP examples: Quantile regression}
 \item \textbf{(Sparse) Quantile regression}:
 $$
-\min_{\beta_0,\bm{\beta}} \frac{1}{n}\sum_{i = 1}^n \rho_\tau \left(y^{(i)} - \beta_0 -  \bm{\beta}^\top\xv^{(i)}\right) \quad \text{s.t. } \|\bm{\beta}\|_1 \le t
+\min_{\beta_0,\bm{\beta}} \frac{1}{n}\sumin \rho_\tau \left(\yi - \beta_0 -  \bm{\beta}^T\xi\right) \quad \text{s.t. } \|\bm{\beta}\|_1 \le t
 $$
 where $\beta_0 \in \R$ and $\bm{\beta} \in \R^p$ are coefficients, and $\rho_\tau$, $\tau \in [0,1]$, is the check function:
 $$
@@ -48,12 +49,12 @@ $$
 \end{framei}
 
 
-\begin{framei}[fs=small]{LP examples: Dantzig selector}
+\begin{framei}{LP examples: Dantzig selector}
 \item \textbf{Dantzig selector}:
 $$
-\min_{\bm{\beta}\in \R^p} \|\bm{\beta}\|_1 \quad \text{s.t. } \| \Xmat^\top (\Xmat \bm{\beta} - \bm{y})\|_\infty \le \lambda
+\min_{\bm{\beta}\in \R^p} \|\bm{\beta}\|_1 \quad \text{s.t. } \| \Xmat^T (\Xmat \bm{\beta} - \yv)\|_\infty \le \lambda
 $$
-where $\bm{y} \in \R^n$, $\Xmat \in \R^{n \times p}$, and $\lambda > 0$ is a tuning parameter
+where $\yv \in \R^n$, $\Xmat \in \R^{n \times p}$, and $\lambda > 0$ is a tuning parameter
 \item The infinity norm is defined as $\| x \|_\infty = \max\{|x_1|, \dots, |x_n|\}$
 \item Similar to (and behaves similar to) the Lasso
 \item Introduced for variable selection by Tao and Cand\`es
@@ -61,12 +62,12 @@ where $\bm{y} \in \R^n$, $\Xmat \in \R^{n \times p}$, and $\lambda > 0$ is a tun
 \end{framei}
 
 
-\begin{framei}{LP: Standard form}
+\begin{framei}[sep=L]{LP: Standard form}
 \item LPs can be formulated in \textbf{standard form}:
 $$
-\max_{\xv \in \R^n} \mathbf{c}^\top\xv \quad \text{s.t. } \Amat\xv \le \mathbf{b}, \; \xv \ge 0
+\max_{\xv \in \R^n} \mathbf{c}^T\xv \quad \text{s.t. } \Amat\xv \le \bv, \; \xv \ge 0
 $$
-with $\Amat \in \R^{m\times n}$, $\mathbf{b} \in \R^m$
+with $\Amat \in \R^{m\times n}$, $\bv \in \R^m$
 \item Constraints are to be understood \textbf{componentwise}
 \item $\xv \ge 0$: ``non-negativity constraint''
 \item $\mathbf{c}$: ``cost vector''
@@ -76,12 +77,12 @@ with $\Amat \in \R^{m\times n}$, $\mathbf{b} \in \R^m$
 \begin{framei}[sep=L]{LP: Converting to standard form}
 \item $\min \longleftrightarrow \max$: multiply objective function by $-1$
 \item $\leq \; \longleftrightarrow \; \geq$: multiply inequality by $-1$
-\item $= \; \longleftrightarrow \; \leq,\geq$: replace $\mathbf{a}_i^\top\xv=b_i$ by $\mathbf{a}_i^\top\xv\ge b_i$ \textit{and} $\mathbf{a}_i^\top\xv\le b_i$
+\item $= \; \longleftrightarrow \; \leq,\geq$: replace $\mathbf{a}_i^T\xv=b_i$ by $\mathbf{a}_i^T\xv\ge b_i$ \textit{and} $\mathbf{a}_i^T\xv\le b_i$
 \item No non-negativity constraint: replace $x_i$ by $x_i^+ - x_i^-$ with $x_i^+, x_i^- \ge 0$ (positive and negative part)
 \end{framei}
 
 
-\begin{framei}{LP: Standard form example}
+\begin{framei}[sep=L]{LP: Standard form example}
 \item Example:
 $$
 \min - x_1 - x_2 \quad \text{s.t. } x_1 + 2x_2 \le 1, \; 2x_1 + x_2 \le 1, \; x_1, x_2 \ge 0
@@ -94,17 +95,17 @@ $$
 
 
 \begin{framei}{Geometric interpretation: Feasible set}
-\item $i$-th inequality constraint: $\mathbf{a}_i^\top \xv \le b_i$
-\item Points $\{ \xv: \mathbf{a}_i^\top \xv = b_i\}$ form a hyperplane in $\R^n$ \\
+\item $i$-th inequality constraint: $\mathbf{a}_i^T \xv \le b_i$
+\item Points $\{ \xv: \mathbf{a}_i^T \xv = b_i\}$ form a hyperplane in $\R^n$ \\
 ($\mathbf{a}_i$ is perpendicular to the hyperplane and called \textbf{normal vector})
-\item Points $\{\xv: \mathbf{a}_i^\top \xv \ge b_i\}$ lie on the side of the hyperplane into which the normal vector points (``half-space'')
+\item Points $\{\xv: \mathbf{a}_i^T \xv \ge b_i\}$ lie on the side of the hyperplane into which the normal vector points (``half-space'')
 \item Each inequality divides the space into two halves
 \item \textbf{Claim:} Points satisfying \textbf{all} inequalities form a \textbf{convex polytope}
-\imageC[0.4]{figure_man/cons-linear-pro-example.png}
+\imageC[0.5]{figure_man/cons-linear-pro-example.png}
 \end{framei}
 
 
-\begin{framei}{Geometric interpretation: Polytopes}
+\begin{framei}[sep=L]{Geometric interpretation: Polytopes}
 \item A \textbf{polytope} is a generalized polygon in arbitrary dimensions
 \item A polytope consists of several sub-polytopes:
 \begin{itemize}
@@ -120,14 +121,13 @@ $$
 \end{framei}
 
 
-\begin{framei}{Geometric interpretation: Convexity}
-\item Points $\{\xv: \mathbf{a}_i^\top \xv = b_i\}$ lie on the boundary of the polytope
-\item Polytope $\{ \xv: \Amat \xv \le \mathbf{b}\}$ is convex: For $\xv_1,\xv_2 \in \mathcal{S}$ and $t \in [0, 1]$
-\begin{align*}
-    \Amat(\xv_1 + t(\xv_2 - \xv_1)) &= \Amat\xv_1 + t(\Amat\xv_2 - \Amat\xv_1) \\
-    &= (1 -t)\underbrace{\Amat\xv_1}_{\le \mathbf{b}} + t\underbrace{\Amat\xv_2}_{\le \mathbf{b}} \le (1 - t) \mathbf{b} + t \mathbf{b} = \mathbf{b}
-\end{align*}
-\item Polytope $\{ \xv: \Amat \xv \le \mathbf{b}\}$ is an $n$-\textbf{simplex}, i.e., convex hull of $n + 1$ \textit{affinely independent} points
+\begin{framei}[sep=L]{Geometric interpretation: Convexity}
+\item Points $\{\xv: \mathbf{a}_i^T \xv = b_i\}$ lie on the boundary of the polytope
+\item Polytope $\{ \xv: \Amat \xv \le \bv\}$ is convex: For $\xv_1,\xv_2 \in \S$ and $t \in [0, 1]$
+$$
+\Amat(\xv_1 + t(\xv_2 - \xv_1)) = \Amat\xv_1 + t(\Amat\xv_2 - \Amat\xv_1) = (1 -t)\underbrace{\Amat\xv_1}_{\le \bv} + t\underbrace{\Amat\xv_2}_{\le \bv} \le (1 - t) \bv + t \bv = \bv
+$$
+\item Polytope $\{ \xv: \Amat \xv \le \bv\}$ is an $n$-\textbf{simplex}, i.e., convex hull of $n + 1$ \textit{affinely independent} points
 \end{framei}
 
 
@@ -135,22 +135,22 @@ $$
 \item \textbf{Linear case:} Contour lines form a hyperplane
 \item \textbf{Observe:} $\mathbf{c}$ is gradient and perpendicular to contour lines
 \item Solution ``touches'' the polygon
-\imageC[0.45]{figure_man/cons-opposite-direction.png}
+\imageC[0.65]{figure_man/cons-opposite-direction.png}
 \end{framei}
 
 
-\begin{framei}{Solutions to LP}
-\item There are 3 cases for linear programming:
+\begin{framev}{Solutions to LP}
+There are 3 cases for linear programming:
 \begin{enumerate}
 \item Feasible set is \textbf{empty} $\Rightarrow$ LP is infeasible
 \item Feasible set is \textbf{unbounded}
 \item Feasible set is \textbf{bounded} $\Rightarrow$ LP has at least one solution
 \end{enumerate}
-\imageC[0.8]{figure_man/cons-solutions-lp.png}
-\end{framei}
+\imageC[1]{figure_man/cons-solutions-lp.png}
+\end{framev}
 
 
-\begin{framei}{Solutions to LP}
+\begin{framei}[sep=L]{Solutions to LP}
 \item If LP is solvable and constrained (neither case 1 nor case 2), there is always an optimal point that can \textbf{not} be convexly combined from other points in the polytope
 \item The optimal solution is then a corner, edge or side of the polytope
 \end{framei}

@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -23,17 +24,17 @@ figure_man/Weak_and_Strong_Duality.png
 \begin{framei}{Nonlinear Constrained Optimization}
 \item Previous lecture: \textbf{Linear programs}
 $$
-\min_{\xv \in \R^d} f(\xv) := \mathbf{c}^\top\xv \quad
-\text{s.t. }  \Amat \xv \le \mathbf{b}, \;
+\min_{\xv \in \R^d} f(\xv) := \mathbf{c}^T\xv \quad
+\text{s.t. }  \Amat \xv \le \bv, \;
 \mathbf{G} \xv = \mathbf{h} 
 $$
 \item Related to its (Lagrange) dual formulation by the \textit{Lagrangian}
 $$
-\mathcal{L}(\xv,\bm{\alpha},\bm{\beta}) = \mathbf{c}^\top \xv + \bm{\alpha}^\top (\Amat \xv - \mathbf{b}) + \bm{\beta}^\top (\mathbf{G} \xv - \mathbf{h})
+\mathcal{L}(\xv,\bm{\alpha},\bm{\beta}) = \mathbf{c}^T \xv + \bm{\alpha}^T (\Amat \xv - \bv) + \bm{\beta}^T (\mathbf{G} \xv - \mathbf{h})
 $$
 \item \textbf{Weak duality:} For $\bm{\alpha} \geq 0$ and $\bm{\beta}$:
 $$
-f(\xv^\ast) \geq \min_{\xv \in \mathcal{S}} \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) \geq \min_{\xv \in \R^d} \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) =: g(\bm{\alpha}, \bm{\beta})
+\fxvs \geq \min_{\xv \in \S} \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) \geq \min_{\xv \in \R^d} \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) =: g(\bm{\alpha}, \bm{\beta})
 $$
 \item \textbf{Recall:} Implicit domain constraint in \textit{Lagrange dual function} $g(\bm{\alpha}, \bm{\beta})$
 \end{framei}
@@ -62,7 +63,7 @@ $$
 \min_{x\in \R} 2 - x^2 \quad \text{s.t. } x - 1 = 0
 $$
 \item \textbf{Solution:} Resolve the constraint by $x - 1 = 0 \Rightarrow x = 1$\\
-and insert it into the objective: $x^\ast = 1, \; f(x^\ast) = 1$
+and insert it into the objective: $\xs = 1, \; f(\xs) = 1$
 \end{framei}
 
 
@@ -76,7 +77,7 @@ and insert it into the objective
 $$
 f(x_1, x_2) = -2 + (1 - x_2^2) + 2 x_2^2 = -1 + x_2^2
 $$
-\item $\Rightarrow$ Minimum at $\xv^* = (\pm 1, 0)^\top$
+\item $\Rightarrow$ Minimum at $\xvs = (\pm 1, 0)^T$
 \item However, direct way mostly not possible
 \end{framei}
 
@@ -132,7 +133,7 @@ $$
 \item For $f(P) = d(M,P) + d(P,C)$: Use an \textbf{ellipse}
 \item \textbf{Def.:} Given two focal points $F_1$, $F_2$ and distance $2a$:
 $$
-E = \{ P \in \mathbb{R}^2 \;|\; d(F_1,P) + d(P,F_2) = 2a \}
+E = \{ P \in \R^2 \;|\; d(F_1,P) + d(P,F_2) = 2a \}
 $$
 \vfill
 \imageC[0.5]{figure_man/ellipse.png}
@@ -169,19 +170,19 @@ $$
 \item \textbf{First line}: Parallel gradients $|$ \textbf{Second line:} Constraint
 \item \textbf{Observe:} Above system is equivalent to
 $$
-\nabla \mathcal{L}(\xv, \beta) = \mathbf{0}
+\nabla \mathcal{L}(\xv, \beta) = \zero
 $$
 for \textbf{Lagrange function} (or \textbf{Lagrangian}) $\mathcal{L}(\xv, \beta) := f(\xv) + \beta h(\xv)$
 \item Indeed:
 $$
-\begin{pmatrix}
+\mat{
 \nabla_{\xv} \mathcal{L}(\xv, \beta) \\
 \nabla_{\beta} \mathcal{L}(\xv, \beta)
-\end{pmatrix}
-= \begin{pmatrix}
+}
+= \mat{
 \nabla f(\xv) + \beta \nabla h(\xv) \\
 h(\xv)
-\end{pmatrix}
+}
 $$
 \end{framei}
 
@@ -244,11 +245,11 @@ $$
 \begin{framei}[fs=small]{Example: Lagrange function for QPs}
 \item We consider quadratic programming
 $$
-\min_{\xv} f(\xv) := \frac{1}{2} \xv^\top \mathbf{Q} \xv \quad
-\text{s.t.} \; h(\xv) := \mathbf{C} \xv - \mathbf{d} = \mathbf{0}
+\min_{\xv} f(\xv) := \frac{1}{2} \xv^T \mathbf{Q} \xv \quad
+\text{s.t.} \; h(\xv) := \mathbf{C} \xv - \mathbf{d} = \zero
 $$
 with $\mathbf{Q} \in \R^{d\times d}$ symmetric, $\mathbf{C} \in \R^{\ell \times d}$, and $\mathbf{d} \in \R^\ell$
-\item Lagrange function: $\mathcal{L}(\xv, \bm{\beta}) = \frac{1}{2} \xv^\top \mathbf{Q} \xv + \bm{\beta}^\top (\mathbf{C} \xv - \mathbf{d})$
+\item Lagrange function: $\mathcal{L}(\xv, \bm{\beta}) = \frac{1}{2} \xv^T \mathbf{Q} \xv + \bm{\beta}^T (\mathbf{C} \xv - \mathbf{d})$
 \item Solve
 $$
 \nabla \mathcal{L}(\xv, \bm{\beta}) =
@@ -257,16 +258,16 @@ $$
 \partial \mathcal{L} / \partial {\bm{\beta}}
 \end{pmatrix} =
 \begin{pmatrix}
-\mathbf{Q} \xv + \mathbf{C}^\top\bm{\beta} \\
+\mathbf{Q} \xv + \mathbf{C}^T\bm{\beta} \\
 \mathbf{C} \xv - \mathbf{d}
-\end{pmatrix} = \bm{0}
+\end{pmatrix} = \zero
 \quad \Leftrightarrow \quad
 \begin{pmatrix}
-\mathbf{Q} & \mathbf{C}^\top \\
-\mathbf{C} & \bm{0}
+\mathbf{Q} & \mathbf{C}^T \\
+\mathbf{C} & \zero
 \end{pmatrix}
 \begin{pmatrix} \xv \\ \bm{\beta} \end{pmatrix} =
-\begin{pmatrix} \bm{0} \\ \mathbf{d} \end{pmatrix}
+\begin{pmatrix} \zero \\ \mathbf{d} \end{pmatrix}
 $$
 \item \textbf{Observe:} Solve QP by solving a linear system
 \end{framei}
@@ -285,9 +286,9 @@ $$
 \item Gives methods based on dual solutions
 \item Might be computationally inefficient (expensive minimizations)
 \end{itemize}
-\item \textbf{Weak duality:} $f(\xv^*) \geq g(\bm{\alpha}^*, \bm{\beta}^*)$
+\item \textbf{Weak duality:} $\fxvs \geq g(\bm{\alpha}^*, \bm{\beta}^*)$
 \item \textbf{Strong duality} if primal problem satisfies \textit{Slater's condition}$^{(1)}$:\\
-$f(\xv^*) = g(\bm{\alpha}^*, \bm{\beta}^*)$
+$\fxvs = g(\bm{\alpha}^*, \bm{\beta}^*)$
 \vfill
 \item[$^{(1)}$] \textbf{Slater's condition}: Primal problem convex and ``strictly feasible'' ($\exists \xv \forall i: g_i(\xv) < 0$)
 \end{framei}

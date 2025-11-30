@@ -20,60 +20,55 @@ figure_man/convex_programs.png
 \item Understand how Simplex traverses polytope corners
 }
 
-\begin{framei}{Simplex algorithm}
+\begin{framei}[sep=s, fs=small]{Simplex algorithm}
 \item Most important method for solving linear programs
 \item Published in 1947 by Georg Dantzig
 \vfill
-\item[Basic idea:] Start from an arbitrary corner of the polytope.\\
+\item[] \textbf{Basic idea:} Start from an arbitrary corner of the polytope.\\
 Run along edges as long as the solution improves. Find a new edge, ...
-\vfill
-\item[Output:] A path along corners of the polytope ending at the optimum
+\item[] \textbf{Output:} A path along corners of the polytope ending at the optimum
 \vfill
 \item Since LP is a \textbf{convex} optimization problem, the optimal corner found is also a global optimum
+\imageC[0.3]{figure_man/simplex.png}
 \end{framei}
 
 
-\begin{framev}{Simplex algorithm}
-\imageC[0.6]{figure_man/simplex.png}
-\end{framev}
-
-
-\begin{framei}{Simplex algorithm}
+\begin{framei}[sep=L]{Simplex algorithm}
 \item The Simplex algorithm consists of two phases:
 \begin{itemize}
 \item \textbf{Phase I:} Determination of a \textbf{starting point}
 \item \textbf{Phase II:} Determination of the \textbf{optimal solution}
 \end{itemize}
-\vfill
-\item In \textbf{Phase I}, a feasible corner $\bm{x}_0$ must be found first
-\vfill
+\item In \textbf{Phase I}, a feasible corner $\xv_0$ must be found first
 \item In \textbf{Phase II}, this solution is iteratively improved by searching for an edge that improves the objective and running along it to the next corner
 \end{framei}
 
 
 \begin{framei}[fs=small]{Simplex -- Phase I}
-\item Find starting point $\bm{x}_0$ by solving auxiliary LP with artificial variables $\bm{\epsilon}$:
+\item Find starting point $\xv_0$ by solving auxiliary LP with artificial variables $\bm{\epsilon}$:
 $$
-\min_{\epsilon_1, \ldots, \epsilon_m} \sum_{i = 1}^m \epsilon_i \quad \text{s.t. } \bm{Ax} + \bm{\epsilon} \ge \bm{b}, \; \epsilon_1, \ldots, \epsilon_m \ge 0, \; \bm{x} \ge 0
+\min_{\epsilon_1, \ldots, \epsilon_m} \sumim \epsilon_i \quad \text{s.t. } \bm{Ax} + \bm{\epsilon} \ge \bm{b}, \; \epsilon_1, \ldots, \epsilon_m \ge 0, \; \xv \ge 0
 $$
-\item A feasible starting point for the auxiliary problem is $\bm{x} = \bm{0}$ and $\epsilon_i = \begin{cases} 0 & \text{if } b_i < 0 \\
+\item A feasible starting point for the auxiliary problem is $\xv = \zero$ and $\epsilon_i = \begin{cases} 0 & \text{if } b_i < 0 \\
 b_i & \text{if } b_i \ge 0
 \end{cases}$
 \item We then apply Phase II of Simplex to the auxiliary problem
 \item If the original problem is feasible, the optimal solution \textbf{must} be $\bm{\epsilon} = (0, \ldots, 0)$ (all artificial variables disappear)
-\item If we find $\bm{\epsilon} = \bm{0}$, we have a valid starting point
+\item If we find $\bm{\epsilon} = \zero$, we have a valid starting point
 \item Otherwise, the original problem has no feasible solution
 \end{framei}
 
 
-\begin{framei}{Simplex -- Example}
+\begin{framei}[sep=L]{Simplex -- Example}
 \item Consider the following LP:
 $$
-\min_{\bm{x} \in \R^2} -x_1 - x_2
+\min_{\xv \in \R^2} -x_1 - x_2
 $$
+\begin{small}
 $$
-\text{s.t. } x_1 - x_2 \ge -0.5, \; -x_1 - 2x_2 \ge -2, \; -2x_1 - x_2 \ge -2, \; -x_1 + x_2 \ge -0.5, \; \bm{x} \ge 0
+\text{s.t. } x_1 - x_2 \ge -0.5, \; -x_1 - 2x_2 \ge -2, \; -2x_1 - x_2 \ge -2, \; -x_1 + x_2 \ge -0.5, \; \xv \ge 0
 $$
+\end{small}
 \item Starting point is the corner $\bm{(0, 0)}$
 \end{framei}
 

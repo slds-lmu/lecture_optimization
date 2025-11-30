@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -37,11 +38,11 @@ $$
 \item The concept of the \textbf{dual norm} from functional analysis can help
 \item[Definition] Let $\| \xv \|$ be the norm of $\xv$. The dual norm $\| \xv \|_*$ is defined as
 $$
-\| \xv \|_* = \max_{\|\bm{z}\| \le 1} \bm{z}^\top \xv
+\| \xv \|_* = \max_{\|\zv\| \le 1} \zv^T \xv
 $$
 \item If $\| \xv \|$ is a norm and $\| \xv \|_*$ its dual norm, then
 $$
-| \bm{z}^\top \xv | \le \| \bm{z} \| \| \xv \|_*
+| \zv^T \xv | \le \| \zv \| \| \xv \|_*
 $$
 \vfill
 \item[Example] The dual norm of the $L_p$ norm $\| \cdot \|_p$ is the $L_q$ norm $\| \cdot \|_q$ where $1/p + 1/q = 1$

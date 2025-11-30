@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -24,9 +25,9 @@ figure_man/Weak_and_Strong_Duality.png
 \item When we introduced the Lagrangian $\mathcal{L}$ from a geometrical perspective for the equality constraint problem, we realized that the geometrical conditions for the optimum coincided with finding a stationary point of $\mathcal{L}$: 
 $$
 \begin{pmatrix}
-\nabla_{\xv} \mathcal{L}(\xv^\ast, \beta) \\
-\nabla_{\beta} \mathcal{L}(\xv^\ast, \beta)
-\end{pmatrix} = \begin{pmatrix} \nabla f(\xv^\ast) + \beta \nabla h(\xv^\ast) \\
+\nabla_{\xv} \mathcal{L}(\xvs, \beta) \\
+\nabla_{\beta} \mathcal{L}(\xvs, \beta)
+\end{pmatrix} = \begin{pmatrix} \nabla f(\xvs) + \beta \nabla h(\xvs) \\
 h(\xv)
 \end{pmatrix} = \begin{pmatrix}
 0 \\ 0 \end{pmatrix}
@@ -70,14 +71,14 @@ Then $\xv^*$ is a global solution to the problem
 \item The following two formulas are common for ridge regression:
 \item[\textbf{Formula 1:}]
 \begin{equation}
-\min_{\bm{\theta}} \quad f_\lambda(\bm{\theta}) := \|\bm{y} - \mathbf{X}\bm{\theta}\|_2^2 + \lambda \|\bm{\theta}\|_2^2
+\min_{\thetav} \quad f_\lambda(\thetav) := \|\yv - \Xmat\thetav\|_2^2 + \lambda \|\thetav\|_2^2
 \label{eq:form1}
 \end{equation}
 \item[\textbf{Formula 2:}]
 \begin{equation}
 \begin{aligned}
-\min_{\bm{\theta}} & \quad \|\bm{y} - \mathbf{X}\bm{\theta}\|_2^2 \\
-\text{s.t. } & \quad \|\bm{\theta}\|_2^2 - t \le 0
+\min_{\thetav} & \quad \|\yv - \Xmat\thetav\|_2^2 \\
+\text{s.t. } & \quad \|\thetav\|_2^2 - t \le 0
 \end{aligned}
 \label{eq:form2}
 \end{equation}
@@ -102,29 +103,29 @@ Right: loss for ridge regression with corresponding constraint
 
 
 \begin{framei}[fs=small]{Ridge regression -- equivalence}
-\item Consider \eqref{eq:form1}. If $\bm{\theta}^*$ is our minimum, the necessary condition applies:
+\item Consider \eqref{eq:form1}. If $\thetav^*$ is our minimum, the necessary condition applies:
 $$
-\nabla f_\lambda(\bm{\theta}^*) = - 2 \bm{y}^T\mathbf{X} + 2 (\bm{\theta}^*)^T \mathbf{X}^T\mathbf{X} + 2 \lambda (\bm{\theta}^*)^T = 0
+\nabla f_\lambda(\thetav^*) = - 2 \yv^T\Xmat + 2 (\thetav^*)^T \Xmat^T\Xmat + 2 \lambda (\thetav^*)^T = 0
 $$
-\item We show that we can find a $t$ so that $\bm{\theta}^*$ is also solution for \eqref{eq:form2}
+\item We show that we can find a $t$ so that $\thetav^*$ is also solution for \eqref{eq:form2}
 \item We calculate the Lagrange function of \eqref{eq:form2}:
 $$
-L(\bm{\theta}, \alpha) = \|\bm{y} - \mathbf{X}\bm{\theta}\|_2^2 + \alpha (\|\bm{\theta}\|^2_2 - t)
+L(\thetav, \alpha) = \|\yv - \Xmat\thetav\|_2^2 + \alpha (\|\thetav\|^2_2 - t)
 $$
 \item The first KKT condition (stationarity) is:
 $$
-\nabla_\theta L(\bm{\theta}, \alpha)= - 2\bm{y}^T\mathbf{X} + 2 \bm{\theta}^T \mathbf{X}^T\mathbf{X} + 2 \alpha \bm{\theta}^T = 0
+\nabla_\theta L(\thetav, \alpha)= - 2\yv^T\Xmat + 2 \thetav^T \Xmat^T\Xmat + 2 \alpha \thetav^T = 0
 $$
-\item Since $\nabla f_\lambda(\bm{\theta}^*) = 0$, this is fulfilled if we set $\bm{\theta} = \bm{\theta}^*$ and $\alpha = \lambda$
+\item Since $\nabla f_\lambda(\thetav^*) = 0$, this is fulfilled if we set $\thetav = \thetav^*$ and $\alpha = \lambda$
 \end{framei}
 
 
 \begin{framei}{Ridge regression -- equivalence}
 \item However, complementary slackness must still apply for the KKT conditions:
 $$
-\alpha(\|\bm{\theta}\|^2_2 - t) = 0
+\alpha(\|\thetav\|^2_2 - t) = 0
 $$
-\item This is the case if we choose $t = \|\bm{\theta}^*\|^2$
+\item This is the case if we choose $t = \|\thetav^*\|^2$
 \vfill
 \item Vice versa it can be shown that a solution of \eqref{eq:form2} is a solution of \eqref{eq:form1} if we set $\lambda = \alpha$
 \end{framei}

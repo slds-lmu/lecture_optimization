@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -21,10 +22,10 @@ figure_man/convex_programs.png
 }
 
 \begin{framei}[fs=small]{Constrained Optimization in Statistics}
-\item[Example:] Maximum Likelihood Estimation
+\item[] \textbf{Example}: Maximum Likelihood Estimation
 \item For data $(\xv^{(1)}, \ldots, \xv^{(n)})$, we want to find the MLE
 $$
-\max_\theta L(\theta) = \prod_{i = 1}^n f(\xv^{(i)}, \theta)
+\max_\theta L(\theta) = \prodin f(\xv^{(i)}, \theta)
 $$
 \item In some cases, $\theta$ can only take \textbf{certain values}
 \vfill
@@ -44,21 +45,20 @@ $$
 \begin{framei}{Constrained Optimization in ML}
 \item \textbf{Lasso regression}:
 $$
-\min_{\bm{\beta}\in \R^p} \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^\top\xv^{(i)}\right)^2 \quad \text{s.t. } \|\bm{\beta}\|_1 \le t
+\min_{\bm{\beta}\in \R^p} \frac{1}{n}\sumin\left(y^{(i)} - \bm{\beta}^T\xv^{(i)}\right)^2 \quad \text{s.t. } \|\bm{\beta}\|_1 \le t
 $$
 \item \textbf{Ridge regression}:
 $$
-\min_{\bm{\beta}\in \R^p} \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^\top\xv^{(i)}\right)^2 \quad \text{s.t. } \|\bm{\beta}\|_2 \le t
+\min_{\bm{\beta}\in \R^p} \frac{1}{n}\sumin\left(y^{(i)} - \bm{\beta}^T\xv^{(i)}\right)^2 \quad \text{s.t. } \|\bm{\beta}\|_2 \le t
 $$
-\vfill
-\imageC{figure_man/lasso-ridge.png}
+\imageC[0.7]{figure_man/lasso-ridge.png}
 \end{framei}
 
 
-\begin{framei}[fs=small]{Constrained Optimization in ML}
+\begin{framei}{Constrained Optimization in ML}
 \item \textbf{Constrained Lasso regression}:
 $$
-\min_{\bm{\beta}\in \R^p} \frac{1}{n}\sum_{i = 1}^n\left(y^{(i)} - \bm{\beta}^\top\xv^{(i)}\right)^2 \quad \text{s.t. } \|\bm{\beta}\|_1 \le t, ~ \mathbf{C}\bm{\beta} \le \mathbf{d}, ~ \Amat\bm{\beta} = \mathbf{b}
+\min_{\bm{\beta}\in \R^p} \frac{1}{n}\sumin\left(y^{(i)} - \bm{\beta}^T\xv^{(i)}\right)^2 \quad \text{s.t. } \|\bm{\beta}\|_1 \le t, ~ \mathbf{C}\bm{\beta} \le \mathbf{d}, ~ \Amat\bm{\beta} = \mathbf{b}
 $$
 \item Matrices $\Amat\in \R^{l \times p}$ and $\mathbf{C} \in \R^{k \times p}$ have full row rank
 \item This model includes many Lasso variants as special cases, e.g., the Generalized Lasso, (sparse) isotonic regression, log-contrast regression for compositional data, etc.
@@ -66,19 +66,19 @@ $$
 \end{framei}
 
 
-\begin{framei}[fs=small]{Constrained Optimization in ML}
+\begin{framei}{Constrained Optimization in ML}
 \item Dual formulation of the SVM: convex QP with box constraints plus one linear constraint
 $$
-\max_{\boldsymbol{\alpha} \in \R^n} \sum_{i=1}^n \alpha_i - \frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j\yi y^{(j)} \scp{\xi}{\xv^{(j)}}
+\max_{\boldsymbol{\alpha} \in \R^n} \sumin \alpha_i - \frac{1}{2}\sumin\sumjn\alpha_i\alpha_j\yi y^{(j)} \scp{\xi}{\xv^{(j)}}
 $$
 $$
-\text{s.t. } 0 \le \alpha_i \le C, \quad \sum_{i=1}^n \alpha_i \yi = 0
+\text{s.t. } 0 \le \alpha_i \le C, \quad \sumin \alpha_i \yi = 0
 $$
 \end{framei}
 
 
 \begin{framei}{Constrained Optimization}
-\item[Definition] \textbf{Constrained Optimization problem}:
+\item \textbf{Constrained Optimization problem}:
 $$
 \min f(\xv) \quad \text{s.t. } g_i(\xv) \le 0 ~ (i=1,\ldots,k), \quad h_j(\xv) = 0 ~ (j=1,\ldots,l)
 $$
@@ -87,20 +87,18 @@ $$
 \vfill
 \item The \textbf{feasible set} is the set of inputs $\xv$ that fulfill the constraints:
 $$
-\mathcal{S} := \{\xv \in \R^d ~|~ g_i(\xv) \le 0, h_j(\xv) = 0 ~\forall~ i, j\}
+\S := \{\xv \in \R^d ~|~ g_i(\xv) \le 0, h_j(\xv) = 0 ~\forall~ i, j\}
 $$
 \end{framei}
 
 
 \begin{framei}[fs=small]{Constrained Convex Optimization}
-\item \textbf{Convex programs}: convex objective $f$, convex inequality constraints $g_i$, and affine equality constraints $h_j$ (i.e., $h_j(\xv) = \Amat_j^\top \xv - \mathbf{b}_j$)
-\vfill
-\imageC[0.4]{figure_man/convex_programs.png}
-\vfill
+\item \textbf{Convex programs}: convex objective $f$, convex inequality constraints $g_i$, and affine equality constraints $h_j$ (i.e., $h_j(\xv) = \Amat_j^T \xv - \mathbf{b}_j$)
+\imageC[0.3]{figure_man/convex_programs.png}
 \item \textbf{Linear program (LP)}: $f$ and all constraints $g_i, h_j$ are linear
 \item \textbf{Quadratic program (QP)}: $f$ is a quadratic form, constraints are linear
 $$
-\fx = \frac{1}{2}\xv^\top \mathbf{Q} \xv + \mathbf{c}^\top \xv + d \quad \text{for } \mathbf{Q} \in \R^{d \times d}, \mathbf{c} \in \R^d, d \in \R
+\fx = \frac{1}{2}\xv^T \mathbf{Q} \xv + \mathbf{c}^T \xv + d \quad \text{for } \mathbf{Q} \in \R^{d \times d}, \mathbf{c} \in \R^d, d \in \R
 $$
 \item Also: second-order cone programs (SOCP), semidefinite programs (SDP), cone programs (CP)
 \end{framei}
@@ -111,7 +109,6 @@ $$
 \furtherreading{LOBO1998}
 \item In ML, SDPs are at the heart of, e.g., learning kernels from data
 \furtherreading{LANCKRIET2004}
-\vfill
 \item This categorization of convex optimization problem classes helps design specialized \emph{optimization methods} tailored to specific problem types
 \item Keyword: disciplined convex programming
 \furtherreading{GRANT2006}
