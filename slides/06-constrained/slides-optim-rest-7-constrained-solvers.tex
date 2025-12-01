@@ -26,7 +26,7 @@ figure_man/convex_programs.png
 $$
 \min f(\xv) \qquad \text{s.t. } \quad h(\xv) = 0
 $$
-\item[Idea:] Instead of $f$, optimize 2nd order Taylor approximation at point $\xtil$
+\item[] \textbf{Idea:} Instead of $f$, optimize 2nd order Taylor approximation at point $\xtil$
 $$
 \tilde f(\xv) = f(\xtil) +  \nabla_{x} f(\xtil)^T (\xv- \xtil)+ \frac{1}{2} (\xv- \xtil)^T \nabla^2_{xx} f(\xtil) (\xv- \xtil)
 $$
@@ -82,7 +82,7 @@ $$\begin{pmatrix} \nabla^2_{xx} L(\xv, \bm{\mu}) & \nabla h(\xv)^T \\ \nabla h(\
 
 
 \begin{framei}{Penalty methods}
-\item[Idea:] Replace constrained problem with a sequence of unconstrained problems using a \textbf{penalty function}
+\item[] \textbf{Idea:} Replace constrained problem with a sequence of unconstrained problems using a \textbf{penalty function}
 \item Instead of
 $$
 \min f(\xv) \qquad \text{s.t. } \quad h(\xv) = 0
@@ -96,7 +96,7 @@ $$
 
 
 \begin{framei}{Barrier method}
-\item[Idea:] Establish a ``barrier'' that penalizes if $\xv$ comes too close to the edge of the feasible set $\bm{S}$
+\item[] \textbf{Idea:} Establish a ``barrier'' that penalizes if $\xv$ comes too close to the edge of the feasible set $\bm{S}$
 \item For the problem
 $$
 \min f(\xv) \qquad \text{s.t. } \quad g(\xv) \le 0

@@ -58,7 +58,7 @@ $$
 
 \begin{framei}{Constrained problems: the direct way}
 \item Simple constrained problems can be solved in a direct way
-\item[Example 1:]
+\item[] \textbf{Example 1}:
 $$
 \min_{x\in \R} 2 - x^2 \quad \text{s.t. } x - 1 = 0
 $$
@@ -68,7 +68,7 @@ and insert it into the objective: $\xs = 1, \; f(\xs) = 1$
 
 
 \begin{framei}{Constrained problems: the direct way}
-\item[Example 2:]
+\item[] \textbf{Example 2:}
 $$
 \min_{\xv \in \R^2} - 2 + x_1^2 + 2 x_2^2 \quad \text{s.t. } x_1^2 + x_2^2 - 1 = 0
 $$
@@ -97,7 +97,7 @@ $$
 \begin{framei}{Milkmaid problem}
 \item Where is the best point $P$ to clean her bucket?
 \vfill
-\imageC[0.6]{figure_man/milkmaid1.png}
+\imageC[0.7]{figure_man/milkmaid1.png}
 \end{framei}
 
 
@@ -106,7 +106,7 @@ $$
 \item $f(P) := d(M, P) + d(P, C)$ ($d$ measures distance)
 \item $h(P) = 0$ describes the river
 \vfill
-\imageC[0.4]{figure_man/milkmaid2.png}
+\imageC[0.5]{figure_man/milkmaid2.png}
 \end{framei}
 
 
@@ -116,7 +116,7 @@ $$
 \min_{x_1, x_2} f(x_1, x_2) \quad \text{s.t.} \; h(x_1, x_2) = 0
 $$
 \vfill
-\imageC[0.4]{figure_man/milkmaid2.png}
+\imageC[0.5]{figure_man/milkmaid2.png}
 \end{framei}
 
 
@@ -124,7 +124,7 @@ $$
 \item \textbf{Question:} How far can the milkmaid get for a fixed total distance $f(P)$?
 \item \textbf{Assume:} We only care about $d(M,P)$
 \vfill
-\imageC[0.4]{figure_man/milkmaid3.png}
+\imageC[0.5]{figure_man/milkmaid3.png}
 \item \textbf{Observe:} Radius of circle touching river first is the minimal distance
 \end{framei}
 
@@ -135,8 +135,7 @@ $$
 $$
 E = \{ P \in \R^2 \;|\; d(F_1,P) + d(P,F_2) = 2a \}
 $$
-\vfill
-\imageC[0.5]{figure_man/ellipse.png}
+\imageC[0.6]{figure_man/ellipse.png}
 \end{framei}
 
 
@@ -144,8 +143,7 @@ $$
 \item Let $M$ and $C$ be focal points of a collection of ellipses
 \item Find \textbf{smallest} ellipse touching the river $h(x_1, x_2)$
 \item Define $P$ as the touching point
-\vfill
-\imageC[0.45]{figure_man/milkmaid4.png}
+\imageC[0.55]{figure_man/milkmaid4.png}
 \item \textbf{Question:} How can we make sense of this mathematically?
 \end{framei}
 
@@ -157,8 +155,7 @@ $$
 \nabla f(P) = \beta \nabla h(P)
 $$
 \item Multiplier $\beta$ is called \textbf{Lagrange multiplier}
-\vfill
-\imageC[0.45]{figure_man/milkmaid5.png}
+\imageC[0.55]{figure_man/milkmaid5.png}
 \end{framei}
 
 
@@ -194,8 +191,7 @@ $$
 \item Solution $\xv_b$ inside feasible set: constraint is inactive ($\alpha_b =0$)
 \item Solution $\xv_a$ on boundary $g(\xv) = 0$: $\nabla f(\xv_a) = \alpha_a \nabla g(\xv_a)$ ($\alpha_a > 0$)
 \end{itemize}
-\vfill
-\imageC[0.45]{figure_man/constraint_lagrange.png}
+\imageC[0.65]{figure_man/constraint_lagrange.png}
 \end{framei}
 
 

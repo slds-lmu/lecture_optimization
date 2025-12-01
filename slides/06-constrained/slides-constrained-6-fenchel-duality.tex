@@ -28,7 +28,7 @@ $$
 \min_{\xv \in \R^d} \| \xv \| \quad \text{s.t. } \bm{G} \xv = \bm{h}
 $$
 \item $\| \cdot \|$ is some norm function
-\item If the norm is the $L_1$ norm, this is the famous \href{https://en.wikipedia.org/wiki/Basis_pursuit}{\beamergotobutton{basis pursuit}} problem
+\item If the norm is the $L_1$ norm, this is the famous basis pursuit problem \sourceref{https://en.wikipedia.org/wiki/Basis_pursuit}
 \vfill
 \item \textbf{Question:} Is there a more straightforward way to solve constrained optimization problems involving norms?
 \end{framei}
@@ -36,7 +36,7 @@ $$
 
 \begin{framei}{Constrained minimization and dual norms}
 \item The concept of the \textbf{dual norm} from functional analysis can help
-\item[Definition] Let $\| \xv \|$ be the norm of $\xv$. The dual norm $\| \xv \|_*$ is defined as
+\item[] \textbf{Definition} Let $\| \xv \|$ be the norm of $\xv$. The dual norm $\| \xv \|_*$ is defined as
 $$
 \| \xv \|_* = \max_{\|\zv\| \le 1} \zv^T \xv
 $$
@@ -45,7 +45,7 @@ $$
 | \zv^T \xv | \le \| \zv \| \| \xv \|_*
 $$
 \vfill
-\item[Example] The dual norm of the $L_p$ norm $\| \cdot \|_p$ is the $L_q$ norm $\| \cdot \|_q$ where $1/p + 1/q = 1$
+\item[] \textbf{Example} The dual norm of the $L_p$ norm $\| \cdot \|_p$ is the $L_q$ norm $\| \cdot \|_q$ where $1/p + 1/q = 1$
 \end{framei}
 
 \endlecture

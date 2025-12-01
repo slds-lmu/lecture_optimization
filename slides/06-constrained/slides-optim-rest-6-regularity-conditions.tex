@@ -32,11 +32,13 @@ h(\xv)
 \end{pmatrix} = \begin{pmatrix}
 0 \\ 0 \end{pmatrix}
 $$
-\item For this and the general Lagrangian, this leads to the following question
-\item[\textbf{Question:}] Is $\nabla L(\xv, \bm{\alpha}, \bm{\beta}) = 0$ a \textbf{necessary / sufficient condition for the optimum}?
+\item For the general Lagrangian, this leads to the following question:\\
+\spacer
+\item[] Is $\nabla L(\xv, \bm{\alpha}, \bm{\beta}) = 0$ a \textbf{necessary / sufficient condition for the optimum}?
 \end{framei}
 
-\begin{framei}{KKT Conditions}
+
+\begin{framei}[sep=L]{KKT Conditions}
 \item To formulate necessary and sufficient conditions for optimality, we need the \textbf{Karush-Kuhn-Tucker conditions} (KKT conditions)
 \item A triple $(\xv, \bm{\alpha}, \bm{\beta})$ satisfies the KKT conditions if
 \begin{itemize}
@@ -64,17 +66,16 @@ Then $\xv^*$ is a global solution to the problem
 \item Different regularity conditions (or constraint qualifications) ensure that the KKT conditions apply (ACQ, LICQ, MFCQ, Slater condition, ...)
 \item To use the above results, at least one regularity condition must be examined to prove that the function behaves ``regular''
 \item We do not go further into these regularity conditions here
-\item \sourceref{https://docs.ufpr.br/~ademir.ribeiro/ensino/cm721/kkt.pdf}
 \end{framei}
 
 \begin{framei}{Ridge regression}
 \item The following two formulas are common for ridge regression:
-\item[\textbf{Formula 1:}]
+\item[] \textbf{Formula 1:}
 \begin{equation}
 \min_{\thetav} \quad f_\lambda(\thetav) := \|\yv - \Xmat\thetav\|_2^2 + \lambda \|\thetav\|_2^2
 \label{eq:form1}
 \end{equation}
-\item[\textbf{Formula 2:}]
+\item[] \textbf{Formula 2:}
 \begin{equation}
 \begin{aligned}
 \min_{\thetav} & \quad \|\yv - \Xmat\thetav\|_2^2 \\
@@ -89,7 +90,7 @@ Then $\xv^*$ is a global solution to the problem
 \begin{framei}[fs=small]{Ridge regression -- visualization}
 \item \textbf{Visualization:} see additional material
 \vfill
-\imageC[0.65]{figure_man/ridge_original.png}
+\imageC[0.50]{figure_man/ridge_original.png}
 \item Quadratic loss for the \texttt{cars} dataset without penalty
 \vfill
 \splitVCC{
