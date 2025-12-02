@@ -141,35 +141,35 @@ Assume rows of $\Amat \in \R^{m \times n}$ are linearly independent and $m \le n
 
 \begin{framei}{Simplex algorithm}
 \item Construct a Lagrangian for the equality form:
-$$L(\xv, \bm{\mu}, \bm{\lambda}) = \mathbf{c}^T\xv - \bm{\mu}^T\xv - \bm{\lambda}^T(\Amat\xv - \mathbf{b})$$
-with $\bm{\mu} \ge \zero$
-\item Optimal solution satisfies $\frac{\partial L}{\partial \xv}=0$, i.e., $\Amat^T \bm{\lambda} + \bm{\mu} = \mathbf{c}$
+$$L(\xv, \muv, \bm{\lambda}) = \mathbf{c}^T\xv - \muv^T\xv - \bm{\lambda}^T(\Amat\xv - \mathbf{b})$$
+with $\muv \ge \zero$
+\item Optimal solution satisfies $\frac{\partial L}{\partial \xv}=0$, i.e., $\Amat^T \bm{\lambda} + \muv = \mathbf{c}$
 \item Decompose stationarity condition into $\mathcal{B}$ and $\mathcal{V}$ components:
 $$
-\Amat^T \bm{\lambda} + \bm{\mu} = \mathbf{c} 
+\Amat^T \bm{\lambda} + \muv = \mathbf{c} 
 \quad \implies \quad
 \begin{cases}
-\Amat_{\mathcal{B}}^T \bm{\lambda} + \bm{\mu}_{\mathcal{B}} = \mathbf{c}_{\mathcal{B}} \\
-\Amat_{\mathcal{V}}^T \bm{\lambda} + \bm{\mu}_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}}
+\Amat_{\mathcal{B}}^T \bm{\lambda} + \muv_{\mathcal{B}} = \mathbf{c}_{\mathcal{B}} \\
+\Amat_{\mathcal{V}}^T \bm{\lambda} + \muv_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}}
 \end{cases}
 $$
 \end{framei}
 
 
 \begin{framei}[fs=small]{Simplex algorithm}
-\item Choose $ \bm{\mu}_{\mathcal{B}} = 0 $ to satisfy $\bm{\mu} \odot \xv = 0$, since for optimality, we need $\mu_i=0$ when $x_i > 0$
+\item Choose $ \muv_{\mathcal{B}} = 0 $ to satisfy $\muv \odot \xv = 0$, since for optimality, we need $\mu_i=0$ when $x_i > 0$
 \item Compute $ \bm{\lambda} $ from $ \mathcal{B} $:
 $$
-\Amat_{\mathcal{B}}^T \bm{\lambda} + \underbrace{\bm{\mu}_{\mathcal{B}}}_{= 0} = \mathbf{c}_{\mathcal{B}} \quad \implies \quad \bm{\lambda} = \Amat_{\mathcal{B}}^{-T} \mathbf{c}_{\mathcal{B}}
+\Amat_{\mathcal{B}}^T \bm{\lambda} + \underbrace{\muv_{\mathcal{B}}}_{= 0} = \mathbf{c}_{\mathcal{B}} \quad \implies \quad \bm{\lambda} = \Amat_{\mathcal{B}}^{-T} \mathbf{c}_{\mathcal{B}}
 $$
 \item Use this to obtain:
 \begin{align*}
-\Amat_{\mathcal{V}}^T \bm{\lambda} + \bm{\mu}_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}}\\
-\bm{\mu}_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}} - \Amat_{\mathcal{V}}^T \bm{\lambda}\\
-\bm{\mu}_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^T \mathbf{c}_{\mathcal{B}}
+\Amat_{\mathcal{V}}^T \bm{\lambda} + \muv_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}}\\
+\muv_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}} - \Amat_{\mathcal{V}}^T \bm{\lambda}\\
+\muv_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^T \mathbf{c}_{\mathcal{B}}
 \end{align*}
-\item Knowing $ \bm{\mu}_{\mathcal{V}} $ allows us to assess optimality of the vertices\\
-If $ \bm{\mu}_{\mathcal{V}} $ contains negative components, then $\bm{\mu} \ge \zero$ is not satisfied and the vertex is suboptimal
+\item Knowing $ \muv_{\mathcal{V}} $ allows us to assess optimality of the vertices\\
+If $ \muv_{\mathcal{V}} $ contains negative components, then $\muv \ge \zero$ is not satisfied and the vertex is suboptimal
 \end{framei}
 
 
@@ -224,17 +224,17 @@ $$
 $$
 \item The objective function decreases only if $\mu_q$ is negative
 \item To progress toward optimality, we must choose an index $q \in \mathcal{V}$ such that $\mu_q$ is negative
-\item If all components of $\boldsymbol{\mu}_{\mathcal{V}}$ are non-negative, we have found a global optimum
+\item If all components of $\muv_{\mathcal{V}}$ are non-negative, we have found a global optimum
 \end{framei}
 
 
 \begin{framei}[fs=small]{Simplex algorithm: Heuristics}
-\item Since there can be multiple negative entries in $\boldsymbol{\mu}_{\mathcal{V}}$, different heuristics can be used to select an entering index:
+\item Since there can be multiple negative entries in $\muv_{\mathcal{V}}$, different heuristics can be used to select an entering index:
 \item \textbf{Greedy heuristic}: choose a $q$ that maximally reduces $\mathbf{c}^T \xv$
-\item \textbf{Dantzig's rule}: choose the $q$ with the most negative entry in $\boldsymbol{\mu}$\\
+\item \textbf{Dantzig's rule}: choose the $q$ with the most negative entry in $\muv$\\
 Easy to calculate, but does not guarantee the maximum reduction in $\mathbf{c}^T \xv$\\
 Also sensitive to scaling of the constraints
-\item \textbf{Bland's rule}: choose the first $q$ with a negative entry in $\boldsymbol{\mu}$\\
+\item \textbf{Bland's rule}: choose the first $q$ with a negative entry in $\muv$\\
 Tends to result in poor performance in practice when used alone\\
 Helps prevent cycles (returning to a visited vertex without decreasing objective)\\
 Usually used only after no improvements have been made for several iterations to break out of a cycle and ensure convergence
@@ -253,13 +253,13 @@ $\mathbf{b} = (9, 2)^T, \mathbf{c} = (3, -1, 0, 0)^T$\\
 $\mathcal{V}=\{1,2\}, \mathcal{B}=\{3, 4\}$\\
 $\xv_{\mathcal{B}} = \Amat_{\mathcal{B}}^{-1}\mathbf{b} = (9, 2)^T$\\
 $\bm{\lambda} =  \Amat_{\mathcal{B}}^{-1}\mathbf{c}_{\mathcal{B}} = \zero$\\
-$\bm{\mu}_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^T \mathbf{c}_{\mathcal{B}} = (3, -1)^T$\\
+$\muv_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^T \mathbf{c}_{\mathcal{B}} = (3, -1)^T$\\
 \spacer
-$\bm{\mu}_{\mathcal{V}}$ contains negative elements, so our current $\mathcal{B}$ is suboptimal.\\
+$\muv_{\mathcal{V}}$ contains negative elements, so our current $\mathcal{B}$ is suboptimal.\\
 \spacer
 We will pivot on the negative one with $q=2, - \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}}=(1,2)^T$.\\
 This causes $x_4 = 0$, so updated $\mathcal{B}=\{2, 3\}$.\\
-In the second iteration, we find $\xv_{\mathcal{B}}=(1,8)^T, \bm{\lambda} = (0, -\frac{1}{2})^T, \bm{\mu}_{\mathcal{V}} = (1, \frac{1}{2})^T$.\\
+In the second iteration, we find $\xv_{\mathcal{B}}=(1,8)^T, \bm{\lambda} = (0, -\frac{1}{2})^T, \muv_{\mathcal{V}} = (1, \frac{1}{2})^T$.\\
 \spacer
 This is optimal with no negative entry, thus we have $x^*=(0,1,8,0)^T$
 \end{framev}

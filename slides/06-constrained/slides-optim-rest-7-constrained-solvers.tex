@@ -73,7 +73,7 @@ $$
 \State Select a feasible starting point $\xv^{(0)} \in \R^n$
 \While {Stop criterion not fulfilled}
 \State Solve quadratic subproblem by solving the equation
-$$\begin{pmatrix} \nabla^2_{xx} L(\xv, \bm{\mu}) & \nabla h(\xv)^T \\ \nabla h(\xv) & 0 \end{pmatrix} \begin{pmatrix} \bm{d} \\ \bm{\beta} \end{pmatrix} = - \begin{pmatrix} \nabla_{x} L(\xv, \bm{\mu}) \\ h(\xv) \end{pmatrix}$$
+$$\begin{pmatrix} \nabla^2_{xx} L(\xv, \muv) & \nabla h(\xv)^T \\ \nabla h(\xv) & 0 \end{pmatrix} \begin{pmatrix} \bm{d} \\ \bm{\beta} \end{pmatrix} = - \begin{pmatrix} \nabla_{x} L(\xv, \muv) \\ h(\xv) \end{pmatrix}$$
 \State Set $\xv^{(i + 1)} = \xv^{(i)} + \bm{d}$
 \EndWhile
 \end{algorithmic}
