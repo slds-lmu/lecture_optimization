@@ -1,110 +1,105 @@
-# ------------------------------------------------------------------------------
-# constrained
+# Ridge regression objective visualizations (unregularized, penalized, constrained)
 
-# FIG: plot ridge regression
-# ------------------------------------------------------------------------------
+set.seed(1L)
 
-library(rgl)
-library(colorspace)
+library(vistool)
+library(ggplot2)
 
-# ------------------------------------------------------------------------------
+cars_df = cars
+design_matrix = matrix(cars_df$speed, ncol = 1)
+response = cars_df$dist
 
-plotContour = function(x, y, z, constraint = F, opt) {
-  col = terrain_hcl(nrow(z) * ncol(z))
-  image(x, y, z, col = col, xlab = "theta1", ylab = "theta2")
-  contour(x, y, z, add = TRUE, levels = seq(10000, 80000, by = 10000))
-  points(x = opt$par[1], y = opt$par[2], pch = 18, cex = 1.5, col = "red")
-  
-  if (constraint == T) {
-    n = length(h.x1)
-    for (j in seq_along(h.x1)) {
-      if (j > 1) {
-        lines(c(h.x1[j], h.x1[j-1]), c(h.x2[j], h.x2[j-1]), col = "red")
-      } else {
-        lines(c(h.x1[j], h.x1[n]), c(h.x2[j], h.x2[n]), col = "red")
-      }
+theta_limits = list(x1 = c(-18, 18), x2 = c(-18, 18))
+constraint_limits = list(x1 = c(-6, 6), x2 = c(-6, 6))
+
+build_objective = function(lambda_value) {
+  objective_linear(
+    x = design_matrix,
+    y = response,
+    include_intercept = TRUE,
+    penalize_intercept = FALSE,
+    lambda = lambda_value,
+    alpha = 0,
+    label = if (lambda_value == 0) {
+      "Squared error risk"
+    } else {
+      sprintf("Ridge risk (lambda = %s)", lambda_value)
     }
-  }
+  )
 }
 
-data(cars)
-n = dim(cars)[1]
-
-# squared loss
-loss = function(x1, x2) {
-  
-  res = 0
-  
-  for (i in 1:n) {
-    res = res + ((x1 + x2 * cars[i, ]$speed) - cars[i, ]$dist)^2
-  }
-  res = res / n
-  return(res)
+estimate_minimizer = function(objective, start = c(0, 0)) {
+  stats::optim(
+    par = start,
+    fn = objective$eval,
+    gr = objective$grad,
+    method = "BFGS"
+  )$par
 }
 
-# optimum
-fun = function(x) loss(x[1], x[2])
-opt1 = optim(par = c(-10, 5), fn = fun)
+unreg_objective = build_objective(0)
+theta_unreg = estimate_minimizer(unreg_objective, start = c(-10, 5))
 
-# set grid
-x1 = seq(- 18, 18, by = 0.5)
-x2 = seq(- 18, 18, by = 0.5)
+vis = as_visualizer(
+  unreg_objective,
+  type = "2d",
+  x1_limits = c(-20, 20),
+  x2_limits = c(-20, 20)
+)
+vis$add_contours(
+  alpha = 0.6
+  )$add_points(
+    matrix(theta_unreg, ncol = 2, byrow = TRUE),
+    color = "#f6e05e",
+    annotations = "$\\hat{\\theta}$")
 
-# first version: instable version 
-z1 = outer(x1, x2, loss)
+vis$plot(
+  x_lab = "$\\theta_1$",
+  y_lab = "$\\theta_2$",
+  show_legend = FALSE,
+  show_title = FALSE,
+  latex = TRUE
+)
+vis$save("../figure/ridge-unregularized.png")
 
-png('../figure_man/ridge_original.png', width = 480, height = 300)
-plotContour(x1, x2, z1, opt = opt1)
-persp3d(x1, x2, z1, alpha = 0.8, color = "grey", xlab = expression(theta[1]), ylab = expression(theta[2]), zlab = "Loss")
-points3d(opt1$par[1], opt1$par[2], opt1$value, col = "red", size = 5)
-dev.off()
+ridge_lambda = 20
+ridge_objective = build_objective(ridge_lambda)
+theta_ridge = estimate_minimizer(ridge_objective, start = theta_unreg)
 
-# Ridge Regression - Penalty term
-loss.penalty = function(x1, x2, lambda = 20) {
-  
-  res = loss(x1, x2)
-  
-  res = res + lambda * (x1^2 + x2^2)
-  
-  return(res)
-}
+vis_ridge = as_visualizer(
+  ridge_objective,
+  type = "2d",
+  x1_limits = c(-20, 20),
+  x2_limits = c(-20, 20)
+)
+vis_ridge$add_contours(
+  alpha = 0.6
+  )$add_points(
+    matrix(theta_ridge, ncol = 2, byrow = TRUE),
+    color = "#f6e05e",
+    annotations = "$\\hat{\\theta}$")
 
-opt2 = optim(par = c(-10, 5), fn = function(x) loss.penalty(x[1], x[2]))
+p = vis_ridge$plot(
+  x_lab = "$\\theta_1$",
+  y_lab = "$\\theta_2$",
+  show_legend = FALSE,
+  show_title = FALSE,
+  latex = TRUE
+)
+ggsave(plot = p, "../figure/ridge-penalized.png")
 
-z2 = outer(x1, x2, loss.penalty)
-
-png('../figure_man/ridge_formulation1.png', width = 480, height = 300)
-persp3d(x1, x2, z2, col = "grey", alpha = 0.8, xlab = expression(theta[1]), ylab = expression(theta[2]), zlab = "Loss")
-points3d(opt2$par[1], opt2$par[2], opt2$value, col = "red", size = 5)
-plotContour(x1, x2, z2, opt = opt2)
-dev.off()
-
-# constrained ridge regression
-t = sum(opt2$par^2)
-
-
-feasible = function(x1, x2) {
-  res = ifelse(x1^2 + x2^2 <= t, loss(x1, x2), NA)
-  return(res)
-}
-
-h.x1 = seq(-1, 1, length.out = 100)
-h.x2 = c(- sqrt(1 - h.x1[1:50]^2), - sqrt(1 - h.x1[51:100]^2), sqrt(1 - h.x1[100:51]^2), sqrt(1 - h.x1[50:1]^2))
-h.x1 = c(h.x1[1:50], h.x1[51:100], h.x1[100:51], h.x1[50:1])
-
-h.x1 = h.x1 * sqrt(t)
-h.x2 = h.x2 * sqrt(t)
-
-
-x1.feasible = seq(- 8, 8, by = 0.05)
-x2.feasible = seq(- 8, 8,  by = 0.05)
-
-z.feasible = outer(x1.feasible, x2.feasible, feasible)
-
-png('../figure_man/ridge_formulation2.png', width = 480, height = 300)
-persp3d(x1, x2, z1, col = "grey", alpha = 0.8, xlab = expression(theta[1]), ylab = expression(theta[2]), zlab = "Loss")
-points3d(opt2$par[1], opt2$par[2], opt2$value, col = "red", size = 5)
-persp3d(x1.feasible, x2.feasible, z.feasible, col = "green", add = T, alpha = 0.5)
-
-plotContour(x1, x2, z1, constraint = T, opt = opt2)
-dev.off()
+ball_radius = sqrt(sum(theta_ridge^2))
+angles = seq(0, 2 * pi, length.out = 361)
+constraint_path = data.frame(
+  theta1 = ball_radius * cos(angles),
+  theta2 = ball_radius * sin(angles)
+)
+constraint_layer = ggplot2::geom_path(
+  data = constraint_path,
+  mapping = ggplot2::aes(theta1, theta2),
+  inherit.aes = FALSE,
+  linewidth = 0.5,
+  color = "#f56565"
+)
+vis_constrained = p + constraint_layer
+vis_constrained
