@@ -6,18 +6,22 @@ library(vistool)
 library(ggplot2)
 
 cars_df = cars
-design_matrix = matrix(cars_df$speed, ncol = 1)
-response = cars_df$dist
 
-theta_limits = list(x1 = c(-18, 18), x2 = c(-18, 18))
-constraint_limits = list(x1 = c(-6, 6), x2 = c(-6, 6))
+# for nicer contours
+speed_standardized = as.numeric(scale(cars_df$speed, center = TRUE, scale = TRUE))
+dist_standardized = as.numeric(scale(cars_df$dist, center = TRUE, scale = TRUE))
+design_matrix = matrix(speed_standardized, ncol = 1)
+response = dist_standardized
+
+theta_limits = list(x1 = c(-1.5, 1.5), x2 = c(-1.5, 1.5))
+constraint_limits = list(x1 = c(-1, 1), x2 = c(-1, 1))
 
 build_objective = function(lambda_value) {
   objective_linear(
     x = design_matrix,
     y = response,
     include_intercept = TRUE,
-    penalize_intercept = FALSE,
+    penalize_intercept = TRUE,
     lambda = lambda_value,
     alpha = 0,
     label = if (lambda_value == 0) {
@@ -38,17 +42,22 @@ estimate_minimizer = function(objective, start = c(0, 0)) {
 }
 
 unreg_objective = build_objective(0)
-theta_unreg = estimate_minimizer(unreg_objective, start = c(-10, 5))
+theta_unreg = estimate_minimizer(unreg_objective, start = c(0, 0))
 
 vis = as_visualizer(
   unreg_objective,
   type = "2d",
-  x1_limits = c(-20, 20),
-  x2_limits = c(-20, 20)
+  x1_limits = theta_limits$x1,
+  x2_limits = theta_limits$x2
 )
 vis$add_contours(
   alpha = 0.6
-  )$add_points(
+  )
+
+# for later
+vis_constrained = vis$clone(deep = TRUE)
+
+vis$add_points(
     matrix(theta_unreg, ncol = 2, byrow = TRUE),
     color = "#f6e05e",
     annotations = "$\\hat{\\theta}$")
@@ -62,15 +71,15 @@ vis$plot(
 )
 vis$save("../figure/ridge-unregularized.png")
 
-ridge_lambda = 20
+ridge_lambda = 5
 ridge_objective = build_objective(ridge_lambda)
 theta_ridge = estimate_minimizer(ridge_objective, start = theta_unreg)
 
 vis_ridge = as_visualizer(
   ridge_objective,
   type = "2d",
-  x1_limits = c(-20, 20),
-  x2_limits = c(-20, 20)
+  x1_limits = theta_limits$x1,
+  x2_limits = theta_limits$x2
 )
 vis_ridge$add_contours(
   alpha = 0.6
@@ -79,14 +88,14 @@ vis_ridge$add_contours(
     color = "#f6e05e",
     annotations = "$\\hat{\\theta}$")
 
-p = vis_ridge$plot(
+vis_ridge$plot(
   x_lab = "$\\theta_1$",
   y_lab = "$\\theta_2$",
   show_legend = FALSE,
   show_title = FALSE,
   latex = TRUE
 )
-ggsave(plot = p, "../figure/ridge-penalized.png")
+vis_ridge$save("../figure/ridge-penalized.png")
 
 ball_radius = sqrt(sum(theta_ridge^2))
 angles = seq(0, 2 * pi, length.out = 361)
@@ -101,5 +110,20 @@ constraint_layer = ggplot2::geom_path(
   linewidth = 0.5,
   color = "#f56565"
 )
-vis_constrained = p + constraint_layer
-vis_constrained
+
+vis_constrained$add_points(
+    matrix(theta_ridge, ncol = 2, byrow = TRUE),
+    color = "#f6e05e",
+    annotations = "$\\hat{\\theta}$")
+
+p = vis_constrained$plot(
+  x_lab = "$\\theta_1$",
+  y_lab = "$\\theta_2$",
+  show_legend = FALSE,
+  show_title = FALSE,
+  latex = TRUE
+)
+
+constraint_plot = p + constraint_layer
+constraint_plot
+ggsave(plot = constraint_plot, "../figure/ridge-constrained.png")
