@@ -8,369 +8,161 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Evolutionary Algorithms
-  }{% Lecture title  
-  Introduction
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/ea.eps
-  }{
-    \item Evolutionary algorithms
-    \item Encoding
-    \item Parent selection, variation, survival selection
+\titlemeta{
+Evolutionary Algorithms
+}{
+Introduction
+}{
+figure_man/ea.eps
+}{
+\item Evolutionary algorithms
+\item Encoding
+\item Parent selection, variation, survival selection
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\begin{vbframe}{Evolutionary Algorithms}
-
+\begin{framev}{Evolutionary Algorithms}
 \textbf{Evolutionary algorithms} (EA) are a class of stochastic, metaheuristic optimization techniques whose mode of operation is inspired by the evolution of natural organisms.
-
-\vspace{0.5cm}
-\footnotesize
+\spacer
+{\footnotesize
 History of evolutionary algorithms:
-
 \begin{itemize}
 \item \textbf{Genetic algorithms}: Use binary problem representation, therefore closest to the biological model of evolution.
 \item \textbf{Evolution strategies}: Use direct problem representation, e.g., vector of real numbers.
 \item \textbf{Genetic programming}: Create structures that convert an input into a fixed output (e.g. computer programs); solution candidates are represented as trees.
 \item \textbf{Evolutionary programming}: Similar to genetic programming, but solution candidates are not represented by trees, but by finite state machines.
 \end{itemize}
-
 The boundaries between the terms become increasingly blurred and are often used synonymously.
-\end{vbframe}
+}
+\end{framev}
 
-\begin{vbframe}{Structure of an evolutionary algorithm}
 
-\begin{figure}
-  \includegraphics{figure_man/ea.eps}
-\end{figure}
+\begin{framev}{Structure of an evolutionary algorithm}
+\imageC[0.9]{figure_man/ea.eps}
+\end{framev}
 
-% \begin{figure}
-% \centering
-% \begin{tikzpicture}[node distance=1cm, auto,]
-% %nodes
-% \node (init) {Initialize population};
-% \node[below = 0.3cm of init](rating1) {Eval population};
-% \node[below = 0.3cm of rating1](selection1) {Parent selection};
-% \node[below = 0.3cm of selection1](variation) {Variation};
-% \node[below = 0.3cm of variation](rating2) {Eval offspring};
-% \node[below = 0.3cm of rating2](selection2) {Survival selection};
-% \node[below = 0.3cm of selection2](stop) {Stop};
-% \node[below = 1cm of stop](dummy2) {};
-% \node[below = 0.2cm of stop](dummy3) {};
-% \node[right = 0.01cm of dummy3](dummy4) {yes};
-% \node[left = 1.1cm of rating2](dummy1) {no};
-% \draw[->] (init) to (rating1) node[midway, above]{};
-% \draw[->] (rating1) to (selection1) node[midway, above]{};
-% \draw[->] (selection1) to (variation) node[midway, above]{};
-% \draw[->] (variation) to (rating2) node[midway, above]{};
-% \draw[->] (rating2) to (selection2) node[midway, above]{};
-% \draw[->] (selection2) to (stop) node[midway, above]{};
-% \draw[->] (stop) to (dummy2) node[midway, above]{};
-% \draw[->] (stop) to [bend left=90, looseness=2](selection1) node[midway, above]{};
-% \end{tikzpicture}
-% \end{figure}
 
-\end{vbframe}
-
-\begin{vbframe}{Notation and Terminology}
-
-\begin{footnotesize}
+\begin{framev}[fs=footnotesize]{Notation and Terminology}
 \begin{itemize}
 \item A chromosome is a set of parameters which encodes a proposed solution to the problem that the genetic algorithm is trying to solve. The chromosome is often represented as a binary string, although a wide variety of other data structures are also used.\\
 \item The set of all solutions is known as the population.
 \end{itemize}
-\end{footnotesize}
-
-\medskip
-
+\spacer
 \begin{center}
 \begin{tabular}{c|c}
-    \textbf{Symbols} & \textbf{EA Terminology} \\
-    \hline\hline \\
-    solution candidate $\xv \in \mathcal{S}$ & chromosome of an individual \\[0.2em]
-    $x_j$  & $j$-th gene of chromosome \\[0.2em]
-    set of candidates $P$ with $\mu = |P|$ & population and size \\[0.2em]
-    $\lambda$ & number of generated offsprings \\[0.2em]
-    $f: \mathcal{S} \to \R$ & fitness function
+\textbf{Symbols} & \textbf{EA Terminology} \\
+\hline\hline \\
+solution candidate $\xv \in \mathcal{S}$ & chromosome of an individual \\[0.2em]
+$x_j$  & $j$-th gene of chromosome \\[0.2em]
+set of candidates $P$ with $\mu = |P|$ & population and size \\[0.2em]
+$\lambda$ & number of generated offsprings \\[0.2em]
+$f: \mathcal{S} \to \R$ & fitness function
 \end{tabular}
 \end{center}
-
 \textbf{Note}: Unintuitively, we are minimizing fitness because we always minimize $f$ by convention.
-
-% We now look into \textbf{operators}: Functions operating on (a set of) individuals and modifying 
-
-%$$f(\xv) = \widehat{GE}_{\mathcal{D}_{test}}\left(\inducer(\mathcal{D}_{train},\xv)\right)$$
+\end{framev}
 
 
-\end{vbframe}
-
-\begin{vbframe}{Encoding}
-
-Encoding of chromosomes is the first step of solving a problem with EAs.  Technically: Mapping from \textbf{genotype} to \textbf{phenotype}. Encoding depends on the problem, and eventually decides performance of problem solving. 
-
-\lz 
-
-\textbf{Encoding methods}: 
+\begin{framev}[fs=small]{Encoding}
+Encoding of chromosomes is the first step of solving a problem with EAs.
+Technically: Mapping from \textbf{genotype} to \textbf{phenotype}.
+Encoding depends on the problem, and eventually decides performance of problem solving.
+\spacer
+\textbf{Encoding methods}:
 \begin{itemize}
-  \item Binary encoding: Strings of 0s and 1s 
-  \item Real value encoding: Real values 
-
-  \begin{figure}
-    \includegraphics[width=0.7\textwidth]{figure_man/encoding_binary_numeric.png}
-    % https://docs.google.com/presentation/d/12v81ZaLxJUgXVUBy3VdW0y6q7OKHS_6lFcQym3yeYsg/edit#slide=id.p
-  \end{figure}
-   %\item Order encoding: Sequence of elements 
-  \item Tree encoding: Tree objects 
-  \begin{figure}
-    \includegraphics[width=0.45\textwidth]{figure_man/encoding_tree_1.png} ~~ \includegraphics[width=0.45\textwidth]{figure_man/encoding_tree_2.png} \\
-    \begin{footnotesize}
-      Floor planning problem. Given are $n$ circuits of different area requirements. Goal: arrange them into a floor layout so that all circuits are placed in a minimum layout. Each solution candidate can be represented by a tree. \\ 
-      Source: Encoding Techniques in Genetic Algorithms, Debasis Samanta, 2018. \\
-      % https://cse.iitkgp.ac.in/~dsamanta/courses/sca/resources/slides/GA-02%20Encoding%20Techniques.pdf
-    \end{footnotesize}
-  \end{figure}
+\item Binary encoding: Strings of 0s and 1s
+\item Real value encoding: Real values
 \end{itemize}
+\imageC[0.7]{figure_man/encoding_binary_numeric.png}% https://docs.google.com/presentation/d/12v81ZaLxJUgXVUBy3VdW0y6q7OKHS_6lFcQym3yeYsg/edit#slide=id.p
+\spacer
+\begin{itemize}
+\item Tree encoding: Tree objects
+\end{itemize}
+\splitVCC[0.5]{
+\imageC[0.95]{figure_man/encoding_tree_1.png}
+}{
+\imageC[0.95]{figure_man/encoding_tree_2.png}
+}
+{\footnotesize
+Floor planning problem. Given are $n$ circuits of different area requirements. Goal: arrange them into a floor layout so that all circuits are placed in a minimum layout. Each solution candidate can be represented by a tree.\\
+Source: Encoding Techniques in Genetic Algorithms, Debasis Samanta, 2018.\\
+% https://cse.iitkgp.ac.in/~dsamanta/courses/sca/resources/slides/GA-02%20Encoding%20Techniques.pdf
+}
+\end{framev}
 
-\end{vbframe}
 
-\begin{vbframe}{Step 1: Initialize population}
-    \begin{itemize}
-            \item Evolutionary algorithms start with generating initial population $P = \{\xv^{(1)}, ..., \xv^{(\mu)}\}$.
-            \item Usually: Initialize uniformly at random.
-            \item Introducing prior knowledge possible.
-            \item Population is evaluated: objective function is computed for each initial individual.
-            \item Initialization influences quality of solution, so many EAs employ \textit{restarts} with new randomly generated initial populations.
-    \end{itemize}
-\end{vbframe}
+\begin{framei}{Step 1: Initialize population}
+\item Evolutionary algorithms start with generating initial population $P = \{\xv^{(1)}, ..., \xv^{(\mu)}\}$.
+\item Usually: Initialize uniformly at random.
+\item Introducing prior knowledge possible.
+\item Population is evaluated: objective function is computed for each initial individual.
+\item Initialization influences quality of solution, so many EAs employ \textit{restarts} with new randomly generated initial populations.
+\end{framei}
 
-\begin{vbframe}{Step 2: parent selection}
-\footnotesize
+
+\begin{framev}[fs=small]{Step 2: parent selection}
 Choose a number of $\lambda$ parents pairs creating $\lambda$ offsprings.
-
 \begin{itemize}
-    \item \textbf{Neutral selection:} Draw parents uniformly at random.
-    \item \textbf{Fitness-proportional / Roulette wheel selection:} Draw individuals with probability proportional to their fitness.
-    \item \textbf{Tournament selection:} Randomly select $k$ individuals for a "tournament group" and pick the best one (according to fitness value).
+\item \textbf{Neutral selection:} Draw parents uniformly at random.
+\item \textbf{Fitness-proportional / Roulette wheel selection:} Draw individuals with probability proportional to their fitness.
+\item \textbf{Tournament selection:} Randomly select $k$ individuals for a "tournament group" and pick the best one (according to fitness value).
 \end{itemize}
+\spacer
+\splitVCC[0.35]{
+\imageC[1]{figure_man/ea_parent_selection.pdf}
+}{
+\imageC[1]{figure_man/tournament_selection.png}
+}
+{\footnotesize
+\textbf{Left:} Fitness-proportional selection.
+Fitness values of $\mu = 10$ individuals are converted into probabilities.
+\textbf{Right:} Tournament selection.
+}
+\end{framev}
 
-\vspace*{-1.5\baselineskip}
 
-\begin{figure}
-    \includegraphics[width=0.3\textwidth]{figure_man/ea_parent_selection.pdf}
-    \includegraphics[width=0.6\textwidth]{figure_man/tournament_selection.png}
-    \caption*{
-        \footnotesize
-        \centering
-        
-        \textbf{Left:} Fitness-proportional selection.
-        Fitness values of $\mu = 10$ individuals are converted into probabilities.
-        \textbf{Right:} Tournament selection.
-    }
-\end{figure}
-\end{vbframe}
-
-\begin{vbframe}{Step 3: variation}
-
+\begin{framev}{Step 3: variation}
 New individuals (offsprings) are generated from parents.
-
 \begin{itemize}
 \item Recombination/Crossover: Combine two parents into offspring.
 \item Mutation: Modify the offspring locally.
 \end{itemize}
-
 Sometimes only one of both operations is performed.
-
-\vspace{0.3cm}
-\begin{center}
-\begin{figure}
-  \includegraphics[width = 8cm, height = 2.6cm ]{figure_man/rec-and-mut.png}\\
-\end{figure}
-\end{center}
-
+\spacer
+\imageC[0.9]{figure_man/rec-and-mut.png}
 \textbf{Note: } Particular operation depends on encoding.
 Examples for binary and numeric encodings follow later.
+\end{framev}
 
-\end{vbframe}
 
-\begin{vbframe}{Step 4: Survival selection}
+\begin{framev}{Step 4: Survival selection}
 Choosing surviving individuals.
 Two common strategies are:
-
-\vspace{1em}
-
-\begin{itemize}
-    \setlength{\itemsep}{1em}
-    \item \textbf{$(\mu, \lambda)$-selection:}
-        Select $\mu$ best individuals \textit{only from set of offsprings} ($\lambda \ge \mu$ necessary).
-        
-        \textbf{But:} Best individual can get lost!
-    \item \textbf{$(\mu + \lambda)$-selection:}
-        Select $\mu$ best individuals from set of $\mu$ parents and $\lambda$ offsprings
-        
-        \textbf{Now:} Best individual certainly survives.
-\end{itemize}
-
-\end{vbframe}
-
-\begin{vbframe}{Evolutionary Algorithms}
-% \footnotesize
-\textbf{Advantages}
-\begin{itemize}
-    \item Simple but enough to solve complex problems %(including HPO)
-    \item All parameter types possible in general
-    \item Highly parallelizable
-    \item Flexible through different variation operations
-\end{itemize}
-
-\medskip
-
-\textbf{Disadvantages}
-\begin{itemize}
-    \item Little mathematical rigor (for realistic, complex EAs)
-    \item Hard to find balance between exploration and exploitation
-    \item Quite some parameters, hard to determine them
-    \item Customization necessary for complex problems
-    \item Not suitable for expensive problems like HPO as large number of function evaluations necessary
-    % \item Stagnation: Optimization process does not progress any more %FIXME: JR: Isn't that the same as the point below?
-    % \item Premature Convergence: Algorithm converges to a single solution, which is not as good as expected
-    % \item Diversity of population structures: Loss of population diversity for solving complex optimization problems
-\end{itemize}
-\end{vbframe}
-
-%\begin{vbframe}{Example}
-
-%In the following, methods for the individual steps of an evolutionary algorithm are presented.
-
-%\lz
-
-%These are demonstrated using the one-dimensional Ackley function, which we want to optimize on the $[-30, 30]$ interval.
-
-%\lz
-
-%In this case, each individual has exactly one chromosome. The chromosome is (obviously) encoded as a real number: $x_i \in \R$.
-
-%\lz
-
-%Usually for the optimization of a function $f:\R^n \to \R$ individuals are coded as real vectors $\xv_i \in \R^n$.
+\spacer
+\begin{itemizeL}
+\item \textbf{$(\mu, \lambda)$-selection:}
+Select $\mu$ best individuals \textit{only from set of offsprings} ($\lambda \ge \mu$ necessary).
+\textbf{But:} Best individual can get lost!
+\item \textbf{$(\mu + \lambda)$-selection:}
+Select $\mu$ best individuals from set of $\mu$ parents and $\lambda$ offsprings
+\textbf{Now:} Best individual certainly survives.
+\end{itemizeL}
+\end{framev}
 
 
-%We start with a randomly selected population $\mathcal{P} = \{\xv_1, ..., \xv_\mu\}$ of the size $\mu = 20$ and rate it. The fitness function in this case is the function we want to minimize.
-
-%\end{vbframe}
-
-
-%\begin{vbframe}{Step 2: parent selection}
-%\footnotesize
-%In the first step of an iteration, $\lambda$ parents are chosen, who create offspring in the next step.
-
-%\medskip
-
-%Possibilities for selection of parents:
-%\begin{itemize}
-%\item \textbf{Neutral selection: }choose individual with a probability $1/\mu$.
-%\item \textbf{Fitness-proportional selection: }draw individuals with probability proportional to their fitness.
-%\item \textbf{Tournament Selection: }randomly select $k$ individuals for a "Tournament Group". Of the drawn individuals, the best one (with the highest fitness value) is then chosen. In order to draw $\lambda$ individuals, the procedure must be performed $\lambda$-times.
-%\end{itemize}
-%\vspace*{-0.2cm}
-%\begin{figure}
-%  \includegraphics[width = 7cm, height = 2.5cm ]{figure_man/tournament_selection.png}
-%\end{figure}
-%\framebreak
-
-
-%\begin{vbframe}{Mutation for numeric representations}
-
-%\textbf{Mutation:} individuals are changed, for example for $\xv \in \R^n$
-%\begin{itemize}
-%\item \textbf{Uniform mutation:} choose a random gene $x_i$ and replace it with a value uniformly distributed (within the feasible range).
-%\item \textbf{Gauss mutation}: $\bm{\tilde x} = \xv \pm \sigma \mathcal{N}(\bm{0}, \id)$
-%\item \textbf{Polynomial mutation:} polynomial distribution instead of normal distribution
-
-%\begin{center}
-%\begin{figure}
- % \includegraphics[height = 3.5cm, width = 4cm]{figure_man/polynomial_mutation.png}\\
-  %\scriptsize{Source: K. Deb, Analysing mutation schemes for real-parameter genetic algorithms, 2014}
-%\end{figure}
- %\end{center}
-
- %\framebreak
-
-%More exact:
-
-%$$
-%{\tilde x_{i}} = x_{i} + (x_{i,upper} - x_{i,lower}) \delta_{i}
-%$$
-
-%with $x_{i,upper} (x_{i,lower})$ as upper (lower) bound for $x_{i}$.
-
-%$\delta_{i}$ results as:
-
-%\footnotesize
-%$$
-%\delta_{i} =
-%\begin{cases}
-%[2r_{i}+(1-2r_{i})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta +1}} -1, & r_{i} < 0.5 \\
-%1 - [2(1-r_{i})+2(r_{i}-\frac{1}{2})(1-\delta)^{\eta_{m}+1}]^{\frac{1}{\eta_{m} +1}}, &  \text{else.}
-%\end{cases}
-%$$
-%with  $\delta = \frac{min\{(x_{i} - x_{i,lower}), (x_{i,upper}-x_{i})\}}{x_{i,upper} - x_{i,lower}}$.
-
-%\normalsize
-
-%\lz
-
-%Here $r_{i} \in [0,1]$ is a uniformly distributed number, $\eta_{m}$ is the distribution index of the mutation and is chosen by the user.\\
-% Remark: A $\eta_{m}$ of the order of $\eta_{m} \in [20,100]$ is common.
-%\normalsize
-%\end{itemize}
-
-
-
-%\lz
-
-%In our example, we have chosen a Gauss mutation with $\sigma = 2$, we do not apply a recombination.
-
-
-%\end{vbframe}
-
-%\begin{vbframe}{Mutation for bit strings}
-
-%For example, an individual $\xv \in \{0, 1\}^n$ encoded as a bit string can be mutated as follows:
-
-%\lz
-
-%\textbf{Mutation:}
-%\begin{itemize}
-%\item \textbf{Bitflip}: for each index $k \in \{1, ..., n\}$: bit $k$ is flipped with probability $p \in (0,1)$.
-%\item If $(a)$ is an arbitrary bit sequence to which a bitflip mutation is applied, $(b)$ is obtained.
-%\end{itemize}
-
-%\footnotesize
-%\begin{center}
-%\begin{tabular}{c @{\hspace{2\tabcolsep}} *{5}{c}}
- % &
-%  \itshape (a) &
- % \itshape " " &
-  %\itshape " " &
-  %\itshape " " &
-  %\itshape (b)
-
-%\\[1ex]
-%" " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
-%" " & 0 & " " & " " & "  " & 0  \\
-%" " & 0 & " " & $\Rightarrow$ & "  " & \textcolor{red}{1}  \\
-%" " & 1 & " " & " " & "  " & \textcolor{red}{0}  \\
-%" " & 1 & " " & " " & "  " & 1
-%\end{tabular}
-%\end{center}
-%\normalsize
-
-%\end{vbframe}
-
-
+\begin{framei}{Evolutionary Algorithms}
+\item \textbf{Advantages}
+\item Simple but enough to solve complex problems
+\item All parameter types possible in general
+\item Highly parallelizable
+\item Flexible through different variation operations
+\spacer
+\item \textbf{Disadvantages}
+\item Little mathematical rigor (for realistic, complex EAs)
+\item Hard to find balance between exploration and exploitation
+\item Quite some parameters, hard to determine them
+\item Customization necessary for complex problems
+\item Not suitable for expensive problems like HPO as large number of function evaluations necessary
+\end{framei}
 
 \endlecture
 \end{document}
-
