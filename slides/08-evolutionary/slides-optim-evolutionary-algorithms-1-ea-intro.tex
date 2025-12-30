@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -51,42 +52,37 @@ The boundaries between the terms become increasingly blurred and are often used 
 \begin{tabular}{c|c}
 \textbf{Symbols} & \textbf{EA Terminology} \\
 \hline\hline \\
-solution candidate $\xv \in \mathcal{S}$ & chromosome of an individual \\[0.2em]
+solution candidate $\xv \in \S$ & chromosome of an individual \\ [0.2em]
 $x_j$  & $j$-th gene of chromosome \\[0.2em]
 set of candidates $P$ with $\mu = |P|$ & population and size \\[0.2em]
 $\lambda$ & number of generated offsprings \\[0.2em]
-$f: \mathcal{S} \to \R$ & fitness function
+$f: \S \to \R$ & fitness function
 \end{tabular}
 \end{center}
 \textbf{Note}: Unintuitively, we are minimizing fitness because we always minimize $f$ by convention.
 \end{framev}
 
 
-\begin{framev}[fs=small]{Encoding}
+\begin{framev}[fs=footnotesize]{Encoding}
 Encoding of chromosomes is the first step of solving a problem with EAs.
 Technically: Mapping from \textbf{genotype} to \textbf{phenotype}.
 Encoding depends on the problem, and eventually decides performance of problem solving.
-\spacer
 \textbf{Encoding methods}:
 \begin{itemize}
 \item Binary encoding: Strings of 0s and 1s
 \item Real value encoding: Real values
 \end{itemize}
-\imageC[0.7]{figure_man/encoding_binary_numeric.png}% https://docs.google.com/presentation/d/12v81ZaLxJUgXVUBy3VdW0y6q7OKHS_6lFcQym3yeYsg/edit#slide=id.p
-\spacer
+\imageC[0.5]{figure_man/encoding_binary_numeric.png}% https://docs.google.com/presentation/d/12v81ZaLxJUgXVUBy3VdW0y6q7OKHS_6lFcQym3yeYsg/edit#slide=id.p
 \begin{itemize}
 \item Tree encoding: Tree objects
 \end{itemize}
 \splitVCC[0.5]{
-\imageC[0.95]{figure_man/encoding_tree_1.png}
+\imageC[0.7]{figure_man/encoding_tree_1.png}
 }{
-\imageC[0.95]{figure_man/encoding_tree_2.png}
+\imageC[0.7]{figure_man/encoding_tree_2.png}
 }
-{\footnotesize
-Floor planning problem. Given are $n$ circuits of different area requirements. Goal: arrange them into a floor layout so that all circuits are placed in a minimum layout. Each solution candidate can be represented by a tree.\\
-Source: Encoding Techniques in Genetic Algorithms, Debasis Samanta, 2018.\\
-% https://cse.iitkgp.ac.in/~dsamanta/courses/sca/resources/slides/GA-02%20Encoding%20Techniques.pdf
-}
+Floor planning problem. Given are $n$ circuits of different area requirements. Goal: arrange them into a floor layout so that all circuits are placed in a minimum layout. Each solution candidate can be represented by a tree.
+\sourceref{https://www.scribd.com/document/430241958/genetic-algorithm}
 \end{framev}
 
 

@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math.tex}
 \input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/optim-basics.tex}
 
 \title{Optimization in Machine Learning}
 
@@ -121,8 +122,8 @@ $\Rightarrow$ Only 8 out of 50 equally influential features
 
 \begin{framei}{Example 2: Feature selection}
 \item \textbf{Aim:} Find influential features
-\item \textbf{Encoding:} $\textbf{z} \in \{0, 1\}^p$, $z_j = 1$ means $\theta_j$ included in model
-\item \textbf{Fitness function} $f(\mathbf{z})$: BIC of the model belonging to $\mathbf{z}$
+\item \textbf{Encoding:} $\zv \in \{0, 1\}^p$, $z_j = 1$ means $\theta_j$ included in model
+\item \textbf{Fitness function} $f(\zv)$: BIC of the model belonging to $\zv$
 \item \textbf{Mutation:} Bit flip with $p = 0.3$
 \item \textbf{Recombination:} Uniform crossover with $p=0.5$
 \item \textbf{Survival selection:} $(\mu + \lambda)$ strategy with $\mu = 100$ and $\lambda =50$

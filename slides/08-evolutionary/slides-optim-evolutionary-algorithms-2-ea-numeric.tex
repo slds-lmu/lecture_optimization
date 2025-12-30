@@ -3,6 +3,7 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
@@ -27,7 +28,7 @@ Options for recombination of two individuals $\xv, \tilde{\xv} \in \R^d$:
 \item \textbf{Intermediate recombination}: Offspring is created from mean of two parents: $\frac{1}{2}(\xv + \tilde{\xv})$
 \item \textbf{Simulated Binary Crossover (SBX)}: generate \textbf{two offspring}
 $$
-\bar{\xv} \pm \frac{1}{2} \beta (\tilde{\xv} - \xv), \; \bar{\xv} = \frac{1}{2} (\xv + \tilde{\xv}), \; \text{$\beta \in [0,1]$ uniformly at random}
+\bar{\xv} \pm \frac{1}{2} \beta (\tilde{\xv} - \xv), \; \bar{\xv} = \frac{1}{2} (\xv + \tilde{\xv}), \; \text{$\beta \in \unitint$ uniformly at random}
 $$
 \end{itemize}
 \vfill
@@ -45,7 +46,7 @@ $$
 \textbf{Example} for $\xv \in \R^d$:
 \begin{itemize}
 \item \textbf{Uniform mutation:} Select random gene $x_j$ and replace it by uniformly distributed value (within feasible range).
-\item \textbf{Gauss mutation:} $\xv \pm \mathcal{N}(0, \sigma \mathbf{I})$
+\item \textbf{Gauss mutation:} $\xv \pm \normal(0, \sigma \mathbf{I})$
 \item \textbf{Polynomial mutation:} Use a different distribution instead of normal distribution
 \end{itemize}
 \vfill

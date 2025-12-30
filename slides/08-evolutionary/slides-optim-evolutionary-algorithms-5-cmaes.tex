@@ -47,7 +47,7 @@ $$
 \begin{itemize}
 \item $\xv^{[t+1](i)} \in \R^d$ $i$-th offspring; $\lambda \geq 2$ number of offspring
 \item $\mathbf{m}^{[t]} \in \R^d$ mean value and $\mathbf{C}^{[t]} \in \R^{d \times d}$ covariance matrix
-\item $\sigma^{[t]} \in \R_{+}$ ``overall'' standard deviation/step size
+\item $\sigma^{[t]} \in \R_+$ ``overall'' standard deviation/step size
 \end{itemize}
 \vfill
 \imageC[0.5]{figure_man/cmaes/cmaes_generations.png}
@@ -88,7 +88,7 @@ $\mathbf{C}^{[1]}$ reproduces successful points with higher probability than $\m
 \spacer
 {\small
 Update $\mathbf{C}^{[0]}$ using sum of outer products and parameter $c_{\mu}$:
-$\mathbf{C}^{[1]} = (1-c_{\mu}) \mathbf{C}^{[0]} + c_{\mu} \sum_{i=1}^{\mu} w_i \yv_{i:\lambda}^{[1]}(\yv_{i:\lambda}^{[1]})^{T}$ (rank-$\mu$ update).
+$\mathbf{C}^{[1]} = (1-c_{\mu}) \mathbf{C}^{[0]} + c_{\mu} \sum_{i=1}^{\mu} w_i \yv_{i:\lambda}^{[1]}(\yv_{i:\lambda}^{[1]})^T$ (rank-$\mu$ update).
 }
 \end{enumerate}
 \end{framev}
@@ -125,7 +125,7 @@ $$
 $$
 Final update of $\mathbf{C}$ is
 $$
-\mathbf{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum_j} w_j)\mathbf{C}^{[t]}+c_1 \underbrace{\mathbf{p}_{c}^{[t+1]}(\mathbf{p}_{c}^{[t+1]})^{T}}_{\text{rank-$1$}}+c_{\mu}\underbrace{\sum_{i=1}^{\mu}w_i \yv_{i:\lambda}^{[t+1]}(\yv_{i:\lambda}^{[t+1]})^{T}}_{\text{rank-$\mu$}}
+\mathbf{C}^{[t+1]}=(1-c_1-c_{\mu}{\scriptstyle\sum_j} w_j)\mathbf{C}^{[t]}+c_1 \underbrace{\mathbf{p}_{c}^{[t+1]}(\mathbf{p}_{c}^{[t+1]})^T}_{\text{rank-$1$}}+c_{\mu}\underbrace{\sum_{i=1}^{\mu}w_i \yv_{i:\lambda}^{[t+1]}(\yv_{i:\lambda}^{[t+1]})^T}_{\text{rank-$\mu$}}
 $$
 \begin{itemize}
 \item Correlation between generations used in rank-$1$ update

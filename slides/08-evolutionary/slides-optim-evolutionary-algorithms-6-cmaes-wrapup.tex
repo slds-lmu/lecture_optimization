@@ -31,11 +31,11 @@ figure_man/cmaes/cmaes_muds_1.png
 \State Set: $c_{\bm{C}} \approx 4/d$, $c_{\sigma} \approx 4/d$, $c_1 \approx 2/d^2$, $c_{\mu} \approx \mu_w/d^2$, $c_1+c_{\mu} \leq 1$, $d_{\sigma} \approx 1+\sqrt{\mu_w/d}$ and $w_{i=1,\dots, \mu}$ such that $\mu_w = \frac{1}{\sum_{i=1}^{\mu} w_i^2} \approx 0.3 \lambda$
 \While{not terminate}
 \State $\xv^{(i)} = \bm{m} + \sigma \normal(\bm{0}, \bm{C}) \quad \text{for } i=1,\dots, \lambda$ \quad \hfill \textit{Sampling}
-\State $\bm{y}_w = \sum_{i=1}^{\mu} w_i \bm{y}_{i:\lambda},\;\text{where }\bm{y}_{i:\lambda}=(\xv_{i:\lambda}-\bm{m})/\sigma$ \quad \hfill \textit{Selection/Recombination}
-\State $\bm{m} \leftarrow \bm{m} + \sigma \bm{y}_w$ \quad \hfill \textit{Update $\bm{m}$}
-\State $\bm{p}_{\bm{C}} \leftarrow (1-c_{\bm{C}})\bm{p}_{\bm{C}} + \sqrt{c_{\bm{C}}(2-c_{\bm{C}})\mu_w}\bm{y}_w$ \quad \hfill \textit{Cumulation of $\bm{C}$}
-\State $\bm{p}_{\sigma} \leftarrow (1-c_{\sigma})\bm{p}_{\sigma} + \sqrt{c_{\sigma}(2-c_{\sigma})\mu_w} \bm{C}^{-\frac{1}{2}} \bm{y}_w$ \quad \hfill \textit{Cumulation of $\sigma$}
-\State $\bm{C} \leftarrow (1-c_1-c_{\mu}\sum w_j) \bm{C} + c_1 \bm{p}_{\bm{C}} \bm{p}_{\bm{C}}^\top + c_{\mu} \sum_{i=1}^{\mu} w_i \bm{y}_{i:\lambda} \bm{y}_{i:\lambda}^\top$ \quad \hfill \textit{Update $\bm{C}$}
+\State $\yv_w = \sum_{i=1}^{\mu} w_i \yv_{i:\lambda},\;\text{where }\yv_{i:\lambda}=(\xv_{i:\lambda}-\bm{m})/\sigma$ \quad \hfill \textit{Selection/Recombination}
+\State $\bm{m} \leftarrow \bm{m} + \sigma \yv_w$ \quad \hfill \textit{Update $\bm{m}$}
+\State $\bm{p}_{\bm{C}} \leftarrow (1-c_{\bm{C}})\bm{p}_{\bm{C}} + \sqrt{c_{\bm{C}}(2-c_{\bm{C}})\mu_w}\yv_w$ \quad \hfill \textit{Cumulation of $\bm{C}$}
+\State $\bm{p}_{\sigma} \leftarrow (1-c_{\sigma})\bm{p}_{\sigma} + \sqrt{c_{\sigma}(2-c_{\sigma})\mu_w} \bm{C}^{-1/2} \yv_w$ \quad \hfill \textit{Cumulation of $\sigma$}
+\State $\bm{C} \leftarrow (1-c_1-c_{\mu}\sum w_j) \bm{C} + c_1 \bm{p}_{\bm{C}} \bm{p}_{\bm{C}}^\top + c_{\mu} \sum_{i=1}^{\mu} w_i \yv_{i:\lambda} \yv_{i:\lambda}^\top$ \quad \hfill \textit{Update $\bm{C}$}
 \State $\sigma \leftarrow \sigma \times \exp\biggl( \frac{c_\sigma}{d_\sigma}\Bigl(\frac{||\bm{p}_\sigma||}{\E||\normal(\bm{0}, \bm{\I})||} - 1 \Bigl)\biggl)$ \quad \hfill \textit{Update $\sigma$}
 \EndWhile
 \end{algorithmic}
@@ -62,7 +62,7 @@ Related to $\sigma$-update:
 \item $\bm{1-c_{\sigma}}$: decay rate for evolution path \textcolor{blue}{$\quad 1- \frac{\mu_w+2}{d+\mu_w+5}$}
 \item $\bm{d_{\sigma}}$: damping for $\sigma$-change \textcolor{blue}{$\quad 1+2 \max\Bigl(0, \sqrt{\frac{\mu_w-1}{d+1}}-1\Bigl) + c_\sigma$}
 \end{itemizeS}
-with $\mu_w=\bigl(\frac{||\bm{w}||_1}{||\bm{w}||_2}\bigr)=\frac{(\sum_{i=1}^\mu |w_i|)^2}{\sum_{i=1}^\mu w_i^2} = \frac{1}{\sum_{i=1}^\mu w_i^2}$ and \textcolor{blue}{typical default parameter values}.
+with $\mu_w=\bigl(\frac{||\wv||_1}{||\wv||_2}\bigr)=\frac{(\sum_{i=1}^\mu |w_i|)^2}{\sum_{i=1}^\mu w_i^2} = \frac{1}{\sum_{i=1}^\mu w_i^2}$ and \textcolor{blue}{typical default parameter values}.
 \spacer
 \begin{itemizeS}
 \item $\mu_w$ can be extended to $\lambda$ instead of $\mu$ weights, allowing negative weights for the remaining $\lambda-\mu$ points (\enquote{active covariance adaptation}).
