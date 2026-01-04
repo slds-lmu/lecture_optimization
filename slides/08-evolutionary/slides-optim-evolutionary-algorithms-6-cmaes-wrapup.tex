@@ -21,8 +21,9 @@ figure_man/cmaes/cmaes_muds_1.png
 }
 
 
-\begin{framev}[fs=footnotesize]{CMA-ES: Wrap Up}
+\begin{framev}{CMA-ES: Wrap Up}
 \begin{algorithm}[H]
+\footnotesize
 \begin{center}
 \caption{CMA-ES}
 \begin{algorithmic}[1]
@@ -44,7 +45,7 @@ figure_man/cmaes/cmaes_muds_1.png
 \end{framev}
 
 
-\begin{framev}[fs=tiny]{CMA-ES: Wrap Up - Default Values}
+\begin{framev}[fs=footnotesize]{CMA-ES: Wrap Up - Default Values}
 Related to selection and recombination:
 \begin{itemizeS}
 \item $\bm{\lambda}$: offspring number, population size \textcolor{blue}{$\quad 4 + \lfloor 3 \ln d\rfloor$}
@@ -122,17 +123,17 @@ functions and however can get stuck in local optima on multi-modal functions, su
 
 
 \begin{framei}[fs=footnotesize]{CMA-ES: Wrap Up - Benchmark EAs}
-\item \textit{Example:} Black-box optimization of 25 benchmark functions under thoroughly defined experimental and recording conditions for the 2005 IEEE Congress on Evolutionary Computation: Session on Real-Parameter Optimization.\\
-17 papers were submitted, 11 were accepted, thereunder hybrid methods.
-\item \textit{Two of the Algorithms:}
-\item L-CMA-ES (Auger and Hansen. 2005a): A CMA evolution strategy with small population size and small initial step-size to emphasize on local search characteristics. Independent restarts are conducted until the target function value is reached or the maximum number of function evaluations is exceeded.
-\item G-CMA-ES (Auger and Hansen. 2005b): A CMA evolution strategy restarted with increasing population size (IPOP). Independent restarts are conducted with increasing population size until the target function value is reached or the maximum number of function evaluations is exceeded. With the initial small population size the algorithm converges fast, with the succeeding larger population sizes the global search performance is emphasized in subsequent restarts.
+\item \textbf{Example:} Black-box optimization of 25 benchmark functions under thoroughly defined experimental and recording conditions for the 2005 IEEE Congress on Evolutionary Computation: Session on Real-Parameter Optimization. \furtherreading{SUGANTHANETAL2005CEC}\\
+\spacer
+17 papers were submitted, 11 were accepted, thereunder hybrid methods.\\
+\textbf{Two of the Algorithms:}
+\item L-CMA-ES: A CMA evolution strategy with small population size and small initial step-size to emphasize on local search characteristics. Independent restarts are conducted until the target function value is reached or the maximum number of function evaluations is exceeded. \furtherreading{AUGERHANSEN2005LOCALSEARCH}
+\item G-CMA-ES: A CMA evolution strategy restarted with increasing population size (IPOP). Independent restarts are conducted with increasing population size until the target function value is reached or the maximum number of function evaluations is exceeded. With the initial small population size the algorithm converges fast, with the succeeding larger population sizes the global search performance is emphasized in subsequent restarts. \furtherreading{AUGERHANSEN2005IPOP}
 \end{framei}
 
 
 \begin{framev}[fs=footnotesize]{CMA-ES: Wrap Up - Benchmark EAs}
-\imageC[1]{figure_man/cmaes/cmaes_benchmark.png}
-\spacer
+\imageC[0.9]{figure_man/cmaes/cmaes_benchmark.png}
 \begin{itemizeS}
 \item Comparison of performance results from 11 algorithms for search space dimension 10 and 30 on different function subsets
 \item Expected number of function evaluations (FEs) to reach the target function value is normalized by the value of the best algorithm on the respective function $\text{FEs}_{best}$

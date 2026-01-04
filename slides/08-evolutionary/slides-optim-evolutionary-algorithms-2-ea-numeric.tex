@@ -50,8 +50,7 @@ $$
 \item \textbf{Polynomial mutation:} Use a different distribution instead of normal distribution
 \end{itemize}
 \vfill
-\imageC[0.45]{figure_man/polynomial_mutation.png}
-\scriptsize{\textbf{Source:} K. Deb, D. Deb. Analysing mutation schemes for real-parameter genetic algorithms, 2014}
+\imageC[0.45][https://www.researchgate.net/publication/262320509_Analysing_mutation_schemes_for_real-parameter_genetic_algorithms]{figure_man/polynomial_mutation.png}
 \end{framev}
 
 
@@ -118,10 +117,10 @@ Implementation: \url{https://juliambr.shinyapps.io/balls/}
 
 
 \begin{framev}{Example 2: Grid of balls}
-In our example, the chromosome of an individual is the center of a circle, so the chromosomes are encoded as 2-dimensional real vectors $\xv = (x_1, x_2) \in \R^2$.
-\lz
-The population $P \subset \R^2$ is given as a set of circle centers.
-\lz
+In our example, the chromosome of an individual is the center of a circle, so the chromosomes are encoded as 2-dimensional real vectors $\xv = (x_1, x_2) \in \R^2$.\\
+\spacer
+The population $P \subset \R^2$ is given as a set of circle centers.\\
+\spacer
 The fitness function evaluates an individual $\xv \in P$ based on the distance to the nearest neighboring gray circle $k$.
 $$
 f(\xv) = \min_{k \in \text{Grid}} \text{distance} (k, \xv),

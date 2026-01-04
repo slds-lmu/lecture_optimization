@@ -21,75 +21,82 @@ figure_man/cmaes/cmaes_generations.png
 }
 
 \begin{framev}[align=top]{Estimation of Distribution Algorithm}
-\splitVTT[0.62]
-{
-\begin{itemize}
-\item Instead of population, maintain distribution to sample offspring from
-\end{itemize}
+\splitVCC[0.62]{
+Instead of population, maintain distribution to sample offspring from
 \spacer
 \begin{enumerate}
 \item Draw $\lambda$ offspring $\xv^{(i)}$ from $p(\cdot|\thetav^{[t]})$
 \item Evaluate fitness $f(\xv^{(i)})$
 \item Update $\thetav^{[t+1]}$ with $\mu$ best offspring
 \end{enumerate}
-}
-{
+}{
 \imageC[1]{figure_man/cmaes/cmaes_eda.png}
 }
 \end{framev}
 
 
-\begin{framev}[fs=small]{Covariance Matrix Adaptation}
-Sample distribution is multivariate Gaussian
+\begin{framei}[fs=footnotesize]{Covariance Matrix Adaptation}
+\item Sample distribution is multivariate Gaussian
 $$
 \xv^{[t+1](i)} \sim \mathbf{m}^{[t]} + \sigma^{[t]} \normal(\bm{0}, \mathbf{C}^{[t]}) \quad \text{for } i = 1, \dots, \lambda
 $$
-\begin{itemize}
 \item $\xv^{[t+1](i)} \in \R^d$ $i$-th offspring; $\lambda \geq 2$ number of offspring
 \item $\mathbf{m}^{[t]} \in \R^d$ mean value and $\mathbf{C}^{[t]} \in \R^{d \times d}$ covariance matrix
 \item $\sigma^{[t]} \in \R_+$ ``overall'' standard deviation/step size
-\end{itemize}
-\vfill
-\imageC[0.5]{figure_man/cmaes/cmaes_generations.png}
-\textbf{Question:} How to adapt $\mathbf{m}^{[t+1]}$, $\mathbf{C}^{[t+1]}$, $\sigma^{[t+1]}$ for next generation $t+1$?
-\end{framev}
+\imageC[0.65]{figure_man/cmaes/cmaes_generations.png}
+\item \textbf{Question:} How to adapt $\mathbf{m}^{[t+1]}$, $\mathbf{C}^{[t+1]}$, $\sigma^{[t+1]}$ for next generation $t+1$?
+\end{framei}
 
 
 \begin{framev}[fs=small]{CMA-ES: Basic Method - Iteration 1}
-\begin{enumerate}
-\setcounter{enumi}{-1}
+\begin{enumerate} \setcounter{enumi}{-1}
 \item Initialize $\mathbf{m}^{[0]},\sigma^{[0]}$ problem-dependent and $\mathbf{C}^{[0]}=\mathbf{I}_{d}$
-\imageC[0.95]{figure_man/cmaes/cmaes_update_1.png}
+\imageC[0.85]{figure_man/cmaes/cmaes_update_1.png}
 \end{enumerate}
 \end{framev}
 
 
 \begin{framev}[fs=small]{CMA-ES: Basic Method - Iteration 1}
-\begin{enumerate}
-\setcounter{enumi}{0}
+\begin{enumerate} \setcounter{enumi}{0}
 \item \textbf{Sample} $\lambda$ offspring from distribution
 $$
 \xv^{[1](i)} = \mathbf{m}^{[0]} + \sigma^{[0]} \normal(\bm{0}, \mathbf{C}^{[0]})
 $$
-\imageC[0.95]{figure_man/cmaes/cmaes_update_2.png}
+\imageC[0.85]{figure_man/cmaes/cmaes_update_2.png}
+\end{enumerate}
+\end{framev}
+
+
+\begin{framev}[fs=small]{CMA-ES: Basic Method - Iteration 1}
+\begin{enumerate} \setcounter{enumi}{1}
 \item \textbf{Selection and recombination} of $\mu<\lambda$ best-performing offspring using fixed weights $w_1\geq\ldots\geq w_{\mu}>0,\sum_{i=1}^{\mu} w_i = 1$.
 $\xv_{i:\lambda}$ is $i$-th ranked solution, ranked by $f(\xv_{i:\lambda})$.
-\imageC[0.95]{figure_man/cmaes/cmaes_update_21.png}
-\spacer
+\imageC[0.85]{figure_man/cmaes/cmaes_update_21.png}
 Calculation of auxiliary variables ($\mu=3$ points) $\yv_w^{[1]} := \sum_{i=1}^{\mu} w_i (\xv_{i:\lambda}^{[1]}-\mathbf{m}^{[0]})/\sigma^{[0]} := \sum_{i=1}^{\mu} w_i \yv_{i:\lambda}^{[1]}$
+\end{enumerate}
+\end{framev}
+
+
+\begin{framev}[fs=small]{CMA-ES: Basic Method - Iteration 1}
+\begin{enumerate} \setcounter{enumi}{2}
 \item \textbf{Update mean}
-\imageC[0.95]{figure_man/cmaes/cmaes_update_3.png}
+\imageC[0.85]{figure_man/cmaes/cmaes_update_3.png}
 Movement towards the new distribution with mean
 $\mathbf{m}^{[1]} = \mathbf{m}^{[0]} + \sigma^{[0]} \yv_{w}^{[1]}$.
-\item \textbf{Update covariance matrix}
+\end{enumerate}
+\end{framev}
+
+
+\begin{framev}[fs=small]{CMA-ES: Basic Method - Iteration 1}
+\begin{enumerate} \setcounter{enumi}{3}
+\item \textbf{Update covariance matrix}\\
 Roughly: elongate density ellipsoid in direction of successful steps.
 $\mathbf{C}^{[1]}$ reproduces successful points with higher probability than $\mathbf{C}^{[0]}$.
-\imageC[0.95]{figure_man/cmaes/cmaes_update_4.png}
-\spacer
-{\small
+\imageC[0.85]{figure_man/cmaes/cmaes_update_4.png}
+\begin{small}
 Update $\mathbf{C}^{[0]}$ using sum of outer products and parameter $c_{\mu}$:
 $\mathbf{C}^{[1]} = (1-c_{\mu}) \mathbf{C}^{[0]} + c_{\mu} \sum_{i=1}^{\mu} w_i \yv_{i:\lambda}^{[1]}(\yv_{i:\lambda}^{[1]})^T$ (rank-$\mu$ update).
-}
+\end{small}
 \end{enumerate}
 \end{framev}
 
@@ -97,23 +104,34 @@ $\mathbf{C}^{[1]} = (1-c_{\mu}) \mathbf{C}^{[0]} + c_{\mu} \sum_{i=1}^{\mu} w_i 
 \begin{framev}[fs=small]{CMA-ES: Basic Method - Iteration 2}
 \begin{enumerate}
 \item \textbf{Sample} from distribution for new generation
-\imageC[0.95]{figure_man/cmaes/cmaes_update_5.png}
+\imageC[0.85]{figure_man/cmaes/cmaes_update_5.png}
 \end{enumerate}
 \end{framev}
 
 
 \begin{framev}[fs=small]{CMA-ES: Basic Method - Iteration 2}
-\begin{enumerate}
-\setcounter{enumi}{1}
+\begin{enumerate} \setcounter{enumi}{1}
 \item \textbf{Selection and recombination} of $\mu<\lambda$ best-performing offspring
 \item \textbf{Update mean}
-\imageC[0.95]{figure_man/cmaes/cmaes_update_6.png}
+\imageC[0.85]{figure_man/cmaes/cmaes_update_6.png}
+\end{enumerate}
+\end{framev}
+
+
+\begin{framev}[fs=small]{CMA-ES: Basic Method - Iteration 2}
+\begin{enumerate}\setcounter{enumi}{1}
 \item \textbf{Update covariance matrix}
-\imageC[0.95]{figure_man/cmaes/cmaes_update_7.png}
-\item \textbf{Update step-size} exploiting correlation in history of steps.
+\imageC[0.85]{figure_man/cmaes/cmaes_update_7.png}
+\end{enumerate}
+\end{framev}
+
+
+\begin{framev}[fs=small]{CMA-ES: Basic Method - Iteration 2}
+\begin{enumerate}\setcounter{enumi}{1}
+\item \textbf{Update step-size} exploiting correlation in history of steps.\\
 steps point in similar direction $\implies$ increase step-size
 steps cancel out $\implies$ decrease step-size
-\imageC[0.95]{figure_man/cmaes/cmaes_update_8.png}
+\imageC[0.85]{figure_man/cmaes/cmaes_update_8.png}
 \end{enumerate}
 \end{framev}
 
@@ -134,8 +152,7 @@ $$
 \end{framev}
 
 
-\begin{framev}[fs=small]{Updating $\sigma$: Methods Step-Size Control}
-\begin{itemizeL}
+\begin{framei}[sep=L, fs=small]{Updating $\sigma$: Methods Step-Size Control}
 \item \textbf{$1/5$-th success rule}: increases the step-size if more than 20 \% of the new solutions are successful, decrease otherwise
 \item \textbf{$\sigma$-self-adaptation}: mutation is applied to the step-size and the better - according to the objective function value - is selected
 \item \textbf{Path length control via cumulative step-size adaptation (CSA)}\\ Intuition:
@@ -143,10 +160,9 @@ $$
 \item Short cumulative step-size $\triangleq$ steps cancel $\to$ decrease $\sigma^{[t+1]}$
 \item Long cumulative step-size $\triangleq$ corr. steps $\to$ increase $\sigma^{[t+1]}$
 \end{itemizeS}
-\end{itemizeL}
 \vfill
-\imageC[0.7]{figure_man/cmaes/cumulative-step-size.png}
-\end{framev}
+\imageC[0.8]{figure_man/cmaes/cumulative-step-size.png}
+\end{framei}
 
 \endlecture
 \end{document}
