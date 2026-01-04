@@ -42,7 +42,7 @@ The boundaries between the terms become increasingly blurred and are often used 
 \end{framev}
 
 
-\begin{framev}[fs=footnotesize]{Notation and Terminology}
+\begin{framev}[fs=small]{Notation and Terminology}
 \begin{itemize}
 \item A chromosome is a set of parameters which encodes a proposed solution to the problem that the genetic algorithm is trying to solve. The chromosome is often represented as a binary string, although a wide variety of other data structures are also used.\\
 \item The set of all solutions is known as the population.
@@ -63,7 +63,7 @@ $f: \S \to \R$ & fitness function
 \end{framev}
 
 
-\begin{framev}[fs=footnotesize]{Encoding}
+\begin{framev}{Encoding}
 Encoding of chromosomes is the first step of solving a problem with EAs.
 Technically: Mapping from \textbf{genotype} to \textbf{phenotype}.
 Encoding depends on the problem, and eventually decides performance of problem solving.
@@ -73,16 +73,18 @@ Encoding depends on the problem, and eventually decides performance of problem s
 \item Real value encoding: Real values
 \end{itemize}
 \imageC[0.5]{figure_man/encoding_binary_numeric.png}% https://docs.google.com/presentation/d/12v81ZaLxJUgXVUBy3VdW0y6q7OKHS_6lFcQym3yeYsg/edit#slide=id.p
+\end{framev}
+
+
+\begin{framev}{Encoding}
 \begin{itemize}
 \item Tree encoding: Tree objects
 \end{itemize}
-\splitVCC[0.5]{
-\imageC[0.7]{figure_man/encoding_tree_1.png}
-}{
-\imageC[0.7]{figure_man/encoding_tree_2.png}
-}
+\imageC[0.5]{figure_man/encoding_tree_1.png}
+\imageC[0.5][https://www.scribd.com/document/430241958/genetic-algorithm]{figure_man/encoding_tree_2.png}
+\begin{small}
 Floor planning problem. Given are $n$ circuits of different area requirements. Goal: arrange them into a floor layout so that all circuits are placed in a minimum layout. Each solution candidate can be represented by a tree.
-\sourceref{https://www.scribd.com/document/430241958/genetic-algorithm}
+\end{small}
 \end{framev}
 
 
@@ -102,17 +104,17 @@ Choose a number of $\lambda$ parents pairs creating $\lambda$ offsprings.
 \item \textbf{Fitness-proportional / Roulette wheel selection:} Draw individuals with probability proportional to their fitness.
 \item \textbf{Tournament selection:} Randomly select $k$ individuals for a "tournament group" and pick the best one (according to fitness value).
 \end{itemize}
-\spacer
+\vfill
 \splitVCC[0.35]{
 \imageC[1]{figure_man/ea_parent_selection.pdf}
 }{
 \imageC[1]{figure_man/tournament_selection.png}
 }
-{\footnotesize
+\begin{footnotesize}\begin{center}
 \textbf{Left:} Fitness-proportional selection.
 Fitness values of $\mu = 10$ individuals are converted into probabilities.
 \textbf{Right:} Tournament selection.
-}
+\end{center}\end{footnotesize}
 \end{framev}
 
 
