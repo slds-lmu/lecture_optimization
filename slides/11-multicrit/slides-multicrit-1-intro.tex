@@ -8,6 +8,7 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-mbo}
+\input{../../latex-math/optim-basics}
 \input{macros}
 
 % -- Macros from original code --------------------------------------
@@ -169,7 +170,6 @@ we cannot say any is strictly better.
 
 \end{vbframe}
 
-
 % -------------------------------------------------------------------
 \begin{vbframe}{Definition: multi-criteria optimization}
 
@@ -224,7 +224,6 @@ Given
 \end{itemize}
 
 \end{vbframe}
-
 
 % -------------------------------------------------------------------
 \begin{vbframe}{Example: One objective function}
@@ -302,8 +301,8 @@ Two overall strategies:
 
 $$ \min_{\conf} \sum_{i=1}^m w_i \cost_i(\conf) $$
 
-\textbf{Prior knowledge}: 
-``One rating point is worth 50~Euro to this customer.'' 
+\textbf{Prior knowledge}:
+``One rating point is worth 50~Euro to this customer.''
 
 \[
 \min_{\text{Hotel}} \text{(Price)} \;-\; 50 \times \text{(Rating)}.
@@ -313,12 +312,11 @@ $$ \min_{\conf} \sum_{i=1}^m w_i \cost_i(\conf) $$
 \includegraphics[width=0.6\textwidth]{figure_man/expedia-9-1.pdf}
 \end{center}
 
-
 \framebreak
 
 \textbf{Example: Lexicographic method}
 
-\textbf{Prior knowledge}: The rating is more important than the price. 
+\textbf{Prior knowledge}: The rating is more important than the price.
 Hence we optimize the rating first, then the price among those best ratings:
 
 \begin{center}
@@ -334,7 +332,7 @@ Lexicographic approach in general:
 \begin{aligned}
 \yy_1^* &= \min_{\conf \in \pcs} \;\cost_1(\conf),\\
 \yy_2^* &= \min_{\substack{\conf \in \pcs:\\ \cost_1(\conf)=\yy_1^*}} \;\cost_2(\conf),\\
-\yy_3^* &= \min_{\substack{\conf \in \pcs:\\ \cost_1(\conf)=\yy_1^*,\,\cost_2(\conf)=\yy_2^*}} 
+\yy_3^* &= \min_{\substack{\conf \in \pcs:\\ \cost_1(\conf)=\yy_1^*,\,\cost_2(\conf)=\yy_2^*}}
           \;\cost_3(\conf),\\
 &\quad\vdots
 \end{aligned}
@@ -383,6 +381,82 @@ User then picks from that subset on the right, based on hidden preferences
 \end{center}
 
 \end{vbframe}
+
+
+\begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions I}
+  \item \textbf{Weighted sum scalarization} solves:
+  \[\xvs := \argmin_{\xv \in \S } \sumid w_i \f_i(\xv).\]
+  We can show that this approach can find Pareto-optimal solutions.
+  \item Without loss of generality we can assume $\sumid w_i =1$.
+  \item \textbf{Theorem:} If $w_i>0$ for all $i$, then $\xvs$ is Pareto-optimal.
+  \\[0.5cm]
+  \textbf{Proof.} Suppose $\xvs$ is not Pareto-optimal, i.e., there exists $\tilde{\xv}$ such that $\f_i(\tilde{\xv}) \leq \f_i(\xvs)$ for all $i$ and $\f_j(\tilde{\xv}) < \f_j(\xv^*)$ for at least one $j$. Then,
+  \[\sumid w_i \f_i(\tilde{\xv}) < \sumid w_i \f_i(\xvs),\]
+  which contradicts the definition of $\xvs$ as the minimizer.
+  \end{framei}
+
+
+\begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions II}
+  \item Not all Pareto-optimal solutions can be found by solving
+    \[\xvs := \argmin_{\xv \in \S } \sumid w_i \f_i(\xv).\]
+  \item \textbf{Example:} We find three out of the five Pareto-optimal solutions:
+  \imageC[0.7]{figure_man/expedia_weighted_sum.pdf}
+\end{framei}
+
+\begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions III}
+  \item \textbf{Example:} $\cost_1(x) = (x-1)^2$ and $\cost_2(x) = 3(x-2)^2$ with
+  \[
+  \min_{x} \cost(x)
+    = \bigl(\cost_1(x),\, \cost_2(x)\bigr),
+  \quad 0 \le x \le 3.
+  \]
+  \item Use $0 \le x \le 3$ with $300$ steps ($100$ non-dominated points).
+  \item Use $w_1 \in (0,1)$ with $100$ steps and $w_2=1-w_1$.
+  \imageC[0.7]{figure_man/expedia-weighted-pareto_100.pdf}
+  \item Not all Pareto-optimal solutions are found.
+  \end{framei}
+
+\begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions IV}
+  \item \textbf{Example:} $\cost_1(x) = (x-1)^2$ and $\cost_2(x) = 3(x-2)^2$ with
+  \[
+  \min_{x} \cost(x)
+    = \bigl(\cost_1(x),\, \cost_2(x)\bigr),
+  \quad 0 \le x \le 3.
+  \]
+  \item Use $0 \le x \le 3$ with $300$ steps ($100$ non-dominated points).
+  \item Using $w_1$ with $300$ steps yields all Pareto-optimal solutions:
+  \imageC[0.7]{figure_man/expedia-weighted-pareto_300.pdf}
+  \item Under which conditions can we find all Pareto-optimal solutions?
+  \end{framei}
+
+\begin{framev}{Finding Pareto-optimal solutions V}
+  \textbf{Theorem (Geoffrion, 1968):} Let $\S$ be \underline{convex} and assume $\cost_1,\dots,\cost_d$ are \underline{convex}. Then $\xvs \in \S$ is \underline{properly} Pareto-optimal if and only if
+  $\xvs$ is an optimal solution of
+    \[\min_{\xv \in \S } \sumid w_i \cost_i(\xv)\]
+  with strictly positive weights $w_i$ all $i$.
+\begin{itemize}
+  \item For convex functions and convex search spaces, we can find all \underline{properly} Pareto-optimal solutions using weighted sum scalarization.
+  \item \textbf{Proper Pareto-optimal solution}: Exclude solutions where an arbitrary small improvement in one objective leads to an arbitrary large deterioration in another objective.
+\end{itemize}
+  \end{framev}
+
+\begin{framev}{Finding Pareto-optimal solutions VI}
+  \textbf{Definition (Geoffrion, 1968):} A Pareto-optimal solution $\xvs \in \S$ is called \textbf{properly} Pareto-optimal, if there exists a constant $M>0$ such that for all $i$ and ${\xv} \in \S$ with $\cost_i(\xv) < \cost_i(\xvs)$ there exists an index $j$, such that $\cost_j(\xvs) < \cost_j(\xv)$ and
+  \[ \frac{\cost_i(\xvs)-\cost_i(\xv)}{\cost_j(\xv)-\cost_j(\xvs)} \leq M.\]
+  \textbf{Example:} $\cost_1(x) =(x-1)^2$ and $\cost_2(x) = 3(x-2)^2$ for $0 \le x \le 3$.
+  \begin{itemize}
+    \item Pareto-optimal solutions are $x \in [1,2]$ (as exercise).
+    \item $\xs=1$ is not properly Pareto-optimal.
+    \\
+    \textbf{Proof.} For $\xs=1$ we have $\cost_1(\xs)=0$ and $\cost_2(\xs)=3$. Let $x=1+\epsilon$ for $\epsilon>0$, then $\cost_2(x)<\cost_2(\xs)$ and $\cost_1(x)>\cost_1(\xs)$. Then,
+    \[\frac{\cost_2(\xs)-\cost_2(x)}{\cost_1(x)-\cost_1(\xs)} = \frac{3- 3(\epsilon-1)^2}{\epsilon^2} =\frac{6\epsilon-3\epsilon^2}{\epsilon^2}\to \infty \text{ for } \epsilon \to 0.\]
+  \end{itemize}
+  \end{framev}
+
+
+
+
+
 
 % -------------------------------------------------------------------
 \begin{vbframe}{Evaluation of solutions}
