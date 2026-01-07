@@ -1,3 +1,4 @@
+%TODO: Tikz picture, latex-math, manual check
 \documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
 \input{../../style/preamble}
@@ -9,20 +10,19 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Bayesian Optimization
-  }{% Lecture title  
-  Black Box Optimization
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/01_BlackBox.png
-  }{
-    \item Definition and properties
-    \item Examples
-    \item Naive approaches
+\titlemeta{
+Bayesian Optimization
+}{
+Black Box Optimization
+}{
+figure_man/01_BlackBox.png
+}{
+\item Definition and properties
+\item Examples
+\item Naive approaches
 }
 
-\begin{vbframe}{Standard vs. Black-Box Optimization}
-
+\begin{framev}{Standard vs. Black-Box Optimization}
 \textbf{Optimization: } Find
 $$
 \min_{\xv \in \mathcal{S}} \fx
@@ -32,26 +32,20 @@ $$
 f: \; \mathcal{S} \to \R,
 $$
 where $\mathcal{S}$ is usually box constrained.
-
-\lz 
-
-\begin{columns}
-\begin{column}{0.4\textwidth}
-\begin{center}
-\includegraphics[height = 4cm]{figure_man/Multimodal-example1.png}
-\end{center}
-\end{column}
-\begin{column}{0.59\textwidth}
-If we are lucky ... 
+\spacer
+\splitVTT[0.4]
+{\imageC[0.95]{figure_man/Multimodal-example1.png}}
+{
+If we are lucky ...
 \begin{itemize}
 \item ... we have an analytic description of $f: \; \mathcal{S} \to \R$
-\item ... we can calculate gradients and use gradient-based methods (e.g. gradient descent) for optimization 
+\item ... we can calculate gradients and use gradient-based methods (e.g. gradient descent) for optimization
 \end{itemize}
-\end{column}
-\end{columns}
+}
+\end{framev}
 
-\framebreak 
 
+\begin{framev}{Standard vs. Black-Box Optimization}
 \textbf{Optimization: } Find
 $$
 \min_{\xv \in \mathcal{S}} \fx
@@ -61,26 +55,20 @@ $$
 f: \; \mathcal{S} \to \R,
 $$
 where $\mathcal{S}$ is usually box constrained.
-
-\lz 
-
-\begin{columns}
-\begin{column}{0.4\textwidth}
-\begin{center}
-\includegraphics[height = 4cm]{figure_man/cross-in-tray.jpg}
-\end{center}
-\end{column}
-\begin{column}{0.59\textwidth}
+\spacer
+\splitVTT[0.4]
+{\imageC[0.95]{figure_man/cross-in-tray.jpg}}
+{
 Optimization gets harder ...
 \begin{itemize}
 \item ... if we cannot calculate gradients (because $f$ is not differentiable or $f$ is not known to us)
 \item ... but as long as evaluations of $f$ are cheap, we can use standard derivative-free optimization methods (e.g. Nelder-Mead, simulated annealing, EAs)
 \end{itemize}
-\end{column}
-\end{columns}
+}
+\end{framev}
 
-\framebreak 
 
+\begin{framev}{Standard vs. Black-Box Optimization}
 \textbf{Optimization: } Find
 $$
 \min_{\xv \in \mathcal{S}} \fx
@@ -90,26 +78,19 @@ $$
 f: \; \mathcal{S} \to \R,
 $$
 where $\mathcal{S}$ is usually box constrained.
-
-\lz 
-
-\begin{columns}
-\begin{column}{0.4\textwidth}
-
+\spacer
+\splitVTT[0.4]
+{
 \vspace*{-0.8cm}
-
-\input{figure_man/gear.tex}
-%http://tex.stackexchange.com/questions/6135/how-to-make-beamer-overlays-with-tikz-node
-
+\input{figure_man/gear.tex} %http://tex.stackexchange.com/questions/6135/how-to-make-beamer-overlays-with-tikz-node
 \tikzset{
-  %Style of the black box
-  bbox/.style={draw, fill=black, minimum size=3cm,
-  label={[white, yshift=-1.25em]above:$in$},
-  label={[white, yshift=1.25em]below:$out$},
-  label={[rotate = 90, xshift=1em, yshift=0.5em]left:Black-Box}
-  },
-  multiple/.style={double copy shadow={shadow xshift=1.5ex,shadow
-  yshift=-0.5ex,draw=black!30,fill=white}}
+bbox/.style={draw, fill=black, minimum size=3cm,
+label={[white, yshift=-1.25em]above:$in$},
+label={[white, yshift=1.25em]below:$out$},
+label={[rotate = 90, xshift=1em, yshift=0.5em]left:Black-Box}
+},
+multiple/.style={double copy shadow={shadow xshift=1.5ex,shadow
+yshift=-0.5ex,draw=black!30,fill=white}}
 }
 \begin{center}
 \scalebox{0.9}{
@@ -117,135 +98,110 @@ where $\mathcal{S}$ is usually box constrained.
 \node[bbox] (a) {};
 \draw[thick, shift=({-0.4cm,0.2cm}), draw = white](a.center) \gear{18}{0.5cm}{0.6cm}{10}{2}; \draw[thick, shift=({0.4cm,-0.3cm}), draw = white](a.center) \gear{14}{0.3cm}{0.4cm}{10}{2};
 {
-  \draw[<-] (a.120) --++(90:1.5em) node [above] {$x_1$};
-  \draw[<-] (a.100) --++(90:1.5em) node [above] {$x_2$};
-  \draw[<-] (a.80) --++(90:1.5em) node [above] {$\ldots$};
-  \draw[<-] (a.60) --++(90:1.5em) node [above] {$x_d$};
+\draw[<-] (a.120) --++(90:1.5em) node [above] {$x_1$};
+\draw[<-] (a.100) --++(90:1.5em) node [above] {$x_2$};
+\draw[<-] (a.80) --++(90:1.5em) node [above] {$\ldots$};
+\draw[<-] (a.60) --++(90:1.5em) node [above] {$x_d$};
 }
 {
-  \draw[->] (a.270) --++(90:-1.5em) node [below] {$f(\xv)$};
+\draw[->] (a.270) --++(90:-1.5em) node [below] {$f(\xv)$};
 }
 \end{tikzpicture}
 }
 \end{center}
-\end{column}
-\begin{column}{0.59\textwidth}
+}
+{
 Optimization gets \textbf{really hard} if ...
 \begin{itemize}
-\item ... there is no analytic description of $f: \; \mathcal{S} \to \R$ (\textbf{black box}) 
+\item ... there is no analytic description of $f: \; \mathcal{S} \to \R$ (\textbf{black box})
 \item ... evaluations of $f$ for given values of $\xv$ are \textbf{time consuming}
 \end{itemize}
+}
+\end{framev}
 
-\end{column}
-\end{columns}
 
-\end{vbframe}
-
-\begin{vbframe}{Examples for Bayesian Optimization} 
+\begin{framev}{Examples for Bayesian Optimization}
 \begin{enumerate}
 \item Robot Gait Optimization: The robot's gait is controlled by a \textbf{parameterized controller}
-
-\medskip
-
-\begin{center}
-\includegraphics[width = 2.5 cm]{figure_man/robot_gait.png}\\
-\end{center}
-\begin{footnotesize}
-\begin{itemize}
+\spacer
+\imageC[0.25]{figure_man/robot_gait.png}
+\begin{itemize}\footnotesize
 \item \textbf{Goal: } Find parameters s.t. average velocity (directional speed) of the robot is maximized
 \item Parameters of the gait control e.g. joints of ankles and knees
 \item \emph{Calandra et al. (2014). An Experimental Evaluation of Bayesian Optimization on Bipedal Locomotion}
 \end{itemize}
-\end{footnotesize}
+\end{enumerate}
+\end{framev}
 
-\framebreak 
 
+\begin{framev}{Examples for Bayesian Optimization}
+\begin{enumerate}
+\setcounter{enumi}{1}
 \item Optimization of a cookie recipe
-\medskip
-
-\begin{center}
-\includegraphics[width = 5 cm]{figure_man/cookie.jpg}\\
-\tiny{\url{https://www.bettycrocker.com}} \\
-\includegraphics[width = 8 cm]{figure_man/cookie2.png}
-\end{center}
+\spacer
+\imageC[0.5]{figure_man/cookie.jpg}
+\tiny{\sourceref{https://www.bettycrocker.com}}
+\imageC[0.8]{figure_man/cookie2.png}
+\spacer
 \begin{itemize}
-\item \textbf{Goal: } Find \enquote{optimal} composition and amounts of ingredients 
+\item \textbf{Goal: } Find \enquote{optimal} composition and amounts of ingredients
 \item \textbf{Evaluation: } Cookies are baked according to the recipe, tested and rated by volunteers
 \item \emph{Kochanski et al. (2017). Bayesian Optimization for a Better Dessert}
 \end{itemize}
-
 \end{enumerate}
-\end{vbframe}
+\end{framev}
 
-\begin{vbframe}{Naive Approaches}
+
+\begin{framev}{Naive Approaches}
 \begin{enumerate}
 \item Empirical knowledge / manual tuning
 \begin{itemize}
-\item Select parameters based on \enquote{expert} knowledge 
+\item Select parameters based on \enquote{expert} knowledge
 \item \textbf{Advantages:} Can lead to fairly good outcomes for known problems
 \item \textbf{Disadvantages:} Very (!) inefficient, poor reproducibility, chosen solution can also be far away from a global optimum
 \end{itemize}
+\end{enumerate}
+\end{framev}
 
-\framebreak 
+
+\begin{framev}{Naive Approaches}
+\begin{enumerate}
+\setcounter{enumi}{1}
 \item Random search / Grid search
 \begin{itemize}
-\item Random search: Evaluate uniformly sampled inputs 
+\item Random search: Evaluate uniformly sampled inputs
 \item Grid search: Exhaustive search of a predefined grid of inputs
 \item \textbf{Advantages: } Easy, intuitive, parallelization is trivial
 \item \textbf{Disadvantages: } Inefficient, search large irrelevant areas
 \end{itemize}
 \vfill
-\begin{center}
-\begin{figure}
-\includegraphics[width=0.4\textwidth]{figure_man/black_box_0.png} ~ \includegraphics[width=0.4\textwidth]{figure_man/black_box_1.png}
-\end{figure}
+\splitV[0.5]
+{\imageC[0.9]{figure_man/black_box_0.png}}
+{\imageC[0.9]{figure_man/black_box_1.png}}
 \begin{footnotesize}
 Rug plots of RS vs. GS.
 \end{footnotesize}
-\end{center}
+\end{enumerate}
+\end{framev}
 
 
-\framebreak 
-
-\item Traditional black-box optimization 
+\begin{framev}{Naive Approaches}
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item Traditional black-box optimization
 \begin{itemize}
-\item Traditional approaches that do not require derivatives 
-\item E.g. Nelder-Mead, simulated annealing, EAs 
+\item Traditional approaches that do not require derivatives
+\item E.g. Nelder-Mead, simulated annealing, EAs
 \item \textbf{Advantages:} Truly iterative, focuses on relevant regions
 \item \textbf{Disadvantages:} Still inefficient; usually lots of evaluations are needed to produce good outcomes
 \end{itemize}
 \vfill
-\begin{figure}
-% \begin{center}
-% \includegraphics[width = 3cm]{figure_man/neldermead.png} ~
-% \begin{tikzpicture}[node distance=1cm, auto,]
-% \tikzstyle{every node}=[font=\tiny]
-% %nodes
-% \node (init) {Initial Population};
-% \node[below = 0.2cm of init](dummy1) {};
-% \node[below = 0.6cm of init](selection) {Selection};
-% \node[below = 1cm of init](dummy2) {};
-% \node[right = 1cm of dummy2](crossover) {Crossover};
-% \node[right = 1cm of dummy1](mutation) {Mutation};
-% \node[below = 0.7cm of selection](stop) {Termination};
-% \draw[->] (init) to (selection) node[midway, above]{};
-% \draw[->] (selection) to (stop) node[midway, above]{};
-% \draw[->] (selection) to [bend right=50, looseness=1](crossover) node[midway, below]{};
-% \draw[->] (crossover) to [bend right=50, looseness=1](mutation) node[midway, below]{};
-% \draw[->] (mutation) to [bend right=50, looseness=1](selection) node[midway, above]{};
-% \end{tikzpicture} ~
-\centering
-\includegraphics[width=0.45\linewidth]{figure_man/black_box_2.png}
-\caption*{\footnotesize \centering
-    BO vs. CMAES vs. RS on 2D Ackley.
-    % 
-    % CMAES initially performs poorly, needs to init itself, not made for expensive regimes.
-}
-\end{figure}
-
+\imageC[0.55]{figure_man/black_box_2.png}
+\begin{footnotesize}
+BO vs. CMAES vs. RS on 2D Ackley.
+\end{footnotesize}
 \end{enumerate}
-\end{vbframe}
-
+\end{framev}
 
 \endlecture
 \end{document}
