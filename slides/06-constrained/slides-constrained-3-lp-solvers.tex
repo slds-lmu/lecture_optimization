@@ -8,124 +8,89 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  }{% Lecture title  
-  Algorithms for linear programs
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/convex_programs.png
-  }{
-    \item Definition
-    \item Max. Likelihood 
-    \item Normal regression
-    \item Risk Minimization
+\titlemeta{
+Constrained Optimization
+}{
+Algorithms for linear programs
+}{
+figure_man/convex_programs.png
+}{
+\item Understand the Simplex algorithm for solving LPs
+\item Know the two-phase approach for finding a starting point
+\item Understand how Simplex traverses polytope corners
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{vbframe}{Simplex algorithm}
 
-The Simplex algorithm is the most important method for solving Linear programming. It was published in 1947 by Georg Dantzig.
+\begin{framei}[sep=s, fs=small]{Simplex algorithm}
+\item Most important method for solving linear programs
+\item Published in 1947 by Georg Dantzig
+\vfill
+\item[] \textbf{Basic idea:} Start from an arbitrary corner of the polytope.\\
+Run along edges as long as the solution improves. Find a new edge, ...
+\item[] \textbf{Output:} A path along corners of the polytope ending at the optimum
+\vfill
+\item Since LP is a \textbf{convex} optimization problem, the optimal corner found is also a global optimum
+\imageC[0.3]{figure_man/simplex.png}
+\end{framei}
 
-\lz
 
-\textbf{Basic idea:} start from an arbitrary corner of the polytope. Run along this edge as long as the solution improves. Find a new edge, ...
-
-\lz
-
-\textbf{Output:} a path along the corners of the polytope that ends at the optimal point of the polytope.
-
-\lz
-
-Since linear programming is a \textbf{convex} optimization problem, the optimal corner found in this way is also a global optimum.
-
-\framebreak
-
-\begin{center}
-\includegraphics[width = 0.6\textwidth]{figure_man/simplex.png}
-\end{center}
-
-\framebreak
-
-The simplex algorithm can be divided into two steps:
-
+\begin{framei}[sep=L]{Simplex algorithm}
+\item The Simplex algorithm consists of two phases:
 \begin{itemize}
-\item \textbf{Phase I:} determination of a \textbf{starting point}
-\item \textbf{Phase II:} determination of the \textbf{optimal solution}
+\item \textbf{Phase I:} Determination of a \textbf{starting point}
+\item \textbf{Phase II:} Determination of the \textbf{optimal solution}
 \end{itemize}
+\item In \textbf{Phase I}, a feasible corner $\xv_0$ must be found first
+\item In \textbf{Phase II}, this solution is iteratively improved by searching for an edge that improves the objective and running along it to the next corner
+\end{framei}
 
-To be able to start, a starting point must first be found in \textbf{Phase I}, i.e. a feasible corner $\bm{x}_0$.
 
-\lz
-
-In \textbf{phase II} this solution is iteratively improved by searching for an edge that improves the solution and running along it to the next corner.
-
-\framebreak
-
-\textbf{Phase I}:
-
-One way to find a starting point $\bm{x}_0$ is to solve a auxiliary linear problem with artificial variables $\bm{\epsilon}$:
-
-\begin{eqnarray*}
-\min_{\epsilon_1, ..., \epsilon_m} && \sum_{i = 1}^m \epsilon_i \\
-\text{s.t. } && \bm{Ax} + \bm{\epsilon} \ge \bm{b} \\
-&& \epsilon_1, ..., \epsilon_m \ge 0\\
-&& \bm{x} \ge 0
-\end{eqnarray*}
-
-\begin{itemize}
-\item A feasible starting point for the auxiliary problem is $\bm{x} = \bm{0}$ and $\epsilon_i = \begin{cases} 0 & \text{if } b_i < 0 \\
+\begin{framei}[fs=small]{Simplex -- Phase I}
+\item Find starting point $\xv_0$ by solving auxiliary LP with artificial variables $\bm{\epsilon}$:
+$$
+\min_{\epsilon_1, \ldots, \epsilon_m} \sumim \epsilon_i \quad \text{s.t. } \bm{Ax} + \bm{\epsilon} \ge \bm{b}, \; \epsilon_1, \ldots, \epsilon_m \ge 0, \; \xv \ge 0
+$$
+\item A feasible starting point for the auxiliary problem is $\xv = \zero$ and $\epsilon_i = \begin{cases} 0 & \text{if } b_i < 0 \\
 b_i & \text{if } b_i \ge 0
 \end{cases}$
-\item We then apply phase II of the simplex algorithm to the auxiliary problem.
-\item If the original problem has a feasible solution, then the optimal solution of the auxiliary problem \textbf{must} be $\bm{\epsilon} = (0, ..., 0)$ (all artificial variables disappear) and the objective function is $0$.
-\item If we find a solution with $\bm{\epsilon} = \bm{0}$, then we have found a valid starting point.
-\item If we do not find a solution with $\bm{\epsilon} = \bm{0}$, the problem can not be solved.
-\end{itemize}
+\item We then apply Phase II of Simplex to the auxiliary problem
+\item If the original problem is feasible, the optimal solution \textbf{must} be $\bm{\epsilon} = (0, \ldots, 0)$ (all artificial variables disappear)
+\item If we find $\bm{\epsilon} = \zero$, we have a valid starting point
+\item Otherwise, the original problem has no feasible solution
+\end{framei}
 
-\framebreak
 
-\textbf{Example:}
+\begin{framei}[sep=L]{Simplex -- Example}
+\item Consider the following LP:
+$$
+\min_{\xv \in \R^2} -x_1 - x_2
+$$
+\begin{small}
+$$
+\text{s.t. } x_1 - x_2 \ge -0.5, \; -x_1 - 2x_2 \ge -2, \; -2x_1 - x_2 \ge -2, \; -x_1 + x_2 \ge -0.5, \; \xv \ge 0
+$$
+\end{small}
+\item Starting point is the corner $\bm{(0, 0)}$
+\end{framei}
 
-\begin{eqnarray*}
-\min_{\bm{x} \in \R^2} && -x_1 - x_2 \\
-\text{s.t. } && x_1 - x_2 \ge - 0.5 \\
-&& - x_1 - 2 x_2 \ge - 2 \\
-&& - 2x_1 - x_2 \ge - 2 \\
-&& - x_1 + x_2 \ge - 0.5 \\
-&& \bm{x} \ge 0
-\end{eqnarray*}
 
-A starting point is the corner $\bm{(0, 0)}$.
+\begin{framev}{Simplex -- Example}
+\imageC[0.6]{figure_man/simplex_implementation/iter1.png}
+\end{framev}
 
-\framebreak
 
-\begin{center}
-\includegraphics[width = 0.6\textwidth]{figure_man/simplex_implementation/iter1.png}
-\end{center}
+\begin{framev}{Simplex -- Example}
+\imageC[0.6]{figure_man/simplex_implementation/iter2.png}
+\end{framev}
 
-\framebreak
 
-\begin{center}
-\includegraphics[width = 0.6\textwidth]{figure_man/simplex_implementation/iter2.png}
-\end{center}
+\begin{framev}{Simplex -- Example}
+\imageC[0.6]{figure_man/simplex_implementation/iter3.png}
+\end{framev}
 
-\framebreak
 
-\begin{center}
-\includegraphics[width = 0.6\textwidth]{figure_man/simplex_implementation/iter3.png}
-\end{center}
-
-\framebreak
-
-\begin{center}
-\includegraphics[width = 0.6\textwidth]{figure_man/simplex_implementation/iter4.png}
-\end{center}
-
-\end{vbframe}
-
-% \begin{vbframe}{Komplexität des Simplex Algorithmus}
-%
-% \end{vbframe}
+\begin{framev}{Simplex -- Example}
+\imageC[0.6]{figure_man/simplex_implementation/iter4.png}
+\end{framev}
 
 \endlecture
 \end{document}
-
-

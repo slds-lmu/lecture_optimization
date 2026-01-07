@@ -1,653 +1,145 @@
 \documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
 \input{../../style/preamble}
-\input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+\input{../../latex-math/optim-basics.tex}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Evolutionary Algorithms
-  }{% Lecture title  
-  GA / Bit Strings
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/var-selection2.png
-  }{
-    \item Recombination
-    \item Mutation 
-    \item Simple examples
+\titlemeta{
+Evolutionary Algorithms
+}{
+GA / Bit Strings
+}{
+figure_man/var-selection2.png
+}{
+\item Recombination
+\item Mutation 
+\item Simple examples
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Binary encoding}
 
-\begin{itemize}
-    \item In theory: Each problem can be encoded binary
-    \item In practice: Binary not always best representation (e.g., if values are numeric, trees or programs)
-\end{itemize}
+\begin{framei}{Binary encoding}
+\item In theory: Each problem can be encoded binary
+\item In practice: Binary not always best representation (e.g., if values are numeric, trees or programs)
+\spacer
+\item We typically encode problems with \textbf{binary decision variables} in binary representation.
+\spacer
+\item[] \textbf{Examples:}
+\item Scheduling problems
+\item Integer / binary linear programming
+\item Feature selection 
+\item ... 
+\end{framei}
 
-\medskip
 
-We typically encode problems with \textbf{binary decision variables} in binary representation.
-
-\medskip
-
-\textbf{Examples:}
-\begin{itemize}
-    \item Scheduling problems
-    \item Integer / binary linear programming
-    \item Feature selection 
-    \item ... 
-\end{itemize}
-    
-\end{vbframe}
-
-\begin{vbframe}{Recombination for bit strings}
-
+\begin{framev}[fs=small]{Recombination for bit strings}
 Two individuals $\xv,\tilde{\xv} \in \{0, 1\}^d$ encoded as bit strings can be recombined as follows:
-
 \begin{itemize}
-    \item \textbf{1-point crossover:}
-        Select crossover $k \in \{1, ..., d - 1\}$ randomly.
-        Take first $k$ bits from parent 1 and last $d-k$ bits from parent 2.
-    
-        \begin{center}
-            \small
-            \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
-                \textcolor{red}{1} & \textcolor{blue}{1}  & & \textcolor{red}{1}  \\
-                \textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{red}{0}  \\ \cmidrule{1-4}
-                \textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
-                \textcolor{red}{1} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
-                \textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{blue}{0}
-            \end{tabular}
-        \end{center}
-    
-    \item \textbf{Uniform crossover:}
-        Select bit $j$ with probability $p$ from parent 1 and $1-p$ from parent 2.
-    
-        \begin{center}
-            \small
-            \begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
-                \textcolor{red}{1} & \textcolor{blue}{0}  & & \textcolor{red}{1}  \\
-                \textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{blue}{0}  \\ 
-                \textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
-                \textcolor{red}{0} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
-                \textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{red}{1}
-            \end{tabular}
-        \end{center}
-\end{itemize}
-  
-\end{vbframe}
-
-\begin{vbframe}{Mutation for bit strings}
-Offspring $\xv \in \{0, 1\}^d$ encoded as a bit string can be mutated as follows:
-\vspace{0.5cm}
-
-\begin{itemize}
-    \item \textbf{Bitflip:} Each bit $j$ is flipped with probability $p \in (0,1)$.
-\end{itemize}
-
+\item \textbf{1-point crossover:}
+Select crossover $k \in \{1, ..., d - 1\}$ randomly.
+Take first $k$ bits from parent 1 and last $d-k$ bits from parent 2.
 \begin{center}
-    \begin{tabular}{c @{\hspace{2\tabcolsep}} *{5}{c}}
-    \\[1ex]
-    1  &               & \textcolor{red}{0}  \\
-    0  &               & 0  \\
-    0  & $\Rightarrow$ & 0  \\
-    0  &               & \textcolor{red}{1}  \\
-    1  &               & 1
-    \end{tabular}
+\begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
+\textcolor{red}{1} & \textcolor{blue}{1}  & & \textcolor{red}{1}  \\
+\textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{red}{0}  \\ \cmidrule{1-4}
+\textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
+\textcolor{red}{1} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
+\textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{blue}{0}
+\end{tabular}
 \end{center}
-\end{vbframe}
-
-\begin{vbframe}{Example 1: One-Max Example}
-
-$\xv \in \{0, 1\}^d, d = 15$ bit vector representation.
-
-\medskip
-
-\textbf{Goal:} Find the vector with the maximum number of 1's. 
-
-\begin{itemize}
-  \item Fitness: $f(\xv) = \sum_{i = 1}^d x_i$
-  \item $\mu = 15$, $\lambda = 5$, $(\mu + \lambda)$-strategy, bitflip mutation, no recombination
+\item \textbf{Uniform crossover:}
+Select bit $j$ with probability $p$ from parent 1 and $1-p$ from parent 2.
+\begin{center}
+\begin{tabular}{c @{\hspace{2\tabcolsep}} *{6}{c}}
+\textcolor{red}{1} & \textcolor{blue}{0}  & & \textcolor{red}{1}  \\
+\textcolor{red}{0} & \textcolor{blue}{0}  & &  \textcolor{blue}{0}  \\
+\textcolor{red}{0} & \textcolor{blue}{1}  &$\Rightarrow$ & \textcolor{blue}{1}  \\
+\textcolor{red}{0} & \textcolor{blue}{1}  & &   \textcolor{blue}{1}  \\
+\textcolor{red}{1} & \textcolor{blue}{0}  & &   \textcolor{red}{1}
+\end{tabular}
+\end{center}
 \end{itemize}
+\end{framev}
 
-\begin{figure}
-  \includegraphics[width=0.65\textwidth]{figure_man/one_max_example.pdf} \\
-  \begin{footnotesize}
-  \textbf{Green:} Representation of best individual per iteration. Right scale shows fitness.
-  \end{footnotesize}
-\end{figure}
 
-\end{vbframe}
+\begin{framev}{Mutation for bit strings}
+Offspring $\xv \in \{0, 1\}^d$ encoded as a bit string can be mutated as follows:
+\spacer
+\begin{itemize}
+\item \textbf{Bitflip:} Each bit $j$ is flipped with probability $p \in (0,1)$.
+\end{itemize}
+\begin{center}
+\begin{tabular}{c @{\hspace{2\tabcolsep}} *{5}{c}}
+\\[1ex]
+1  &               & \textcolor{red}{0}  \\
+0  &               & 0  \\
+0  & $\Rightarrow$ & 0  \\
+0  &               & \textcolor{red}{1}  \\
+1  &               & 1
+\end{tabular}
+\end{center}
+\end{framev}
 
-\begin{vbframe}{Example 2: Feature selection}
 
+\begin{framei}{Example 1: One-Max Example}
+\item $\xv \in \{0, 1\}^d, d = 15$ bit vector representation.
+\item \textbf{Goal:} Find the vector with the maximum number of 1's. 
+\item Fitness: $f(\xv) = \sum_{i = 1}^d x_i$
+\item $\mu = 15$, $\lambda = 5$, $(\mu + \lambda)$-strategy, bitflip mutation, no recombination
+\vfill
+\imageC[0.65]{figure_man/one_max_example.pdf}
+{\footnotesize \textbf{Green:} Representation of best individual per iteration. Right scale shows fitness.}
+\end{framei}
+
+
+\begin{framev}[fs=small]{Example 2: Feature selection}
 We consider the following toy setting:
-
 \begin{itemize}
 \item Generate design matrix $\Xmat \in \R^{n \times p}$ by drawing $n = 1000$ samples of $p = 50$ independent normally distributed features with $\mu_j = 0$ and $\sigma_j^2 > 0$ varying between 1 and 5 for $j = 1, \dots, p$.
 \item Linear regression problem with dependent variable $\yv$:
 $$
-    \yv = \Xmat \thetav + \eps
+\yv = \Xmat \thetav + \eps
 $$
 with $\eps \sim \mathcal N(0, 1)$.
-
-\medskip
-
+\spacer
 Parameter $\thetav$:
 \begin{align*}
-    \theta_0 &= - 1.2 \\
-    \theta_j &= \begin{cases}
-        1 & \text{for $j \in {1, 7, 13, 19, 25, 31, 37, 43}$} \\
-        0 & \text{otherwise}
-    \end{cases}
+\theta_0 &= - 1.2 \\
+\theta_j &= \begin{cases}
+1 & \text{for $j \in {1, 7, 13, 19, 25, 31, 37, 43}$} \\
+0 & \text{otherwise}
+\end{cases}
 \end{align*}
-
 $\Rightarrow$ Only 8 out of 50 equally influential features
-%<<>>=
-%set.seed(123)
-%X = matrix(rnorm(50000, sd = 1:5), ncol = 50, byrow = TRUE)
-%@
- 
-%<<>>=
-%vars = seq(1, 43, length = 8)
-%vars
-%@
-
-%<<>>=
-%y = - 1.2 + rowSums(X[, vars]) + rnorm(nrow(X), 1)
-%@
 \end{itemize}
-
-\framebreak
-
-\begin{itemize}
-    \item \textbf{Aim:} Find influential features
-    \item \textbf{Encoding:} $\textbf{z} \in \{0, 1\}^p$, $z_j = 1$ means $\theta_j$ included in model
-    \item \textbf{Fitness function} $f(\mathbf{z})$: BIC of the model belonging to $\mathbf{z}$
-    \item \textbf{Mutation:} Bit flip with $p = 0.3$
-    \item \textbf{Recombination:} Uniform crossover with $p=0.5$
-    \item \textbf{Survival selection:} $(\mu + \lambda)$ strategy with $\mu = 100$ and $\lambda =50$
-\end{itemize}
-
-%<<>>=
-%fn = function(x) {
- % mod = lm(y ~ X[, x == 1])
-  %bic = BIC(mod)
-  % return(bic)
-%}
-%@
-
-%\framebreak
-%<<>>=
-%MU = 100L # Size of the population
-%LAMBDA = 50L # Number of offspring per iteration
-%@
-
-%<<>>=
-%control = initECRControl(fn, n.objectives = 1)
-%control = registerECROperator(control, "mutate", mutBitflip,
-%                              p = 0.3)
-%control = registerECROperator(control, "selectForMating",
-%                              selGreedy, n.select = LAMBDA)
-%control = registerECROperator(control, "recombine",
-%                              recUnifCrossover, p = 0.5)
-%control = registerECROperator(control, "selectForSurvival",
-%                              selGreedy)
-%@
+% Data generation and EA run: rsrc/var-selection.R
+\end{framev}
 
 
-
-%\framebreak
-
-\begin{center}
-\begin{figure}
-    \includegraphics[height=3cm,keepaspectratio]{figure_man/example3.png}
-\end{figure}
-\end{center}
-
-%<<evaluate = F>>=
-%MAX.ITER = 100L # Number of iterations
-
-%# Step 1: Initialize & rate population
-%population = genBin(MU, 50)
-%fitness = evaluateFitness(control, population)
-
-%for (i in seq_len(MAX.ITER)) {
-%    # Step 2: variation
-%    offspring = generateOffspring(control, population, fitness,
-%                                  LAMBDA)
-%    fitness.o = evaluateFitness(control, offspring)
-
-%    # Step 3: survival selection
-%    sel = replaceMuPlusLambda(control, population, offspring,
-%                              fitness, fitness.o)
-%    population = sel$population
-%    fitness = sel$fitness
-%}
-%@
-
-%<<echo = F>>=
-%set.seed(1234)
-
-%MAX.ITER = 100L # Number of iterations
-
-%# Step 1: Initialize & rate population
-%population = genBin(MU, 50)
-%fitness = evaluateFitness(control, population)
-%bic = matrix(fitness[1, ], ncol = MU)
-%best = matrix(population[[which.min(fitness)]], ncol = 50)
+\begin{framei}{Example 2: Feature selection}
+\item \textbf{Aim:} Find influential features
+\item \textbf{Encoding:} $\zv \in \{0, 1\}^p$, $z_j = 1$ means $\theta_j$ included in model
+\item \textbf{Fitness function} $f(\zv)$: BIC of the model belonging to $\zv$
+\item \textbf{Mutation:} Bit flip with $p = 0.3$
+\item \textbf{Recombination:} Uniform crossover with $p=0.5$
+\item \textbf{Survival selection:} $(\mu + \lambda)$ strategy with $\mu = 100$ and $\lambda =50$
+\vfill
+\imageC[1]{figure_man/example3.png}
+\end{framei}
 
 
-%for (i in seq_len(MAX.ITER)) {
-%     # Step 2: variation
-%    offspring = generateOffspring(control, population, fitness,
-%                                  LAMBDA)
-%    fitness.o = evaluateFitness(control, offspring)
-
-%    # Step 3: survival selection
-%    sel = replaceMuPlusLambda(control, population, offspring,
-%                              fitness, fitness.o)
-%   population = sel$population
-%    fitness = sel$fitness
-%    best = rbind(best, population[[which.min(fitness)]])
-%    bic = rbind(bic, fitness[1, ])
-
-%    if (i %% 10 == 0) {
-%      print(paste("After", i, "iterations:"))
-%      print(which(population[[1]] == 1))
-%    }
-
-%    if (all((which(population[[1]] == 1)) %in% vars)) {
-%      print(paste("Included variables after", i, "iterations:"))
-%      print(which(population[[1]] == 1))
-%      break
-%    }
-%}
-%@
-
-\framebreak
-
-\begin{center}
-\begin{figure}
-    \includegraphics[width=0.8\linewidth]{figure_man/var-selection1.png}
-\end{figure}
-\end{center}
-
-\framebreak
-
-\begin{center}
-\begin{figure}
-    \includegraphics[width=0.8\linewidth]{figure_man/var-selection2.png}
-\end{figure}
-\end{center}
-
-\end{vbframe}
+\begin{framev}{Example 2: Feature selection}
+\imageC[1]{figure_man/var-selection1.png}
+\end{framev}
 
 
-% \begin{vbframe}{Application}
-
-% When should evolutionary algorithms be applied?
-
-% \begin{itemize}
-% \item Problem given by black/gray box (objective function not known or insufficiently known)
-% \item No problem-specific solver available
-% \item Problem insufficiently understood
-% \item No resources for developing a problem-specific solver
-% \item Solution with \enquote{satisfactory quality} sufficient (as a rule, EAs give no guarantee of optimality)
-% \end{itemize}
-
-% \end{vbframe}
-
-
-
-
-% \begin{vbframe}{Anwendungen}
-%
-% Die Bereiche, in denen evolutionäre Algorithmen eingesetzt werden, sind nahezu unbegrenzt.
-%
-% \begin{itemize}
-% \item Wirtschaft
-% \item Forschung
-% \item Kunst und Musik
-% \end{itemize}
-%
-% \end{vbframe}
-
-
-
-% \begin{vbframe}{8-Damen-Problem}
-%
-% \begin{itemize}
-%   \item Acht Damen sollen so auf einem Schachbrett aufgestellt werden, dass keine
-%   zwei Damen einander schlagen können. Jede Figur spielt hierbei gegeneinander.
-%   \item Konkret: Keine zwei Damen dürfen auf derselben Reihe, Linie oder Diagonale stehen.
-%   \item Auf klassischem 8x8-Brett gibt es 92 Lösungen die Damen aufzustellen.
-% \end{itemize}
-%
-% \framebreak
-%
-% \begin{figure}
-%   \includegraphics[width=0.5\textwidth, height=0.5\textheight]{figure_man/damen.png}
-%   \caption{Eine Lösung des 8-Damen-Problems}
-% \end{figure}
-%
-%
-% \framebreak
-%
-% <<eval=FALSE>>=
-% # create a random chessboard of size n x n
-% # represent board as vectors of x and y coords
-% # place queens on random coords, we even allow clashes
-% # where multiple queens are on the same tile
-% createRandomBoard = function(n) {
-%   xs = integer(n)
-%   ys = integer(n)
-%   for (i in 1:n) {
-%     xs[i] = sample(n, 1)
-%     ys[i] = sample(n, 1)
-%   }
-%   list(n = n, xs = xs, ys = ys)
-% }
-% @
-%
-% \framebreak
-%
-% <<eval=FALSE, size='footnotesize'>>=
-% # print board on console so we can understand it
-% printBoard = function(b) {
-%   n = b$n
-%   f = matrix(".", n,n)
-%   for (i in 1:n) {
-%     f[b$xs[i], b$ys[i]] = i
-%   }
-%   for (i in 1:n) {
-%     for (j in 1:n) {
-%       cat(f[i,j])
-%     }
-%     cat("\n")
-%   }
-% }
-% @
-%
-% \framebreak
-%
-% <<eval=FALSE, size='footnotesize'>>=
-% # iterate over all queens and check conflicts
-% # if a queen threatens another one, +1 penalty
-% # if a queen is on top of another, +n penaly
-% objective = function(b) {
-%   n = b$n
-%   penalty = 0
-%   # check all ordered pairs of queens
-%   # (yes, we then count penalties twice)
-%   for (i in 1:n) {
-%     for (j in setdiff(1:n, i)) {
-%       x1 = b$xs[i]; y1 = b$ys[i]
-%       x2 = b$xs[j]; y2 = b$ys[j]
-%     cond = x1 == x2 || y1 == y2 || x1 + y1 == x2 + y2 ||
-%       x1 - y1 == x2 - y2
-%     [...]
-% @
-%
-% \framebreak
-%
-% <<eval=FALSE, size='footnotesize'>>=
-%     [...]
-%     if (cond) {
-%       penalty = penalty + 1
-%     }
-%     if (x1 == x2 && y1 == y2)
-%       penalty = penalty + n
-%     }
-%   }
-%   return(penalty)
-% }
-% @
-%
-%
-% \framebreak
-%
-% <<eval=FALSE, size='footnotesize'>>=
-%
-% # do a local perturbation of the board,
-% # for SA, return perturbed board
-% #
-% # select random queen, then:
-% # method "1step": move queen 1 random step
-% # to on the board (8 dirs, or even stay)
-% # method: "geom": sample movement in x and y by
-% # adding geometric distribution: G(0.5) - G(0.5)
-% # at end: if we have left the board --> clip to board boundary
-% getPerturbedBoard = function(b, op = "geom") {
-%   # select random queen
-%   i = sample(b$n, 1L)
-%   x = b$xs[i]
-%   y = b$ys[i]
-%   [...]
-% @
-%
-% \framebreak
-%
-% \vspace*{-0.4cm}
-%
-% <<eval=FALSE, size='footnotesize'>>=
-%   [...]
-%     # option a) move 1 random step
-%   if (op == "1step") {
-%     x = x + sample(c(-1,0,1), 1L)
-%     y = y + sample(c(-1,0,1), 1L)
-%   }
-%   # option b) add geometric distruted steps
-%   if (op == "geom") {
-%     h = function() rgeom(1, prob = 0.5) - rgeom(1, prob = 0.5)
-%     x = x + h()
-%     y = y + h()
-%   }
-%   [...]
-% }
-% @
-%
-%
-% \framebreak
-%
-% <<eval=FALSE, size='footnotesize'>>=
-%   [...]
-%   # clip to board and write x,y back to board
-%   x = min(max(x, 1), b$n)
-%   y = min(max(y, 1), b$n)
-%   b$xs[i] = x
-%   b$ys[i] = y
-%   return(b)
-% }
-% @
-%
-% \framebreak
-%
-% <<eval=FALSE, size='footnotesize'>>=
-% # simulated annealing for a starting board
-% # b: board of queens
-% # maxit: number of SA iterations
-% # op: operator for local perturbation, see getPerturbedBoard
-% # t.start: start temperature
-% # t.factor: used in cooling T <- t.factor * T
-% sa = function(b, maxit = 3L, op = "geom", t.start = 100,
-%   t.keep = 50L, t.factor = 0.8) {
-%   # init stuff
-%   penalty = objective(b)
-%   penalties = penalty # archive for all evals
-%   temp = t.start
-%   iter = 1L
-%   [...]
-% @
-%
-% \framebreak
-%
-% <<eval=FALSE, size='footnotesize'>>=
-%   [...]
-%   while(penalty > 0 && iter <= maxit) {
-%     # local perturbation, evaluate it, store the eval
-%     b.new = getPerturbedBoard(b, op = op)
-%     p.new = objective(b.new)
-%     penalties = c(penalties,p.new)
-%     # compute delta diff d, and prob to accept
-%     d = penalty - p.new
-%     prob = exp(d / temp)
-%     u = runif(1)
-%     messagef("iter = %4i; cur = %4i,  new = %4i,
-%         prob = %.4f,  t = %g",
-%       iter, penalty, p.new, ifelse(d < 0, prob, 0) , temp)
-%     # accept if we are better, or randomly if we are worse
-%
-%     [...]
-% @
-%
-% \framebreak
-%
-% <<eval=FALSE, size='footnotesize'>>=
-%     [...]
-%     if (d > 0 || u < prob) {
-%       b = b.new
-%       penalty = p.new
-%     }
-%
-%     # decrease temperature
-%     if (iter %% t.keep == 0)
-%       temp = temp * t.factor
-%     iter = iter + 1L
-%   }
-%   list(b = b, penalty = penalty, penalties = penalties)
-% }
-% @
-%
-%
-% \framebreak
-%
-% <<echo=FALSE, cache=TRUE>>=
-% source("rsrc/sa-8queens-example/board.R")
-% source("rsrc/sa-8queens-example/objective.R")
-% source("rsrc/sa-8queens-example/sa.R")
-% @
-%
-% <<message = FALSE, cache = TRUE>>=
-% set.seed(5)
-% b1 = createRandomBoard(8)
-% printBoard(b1)
-% print(objective(b1))
-% @
-%
-% \framebreak
-%
-% <<message = FALSE, cache = TRUE>>=
-% z = sa(b1, maxit = 2000, t.factor = 0.8, t.start = 100)
-% b2 = z$b
-% printBoard(b2)
-% print(objective(b2))
-% @
-%
-% \framebreak
-%
-% <<cache=TRUE>>=
-% library(plyr)
-% n = 8L
-% nrep = 10L
-% maxit = 10000L
-%
-% methods = c("random", "greedy", "sa1", "sa2", "sa3", "sa4")
-% ops = c("1step",  "geom")
-% reps = 1:nrep
-% t.starts =  c(random = 100000, greedy = 1e-16,
-%   sa1 = 100, sa2 = 100, sa3 = 10, sa4 = 1)
-% t.factors = c(random = 1, greedy = 1,
-%   sa1 = 0.8, sa2 = 0.7, sa3 = 0.8, sa4 = 0.8)
-% grid = expand.grid(method = methods, op = ops, rep = reps)
-%
-% boards = lapply(reps, function(i) createRandomBoard(n = n))
-% @
-%
-% \framebreak
-%
-% <<eval = FALSE, message=FALSE>>=
-% for (i in seq_row(grid)) {
-%   g = grid[i, ]
-%   m = as.character(g$method)
-%   b = boards[[g$rep]]
-%   z = sa(b, maxit = maxit, op = g$op , t.start = t.starts[m],
-%     t.factor = t.factors[m])
-%   grid[i, "y"] = min(z$penalties)
-%   grid[i, "ert"] = length(z$penalties)
-% }
-% grid2 = ddply(grid, c("method", "op"), summarize, ert = median(ert))
-% @
-%
-% <<results = 'hide', echo = FALSE, eval = FALSE, message=FALSE>>=
-% # library(plyr)
-% # library(parallelMap)
-% # parallelStartSocket(30)
-% # parallelExport("grid", "t.starts", "t.factors", "n", "maxit", "rep", "boards")
-% # parallelLibrary("BBmisc")
-% # parallelSource(files = paste0(getwd(),c("/sa-8queens-example/board.R", "/sa-8queens-example/objective.R", "/sa-8queens-example/sa.R")))
-% # z = parallelLapply(seq_row(grid), function(i) {
-% #   g = grid[i, ]
-% #   m = as.character(g$method)
-% #   b = boards[[g$rep]]
-% #   return(sa(b, maxit = maxit, op = g$op , t.start = t.starts[m], t.factor = t.factors[m]))
-% # })
-% # parallelStop()
-% #
-% # grid[, "y"] = vnapply(z, function(x) min(x$penalties))
-% # grid[, "ert"] = vnapply(z, function(x) length(x$penalties))
-% #
-% # grid2 = ddply(grid, c("method", "op"), summarize, ert = median(ert))
-% # save(grid, grid2, file = "sa-8queens-example/sa-8queens-benchmark.RData")
-% @
-%
-% \framebreak
-%
-% <<echo = -1>>=
-% load("rsrc/sa-8queens-example/sa-8queens-benchmark.RData")
-% grid[1:12, ]
-% @
-%
-% \framebreak
-%
-% <<>>=
-% grid2
-% @
-%
-% \end{vbframe}
-
-% \section{Optimierung in R}
-%
-% \begin{vbframe}{Optimierung in R}
-% Funktion \pkg{optim()} aus base R stellt Algorithmen für allgemeine Optimierungsprobleme bereit: \\[0.15cm]
-% \begin{itemize}
-% \item \textbf{BRENT:} Nur für eindimensionale Funktionen. Benutzt die Funktion \pkg{optimize()}.
-%       Kann sinnvoll sein, wenn \pkg{optim()} innerhalb einer anderen Funktion aufgerufen wird.
-% \item \textbf{CG:} Konjugierte Gradienten Verfahren
-% % \item \textbf{Nelder-Mead Simplex:} Gut für nicht-dif'bare Funktionen, basiert nur auf Funktionsauswertungen (default)
-% \item \textbf{BFGS, Quasi-Newton:} Veröffentlicht in 1970 zeitgleich durch Broyden, Fletcher, Goldfarb and Shanno
-% % \item \textbf{SANN:} Stochastisches Simulated Annealing
-% \end{itemize}
-% \framebreak
-% <<eval=FALSE>>=
-% # Grundlegender Aufruf:
-% optim(par, fn, gr, method, lower, upper, control)
-% @
-% \begin{itemize}
-% \item \textbf{par} Startwerte der zu optimierenden Parameter
-% \item \textbf{fn} (Objective) Function, die optimiert (default: minimiert) werden soll
-% \item \textbf{gr} Gradient/Ableitung bei entsprechender Methode
-% \item \textbf{method} Optimierungsmethode (siehe oben)
-% \item \textbf{lower/upper} Grenzen für Optimierung (L-BFGS-B)
-% \item \textbf{control} Liste von Kontrollparametern
-% \end{itemize}
-% \end{vbframe}
-
-
+\begin{framev}{Example 2: Feature selection}
+\imageC[1]{figure_man/var-selection2.png}
+\end{framev}
 
 \endlecture
 \end{document}

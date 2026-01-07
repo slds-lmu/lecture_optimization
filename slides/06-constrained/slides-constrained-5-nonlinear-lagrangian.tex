@@ -3,663 +3,291 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  }{% Lecture title  
-  Nonlinear programs and Lagrangian
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/Weak_and_Strong_Duality.png
-  }{
-    \item Lagrangian for general constrained optimization
-    \item Geometric intuition for Lagrangian duality
-    \item Properties and examples
+\titlemeta{
+Constrained Optimization
+}{
+Nonlinear programs and Lagrangian
+}{
+figure_man/Weak_and_Strong_Duality.png
+}{
+\item Lagrangian for general constrained optimization
+\item Geometric intuition for Lagrangian duality
+\item Properties and examples
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{vbframe}{Nonlinear Constrained Optimization}
+\begin{framei}{Nonlinear Constrained Optimization}
+\item Previous lecture: \textbf{Linear programs}
+$$
+\min_{\xv \in \R^d} f(\xv) := \mathbf{c}^T\xv \quad
+\text{s.t. }  \Amat \xv \le \bv, \;
+\mathbf{G} \xv = \mathbf{h} 
+$$
+\item Related to its (Lagrange) dual formulation by the \textit{Lagrangian}
+$$
+\mathcal{L}(\xv,\bm{\alpha},\bm{\beta}) = \mathbf{c}^T \xv + \bm{\alpha}^T (\Amat \xv - \bv) + \bm{\beta}^T (\mathbf{G} \xv - \mathbf{h})
+$$
+\item \textbf{Weak duality:} For $\bm{\alpha} \geq 0$ and $\bm{\beta}$:
+$$
+\fxvs \geq \min_{\xv \in \S} \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) \geq \min_{\xv \in \R^d} \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) =: g(\bm{\alpha}, \bm{\beta})
+$$
+\item \textbf{Recall:} Implicit domain constraint in \textit{Lagrange dual function} $g(\bm{\alpha}, \bm{\beta})$
+\end{framei}
 
-Previous lecture: \textbf{Linear programs}
 
-\vspace{-\baselineskip}
+\begin{framei}{General Constrained Optimization}
+\item General form of a constrained optimization problem
+$$
+\min_{\xv \in \R^d} f(\xv) \quad
+\text{s.t. } g_i(\xv) \le 0, \; i=1,\ldots, k, \quad
+h_j(\xv) = 0, \; j=1,\ldots, \ell
+$$
+\item Functions $f$, $g_i$, $h_j$ generally nonlinear
+\item Transfer the Lagrangian from linear programs:
+$$
+\mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) := f(\xv) + \sum_{i=1}^k \alpha_i g_i(\xv) + \sum_{j=1}^\ell \beta_j h_j(\xv)
+$$
+\item Dual variables $\alpha_i \ge 0$ and $\beta_i$ are also called \textit{Lagrange multipliers}
+\end{framei}
 
-\begin{eqnarray*}
- \min_{\xv \in \R^d} && f(\xv) := \mathbf{c}^\top\xv \\
-\text{s.t. } &&  \Amat \xv \le \mathbf{b}\\
-             && \mathbf{G} \xv = \mathbf{h} 
-\end{eqnarray*}
 
-Related to its (Lagrange) dual formulation by the \textit{Lagrangian}
-\begin{equation*}
-    \mathcal{L}(\xv,\bm{\alpha},\bm{\beta}) = \mathbf{c}^\top \xv + \bm{\alpha}^\top (\Amat \xv - \mathbf{b}) + \bm{\beta}^\top (\mathbf{G} \xv - \mathbf{h}).
-\end{equation*}
+\begin{framei}{Constrained problems: the direct way}
+\item Simple constrained problems can be solved in a direct way
+\item[] \textbf{Example 1}:
+$$
+\min_{x\in \R} 2 - x^2 \quad \text{s.t. } x - 1 = 0
+$$
+\item \textbf{Solution:} Resolve the constraint by $x - 1 = 0 \Rightarrow x = 1$\\
+and insert it into the objective: $\xs = 1, \; f(\xs) = 1$
+\end{framei}
 
-\textbf{Weak duality:} For $\bm{\alpha} \geq 0$ and $\bm{\beta}$:
-\begin{equation*}
-    f(\xv^\ast) \geq \min_{\xv \in \mathcal{S}} \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) \geq \min_{\xv \in \R^d} \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) =: g(\bm{\alpha}, \bm{\beta})
-\end{equation*}
 
-\textbf{Recall:} Implicit domain constraint in \textit{Lagrange dual function} $g(\bm{\alpha}, \bm{\beta})$.
-
-\framebreak
-
-General form of a constraint optimization problem
-
-\vspace{-\baselineskip}
-
-\begin{eqnarray*}
- \min_{\xv \in \R^d} && f(\xv) \\
-\text{s.t. } && g_i(\xv) \le 0, \quad i=1,\ldots, k, \\
-             && h_j(\xv) = 0, \quad j=1,\ldots, \ell.
-\end{eqnarray*}
-
-\begin{itemize}
-    \item Functions $f$, $g_i$, $h_j$ generally nonlinear
-    \item Transfer the Lagrangian from linear programs:
-        \begin{equation*}
-            \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) := f(\xv) + \sum_{i=1}^k \alpha_i g_i(\xv) + \sum_{j=1}^\ell \beta_j h_j(\xv)
-        \end{equation*}
-    \item Dual variables $\alpha_i \ge 0$ and $\beta_i$ are also called \textit{Lagrange multipliers}.
-\end{itemize}
-
-\end{vbframe}
-
-\begin{vbframe}{Constrained problems: the direct way}
-
-Simple constrained problems can be solved in a direct way.
-
-\medskip
-
-\textbf{Example 1:}
-\begin{eqnarray*}
-    \min_{x\in \R} && 2 - x^2 \\
-    \text{s.t. } && x - 1 = 0
-\end{eqnarray*}
-
-\textbf{Solution:} Resolve the constraint by
-
-\vspace{-\baselineskip}
-
-\begin{align*}
-    x - 1 &= 0 \\
-    x &= 1
-\end{align*}
-
-and insert it into the objective: 
-
-\vspace*{-\baselineskip}
-
-\begin{align*}
-    x^\ast = 1, \quad f(x^\ast) = 1
-\end{align*}
-
-\framebreak
-
-\textbf{Example 2:}
-
-\vspace*{-\baselineskip}
-
-\begin{eqnarray*}
-    \min_{\xv \in \R^2} && - 2 + x_1^2 + 2 x_2^2\\
-    \text{s.t. } && x_1^2 + x_2^2 - 1 = 0
-\end{eqnarray*}
-
-\textbf{Solution:} Resolve the constraint
-
-\vspace{-\baselineskip}
-
-\begin{eqnarray*}
-    x_1^2 = 1 - x_2^2
-\end{eqnarray*}
-
+\begin{framei}{Constrained problems: the direct way}
+\item[] \textbf{Example 2:}
+$$
+\min_{\xv \in \R^2} - 2 + x_1^2 + 2 x_2^2 \quad \text{s.t. } x_1^2 + x_2^2 - 1 = 0
+$$
+\item \textbf{Solution:} Resolve the constraint $x_1^2 = 1 - x_2^2$\\
 and insert it into the objective
-
-\vspace*{-\baselineskip}
-
-\begin{align*}
-    f(x_1, x_2) &= -2 + (1 - x_2^2) + 2 x_2^2 \\
-    &= -1 + x_2^2.
-\end{align*}
-
-$\Rightarrow$ Minimum at $\xv^* = (\pm 1, 0)^\top$.
-However, direct way mostly not possible.
-
-\end{vbframe}
-
-\begin{vbframe}{A classic example: "milkmaid problem"}
-
-\textbf{Question 1:} Is there a general recipe for solving general constrained nonlinear optimization problems? 
-
-\textbf{Question 2:} Can we understand this recipe geometrically?
-
-\textbf{Question 3:} How does this relate to the Lagrange function approach?
-
-\lz
-For this purpose, we consider the classical \enquote{milkmaid problem}; the following example is taken
-from \textit{Steuard Jensen, An Introduction to Lagrange Multipliers} (but the example works
-of course equally well with a \enquote{milk man}). 
-
-\begin{itemize}
-	\item Assume a milk maid is sent to the field to get the day's milk
-	\item The milkmaid wants to finish her job as quickly as possible
-	\item However, she has to clean her bucket first at the nearby river. 
-\end{itemize}
-
-\framebreak 
-Where is the best point $P$ to clean her bucket?
-
-\medskip
-
-\begin{center}
-	\includegraphics[width=0.6\textwidth]{figure_man/milkmaid1.png}
-\end{center}
-
-\framebreak 
-
-\textbf{Aim:} Find point $P$ at the river for minimum total distance $f(P)$
-
-\medskip
-
-\begin{itemize} 
-    \item $f(P) := d(M, P) + d(P, C)$ ($d$ measures distance)
-    \item $h(P) = 0$ describes the river
-\end{itemize}
-
-\medskip
-
-\begin{center}
-	\includegraphics[width=0.4\textwidth]{figure_man/milkmaid2.png}
-\end{center}
-
-
-\framebreak 
-
-Corresponding optimization problem:
-
-\vspace{-\baselineskip}
-
-\begin{eqnarray*}
-	\min_{x_1, x_2} && f(x_1, x_2) \\
-	\text{s.t.} && h(x_1, x_2) = 0
-\end{eqnarray*}
-
-\medskip
-
-\begin{center}
-	\includegraphics[width=0.4\textwidth]{figure_man/milkmaid2.png}
-\end{center}
-
-\framebreak 
-
-\textbf{Question:} How far can the milkmaid get for a fixed total distance $f(P)$?
-
-\medskip
-
-\textbf{Assume:} We only care about $d(M,P)$.
-
-\begin{center}
-	\includegraphics[width=0.4\textwidth]{figure_man/milkmaid3.png}
-\end{center}
-
-\textbf{Observe:} Radius of circle touching river first is the minimal distance.
-
-\framebreak 
-
-\begin{itemize}
-    \item For $f(P) = d(M,P) + d(P,C)$: Use an \textbf{ellipse}.
-    \item \textbf{Def.:} Given two focal points $F_1$, $F_2$ and distance $2a$:
-        \begin{equation*}
-            E = \{ P \in \mathbb{R}^2 \;|\; d(F_1,P) + d(P,F_2) = 2a \}
-        \end{equation*}
-\end{itemize}
-
-\medskip
-
-\begin{figure}
-    \centering
-	\includegraphics[width=0.5\textwidth]{figure_man/ellipse.png}
-\end{figure}
-
-\framebreak 
-
-%Our problem is of course more difficult. However, we can make use of the following: For every point $P$ on a fixed ellipse with foci $M$ and $C$, the distance from $M$ to $P$ and back from $P$ to $C$ stays the same (independent of the exact choice of $P$). 
-
-\begin{itemize}
-    \item Let $M$ and $C$ be focal points of a collection of ellipses
-    \item Find \textbf{smallest} ellipse touching the river $h(x_1, x_2)$
-    \item Define $P$ as the touching point
-\end{itemize}
-
-\vspace*{0.5\baselineskip}
-
-\begin{figure}
-    \centering
-	\includegraphics[width=0.45\textwidth]{figure_man/milkmaid4.png}
-\end{figure}
-
-\textbf{Question:} How can we make sense of this mathematically?
-
-\framebreak
-
-\begin{itemize}
-    \item \textbf{Recall:} Gradient is normal (perpendicular) to contour lines
-    \item Since contour lines of $f$ and $h$ touch, gradients are parallel:
-        \begin{equation*}
-            \nabla f(P) = \beta \nabla h(P)
-        \end{equation*}
-    \item Multiplier $\beta$ is called \textbf{Lagrange multiplier}.
-\end{itemize}
-
-\begin{center}
-	\includegraphics[width=0.45\textwidth]{figure_man/milkmaid5.png}
-\end{center}
-
-\end{vbframe}
-
-\begin{vbframe}{Lagrange Function}
-
-\textbf{General:} Solve problem with single equality constraint by:
-
-\vspace{-\baselineskip}
-
-\begin{align*}
-    \nabla f(\xv) &= \beta \nabla h(\xv) \\
-    h(\xv) &= 0
-\end{align*}
-
-\begin{itemize}
-    \item \textbf{First line}: Parallel gradients $|$ \textbf{Second line:} Constraint
-\end{itemize}
-
-\textbf{Observe:} Above system is equivalent to
-\begin{equation*}
-    \nabla \mathcal{L}(\xv, \beta) = \mathbf{0}
-\end{equation*}
-for \textbf{Lagrange function} (or \textbf{Lagrangian}) $\mathcal{L}(\xv, \beta) := f(\xv) + \beta h(\xv)$
-
-\medskip
-
-Indeed:
-\begin{equation*}
-    \begin{pmatrix}
-        \nabla_{\xv} \mathcal{L}(\xv, \beta) \\
-        \nabla_{\beta} \mathcal{L}(\xv, \beta)
-    \end{pmatrix}
-    = \begin{pmatrix}
-        \nabla f(\xv) + \beta \nabla h(\xv) \\
-        h(\xv)
-    \end{pmatrix}
-\end{equation*}
-
-\framebreak
-
-Idea can be extended to \textbf{inequality} constraints $g(\xv) \leq 0$.
-
-\medskip
-
-There are two possible cases for a solution: 
-
-\begin{itemize}
-	\item Solution $\xv_b$ inside feasible set: constraint is inactive ($\alpha_b =0$)
-	\item Solution $\xv_a$ on boundary $g(\xv) = 0$: $\nabla f(\xv_a) = \alpha_a \nabla g(\xv_a)$ ($\alpha_a > 0$)
-\end{itemize}
-
-\begin{center}
-	\includegraphics[width=0.45\textwidth]{figure_man/constraint_lagrange.png}
-\end{center}
-\end{vbframe}
-
-
-
-
-% \begin{vbframe}{Lagrange function: geometry}
-
-% We imagine the contour lines of $f(\xv) = -2 + x_1^2 + 2 x_2^2$ as a \enquote{balloon} that is inflated. The higher the value of the function, the more the balloon is inflated.
-
-% \vspace*{-0.5cm}
-
-% <<echo = F, fig.width = 6, fig.asp = 1, fig.align = 'center', out.width = '50%'>>=
-% source("rsrc/lagrange.R")
-
-% x = seq(- 1.2, 1.2, by = 0.01)
-% y = seq(- 1.2, 1.2, by = 0.01)
-% z = outer(x, y, function(x1, x2) - 2 + x1^2 + 2 * x2^2)
-
-% lagrangeContour()
-% @
-
-% \framebreak
-
-% We include the precondition $x_1^2 + x_2^2 - 1 = 0$.
-
-% \vspace*{-0.5cm}
-
-% <<echo = F, fig.width = 6, fig.asp = 1, fig.align = 'center', out.width = '60%'>>=
-% h.x1 = seq(-1, 1, length.out = 100)
-% h.x2 = c(- sqrt(1 - h.x1[1:50]^2), - sqrt(1 - h.x1[51:100]^2), sqrt(1 - h.x1[100:51]^2), sqrt(1 - h.x1[50:1]^2))
-% h.x1 = c(h.x1[1:50], h.x1[51:100], h.x1[100:51], h.x1[50:1])
-
-% h.y = h.x1^2 + h.x2^2
-
-% p1 = c(- sqrt(0.5), - sqrt(0.5))
-% p2 = c(-1, 0)
-
-% seq.along = seq(- sqrt(0.5), -1, length.out = 20)
-% path = as.data.frame(matrix(c(seq.along, - sqrt(1 - seq.along^2)), ncol = 2))
-% colnames(path) = c("x", "y")
-
-% lagrangeContour(constraint = T, add.path = T)
-% @
-
-
-% \framebreak
-
-% \begin{itemize}
-% \item If the \enquote{balloon} is too small, the precondition is not yet fulfilled (e.g. for $f(\xv) = - 1.5$) and we inflate the balloon further.
-% \item The same is true if the balloon is too big. Air must be released from the balloon.
-% \item For $f(\xv) = - 0.5$ the constraint is fulfilled, because the contour line and the constraint intersect.
-% \item However, points \enquote{within} the contour line $f(\xv) = - 0.5$ have smaller function values. So we could get better by letting some air out of the balloon.
-% \item This works until the \enquote{balloon} and the precondition just touch, i.e. they are \textbf{tangential} to each other. This applies for $f(\xv) = -1$.
-% \end{itemize}
-
-% \framebreak
-
-% The fact that the contour line and the precondition are \textbf{tangential} to each other in the optimum $\xv^*$ is equivalent to the fact that the respective \textbf{gradients} run parallel to each other.
-
-% \vspace*{-0.3cm}
-% \begin{eqnarray*}
-% - \nabla f(\xv^*) = \beta \nabla h(\xv^*)
-% \end{eqnarray*}
-
-% Of course, we still demand that the precondition is fulfilled, i.e. that
-
-% \vspace*{-0.3cm}
-% \begin{eqnarray*}
-% h(\xv^*) = 0.
-% \end{eqnarray*}
-
-% These can be combined to the \textbf{Lagrange} function with Lagrange multiplier~$\beta$:
-
-% $$
-% \mathcal{L}(\xv, \beta) := f(\xv) + \beta h(\xv).
-% $$
-
-% \vspace*{0.3cm}
-
-% We are now looking for \textbf{stationary points} of the Lagrange function:
-
-% $$
-%   \begin{pmatrix}
-%   \nabla_x \mathcal{L}(\xv^*, \beta) \\
-%   \nabla_\beta \mathcal{L}(\xv^*, \beta)
-%   \end{pmatrix} = \begin{pmatrix} \nabla f(\xv^*) + \beta \nabla h(\xv^*) \\
-%   h(\xv)
-%   \end{pmatrix} = \begin{pmatrix}
-%   0 \\ 0 \end{pmatrix}
-% $$
-
-% \framebreak
-
-% For the above example, the Lagrange function is
-
-% $$
-% \mathcal{L}(x_1, x_2, \beta) := -2 + x_1^2 + 2x_2^2 + \beta (x_1^2 + x_2^2 - 1).
-% $$
-
-% We set the gradient to $0$
-
-% $$
-% \nabla \mathcal{L}(x_1, x_2, \beta) = \begin{pmatrix} \frac{\partial{L}}{\partial{x_1}} \\ \frac{\partial{L}}{\partial{x_2}} \\ \frac{\partial{L}}{\beta} \end{pmatrix} = \begin{pmatrix} 2x_1 + 2 \beta x_1 \\ 4x_2 + 2 \beta x_2 \\ x_1^2 + x_2^2 - 1 \end{pmatrix} = 0
-% $$
-
-% and see that either $\beta = -1$ or $\beta = - 2$ must apply.
-
-% \begin{itemize}
-% \item For $\beta = -1$: $x_2 = 0$ and $x_1 = \pm 1$ (as already calculated).
-% \item For $\beta = -2$: $x_2 = \pm 1$ and $x_1 = 0$.
-% \end{itemize}
-
-% These are the maxima / minima of the function.
-
-% \end{vbframe}
-
-
-\begin{vbframe}{Lagrange function and primal problem}
-
-General constrained optimization problems:
-\begin{align*}
-    \min_{\xv} \quad& f(\xv) \\
-    \text{s.t.} \quad& g_i(\xv) \leq 0, \quad i = 1, \ldots ,k \\
-    & h_j(\xv) = 0, \quad j = 1, \ldots, \ell
-\end{align*}
-
-Extend Lagrangian ($\alpha_i\ge 0$, $\beta_i$ Lagrange multipliers):
-\begin{equation*}
-    \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) := f(\xv) + \sum_{i=1}^k \alpha_i g_i(\xv) + \sum_{j=1}^\ell \beta_j h_j(\xv)
-\end{equation*}
-
-\textbf{Equivalent} primal problem:
-\begin{equation*}
-    \min_{\xv} \max_{\bm{\alpha}\ge 0, \bm{\beta}}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})
-\end{equation*}
-
-\textbf{Question:} Why?
-
-\framebreak
-
-For simplicity: Consider only single inequality constraint $g(\xv) \leq 0$
-
-\vspace*{0.2cm} 
-
-If $\xv$ \textbf{breaks} inequality constraint ($g(\xv) > 0$):
-
-\begin{equation*}
-	\max_{\alpha \ge 0} \mathcal{L}(\xv, \alpha) = \max_{\alpha \ge 0} f(\xv) +  \alpha g(\xv) = \infty
-\end{equation*}
-
-If $\xv$ \textbf{satisfies} inequality constraint ($g(\xv) \le 0$):
-
-\begin{equation*}
-	\max_{\alpha \ge 0} \mathcal{L}(\xv, \alpha) = \max_{\alpha \ge 0} f(\xv) +  \alpha g(\xv) = f(\xv)
-\end{equation*}
-
-\medskip
-
-Combining yields \textbf{original formulation}:
-
-\begin{equation*}
-	\min_{\xv} \max_{\alpha \ge 0} \mathcal{L}(\xv, \alpha) =
-    \begin{cases}
-        \infty & \text{if } g(\xv) > 0 \\
-        \min_{\xv} f(\xv) & \text{if }  g(\xv) \le 0
-    \end{cases}
-\end{equation*}
-
-Similar argument holds for equality constraints $h_j(\xv)$
-
-\end{vbframe}
-
-\begin{vbframe}{Example: Lagrange function for QP's}
-
-We consider quadratic programming
-
-\vspace{-\baselineskip}
-
-\begin{align*}
-    \min_{\xv} \quad& f(\xv) := \frac{1}{2} \xv^\top \mathbf{Q} \xv \\
-    \text{s.t.} \quad& h(\xv) := \mathbf{C} \xv - \mathbf{d} = \mathbf{0}
-\end{align*}
-
-with $\mathbf{Q} \in \R^{d\times d}$ symmetric, $\mathbf{C} \in \R^{\ell \times d}$, and $\mathbf{d} \in \R^\ell$.
-
-\medskip
-
-Lagrange function: $\mathcal{L}(\xv, \bm{\beta}) = \frac{1}{2} \xv^\top \mathbf{Q} \xv + \bm{\beta}^\top (\mathbf{C} \xv - \mathbf{d})$
-
-\medskip
-
-Solve
-\begin{alignat*}{3}
-    && \nabla \mathcal{L}(\xv, \bm{\beta}) =
-    \begin{pmatrix}
-        \partial \mathcal{L} / \partial \xv \\
-        \partial \mathcal{L} / \partial {\bm{\beta}}
-    \end{pmatrix} &=
-    \begin{pmatrix}
-        \mathbf{Q} \xv + \mathbf{C}^\top\bm{\beta} \\
-        \mathbf{C} \xv - \mathbf{d}
-    \end{pmatrix} = \bm{0} \\
-    \Leftrightarrow \quad && \begin{pmatrix}
-        \mathbf{Q} & \mathbf{C}^\top \\
-        \mathbf{C} & \bm{0}
-    \end{pmatrix}
-    \begin{pmatrix} \xv \\ \bm{\beta} \end{pmatrix} &=
-    \begin{pmatrix} \bm{0} \\ \mathbf{d} \end{pmatrix}
-\end{alignat*}
-
-\textbf{Observe:} Solve QP by solving a linear system
-
-\end{vbframe}
-
-% \begin{vbframe}{Example: Lagrange function for Lasso}
-
-% \textbf{Lasso regression}:
-
-% \vspace{-\baselineskip}
-
-% \begin{eqnarray*}
-% 	\min_{\thetav} && \|\yv - \Xmat \thetav\|_2^2 \\
-% 	\text{s.t. } && \|\thetav\|_1 - t \le 0.
-% \end{eqnarray*}
-
-% Formulate problem with Lagrangian:
-
-% \begin{equation*}
-% 	\min_{\thetav} \max_{\alpha \ge 0} \mathcal{L}(\xv, \bm{\alpha}) = \min_{\thetav} \max_{\alpha \ge 0} \left\{\|\yv - \Xmat \thetav\|_2^2 + \alpha \left(\|\thetav\|_1 - t\right)\right\}.
-% \end{equation*}
-
-% The explicit derivation of the dual of the Lasso can be found in 
-% \href{https://sites.stat.washington.edu/courses/stat527/s13/readings/osborneetal00.pdf}{\beamergotobutton{Osbourne et al.,2000}}.
-
-% \end{vbframe}
-
-\begin{vbframe}{Lagrange duality}
-
-\textbf{Dual problem:}
-\begin{equation*}
-    \max_{\bm{\alpha} \ge 0, \bm{\beta}} \min_{\xv}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})
-\end{equation*}
-
-Define \textbf{Lagrange dual function} $g(\bm{\alpha}, \bm{\beta}) := \min_{\xv}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})$
-
-\medskip
-
-Important characteristics of the dual problem:
-
-\begin{itemize}
-    \item \textbf{Convexity} (pointwise minimum of \textit{affine} functions)
-        \begin{itemize}
-            \small
-            \item Gives methods based on dual solutions
-            \item Might be computationally inefficient (expensive minimizations)
-        \end{itemize}
-    \item \textbf{Weak duality:}
-        \begin{equation*}
-            f(\xv^*) \geq g(\bm{\alpha}^*, \bm{\beta}^*)
-        \end{equation*}
-    \item \textbf{Strong duality} if primal problem satisfies \textit{Slater's condition}$^{(1)}$:
-        \begin{equation*}
-            f(\xv^*) = g(\bm{\alpha}^*, \bm{\beta}^*)
-        \end{equation*}
-\end{itemize}
-
+$$
+f(x_1, x_2) = -2 + (1 - x_2^2) + 2 x_2^2 = -1 + x_2^2
+$$
+\item $\Rightarrow$ Minimum at $\xvs = (\pm 1, 0)^T$
+\item However, direct way mostly not possible
+\end{framei}
+
+
+\begin{framei}{A classic example: milkmaid problem}
+\item \textbf{Question 1:} Is there a general recipe for solving general constrained nonlinear optimization problems?
+\item \textbf{Question 2:} Can we understand this recipe geometrically?
+\item \textbf{Question 3:} How does this relate to the Lagrange function approach?
 \vfill
-
-\begin{footnotesize}
-$^{(1)}$ \textbf{Slater's condition}: Primal problem convex and \enquote{strictly feasible} ($\exists \xv \forall i: g_i(\xv) < 0$).
-\end{footnotesize}
-
-\end{vbframe}
-
-%\begin{vbframe}{Optimalitätsbedingungen}
+\item For this purpose, we consider the classical ``milkmaid problem''
+\item Assume a milkmaid is sent to the field to get the day's milk
+\item The milkmaid wants to finish her job as quickly as possible
+\item However, she has to clean her bucket first at the nearby river
+\end{framei}
 
 
-% Für einen Punkt $\xv \in \mathcal{S}$ definieren wir die Indexmenge der aktiven Ungleichungsnebenbedingungen
-%
-% $$
-% \mathcal{A}(\xv) = \{i: 1 \le i \le m: g_i(\xv) = 0\}.
-% $$
-%
-% Die Menge $\mathcal{A}(\xv)$ beschreibt also, welche Ungleichungen mit Gleichheit erfüllt sind.
-%
-% \framebreak
-%
-% \textbf{Frage: } Ist $\nabla \mathcal{L}(\xv^*, \beta) = 0$ eine \textbf{notwendige Optimalitätsbedingung}?
-%
-% \lz
-%
-% Im Gegensatz zur unrestringierten Optimierung, ist die Formulierung hinreichender und notwendiger Optimalitätsbedingungen komplizierter. Wir müssen berücksichtigen, dass wir uns möglicherweise am Rand des zulässigen Bereiches befinden.
+\begin{framei}{Milkmaid problem}
+\item Where is the best point $P$ to clean her bucket?
+\vfill
+\imageC[0.7]{figure_man/milkmaid1.png}
+\end{framei}
 
-% \lz
-%
-% Wir betrachten zunächst ein einfaches Beispiel
-%
-% \vspace*{-0.5cm}
-%
-%   \begin{eqnarray*}
-%     \min\limits_{x_1, x_2} &  - x_1 - x_2 & \\
-%     \text{s.t.} & x_1^2 + x_2^2 & = 1
-%   \end{eqnarray*}
-%
-% \lz
-%
-% Wir lösen das Optimierungsproblem, indem wir die Zielgerade (also die Niveaulinie $f(\xv) = c$) so lange verschieben, bis wir einen Punkt finden, der die Nebenbedingung erfüllt und die Zielfunktion minimiert.
-%
-% \framebreak
-%
-% \center
-%   \includegraphics[width = 0.6\textwidth]{figure_man/constraints_violated.pdf}
-%
-% \framebreak
-%
-%   \includegraphics[width = 0.6\textwidth]{figure_man/constraints_satisfied.pdf}
-%
-% \framebreak
-%
-%   \includegraphics[width = 0.6\textwidth]{figure_man/constraints_opt.pdf}
-%
-% \framebreak
-%
-% \flushleft
-%
-% \textbf{Beobachtung}: Das Optimum $\xv^*$ ist genau dort, wo die Höhenlinie tangential zur Hyperebene der Nebenbedingung liegt.
-%
-% \lz
-%
-% In anderen Worten: $- \nabla f(\xv^*)$, $\nabla h(\xv^*)$ sind parallel.
-%
-% $$
-%   - \nabla f(\xv^*) = \beta \nabla h(\xv^*)
-% $$
-%
-% oder äquivalent
-%
-% $$
-%   \nabla \mathcal{L}(\xv^*, \beta) := \nabla (f(\xv^*) + \beta h(\xv^*)) = \nabla f(\xv^*) + \nabla \beta h(\xv^*) = 0
-% $$
-%
-%
-% \lz
-%
-%
-%
-% \end{vbframe}
+
+\begin{framei}{Milkmaid problem}
+\item \textbf{Aim:} Find point $P$ at the river for minimum total distance $f(P)$
+\item $f(P) := d(M, P) + d(P, C)$ ($d$ measures distance)
+\item $h(P) = 0$ describes the river
+\vfill
+\imageC[0.5]{figure_man/milkmaid2.png}
+\end{framei}
+
+
+\begin{framei}{Milkmaid problem}
+\item Corresponding optimization problem:
+$$
+\min_{x_1, x_2} f(x_1, x_2) \quad \text{s.t.} \; h(x_1, x_2) = 0
+$$
+\vfill
+\imageC[0.5]{figure_man/milkmaid2.png}
+\end{framei}
+
+
+\begin{framei}{Milkmaid problem}
+\item \textbf{Question:} How far can the milkmaid get for a fixed total distance $f(P)$?
+\item \textbf{Assume:} We only care about $d(M,P)$
+\vfill
+\imageC[0.5]{figure_man/milkmaid3.png}
+\item \textbf{Observe:} Radius of circle touching river first is the minimal distance
+\end{framei}
+
+
+\begin{framei}{Milkmaid problem}
+\item For $f(P) = d(M,P) + d(P,C)$: Use an \textbf{ellipse}
+\item \textbf{Def.:} Given two focal points $F_1$, $F_2$ and distance $2a$:
+$$
+E = \{ P \in \R^2 \;|\; d(F_1,P) + d(P,F_2) = 2a \}
+$$
+\imageC[0.6]{figure_man/ellipse.png}
+\end{framei}
+
+
+\begin{framei}{Milkmaid problem}
+\item Let $M$ and $C$ be focal points of a collection of ellipses
+\item Find \textbf{smallest} ellipse touching the river $h(x_1, x_2)$
+\item Define $P$ as the touching point
+\imageC[0.55]{figure_man/milkmaid4.png}
+\item \textbf{Question:} How can we make sense of this mathematically?
+\end{framei}
+
+
+\begin{framei}{Milkmaid problem}
+\item \textbf{Recall:} Gradient is normal (perpendicular) to contour lines
+\item Since contour lines of $f$ and $h$ touch, gradients are parallel:
+$$
+\nabla f(P) = \beta \nabla h(P)
+$$
+\item Multiplier $\beta$ is called \textbf{Lagrange multiplier}
+\imageC[0.55]{figure_man/milkmaid5.png}
+\end{framei}
+
+
+\begin{framei}{Lagrange function}
+\item \textbf{General:} Solve problem with single equality constraint by:
+$$
+\nabla f(\xv) = \beta \nabla h(\xv) \quad \text{and} \quad h(\xv) = 0
+$$
+\item \textbf{First line}: Parallel gradients $|$ \textbf{Second line:} Constraint
+\item \textbf{Observe:} Above system is equivalent to
+$$
+\nabla \mathcal{L}(\xv, \beta) = \zero
+$$
+for \textbf{Lagrange function} (or \textbf{Lagrangian}) $\mathcal{L}(\xv, \beta) := f(\xv) + \beta h(\xv)$
+\item Indeed:
+$$
+\mat{
+\nabla_{\xv} \mathcal{L}(\xv, \beta) \\
+\nabla_{\beta} \mathcal{L}(\xv, \beta)
+}
+= \mat{
+\nabla f(\xv) + \beta \nabla h(\xv) \\
+h(\xv)
+}
+$$
+\end{framei}
+
+
+\begin{framei}{Lagrange function}
+\item Idea can be extended to \textbf{inequality} constraints $g(\xv) \leq 0$
+\item There are two possible cases for a solution:
+\begin{itemize}
+\item Solution $\xv_b$ inside feasible set: constraint is inactive ($\alpha_b =0$)
+\item Solution $\xv_a$ on boundary $g(\xv) = 0$: $\nabla f(\xv_a) = \alpha_a \nabla g(\xv_a)$ ($\alpha_a > 0$)
+\end{itemize}
+\imageC[0.65]{figure_man/constraint_lagrange.png}
+\end{framei}
+
+
+\begin{framei}[fs=small]{Lagrange function and primal problem}
+\item General constrained optimization problems:
+$$
+\min_{\xv} f(\xv) \quad
+\text{s.t.} \; g_i(\xv) \leq 0, \; i = 1, \ldots ,k, \quad
+h_j(\xv) = 0, \; j = 1, \ldots, \ell
+$$
+\item Extend Lagrangian ($\alpha_i\ge 0$, $\beta_i$ Lagrange multipliers):
+$$
+\mathcal{L}(\xv, \bm{\alpha}, \bm{\beta}) := f(\xv) + \sum_{i=1}^k \alpha_i g_i(\xv) + \sum_{j=1}^\ell \beta_j h_j(\xv)
+$$
+\item \textbf{Equivalent} primal problem:
+$$
+\min_{\xv} \max_{\bm{\alpha}\ge 0, \bm{\beta}}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})
+$$
+\item \textbf{Question:} Why?
+\end{framei}
+
+
+\begin{framei}{Lagrange function and primal problem}
+\item For simplicity: Consider only single inequality constraint $g(\xv) \leq 0$
+\vfill
+\item If $\xv$ \textbf{breaks} inequality constraint ($g(\xv) > 0$):
+$$
+\max_{\alpha \ge 0} \mathcal{L}(\xv, \alpha) = \max_{\alpha \ge 0} f(\xv) +  \alpha g(\xv) = \infty
+$$
+\item If $\xv$ \textbf{satisfies} inequality constraint ($g(\xv) \le 0$):
+$$
+\max_{\alpha \ge 0} \mathcal{L}(\xv, \alpha) = \max_{\alpha \ge 0} f(\xv) +  \alpha g(\xv) = f(\xv)
+$$
+\vfill
+\item Combining yields \textbf{original formulation}:
+$$
+\min_{\xv} \max_{\alpha \ge 0} \mathcal{L}(\xv, \alpha) =
+\begin{cases}
+\infty & \text{if } g(\xv) > 0 \\
+\min_{\xv} f(\xv) & \text{if }  g(\xv) \le 0
+\end{cases}
+$$
+\item Similar argument holds for equality constraints $h_j(\xv)$
+\end{framei}
+
+
+\begin{framei}[fs=small]{Example: Lagrange function for QPs}
+\item We consider quadratic programming
+$$
+\min_{\xv} f(\xv) := \frac{1}{2} \xv^T \mathbf{Q} \xv \quad
+\text{s.t.} \; h(\xv) := \mathbf{C} \xv - \mathbf{d} = \zero
+$$
+with $\mathbf{Q} \in \R^{d\times d}$ symmetric, $\mathbf{C} \in \R^{\ell \times d}$, and $\mathbf{d} \in \R^\ell$
+\item Lagrange function: $\mathcal{L}(\xv, \bm{\beta}) = \frac{1}{2} \xv^T \mathbf{Q} \xv + \bm{\beta}^T (\mathbf{C} \xv - \mathbf{d})$
+\item Solve
+$$
+\nabla \mathcal{L}(\xv, \bm{\beta}) =
+\begin{pmatrix}
+\partial \mathcal{L} / \partial \xv \\
+\partial \mathcal{L} / \partial {\bm{\beta}}
+\end{pmatrix} =
+\begin{pmatrix}
+\mathbf{Q} \xv + \mathbf{C}^T\bm{\beta} \\
+\mathbf{C} \xv - \mathbf{d}
+\end{pmatrix} = \zero
+\quad \Leftrightarrow \quad
+\begin{pmatrix}
+\mathbf{Q} & \mathbf{C}^T \\
+\mathbf{C} & \zero
+\end{pmatrix}
+\begin{pmatrix} \xv \\ \bm{\beta} \end{pmatrix} =
+\begin{pmatrix} \zero \\ \mathbf{d} \end{pmatrix}
+$$
+\item \textbf{Observe:} Solve QP by solving a linear system
+\end{framei}
+
+
+\begin{framei}[fs=small]{Lagrange duality}
+\item \textbf{Dual problem:}
+$$
+\max_{\bm{\alpha} \ge 0, \bm{\beta}} \min_{\xv}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})
+$$
+\item Define \textbf{Lagrange dual function} $g(\bm{\alpha}, \bm{\beta}) := \min_{\xv}  \mathcal{L}(\xv, \bm{\alpha}, \bm{\beta})$
+\vfill
+\item Important characteristics of the dual problem:
+\item \textbf{Convexity} (pointwise minimum of \textit{affine} functions)
+\begin{itemize}
+\item Gives methods based on dual solutions
+\item Might be computationally inefficient (expensive minimizations)
+\end{itemize}
+\item \textbf{Weak duality:} $\fxvs \geq g(\bm{\alpha}^*, \bm{\beta}^*)$
+\item \textbf{Strong duality} if primal problem satisfies \textit{Slater's condition}$^{(1)}$:\\
+$\fxvs = g(\bm{\alpha}^*, \bm{\beta}^*)$
+\vfill
+\item[$^{(1)}$] \textbf{Slater's condition}: Primal problem convex and ``strictly feasible'' ($\exists \xv \forall i: g_i(\xv) < 0$)
+\end{framei}
 
 \endlecture
 \end{document}
-
-
-

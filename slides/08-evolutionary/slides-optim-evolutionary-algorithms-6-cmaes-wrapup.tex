@@ -8,139 +8,109 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Evolutionary Algorithms
-  }{% Lecture title  
-  CMA-ES Wrap Up
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/cmaes/cmaes_muds_1.png
-  }{
-    \item Advantages \& Limitations
-    \item IPOP-CMA-ES
-    \item Benchmark
+\titlemeta{
+Evolutionary Algorithms
+}{
+CMA-ES Wrap Up
+}{
+figure_man/cmaes/cmaes_muds_1.png
+}{
+\item Advantages \& Limitations
+\item IPOP-CMA-ES
+\item Benchmark
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\begin{vbframe}{CMA-ES: Wrap Up}
-
+\begin{framev}{CMA-ES: Wrap Up}
 \begin{algorithm}[H]
-  \begin{footnotesize}
-  \begin{center}
-  \caption{CMA-ES}
-    \begin{algorithmic}[1]
-    \State Input: $m \in \R^{d}$, $\sigma \in \R_+$, $\lambda$ (problem-dependent)
-    \State Initialize: $\bm{C} = \bm{\I}$, $\bm{p}_{\bm{c}} = \bm{0}$, $\bm{p}_{\sigma} = \bm{0}$
-    \State Set: $c_{\bm{C}} \approx 4/d$, $c_{\sigma} \approx 4/d$, $c_1 \approx 2/d^2$, $c_{\mu} \approx \mu_w/d^2$, $c_1+c_{\mu} \leq 1$, $d_{\sigma} \approx 1+\sqrt{\mu_w/d}$ and $w_{i=1,\dots, \mu}$ such that $\mu_w = \frac{1}{\sum_{i=1}^{\mu} w_i^2} \approx 0.3 \lambda$
-    \While{not terminate}
-      \State $\xv^{(i)} = \bm{m} + \sigma \normal(\bm{0}, \bm{C}) \quad \text{for } i=1,\dots, \lambda$ \quad \hfill \textit{Sampling}
-      \State $\bm{y}_w = \sum_{i=1}^{\mu} w_i \bm{y}_{i:\lambda},\;\text{where }\bm{y}_{i:\lambda}=(\xv_{i:\lambda}-\bm{m})/\sigma$ \quad \hfill \textit{Selection/Recombination}
-      \State $\bm{m} \leftarrow \bm{m} + \sigma \bm{y}_w$ \quad \hfill \textit{Update $\bm{m}$}
-      \State $\bm{p}_{\bm{C}} \leftarrow (1-c_{\bm{C}})\bm{p}_{\bm{C}} + \sqrt{c_{\bm{C}}(2-c_{\bm{C}})\mu_w}\bm{y}_w$ \quad \hfill \textit{Cumulation of $\bm{C}$}
-      \State $\bm{p}_{\sigma} \leftarrow (1-c_{\sigma})\bm{p}_{\sigma} + \sqrt{c_{\sigma}(2-c_{\sigma})\mu_w} \bm{C}^{-\frac{1}{2}} \bm{y}_w$ \quad \hfill \textit{Cumulation of $\sigma$}
-      \State $\bm{C} \leftarrow (1-c_1-c_{\mu}{\scriptsize\sum}w_j) \bm{C} + c_1 \bm{p}_{\bm{C}} \bm{p}_{\bm{C}}^\top + c_{\mu} \sum_{i=1}^{\mu} w_i \bm{y}_{i:\lambda} \bm{y}_{i:\lambda}^\top$ \quad \hfill \textit{Update $\bm{C}$}
-      \State $\sigma \leftarrow \sigma \times \exp\biggl( \frac{c_\sigma}{d_\sigma}\Bigl(\frac{||\bm{p}_\sigma||}{\E||\normal(\bm{0}, \bm{\I})||} - 1 \Bigl)\biggl)$ \quad \hfill \textit{Update $\sigma$}
-    \EndWhile
-    \end{algorithmic}
-    \end{center}
-    \end{footnotesize}
+\footnotesize
+\begin{center}
+\caption{CMA-ES}
+\begin{algorithmic}[1]
+\State Input: $m \in \R^{d}$, $\sigma \in \R_+$, $\lambda$ (problem-dependent)
+\State Initialize: $\bm{C} = \bm{\I}$, $\bm{p}_{\bm{c}} = \bm{0}$, $\bm{p}_{\sigma} = \bm{0}$
+\State Set: $c_{\bm{C}} \approx 4/d$, $c_{\sigma} \approx 4/d$, $c_1 \approx 2/d^2$, $c_{\mu} \approx \mu_w/d^2$, $c_1+c_{\mu} \leq 1$, $d_{\sigma} \approx 1+\sqrt{\mu_w/d}$ and $w_{i=1,\dots, \mu}$ such that $\mu_w = \frac{1}{\sum_{i=1}^{\mu} w_i^2} \approx 0.3 \lambda$
+\While{not terminate}
+\State $\xv^{(i)} = \bm{m} + \sigma \normal(\bm{0}, \bm{C}) \quad \text{for } i=1,\dots, \lambda$ \quad \hfill \textit{Sampling}
+\State $\yv_w = \sum_{i=1}^{\mu} w_i \yv_{i:\lambda},\;\text{where }\yv_{i:\lambda}=(\xv_{i:\lambda}-\bm{m})/\sigma$ \quad \hfill \textit{Selection/Recombination}
+\State $\bm{m} \leftarrow \bm{m} + \sigma \yv_w$ \quad \hfill \textit{Update $\bm{m}$}
+\State $\bm{p}_{\bm{C}} \leftarrow (1-c_{\bm{C}})\bm{p}_{\bm{C}} + \sqrt{c_{\bm{C}}(2-c_{\bm{C}})\mu_w}\yv_w$ \quad \hfill \textit{Cumulation of $\bm{C}$}
+\State $\bm{p}_{\sigma} \leftarrow (1-c_{\sigma})\bm{p}_{\sigma} + \sqrt{c_{\sigma}(2-c_{\sigma})\mu_w} \bm{C}^{-1/2} \yv_w$ \quad \hfill \textit{Cumulation of $\sigma$}
+\State $\bm{C} \leftarrow (1-c_1-c_{\mu}\sum w_j) \bm{C} + c_1 \bm{p}_{\bm{C}} \bm{p}_{\bm{C}}^\top + c_{\mu} \sum_{i=1}^{\mu} w_i \yv_{i:\lambda} \yv_{i:\lambda}^\top$ \quad \hfill \textit{Update $\bm{C}$}
+\State $\sigma \leftarrow \sigma \times \exp\biggl( \frac{c_\sigma}{d_\sigma}\Bigl(\frac{||\bm{p}_\sigma||}{\E||\normal(\bm{0}, \bm{\I})||} - 1 \Bigl)\biggl)$ \quad \hfill \textit{Update $\sigma$}
+\EndWhile
+\end{algorithmic}
+\end{center}
 \end{algorithm}
-
-% \framebreak
-% {\tiny
-% \begin{align*}
-% \text{\textbf{Sampling}} \quad & \xv_i^{(g+1)} \sim \bm{m}^{(g)} + \sigma \normal(\bm{0}, \bm{C}^{(g)} \quad \text{for } i = 1,\dots, \lambda\\
-% \text{\textbf{Evaluation}} \quad & \text{Calculate fitness of all } \lambda \text{ individuals and sort them}\\
-% \text{\textbf{Selection}} \quad & \bm{m}^{(g+1)} = \sum_{i =1}^{\mu} w_i\xv_{i:\lambda}^{(g+1)}, \\
-% & \text{where } \sum_{i=1}^{\mu} w_i = 1, \quad w_1 \geq w_2 \geq \dots \geq w_{\mu} > 0\\[2em]
-% \text{\textbf{Recombination,Adaptation}}  \quad & \bm{C}^{(g+1)} = (1-c_{cov})\bm{C}^{(g)} + \frac{c_{cov}}{\mu_{cov}} \overbrace{\bm{p}_c^{(g+1)}{\bm{p}_c^{(g+1)}}^\top}^{\text{rank-one update}} \\
-% & + c_{cov} \Bigl( 1 - \frac{1}{\mu_{cov}}\Bigl) \times \underbrace{\sum_{i = 1}^{\mu} w_i\bm{y}_{i:\lambda}^{(g+1)} \bigl(w_i\bm{y}_{i:\lambda}^{(g+1)}\bigl)^\top}_{\text{rank-$mu$ update}}, \\
-% & \sigma^{(g+1)} = \sigma^{(g)} \exp\biggl( \frac{c_\sigma}{d_\sigma}\Bigl(\frac{||\bm{p}_\sigma^{(g+1)}||}{\E||\normal(\bm{0}, \bm{\I})||} - 1 \Bigl)\biggl)
-% \end{align*}
-% }%
-
-\end{vbframe}
+\end{framev}
 
 
-\begin{vbframe}{CMA-ES: Wrap Up - Default Values} % Parameter
-\scriptsize{
+\begin{framev}[fs=footnotesize]{CMA-ES: Wrap Up - Default Values}
 Related to selection and recombination:
-
-\begin{itemize}
+\begin{itemizeS}
 \item $\bm{\lambda}$: offspring number, population size \textcolor{blue}{$\quad 4 + \lfloor 3 \ln d\rfloor$}
 \item $\bm{\mu}$: parent number, solutions involved in mean update \textcolor{blue}{$\quad \lfloor \lambda / 2\rfloor$}
 \item $\bm{w_i}$: recombination weights (preliminary convex shape) \textcolor{blue}{$\quad \ln \frac{\lambda + 1}{2} - \ln i, \text{ for } i = 1, \dots, \lambda$}
-\end{itemize}
-
+\end{itemizeS}
 Related to $\bm{C}$-update:
-
-\begin{itemize}
+\begin{itemizeS}
 \item $\bm{1-c_{\bm{C}}}$: decay rate for evolution path, cumulation factor \textcolor{blue}{$\quad 1- \frac{4+\mu_w/d}{d+4+2\mu_w/d}$}
 \item $\bm{c_1}$: learning rate for rank-one update of $\bm{C}$ \textcolor{blue}{$\quad \frac{2}{(d+1.3)^2+\mu_w}$}
 \item $\bm{c_{\mu}}$: learning rate for rank-$\mu$ update of $\bm{C}$ \textcolor{blue}{$\quad \min\Bigl(1-c_1, 2\cdot \frac{\mu_w-2+1/\mu_w}{(d+2)^2+\mu_w}\Bigl)$}
-\end{itemize}
-
+\end{itemizeS}
 Related to $\sigma$-update:
-
-\begin{itemize}
+\begin{itemizeS}
 \item $\bm{1-c_{\sigma}}$: decay rate for evolution path \textcolor{blue}{$\quad 1- \frac{\mu_w+2}{d+\mu_w+5}$}
 \item $\bm{d_{\sigma}}$: damping for $\sigma$-change \textcolor{blue}{$\quad 1+2 \max\Bigl(0, \sqrt{\frac{\mu_w-1}{d+1}}-1\Bigl) + c_\sigma$}
-\end{itemize}
-
-with $\mu_w=\bigl(\frac{||\bm{w}||_1}{||\bm{w}||_2}\bigl)=\frac{(\sum_{i=1}^\mu |w_i|)^2}{\sum_{i=1}^\mu w_i^2} = \frac{1}{\sum_{i=1}^\mu w_i^2}$ and \textcolor{blue}{typical default parameter values}.
-\vspace{0.2cm}
-\begin{itemize}
-\item $\mu_w$ can be extended to $\lambda$ instead of $\mu$ weights, allowing negative weights for the remaining $\lambda-\mu$ points (\enquote{active covariance adaption}).
-\end{itemize}
-
-% The default values depend only on the dimension. In the first place they do not depend on the objective function.
-}
-\end{vbframe}
+\end{itemizeS}
+with $\mu_w=\bigl(\frac{||\wv||_1}{||\wv||_2}\bigr)=\frac{(\sum_{i=1}^\mu |w_i|)^2}{\sum_{i=1}^\mu w_i^2} = \frac{1}{\sum_{i=1}^\mu w_i^2}$ and \textcolor{blue}{typical default parameter values}.
+\spacer
+\begin{itemizeS}
+\item $\mu_w$ can be extended to $\lambda$ instead of $\mu$ weights, allowing negative weights for the remaining $\lambda-\mu$ points (\enquote{active covariance adaptation}).
+\end{itemizeS}
+\end{framev}
 
 
-\begin{frame}{CMA-ES: Wrap Up}
-\begin{figure}
-\begin{overprint}
-\centering
-\only<1>{\includegraphics[width=0.95\textwidth, height=0.85\textheight]{figure_man/cmaes/cmaes_muds_1.png}}
-\only<2>{\includegraphics[width=0.95\textwidth, height=0.85\textheight]{figure_man/cmaes/cmaes_muds_2.png}}
-\only<3>{\includegraphics[width=0.95\textwidth, height=0.85\textheight]{figure_man/cmaes/cmaes_muds_3.png}}
-\only<4>{\includegraphics[width=0.95\textwidth, height=0.85\textheight]{figure_man/cmaes/cmaes_muds_4.png}}
-\end{overprint}
-\end{figure}
-\end{frame}
+\begin{framev}[align=center]{CMA-ES: Wrap Up}
+\imageC[0.95]{figure_man/cmaes/cmaes_muds_1.png}
+\end{framev}
 
 
-\begin{vbframe}{CMA-ES: Wrap Up - Advantages}
-CMA-ES can outperform other strategies in following cases:
+\begin{framev}[align=center]{CMA-ES: Wrap Up}
+\imageC[0.95]{figure_man/cmaes/cmaes_muds_2.png}
+\end{framev}
 
-\begin{itemize}
-\setlength\itemsep{1.2em}
+
+\begin{framev}[align=center]{CMA-ES: Wrap Up}
+\imageC[0.95]{figure_man/cmaes/cmaes_muds_3.png}
+\end{framev}
+
+
+\begin{framev}[align=center]{CMA-ES: Wrap Up}
+\imageC[0.95]{figure_man/cmaes/cmaes_muds_4.png}
+\end{framev}
+
+
+\begin{framei}[sep=L]{CMA-ES: Wrap Up - Advantages}
+\item CMA-ES can outperform other strategies in following cases:
 \item Non-separable problems (parameters of the objective function are dependent)
 \item Derivative of the objective function is not available
 \item High-dimensional problems (large $d$)
 \item Very large search space
 \item Useful in case \enquote{classical} search methods like quasi-Newton methods (BFGS) or conjugate gradient methods fail due to a non-convex or rugged search landscape (e.g. outliers, noise, local optima, sharp bends).
-\end{itemize}
-\end{vbframe}
+\end{framei}
 
 
-\begin{vbframe}{CMA-ES: Wrap Up - Limitations}
-CMA-ES can be outperformed by other strategies in following cases:
-
-\begin{itemize}
-\setlength\itemsep{1.2em}
+\begin{framei}[sep=L]{CMA-ES: Wrap Up - Limitations}
+\item CMA-ES can be outperformed by other strategies in following cases:
 \item Partly separable problems (i.e. optimization of $n$-dimensional objective function can be divided into a series of $d$ optimizations of every single parameter)
-\item Derivative of the objective function is easily available $\rightarrow$ Gradient Descend / Ascend
+\item Derivative of the objective function is easily available $\rightarrow$ Gradient Descent / Ascent
 \item Low dimensional problems (small $d$)
-\item Problems that can be solved by using a relative small number of function evaluations (e.g. $< 10 d$ evaluations)
-\end{itemize}
-\end{vbframe}
+\item Problems that can be solved by using a relatively small number of function evaluations (e.g. $< 10 d$ evaluations)
+\end{framei}
 
 
-\begin{vbframe}{CMA-ES: IPOP}
-\footnotesize{
-\begin{itemize}
+\begin{framei}[fs=footnotesize]{CMA-ES: IPOP}
 \item Many special forms and extensions of the \enquote{basic} CMA-ES exist
 \item CMA-ES efficiently minimizes unimodal objective functions and is in particular superior on ill-conditioned, non-separable problems
 \item Default population size $\lambda_{default}$ has been tuned for unimodal
@@ -149,45 +119,28 @@ functions and however can get stuck in local optima on multi-modal functions, su
 \item \textbf{IPOP-CMA-ES} is a special form of restart-CMA-ES, where the \textit{population size is increased for each restart} (IPOP)
 \item By increasing the population size the search characteristic becomes more global after each restart
 \item For the restart strategy CMA-ES is stopped whenever some stopping criterion is met, and an independent restart is launched with the population size increased by a factor of 2 (values between 1.5 and 5 are reasonable).
-\end{itemize}
-}
-\end{vbframe}
+\end{framei}
 
 
-\begin{vbframe}{CMA-ES: Wrap Up - Benchmark EAs}
-\footnotesize{
-\textit{Example:} Black-box optimization of 25 benchmark functions under thoroughly defined experimental and recording conditions for the 2005 IEEE Congress on Evolutionary Computation: Session on Real-Parameter Optimization.
+\begin{framei}[fs=footnotesize]{CMA-ES: Wrap Up - Benchmark EAs}
+\item \textbf{Example:} Black-box optimization of 25 benchmark functions under thoroughly defined experimental and recording conditions for the 2005 IEEE Congress on Evolutionary Computation: Session on Real-Parameter Optimization. \furtherreading{SUGANTHANETAL2005CEC}\\
+\spacer
+17 papers were submitted, 11 were accepted, thereunder hybrid methods.\\
+\textbf{Two of the Algorithms:}
+\item L-CMA-ES: A CMA evolution strategy with small population size and small initial step-size to emphasize on local search characteristics. Independent restarts are conducted until the target function value is reached or the maximum number of function evaluations is exceeded. \furtherreading{AUGERHANSEN2005LOCALSEARCH}
+\item G-CMA-ES: A CMA evolution strategy restarted with increasing population size (IPOP). Independent restarts are conducted with increasing population size until the target function value is reached or the maximum number of function evaluations is exceeded. With the initial small population size the algorithm converges fast, with the succeeding larger population sizes the global search performance is emphasized in subsequent restarts. \furtherreading{AUGERHANSEN2005IPOP}
+\end{framei}
 
-17 papers were submitted, 11 were accepted, thereunder hybrid methods.
 
-\lz
-
-\textit{Two of the Algorithms:}
-\begin{itemize}
-\item L-CMA-ES (Auger and Hansen. 2005a): A CMA evolution strategy with small population size and small initial step-size to emphasize on local search characteristics. Independent restarts are conducted until the target function value is reached or the maximum number of function evaluations is exceeded.
-% Auger and Hansen. A Restart CMA Evolution Strategy With Increasing Population Size. 2005a
-\item G-CMA-ES (Auger and Hansen. 2005b): A CMA evolution strategy restarted with increasing population size (IPOP). Independent restarts are conducted with increasing population size until the target function value is reached or the maximum number of function evaluations is exceeded. With the initial small population size the algorithm converges fast, with the succeeding larger population sizes the global search performance is emphasized in subsequent restarts.
-% G-CMA-ES (Auger and Hansen. Performance Evaluation of an Advanced Local Search Evolutionary Algorithm. 2005b)
-\end{itemize}
-}
-
-\framebreak
-
-\begin{figure}
-\includegraphics[width=1\textwidth, height=0.55\textheight]{figure_man/cmaes/cmaes_benchmark.png}
-\end{figure}
-
-\vspace{-15pt}
-\scriptsize{
-\begin{itemize}
+\begin{framev}[fs=footnotesize]{CMA-ES: Wrap Up - Benchmark EAs}
+\imageC[0.9]{figure_man/cmaes/cmaes_benchmark.png}
+\begin{itemizeS}
 \item Comparison of performance results from 11 algorithms for search space dimension 10 and 30 on different function subsets
 \item Expected number of function evaluations (FEs) to reach the target function value is normalized by the value of the best algorithm on the respective function $\text{FEs}_{best}$
 \item Calculation of the empirical cumulative distribution function of FEs / $\text{FEs}_{best}$ for each algorithm over different sets of functions in 10 and 30D
 \item Small values for FEs / $\text{FEs}_{best}$ and therefore large values of the graphs are preferable.
-\end{itemize}
-}
-\end{vbframe}
+\end{itemizeS}
+\end{framev}
 
 \endlecture
 \end{document}
-
