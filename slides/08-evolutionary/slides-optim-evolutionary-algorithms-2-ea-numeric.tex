@@ -3,223 +3,131 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Evolutionary Algorithms
-  }{% Lecture title  
-  ES / Numerical Encodings
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/1dim-ackley-func-selection.png
-  }{
-    \item Recombination 
-    \item Mutation 
-    \item A few simple examples
+\titlemeta{
+Evolutionary Algorithms
+}{
+ES / Numerical Encodings
+}{
+figure_man/1dim-ackley-func-selection.png
+}{
+\item Recombination 
+\item Mutation 
+\item A few simple examples
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Recombination for numeric}
-
+\begin{framev}{Recombination for numeric}
 Options for recombination of two individuals $\xv, \tilde{\xv} \in \R^d$: 
 \begin{itemize}
-    \item \textbf{Uniform crossover}: Choose gene $j$ of parent 1 with probability $p$ and of parent 2 with probability $1-p$
-    \item \textbf{Intermediate recombination}: Offspring is created from mean of two parents: $\frac{1}{2}(\xv + \tilde{\xv})$
-    \item \textbf{Simulated Binary Crossover (SBX)}: generate \textbf{two offspring}
-        $$
-            \bar{\xv} \pm \frac{1}{2} \beta (\tilde{\xv} - \xv), \; \bar{\xv} = \frac{1}{2} (\xv + \tilde{\xv}), \; \text{$\beta \in [0,1]$ uniformly at random}
-        $$
+\item \textbf{Uniform crossover}: Choose gene $j$ of parent 1 with probability $p$ and of parent 2 with probability $1-p$
+\item \textbf{Intermediate recombination}: Offspring is created from mean of two parents: $\frac{1}{2}(\xv + \tilde{\xv})$
+\item \textbf{Simulated Binary Crossover (SBX)}: generate \textbf{two offspring}
+$$
+\bar{\xv} \pm \frac{1}{2} \beta (\tilde{\xv} - \xv), \; \bar{\xv} = \frac{1}{2} (\xv + \tilde{\xv}), \; \text{$\beta \in \unitint$ uniformly at random}
+$$
 \end{itemize}
+\vfill
+\splitV[0.62]{
+\imageC[1]{figure_man/ea_recombination_uniform.png} % https://docs.google.com/presentation/d/12v81ZaLxJUgXVUBy3VdW0y6q7OKHS_6lFcQym3yeYsg/edit#slide=id.p
+}{
+\imageC[1]{figure_man/ea_recombination_numeric.pdf}
+}
+\end{framev}
 
-\vspace*{-0.3cm}
-\begin{figure}
-  \vspace*{-0.3cm}
-  \includegraphics[width=0.5\textwidth]{figure_man/ea_recombination_uniform.png}  
-  % https://docs.google.com/presentation/d/12v81ZaLxJUgXVUBy3VdW0y6q7OKHS_6lFcQym3yeYsg/edit#slide=id.p
-  \includegraphics[width=0.3\textwidth]{figure_man/ea_recombination_numeric.pdf}
-\end{figure}
 
-\end{vbframe}
-
-\begin{vbframe}{Mutation for numeric}
-\footnotesize
-
+\begin{framev}[fs=footnotesize]{Mutation for numeric}
 \textbf{Mutation:} Individuals get modified
-
 \medskip
-
 \textbf{Example} for $\xv \in \R^d$:
-
 \begin{itemize}
-    \item \textbf{Uniform mutation:} Select random gene $x_j$ and replace it by uniformly distributed value (within feasible range).
-    \item \textbf{Gauss mutation:} $\xv \pm \mathcal{N}(0, \sigma \mathbf{I})$
-    \item \textbf{Polynomial mutation:} Use a different distribution instead of normal distribution
+\item \textbf{Uniform mutation:} Select random gene $x_j$ and replace it by uniformly distributed value (within feasible range).
+\item \textbf{Gauss mutation:} $\xv \pm \normal(0, \sigma \mathbf{I})$
+\item \textbf{Polynomial mutation:} Use a different distribution instead of normal distribution
 \end{itemize}
-\begin{center}
+\vfill
+\imageC[0.45][https://www.researchgate.net/publication/262320509_Analysing_mutation_schemes_for_real-parameter_genetic_algorithms]{figure_man/polynomial_mutation.png}
+\end{framev}
 
-\begin{figure}
-  \includegraphics[height = 3.5cm, width = 4cm]{figure_man/polynomial_mutation.png}\\
-  \scriptsize{\textbf{Source:} K. Deb, D. Deb. Analysing mutation schemes for real-parameter genetic algorithms, 2014}
-\end{figure}
-\end{center}
 
-\end{vbframe}
-
-\begin{vbframe}{Example of an evolutionary algorithm}
-\small
-
+\begin{framev}[fs=small]{Example of an evolutionary algorithm}
 (Simple) EA on 1-dim Ackley function on $[-30, 30]$.
 Usually, for optimizing a function $f : \R^d \to \R$, individuals are encoded as real vectors $\xv \in \R^d$.
-
 \medskip
+\vfill
+\imageC[0.6]{figure_man/1dim-ackley-func.png}
+\end{framev}
 
-\begin{center}
-\begin{figure}
-  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func.png}
-\end{figure}
-\end{center}
 
-\end{vbframe}
-
-\begin{vbframe}{Example of an evolutionary algorithm}
-
+\begin{framev}{Example of an evolutionary algorithm}
 Random initial population with size $\mu = 10$
-
 \medskip
-
-\begin{center}
-\begin{figure}
-  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-2.png}
-\end{figure}
-\end{center}
-
-\end{vbframe}
-
-% \begin{vbframe}{Example 1:}
-
-% \begin{itemize}
-% \item Let the fitness function be a 1-dim Ackley function, aiming to be optimized on the interval $[-30, 30]$. That is, $-30$ and $+30$ are the lower and upper boundaries, respectively.
-% \item Consider an initial population with size $\mu=30$ and $\lambda=5$ as the number of offspring per iteration. Besides, let $\sigma=2$ represent a Gaussian mutation. We want $5$ iterations for this algorithm.
-% \item Step 1: Randomly initialize the population and evaluate it by the fitness function.
-% \item Step 2: As the first iterative step, choose parents by neutral selection.
-% \item Step 3: As the second iterative step, choose the Gaussian mutation as variation and evaluate the fitness function.
-% \item Step 4: As the final iterative step, use $(\mu + \lambda)$-selection strategy as the survival selection.
-% \end{itemize}
-
-% \framebreak
-
-% \vspace{1cm}
-% \begin{center}
-% \begin{figure}
-%   \includegraphics[height = 5cm, width = 8cm]{figure_man/example.png}
-% \end{figure}
-% \end{center}
-
-% \end{vbframe}
+\vfill
+\imageC[0.6]{figure_man/1dim-ackley-func-2.png}
+\end{framev}
 
 
-\begin{vbframe}{Example 1: Ackley function}
-We choose $\lambda = 5$ offsprings by neutral selection (red individuals).
+\begin{framev}{Example 1: Ackley function}
+We choose $\lambda = 5$ offspring by neutral selection (red individuals).
+\vfill
+\imageC[0.6]{figure_man/1dim-ackley-func-neutral-selec.png}
+\end{framev}
 
-\vspace{0.5cm}
 
-\begin{center}
-\begin{figure}
-  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-neutral-selec.png}
-\end{figure}
-\end{center}
-
-\end{vbframe}
-
-\begin{vbframe}{Example 1: Ackley function}
-
-%We use a Gaussian mutation with $\sigma = 2$ and don't apply a recombination.
+\begin{framev}{Example 1: Ackley function}
 Use Gaussian mutation with $\sigma=2$, but without recombination.
-
 \medskip
-
-\begin{center}
-\begin{figure}
-  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-gaussian-mutation.png}
-\end{figure}
-\end{center}
-
-\end{vbframe}
+\vfill
+\imageC[0.6]{figure_man/1dim-ackley-func-gaussian-mutation.png}
+\end{framev}
 
 
-\begin{vbframe}{Example 1: Ackley function}
+\begin{framev}{Example 1: Ackley function}
 Use $(\mu + \lambda)$ selection.
 Selected individuals are marked in green.
-
 \medskip
-
-\begin{center}
-\begin{figure}
-  \includegraphics[width=0.6\textwidth]{figure_man/1dim-ackley-func-selection.png}
-\end{figure}
-\end{center}
+\vfill
+\imageC[0.6]{figure_man/1dim-ackley-func-selection.png}
+\end{framev}
 
 
-\end{vbframe}
-
-\begin{vbframe}{Example 1: Ackley function}
-
+\begin{framev}{Example 1: Ackley function}
 After $50$ iterations: 
+\vfill
+\imageC{figure_man/1dim-ackley-func-final.png}
+\end{framev}
 
-\vspace{0.5cm}
 
-\begin{center}
-\begin{figure}
-  \includegraphics[width=1\textwidth]{figure_man/1dim-ackley-func-final.png}
-\end{figure}
-\end{center}
-
-\end{vbframe}
-
-\begin{vbframe}{Example 2: Grid of balls}
-
+\begin{framev}{Example 2: Grid of balls}
 Consider a grid in which $n$ balls with random radius are placed.
-\begin{center}
-\begin{figure}
-  \includegraphics[height = 4.25cm, width = 5.25cm]{figure_man/grid.png}
-\end{figure}
-\end{center}
-
-
+\vfill
+\imageC[0.55]{figure_man/grid.png}
+\vfill
 \textbf{Aim:} Find the circle with the largest possible radius in the grid that does \textbf{not} intersect with the other existing circles.
-
 \begin{itemize}
 \item What is the fitness function?
 \item How is the population defined?
 \end{itemize}
-
 Implementation: \url{https://juliambr.shinyapps.io/balls/}
+\end{framev}
 
-\framebreak
 
-In our example, the chromosome of an individual is the center of a circle, so the chromosomes are encoded as 2-dimensional real vectors $\xv = (x_1, x_2) \in \R^2$.
-
-\lz
-
-The population $P \subset \R^2$ is given as a set of circle centers.
-
-\lz
-
+\begin{framev}{Example 2: Grid of balls}
+In our example, the chromosome of an individual is the center of a circle, so the chromosomes are encoded as 2-dimensional real vectors $\xv = (x_1, x_2) \in \R^2$.\\
+\spacer
+The population $P \subset \R^2$ is given as a set of circle centers.\\
+\spacer
 The fitness function evaluates an individual $\xv \in P$ based on the distance to the nearest neighboring gray circle $k$.
-
 $$
 f(\xv) = \min_{k \in \text{Grid}} \text{distance} (k, \xv),
 $$
-
 where the distance is defined as $0$ if a circle center is within the radius of a circle of the grid.
-
 This function is to be maximized: we are looking for the largest circle that does not touch any of the gray circles.
-
-\end{vbframe}
-
-
+\end{framev}
 
 \endlecture
 \end{document}
