@@ -385,7 +385,7 @@ User then picks from that subset on the right, based on hidden preferences
 
 \begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions I}
   \item \textbf{Weighted sum scalarization} solves:
-  \[\xvs := \argmin_{\xv \in \S } \sumid w_i \f_i(\xv).\]
+  \[\xvs := \argmin_{\xv \in \S } \sum_{i=1}^m w_i \f_i(\xv)\]
   We can show that this approach can find Pareto-optimal solutions.
   \item Without loss of generality we can assume $\sumid w_i =1$.
   \item \textbf{Theorem:} If $w_i>0$ for all $i$, then $\xvs$ is Pareto-optimal.
@@ -398,7 +398,7 @@ User then picks from that subset on the right, based on hidden preferences
 
 \begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions II}
   \item Not all Pareto-optimal solutions can be found by solving
-    \[\xvs := \argmin_{\xv \in \S } \sumid w_i \f_i(\xv).\]
+    \[\xvs := \argmin_{\xv \in \S } \sum_{i=1}^m w_i \f_i(\xv)\]
   \item \textbf{Example:} We find three out of the five Pareto-optimal solutions:
   \imageC[0.7]{figure_man/expedia_weighted_sum.pdf}
 \end{framei}
@@ -432,8 +432,8 @@ User then picks from that subset on the right, based on hidden preferences
 \begin{framev}{Finding Pareto-optimal solutions V}
   \textbf{Theorem (Geoffrion, 1968):} Let $\S$ be \underline{convex} and assume $\cost_1,\dots,\cost_d$ are \underline{convex}. Then $\xvs \in \S$ is \underline{properly} Pareto-optimal if and only if
   $\xvs$ is an optimal solution of
-    \[\min_{\xv \in \S } \sumid w_i \cost_i(\xv)\]
-  with strictly positive weights $w_i$ all $i$.
+    \[\min_{\xv \in \S } \sum_{i=1}^m w_i \cost_i(\xv)\]
+  with strictly positive weights $w_i$ for all $i$.
 \begin{itemize}
   \item For convex functions and convex search spaces, we can find all \underline{properly} Pareto-optimal solutions using weighted sum scalarization.
   \item \textbf{Proper Pareto-optimal solution}: Exclude solutions where an arbitrary small improvement in one objective leads to an arbitrary large deterioration in another objective.
@@ -442,20 +442,57 @@ User then picks from that subset on the right, based on hidden preferences
 
 \begin{framev}{Finding Pareto-optimal solutions VI}
   \textbf{Definition (Geoffrion, 1968):} A Pareto-optimal solution $\xvs \in \S$ is called \textbf{properly} Pareto-optimal, if there exists a constant $M>0$ such that for all $i$ and ${\xv} \in \S$ with $\cost_i(\xv) < \cost_i(\xvs)$ there exists an index $j$, such that $\cost_j(\xvs) < \cost_j(\xv)$ and
-  \[ \frac{\cost_i(\xvs)-\cost_i(\xv)}{\cost_j(\xv)-\cost_j(\xvs)} \leq M.\]
+  \[ \frac{\cost_i(\xvs)-\cost_i(\xv)}{\cost_j(\xv)-\cost_j(\xvs)} \leq M\]
   \textbf{Example:} $\cost_1(x) =(x-1)^2$ and $\cost_2(x) = 3(x-2)^2$ for $0 \le x \le 3$.
   \begin{itemize}
     \item Pareto-optimal solutions are $x \in [1,2]$ (as exercise).
     \item $\xs=1$ is not properly Pareto-optimal.
     \\
     \textbf{Proof.} For $\xs=1$ we have $\cost_1(\xs)=0$ and $\cost_2(\xs)=3$. Let $x=1+\epsilon$ for $\epsilon>0$, then $\cost_2(x)<\cost_2(\xs)$ and $\cost_1(x)>\cost_1(\xs)$. Then,
-    \[\frac{\cost_2(\xs)-\cost_2(x)}{\cost_1(x)-\cost_1(\xs)} = \frac{3- 3(\epsilon-1)^2}{\epsilon^2} =\frac{6\epsilon-3\epsilon^2}{\epsilon^2}\to \infty \text{ for } \epsilon \to 0.\]
+    \[\frac{\cost_2(\xs)-\cost_2(x)}{\cost_1(x)-\cost_1(\xs)} = \frac{3- 3(\epsilon-1)^2}{\epsilon^2} =\frac{6\epsilon-3\epsilon^2}{\epsilon^2}\to \infty \text{ for } \epsilon \to 0\]
   \end{itemize}
   \end{framev}
 
 
+\begin{framei}{Finding Pareto-optimal solutions VI}
+  \item Convexity is required to find properly Pareto-optimal solutions
+  \item In non-convex settings: Often poor coverage of the Pareto front.
+  \item \textbf{Example:} $\S = \{\xv \in \mathbb{R}^2: x_1^2+x_2^2 \geq 1\}$ with $\cost_1(\xv) = x_1$ and $\cost_2(\xv)=x_2$.
+  \item {\color{orange}Pareto front:} $\mathcal{F} = \{\xv \in \mathbb{R}^2: x_1^2+x_2^2=1\}$
+  \item {\color{blue}Weighted sum scalarization} only finds {\color{blue}$\xv^{(1)}$} and {\color{blue}$\xv^{(2)}$}
+  \imageC[0.4]{figure_man/example_unit_arc.pdf}
+\end{framei}
 
 
+\begin{framei}{Finding Pareto-optimal solutions VII}
+    \item \textbf{Alternative:} $\epsilon$-constraint method
+    \[\xv^* := \arg\min_{\xv \in \mathcal{S}} \cost_1(\xv) \quad \text{s.t. } \cost_{2}(\xv) \leq \epsilon_2.\]
+
+    \item By varying $\epsilon_i$ we can find different Pareto-optimal solutions:
+    \imageC[0.5]{figure_man/example_epsilon_constraint.pdf}
+\end{framei}
+
+\begin{framei}{Finding Pareto-optimal solutions VIII}
+    \item General form of the $\epsilon$-constraint method:
+    \[\xv^* := \arg\min_{\xv \in \mathcal{S}} \cost_i(\xv) \quad \text{s.t. } \cost_j(\xv) \leq \epsilon_j, \quad j=1,\dots,m, j \neq i.\]
+    \item Are solutions found by the $\epsilon$-constraint method Pareto-optimal?
+    \item \textbf{Theorem:} If $\xv^*$ is the \textbf{unique} optimal solution of the $\epsilon$-constraint method for some $\epsilon$, then $\xv^*$ is Pareto-optimal.
+    \\[0.5cm]
+    \textbf{Proof.} Suppose $\xv^*$ is not Pareto-optimal. Then there exists $\tilde{\xv} \in \mathcal{S}$, such that $\cost_i(\tilde{\xv}) \leq \cost_i(\xv^*)$ for all $i = 1, \dots, m$ and $\cost_j(\tilde{\xv}) < \cost_j(\xv^*)$ for at least one $j \in \{1, \dots, m\}$.
+    Since $\xv^*$ is feasible for the $\epsilon$-constraint problem, it follows that $\cost_i(\tilde{\xv}) \leq \cost_i(\xv^*) \leq \epsilon_i$, so $\tilde{\xv}$ is also feasible.
+    Moreover, $\cost_1(\tilde{\xv}) \leq \cost_1(\xv^*)$, and since $\xv^*$ is the \textbf{unique} minimizer of $\text{cost}_1$, we must have $\tilde{\xv} = \xv^*$, which is a contradiction.
+\end{framei}
+
+\begin{framei}{Finding Pareto-optimal solutions VIII}
+    \item Can the $\epsilon$-constraint method find all Pareto-optimal solutions?
+        \[\xv^* := \arg\min_{\xv \in \mathcal{S}} \cost_i(\xv) \quad \text{s.t. } \cost_j(\xv) \leq \epsilon_j, \quad j=1,\dots,m, j \neq i.\]
+    \item \textbf{Theorem:} $\xv^* \in \S$ is Pareto-optimal if and only if there exists $\mathbf{\epsilon} \in \mathbb{R}^m$ such that $\xv^*$ is an optimal solution for all $i=1,\dots,m$.
+    \\[0.5cm]
+    \textbf{Proof.} ``$\Rightarrow$'' Suppose $\xv^*$ is not an optimal solution of the $\epsilon$-constraint problem. Then define $\mathbf{\epsilon}=\cost(\xv*)$, and there exists $\xv \in \S$ with $\cost_i(\xv) <\cost_i(\xv^*)$ and $f_j(\xv) \leq \epsilon_j = \cost_j(\xv^*)$, which contradicts the Pareto-optimality of $\xv^*$.
+    \\
+    ``$\Leftarrow$'' Suppose $\xv^*$ is not Pareto-optimal. Then there exists $\xv \in \S$, such that $\cost_i(\xv) < \cost_i(\xv^*)$ for at least one $i \in \{1, \dots, m\}$ and $\cost_j(\xv) \leq \cost_j(\xv^*)$ for all $j = 1, \dots, m$.
+    Since $\xv^*$ is a solution of the $\epsilon$-constraint problem, it follows that $\cost_j(\xv) \leq \cost_j(\xv^*) \leq \epsilon_j$, so $\xv$ satisfies the constraints, which contradicts the optimality of $\xv^*$ for the $\epsilon$-constraint problem and index $i$.
+\end{framei}
 
 
 % -------------------------------------------------------------------
