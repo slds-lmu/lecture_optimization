@@ -390,8 +390,8 @@ User then picks from that subset on the right, based on hidden preferences
   \item Without loss of generality we can assume $\sumid w_i =1$.
   \item \textbf{Theorem:} If $w_i>0$ for all $i$, then $\xvs$ is Pareto-optimal.
   \\[0.5cm]
-  \textbf{Proof.} Suppose $\xvs$ is not Pareto-optimal, i.e., there exists $\tilde{\xv}$ such that $\f_i(\tilde{\xv}) \leq \f_i(\xvs)$ for all $i$ and $\f_j(\tilde{\xv}) < \f_j(\xv^*)$ for at least one $j$. Then,
-  \[\sumid w_i \f_i(\tilde{\xv}) < \sumid w_i \f_i(\xvs),\]
+  \textbf{Proof.} Suppose $\xvs$ is not Pareto-optimal, i.e., there exists $\xv$ such that $\f_i(\xv) \leq \f_i(\xvs)$ for all $i$ and $\f_j(\xv) < \f_j(\xv^*)$ for at least one $j$. Then,
+  \[\sum_{i=1}^m w_i \f_i(\xv) < \sumid w_i \f_i(\xvs),\]
   which contradicts the definition of $\xvs$ as the minimizer.
   \end{framei}
 
@@ -476,17 +476,17 @@ User then picks from that subset on the right, based on hidden preferences
     \item General form of the $\epsilon$-constraint method:
     \[\xv^* := \arg\min_{\xv \in \mathcal{S}} \cost_i(\xv) \quad \text{s.t. } \cost_j(\xv) \leq \epsilon_j, \quad j=1,\dots,m, j \neq i.\]
     \item Are solutions found by the $\epsilon$-constraint method Pareto-optimal?
-    \item \textbf{Theorem:} If $\xv^*$ is the \textbf{unique} optimal solution of the $\epsilon$-constraint method for some $\epsilon$, then $\xv^*$ is Pareto-optimal.
+    \item \textbf{Theorem:} If $\xv^*$ is the \underline{unique} optimal solution of the $\epsilon$-constraint method \underline{for some} index $i$, then $\xv^*$ is Pareto-optimal.
     \\[0.5cm]
-    \textbf{Proof.} Suppose $\xv^*$ is not Pareto-optimal. Then there exists $\tilde{\xv} \in \mathcal{S}$, such that $\cost_i(\tilde{\xv}) \leq \cost_i(\xv^*)$ for all $i = 1, \dots, m$ and $\cost_j(\tilde{\xv}) < \cost_j(\xv^*)$ for at least one $j \in \{1, \dots, m\}$.
-    Since $\xv^*$ is feasible for the $\epsilon$-constraint problem, it follows that $\cost_i(\tilde{\xv}) \leq \cost_i(\xv^*) \leq \epsilon_i$, so $\tilde{\xv}$ is also feasible.
-    Moreover, $\cost_1(\tilde{\xv}) \leq \cost_1(\xv^*)$, and since $\xv^*$ is the \textbf{unique} minimizer of $\text{cost}_1$, we must have $\tilde{\xv} = \xv^*$, which is a contradiction.
+    \textbf{Proof.} Suppose $\xv^*$ is not Pareto-optimal. Then there exists $\xv \in \mathcal{S}$, such that $\cost_i(\xv) \leq \cost_i(\xv^*)$ for all $i = 1, \dots, m$ and $\cost_j(\xv) < \cost_j(\xv^*)$ for at least one $j \in \{1, \dots, m\}$.
+    Since $\xv^*$ is feasible for the $\epsilon$-constraint problem, it follows that $\cost_i(\xv) \leq \cost_i(\xv^*) \leq \epsilon_i$, so $\xv$ is also feasible.
+    Moreover, $\cost_1(\xv) \leq \cost_1(\xv^*)$, and since $\xv^*$ is the unique minimizer of $\text{cost}_1$, we must have $\xv = \xv^*$, which is a contradiction.
 \end{framei}
 
-\begin{framei}{Finding Pareto-optimal solutions VIII}
+\begin{framei}{Finding Pareto-optimal solutions IX}
     \item Can the $\epsilon$-constraint method find all Pareto-optimal solutions?
         \[\xv^* := \arg\min_{\xv \in \mathcal{S}} \cost_i(\xv) \quad \text{s.t. } \cost_j(\xv) \leq \epsilon_j, \quad j=1,\dots,m, j \neq i.\]
-    \item \textbf{Theorem:} $\xv^* \in \S$ is Pareto-optimal if and only if there exists $\mathbf{\epsilon} \in \mathbb{R}^m$ such that $\xv^*$ is an optimal solution for all $i=1,\dots,m$.
+    \item \textbf{Theorem:} $\xv^* \in \S$ is Pareto-optimal if and only if there exists $\mathbf{\epsilon} \in \mathbb{R}^m$ such that $\xv^*$ is an optimal solution \underline{for all} $i=1,\dots,m$.
     \\[0.5cm]
     \textbf{Proof.} ``$\Rightarrow$'' Suppose $\xv^*$ is not an optimal solution of the $\epsilon$-constraint problem. Then define $\mathbf{\epsilon}=\cost(\xv*)$, and there exists $\xv \in \S$ with $\cost_i(\xv) <\cost_i(\xv^*)$ and $f_j(\xv) \leq \epsilon_j = \cost_j(\xv^*)$, which contradicts the Pareto-optimality of $\xv^*$.
     \\
