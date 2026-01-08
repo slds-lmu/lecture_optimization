@@ -1,6 +1,4 @@
-
-
-
+# This script reproduces the R script expedia.R and creates some novel plots using Python.
 if __name__ == '__main__':
     # ------------------------------------------------------------------------------
     # multicrit
@@ -668,6 +666,15 @@ if __name__ == '__main__':
     # Y-axis
     ax.annotate('', xy=(0, 1.75), xytext=(0, -0.1),
                 arrowprops=dict(arrowstyle="-|>", color='black', lw=1.2, mutation_scale=20))
+
+    plt.text(
+        1.3,
+        1.5,
+        "$\mathbf{w}=[1,2]$",
+        color="blue",
+        fontsize=20,
+        bbox=dict(facecolor="white", alpha=0.6, edgecolor="blue")
+    )
 
     # 8. Add manual tick marks and numerical labels
     ticks = [0.0, 0.5, 1.0, 1.5]
