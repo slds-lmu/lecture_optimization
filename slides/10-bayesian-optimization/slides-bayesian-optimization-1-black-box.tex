@@ -1,9 +1,9 @@
-%TODO: latex-math, manual check
 \documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 \input{../../latex-math/ml-mbo}
 
 \title{Optimization in Machine Learning}
@@ -25,20 +25,20 @@ figure_man/01_BlackBox.png
 \begin{framev}{Standard vs. Black-Box Optimization}
 \textbf{Optimization: } Find
 $$
-\min_{\xv \in \mathcal{S}} \fx
+\min_{\xv \in \S} \fx
 $$
 with objective function
 $$
-f: \; \mathcal{S} \to \R,
+f: \; \S \to \R,
 $$
-where $\mathcal{S}$ is usually box constrained.
+where $\S$ is usually box constrained.
 \spacer
 \splitVTT[0.4]
 {\imageC[0.95]{figure_man/Multimodal-example1.png}}
 {
 If we are lucky ...
 \begin{itemize}
-\item ... we have an analytic description of $f: \; \mathcal{S} \to \R$
+\item ... we have an analytic description of $f: \; \S \to \R$
 \item ... we can calculate gradients and use gradient-based methods (e.g. gradient descent) for optimization
 \end{itemize}
 }
@@ -48,13 +48,13 @@ If we are lucky ...
 \begin{framev}{Standard vs. Black-Box Optimization}
 \textbf{Optimization: } Find
 $$
-\min_{\xv \in \mathcal{S}} \fx
+\min_{\xv \in \S} \fx
 $$
 with objective function
 $$
-f: \; \mathcal{S} \to \R,
+f: \; \S \to \R,
 $$
-where $\mathcal{S}$ is usually box constrained.
+where $\S$ is usually box constrained.
 \spacer
 \splitVTT[0.4]
 {\imageC[0.95]{figure_man/cross-in-tray.jpg}}
@@ -71,13 +71,13 @@ Optimization gets harder ...
 \begin{framev}{Standard vs. Black-Box Optimization}
 \textbf{Optimization: } Find
 $$
-\min_{\xv \in \mathcal{S}} \fx
+\min_{\xv \in \S} \fx
 $$
 with objective function
 $$
-f: \; \mathcal{S} \to \R,
+f: \; \S \to \R,
 $$
-where $\mathcal{S}$ is usually box constrained.
+where $\S$ is usually box constrained.
 \spacer
 \splitVTT[0.4]
 {
@@ -86,7 +86,7 @@ where $\mathcal{S}$ is usually box constrained.
 {
 Optimization gets \textbf{really hard} if ...
 \begin{itemize}
-\item ... there is no analytic description of $f: \; \mathcal{S} \to \R$ (\textbf{black box})
+\item ... there is no analytic description of $f: \; \S \to \R$ (\textbf{black box})
 \item ... evaluations of $f$ for given values of $\xv$ are \textbf{time consuming}
 \end{itemize}
 }

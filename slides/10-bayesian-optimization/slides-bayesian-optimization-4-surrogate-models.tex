@@ -43,12 +43,12 @@ Depending on the application:
 \begin{framev}[fs=small]{Gaussian Process}
 Posterior predictive distribution for test point $\xv \in \mathcal{S}$ under zero mean:
 $$
-Y(\xv) ~|~ \xv, \Dt \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)
+Y(\xv) ~|~ \xv, \Dt \sim \normal\left(\fh(\xv), \sh^2(\xv)\right)
 $$
 with
 $$
 \begin{aligned}
-\fh(\xv) &= k(\xv)^\top \bm{K}^{-1} \bm{y} \\
+\fh(\xv) &= k(\xv)^\top \bm{K}^{-1} \yv \\
 \sh^2(\xv) &= k(\xv, \xv) - k(\xv)^\top \bm{K}^{-1} k(\xv)
 \end{aligned}
 $$
@@ -58,7 +58,7 @@ $$
 \begin{footnotesize}
 Note: $\xv$ here denotes the test input.
 $k(\xv) \coloneqq (k(\xv, \xvsi[1]), \ldots, k(\xv, \xvsi[t]))^\top$.
-$\bm{y} \coloneqq (y^{[1]}, \ldots, y^{[t]})^\top$. \\
+$\yv \coloneqq (y^{[1]}, \ldots, y^{[t]})^\top$. \\
 Kernel / Gram matrix $\bm{K} \coloneqq \left(k(\xvsi, \xvsi[j])\right)_{i,j}$ where $i, j \in \{1, \ldots, t\}.$
 \end{footnotesize}
 \end{framev}

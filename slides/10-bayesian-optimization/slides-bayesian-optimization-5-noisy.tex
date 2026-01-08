@@ -23,8 +23,8 @@ figure_man/noisy_2.png
 
 \begin{framev}{Noisy Evaluations}
 In many real-life applications, we cannot access the true function values $f(\xv)$ but only a \textbf{noisy} version thereof
-$$f(\xv) + \epsilon(\xv)$$
-For the sake of simplicity, we assume $\epsilon(\xv) \sim \mathcal{N}\left(0, \sigma_{\epsilon}^{2}\right)$ for now\\
+$$f(\xv) + \eps(\xv)$$
+For the sake of simplicity, we assume $\eps(\xv) \sim \normal(0, \sigma_{\eps}^2)$ for now\\
 \vfill
 \imageC[0.5]{figure_man/noisy_0.png}
 \end{framev}
@@ -57,20 +57,20 @@ for design points $(\xvsi, \ysi) \in \Dt$. This is problematic.
 \splitVTT[0.5]{
 In case of noisy evaluations, a nugget-effect GP (GP regression) should be used instead of an interpolating GP.\\
 \spacer
-The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP assuming homoscedastic noise ($\sigma_{\epsilon}^{2}$) is:
+The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP assuming homoscedastic noise ($\sigma_{\eps}^2$) is:
 }{
 \imageC[1]{figure_man/noisy_2.png}
 }
 \vfill
 $$
-Y(\xv) ~|~ \xv, \Dt \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)
+Y(\xv) ~|~ \xv, \Dt \sim \normal(\fh(\xv), \sh^2(\xv))
 $$
 with
 $$
-\fh(\xv) = k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I}_{t})^{-1} \bm{y}
+\fh(\xv) = k(\xv)^T (\bm{K} + \sigma_{\eps}^2\mathbf{I}_t)^{-1} \bm{y}
 $$
 $$
-\sh^2(\xv) = k(\xv, \xv) - k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I}_{t})^{-1} k(\xv)
+\sh^2(\xv) = k(\xv, \xv) - k(\xv)^T (\bm{K} + \sigma_{\eps}^2\mathbf{I}_t)^{-1} k(\xv)
 $$
 \end{framev}
 
@@ -78,24 +78,24 @@ $$
 \begin{framev}{Noisy Acquisition Functions: AEI}
 \textbf{Augmented Expected Improvement} (\sourceref{https://link.springer.com/article/10.1007/s10898-005-2454-3})
 $$
-a_{\text{AEI}}(\xv) = a_{\text{EI}_{f_{\min_*}}}(\xv) \Bigg(1- \frac{\sigma_{\epsilon}}{\sqrt{\sh^2(\xv)+ \sigma_{\epsilon}^{2}}}\Bigg).
+a_{\text{AEI}}(\xv) = a_{\text{EI}_{f_{\min_*}}}(\xv) \Bigg(1- \frac{\sigma_{\eps}}{\sqrt{\sh^2(\xv)+ \sigma_{\eps}^2}}\Bigg).
 $$
 Here, $a_{\text{EI}_{f_{\min_*}}}$ denotes the \textbf{Expected Improvement with Plugin}.\\
 It uses the \textbf{effective best solution} as a plugin for the (unknown) best observed value $\fmin$
 $$
-f_{\min_*} = \min_{\xv \in \{\xvsi[1], ..., \xvsi[t]\}} \fh(\xv) + c \sh(\xv),
+f_{\min_*} = \min_{\xv \in \{\xvsi[1], \ldots, \xvsi[t]\}} \fh(\xv) + c \sh(\xv),
 $$
 where $c > 0$ is a constant that controls the risk aversion.\\
 \spacer
-$\sigma_{\epsilon}^{2}$ is the nugget-effect as estimated by the GP regression.
+$\sigma_{\eps}^2$ is the nugget-effect as estimated by the GP regression.
 \end{framev}
 
 
 \begin{framev}{Noisy Acquisition Functions: AEI}
 \splitVTT[0.5]{
-In addition, it takes into account the nugget-effect $\sigma_{\epsilon}^{2}$ by a penalty term:
+In addition, it takes into account the nugget-effect $\sigma_{\eps}^2$ by a penalty term:
 $$
-\Bigg(1- \frac{\sigma_\epsilon}{\sqrt{\sh^2(\xv)+ \sigma_\epsilon^2}}\Bigg)
+\Bigg(1- \frac{\sigma_\eps}{\sqrt{\sh^2(\xv)+ \sigma_\eps^2}}\Bigg)
 $$
 The penalty is justified to \enquote{account for the diminishing return of additional replicates as the predictions become more accurate} (\sourceref{https://link.springer.com/article/10.1007/s10898-005-2454-3})
 }{
@@ -104,7 +104,7 @@ The penalty is justified to \enquote{account for the diminishing return of addit
 \vfill
 \begin{itemize}
 \item Designs with small predictive variance $\sh^2(\xv)$ are penalized in favor of more exploration.
-\item If $\sigma_\epsilon^2 = 0$ (noise-free), the AEI corresponds to the EI with plugin.
+\item If $\sigma_\eps^2 = 0$ (noise-free), the AEI corresponds to the EI with plugin.
 \end{itemize}
 \end{framev}
 
