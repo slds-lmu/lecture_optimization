@@ -9,18 +9,17 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Bayesian Optimization
-  }{% Lecture title  
-  Noisy Bayesian Optimization
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/noisy_2.png
-  }{
-    \item Noisy surrogate modeling
-    \item Noisy acquisition functions
-    \item Final best point
+\titlemeta{
+Bayesian Optimization
+}{
+Noisy Bayesian Optimization
+}{
+figure_man/noisy_2.png
+}{
+\item Noisy surrogate modeling
+\item Noisy acquisition functions
+\item Final best point
 }
-
 
 \begin{framev}{Noisy Evaluations}
 In many real-life applications, we cannot access the true function values $f(\xv)$ but only a \textbf{noisy} version thereof
@@ -34,62 +33,58 @@ For the sake of simplicity, we assume $\epsilon(\xv) \sim \mathcal{N}\left(0, \s
 \begin{framev}{Noisy Evaluations}
 Examples:
 \begin{itemize}
-    \item HPO (due to non-deterministic learning algorithm and/or resampling technique)
-    \item Oil drilling optimization (an oil sample is only an estimate)
-    \item Robot gait optimization (velocity of a run of a robot is an estimate of true velocity)
+\item HPO (due to non-deterministic learning algorithm and/or resampling technique)
+\item Oil drilling optimization (an oil sample is only an estimate)
+\item Robot gait optimization (velocity of a run of a robot is an estimate of true velocity)
 \end{itemize}
 \end{framev}
 
 \begin{framev}{Noisy Evaluations}
 This raises the following problems:
-
 \begin{itemize}
-  \item \textbf{Surrogate modeling:} So far we used an interpolating GP that is based on noise-free observations; as a consequence, the variance is modeled as $0$
-  $$
-    s^2(\xvsi) = 0
-  $$
-  for design points $(\xvsi, \ysi) \in \Dt$. This is problematic.
-  \item \textbf{Acquisition functions:} Most acquisition functions are based on the best observed value $\fmin$ so far. If evaluations are noisy, we do not know this value (it is a random variable).
-  \item \textbf{Final best point:} The design point evaluated best is not necessarily the true best point in design (overestimation).
+\item \textbf{Surrogate modeling:} So far we used an interpolating GP that is based on noise-free observations; as a consequence, the variance is modeled as $0$
+$$
+s^2(\xvsi) = 0
+$$
+for design points $(\xvsi, \ysi) \in \Dt$. This is problematic.
+\item \textbf{Acquisition functions:} Most acquisition functions are based on the best observed value $\fmin$ so far. If evaluations are noisy, we do not know this value (it is a random variable).
+\item \textbf{Final best point:} The design point evaluated best is not necessarily the true best point in design (overestimation).
 \end{itemize}
 \end{framev}
 
+
 \begin{framev}{Surrogate Model}
-\splitVTT[0.5]
-{
+\splitVTT[0.5]{
 In case of noisy evaluations, a nugget-effect GP (GP regression) should be used instead of an interpolating GP.\\
 \spacer
 The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP assuming homoscedastic noise ($\sigma_{\epsilon}^{2}$) is:
-}
-{
+}{
 \imageC[1]{figure_man/noisy_2.png}
 }
-
 \vfill
 $$
-  Y(\xv) ~|~ \xv, \Dt \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)
+Y(\xv) ~|~ \xv, \Dt \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)
 $$
 with
 $$
-  \fh(\xv) = k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I}_{t})^{-1} \bm{y}
+\fh(\xv) = k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I}_{t})^{-1} \bm{y}
 $$
 $$
-  \sh^2(\xv) = k(\xv, \xv) - k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I}_{t})^{-1} k(\xv)
+\sh^2(\xv) = k(\xv, \xv) - k(\xv)^\top (\bm{K} + \sigma_{\epsilon}^{2}\mathbf{I}_{t})^{-1} k(\xv)
 $$
 \end{framev}
+
 
 \begin{framev}{Noisy Acquisition Functions: AEI}
 \textbf{Augmented Expected Improvement} (\sourceref{https://link.springer.com/article/10.1007/s10898-005-2454-3})
 $$
-  a_{\text{AEI}}(\xv) = a_{\text{EI}_{f_{\min_*}}}(\xv) \Bigg(1- \frac{\sigma_{\epsilon}}{\sqrt{\sh^2(\xv)+ \sigma_{\epsilon}^{2}}}\Bigg).
+a_{\text{AEI}}(\xv) = a_{\text{EI}_{f_{\min_*}}}(\xv) \Bigg(1- \frac{\sigma_{\epsilon}}{\sqrt{\sh^2(\xv)+ \sigma_{\epsilon}^{2}}}\Bigg).
 $$
-
 Here, $a_{\text{EI}_{f_{\min_*}}}$ denotes the \textbf{Expected Improvement with Plugin}.\\
 It uses the \textbf{effective best solution} as a plugin for the (unknown) best observed value $\fmin$
 $$
-  f_{\min_*} = \min_{\xv \in \{\xvsi[1], ..., \xvsi[t]\}} \fh(\xv) + c \sh(\xv),
+f_{\min_*} = \min_{\xv \in \{\xvsi[1], ..., \xvsi[t]\}} \fh(\xv) + c \sh(\xv),
 $$
-
 where $c > 0$ is a constant that controls the risk aversion.\\
 \spacer
 $\sigma_{\epsilon}^{2}$ is the nugget-effect as estimated by the GP regression.
@@ -97,34 +92,31 @@ $\sigma_{\epsilon}^{2}$ is the nugget-effect as estimated by the GP regression.
 
 
 \begin{framev}{Noisy Acquisition Functions: AEI}
-\splitVTT[0.5]
-{
+\splitVTT[0.5]{
 In addition, it takes into account the nugget-effect $\sigma_{\epsilon}^{2}$ by a penalty term:
 $$
-  \Bigg(1- \frac{\sigma_\epsilon}{\sqrt{\sh^2(\xv)+ \sigma_\epsilon^2}}\Bigg)
+\Bigg(1- \frac{\sigma_\epsilon}{\sqrt{\sh^2(\xv)+ \sigma_\epsilon^2}}\Bigg)
 $$
 The penalty is justified to \enquote{account for the diminishing return of additional replicates as the predictions become more accurate} (\sourceref{https://link.springer.com/article/10.1007/s10898-005-2454-3})
-}
-{
+}{
 \imageC[1]{figure_man/noisy_3.png}
 }
 \vfill
 \begin{itemize}
-  \item Designs with small predictive variance $\sh^2(\xv)$ are penalized in favor of more exploration.
-  \item If $\sigma_\epsilon^2 = 0$ (noise-free), the AEI corresponds to the EI with plugin.
+\item Designs with small predictive variance $\sh^2(\xv)$ are penalized in favor of more exploration.
+\item If $\sigma_\epsilon^2 = 0$ (noise-free), the AEI corresponds to the EI with plugin.
 \end{itemize}
 \end{framev}
+
 
 \begin{framev}{Reinterpolation}
 Clean noise from the model and then apply a general acquisition function (EI, PI, LCB, ...)\\
 \spacer
 The RP suggests to build \textbf{two models}: a nugget-effect GP (regression model; left) and then, on the predictions from the first model (grey), an interpolating GP (right)
 \vfill
-\splitVCC[0.5]
-{
+\splitVCC[0.5]{
 \imageC[1]{figure_man/noisy_2.png}
-}
-{
+}{
 \imageC[1]{figure_man/noisy_4.png}
 }
 \end{framev}
@@ -132,36 +124,32 @@ The RP suggests to build \textbf{two models}: a nugget-effect GP (regression mod
 
 \begin{framev}[fs=small]{Reinterpolation}
 \begin{algorithm}[H]
-  \caption{Reinterpolation Procedure}
-  \begin{algorithmic}[1]
-  \State{Build a nugget-effect GP model based on noisy evaluations}
-  \State{Compute predictions for all points in the design $\fh(\xvsi[1]), \ldots, \fh(\xvsi[t])$}
-  \State{Train an interpolating GP on $\left\{\left(\xvsi[1], \fh(\xvsi[1])\right), \ldots, \left(\xvsi[t], \fh(\xvsi[t])\right)\right\}$}
-  \State{Based on the interpolating model, obtain a new candidate using a noise-free acquisition function}
-  \end{algorithmic}
+\caption{Reinterpolation Procedure}
+\begin{algorithmic}[1]
+\State{Build a nugget-effect GP model based on noisy evaluations}
+\State{Compute predictions for all points in the design $\fh(\xvsi[1]), \ldots, \fh(\xvsi[t])$}
+\State{Train an interpolating GP on $\left\{\left(\xvsi[1], \fh(\xvsi[1])\right), \ldots, \left(\xvsi[t], \fh(\xvsi[t])\right)\right\}$}
+\State{Based on the interpolating model, obtain a new candidate using a noise-free acquisition function}
+\end{algorithmic}
 \end{algorithm}
 \vfill
-\splitVCC[0.5]
-{
+\splitVCC[0.5]{
 \imageC[1]{figure_man/noisy_2.png}
-}
-{
+}{
 \imageC[1]{figure_man/noisy_4.png}
 }
 \end{framev}
 
 \begin{framev}{Identification of final best point}
 Another problem is the identification of a final best point:
-
 \begin{itemize}
-  \item Assume that all evaluations are noisy
-  \item The probability is high that \textbf{by chance}
-  \begin{itemize}
-    \item bad points get overrated
-    \item good points get overlooked
-  \end{itemize}
+\item Assume that all evaluations are noisy
+\item The probability is high that \textbf{by chance}
+\begin{itemize}
+\item bad points get overrated
+\item good points get overlooked
 \end{itemize}
-
+\end{itemize}
 \vfill
 \imageC[0.5]{figure_man/noisy_5.png}
 \end{framev}
@@ -170,13 +158,12 @@ Another problem is the identification of a final best point:
 \begin{framev}{Identification of final best point}
 Possibilities to reduce the risk of falsely returning a bad point:
 \begin{itemize}
-  \item Return the best predicted point: $\argmin_{\xv \in \{\xvsi[1], \ldots, \xvsi[t]\}} \fh(\xv)$
-  \item Repeated evaluations of the final point: infer guarantees about final point (however if final point is \enquote{bad} unclear how to find a better one)
-  \item Repeated evaluations of all design points: reduce noise during optimization and risk of falsely returning a bad point
-  \item More advanced replication strategies, e.g. incumbent strategies: also re-evaluate the \enquote{incumbent} in each iteration
+\item Return the best predicted point: $\argmin_{\xv \in \{\xvsi[1], \ldots, \xvsi[t]\}} \fh(\xv)$
+\item Repeated evaluations of the final point: infer guarantees about final point (however if final point is \enquote{bad} unclear how to find a better one)
+\item Repeated evaluations of all design points: reduce noise during optimization and risk of falsely returning a bad point
+\item More advanced replication strategies, e.g. incumbent strategies: also re-evaluate the \enquote{incumbent} in each iteration
 \end{itemize}
 \end{framev}
-
 
 \endlecture
 \end{document}

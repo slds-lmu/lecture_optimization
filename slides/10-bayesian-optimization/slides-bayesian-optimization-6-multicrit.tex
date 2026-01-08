@@ -1,4 +1,3 @@
-%TIKZ again!
 \documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
 \input{../../style/preamble}
@@ -10,60 +9,28 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Bayesian Optimization
-  }{% Lecture title  
-  Multicriteria Bayesian Optimization
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/sms_plot.pdf
-  }{
-    \item Multicriteria Optimization
-    \item Taxonomy
-    \item ParEGO, SMS-EGO, EHI
+\titlemeta{
+Bayesian Optimization
+}{
+Multicriteria Bayesian Optimization
+}{
+figure_man/sms_plot.pdf
+}{
+\item Multicriteria Optimization
+\item Taxonomy
+\item ParEGO, SMS-EGO, EHI
 }
 
 \begin{framev}[fs=small]{Multicriteria Bayesian Optimization}
-\splitV[0.4]
-{
-\vspace*{-0.8cm}
-
-\input{figure_man/gear.tex}
-%http://tex.stackexchange.com/questions/6135/how-to-make-beamer-overlays-with-tikz-node
-
-\tikzset{
-  %Style of the black box
-  bbox/.style={draw, fill=black, minimum size=3cm,
-  label={[white, yshift=-1.25em]above:$in$},
-  label={[white, yshift=1.25em]below:$out$},
-  label={[rotate = 90, xshift=1em, yshift=0.5em]left:Black-Box}
-  },
-  multiple/.style={double copy shadow={shadow xshift=1.5ex,shadow
-  yshift=-0.5ex,draw=black!30,fill=white}}
-}
-
-\begin{tikzpicture}[>=triangle 45, semithick]
-\node[bbox] (a) {};
-\draw[thick, shift=({-0.4cm,0.2cm}), draw = white](a.center) \gear{18}{0.5cm}{0.6cm}{10}{2}; \draw[thick, shift=({0.4cm,-0.3cm}), draw = white](a.center) \gear{14}{0.3cm}{0.4cm}{10}{2};
-{
-\draw[<-] (a.120) --++(90:1.5em) node [above] {$x_1$};
-\draw[<-] (a.100) --++(90:1.5em) node [above] {$x_2$};
-\draw[<-] (a.80) --++(90:1.5em) node [above] {$\ldots$};
-\draw[<-] (a.60) --++(90:1.5em) node [above] {$x_d$};
-}
-{
-\draw[->] (a.240) --++(90:-1.5em) node [below] {$f_1(\xv)$};
-\draw[->] (a.300) --++(90:-1.5em) node [below] {$f_2(\xv)$};
-}
-\end{tikzpicture}
-}
-{
+\splitV[0.4]{
+\input{figure_man/black_box.tex}
+}{
 $$
 f: \mathcal{S} \rightarrow \R^m
 $$
 $$
 \min \limits_{\xv \in \mathcal{S}} f(\xv) = ( f_1(\xv), \ldots, f_m(\xv) )
 $$
-
 \begin{itemize}
 \item A configuration $\xv$ \textbf{dominates} ($\prec$) $\tilde{\xv}$ if
 $$
@@ -156,25 +123,24 @@ ParEGO Example, initial design and true Pareto front in black ...
 The grey point visualizes the candidate we choose to evaluate in the previous iteration
 \end{framev}
 
+
 \begin{framev}{SMS-EGO}
 \imageC[0.6]{figure_man/FlowchartMBMO_sms.pdf}
 \end{framev}
+
 
 \begin{framev}{SMS-EGO}
 Individual models for each objective $f_i$\\
 \vspace{1em}
 Single-objective optimization of aggregating acquisition function: \\
 Calculate contribution of the confidence bound of candidate to the current front approximation
-
-\splitV[0.55]
-{
+\splitV[0.55]{
 \begin{itemize}
 \item Calculate LCB for each objective
 \item Measure contribution with regard to the hypervolume improvement
 \item For $\varepsilon$-dominated ($\prec_{\varepsilon}$) solutions, a penalty is added
 \end{itemize}
-}
-{
+}{
 \imageC[1]{figure_man/hv_plot.pdf}
 }
 \end{framev}
@@ -185,7 +151,6 @@ Individual models for each objective $f_i$\\
 \vspace{1em}
 Single-objective optimization of aggregating acquisition function: \\
 Calculate contribution of the confidence bound of candidate to the current front approximation
-
 \splitV[0.55]
 {
 \begin{itemize}
@@ -193,8 +158,7 @@ Calculate contribution of the confidence bound of candidate to the current front
 \item Measure contribution with regard to the hypervolume improvement
 \item For $\varepsilon$-dominated ($\prec_{\varepsilon}$) solutions, a penalty is added
 \end{itemize}
-}
-{
+}{
 \imageC[1]{figure_man/hv_contr_plot.pdf}
 }
 \end{framev}
@@ -205,16 +169,13 @@ Individual models for each objective $f_i$\\
 \vspace{1em}
 Single-objective optimization of aggregating acquisition function: \\
 Calculate contribution of the confidence bound of candidate to the current front approximation
-
-\splitV[0.55]
-{
+\splitV[0.55]{
 \begin{itemize}
 \item Calculate LCB for each objective
 \item Measure contribution with regard to the hypervolume improvement
 \item For $\varepsilon$-dominated ($\prec_{\varepsilon}$) solutions, a penalty is added
 \end{itemize}
-}
-{
+}{
 \imageC[1]{figure_man/sms_plot.pdf}
 }
 \end{framev}
@@ -228,7 +189,6 @@ Calculate contribution of the confidence bound of candidate to the current front
 \item ...
 \end{itemize}
 \end{framei}
-
 
 \endlecture
 \end{document}
