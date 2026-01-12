@@ -54,7 +54,7 @@ for design points $(\xvsi, \ysi) \in \Dt$. This is problematic.
 
 
 \begin{framev}{Surrogate Model}
-\splitVTT[0.5]{
+\splitV[0.5]{
 In case of noisy evaluations, a nugget-effect GP (GP regression) should be used instead of an interpolating GP.\\
 \spacer
 The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP assuming homoscedastic noise ($\sigma_{\eps}^2$) is:
@@ -92,7 +92,7 @@ $\sigma_{\eps}^2$ is the nugget-effect as estimated by the GP regression.
 
 
 \begin{framev}{Noisy Acquisition Functions: AEI}
-\splitVTT[0.5]{
+\splitV[0.5]{
 In addition, it takes into account the nugget-effect $\sigma_{\eps}^2$ by a penalty term:
 $$
 \Bigg(1- \frac{\sigma_\eps}{\sqrt{\sh^2(\xv)+ \sigma_\eps^2}}\Bigg)

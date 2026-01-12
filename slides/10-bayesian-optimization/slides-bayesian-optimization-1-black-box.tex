@@ -32,8 +32,8 @@ $$
 f: \; \S \to \R,
 $$
 where $\S$ is usually box constrained.
-\spacer
-\splitVTT[0.4]
+\vfill
+\splitVCC[0.4]
 {\imageC[0.95]{figure_man/Multimodal-example1.png}}
 {
 If we are lucky ...
@@ -55,8 +55,8 @@ $$
 f: \; \S \to \R,
 $$
 where $\S$ is usually box constrained.
-\spacer
-\splitVTT[0.4]
+\vfill
+\splitVCC[0.4]
 {\imageC[0.95]{figure_man/cross-in-tray.jpg}}
 {
 Optimization gets harder ...
@@ -78,8 +78,8 @@ $$
 f: \; \S \to \R,
 $$
 where $\S$ is usually box constrained.
-\spacer
-\splitVTT[0.4]
+\vfill
+\splitVCC[0.4]
 {
 \input{figure_man/black_box.tex} 
 }
@@ -95,13 +95,13 @@ Optimization gets \textbf{really hard} if ...
 
 \begin{framev}{Examples for Bayesian Optimization}
 \begin{enumerate}
-\item Robot Gait Optimization: The robot's gait is controlled by a \textbf{parameterized controller}
+\item Robot Gait Optimization: The robot's gait is controlled by a \textbf{parameterized controller} %TODO: source
 \spacer
 \imageC[0.25]{figure_man/robot_gait.png}
 \begin{itemize}\footnotesize
 \item \textbf{Goal: } Find parameters s.t. average velocity (directional speed) of the robot is maximized
 \item Parameters of the gait control e.g. joints of ankles and knees
-\item \emph{Calandra et al. (2014). An Experimental Evaluation of Bayesian Optimization on Bipedal Locomotion}
+% \item \emph{Calandra et al. (2014). An Experimental Evaluation of Bayesian Optimization on Bipedal Locomotion}
 \end{itemize}
 \end{enumerate}
 \end{framev}
@@ -112,14 +112,13 @@ Optimization gets \textbf{really hard} if ...
 \setcounter{enumi}{1}
 \item Optimization of a cookie recipe
 \spacer
-\imageC[0.5]{figure_man/cookie.jpg}
-\tiny{\sourceref{https://www.bettycrocker.com}}
+\imageC[0.5][https://www.bettycrocker.com]{figure_man/cookie.jpg}
 \imageC[0.8]{figure_man/cookie2.png}
 \spacer
 \begin{itemize}
 \item \textbf{Goal: } Find \enquote{optimal} composition and amounts of ingredients
-\item \textbf{Evaluation: } Cookies are baked according to the recipe, tested and rated by volunteers
-\item \emph{Kochanski et al. (2017). Bayesian Optimization for a Better Dessert}
+\item \textbf{Evaluation: } Cookies are baked according to the recipe, tested and rated by volunteers %TODO: source
+% \item \emph{Kochanski et al. (2017). Bayesian Optimization for a Better Dessert}
 \end{itemize}
 \end{enumerate}
 \end{framev}
@@ -151,9 +150,9 @@ Optimization gets \textbf{really hard} if ...
 \splitV[0.5]
 {\imageC[0.9]{figure_man/black_box_0.png}}
 {\imageC[0.9]{figure_man/black_box_1.png}}
-\begin{footnotesize}
+\begin{footnotesize}\begin{center}
 Rug plots of RS vs. GS.
-\end{footnotesize}
+\end{center}\end{footnotesize}
 \end{enumerate}
 \end{framev}
 
@@ -170,9 +169,9 @@ Rug plots of RS vs. GS.
 \end{itemize}
 \vfill
 \imageC[0.55]{figure_man/black_box_2.png}
-\begin{footnotesize}
+\begin{footnotesize}\begin{center}
 BO vs. CMAES vs. RS on 2D Ackley.
-\end{footnotesize}
+\end{center}\end{footnotesize}
 \end{enumerate}
 \end{framev}
 

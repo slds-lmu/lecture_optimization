@@ -52,9 +52,7 @@ $$
 \sh^2(\xv) &= k(\xv, \xv) - k(\xv)^\top \bm{K}^{-1} k(\xv)
 \end{aligned}
 $$
-\vfill
-\imageC[0.3]{figure_man/bayesian_loop_sm_normal.png}
-\spacer
+\imageC[0.4]{figure_man/bayesian_loop_sm_normal.png}
 \begin{footnotesize}
 Note: $\xv$ here denotes the test input.
 $k(\xv) \coloneqq (k(\xv, \xvsi[1]), \ldots, k(\xv, \xvsi[t]))^\top$.
@@ -116,14 +114,10 @@ Mixed inputs / dependencies require special kernels
 \end{framev}
 
 
-\begin{framev}[fs=small]{Random Forest - Mean and Variance}
-\begin{itemize}
+\begin{framei}[fs=small]{Random Forest - Mean and Variance}
 \item Let $\fh_b: \mathcal{S} \to \R$ be the mean prediction of a decision tree $b$ (mean of all data points in the same node as observation $\xv \in \mathcal{S}$)
 \item Let $\sh_{b}^2: \mathcal{S} \to \R$ be the variance prediction (variance of all data points in the same node as observation $\xv \in \mathcal{S}$)
-\item Mean prediction of forest: $\fh: \mathcal{S} \to \R$,
-$$
-\xv \mapsto \frac{1}{B} \sum_{b = 1}^{B} \fh_{b}(\xv)
-$$
+\item Mean prediction of forest: $\fh: \mathcal{S} \to \R, \xv \mapsto \frac{1}{B} \sum_{b = 1}^{B} \fh_{b}(\xv) $
 \item Variance prediction of forest: $\sh^{2}: \mathcal{S} \to \R$,
 $$
 \xv \mapsto  \left( \frac{1}{B} \sum_{b = 1}^{B} \sh_{b}^2(\xv) + \fh_{b}(\xv)^{2} \right) - \fh(\xv)^{2}
@@ -139,8 +133,7 @@ $$
 \item Features sampled at random
 \item (randomized split locations in the case of \enquote{extratrees})
 \end{itemize}
-\end{itemize}
-\end{framev}
+\end{framei}
 
 
 \begin{framev}{Random Forest - Different Choices}
@@ -148,19 +141,19 @@ $$
 % no bootstrap means we do subsampling (i.e., simply use all data once)
 % no random split means we split by variance criterion
 % random split means we choose the split point in a feature uniformly at random between feature bounds
-\imageC[0.9]{figure_man/surrogate_1.png}
+\imageC[0.95]{figure_man/surrogate_1.png}
 \end{framev}
 
 
 \begin{framei}{Random Forest}
-\item[Pros:]
+\item[] \textbf{Pros:}
 \item Cheap(er) to train
 \item Scales well with the number of data points
 \item Scales well with the number of dimensions
 \item Can easily handle hierarchical mixed spaces. Either via imputation or directly respecting dependencies in the tree structure
 \item Robust
 \spacer
-\item[Cons:]
+\item[] \textbf{Cons:}
 \item Suboptimal uncertainty estimates
 \item Not really Bayesian (no real posterior predictive distribution)
 \item Poor extrapolation
@@ -171,9 +164,7 @@ $$
 % BO_RF is the RF top right on slide 9
 % BO_RF_ET is the RF top bottom on slide 9
 Minimize the 2D Ackley Function using BO\_GP (GP with Matérn 3/2, EI), BO\_RF (standard Random Forest, EI), BO\_RF\_ET (Random Forest with extratrees, EI) or a random search:
-\vfill
-\imageC[0.5]{figure_man/surrogate_2.png}
-\spacer
+\imageC[0.6]{figure_man/surrogate_2.png}
 \begin{footnotesize}
 Strong BO\_GP performance. BO\_RF and BO\_RF\_ET not too bad either. BO\_RF\_ET maybe slightly better final performance than BO\_RF.
 \end{footnotesize}

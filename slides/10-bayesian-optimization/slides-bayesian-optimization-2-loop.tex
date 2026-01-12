@@ -22,22 +22,19 @@ figure_man/loop_2.png
 \item Basic loop
 }
 
-\begin{framev}{Optimization via Surrogate Modeling}
-\textbf{Starting point:}
-\begin{itemize}
+\begin{framei}{Optimization via Surrogate Modeling}
+\item[] \textbf{Starting point:}
 \item We do not know the objective function $f: \S \to \R$
 \item But we can evaluate $f$ for a few different inputs $\xv \in \S$
 \item For now we assume that those evaluations are noise-free
 \item \textbf{Idea:}
 Use the data $\Dt = \{(\xvsi, \ysi)\}_{i = 1, \ldots t}$, $\ysi := f(\xvsi)$, to derive properties about the unknown function $f$
-\end{itemize}
 \vfill
 \imageC[0.5]{figure_man/loop_1.png}
-\end{framev}
+\end{framei}
 
 
-\begin{framev}{Initial Design}
-\begin{itemize}
+\begin{framei}{Initial Design}
 \item Should cover / explore input space sufficiently:
 \begin{itemize}
 \item Random design
@@ -48,14 +45,13 @@ Use the data $\Dt = \{(\xvsi, \ysi)\}_{i = 1, \ldots t}$, $\ysi := f(\xvsi)$, to
 \item A more important choice is the \textbf{size} of the initial design
 \begin{itemize}
 \item Should neither be too small (bad initial fit) nor too large (spending too much budget without doing \enquote{intelligent} optimization)
-  \item Rule of thumb: $4d$
+\item Rule of thumb: $4d$
 \end{itemize}
-\end{itemize}
-\end{framev}
+\end{framei}
 
 
 \begin{framev}{Latin Hypercube Sampling}
-\splitVTT[0.5]{
+\splitVCC[0.5]{
 \begin{itemize}
 \item LHS partitions the search space into bins of equal probability
 \item Goal is to attain a more even distribution of sample points than random sampling
@@ -63,12 +59,10 @@ Use the data $\Dt = \{(\xvsi, \ysi)\}_{i = 1, \ldots t}$, $\ysi := f(\xvsi)$, to
 \end{itemize}
 }{
 \imageC[0.75]{figure_man/init_0.png}
-\spacer
 \imageC[0.75]{figure_man/init_1.png}
-\spacer
-{\footnotesize
+\begin{footnotesize}\begin{center}
 Marginal histograms RS vs. LHS
-}
+\end{center}\end{footnotesize}
 }
 \end{framev}
 
@@ -96,20 +90,20 @@ Running example = minimize this \enquote{black-box}:
 \item \textbf{Fit} a \textbf{regression model} $\fh: \Dt \rightarrow \R$ (blue) to extract maximum information from the design points (black) and learn properties of $f$
 \end{enumerate}
 \vfill
-\imageC[0.5]{figure_man/loop_2.png}
-\spacer
+\imageC[0.7]{figure_man/loop_2.png}
+\begin{center}
 As we can eval $f$ without noise, we fit an interpolator
+\end{center}
 \end{framev}
 
 
 \begin{framev}{Surrogate Modeling}
 \begin{enumerate}
 \setcounter{enumi}{1}
-\item Instead of the expensive $f$, we optimize the cheap 
- surrogate $\fh$ (blue) to \textbf{propose} a new point (red) for evaluation 
+\item Instead of the expensive $f$, we optimize the cheap surrogate $\fh$ (blue) to \textbf{propose} a new point (red) for evaluation 
 \end{enumerate}
 \vfill
-\imageC[0.5]{figure_man/loop_3.png}
+\imageC[0.7]{figure_man/loop_3.png}
 \end{framev}
 
 
@@ -119,7 +113,7 @@ As we can eval $f$ without noise, we fit an interpolator
 \item We finally evaluate the newly proposed point
 \end{enumerate}
 \vfill
-\imageC[0.5]{figure_man/loop_4.png}
+\imageC[0.7]{figure_man/loop_4.png}
 \end{framev}
 
 
@@ -128,7 +122,7 @@ As we can eval $f$ without noise, we fit an interpolator
 \item After evaluation of the new point, we \textbf{adjust} the model on the expanded dataset via (slower) refitting or a (cheaper) online update
 \end{itemize}
 \vfill
-\imageC[0.5]{figure_man/loop_5.png}
+\imageC[0.7]{figure_man/loop_5.png}
 \end{framev}
 
 
@@ -137,7 +131,7 @@ As we can eval $f$ without noise, we fit an interpolator
 \item We again obtain a new candidate point (red) by optimizing the cheap surrogate model function (blue) ...
 \end{itemize}
 \vfill
-\imageC[0.5]{figure_man/loop_6.png}
+\imageC[0.7]{figure_man/loop_6.png}
 \end{framev}
 
 
@@ -146,7 +140,7 @@ As we can eval $f$ without noise, we fit an interpolator
 \item ... and evaluate that candidate
 \end{itemize}
 \vfill
-\imageC[0.5]{figure_man/loop_7.png}
+\imageC[0.7]{figure_man/loop_7.png}
 \end{framev}
 
 
@@ -155,7 +149,7 @@ As we can eval $f$ without noise, we fit an interpolator
 \item We repeat: (i) \textbf{fit} the model
 \end{itemize}
 \vfill
-\imageC[0.5]{figure_man/loop_8.png}
+\imageC[0.7]{figure_man/loop_8.png}
 \end{framev}
 
 
@@ -164,7 +158,7 @@ As we can eval $f$ without noise, we fit an interpolator
 \item (ii) \textbf{propose} a new point
 \end{itemize}
 \vfill
-\imageC[0.5]{figure_man/loop_9.png}
+\imageC[0.7]{figure_man/loop_9.png}
 \end{framev}
 
 
@@ -173,7 +167,7 @@ As we can eval $f$ without noise, we fit an interpolator
 \item (iii) \textbf{evaluate} that point
 \end{itemize}
 \vfill
-\imageC[0.5]{figure_man/loop_10.png}
+\imageC[0.7]{figure_man/loop_10.png}
 \spacer
 \begin{itemize}
 \item We observe that the algorithm converged
@@ -194,7 +188,7 @@ The basic loop of our sequential optimization procedure is:
 \begin{framev}{Exploration vs. Exploitation}
 We see: We ran into a local minimum. We did not \enquote{explore} the most crucial areas and \textbf{missed} the global minimum.
 \vfill
-\splitVTT[0.5]{
+\splitVCC[0.5]{
 \imageC[1]{figure_man/loop_11.png}
 }{
 \begin{itemize}

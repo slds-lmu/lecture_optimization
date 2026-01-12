@@ -53,7 +53,7 @@ $$
 \begin{framev}{Multicriteria Bayesian Optimization}
 Example Pareto front:
 \vfill
-\imageC[0.6]{figure_man/multicrit_0.png}
+\imageC[0.8]{figure_man/multicrit_0.png}
 \end{framev}
 
 
@@ -66,7 +66,7 @@ $$
 $$
 where $\mu$ is the Lebesgue measure and the dominated hypercube is given as:
 $$
-	ext{domHC}_{\bm{r}}(\xv) := \{\uv \in \R^m~|~ f_i(\xv) \leq \uv_i \leq \bm{r}_i\;\forall i \in \{1, \dots, m\}\}
+\text{domHC}_{\bm{r}}(\xv) := \{\uv \in \R^m~|~ f_i(\xv) \leq \uv_i \leq \bm{r}_i\;\forall i \in \{1, \dots, m\}\}
 $$
 \end{framev}
 
@@ -74,22 +74,24 @@ $$
 \begin{framev}{Multicriteria Bayesian Optimization}
 Hypervolume example:
 \vfill
-\imageC[0.6]{figure_man/multicrit_1.png}
+\imageC[0.7]{figure_man/multicrit_1.png}
 Reference point $\bm{r}$ in red, estimated Pareto front $\hat{\mathcal{F}}$ in black, corresponding $\operatorname{HV}_{\bm{r}}(\hat{\mathcal{P}})$ is given by the grey area
 \end{framev}
 
+
 \begin{framev}{Taxonomy}
-\imageC[0.6]{figure_man/FlowchartMBMO.pdf}
+\imageC[0.7]{figure_man/FlowchartMBMO.pdf}
 \vfill
+%TODO: source
 Horn, Wagner, Bischl et al. (2014).
 \end{framev}
 
 \begin{framev}{ParEGO}
-\imageC[0.6]{figure_man/FlowchartMBMO_parego.pdf}
+\imageC[0.8]{figure_man/FlowchartMBMO_parego.pdf}
 \end{framev}
 
 
-\begin{framev}[fs=small]{ParEGO}
+\begin{framev}{ParEGO}
 \begin{enumerate}
 \item Scalarize standardized objectives using the augmented Tchebycheff norm
 $$
@@ -105,7 +107,7 @@ with weight vector $\wv$ drawn uniformly from the set of evenly distributed weig
 \begin{framev}{ParEGO}
 ParEGO Example, initial design and true Pareto front in black ...
 \vfill
-\imageC[0.6]{figure_man/multicrit_2.png}
+\imageC[0.8]{figure_man/multicrit_2.png}
 \end{framev}
 
 
@@ -125,10 +127,10 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 
 
 \begin{framev}{SMS-EGO}
-\imageC[0.6]{figure_man/FlowchartMBMO_sms.pdf}
+\imageC[0.8]{figure_man/FlowchartMBMO_sms.pdf}
 \end{framev}
 
-
+\foreach \figbase in {hv_plot, hv_contr_plot, sms_plot} {
 \begin{framev}{SMS-EGO}
 Individual models for each objective $f_i$\\
 \vspace{1em}
@@ -141,44 +143,10 @@ Calculate contribution of the confidence bound of candidate to the current front
 \item For $\varepsilon$-dominated ($\prec_{\varepsilon}$) solutions, a penalty is added
 \end{itemize}
 }{
-\imageC[1]{figure_man/hv_plot.pdf}
+\imageC[1]{figure_man/\figbase.pdf}
 }
 \end{framev}
-
-
-\begin{framev}{SMS-EGO}
-Individual models for each objective $f_i$\\
-\vspace{1em}
-Single-objective optimization of aggregating acquisition function: \\
-Calculate contribution of the confidence bound of candidate to the current front approximation
-\splitV[0.55]
-{
-\begin{itemize}
-\item Calculate LCB for each objective
-\item Measure contribution with regard to the hypervolume improvement
-\item For $\varepsilon$-dominated ($\prec_{\varepsilon}$) solutions, a penalty is added
-\end{itemize}
-}{
-\imageC[1]{figure_man/hv_contr_plot.pdf}
 }
-\end{framev}
-
-
-\begin{framev}{SMS-EGO}
-Individual models for each objective $f_i$\\
-\vspace{1em}
-Single-objective optimization of aggregating acquisition function: \\
-Calculate contribution of the confidence bound of candidate to the current front approximation
-\splitV[0.55]{
-\begin{itemize}
-\item Calculate LCB for each objective
-\item Measure contribution with regard to the hypervolume improvement
-\item For $\varepsilon$-dominated ($\prec_{\varepsilon}$) solutions, a penalty is added
-\end{itemize}
-}{
-\imageC[1]{figure_man/sms_plot.pdf}
-}
-\end{framev}
 
 \begin{framei}{Outlook}
 \item Many more options exist:

@@ -25,23 +25,20 @@ figure_man/bayesian_loop_sm_normal.png
 \textbf{Goal:}
 Find trade-off between \textbf{exploration} (areas we have not visited yet) and \textbf{exploitation} (search around good design points)
 \vfill
-\imageC[0.5]{figure_man/bayesian_loop_ee.png}
-\vfill
+\imageC[0.7]{figure_man/bayesian_loop_ee.png}
 \end{framev}
 
 
-\begin{framev}{Bayesian Surrogate Modeling}
-\begin{itemize}
+\begin{framei}{Bayesian Surrogate Modeling}
 \item \textbf{Idea}: Use a \textbf{Bayesian approach} to build SM that yields estimates for the posterior mean $\fh(\xv)$ and the posterior variance $\sh^2(\xv)$
 \item $\sh^2(\xv)$ expresses \enquote{confidence}/\enquote{certainty} in prediction
-\end{itemize}
 \vfill
 \splitV[0.5]{
 \imageC[1]{figure_man/bayesian_loop_ee.png}
 }{
 \imageC[1]{figure_man/bayesian_loop_sm.png}
 }
-\end{framev}
+\end{framei}
 
 
 \begin{framev}{Bayesian Surrogate Modeling}
@@ -53,7 +50,7 @@ will abbreviate it as $Y(\xv)$
 \vfill
 \imageC[0.5]{figure_man/bayesian_loop_sm_normal.png}
 \begin{footnotesize}
-For now we assume an interpolating SM; $\fh(\xv) = f(\xv)$ and $\sh(\xv) = 0$ for training points\\
+For now we assume an interpolating SM; $\fh(\xv) = f(\xv)$ and $\sh(\xv) = 0$ for training points
 \end{footnotesize}
 \end{framev}
 
@@ -62,9 +59,7 @@ For now we assume an interpolating SM; $\fh(\xv) = f(\xv)$ and $\sh(\xv) = 0$ fo
 To sequentially propose new points based on the SM, we make use of so-called acquisition functions $a: \mathcal{S} \to \R$
 \vfill
 Let $\fmin \coloneqq \min \left\{f(\xvsi[1]), \ldots, f(\xvsi[t])\right\}$ denote the best observed value so far (visualized in green - we will need this later!)
-\vfill
 \imageC[0.5]{figure_man/bayesian_loop_sm_fmin.png}
-\vfill
 In the examples before we simply used the posterior mean $a(\xv) = \fh(\xv)$ as acquisition function - ignoring uncertainty
 \end{framev}
 
@@ -83,7 +78,7 @@ The LCB is conceptually very simple and does \textbf{not} rely on distributional
 \begin{framev}{Lower Confidence Bound}
 $\tau = 1$
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_lcb_0.png}
+\imageC[0.7]{figure_man/bayesian_loop_lcb_0.png}
 \vfill
 Top: Design points and SM showing $\fh(\xv)$ (blue) and $\fh(\xv) - \tau \sh(\xv)$ (red)\\
 Bottom: the red point depicts $\argmin_{\xv \in \mathcal{S}} a_{\text{LCB}}(\xv)$
@@ -93,14 +88,14 @@ Bottom: the red point depicts $\argmin_{\xv \in \mathcal{S}} a_{\text{LCB}}(\xv)
 \begin{framev}{Lower Confidence Bound}
 $\tau = 5$
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_lcb_1.png}
+\imageC[0.7]{figure_man/bayesian_loop_lcb_1.png}
 \end{framev}
 
 
 \begin{framev}{Lower Confidence Bound}
 $\tau = 10$
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_lcb_2.png}
+\imageC[0.7]{figure_man/bayesian_loop_lcb_2.png}
 \end{framev}
 
 \endlecture

@@ -40,6 +40,12 @@ where $\Phi(\cdot)$ is the standard normal cdf (assuming Gaussian posterior)
 
 
 \begin{framev}{Probability of Improvement}
+\textbf{Goal}: Find $\xvsi[t+1]$ that maximizes the \textbf{Probability of Improvement} (PI):
+$$
+a_{\text{PI}}(\xv) = \P(Y(\xv) < \fmin) = \Phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right)
+$$
+where $\Phi(\cdot)$ is the standard normal cdf (assuming Gaussian posterior)
+\vfill
 \textbf{Note:} $a_\text{PI}(\xv)=0$ for design points $\xv$, since
 \begin{itemize}
 \item $\sh(\xv) = 0$,
@@ -54,12 +60,11 @@ $$
 
 \begin{framev}{Probability of Improvement}
 The PI does not take the size of the improvement into account
-Often it will propose points close to the current $\fmin$
+Often it will propose points close to the current $\fmin$\\
 \spacer
 We use the PI (red line) to propose the next point ...
 \vfill
 \imageC[0.6]{figure_man/bayesian_loop_pi_1.png}
-\vfill
 The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{PI}}(\xv)$
 \end{framev}
 
@@ -67,8 +72,7 @@ The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{PI}}(\xv)$
 \begin{framev}{Probability of Improvement}
 ... evaluate that point, refit the SM and propose the next point
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_pi_2.png}
-\vfill
+\imageC[0.7]{figure_man/bayesian_loop_pi_2.png}
 (grey point = prev point from last iter)
 \end{framev}
 
@@ -76,49 +80,49 @@ The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{PI}}(\xv)$
 \begin{framev}{Probability of Improvement}
 ...
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_pi_3.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_3.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 In our example, using the PI results in spending plenty of time optimizing the local optimum ...
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_pi_4.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_4.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 ...
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_pi_5.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_5.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 ...
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_pi_6.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_6.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 ...
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_pi_7.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_7.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 ... eventually, we explore other regions ...
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_pi_8.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_8.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 ...
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_pi_9.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_9.png}
 \end{framev}
 
 
@@ -134,16 +138,20 @@ $$
 \imageC[1]{figure_man/bayesian_loop_pi_0.png}
 }
 \vfill
-\footnotesize
-\begin{itemize}
+\begin{small}\begin{itemize}
 \item We now take the expectation in the tail,
 instead of the prob as in PI.
 \item Improvement is always assumed $\geq 0$.
-\end{itemize}
+\end{itemize}\end{small}
 \end{framev}
 
 
-\begin{framev}[fs=small]{Expected Improvement}
+\begin{framev}{Expected Improvement}
+\textbf{Goal:} Propose $\xvsi[t+1]$ that maximizes the \textbf{Expected Improvement} (EI):
+$$
+a_{\text{EI}}(\xv) = \E(\max\{\fmin - Y(\xv), 0\})
+$$
+\begin{small}
 If $Y(\xv) \sim \normal\left(\fh(\xv), \sh^2(\xv)\right)$, we can express the EI in closed-form as:
 $$
 a_{\text{EI}}(\xv) = (\fmin-\fh(\xv)) \Phi \Big(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\Big) + \sh(\xv) \phi\Big(\frac{\fmin-\fh(\xv)}{\sh(\xv)}\Big),
@@ -154,13 +162,14 @@ $$
 a_{\text{EI}}(\xv) = (\fmin-\fh(\xv)) \underbrace{\Phi \Big(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\Big)}_{= 0, \text{ see PI }} + \underbrace{\sh(\xv)}_{ = 0} \phi\Big(\frac{\fmin-\fh(\xv)}{\sh(\xv)}\Big)
 $$
 \end{itemize}
+\end{small}
 \end{framev}
 
 
 \begin{framev}{Expected Improvement}
 We use the EI (red line) to propose the next point ...
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_1.png}
+\imageC[0.7]{figure_man/bayesian_loop_1.png}
 \vfill
 The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
 \end{framev}
@@ -169,7 +178,7 @@ The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
 \begin{framev}{Expected Improvement}
 ... evaluate that point, refit the SM and propose the next point
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_2.png}
+\imageC[0.7]{figure_man/bayesian_loop_2.png}
 \vfill
 (grey point = prev point from last iter)
 \end{framev}
@@ -178,34 +187,33 @@ The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
 \begin{framev}{Expected Improvement}
 ...
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_3.png}
+\imageC[0.7]{figure_man/bayesian_loop_3.png}
 \end{framev}
 
 
 \begin{framev}{Expected Improvement}
 ...
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_4.png}
+\imageC[0.7]{figure_man/bayesian_loop_4.png}
 \end{framev}
 
 
 \begin{framev}{Expected Improvement}
 ...
 \vfill
-\imageC[0.6]{figure_man/bayesian_loop_5.png}
+\imageC[0.7]{figure_man/bayesian_loop_5.png}
 \end{framev}
 
 
 \begin{framev}{Expected Improvement}
 The EI is capable of exploration and quickly proposes promising points in areas we have not visited yet
-\vfill
-\imageC[0.6]{figure_man/bayesian_loop_6.png}
-\vfill
+\imageC[0.7]{figure_man/bayesian_loop_6.png}
 Here, also a result of well-calibrated uncertainty $\sh(\xv)$ of our GP.
 \end{framev}
 
 
 \begin{framei}{Discussion}
+%TODO: source
 \item Under some mild conditions: BO with a GP as SM and EI is a \textbf{global optimizer}, i.e., convergence to the \textbf{global} (!) optimum is guaranteed given unlimited budget (Bull 2011 \sourceref{https://dl.acm.org/doi/pdf/10.5555/1953048.2078198})
 \item Cannot be proven for the PI or the vanilla LCB
 \item LCB can be proven to converge in a similar manner if the mean-variance trade-off parameter is chosen adaptively and ``correctly'' (Srinivas et al. 2010 \sourceref{https://icml.cc/Conferences/2010/papers/422.pdf})
