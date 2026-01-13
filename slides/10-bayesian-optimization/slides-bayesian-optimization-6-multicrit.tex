@@ -9,201 +9,153 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Bayesian Optimization
-  }{% Lecture title  
-  Multicriteria Bayesian Optimization
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/sms_plot.pdf
-  }{
-    \item Multicriteria Optimization
-    \item Taxonomy
-    \item ParEGO, SMS-EGO, EHI
+\titlemeta{
+Bayesian Optimization
+}{
+Multicriteria Bayesian Optimization
+}{
+figure_man/sms_plot.pdf
+}{
+\item Multicriteria Optimization
+\item Taxonomy
+\item ParEGO, SMS-EGO, EHI
 }
 
-\begin{vbframe}{Multicriteria Bayesian Optimization}
-\begin{columns}
-\begin{column}{0.4\textwidth}
-
-\vspace*{-0.8cm}
-
-\input{figure_man/gear.tex}
-%http://tex.stackexchange.com/questions/6135/how-to-make-beamer-overlays-with-tikz-node
-
-\tikzset{
-  %Style of the black box
-  bbox/.style={draw, fill=black, minimum size=3cm,
-  label={[white, yshift=-1.25em]above:$in$},
-  label={[white, yshift=1.25em]below:$out$},
-  label={[rotate = 90, xshift=1em, yshift=0.5em]left:Black-Box}
-  },
-  multiple/.style={double copy shadow={shadow xshift=1.5ex,shadow
-  yshift=-0.5ex,draw=black!30,fill=white}}
-}
-\begin{center}
-\begin{tikzpicture}[>=triangle 45, semithick]
-\node[bbox] (a) {};
-\draw[thick, shift=({-0.4cm,0.2cm}), draw = white](a.center) \gear{18}{0.5cm}{0.6cm}{10}{2}; \draw[thick, shift=({0.4cm,-0.3cm}), draw = white](a.center) \gear{14}{0.3cm}{0.4cm}{10}{2};
-{
-  \draw[<-] (a.120) --++(90:1.5em) node [above] {$x_1$};
-  \draw[<-] (a.100) --++(90:1.5em) node [above] {$x_2$};
-  \draw[<-] (a.80) --++(90:1.5em) node [above] {$\ldots$};
-  \draw[<-] (a.60) --++(90:1.5em) node [above] {$x_d$};
-}
-{
-  \draw[->] (a.240) --++(90:-1.5em) node [below] {$f_1(\xv)$};
-  \draw[->] (a.300) --++(90:-1.5em) node [below] {$f_2(\xv)$};
-}
-\end{tikzpicture}
-\end{center}
-\end{column}
-
-\begin{column}{0.60\textwidth}
-\begin{eqnarray*}
-  && f: \mathcal{S} \rightarrow \R^m\\
-  \min \limits_{\xv \in \mathcal{S}} && f(\xv) = \left(f_1(\xv), \ldots, f_m(\xv)\right)
-\end{eqnarray*}
-\vspace{-1em}
+\begin{framev}[fs=small]{Multicriteria Bayesian Optimization}
+\splitV[0.4]{
+\input{figure_man/black_box.tex}
+}{
+$$
+f: \mathcal{S} \rightarrow \R^m
+$$
+$$
+\min \limits_{\xv \in \mathcal{S}} f(\xv) = ( f_1(\xv), \ldots, f_m(\xv) )
+$$
 \begin{itemize}
-  \item A configuration $\xv$ \textbf{dominates} ($\prec$) $\tilde{\xv}$ if
-\begin{eqnarray*}
-  \forall i \in \{ 1, ..., m\}: && f_i(\xv) \leq f_i(\tilde{\xv})\\
-  \text{and}~\exists j \in \{1, ..., m\}: && f_j(\xv) < f_j(\tilde{\xv})
-\end{eqnarray*}
+\item A configuration $\xv$ \textbf{dominates} ($\prec$) $\tilde{\xv}$ if
+$$
+\forall i \in \{ 1, \ldots, m\}:\; f_i(\xv) \leq f_i(\tilde{\xv})
+$$
+$$
+\text{and}~\exists j \in \{1, \ldots, m\}:\; f_j(\xv) < f_j(\tilde{\xv})
+$$
 \item Set of non-dominated solutions:
-  \begin{small}
-  \begin{align*}
-    \mathcal{P} := \{\xv \in \mathcal{S} | \nexists \tilde{\xv} \in \mathcal{S}: \tilde{\xv} \prec \xv \}
-\end{align*}
-\end{small}
+$$
+\mathcal{P} := \{\xv \in \mathcal{S} | \nexists \tilde{\xv} \in \mathcal{S}: \tilde{\xv} \prec \xv \}
+$$
 \item Pareto set $\mathcal{P}$, Pareto front $\mathcal{F} = f(\mathcal{P})$
 \item{Goal:} Find $\hat{\mathcal{P}}$ of non-dominated points that estimates the true Pareto set $\mathcal{P}$
 \end{itemize}
-\end{column}
-\end{columns}
+}
+\end{framev}
 
-\framebreak
 
+\begin{framev}{Multicriteria Bayesian Optimization}
 Example Pareto front:
+\vfill
+\imageC[0.8]{figure_man/multicrit_0.png}
+\end{framev}
 
-\vspace{+0.45cm}
-\begin{center}
-  \includegraphics[width = 0.6\textwidth]{figure_man/multicrit_0.png}
-\end{center}
 
-\framebreak
+\begin{framev}[fs=small]{Multicriteria Bayesian Optimization}
 The most popular quality indicator is the hypervolume indicator (also called dominated hypervolume or $\mathcal{S}$-metric).\\
 \vspace{1em}
 The hypervolume, $\operatorname{HV}$, of an approximation of the Pareto front $\hat{\mathcal{F}} = f(\hat{\mathcal{P}})$ can be defined as the combined volume of the dominated hypercubes $\text{domHC}_{\bm{r}}$ of all solution points $\xv \in \hat{\mathcal{P}}$ regarding a reference point $\bm{r}$, i.e.,
-$$\operatorname{HV}_{\bm{r}}(\hat{\mathcal{P}}) := \mu\left(\bigcup_{\xv \in \hat{\mathcal{P}}}\text{domHC}_{\bm{r}}(\xv)\right)$$
+$$
+\operatorname{HV}_{\bm{r}}(\hat{\mathcal{P}}) := \mu\left(\bigcup_{\xv \in \hat{\mathcal{P}}}\text{domHC}_{\bm{r}}(\xv)\right)
+$$
 where $\mu$ is the Lebesgue measure and the dominated hypercube is given as:
-$$\text{domHC}_{\bm{r}}(\xv) := \{\bm{u} \in \R^m~|~ f_i(\xv) \leq \bm{u}_i \leq \bm{r}_i\;\forall i \in \{1, \dots, m\}\}$$
+$$
+\text{domHC}_{\bm{r}}(\xv) := \{\uv \in \R^m~|~ f_i(\xv) \leq \uv_i \leq \bm{r}_i\;\forall i \in \{1, \dots, m\}\}
+$$
+\end{framev}
 
-\framebreak
 
+\begin{framev}{Multicriteria Bayesian Optimization}
 Hypervolume example:
-
-\vspace{+0.45cm}
-\begin{center}
-  \includegraphics[width = 0.6\textwidth]{figure_man/multicrit_1.png}
-\end{center}
+\vfill
+\imageC[0.7]{figure_man/multicrit_1.png}
 Reference point $\bm{r}$ in red, estimated Pareto front $\hat{\mathcal{F}}$ in black, corresponding $\operatorname{HV}_{\bm{r}}(\hat{\mathcal{P}})$ is given by the grey area
+\end{framev}
 
-\end{vbframe}
 
-\begin{frame}{Taxonomy}
-\centering
-\includegraphics[width = 0.6\textwidth]{figure_man/FlowchartMBMO.pdf}\\
-% \vspace{-0.2cm}
-Horn, Wagner, Bischl et al. (2014).
-\end{frame}
+\begin{framev}{Taxonomy}
+\imageC[0.7]{figure_man/FlowchartMBMO.pdf}
+\vfill
+\center \furtherreading{HORN2015MBMO}
+\end{framev}
 
-\begin{vbframe}{ParEGO}
-\centering
-\includegraphics[width = 0.6\textwidth]{figure_man/FlowchartMBMO_parego.pdf}
-\framebreak
+\begin{framev}{ParEGO}
+\imageC[0.8]{figure_man/FlowchartMBMO_parego.pdf}
+\end{framev}
 
+
+\begin{framev}{ParEGO}
 \begin{enumerate}
-  \item Scalarize standardized objectives using the augmented Tchebycheff norm
-  \begin{equation*}
-  \label{eq:tcheby}
-  \max\limits_{i \in \{1, \ldots, m\}} w_i f_i(\xv) + \rho \sum\limits_{i = 1}^m w_i f_i(\xv)
-  \end{equation*}
-  with weight vector $\mathbf{w}$ drawn uniformly from the set of evenly distributed weight vectors $\mathcal{W}$
-  \item Fit SM on the scalarized objective function
-  \item Proceed to use any standard single-objective acquisition function (EI, PI, LCB, ...)
+\item Scalarize standardized objectives using the augmented Tchebycheff norm
+$$
+\max\limits_{i \in \{1, \ldots, m\}} w_i f_i(\xv) + \rho \sum\limits_{i = 1}^m w_i f_i(\xv)
+$$
+with weight vector $\wv$ drawn uniformly from the set of evenly distributed weight vectors $\mathcal{W}$
+\item Fit SM on the scalarized objective function
+\item Proceed to use any standard single-objective acquisition function (EI, PI, LCB, ...)
 \end{enumerate}
+\end{framev}
 
-\framebreak
+
+\begin{framev}{ParEGO}
 ParEGO Example, initial design and true Pareto front in black ...
-\vspace{1cm}
-\begin{center}
-  \includegraphics[width = 0.6\textwidth]{figure_man/multicrit_2.png}
-\end{center}
+\vfill
+\imageC[0.8]{figure_man/multicrit_2.png}
+\end{framev}
 
-\framebreak
+
+\begin{framev}{ParEGO}
 ... standardize objectives, obtain scalarized objective via augmented Tchebycheff norm, fit SM and optimize EI ...
-\vspace{+0.45cm}
-\begin{center}
-  \includegraphics[width = \textwidth]{figure_man/multicrit_3.png}
-\end{center}
+\vfill
+\imageC[1]{figure_man/multicrit_3.png}
+\end{framev}
 
-\framebreak
+
+\begin{framev}{ParEGO}
 ... note that the specific scalarization is different at each iteration!
-\begin{center}
-  \includegraphics[width = \textwidth]{figure_man/multicrit_4.png}
-\end{center}
+\vfill
+\imageC[1]{figure_man/multicrit_4.png}
 The grey point visualizes the candidate we choose to evaluate in the previous iteration
+\end{framev}
 
-\end{vbframe}
 
-\begin{frame}{SMS-EGO}
+\begin{framev}{SMS-EGO}
+\imageC[0.8]{figure_man/FlowchartMBMO_sms.pdf}
+\end{framev}
 
-\centering
-\includegraphics[width = 0.6\textwidth]{figure_man/FlowchartMBMO_sms.pdf}
-
-\end{frame}
-
-\begin{frame}{SMS-EGO}
-
+\foreach \figbase in {hv_plot, hv_contr_plot, sms_plot} {
+\begin{framev}{SMS-EGO}
 Individual models for each objective $f_i$\\
 \vspace{1em}
 Single-objective optimization of aggregating acquisition function: \\
 Calculate contribution of the confidence bound of candidate to the current front approximation
-
-\begin{columns}
-
-\begin{column}{0.55\textwidth}
+\splitV[0.55]{
 \begin{itemize}
-  \item Calculate LCB for each objective
-  \item Measure contribution with regard to the hypervolume improvement
-  \item For $\varepsilon$-dominated ($\prec_{\varepsilon}$) solutions, a penalty is added
+\item Calculate LCB for each objective
+\item Measure contribution with regard to the hypervolume improvement
+\item For $\varepsilon$-dominated ($\prec_{\varepsilon}$) solutions, a penalty is added
 \end{itemize}
-\vfill
-\end{column}
+}{
+\imageC[1]{figure_man/\figbase.pdf}
+}
+\end{framev}
+}
 
-\begin{column}{0.45\textwidth}
-
-\includegraphics[page = 1]{figure_man/hv_plot.pdf}<1>
-\includegraphics[page = 1]{figure_man/hv_contr_plot.pdf}<2>
-\includegraphics[page = 1]{figure_man/sms_plot.pdf}<3>
-
-\end{column}
-
-\end{columns}
-\end{frame}
-
-\begin{frame}{Outlook}
-Many more options exist:
+\begin{framei}{Outlook}
+\item Many more options exist:
 \begin{itemize}
-  \item Expected Hypervolume Improvement
-  \item Multi-EGO
-  \item Entropy based: PESMO, MESMO
-  \item ...
+\item Expected Hypervolume Improvement
+\item Multi-EGO
+\item Entropy based: PESMO, MESMO
+\item ...
 \end{itemize}
-
-\end{frame}
-
+\end{framei}
 
 \endlecture
 \end{document}

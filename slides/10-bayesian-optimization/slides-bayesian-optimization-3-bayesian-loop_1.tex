@@ -9,124 +9,94 @@
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Bayesian Optimization
-  }{% Lecture title  
-  Posterior Uncertainty and Acquisition Functions I
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/bayesian_loop_sm_normal.png
-  }{
-    \item Bayesian surrogate modeling
-    \item Acquisition functions
-    \item Lower confidence bound
+\titlemeta{
+Bayesian Optimization
+}{
+Posterior Uncertainty and Acquisition Functions I
+}{
+figure_man/bayesian_loop_sm_normal.png
+}{
+\item Bayesian surrogate modeling
+\item Acquisition functions
+\item Lower confidence bound
 }
 
-\begin{vbframe}{Bayesian Surrogate Modeling}
-
+\begin{framev}{Bayesian Surrogate Modeling}
 \textbf{Goal:}
-
 Find trade-off between \textbf{exploration} (areas we have not visited yet) and \textbf{exploitation} (search around good design points)
+\vfill
+\imageC[0.7]{figure_man/bayesian_loop_ee.png}
+\end{framev}
 
-\vspace{+.45cm}
 
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_ee.png}
-\end{center}
-
-\framebreak 
-
-\begin{itemize}
+\begin{framei}{Bayesian Surrogate Modeling}
 \item \textbf{Idea}: Use a \textbf{Bayesian approach} to build SM that yields estimates for the posterior mean $\fh(\xv)$ and the posterior variance $\sh^2(\xv)$
-\item  $\sh^2(\xv)$ expresses \enquote{confidence}/\enquote{certainty} in prediction
-% \item The High the more observations there are in region
-\end{itemize}
-\vspace{+.45cm}
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_ee.png}
-\end{minipage}
-\hfill
-\begin{minipage}[b]{0.45\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/bayesian_loop_sm.png}
-\end{minipage}
+\item $\sh^2(\xv)$ expresses \enquote{confidence}/\enquote{certainty} in prediction
+\vfill
+\splitV[0.5]{
+\imageC[1]{figure_man/bayesian_loop_ee.png}
+}{
+\imageC[1]{figure_man/bayesian_loop_sm.png}
+}
+\end{framei}
 
-\framebreak
 
+\begin{framev}{Bayesian Surrogate Modeling}
 \begin{itemize}
-\item Denote by $Y~|~\xv, \Dt$ the (conditional) RV associated with the posterior predictive distribution of a new point $\xv$ under a SM;\\will abbreviate it as $Y(\xv)$
-\item Most prominent choice for a SM is a \textbf{Gaussian process}, here $Y(\xv) \sim \mathcal{N}\left(\fh(\xv), \sh^2(\xv)\right)$
+\item Denote by $Y~|~\xv, \Dt$ the (conditional) RV associated with the posterior predictive distribution of a new point $\xv$ under a SM;\\
+will abbreviate it as $Y(\xv)$
+\item Most prominent choice for a SM is a \textbf{Gaussian process}, here $Y(\xv) \sim \normal\left(\fh(\xv), \sh^2(\xv)\right)$
 \end{itemize}
-\vspace{-1em}
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_sm_normal.png}
-\end{center}
+\vfill
+\imageC[0.5]{figure_man/bayesian_loop_sm_normal.png}
 \begin{footnotesize}
-    For now we assume an interpolating SM; $\fh(\xv) = f(\xv)$ and $\sh(\xv) = 0$ for training points\\
+For now we assume an interpolating SM; $\fh(\xv) = f(\xv)$ and $\sh(\xv) = 0$ for training points
 \end{footnotesize}
+\end{framev}
 
-\end{vbframe} 
 
-\begin{vbframe}{Acquisition Functions}
-
-To sequentially propose new points based on the SM, we make use of so-called acquisition functions $a: \mathcal{S} \to \R$\\
-
-\vspace{1em}
-
+\begin{framev}{Acquisition Functions}
+To sequentially propose new points based on the SM, we make use of so-called acquisition functions $a: \mathcal{S} \to \R$
+\vfill
 Let $\fmin \coloneqq \min \left\{f(\xvsi[1]), \ldots, f(\xvsi[t])\right\}$ denote the best observed value so far (visualized in green - we will need this later!)
-\vspace*{-0.2cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/bayesian_loop_sm_fmin.png}
-\end{center}
-
-\vspace*{-0.3cm}
-
+\imageC[0.5]{figure_man/bayesian_loop_sm_fmin.png}
 In the examples before we simply used the posterior mean $a(\xv) = \fh(\xv)$ as acquisition function - ignoring uncertainty
+\end{framev}
 
-\end{vbframe}
 
-\begin{vbframe}{Lower Confidence Bound}
-
+\begin{framev}{Lower Confidence Bound}
 \textbf{Goal}: Find $\xvsi[t+1]$ that minimizes the \textbf{Lower Confidence Bound} (LCB):
-
 $$
-  a_{\text{LCB}}(\xv) = \fh(\xv) - \tau \sh(\xv)
+a_{\text{LCB}}(\xv) = \fh(\xv) - \tau \sh(\xv)
 $$
-
 where $\tau > 0$ is a constant that controls the \enquote{mean vs. uncertainty} trade-off\\
-
-\vspace{1em}
-
+\vfill
 The LCB is conceptually very simple and does \textbf{not} rely on distributional assumptions of the posterior predictive distribution under a SM
+\end{framev}
 
-\framebreak
 
+\begin{framev}{Lower Confidence Bound}
 $\tau = 1$
-
-\begin{center}
-  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_lcb_0.png}
-\end{center}
-
+\vfill
+\imageC[0.7]{figure_man/bayesian_loop_lcb_0.png}
+\vfill
 Top: Design points and SM showing $\fh(\xv)$ (blue) and $\fh(\xv) - \tau \sh(\xv)$ (red)\\
 Bottom: the red point depicts $\argmin_{\xv \in \mathcal{S}} a_{\text{LCB}}(\xv)$
+\end{framev}
 
-\framebreak
 
+\begin{framev}{Lower Confidence Bound}
 $\tau = 5$
+\vfill
+\imageC[0.7]{figure_man/bayesian_loop_lcb_1.png}
+\end{framev}
 
-\begin{center}
-  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_lcb_1.png}
-\end{center}
 
-\framebreak
-
+\begin{framev}{Lower Confidence Bound}
 $\tau = 10$
-
-\begin{center}
-  \includegraphics[width = 0.6\textwidth]{figure_man/bayesian_loop_lcb_2.png}
-\end{center}
-
-\end{vbframe}
+\vfill
+\imageC[0.7]{figure_man/bayesian_loop_lcb_2.png}
+\end{framev}
 
 \endlecture
-
 \end{document}

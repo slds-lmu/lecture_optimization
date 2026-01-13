@@ -1,0 +1,32 @@
+% \vspace*{-0.8cm}
+\newcommand{\gear}[5]{%
+  \foreach \i in {1,...,#1} {%
+    [rotate=(\i-1)*360/#1]  (0:#2)  arc (0:#4:#2) {[rounded corners=1.5pt]
+       -- (#4+#5:#3)  arc (#4+#5:360/#1-#5:#3)} --  (360/#1:#2)
+  }} %http://tex.stackexchange.com/questions/6135/how-to-make-beamer-overlays-with-tikz-node
+\tikzset{
+bbox/.style={draw, fill=black, minimum size=3cm,
+label={[white, yshift=-1.25em]above:$in$},
+label={[white, yshift=1.25em]below:$out$},
+label={[rotate = 90, xshift=1em, yshift=0.5em]left:Black-Box}
+},
+multiple/.style={double copy shadow={shadow xshift=1.5ex,shadow
+yshift=-0.5ex,draw=black!30,fill=white}}
+}
+\begin{center}
+\scalebox{0.9}{
+\begin{tikzpicture}[>=triangle 45, semithick]
+\node[bbox] (a) {};
+\draw[thick, shift=({-0.4cm,0.2cm}), draw = white](a.center) \gear{18}{0.5cm}{0.6cm}{10}{2}; \draw[thick, shift=({0.4cm,-0.3cm}), draw = white](a.center) \gear{14}{0.3cm}{0.4cm}{10}{2};
+{
+\draw[<-] (a.120) --++(90:1.5em) node [above] {$x_1$};
+\draw[<-] (a.100) --++(90:1.5em) node [above] {$x_2$};
+\draw[<-] (a.80) --++(90:1.5em) node [above] {$\ldots$};
+\draw[<-] (a.60) --++(90:1.5em) node [above] {$x_d$};
+}
+{
+\draw[->] (a.270) --++(90:-1.5em) node [below] {$f(\xv)$};
+}
+\end{tikzpicture}
+}
+\end{center}
