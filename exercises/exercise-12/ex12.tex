@@ -219,9 +219,8 @@ Consider the function
 $$g: \mathbb{R}^2 \rightarrow \mathbb{R}, (x_{1}, x_{2}) \mapsto |x_{1} - x_{2}| + 0.1 (x_{1} + x_{2}).$$
 \begin{enumerate}
 \item Perform one round of coordinate descent starting from an arbitrary point $(x_{1}, x_{2})$.
-      Show that after updating $x_{1}$ (while fixing $x_{2}$) and then updating $x_{2}$ (while fixing $x_{1}$)
-      the algorithm arrives at a point where $x_{1} = x_{2}$ and terminates.
-      That is, show that coordinate descent will not move beyond the first iteration.
+      Show that after updating $x_{1}$ (while fixing $x_{2}$), the algorithm arrives at a point where $x_{1} = x_{2}$ and terminates.
+      That is, show that coordinate descent will not move beyond the initial update from the first iteration.
 \item Show that the global infimum of $g$ is $-\infty$.
       Conclude that coordinate descent fails to find the true minimizer for this function.
 \end{enumerate}
