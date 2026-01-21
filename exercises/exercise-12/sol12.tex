@@ -250,7 +250,7 @@
     Note that $g$ is symmetric in its arguments, therefore based on the first analysis, we conclude that again $x_{2}^{*} = c$.\\
     After updating $x_{2}$ while holding $x_{1}$ constant, we arrive at $(x_{1}^{[1]}, x_{2}^{[1]}) = (x_{1}^{[1]}, x_{1}^{[1]}) = (x_{2}^{[0]}, x_{2}^{[0]})$.\\
 
-    We observe that coordinate updates will set the respective coordinate to the value of the other constant held coordinate value and once the algorithm arrives at $x_{1} = x_{2} = c$, neither coordinate update will move the point.
+    We observe that coordinate updates will set the respective coordinate to the value of the other constant held coordinate value and once the algorithm arrives at $x_{1} = x_{2} = c$, neither coordinate update will move the point. The algorithm already reaches this point after the first coordinate update within the first iteration.
 
   \item Along the diagonal $x_{1} = x_{2} = t$, the function simplifies to $$g(t, t) = |t - t| + 0.1 (t + t) = 0.2 t.$$
     As $t \rightarrow - \infty$, $0.2 t \rightarrow - \infty$, hence the infimum of $g$ is $- \infty$.
