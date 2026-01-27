@@ -3,532 +3,210 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document} 
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Second order methods
-  }{% Lecture title  
-  Gauss-Newton
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/squares.png
-  }{
-    \item Least squares
-    \item Gauss-Newton
-    \item Levenberg-Marquardt
+\titlemeta{
+Second order methods
+}{
+Gauss-Newton
+}{
+figure_man/squares.png
+}{
+\item Least squares
+\item Gauss-Newton
+\item Levenberg-Marquardt
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Least squares pro blem}
-
-Consider the problem of minimizing a sum of squares
-
-\begin{equation*}
-	\min_{\thetav} g(\thetav),
-\end{equation*}
+\begin{framei}{Least squares problem}
+\item Consider the problem of minimizing a sum of squares
+$$
+\min_{\thetav} g(\thetav),
+$$
 where
-\begin{equation*}
-    g(\thetav) = r(\thetav)^\top r(\thetav) = \sum_{i = 1}^n r_i(\bm{\theta})^2
-\end{equation*}
+$$
+g(\thetav) = r(\thetav)^T r(\thetav) = \sum_{i = 1}^n r_i(\thetav)^2
+$$
 and
-\begin{align*}
-	r: \R^d &\to \R^n \\
-	\thetav &\mapsto (r_1(\thetav), \ldots, r_n(\thetav))^\top
-\end{align*}
+$$
+\begin{aligned}
+r: \R^d &\to \R^n \\
+\thetav &\mapsto (r_1(\thetav), \ldots, r_n(\thetav))^T
+\end{aligned}
+$$
 maps parameters $\thetav$ to residuals $r(\thetav)$
-
-\framebreak 
-
-\textbf{Risk minimization with squared loss} $\Lxy = \left(y - \fx\right)^2$
-
-\medskip
-
-\textbf{Least squares regression:}
-\begin{equation*}
-    \risket = \sumin \Lxyit = \sumin \underbrace{\left(\yi - \fxit \right)^2}_{r_i(\thetav)^2}
-\end{equation*}
-
-\begin{itemize}
-    \item $\fxit$ might be a function that is \textbf{nonlinear in $\thetav$}
-    \item Residuals: $r_i = y^{(i)} - f(\xv^{(i)} \,|\, \thetav)$
-\end{itemize}
-
-\vspace*{0.3cm} 
-
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\textbf{Example:} 
-%Consider, for example, a regression problem with data
-
-\begin{footnotesize}
-\begin{eqnarray*}
-\D &=& \left(\left(\xi, \yi\right)\right)_{i = 1, ..., 5} \\ &=& \left((1,3),(2,5),(4,6),(5,13),(8,20)\right)
-\end{eqnarray*}
-\end{footnotesize}
-\end{column}
-\begin{column}{0.4\textwidth}
-	\vspace*{-0.5cm}  
-    \begin{center}
-     \includegraphics[width=1\textwidth]{figure_man/squares.png}
-     \end{center}
-\end{column}
-\end{columns}
+\end{framei}
 
 
-% <<echo = F, out.width = '50%', fig.align='center'>>=
-% x = c(1, 2, 4, 5, 8)
-% y = c(3, 5, 6, 13, 20)
-% mod = nls(y ~ a*exp(b*x), start = list(a = 1, b = 0.2))
-
-% d = data.frame(x = x, y = y, pred = predict(mod))
-
-% plot = ggplot(data = d, aes(x = x, y = y)) + geom_point()
-% plot = plot + geom_smooth(method = "nls", formula = y ~ a*exp(b*x),method.args = list(start = c(a = 1, b = 0.2)), se = FALSE, color = "black" )
-% plot = plot + geom_point(aes(x = x, y = pred))
-% plot = plot + geom_segment(aes(x = x, y = y, xend = x, yend = pred), color = "red")
-% plot = plot + theme_bw()
-% plot
-% @
-
-
-% Allgemein ist die Modellfunktion beschrieben durch:
-% $$
-% \bm{y} = f(\bm{x_1},...,\bm{x_n})
-% $$
-% und hat $p \leq k$ Parameter $\bm{\theta} = (\theta_1,...,\theta_p)$ die nun so bestimmt werden sollen dass die Modellfunktion die tatsächlichen Werte $\bm{y}$ möglichst gut beschreibt.
-
-\framebreak
-
-Suppose, we suspect an \textit{exponential} relationship between $x \in \R$ and $y$ 
-\begin{equation*}
-    f(x \,|\, \thetav) = \theta_1 \cdot \exp(\theta_2 \cdot x), \quad \theta_1, \theta_2 \in \R
-\end{equation*}
-
-% Die Residuen lauten also:
-% $$
-% r^{(i)}(\bm{\theta}) := y^{(i)} - f(x^{(i)}) = y^{(i)} - \theta_1 \exp(\theta_2 x^{(i)})
-% $$
-% \framebreak
-
-% Sei $|| \cdot ||$ die euklidische Norm. Da bei der KQ-Methode der quadrierte vertikale Abstand zwischen beobachtung $y^{(i)}$ und der Modellfunktion $f(x)$ minimiert wird, können wir das Optimierungsproblem schreiben als:
-% \footnotesize
-% $$
-% \min_{\bm{\theta} \in \R^n} \; g(\bm{\theta}) = \min_{\bm{\theta} \in \R^n} \; \frac{1}{2} ||r(\bm{\theta})||^2 = \min_{\bm{\theta} \in \R^n} \; \frac{1}{2} \sum_{i=1}^{n} (r^{(i)})^2 (\bm{\theta}) =  \min_{\bm{\theta} \in \R^n} \; \frac{1}{2} r(\bm{\theta})^{\top}r(\bm{\theta})
-% $$
-
-% Dieses Optimierungsproblem möchten wir nun mit Hilfe des Newton Verfahrens lösen. Hierfür beginnen wir mit der Berechnung der Jakobi- und Hessematrix.
-
-\textbf{Residuals:}
-\begin{equation*}
-    \footnotesize
-    r(\bm{\theta}) = \mat{
-        \theta_1 \exp(\theta_2 x^{(1)}) - y^{(1)} \\
-        \theta_1 \exp(\theta_2 x^{(2)}) - y^{(2)} \\
-        \theta_1 \exp(\theta_2 x^{(3)}) - y^{(3)} \\
-        \theta_1 \exp(\theta_2 x^{(4)}) - y^{(4)} \\
-        \theta_1 \exp(\theta_2 x^{(5)}) - y^{(5)}
-    } = \mat{
-        \theta_1 \exp(1 \theta_2) - 3 \\
-        \theta_1 \exp(2 \theta_2) - 5 \\
-        \theta_1 \exp(4 \theta_2) - 6 \\
-        \theta_1 \exp(5 \theta_2) - 13 \\
-        \theta_1 \exp(8 \theta_2) - 20
-    }
-\end{equation*}
-
-\textbf{Least squares problem:}
-\begin{equation*}
-    \min_{\thetav} g(\thetav) = \min_{\thetav} \sum_{i=1}^{5} \left(\yi - \theta_1 \exp\left(\theta_2 x^{(i)}\right)\right)^2
-\end{equation*}
-
-\end{vbframe}
-
-\begin{vbframe}{Newton-Raphson Idea}
+\begin{framei}{Least squares problem}
+\item \textbf{Risk minimization with squared loss} $\Lxy = \left(y - \fx\right)^2$
+\item \textbf{Least squares regression:}
+$$
+\risket = \sumin \Lxyit = \sumin \underbrace{\left(\yi - \fxit \right)^2}_{r_i(\thetav)^2}
+$$
+\item $\fxit$ might be a function that is \textbf{nonlinear in $\thetav$}
+\item Residuals: $r_i = y^{(i)} - f(\xv^{(i)} \,|\, \thetav)$
+\vfill
+\item \textbf{Example:}
+\splitV[0.55]{
+$$
+\begin{aligned}
+\D &= \left(\left(\xi, \yi\right)\right)_{i = 1, ..., 5} \\ &= \left((1,3),(2,5),(4,6),(5,13),(8,20)\right)
+\end{aligned}
+$$
+}{
+\imageC[1]{figure_man/squares.png}
+}
+\end{framei}
 
 
-\textbf{Approach:} Calculate Newton-Raphson update direction by solving:
-\begin{equation*}
-    \nabla^2 g(\bm{\theta}^{[t]}) \mathbf{d}^{[t]} = - \nabla g(\thetav^{[t]}).
-\end{equation*}
+\begin{framei}{Least squares problem}
+\item Suppose, we suspect an \textit{exponential} relationship between $x \in \R$ and $y$
+$$
+f(x \,|\, \thetav) = \theta_1 \cdot \exp(\theta_2 \cdot x), \quad \theta_1, \theta_2 \in \R
+$$
+\item \textbf{Residuals:}
+$$
+r(\thetav) = \mat{
+\theta_1 \exp(\theta_2 x^{(1)}) - y^{(1)} \\
+\theta_1 \exp(\theta_2 x^{(2)}) - y^{(2)} \\
+\theta_1 \exp(\theta_2 x^{(3)}) - y^{(3)} \\
+\theta_1 \exp(\theta_2 x^{(4)}) - y^{(4)} \\
+\theta_1 \exp(\theta_2 x^{(5)}) - y^{(5)}
+} = \mat{
+\theta_1 \exp(1 \theta_2) - 3 \\
+\theta_1 \exp(2 \theta_2) - 5 \\
+\theta_1 \exp(4 \theta_2) - 6 \\
+\theta_1 \exp(5 \theta_2) - 13 \\
+\theta_1 \exp(8 \theta_2) - 20
+}
+$$
+\item \textbf{Least squares problem:}
+$$
+\min_{\thetav} g(\thetav) = \min_{\thetav} \sum_{i=1}^5 \left(\yi - \theta_1 \exp\left(\theta_2 x^{(i)}\right)\right)^2
+$$
+\end{framei}
 
-Gradient is calculated via chain rule
-\begin{equation*}
-    \nabla g(\thetav) = \nabla (r(\thetav)^\top r(\thetav)) = 2 \cdot J_r(\thetav)^\top r(\thetav),
-\end{equation*}
+
+\begin{framei}{Newton-Raphson idea}
+\item \textbf{Approach:} Calculate Newton-Raphson update direction by solving:
+$$
+\nabla^2 g(\thetat) \mathbf{d}^{[t]} = - \nabla g(\thetat).
+$$
+\item Gradient is calculated via chain rule
+$$
+\nabla g(\thetav) = \nabla (r(\thetav)^T r(\thetav)) = 2 \cdot J_r(\thetav)^T r(\thetav),
+$$
 where $J_r(\thetav)$ is Jacobian of $r(\thetav)$.
-
-\lz
-
-In our example:
-
-\begin{equation*}
-    \footnotesize
-    J_r(\thetav) = \mat{
-        \frac{\partial r_1(\thetav)}{\partial \theta_1} & \frac{\partial r_1(\thetav)}{\partial \theta_2} \\
-        \frac{\partial r_2(\thetav)}{\partial \theta_1} & \frac{\partial r_2(\thetav)}{\partial \theta_2} \\
-        \vdots & \vdots \\
-        \frac{\partial r_5(\thetav)}{\partial \theta_1} & \frac{\partial r_5(\thetav)}{\partial \theta_2}
-        } = \mat{
-            \exp(\theta_2 x^{(1)}) & x^{(1)} \theta_ 1 \exp(\theta_2 x^{(1)}) \\
-            \exp(\theta_2 x^{(2)}) & x^{(2)} \theta_ 1 \exp(\theta_2 x^{(2)})\\ \exp(\theta_2 x^{(3)}) & x^{(3)} \theta_1 \exp(\theta_2 x^{(3)}) \\
-            \exp(\theta_2 x^{(4)}) & x^{(4)} \theta_1 \exp(\theta_2 x^{(4)}) \\ \exp(\theta_2 x^{(5)}) & x^{(5)} \theta_1 \exp(\theta_2 x^{(5)})
-        }
-\end{equation*}
-
-\framebreak 
-
-Hessian of $g$, $\mathbf{H}_g = (H_{jk})_{jk}$, is obtained via product rule:
-
-\begin{equation*}
-	H_{jk} = 2 \sum_{i=1}^n \left(\frac{\partial r_i}{\partial \theta_j}\frac{\partial r_i}{\partial \theta_k} + r_i \frac{\partial^2 r_i}{\partial \theta_j \partial \theta_k}\right)
-\end{equation*}
-
-% \begin{eqnarray*}
-% \nabla^2_\theta \left(r(\thetav)^\top r(\thetav)\right) &=& \nabla_\theta \left(\nabla_\theta \left(r(\thetav)^\top(\thetav)\right)\right) = \nabla_\theta \left[2 \cdot  \nabla r(\thetav)^\top r(\thetav)\right] \\ 
-% &=& 2 \nabla_\theta r(\thetav)^\top \nabla_\theta r(\thetav) + 
-% \end{eqnarray*}
+\item In our example:
+$$
+J_r(\thetav) = \mat{
+\frac{\partial r_1(\thetav)}{\partial \theta_1} & \frac{\partial r_1(\thetav)}{\partial \theta_2} \\
+\frac{\partial r_2(\thetav)}{\partial \theta_1} & \frac{\partial r_2(\thetav)}{\partial \theta_2} \\
+\vdots & \vdots \\
+\frac{\partial r_5(\thetav)}{\partial \theta_1} & \frac{\partial r_5(\thetav)}{\partial \theta_2}
+} = \mat{
+\exp(\theta_2 x^{(1)}) & x^{(1)} \theta_1 \exp(\theta_2 x^{(1)}) \\
+\exp(\theta_2 x^{(2)}) & x^{(2)} \theta_1 \exp(\theta_2 x^{(2)})\\ \exp(\theta_2 x^{(3)}) & x^{(3)} \theta_1 \exp(\theta_2 x^{(3)}) \\
+\exp(\theta_2 x^{(4)}) & x^{(4)} \theta_1 \exp(\theta_2 x^{(4)}) \\ \exp(\theta_2 x^{(5)}) & x^{(5)} \theta_1 \exp(\theta_2 x^{(5)})
+}
+$$
+\end{framei}
 
 
-% The Hessian matrix $\nabla^{2} f(\bm{\theta})$ is obtained by applying the chain rule:
-
-% % muss eine p x p - Matrix sein
-% % r ist ein n x p Vektor
-% % nabla r_i ist p x 1
-% \begin{align*}
-% \nabla^{2} \left(\frac{1}{2}\cdot r(\bm{\theta})^\top r(\bm{\theta}) \right) &= \nabla r(\bm{\theta})^\top \nabla r(\bm{\theta}) + \sum_{i=1}^{n} r^{(i)}(\bm{\theta}) (\nabla^2)^{(i)}(\bm{\theta})
-% % &= J(\bm{\theta})^\top J(\bm{\theta}) + W(\bm{\theta})
-% \end{align*}
-
-\medskip
-
-\textbf{But:}
-\begin{framed}
-    \textbf{Main problem with Newton-Raphson:}
-    
-    \centering
-    Second derivatives can be computationally expensive.
-\end{framed}
-
-\end{vbframe}
-
-\begin{vbframe}{Gauss-Newton for least squares}
-
-Gauss-Newton approximates $\mathbf{H}_g$ by dropping its second order part:
-
-\begin{align*}
-    H_{jk} &= 2 \sum_{i=1}^n \left(\frac{\partial r_i}{\partial \theta_j}\frac{\partial r_i}{\partial \theta_k} + r_i \frac{\partial^2 r_i}{\partial \theta_j \partial \theta_k}\right) \\
-    &\approx  2 \sum_{i=1}^n \frac{\partial r_i}{\partial \theta_j}\frac{\partial r_i}{\partial \theta_k} \\
-    &= 2 J_r(\thetav)^\top J_r(\thetav)
-\end{align*}
-
-\textbf{Note}: We assume that
-\begin{equation*}
-    \left|\frac{\partial r_i}{\partial \theta_j}\frac{\partial r_i}{\partial \theta_k}\right| \gg \left|r_i \frac{\partial^2 r_i}{\partial \theta_j \partial \theta_k}\right|.
-\end{equation*}
-
-This assumption may be valid if: 
-
-\begin{itemize}
-	\item Residuals $r_i$ are small in magnitude \underline{\textbf{or}}
-	\item Functions are only \enquote{mildly} nonlinear s.t. $\frac{\partial^2 r_i}{\partial \theta_j \partial \theta_k}$ is small. 
-\end{itemize}
-
-\framebreak 
-
-If $J_r(\thetav)^\top J_r(\thetav)$ is invertible, Gauss-Newton update direction is
-\begin{align*}
-    \mathbf{d}^{[t]} &= - \left[\nabla^2 g(\bm{\theta}^{[t]})\right]^{-1} \nabla g(\thetav^{[t]}) \\
-    &\approx - \left[J_r(\thetav^{[t]})^\top J_r(\thetav^{[t]})\right]^{-1} J_r(\thetav^{[t]})^\top r(\thetav) \\
-    &= - (J_r^\top J_r)^{-1} J_r^\top r(\thetav)
-\end{align*}
-
-\textbf{Advantage}:
-\vspace{-0.5\baselineskip}
-\begin{framed}
-    Reduced computational complexity since no Hessian necessary.
-\end{framed}
-
-\textbf{Note:} Gauss-Newton can also be derived by starting with
-\begin{equation*}
-    r(\thetav) \approx r(\thetav^{[t]}) + J_r(\thetav^{[t]})^\top (\thetav - \thetav^{[t]}) = \tilde{r}(\thetav)
-\end{equation*}
-and $\tilde{g}(\thetav) = \tilde{r}(\thetav)^\top \tilde{r}(\thetav)$.
-Then, set $\nabla \tilde{g}(\thetav)$ to zero.
-
-% \textbf{Solution:} Gauss-Newton algorithm
-% \begin{itemize}
-% \item If residuals $r^{(i)}(\bm{\theta})$ small, approximation of the Hessian matrix:
-% \begin{align*}
-% \nabla^{2} f(\bm{\theta}) &= \nabla r(\bm{\theta})^\top \nabla r(\bm{\theta}) + \underbrace{\sum_{i=1}^{n} r^{(i)}(\bm{\theta}) \nabla^{2}r^{(i)}(\bm{\theta})}_{\approx 0} \approx \nabla r(\bm{\theta})^{\top} \nabla r(\bm{\theta})
-% \end{align*}
-
-% \item Hessian matrix is therefore not \explicitly calculated \\ $\rightarrow$ less effort than Newton's method.
-% % \item Quadratische Konvergenz bei Startwert nahe des Optimums
-% % \item Algorithmus iteriert durch die Parameter $\bm{\theta}$.
-% \end{itemize}
-
-% \textbf{Prerequisites for Gauss Newton:}
-% \begin{itemize}
-% \item Residuals must be sufficiently small so that approximation is not too bad
-% % \item initial value of the parameters $\bm{\theta}$ must be sufficiently close to the optimal solution (otherwise procedure does not converge)
-% \item Full Rank of the Jacobian matrix $\nabla r(\bm{\theta})$ (so that solution of the LES possible)
-% \end{itemize}
-
-% \framebreak
-
-% Instead of using the exact Newton-Raphson search direction
-
-% \begin{eqnarray*}
-% \nabla^2 f(\bm{\theta}^{[t]}) \mathbf{d}^{[t]} &=& - \nabla f(\bm{x}^{[t]}),
-% \end{eqnarray*}
-
-% we are using a simplified Newton-Raphson search direction:
-
-% \begin{eqnarray*}
-% \nabla r(\bm{\theta}^{[t]})^\top\nabla r(\bm{\theta}^{[t]}) \mathbf{d}^{[t]} &=& - \nabla  r(\bm{\theta}^{[t]})^\top r(\bm{\theta}^{[t]})
-% \end{eqnarray*}
-
-% Dieses Gleichungssystem ist widerum ein überbestimmtes Gleichungssystem, das wir durch die analytische Lösung des Optimierungsproblems
-
-% \begin{eqnarray*}
-% \text{arg } \min_{\mathbf{d}_i} \frac{1}{2} \|\nabla r(\bm{\theta}_i) \mathbf{d}_i + r(\bm{\theta}_i)\| \\
-% \mathbf{d}_i = \left(\nabla r(\bm{\theta}_i)^\top \nabla r(\bm{\theta}_i)\right)^{-1} \nabla r(\bm{\theta}_i)^\top  \left(r(\bm{\theta}_i\right)
-% \end{eqnarray*}
-
-% ersetzen.
-
-% \lz
+\begin{framei}{Newton-Raphson idea}
+\item Hessian of $g$, $\H_g = (H_{jk})_{jk}$, is obtained via product rule:
+$$
+H_{jk} = 2 \sum_{i=1}^n \left(\frac{\partial r_i}{\partial \theta_j}\frac{\partial r_i}{\partial \theta_k} + r_i \frac{\partial^2 r_i}{\partial \theta_j \partial \theta_k}\right)
+$$
+\vfill
+\item \textbf{But:}
+\begin{center}
+\textbf{Main problem with Newton-Raphson:}
+Second derivatives can be computationally expensive.
+\end{center}
+\end{framei}
 
 
-% $$
-% \nabla^{2} g(\bm{\theta}) = J(\bm{\theta})^\top J(\bm{\theta})
-% $$
+\begin{framei}{Gauss-Newton for least squares}
+\item Gauss-Newton approximates $\H_g$ by dropping its second order part:
+$$
+\begin{aligned}
+H_{jk} &= 2 \sum_{i=1}^n \left(\frac{\partial r_i}{\partial \theta_j}\frac{\partial r_i}{\partial \theta_k} + r_i \frac{\partial^2 r_i}{\partial \theta_j \partial \theta_k}\right) \\
+&\approx  2 \sum_{i=1}^n \frac{\partial r_i}{\partial \theta_j}\frac{\partial r_i}{\partial \theta_k} \\
+&= 2 J_r(\thetav)^T J_r(\thetav)
+\end{aligned}
+$$
+\item \textbf{Note}: We assume that
+$$
+\left|\frac{\partial r_i}{\partial \theta_j}\frac{\partial r_i}{\partial \theta_k}\right| \gg \left|r_i \frac{\partial^2 r_i}{\partial \theta_j \partial \theta_k}\right|.
+$$
+\item This assumption may be valid if:
+Residuals $r_i$ are small in magnitude \underline{\textbf{or}} functions are only \enquote{mildly} nonlinear s.t. $\frac{\partial^2 r_i}{\partial \theta_j \partial \theta_k}$ is small
+\end{framei}
 
-% Die Gauss-Newton-Suchrichtung $\mathbf{d}_i$ lautet somit
 
-% $$
-% \nabla^{2} g(\bm{\theta}) d_{G} = -\nabla g(\bm{\theta})
-% $$
-% $$
-% J(\bm{\theta})^{\top} J(\bm{\theta}) d_{GN} = J(\bm{\theta})^{\top} r(\bm{\theta})
-% $$
-% \medskip
+\begin{framei}{Gauss-Newton for least squares}
+\item If $J_r(\thetav)^T J_r(\thetav)$ is invertible, Gauss-Newton update direction is
+$$
+\begin{aligned}
+\mathbf{d}^{[t]} &= - \left[\nabla^2 g(\thetat)\right]^{-1} \nabla g(\thetat) \\
+&\approx - \left[J_r(\thetat)^T J_r(\thetat)\right]^{-1} J_r(\thetat)^T r(\thetav) \\
+&= - (J_r^T J_r)^{-1} J_r^T r(\thetav)
+\end{aligned}
+$$
+\vfill
+\item \textbf{Advantage}:
+\begin{center}
+Reduced computational complexity since no Hessian necessary.
+\end{center}
+\vfill
+\item \textbf{Note:} Gauss-Newton can also be derived by starting with
+$$
+r(\thetav) \approx r(\thetat) + J_r(\thetat)^T (\thetav - \thetat) = \tilde{r}(\thetav)
+$$
+and $\tilde{g}(\thetav) = \tilde{r}(\thetav)^T \tilde{r}(\thetav)$.
+Then, set $\nabla \tilde{g}(\thetav)$ to zero
+\end{framei}
 
-% Die Iterationsvorschrift des Gauß-Newton Verfahrens lautet:
-% $$
-% \bm{\theta}_{i+1} = \bm{\theta}_{k} + \mathbf{d}_{i}
-% $$
-% wobei $\bm{\delta}_k$ die Lösung des folgenden Optimierungsproblems in der $k$-ten Iterations ist:
-% $$
-% \min_{d} \; \frac{1}{2} ||J_k d + r_k||^2 = \min_{d} \; \frac{1}{2} ||J_k d -(-r(\bm{\theta}))||^2
-% $$
-% Die Lösung ist dann durch die Normalengleichung bestimmt:
-% $$
-% J_{k}^\top J_{k} d = -J_{k}^\top r_k \Leftrightarrow d = (J_{k}^\top J_{k})^{-1} J_{k}^\top(-r_k)
-% $$
-% \medskip
 
-% Das Minimum entspricht also der Gauß-Newton-Suchrichtung $d_{GN} = d $
-% \lz
+\begin{framei}{Levenberg-Marquardt algorithm}
+\item \textbf{Problem:} Gauss-Newton may not decrease $g$ in every iteration but may diverge, especially if starting point is far from minimum
+\item \textbf{Solution:} Choose step size $\alpha > 0$ s.t.
+$$
+\xv^{[t+1]} = \xv^{[t]} + \alpha \mathbf{d}^{[t]}
+$$
+decreases $g$ (e.g., by satisfying Wolfe conditions)
+\item However, if $\alpha$ gets too small, an \textbf{alternative} method is the
+\begin{center}
+\textbf{Levenberg-Marquardt algorithm}
+$$
+(J_r^T J_r + \lambda D) \mathbf{d}^{[t]} = -J_r^T r(\thetav)
+$$
+\end{center}
+\item $D$ is a positive diagonal matrix
+\item $\lambda = \lambda^{[t]} > 0$ is the \emph{Marquardt parameter} and chosen at each step
+\end{framei}
 
-% \textbf{Note:} In \texttt{R} LS estimators for non-linear relationships can be determined using the \texttt{nls()} function. This function uses the Gauss Newton algorithm by default.
 
-\end{vbframe}
-%
-% \framebreak
-%
-% \normalsize
-% \textbf{Allgemein: }
-%
-%
-%
-% \begin{itemize}
-% \item Sei $r$ Funktion eines n-dimensionalen Vektors
-%
-% \vspace*{-0.2cm}
-%
-% $$
-%   g: \; \R^p \rightarrow \R^n.
-% $$
-%
-% In vorherigem Beispiel bildet die Funktion $g$ den $p$-dimensionalen Parametervektor $\bm{\theta}$ auf die $n$ Residuen ab.
-%
-% \item \textbf{Ziel}: $g(x)$ so nah wie möglich an Null, z.B. bezüglich quadratischem Abstand
-%
-% \vspace*{-0.2cm}
-% $$
-% \min_{x\in\R^p} f(x) = \min_{x\in\R^p} \; \frac{1}{2} ||g(x)||_2^2 = \min_{x\in\R^p} \; \frac{1}{2} \sum_{i=1}^{n} g_i^2(x).
-% $$
-% \item Kann als elementweise Penalty der Werte von $g(x)$ angesehen werden (auch andere Penalty vorstellbar, z.B. L1-Norm $\min_{x\in\R^p}\; \sum_{i=1}^n |g_i(x)|$).
-% \end{itemize}
-%
-% <<echo=FALSE, fig.align='center'>>=
-% int = seq(-2,2,l=300)
-% plot(int,  int^2/2, type = "l", xlab = \expression(g[i](x)), ylab = "Penalty")
-% points(int, abs(int), type="l")
-% @
-% %
-% % \framebreak
-% %
-% % \begin{itemize}
-% % \item Allgemein lässt sich Penalty darstellen als:
-% % $$
-% % f(x)=\sum_{i=1}^{m} \phi(g_i(x))
-% % $$
-% % % \lz
-% % % \item Dadurch auch auf z.B. Constrained Optimierung übertragbar
-% % \end{itemize}
-%
-% \framebreak
-%
-% Allgemein lässt sich Penalty darstellen als:
-%
-% \lz
-% $$
-% f(x)=\sum_{i=1}^{n} \phi(g_i(x))
-% $$
-% \lz
-%
-% \textbf{Ableitungen von $f(x)$}:
-% \begin{itemize}
-% \lz
-% \item $\nabla f(x) = \sum_{i} \phi'(g_i(x)) \nabla g_i(x)$
-% \lz
-% \item $\nabla^2 f(x) = \sum_{i} [\phi''(g_i(x)) \nabla g_i(x)] \nabla g_i(x)^T + \phi'(g_i(x)) \nabla^2g_i(x)$
-% \end{itemize}
-% \framebreak
-%
-% \textbf{Matrixform:}
-% \lz
-% \begin{itemize}
-% \item $\nabla f(x)= \nabla g(x) \phi'(g(x))$
-% \lz
-% \item $\nabla^2 f(x)= \nabla g(x) \Phi''  \nabla^{\top} g(x) + \sum_i \phi'(g_i(x)) \nabla^2 g_i(x),$
-% \end{itemize}
-%
-% mit
-% $$
-% \nabla g(x) = [\nabla g_1(x), \nabla g_2(x), \ldots, \nabla g_n(x)] \text{ (Jacobi-Matrix)},
-% $$
-% $$
-% \phi'(g(x)) = [\phi'(g_1(x)), \ldots, \phi'(g_n(x))]^{\top},
-% $$
-% $$
-% \Phi'' = \diag(\phi''(g_1(x)), \ldots, \phi''(g_n(x)))
-% $$
-%
-% \begin{footnotesize}
-% Wegen Blockmatrix-Produkt:
-% $$
-%   [\nabla g_1(x), \ldots, \nabla g_n(x)] \Phi'' [\nabla g_1(x), \ldots, \nabla g_n(x)]^{\top}
-%    = \sum_i \Phi'' \nabla g_i(x) \nabla^{\top} g_i(x)
-% $$
-% \end{footnotesize}
-%
-% \framebreak
-%
-% \textbf{Im Least Squares Fall:} \\
-% \lz
-% \begin{itemize}
-% \item Penalty: $\phi(t) = \frac{1}{2} t^2$,  $\phi'(t) =t$, $\phi''(t) =1$, $\Phi''= I$
-% \lz
-% \item Setze in Formeln von vorheriger Slide ein:
-% \begin{itemize}
-% \lz
-% \item $\nabla f(x) = \nabla g(x) g(x)$
-% \lz
-% \item $\nabla^2 f(x) = \nabla g(x) \nabla^{\top}g(x) + \sum_{i} g_i(x)\nabla^2 g_i(x)$
-% \end{itemize}
-% \end{itemize}
-
-% \framebreak
-%
-%
-%
-% \textbf{Idee Gauss-Newton Methode:} \\
-% \begin{itemize}
-% \item Was passiert mit $\nabla^2 f(x)$ wenn nahe an Minimum und damit $g_i$ klein?
-% $$
-% \nabla^2 f(x)  \approx \nabla g(x) (\nabla g(x))^{\top} = H(x),
-% $$
-% H(x) positiv (semi-)definit.
-%
-% \item Gauss-Newton ähnlich Newton Methode:
-% $$
-% x^{(i+1)} =  x^{(i)} - \lambda H^{-1}(x^{(i)}) \nabla g(x^{(i)}) g(x^{(i)}),
-% $$
-% mit $\lambda$ Schrittweite und $\nabla g(x^{(i)}) g(x^{(i)})$ Gradient von f an der Stelle $x^{(i)}$.
-% \end{itemize}
-
-\begin{vbframe}{Levenberg-Marquardt algorithm}
-
-\begin{itemize}
-    \item \textbf{Problem:} Gauss-Newton may not decrease $g$ in every iteration but may diverge, especially if starting point is far from minimum
-    \item \textbf{Solution:} Choose step size $\alpha > 0$ s.t.
-        \begin{equation*}
-            \xv^{[t+1]} = \xv^{[t]} + \alpha \mathbf{d}^{[t]}
-        \end{equation*}
-        decreases $g$ (e.g., by satisfying Wolfe conditions)
-    \item However, if $\alpha$ gets too small, an \textbf{alternative} method is the
-        \begin{framed}
-            \centering
-            \textbf{Levenberg-Marquardt algorithm}
-            \begin{equation*}
-                (J_r^\top J_r + \lambda D) \mathbf{d}^{[t]} = -J_r^\top r(\thetav)
-            \end{equation*}
-        \end{framed}
-    \item $D$ is a positive diagonal matrix
-    \item $\lambda = \lambda^{[t]} > 0$ is the \emph{Marquardt parameter} and chosen at each step
-\end{itemize}
-
-\framebreak
-
-\begin{itemize}
-    \item \textbf{Interpretation:} Levenberg-Marquardt \emph{rotates} Gauss-Newton update directions towards direction of \emph{steepest descent}
-        \begin{framed}
-            Let $D = I$ for simplicity.
-            Then:
-            \begin{align*}
-                \lambda \mathbf{d}^{[t]} &= \lambda (J_r^\top J_r + \lambda I)^{-1} (- J_r^\top r(\thetav)) \\
-                &= (I - J_r^\top J_r / \lambda + (J_r^\top J_r)^2 / \lambda^2 \mp \cdots) (- J_r^\top r(\thetav)) \\
-                &\to - J_r^\top r(\thetav) = - \nabla g(\thetav) / 2
-            \end{align*}
-            for $\lambda \to \infty$
-
-            \medskip
-
-            \textbf{Note:} $(\Amat + \mathbf{B})^{-1} = \sum_{k=0}^\infty (- \Amat^{-1} \mathbf{B})^k \Amat^{-1}$ if $\|\Amat^{-1} \mathbf{B}\| < 1$
-        \end{framed}
-    \item Therefore: $\mathbf{d}^{[t]}$ approaches direction of negative gradient of $g$
-    \item Often: $D = \text{diag}(J_r^\top J_r)$ to get scale invariance \\[0.1\baselineskip]
-        (\textbf{Recall:} $J_r^\top J_r$ is positive semi-definite $\Rightarrow$ non-negative diagonal)
-\end{itemize}
-
-\end{vbframe}
-
-% \begin{vbframe}{Levenberg-Marquardt algorithm}
-
-% If $\nabla r(\bm{\theta}^{[t]})^\top\nabla r(\bm{\theta}^{[t]})$ singular, use $\nabla r(\bm{\theta}^{[t]})^\top\nabla r(\bm{\theta}^{[t]})+\Delta$ with $\Delta$ non-negative diagonal matrix.
-% \lz
-% $$
-% \Delta = \epsilon \cdot I
-% $$
-% or
-% $$
-% \Delta = \epsilon \cdot \diag\left(\nabla r(\bm{\theta}^{[t]})^\top\nabla r(\bm{\theta}^{[t]})\right)
-% $$
-
-% LMA is an efficient and popular method for solving nonlinear optimization problems.
-
-% \lz
-
-% Note: The diag elements of a pd matrix are always $\geq 0$
-
-% \end{vbframe}
+\begin{framei}{Levenberg-Marquardt algorithm}
+\item \textbf{Interpretation:} Levenberg-Marquardt \emph{rotates} Gauss-Newton update directions towards direction of \emph{steepest descent}
+\item Let $D = I$ for simplicity. Then:
+$$
+\begin{aligned}
+\lambda \mathbf{d}^{[t]} &= \lambda (J_r^T J_r + \lambda I)^{-1} (- J_r^T r(\thetav)) \\
+&= (I - J_r^T J_r / \lambda + (J_r^T J_r)^2 / \lambda^2 \mp \cdots) (- J_r^T r(\thetav)) \\
+&\to - J_r^T r(\thetav) = - \nabla g(\thetav) / 2
+\end{aligned}
+$$
+for $\lambda \to \infty$
+\item \textbf{Note:} $(\A + \mathbf{B})^{-1} = \sum_{k=0}^\infty (- \A^{-1} \mathbf{B})^k \A^{-1}$ if $\|\A^{-1} \mathbf{B}\| < 1$
+\item Therefore: $\mathbf{d}^{[t]}$ approaches direction of negative gradient of $g$
+\item Often: $D = \text{diag}(J_r^T J_r)$ to get scale invariance (\textbf{Recall:} $J_r^T J_r$ is positive semi-definite $\Rightarrow$ non-negative diagonal)
+\end{framei}
 
 \endlecture
 \end{document}
-
-

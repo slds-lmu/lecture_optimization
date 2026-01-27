@@ -1,3 +1,10 @@
+# ------------------------------------------------------------------------------
+# bayesian optimization
+
+# FIG: compare different surrogate models for Bayesian optimization 
+#      using Gaussian Process Regression (GP) and Random Forest (RF).
+# ------------------------------------------------------------------------------
+
 library(bbotk)
 library(data.table)
 library(mlr3mbo)
@@ -12,6 +19,9 @@ library(mlr3misc)
 source("LearnerRegrRangerCustom.R")
 
 set.seed(123)
+
+# ------------------------------------------------------------------------------
+
 objective = ObjectiveRFunDt$new(
  fun = function(xdt) data.table(y = 2 * xdt$x * sin(14 * xdt$x)),
  domain = ps(x = p_dbl(lower = 0, upper = 1)),

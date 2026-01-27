@@ -208,6 +208,25 @@
 
 \kopfsl{3}{Mathematical Concepts 3}
 
+\loesung{Optimality in d dimensions}{
+
+\begin{enumerate}
+	\item $\var(\mathbf{w}^\top \mathbf{X} - \mathbf{Y}) = \var(\mathbf{w}^\top \mathbf{X}) + \var(\mathbf{Y}) -2\cov(\mathbf{w}^\top \mathbf{X}, \mathbf{Y}) = \mathbf{w}^\top \Sigma_\mathbf{X} \mathbf{w} + \var(\mathbf{Y}) - 2\mathbf{w}^\top \Sigma_{\mathbf{XY}}.$ This is a quadratic form in $\mathbf{w}$ and $\Sigma_{\mathbf{X}}$ is p.s.d. (since it is a covariance matrix) $\Rightarrow f$ is convex.
+    
+	\item $\nabla f =  2\mathbf{w}^\top \Sigma_{\mathbf{X}} - 2\Sigma_{\mathbf{XY}}^\top, \nabla^2f = 2\Sigma_{\mathbf{X}}$
+    
+	\item $\nabla f \overset{!} = \mathbf{0} \iff 2\Sigma_{\mathbf{X}}\mathbf{w} - 2\Sigma_{\mathbf{XY}} = 0 \iff \Sigma_{\mathbf{X}}\mathbf{w} = \Sigma_{\mathbf{XY}}.$
+This system of linear equations has a unique solution if $\Sigma_{\mathbf{X}}$ is non-singular (equivalently full rank or invertible). If 	$\Sigma_{\mathbf{X}}$ is non-singular it follows that $ \mathbf{w} = \Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}}.$ In this case $\Sigma_{\mathbf{X}}$ is p.d. since no eigenvalue can be zero, $f$ is strictly convex and the local minimum is global. 
+% \item First condition: Since $\mathbf{w}$ exists $\Sigma_{\mathbf{X}}$ must be non-singular. \\
+% Then $\Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}} = \E\left((\mathbf{X} - \E(\mathbf{X})(\mathbf{X} - \E(\mathbf{X}))^\top\right)^{-1}\E\left((\mathbf{X} - \E(\mathbf{X}))(\mathbf{Y} - \E(\mathbf{Y}))^\top\right)$ \\
+% Second condition: If $\E(\mathbf{X}) = \mathbf{0}, \E(\mathbf{Y}) = \mathbf{0}$ then \\
+%  $\Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}} = \left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}\E(\mathbf{X}\mathbf{Y}^\top).$ \\
+%  $n(\mathbf{x}_{1:n}^\top\mathbf{x}_{1:n})^{-1}$ is a consistent estimator of $\left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}$ and \\
+%  $\frac{1}{n}\mathbf{x}_{1:n}^\top y_{1:n}$ is a consistent estimator of $\E(\mathbf{X}\mathbf{Y}^\top)$.\\
+%  $\Rightarrow$ The least squares estimator $(\mathbf{x}_{1:n}^\top\mathbf{x}_{1:n})^{-1}\mathbf{x}_{1:n}^\top y_{1:n}$ is a consistent estimator of $\left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}\E(\mathbf{X}\mathbf{Y}^\top)$.
+	
+\end{enumerate}
+}
 
 \loesung{Optimality in 2d}{
 
@@ -234,7 +253,7 @@
 \end{kframe}
 \includegraphics[width=0.5\linewidth]{figure/1d-plot-1} 
 \end{knitrout}
-\item $\nabla f = (\sin(x_1^2 + x_2^2 + x_1x_2)(2x_1 + x_2), \sin(x_1^2 + x_2^2 + x_1x_2)(2x_2 + x_1))^\top$
+\item $\nabla f = (\sin(x_1^2 + x_2^2 + x_1x_2)(2x_1 + x_2), \sin(x_1^2 + x_2^2 + x_1x_2)(2x_2 + x_1))$
 \item $\nabla^2 f = \begin{pmatrix} \cos(u)(2x_1 + x_2)^2 + 2\sin(u) & \cos(u)(2x_1 + x_2)(2x_2 + x_1) + \sin(u) \\ 
  \cos(u)(2x_1 + x_2)(2x_2 + x_1) + \sin(u) & \cos(u)(2x_2 + x_1)^2 + 2\sin(u)\end{pmatrix}$ with $u = x_1^2 + x_2^2 + x_1x_2.$
 \item Let $u: \R^2 \rightarrow \R, (x_1, x_2) \mapsto x_1^2 + x_2^2 + x_1x_2$, such that $f(\mathbf{x}) = - \cos(u(\mathbf{x}))$. \\
@@ -250,46 +269,73 @@
   \begin{equation*}
     \nabla^2 f(\mathbf{x}) = \underbrace{\cos(u(\mathbf{x}))}_{> 0} \underbrace{\nabla u(\mathbf{x}) \nabla u(\mathbf{x})^\top}_{\text{p.s.d.}} + \underbrace{\sin(u(\mathbf{x}))}_{\geq 0} \underbrace{\nabla^2 u(\mathbf{x})}_{\text{p.d.}}.
   \end{equation*}
-  $\Rightarrow \nabla^2 f(\mathbf{x})$ is positive semi-definite. \\
+  $\Rightarrow \nabla^2 f(\mathbf{x})$ is positive semi-definite for all $\mathbf{x} \in S_{\bar{r}}$. \\
   $\Rightarrow f_{|S_{\overline{r}}}$ is convex.
 %\item For $\mathbf{x} \in S_{\bar{r}}$, it holds that $\nabla f(\mathbf{x}) = \underbrace{\sin(u(\mathbf{x}))}_{\ge 0} \nabla u(\mathbf{x})$ and thus $$\nabla f(\mathbf{x}) = \mathbf{0} \iff \nabla u(\mathbf{x}) = \mathbf{0} \iff \mathbf{x} = \mathbf{0}.$$
-\item For $\mathbf{x} \in S_{\bar{r}}$, we have
-\[
-\nabla f(\mathbf{x}) = \sin(u(\mathbf{x})) \, \nabla u(\mathbf{x}),
-\]
-where $\sin(u(\mathbf{x})) \ge 0$ (as shown above). Thus, $\nabla f(\mathbf{x}) = \mathbf{0}$ if $\sin(u(\mathbf{x})) = 0$ or $\nabla u(\mathbf{x}) = \mathbf{0}$.
+% \item For $\mathbf{x} \in S_{\bar{r}}$, we have
+% \[
+% \nabla f(\mathbf{x}) = \sin(u(\mathbf{x})) \, \nabla u(\mathbf{x}),
+% \]
+% where $\sin(u(\mathbf{x})) \ge 0$ (as shown above). Thus, $\nabla f(\mathbf{x}) = \mathbf{0}$ if $\sin(u(\mathbf{x})) = 0$ or $\nabla u(\mathbf{x}) = \mathbf{0}$.
 
-\begin{itemize}
-    \item \textbf{Case 1:} If $\sin(u(\mathbf{x})) = 0$, then $u(\mathbf{x})$ must be a multiple of $\pi$. Since we have shown above that $u(\mathbf{x}) \in [0, \pi/4)$ (for $\mathbf{x} \in S_{\bar{r}}$) this implies $\mathbf{x} = \mathbf{0}$.
+% \begin{itemize}
+%     \item \textbf{Case 1:} If $\sin(u(\mathbf{x})) = 0$, then $u(\mathbf{x})$ must be a multiple of $\pi$. Since we have shown above that $u(\mathbf{x}) \in [0, \pi/4)$ (for $\mathbf{x} \in S_{\bar{r}}$) this implies $\mathbf{x} = \mathbf{0}$.
     
-    \item \textbf{Case 2:} If $\nabla u(\mathbf{x}) = \mathbf{0}$, then by the definition of $u(\mathbf{x})$, this also implies that $\mathbf{x} = \mathbf{0}$.
-\end{itemize}
+%     \item \textbf{Case 2:} If $\nabla u(\mathbf{x}) = \mathbf{0}$, then by the definition of $u(\mathbf{x})$, this also implies that $\mathbf{x} = \mathbf{0}$.
+% \end{itemize}
 
-Therefore, we conclude that
-\[
-\nabla f(\mathbf{x}) = \mathbf{0} \iff \mathbf{x} = \mathbf{0}.
-\]
+% Therefore, we conclude that
+% \[
+% \nabla f(\mathbf{x}) = \mathbf{0} \iff \mathbf{x} = \mathbf{0}.
+% \]
 
-  It follows that $\mathbf{x} = \mathbf{0}$ is a local minimum.
-\item $f(\mathbf{0}) = -1$ and $\cos: \R \rightarrow [-1, 1].$ From this it follows that $\mathbf{0}$ must be a global minimum of $f$ since no element of the image of $f$ is smaller than $-1$.
+%   It follows that $\mathbf{x} = \mathbf{0}$ is a local minimum.
+% \item $f(\mathbf{0}) = -1$ and $\cos: \R \rightarrow [-1, 1].$ From this it follows that $\mathbf{0}$ must be a global minimum of $f$ since no element of the image of $f$ is smaller than $-1$.
 \end{enumerate}
 }
 
-\loesung{Optimality in d dimensions}{
 
-\begin{enumerate}
-	\item $\var(\mathbf{w}^\top \mathbf{X} - \mathbf{Y}) = \var(\mathbf{w}^\top \mathbf{X}) + \var(\mathbf{Y}) -2\cov(\mathbf{w}^\top \mathbf{X}, \mathbf{Y}) = \mathbf{w}^\top \Sigma_\mathbf{X} \mathbf{w} + \var(\mathbf{Y}) - 2\mathbf{w}^\top \Sigma_{\mathbf{XY}}.$ This is a quadratic form in $\mathbf{w}$ and $\Sigma_{\mathbf{X}}$ is p.s.d. (since it is a covariance matrix) $\Rightarrow f$ is convex.
-	\item $\nabla f =  2\Sigma_{\mathbf{X}}\mathbf{w} - 2\Sigma_{\mathbf{XY}}, \nabla^2f = 2\Sigma_{\mathbf{X}}$
-	\item $\nabla f \overset{!} = \mathbf{0} \iff 2\Sigma_{\mathbf{X}}\mathbf{w} - 2\Sigma_{\mathbf{XY}} = 0 \iff \Sigma_{\mathbf{X}}\mathbf{w} = \Sigma_{\mathbf{XY}}.$
-This system of linear equations has a unique solution if $\Sigma_{\mathbf{X}}$ is non-singular. If 	$\Sigma_{\mathbf{X}}$ is non-singular it follows that $ \mathbf{w} = \Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}}.$ In this case $\Sigma_{\mathbf{X}}$ is p.d. since no eigenvalue can be zero, $f$ is strictly convex and the local minimum is global. 
-\item First condition: Since $\mathbf{w}$ exists $\Sigma_{\mathbf{X}}$ must be non-singular. \\
-Then $\Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}} = \E\left((\mathbf{X} - \E(\mathbf{X})(\mathbf{X} - \E(\mathbf{X}))^\top\right)^{-1}\E\left((\mathbf{X} - \E(\mathbf{X}))(\mathbf{Y} - \E(\mathbf{Y}))^\top\right)$ \\
-Second condition: If $\E(\mathbf{X}) = \mathbf{0}, \E(\mathbf{Y}) = \mathbf{0}$ then \\
- $\Sigma_{\mathbf{X}}^{-1}\Sigma_{\mathbf{XY}} = \left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}\E(\mathbf{X}\mathbf{Y}^\top).$ \\
- $n(\mathbf{x}_{1:n}^\top\mathbf{x}_{1:n})^{-1}$ is a consistent estimator of $\left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}$ and \\
- $\frac{1}{n}\mathbf{x}_{1:n}^\top y_{1:n}$ is a consistent estimator of $\E(\mathbf{X}\mathbf{Y}^\top)$.\\
- $\Rightarrow$ The least squares estimator $(\mathbf{x}_{1:n}^\top\mathbf{x}_{1:n})^{-1}\mathbf{x}_{1:n}^\top y_{1:n}$ is a consistent estimator of $\left(\E(\mathbf{X}\mathbf{X}^\top)\right)^{-1}\E(\mathbf{X}\mathbf{Y}^\top)$.
+
+% \loesung{Optimality in 1d}{
+% Let $f: [-1,2] \rightarrow \R, x \mapsto \exp(x^3 - 2x^2)$
+% \begin{enumerate}
+% 	%
+% 	\item $f'(x) = \exp(x^3 - 2x^2)\cdot(3x^2 - 4x)$
+% 	\item 
+% \begin{knitrout}
+% \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+% \begin{alltt}
+% \hlkwd{library}\hlstd{(ggplot2)}
+
+% \hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{exp}\hlstd{(x}\hlopt{^}\hlnum{3} \hlopt{-} \hlnum{2}\hlopt{*}\hlstd{x}\hlopt{^}\hlnum{2}\hlstd{)}
+% \hlstd{df} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{f}\hlstd{(x)} \hlopt{*} \hlstd{(}\hlnum{3}\hlopt{*}\hlstd{x}\hlopt{^}\hlnum{2} \hlopt{-} \hlnum{4}\hlopt{*}\hlstd{x)}
+
+% \hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{x} \hlstd{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.005}\hlstd{)),} \hlkwd{aes}\hlstd{(x))} \hlopt{+}
+%   \hlkwd{geom_function}\hlstd{(}\hlkwc{fun} \hlstd{= f,} \hlkwd{aes}\hlstd{(}\hlkwc{linetype} \hlstd{=} \hlstr{"f"}\hlstd{))} \hlopt{+}
+%   \hlkwd{geom_function}\hlstd{(}\hlkwc{fun} \hlstd{= df,} \hlkwd{aes}\hlstd{(}\hlkwc{linetype} \hlstd{=} \hlstr{"f'"}\hlstd{))}    \hlopt{+}
+%   \hlkwd{scale_linetype_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{"Function"}\hlstd{)}
+% \end{alltt}
+% \end{kframe}
+% \includegraphics[width=0.5\linewidth]{figure/1d-plot-1} 
+% \end{knitrout}
+% 	\item $f$ is continuously differentiable $\Rightarrow$ candidates can only be stationary points and boundary points. \\
+% 	Find stationary points, i.e., points where \\ 
+% 	$f'(x) = 0 \iff  \underbrace{\exp(x^3 - 2x^2)}_{>0}\cdot(3x^2 - 4x) = 0 \iff 3x^2 - 4x = 0 \iff x(3x - 4) = 0 .$ \\
+% 	$\Rightarrow x_1 = 0, x_2 = 4/3.$
+% 	The other candidates are boundary points, i.e., $x_3 = -1, x_4 = 2.$
+% 	\item $f''(x) = \exp(x^3 - 2x^2)\cdot(3x^2 - 4x)^2 + \exp(x^3 - 2x^2)\cdot(6x - 4)$ \\
+% 	\item $f''(x_1) = \exp(0)\cdot(- 4) < 0$ \\
+% 	  $\Rightarrow x_1$ is a local maximum \\[\baselineskip]
+% 	  $f''(x_2) = \exp((4/3)^3 - 2(4/3)^2)\cdot(4) > 0$ \\
+% 	  $\Rightarrow x_2$ is a local minimum. \\[\baselineskip]
+% 	  The boundary points $x_3$ and $x_4$ are not considered as \textit{local} optima.
+% 	\item $f(x_1) = \exp(0) = 1$ \\
+% 	 $f(x_2) = \exp((4/3)^3 - 2(4/3)^2) \approx 0.3057$ \\
+% 	  $f(x_3) = \exp(-3) \approx 0.05$ \\
+% 	  $f(x_4) = \exp(0) = 1$ \\
+% 	  $\Rightarrow x_1, x_4$ are global maxima.
+% 	  $x_3$ is global minimum.
 	
-\end{enumerate}
-}
+% \end{enumerate}
+% }
 \end{document}

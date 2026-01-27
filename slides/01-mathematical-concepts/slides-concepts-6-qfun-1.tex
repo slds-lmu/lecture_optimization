@@ -1,0 +1,123 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/optim-basics}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Mathematical Concepts 
+}{
+Quadratic forms I
+}{
+figure_man/quadratic_functions_2D_example_1_1.png
+}{
+\item Definition of quadratic functions
+\item Gradient, Hessian
+\item Optima
+}
+
+\begin{framei}{Univariate quadratic}
+\item Quadratic function $q: \R \to \R$
+$$ q(x) = a x^2 + b x + c,\quad a \ne 0 $$
+\imageC[0.35]{figure_man/quadratic_functions_1D.png}
+\item Left: $q_1(x) = x^2$. Right: $q_2(x) = - x^2$
+\end{framei}
+
+\begin{framei}{Univariate: basic properties}
+\item Slope at $(x, q(x))$: $$ q'(x) = 2 a x + b $$
+\imageC[0.25]{figure_man/quadratic_functions_1D_derivative.png}
+\item Curvature: $$ q''(x) = 2 a $$
+\imageC[0.25]{figure_man/quadratic_functions_1D_curvature.png}
+%\item $q_1 = x^2$ (orange), $q_2 = 2 x^2$ (green), $q_3 = - x^2$ (blue), $q_4 = - 3 x^2$ (magenta)
+\item $a > 0$: $q$ convex, bounded from below, unique global minimum
+\item $a < 0$: $q$ concave, bounded from above, unique global maximum
+\item Optimum $\xs$
+$$ q'(x) = 0 \;\Leftrightarrow\; 2 a x + b = 0 \;\Rightarrow\; \xs = \frac{-b}{2 a} $$\\
+as 2nd derivative: $q''(\xs) = 2 a \ne 0$ 
+\end{framei}
+  
+\begin{framei}{Multivariate quadratic}
+\item $q: \R^d \to \R$
+$$ q(\xv) = \xv^T \A \xv + \bv^T \xv + c $$
+\item with $\A \in \R^{d \times d}$ full rank, $\bv \in \R^d$, $c \in \R$
+\vfill
+\splitV{
+\imageC[0.9]{figure_man/quadratic_functions_2D_example_1_1.png}
+}{
+\imageC[0.9]{figure_man/quadratic_functions_2D_example_1_2.png}
+}
+\end{framei}
+
+\begin{framei}{Symmetrization}
+\item W.l.o.g. assume $\A$ symmetric, i.e., $\A^T = \A$
+\item If $\A$ not symmetric, there exists symmetric $\tilde \A$ with $$ q(\xv) = \xv^T \A \xv = \xv^T \tilde \A \xv =: \tilde q(\xv) $$
+\item Justification
+$$ q(\xv) = \xv^T \A \xv = \tfrac12 \xv^T \underbrace{(\A + \A^T)}_{\tilde \A_1} \xv + \tfrac12 \xv^T \underbrace{(\A - \A^T)}_{\tilde \A_2} \xv $$
+\item $\tilde \A_1$ symmetric, $\tilde \A_2$ anti-symmetric ($\tilde \A_2^T = - \tilde \A_2$)
+\item Since $\xv^T \A^T \xv$ is a scalar, equal to its transpose
+\begin{align*}
+\xv^T (\A - \A^T) \xv &= \xv^T \A \xv - \xv^T \A^T \xv = \xv^T \A \xv - (\xv^T \A^T \xv)^T \\
+                      &= \xv^T \A \xv - \xv^T \A \xv = 0
+\end{align*}
+\item Therefore $\tilde q(\xv) = \xv^T \tilde \A \xv$ with $\tilde \A = \tilde \A_1/2$
+\end{framei}
+
+\begin{framei}{Gradient and Hessian}
+\item $q: \R^d \to \R$
+$$ q(\xv) = \xv^T \A \xv + \bv^T \xv + c $$
+\item Gradient
+$$ \nabla q(\xv) = ((\A^T + \A) \xv + \bv)^T $$
+\item Under assumed symmetry: $\nabla q(\xv) = (2 \A \xv + \bv)^T$
+\item Directional derivative: $\nabla q(\xv)\, \vv $
+\item Hessian
+$$ \nabla^2 q(\xv) = (\A^T + \A) = 2 \A =: \H \in \R^{d \times d} $$
+\item Under assumed symmetry: $\H = 2 \A$
+\item Directional curvature: $\vv^T \H \vv $
+\end{framei}
+
+
+\begin{framei}{Optimum}
+\item $q: \R^d \to \R$
+$$ q(\xv) = \xv^T \A \xv + \bv^T \xv + c $$
+\item Since $\A$ full rank, unique stationary point $\xvs$ (min, max, or saddle)
+\begin{align*}
+\nabla q(\xvs)      &= \boldsymbol{0}^T \\
+(2 \A \xvs + \bv)^T &= \boldsymbol{0}^T \\
+\xvs                &= -\tfrac{1}{2} \A^{-1} \bv
+\end{align*}
+\item $q(\xvs) = c - \frac12 \bv^T \A^{-1} \bv$
+\vfill
+\imageC[1]{figure_man/minmaxsaddle.png}
+\item Left: $\A$ pos. def. \quad Middle: $\A$ neg. def. \quad Right: $\A$ indefinite
+\end{framei}
+
+\begin{framei}[fs=footnotesize]{Optima: rank-deficient case}
+\item $q: \R^d \to \R$
+$$ q(\xv) = \xv^T \A \xv + \bv^T \xv + c $$
+\item Assume $\A$ symmetric now
+\item For stationary points to exist, we need : $\nabla q(\xv) = 2 \A \xv + \bv = 0$
+\item This implies we need $\bv \in range(\A)$, let's assume this is the case
+\item Let $\xv_p$ be stationary, so $2 \A \xv_p = -\bv$
+\item Then any point in affine space $\xv_p + ker(\A)$ is also stationary, with same function value and same Hessian (as it is constant)
+\imageC[0.35]{figure_man/convex-example.png}
+\end{framei}0
+
+
+\begin{framei}[fs=footnotesize]{Optima: rank-deficient case}
+\item All affine spaces of form $\xv_p + ker(\A)$ for diff. valid $\xv_p$ are the same
+\item Any stationary point must be in $\xv_p + ker(\A)$
+\item So $\xv_p + ker(\A)$ are all the stationary points, with same curvature
+\item If $\A \succeq 0$, they are all minima
+\item If $\A \preceq 0$, they are all maxima
+\item If $\A$ is indefinite, they are all saddle points
+\imageC[0.35]{figure_man/convex-example.png}
+\end{framei}
+  
+
+\endlecture
+
+\end{document}

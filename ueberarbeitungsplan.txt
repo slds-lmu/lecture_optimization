@@ -1,0 +1,43 @@
+Erst einmal nur bis Chapter 5 (Second Order stuff).
+
+- Find an analysis book!
+
+Kapitel nacheinander abarbeiten.
+- Change of Plans: Focus on chapters 1, 4 & 5
+
+
+-------------------------------------------------------------
+Für rate of convergence:
+
+- Deisenroth zitiert https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf
+
+- ich glaube die bisherigen Folien basieren auf https://bookdown.org/rdpeng/advstatcomp/rates-of-convergence.html
+
+-------------------------------------------------------------
+
+Spezifisch:
+- kleine Fehler direkt korrigieren (im Vorschlagmodus)
+- kleine Verständnis/Vollständigkeits issues direkt vorschlagen
+- größere Dinge kommentieren
+- Immer mit 3 Referenzen abgleichen: Deisenroth, FMM von Thomas, Algorithms for Optimization
+
+
+------------------------------------
+
+
+Chapter 1: 
+- Partial Derivatives aren't introduced properly?
+- Big/little O Notation is possibly missing?
+- Somethings off with directional derivative
+- Chain rule is used before it is defined (e.g. 1.5: Quadratic forms)
+
+- 1-6 the nabla transpose notation has been incorporated, 7 still needs to be fixed completely
+
+
+
+
+-----------------------------------------------------------
+ESTABLISHED RULES:
+
+- \partial *ONLY* for partial derivatives
+- generally, d for vectors, but are also allowed for partial derivatives

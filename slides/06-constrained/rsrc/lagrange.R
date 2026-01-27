@@ -1,3 +1,9 @@
+# ------------------------------------------------------------------------------
+# constrained
+
+# FIG: plot lagrange contour lines
+# ------------------------------------------------------------------------------
+
 # Lagrange contour lines
 lagrangeContour = function(col = terrain_hcl, theta = 40, phi = 40, xlab = "x1", ylab = "x2", constraint = F, add.path = F) {
   if ( is.function(col)) col = col(nrow(z) * ncol(z))

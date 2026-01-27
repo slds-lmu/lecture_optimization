@@ -1,0 +1,25 @@
+We are given a multi-objective optimization problem where we want to minimize both objectives $f_{1}$ and $f_{2}$:
+$$
+f_{1}: \mathcal{X} \rightarrow \R, f_{2}: \mathcal{X} \rightarrow \R,
+$$
+where $\mathcal{X} = \{\mathbf{x}^{(1)}, \mathbf{x}^{(2)}, \mathbf{x}^{(3)}, \mathbf{x}^{(4)}, \mathbf{x}^{(5)}, \mathbf{x}^{(6)}\}$.
+
+For each point in the domain, we know their objective function values:
+\begin{align*}
+\mathbf{x}^{(1)} ~ \text{with} ~ \mathbf{f}^{(1)} &= (10, 5)\\
+\mathbf{x}^{(2)} ~ \text{with} ~ \mathbf{f}^{(2)} &= (7, 8)\\
+\mathbf{x}^{(3)} ~ \text{with} ~ \mathbf{f}^{(3)} &= (4, 6)\\
+\mathbf{x}^{(4)} ~ \text{with} ~ \mathbf{f}^{(4)} &= (6, 4)\\
+\mathbf{x}^{(5)} ~ \text{with} ~ \mathbf{f}^{(5)} &= (9, 3)\\
+\mathbf{x}^{(6)} ~ \text{with} ~ \mathbf{f}^{(6)} &= (3, 7)
+\end{align*}
+
+\begin{enumerate}
+\item Determine which of these six points are Pareto optimal (find $\mathcal{P}$).
+\item Sketch the objective space and visualize the Pareto front $\mathbf{f}(\mathcal{P})$.
+\item Assume we are given a reference point $R = (15, 15)$. Compute the dominated hypervolume of the Pareto optimal points.
+\item Perform non-dominated sorting.
+\item Compute the crowding distance of the point $\mathbf{x}^{(3)}$ with $\mathbf{f}^{(3)}$.
+\item Compute the hypervolume contribution of the point $\mathbf{x}^{(5)}$ with $\mathbf{f}^{(5)}$. Again, assume a reference point $R = (15, 15)$.
+\end{enumerate}
+

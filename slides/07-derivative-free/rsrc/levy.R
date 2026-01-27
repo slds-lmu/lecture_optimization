@@ -1,4 +1,13 @@
-# plot levy function
+# ------------------------------------------------------------------------------
+# derivative free
+
+# FIG: plot levy function
+# ------------------------------------------------------------------------------
+
+library(plotly)
+
+# ------------------------------------------------------------------------------
+
 x1 = seq(-5, 5, by = 0.1)
 x2 = seq(-5, 5, by = 0.1)
 
@@ -9,7 +18,7 @@ levy = function(x1, x2) {
 
 z = outer(x1, x2, levy)
 
-plot_ly() %>% add_surface(x = x1, y = x2, z = z) %>%
+p <- plot_ly() %>% add_surface(x = x1, y = x2, z = z) %>%
   layout(
     title = "Levy Funktion",
     scene = list(
@@ -17,3 +26,6 @@ plot_ly() %>% add_surface(x = x1, y = x2, z = z) %>%
       yaxis = list(title = "x2"),
       zaxis = list(title = "y")
     ))
+
+
+htmlwidgets::saveWidget(p, "../figure_man/levy.html", selfcontained = TRUE)

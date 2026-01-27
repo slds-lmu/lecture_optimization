@@ -8,219 +8,97 @@
 
 \begin{document}
 
-
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  First order methods
-  }{% Lecture title  
-  GD -- Multimodality and Saddle points
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/multimodal.png
-  }{
-    \item Multimodality, GD result can be arbitrarily bad
-    \item Saddle points, major problem in NN error landscapes, GD can get stuck or slow crawling
+\titlemeta{
+First order methods
+}{
+GD -- Multimodality and Saddle points
+}{
+figure/ackley_0a.png
+}{
+\item Multimodality, GD result can be arbitrarily bad
+\item Saddle points, major problem in NN error landscapes, GD can get stuck or slow crawling
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{framei}{Unimodal vs. Multimodal loss surfaces}
+\item[]
+\splitV[0.52]
+{\splitV[0.54]{\imageC[1]{figure/ackley_0a.png}}{\imageC[1]{figure/ackley_0b.png}}
+\imageC[1][https://arxiv.org/abs/1712.09913]{figure_man/difficult_vs_easy.png}}
+{\begin{itemizeM}[small]
+\item Snippet of a loss surface with many local optima
+\item In deep learning, we often find multimodal loss surfaces.
+\item \textbf{Left:} Multimodal loss surface.
+\item \textbf{Right:} (Nearly) unimodal loss surface.
+\end{itemizeM}}
+\end{framei}
 
-\begin{vbframe}{Unimodal vs. Multimodal loss surfaces}
 
-\vspace{\baselineskip}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=.85\textwidth]{figure_man/multimodal.png}
-    \caption*{\centering \small Snippet of a loss surface with many local optima}
-\end{figure}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=12cm]{figure_man/difficult_vs_easy.png}
-    \caption*{\centering \footnotesize In deep learning, we often find multimodal loss surfaces.
-    
-    \textbf{Left:} Multimodal loss surface.
-    \textbf{Right:} (Nearly) unimodal loss surface.
-    
-    (Source: Hao Li et al., 2017.}
-\end{figure}
-
-\end{vbframe}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{frame} {GD: Only locally optimal moves}
-\begin{itemize}
-\small{
+\begin{framei}[fs=small]{GD: Only locally optimal moves}
 \item GD makes only \textbf{locally} optimal moves
 \item It may move away from the global optimum
-\begin{figure}
-	\centering
-	\includegraphics[width=0.6\textwidth]{figure_man/local_hill.png}
-	\caption*{\footnotesize Source: Goodfellow et al., 2016}
-\end{figure}
+\imageC[0.7][https://www.deeplearningbook.org]{figure_man/local_hill.png}
 \item Initialization on \enquote{wrong} side of the hill results in weak performance
-\item In higher dimensions, GD may move around the hill (potentially at the cost of longer trajectory and time to convergence)}
-\end{itemize}
-\end{frame}
+\item In higher dimensions, GD may move around the hill (potentially at the cost of longer trajectory and time to convergence)
+\end{framei}
 
-\begin{vbframe} {Local minima}
 
-\begin{itemize}
+\begin{framei}{Local minima}
 \item \textbf{In practice:} Only local minima with high value compared to global minimium are problematic.
-\begin{figure}
-    \centering
-	\includegraphics[width=.6\textwidth]{figure_man/minima.png}
-    \caption*{\footnotesize Source: Goodfellow et al., 2016}
-\end{figure}
-%\item In DL, literature suspects that most local minima have low empirical risk. (\href{https://arxiv.org/abs/1406.2572}{Y. Dauphin et al. (2014)})
-%\item Simple test: Norm of gradient should get close to zero.
-\end{itemize}
+\imageC[0.9][https://www.deeplearningbook.org]{figure_man/minima.png}
+\end{framei}
 
-\framebreak
 
-\begin{itemize}
-    \item Small differences in starting point or step size can lead to huge differences in the reached minimum or even to non-convergence
-\end{itemize}
+\begin{framei}{Local minima: Sensitivity}
+\item Small differences in starting point or step size can lead to huge differences in the reached minimum or even to non-convergence
+\vfill
+\splitV[0.48]{\image{figure/ackley_1.png}}{\image{figure/ackley_2.png}}
+\vfill
+\item (Non-)Converging gradient descent for Ackley function
+\end{framei}
 
-\vspace{\baselineskip}
 
-\includegraphics[width=.45\textwidth]{figure_man/nonconv_ackley_plot.jpg} ~~
-\includegraphics[width=.49\textwidth]{figure_man/nonconv_ackley_path.jpg}
+\begin{framev}{GD at saddle points}
+\splitV[0.52]
+{\textbf{Example:}\\
+\spacer
+$$f(x_1, x_2) = x_1^2 - x_2^2$$
+$$\nabla f(x_1, x_2) = (2 x_1, -2 x_2)^T$$
+$$\bm{H} = \begin{pmatrix} 2 & 0 \\ 0 & -2 \end{pmatrix}$$
+\begin{itemizeM}[small]
+\item Along $x_1$, curvature is positive ($\lambda_1 = 2 > 0$).
+\item Along $x_2$, curvature is negative ($\lambda_2 = -2 < 0$).
+\end{itemizeM}}
+{\imageC[0.95]{figure/saddlepoint.png}}
+\end{framev}
 
-\begin{center}
-    \small
-    (Non-)Converging gradient descent for Ackley function
-\end{center}
-
-\end{vbframe}
-
-%%
-
-\begin{vbframe}{GD at saddle points}
-	
-	\begin{columns}
-		\begin{column}{0.48\textwidth}
-			\textbf{Example: }
-			\begin{eqnarray*}
-				f(x_1, x_2) &=& x_1^2 - x_2^2 \\
-				\nabla f(x_1, x_2) &=& \left(2 x_1, -2 x_2\right)^\top \\
-				\bm{H} &=& \begin{pmatrix} 2 & 0 \\ 0 & - 2\end{pmatrix}
-			\end{eqnarray*}
-
-            \begin{itemize}
-                \item Along $x_1$, curvature is positive ($\lambda_1 = 2 > 0$).
-                \item Along $x_2$, curvature is negative ($\lambda_2 = -2 < 0$).
-            \end{itemize}
-		\end{column}
-		\begin{column}{0.48\textwidth}
-			\begin{figure}
-				\centering
-				\includegraphics[width=\textwidth]{figure_man/saddlepoint.png}
-			\end{figure} 
-		\end{column}	
-	\end{columns}
-	%\item Second-order algorithms experience even greater problems when dealing with saddle points. Newtons method for example actively searches for a region with zero gradient. That might be another reason why second-order methods have not succeeded in replacing gradient descent for neural network training. 
-	
-\end{vbframe}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \frame{
-	
-	\frametitle{Example: Saddle point with GD}
-	\begin{itemize}
-		\item How do saddle points impair optimization?
-		\item Gradient-based algorithms \textbf{might} get stuck in saddle points
-	\end{itemize}
-	\center
-	\only<1>{\includegraphics[width=9cm]{figure_man/opt1.png}}%
-	\only<2>{\includegraphics[width=9cm]{figure_man/opt2.png}}%
-	\only<3>{\includegraphics[width=9cm]{figure_man/opt3.png}}%
-	\only<4>{\includegraphics[width=9cm]{figure_man/opt10.png}}%
-    \only<5>{\includegraphics[width=9cm]{figure_man/saddle_point_grad_norm.pdf}}%
-	
-	\begin{center}
-		\only<1>{Red dot: Starting location}
-		\only<2>{Step 1 ...}
-		\only<3>{... Step 2 ...}
-		\only<4,5>{... Step 10 ... got stuck and cannot escape saddle point}
-	\end{center}
+\frametitle{Example: Saddle point with GD}
+\begin{itemize}
+\item How do saddle points impair optimization?
+\item Gradient-based algorithms \textbf{might} get stuck in saddle points
+\end{itemize}
+\center
+\only<1>{\imageC{figure_man/opt1.png}}
+\only<2>{\imageC{figure_man/opt2.png}}
+\only<3>{\imageC{figure_man/opt3.png}}
+\only<4>{\imageC{figure_man/opt10.png}}
+\only<5>{\imageC{figure_man/saddle_point_grad_norm.pdf}}
+\begin{center}
+\only<1>{Red dot: Starting location}
+\only<2>{Step 1 ...}
+\only<3>{... Step 2 ...}
+\only<4,5>{... Step 10 ... got stuck and cannot escape saddle point}
+\end{center}
 }
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%\section{Cliffs and Exploding Gradients}
-%\begin{vbframe}{Cliffs and exploding gradients}
-%\begin{itemize}
-%\item As a result from the multiplication of several parameters, the emprirical risk for highly nonlinear deep neural networks often contain sharp nonlinearities.
-%\begin{itemize}
-%\item That may result in very high derivatives in some places.
-%\item As the parameters get close to such cliff regions, a gradient descent update can catapult the parameters very far.
-%\item Such an occurrence can lead to losing most of the optimization work that had been done.
-%\end{itemize}
-%\item However, serious consequences can be easily avoided using a technique called \textbf{gradient
-%clipping}.
-%\item The gradient does not specify the optimal step size, but only the optimal direction
-%within an infinitesimal region.
-%\framebreak 
-%\item Gradient clipping simply caps the step size to be small enough that it is less likely to go outside the region where the gradient indicates the direction of steepest descent.
-%\item We simply \enquote{prune} the norm of the gradient at some threshold $h$:
-%$$\text{if  } ||\nabla \thetav|| > \text h: \nabla \thetav \leftarrow \frac{h}{||\nabla \thetav||} \nabla \thetav $$
-%\end{itemize}
-%\end{vbframe}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%\begin{vbframe}{Example: cliffs and exploding gradients}
-%\begin{figure}
-%\centering
-%\includegraphics[width=8cm]{figure_man/cliff2.png}
-%\caption{\enquote{The objective function for highly nonlinear deep neural networks or for
-%	recurrent neural networks often contains sharp nonlinearities in parameter space resulting
-%	from the multiplication of several parameters. These nonlinearities give rise to very
-%	high derivatives in some places. When the parameters get close to such a cliff region, a
-%	gradient descent update can catapult the parameters very far, possibly losing most of the
-%	optimization work that had been done} (Goodfellow et al. (2016)).}
-%\end{figure}
-%\end{vbframe}
-
-\begin{vbframe}{Saddle points in neural networks}
-\begin{itemize}
-    \setlength{\itemsep}{1em}
-    % \item In optimization we look for areas with zero gradient.
-    % \item A variant of zero gradient areas are saddle points.
-    \item For the empirical risk $\risk : \R^d \rightarrow \R$ of a neural network, the expected ratio of the number of saddle points to local minima typically grows exponentially with $d$
-    \item In other words: Networks with more parameters (deeper networks or larger layers) exhibit a lot more saddle points than local minima
-    % \item Why is that?
-    \item \textbf{Reason:} Hessian at local minimum has only positive eigenvalues.
-        Hessian at saddle point has positive and negative eigenvalues.
-\end{itemize}
-
-\framebreak
-
-\begin{itemize}
-    \item Imagine the sign of each eigenvalue is generated by coin flipping:
-    \begin{itemize}
-      \item In a single dimension, it is easy to obtain a local minimum (e.g. \enquote{head} means positive eigenvalue).
-      \item In an $m$-dimensional space, it is exponentially unlikely that all $m$ coin tosses will be head.
-    \end{itemize}
-    \item A property of many random functions is that eigenvalues of the Hessian become more likely to be positive in regions of lower cost.
-    \item For the coin flipping example, this means we are more likely to have heads $m$ times if we are at a critical point with low cost.
-    \item That means in particular that local minima are much more likely to have low cost than high cost and critical points with high cost are far more likely to be saddle points.
-    %\item See Dauphin et al. (2014) for a more detailed investigation.
-
-    \item \enquote{Saddle points are surrounded by high error plateaus that can dramatically slow down learning, and give the illusory impression of the existence of a local minimum} (Dauphin et al. (2014)).
-
-% \framebreak
-
-%     \item \enquote{Saddle points are surrounded by high error plateaus that can dramatically slow down learning, and give the illusory impression of the existence of a local minimum} (Dauphin et al. (2014)).
-%   \begin{figure}
-%     \centering
-%     \includegraphics[width=8.5cm]{figure_man/cost.png}
-%     % TAKEN FROM i2dl LECTURE
-%   \end{figure}
-\end{itemize}
-\end{vbframe}
+\begin{framei}[sep=L]{Saddle points in neural networks}
+\item For the empirical risk $\risk : \R^d \rightarrow \R$ of a neural network, the expected ratio of the number of saddle points to local minima typically grows exponentially with $d$
+\item In other words: Networks with more parameters (deeper networks or larger layers) exhibit a lot more saddle points than local minima
+\item \textbf{Reason:} Hessian at local minimum has only positive eigenvalues.
+Hessian at saddle point has positive and negative eigenvalues.
+\end{framei}
 
 \endlecture
 \end{document}

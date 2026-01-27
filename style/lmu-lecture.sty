@@ -1,6 +1,9 @@
 \RequirePackage{graphicx}
-\RequirePackage{amsmath,amssymb}
+\RequirePackage{color}
+\RequirePackage{amsmath,amssymb,amsfonts}
 \RequirePackage{array}
+
+% Some bespoke right arrow>
 \DeclareSymbolFont{mysymbols}{OMS}{cmsy}{m}{n}
 \SetSymbolFont{mysymbols}{bold}{OMS}{cmsy}{b}{n}
 \DeclareMathSymbol{\myRightarrow}{\mathrel}{symbols}{"29}
@@ -29,31 +32,27 @@
 
 \if@speakermargin
   % If the file exists -> add margin (16:9)
-    \geometry{paperwidth=170.6666666667mm,paperheight=96mm}
+  \geometry{paperwidth=170.6666666667mm,paperheight=96mm}
 
-    \setlength{\logooffset}{2mm}
-    \setlength{\speakerwidth}{42.6666666667mm}  % slide is 4:3
-    %\setlength{\speakerwidth}{34mm}  % 20% speaker
-    \setlength{\slidewidth}{\paperwidth-\speakerwidth}
+  \setlength{\logooffset}{2mm}
+  \setlength{\speakerwidth}{42.6666666667mm}  % slide is 4:3
+  %\setlength{\speakerwidth}{34mm}  % 20% speaker
+  \setlength{\slidewidth}{\paperwidth-\speakerwidth}
 
-    % "i2ml" text color (taken from dark logo color)
-    \definecolor{logoblue}{HTML}{4D88FF}
-    %\definecolor{marginbg}{HTML}{FFFAF8}  % slightly tinted margin
-    %\definecolor{marginbg}{HTML}{F8F8F8}  % grey margin
-    \definecolor{marginbg}{HTML}{FFFFFF}  % white margin
+  % "i2ml" text color (taken from dark logo color)
+  \definecolor{logoblue}{HTML}{4D88FF}
+  \definecolor{marginbg}{HTML}{FFFFFF}  % white margin
 
-    \setbeamertemplate{background}{%
-      \begin{tikzpicture}[overlay,remember picture]
+  \setbeamertemplate{background}{%
+    \begin{tikzpicture}[overlay,remember picture]
       \path [fill=marginbg] (\slidewidth,0) rectangle (\paperwidth,-\paperheight);
 
       \node[anchor=north,text width=0.8\speakerwidth,align=center,text=logoblue,font=\Huge] at ([shift={(-\speakerwidth/2,-\logooffset)}]current page.north east) {
-
-      %\vspace{3mm}
-        \includegraphics[width=0.6\speakerwidth]{../../style/logo.pdf}\\
-      %  \phantom{x}I2ML\\
+        % Logo is specific to the lecture so it can change, but the path must always be the same
+        \includegraphics[width=0.6\speakerwidth]{../../local/logo.pdf}\\
       };
-      \end{tikzpicture}%
-    }
+    \end{tikzpicture}%
+  }
 \else
   % If the file does exist -> old 4:3 layout, no margin
   \geometry{paperwidth=128mm,paperheight=96mm}
@@ -61,40 +60,26 @@
   \setbeamersize{text margin left=0.8cm,text margin right=0.8cm}
 \fi
 
-\newenvironment{rightbox}[1]
-{\itemize[
-    nosep,
-    leftmargin=\dimexpr\textwidth-#1\relax,
-    rightmargin=0pt,
-    itemindent=\parindent,
-    listparindent=\parindent,
-  ]\item[]\relax}
-{\enditemize}
 
 %-------------------------------------------------------------------%
-%   BeginLecture // Title slide                           %
+%   BeginLecture // Title slide                                     %
 %-------------------------------------------------------------------%
 
-% Wrapper to insert title figure within a column env
-% Only needed because column is placed in an if/else arm
-% which is not allowed otherwise (I might be wrong)
+% Helper macros for \titlemeta - needed because environments
+% cannot be placed directly inside \if...\fi constructs
 \newcommand{\includeGraphicsColumn}[1]{%
   \begin{column}{.45\textwidth}
     \begin{figure}[!b]
-    \includegraphics[width=0.9\textwidth, keepaspectratio]{#1}
-    \ifcsname titlecaption\endcsname
-      \caption*{\titlecaption}
-    \fi
+      \includegraphics[width=0.9\textwidth, keepaspectratio]{#1}
+      \ifcsname titlecaption\endcsname
+        \caption*{\titlecaption}
+      \fi
     \end{figure}
   \end{column}%
 }
 
-% Similar wrapper to insert learning goals
 \newcommand{\includeLearningGoalsColumn}[1]{%
   \begin{column}{.55\textwidth}
-    % Uncomment for visual debugging of columns with red line
-    % \color{blue}\rule{\linewidth}{4pt}
-    % \vfill % No vfill needed if columns are vertically centered
     {\normalsize\bfseries Learning goals}
     \normalfont
     \begin{itemize}
@@ -154,14 +139,10 @@
     \begin{columns}[c] % align columns (c)enter or (T)op
       % if checks if argument (detokenized?) is empty, i.e. equal to \relax
       \if\relax\detokenize{#3}\relax\else%
-        % column env is wrapped in separate command because
-        % envs aren't allowed directly within if-else arms apparently
-        % Idea is to have learning goals horizontally centered if no figure is used
         \includeGraphicsColumn{#3}
       \fi
 
       \if\relax\detokenize{#4}\relax\else%
-        % Same idea with learning goals column
         \includeLearningGoalsColumn{#4}
       \fi
     \end{columns}%
@@ -277,7 +258,8 @@
 
 \def\beamer@fteright{\vskip0.35cm\advance\leftskip by 1.7cm\advance\rightskip by1.7cm}
 
-\setbeamertemplate{frametitle continuation}[from second][{\small/~\insertcontinuationcount}]
+% The "/ n" at the end of the title for cointinuations from framebreaks - disabled to discourage framebreaks in general.
+% \setbeamertemplate{frametitle continuation}[from second][{\small/~\insertcontinuationcount}]
 
 \setbeamertemplate{frametitle}{\expandafter\uppercase\expandafter\insertframetitle}
 
@@ -308,38 +290,38 @@
 
 % adjust framenumbers for lecture (check whether reference is already defined)
 \def\addjustlectureframenumber#1{\ifx#1\relax\else%
-  \addtocounter{lectureframenumber}{-\lectureref{lect:@@\thelecture}}\fi}
+    \addtocounter{lectureframenumber}{-\lectureref{lect:@@\thelecture}}\fi}
 \defbeamertemplate*{footline}{lecture theme}
 {
-  \usebeamerfont{footline} %author in head/foot}
-  \setcounter{lectureframenumber}{\insertframenumber}%
-  \ifnum\c@lecture<0\else \expandafter\addjustlectureframenumber\csname r@lect:@@\thelecture\endcsname\fi%
-  \leavevmode%
-  \hbox{%
-    \setbox\beamer@linebox=\hbox to\slidewidth{%
-      \hskip 1em%
-      {\usebeamercolor[fg]{author in head/foot}%
-      % FIXME: If date and author are kept empty anyway, why not remove this?
-      % \insertshortauthor~~\copyright~~\insertshortdate}\hfill%
-      ~~\copyright~~}\hfill%
-      {\usebeamercolor[fg]{title in head/foot}%
-      \inserttitle~~--~~}%
-      \ifnum\c@lecture>0%
-        {\usebeamercolor[fg]{section in head/foot}%
-          \arabic{lecture}~~--~~}%
-      \fi%
-      {\usebeamercolor[fg]{framenumber in head/foot}%
-        \thelectureframenumber~/~%
-        \ifnum\c@lecture<0 \inserttotalframenumber\else\lectureref{endlect:@@\thelecture}\fi%
-      }%
-      \hskip 1em}%
-    \ht\beamer@linebox=2.5mm%
-    \dp\beamer@linebox=0pt%
-    \setbox\beamer@linebox=\vbox{\box\beamer@linebox\vskip1.125ex}%
-    \rule[4.5mm]{\slidewidth}{0.5pt}%
-    %%
-    \hskip-\slidewidth%
-    \hbox{\box\beamer@linebox\hfill}}
+\usebeamerfont{footline} %author in head/foot}
+\setcounter{lectureframenumber}{\insertframenumber}%
+\ifnum\c@lecture<0\else \expandafter\addjustlectureframenumber\csname r@lect:@@\thelecture\endcsname\fi%
+\leavevmode%
+\hbox{%
+\setbox\beamer@linebox=\hbox to\slidewidth{%
+\hskip 1em%
+  {\usebeamercolor[fg]{author in head/foot}%
+    % FIXME: If date and author are kept empty anyway, why not remove this?
+    % \insertshortauthor~~\copyright~~\insertshortdate}\hfill%
+    ~~\copyright~~}\hfill%
+{\usebeamercolor[fg]{title in head/foot}%
+  \inserttitle~~--~~}%
+\ifnum\c@lecture>0%
+  {\usebeamercolor[fg]{section in head/foot}%
+  \arabic{lecture}~~--~~}%
+\fi%
+{\usebeamercolor[fg]{framenumber in head/foot}%
+\thelectureframenumber~/~%
+\ifnum\c@lecture<0 \inserttotalframenumber\else\lectureref{endlect:@@\thelecture}\fi%
+}%
+\hskip 1em}%
+\ht\beamer@linebox=2.5mm%
+\dp\beamer@linebox=0pt%
+\setbox\beamer@linebox=\vbox{\box\beamer@linebox\vskip1.125ex}%
+\rule[4.5mm]{\slidewidth}{0.5pt}%
+%%
+\hskip-\slidewidth%
+\hbox{\box\beamer@linebox\hfill}}
 }
 
 % ------------------------------------------------------------------------
@@ -351,22 +333,15 @@
 \defbeamertemplate*{headline}{lecture theme}{}
 
 %-------------------------------------------------------------------%
-%   Citebutton (superseded by \citelink defined in preamble.tex)    %
-%-------------------------------------------------------------------%
-
-% This version is superseded and \citelink will likely be defined here once widely adopted
-% Example usage (from slides-cart-discussion.tex)
-% \citebutton{Breiman, 1984}{https://www.taylorfrancis.com/books/mono/10.1201/9781315139470/classification-regression-trees-leo-breiman}
-\newcommand{\citebutton}[2]{%
-  \NoCaseChange{\resizebox{!}{9pt}{\protect\beamergotobutton{\href{#2}{#1}}}}%
-}
-
-
-%-------------------------------------------------------------------%
 %   Environments                                                    %
 %-------------------------------------------------------------------%
+% Newly developed suites of macros may be factor out into their own .sty files.
 
 % Frame with breaks and verbatim // this is used very often
+% Should not use 'containsverbatim', see https://tex.stackexchange.com/questions/69191/can-a-beamer-frame-have-both-containsverbatim-and-hidden-shown-block-options
+% Should use 'fragile' instead, but everything breaks if fragile is used all the time
+% See https://tug.ctan.org/macros/latex/contrib/beamer/doc/beameruserguide.pdf for details
+% DEPRECATED
 \newenvironment{vbframe}
 {
   \begin{frame}[containsverbatim,allowframebreaks]
@@ -375,24 +350,22 @@
   \end{frame}
 }
 
-% Frame with verbatim without breaks (to avoid numbering one slided frames)
-% This is not used anywhere but I can see it being useful
-\newenvironment{vframe}
-{
-  \begin{frame}[containsverbatim]
-    }
-    {
-  \end{frame}
-}
-
-% Itemize block
+% Itemize block, rarely used, should probably be phased out?
 \newenvironment{blocki}[1]
 {
   \begin{block}{#1}\begin{itemize}
       }
       {
-    \end{itemize}\end{block}
+  \end{itemize}\end{block}
 }
+
+
+% ------------------------------------------------------------------------
+% Misc helper for formatting, convenience, etc
+% ------------------------------------------------------------------------
+% \spacer inserts 1 empty line
+% \spacer[k] inserts k empty lines
+\newcommand{\spacer}[1][1]{\vspace{#1\baselineskip}}
 
 % ------------------------------------------------------------------------
 \endinput

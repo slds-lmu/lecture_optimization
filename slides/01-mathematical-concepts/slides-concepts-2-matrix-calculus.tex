@@ -1,0 +1,370 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\definecolor{customblue}{HTML}{517FF7}
+\newcommand{\deriv}{d}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+  Mathematical Concepts 
+  }{% Lecture title  
+  Matrix Calculus
+  }{% Relative path to title page image: Can be empty but must not start with slides/
+  figure_man/1920px-Greek_lc_delta.svg.png
+  }{
+    \item Rules of matrix calculus 
+    \item Connection of gradient, Jacobian and Hessian
+}
+
+% ------------------------------------------------------------------------------
+
+\begin{vbframe}{Scope}
+\begin{itemize}
+    \setlength{\itemsep}{0.5\baselineskip}
+    \item $\mathcal{X}$/$\mathcal{Y}$ denote space of \textbf{independent}/\textbf{dependent} variables
+    \item Identify dependent variable $y$ with a \textbf{function} $f: \mathcal{X} \to \mathcal{Y}, x\mapsto f(x)$
+    \item Assume $y$ sufficiently smooth
+    \item In matrix calculus, $x$ and $y$ can be \textbf{scalars}, \textbf{vectors}, or \textbf{matrices}
+        \item We denote vectors/matrices in \textbf{bold} lowercase/uppercase letters
+        \vspace{0.5\baselineskip}
+        \begin{table}
+            \centering
+            \begin{tabular}{c||c|c|c}
+                 Type & scalar $x$ & vector $\xv$ & matrix $\mathbf{X}$ \\ \hline\hline
+                 scalar $y$ & $\deriv y / \deriv x$ & $\deriv y / \deriv\xv$ & $\deriv y / \deriv\mathbf{X}$ \\ \hline
+                 vector $\yv$ & $\deriv\yv / \deriv x$ & $\deriv\yv / \deriv\xv$ & -- \\ \hline
+                 matrix $\mathbf{Y}$ & $\deriv\mathbf{Y} / \deriv x$ & -- & --
+            \end{tabular}
+        \end{table}
+        \item This notation is also referred to as \emph{Leibniz notation}
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Leibniz Notation convention}
+    \begin{itemize} \setlength{\itemsep}{0.5\baselineskip}
+        \item Instead of writing $f(x)$ everywhere, we replace the function $f$ with the variable $y$.
+\item This helps clarify relationships when multiple functions or variables are involved, especially in contexts like partial derivatives or matrix calculus.
+  \item Also applicable to partial derivatives: For \( y = f:\R^n\longrightarrow\R,\; \xv\mapsto\fx=f(x_1, x_2, \ldots, x_n) \), the partial derivative of $y$ w.r.t. \( x_i \) is $
+      \deriv y/\deriv x_i$.
+\item \textbf{Examples:}
+\begin{itemize}
+    \item    $
+      y = x^3 + 5x \Longrightarrow
+      \dfrac{dy}{dx} = 3x^2 + 5
+   $\\[10pt]
+   \item $y = x_1^2 + 3x_2 \Longrightarrow
+      \dfrac{\deriv y}{\deriv x_1} = 2x_1, \quad
+      \dfrac{\deriv y}{\deriv x_2} = 3$
+\end{itemize}
+    \end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Derivatives of scalar-valued functions}
+        \vspace{0.5\baselineskip}
+        \begin{table}
+            \centering
+            \begin{tabular}{c||c|c|c}
+                 Type & scalar $x$ & vector $\xv$ & matrix $\mathbf{X}$ \\ \hline\hline
+                 scalar $y$ & $\deriv y / \deriv x$ & \cellcolor{customblue}$\deriv y / \deriv\xv$ & \cellcolor{customblue}$\deriv y / \deriv\mathbf{X}$ \\ \hline
+                 vector $\yv$ & $\deriv\yv / \deriv x$ & $\deriv\yv / \deriv\xv$ & -- \\ \hline
+                 matrix $\mathbf{Y}$ & $\deriv\mathbf{Y} / \deriv x$ & -- & --
+            \end{tabular}
+        \end{table}\,\\
+        \begin{itemize}
+        \item $\deriv y / \deriv\xv$ is the gradient from the previous slide deck\\[\baselineskip]
+            \item When the input is a matrix the concept remains the same, i.e. for $y= f:\R^{m\times n}\longrightarrow\R,\; \mathbf{X}\mapsto f(\mathbf{X})$
+$$
+\frac{\deriv y}{\deriv\bm{X}}= \left(\begin{array}{ccc}
+\dfrac{\partial f}{\partial x_{11}} & \cdots & \dfrac{\partial f}{\partial x_{1 n}} \\
+\vdots & \ddots & \vdots \\
+\dfrac{\partial f}{\partial x_{m 1}} & \cdots & \dfrac{\partial f }{\partial x_{m n}}
+\end{array}\right) \in \mathbb{R}^{m \times n}
+$$
+        \end{itemize}
+\end{vbframe}
+
+
+\begin{vbframe}{Derivatives: Univariate and Jacobian}
+        \vspace{0.5\baselineskip}
+        \begin{table}
+            \centering
+            \begin{tabular}{c||c|c|c}
+                 Type & scalar $x$ & vector $\xv$ & matrix $\mathbf{X}$ \\ \hline\hline
+                 scalar $y$ &\cellcolor{customblue} $\deriv y / \deriv x$ & $\deriv y / \deriv\xv$ & $\deriv y / \deriv\mathbf{X}$ \\ \hline
+                 vector $\yv$ & $\deriv\yv / \deriv x$ & \cellcolor{customblue}$\deriv\yv / \deriv\xv$ & -- \\ \hline
+                 matrix $\mathbf{Y}$ & $\deriv\mathbf{Y} / \deriv x$ & -- & --
+            \end{tabular}
+        \end{table}\,\\
+        \begin{itemize}
+        \item $\deriv y / \deriv x$ is the univariate derivative $y'$\\[\baselineskip]
+            \item $\deriv\yv / \deriv\xv$ is the Jacobian from the previous slide deck
+        \end{itemize}
+\end{vbframe}
+
+
+
+\begin{vbframe}{Deriv. of functions with scalar inputs}
+       % \vspace{0.5\baselineskip}
+        \begin{table}
+            \centering
+            \begin{tabular}{c||c|c|c}
+                 Type & scalar $x$ & vector $\xv$ & matrix $\mathbf{X}$ \\ \hline\hline
+                 scalar $y$ & $\deriv y / \deriv x$ & $\deriv y / \deriv\xv$ & $\deriv y / \deriv\mathbf{X}$ \\ \hline
+                 vector $\yv$ & \cellcolor{customblue}$\deriv\yv / \deriv x$ & $\deriv\yv / \deriv\xv$ & -- \\ \hline
+                 matrix $\mathbf{Y}$ & \cellcolor{customblue}$\deriv\mathbf{Y} / \deriv x$ & -- & --
+            \end{tabular}
+        \end{table}\,\\
+        \begin{itemize}
+        \item  Here, for univariate $f_{ij}:\R\rightarrow\R$, $\yv$ ($n=1$) or $\mathbf{Y}$ ($n>1$) are equal to a function $f: \R\longrightarrow\R^{m\times n}, x\mapsto \big(f_{ij}(x)\big)_{i=1,\dots,m;\,j=1,\dots,n}$ and the derivatives are, respectively given by $$
+        \frac{\deriv\yv}{\deriv x}=\begin{pmatrix}
+            \dfrac{\partial f_{1}}{\partial x}\\\vdots\\ \dfrac{\partial f_{m}}{\partial x}
+        \end{pmatrix}\in\R^m;\quad
+        \frac{\deriv\mathbf{Y}}{\deriv x}=\left(\begin{array}{ccc}
+\dfrac{\partial f_{11}}{\partial x} & \cdots & \dfrac{\partial f_{1 n}}{\partial x} \\
+\vdots & \ddots & \vdots \\
+\dfrac{\partial f_{m 1}}{\partial x} & \cdots & \dfrac{\partial f_{m n}}{\partial x}
+\end{array}\right) \in \mathbb{R}^{m \times n}$$
+        \end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Multivariate Differentiation Rules}
+  \begin{itemize}
+    \item Basic rules from single-variable calculus still apply.
+    \item But, for \(\boldsymbol{x}\in\mathbb{R}^{n}\): gradients are vectors/matrices (order matters).
+  \end{itemize}
+  
+  \vspace{1em}
+  \textbf{Key Rules:}\\
+  
+  \begin{itemize}
+      \item \textbf{Sum:} 
+      \[
+      \frac{\deriv}{\deriv \boldsymbol{x}}\bigl(f+g\bigr)=\frac{\deriv f}{\deriv \boldsymbol{x}}+\frac{\deriv g}{\deriv \boldsymbol{x}}
+      \]
+    \item \textbf{Product:} 
+      \[
+      \frac{\deriv}{\deriv \boldsymbol{x}}\bigl(fg\bigr)=\frac{\deriv f}{\deriv \boldsymbol{x}}\,g+f\,\frac{\deriv g}{\deriv \boldsymbol{x}}
+      \]
+    \item \textbf{Chain:} 
+      \[
+      \frac{\deriv}{\deriv \boldsymbol{x}}\Bigl((f\circ g)(\boldsymbol{x})\Bigr)=\dfrac{\deriv}{\deriv \boldsymbol{x}}(f(g(\boldsymbol{x})))=\frac{\deriv f}{\deriv g}\,\frac{\deriv g}{\deriv \boldsymbol{x}}
+      \]
+  \end{itemize}
+\end{vbframe}
+
+\begin{frame}[allowframebreaks]{Details on the Chain Rule}
+\vspace*{-5pt}
+\begin{itemize}
+    \item Suppose\begin{itemize}
+    \item  we have functions $\boldsymbol{g}: S\subseteq\mathbb{R}^n \rightarrow \mathbb{R}^m$ and $\boldsymbol{f}: T\subseteq\mathbb{R}^m \rightarrow \mathbb{R}^{\ell}$
+    \item $\boldsymbol{a} \in S$ is a point such that $\boldsymbol{g}(\boldsymbol{a}) \in T$ $\Rightarrow$ $\boldsymbol{f} \circ \boldsymbol{g}(\boldsymbol{x})=\boldsymbol{f}(\boldsymbol{g}(\boldsymbol{x}))$ is well-defined for all $\boldsymbol{x}$ close to $\boldsymbol{a}$
+\end{itemize}
+\item Then, if $\boldsymbol{g}$ is differentiable at $\boldsymbol{a}$ and $\boldsymbol{f}$ is differentiable at $\boldsymbol{g}(\boldsymbol{a})$ $\Rightarrow\boldsymbol{f} \circ \boldsymbol{g}$ is differentiable at $\boldsymbol{a}$, and the derivative $\dfrac{\deriv \boldsymbol f}{\deriv \boldsymbol g} \dfrac{\deriv \boldsymbol g}{\deriv \boldsymbol{x}}$, is equal to
+\begin{align*}
+\nabla_{\boldsymbol{a}} \boldsymbol{f} \circ \boldsymbol{g}\;\hat{=}\;\boldsymbol{J}_{\boldsymbol{f} \circ \boldsymbol{g}}(\boldsymbol{a})=\boldsymbol{J}_{\boldsymbol{f}}(\boldsymbol{g}(\boldsymbol{a}))\boldsymbol{J}_ {\boldsymbol{g}}(\boldsymbol{a})\;\hat{=}\;\nabla_{\boldsymbol{g}(\boldsymbol{a})}{\boldsymbol{f}}\;\nabla_{\boldsymbol{a}} {\boldsymbol{g}}\in\R^{l\times n}
+\end{align*}
+\noindent {\footnotesize (See
+\href{https://www.math.utoronto.ca/courses/mat237y1/20199/notes/Chapter2/S2.3.html\#sect-2.3.4}{Chapter 2.3 of the UofT course \emph{MAT237 - Multivariable Calculus} for proof})}\\[5pt]
+
+\item We can also write $\boldsymbol{f}$ as a function of $\boldsymbol{y}=\left(y_1, \ldots, y_m\right) \in \mathbb{R}^m$, and $\boldsymbol{g}$ as a function of $\boldsymbol{x}=\left(x_1, \ldots, x_n\right) \in \mathbb{R}^n$. Then for each $k=1, \ldots, \ell$ and $j=1, \ldots, n$
+\begin{equation*}
+\left[\boldsymbol{J}_{\boldsymbol{f} \circ \boldsymbol{g}}(\boldsymbol{a})\right]_{kj} = \frac{\partial}{\partial x_j}\left(f_k \circ \boldsymbol{g}\right)(\boldsymbol{a})=\sum_{i=1}^m \frac{\partial f_k}{\partial y_i}(\boldsymbol{g}(\boldsymbol{a})) \frac{\partial g_i}{\partial x_j}(\boldsymbol{a})
+\end{equation*}
+\end{itemize}
+\end{frame}
+
+\begin{vbframe}{Helpful Calculation Rules}
+Let $\boldsymbol{a}$, $\boldsymbol{b}$ denote vectors, $\boldsymbol{X}$, $\boldsymbol{A}$ matrices, and $f(\boldsymbol{X})^{-1}$ the inverse of $f(\boldsymbol{X})$ if it exists. 
+ \begin{itemize}
+    \item $ \frac{\deriv \boldsymbol{x}^{\top} \boldsymbol{a}}{\deriv \boldsymbol{x}}=\boldsymbol{a}^{\top}$, $\frac{\deriv \boldsymbol{a}^{\top} \boldsymbol{x}}{\deriv \boldsymbol{x}}=\boldsymbol{a}^{\top}$
+    \item $\frac{\deriv\boldsymbol{X}\boldsymbol{a}}{\deriv\boldsymbol{a}} = \boldsymbol{X}$, $\frac{\deriv\boldsymbol{a}^T\boldsymbol{X}}{\deriv\boldsymbol{a}} = \boldsymbol{X}^T$
+    \item $\frac{\deriv \boldsymbol{a}^{\top} \boldsymbol{X} \boldsymbol{b}}{\deriv \boldsymbol{X}}=\boldsymbol{a} \boldsymbol{b}^{\top}$
+    \item $\frac{\deriv \boldsymbol{x}^{\top} \boldsymbol{A} \boldsymbol{x}}{\deriv \boldsymbol{x}}=\boldsymbol{x}^{\top}\left(\boldsymbol{A}+\boldsymbol{A}^{\top}\right)$
+    \item For a symmetric matrix $\boldsymbol{W}$, $\frac{\deriv}{\deriv \boldsymbol{s}}(\boldsymbol{x}-\boldsymbol{A} \boldsymbol{s})^{\top} \boldsymbol{W}(\boldsymbol{x}-\boldsymbol{A} \boldsymbol{s})=-2(\boldsymbol{x}-\boldsymbol{A} \boldsymbol{s})^{\top} \boldsymbol{W} \boldsymbol{A}$
+    \item $\frac{\deriv}{\deriv \boldsymbol{X}} \boldsymbol{f}(\boldsymbol{X})^{\top}=\left(\frac{\deriv \boldsymbol{f}(\boldsymbol{X})}{\deriv \boldsymbol{X}}\right)^{\top}$
+    \item $\frac{\deriv}{\deriv \boldsymbol{X}} \boldsymbol{f}(\boldsymbol{X})^{-1}=-\boldsymbol{f}(\boldsymbol{X})^{-1} \frac{\deriv \boldsymbol{f}(\boldsymbol{X})}{\deriv \boldsymbol{X}} \boldsymbol{f}(\boldsymbol{X})^{-1}$
+    \item $\frac{\deriv \boldsymbol{a}^{\top} \boldsymbol{X}^{-1} \boldsymbol{b}}{\deriv \boldsymbol{X}}=-\left(\boldsymbol{X}^{-1}\right)^{\top} \boldsymbol{a} \boldsymbol{b}^{\top}\left(\boldsymbol{X}^{-1}\right)^{\top}$
+    \end{itemize}  \,\\
+    {\small\textbf{Note:} to compute  gradients of matrices
+with respect to vectors (or other matrices) we need \emph{tensors}, see chapter 5.4 of \href{https://mml-book.github.io/book/mml-book.pdf}{\textcolor{blue}{Deisenroth}} for more.}
+\end{vbframe}
+
+\begin{vbframe}{Example: Logistic Regression I}
+\begin{itemize}    \setlength{\itemsep}{0.5\baselineskip}
+    \item Let's say, for data in $\R^{n\times m}$ we're trying to minimize the risk in logistic regression by finding the gradient for negative log loss:
+\[
+-\ell({\theta})=\sum_{i=1}^n-y^{(i)} \log \left(\pi\left(\mathbf{x}^{(i)} \mid \theta\right)\right)-\left(1-y^{(i)}\right) \log \left(1-\pi\left(\mathbf{x}^{(i)} \mid \theta\right)\right)
+\]
+where $
+\pi(\mathbf{x} \mid {\theta})=s(f(\theta,\xv))
+$\\[5pt] with 
+$f(\theta,\xv)=\theta^{\top} \xv$ and $s(x)=\frac{1}{1+\exp (-x)}$.
+\item[$\Rightarrow$] We want to find \begin{align*}
+\nabla_\theta -\ell (\theta)=-\nabla_\theta \ell (\theta)&=-\sumin\underbrace{ y^{(i)} \log (s(f(\theta,\xv^{(i)}))+(1-y^{(i)}) \log (1-s(f(\theta,\xv^{(i)}))}_{=:y_i \log (s_i)+(1-y_i) \log (1-s_i)}
+\end{align*}
+\item $s_i = s(f_i)$; $h_i:=-[y_i \log (s_i)+(1-y_i) \log (1-s_i)]$; $f_i:=\theta^{\top} \xv^{(i)}$
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Example: Logistic Regression II}
+\begin{itemize}    \setlength{\itemsep}{0.5\baselineskip}
+\item We can now directly apply the chain rule:
+$$
+-\nabla_\theta \ell (\theta)=\sumin\nabla_\theta h_i\circ s_i \circ f_i=\sumin\frac{\deriv h_i}{\deriv s_i} \frac{\deriv s_i}{\deriv f_i} \frac{\deriv f_i}{\deriv \theta}
+$$
+    \item Given that, $\forall i\in\{1,\dots,n\}$ $$\frac{\deriv h_i}{\deriv s_i}=\frac{1-y_i}{1-s_i}-\frac{y_i}{s_i};\quad\frac{\deriv s_i}{\deriv f_i}=s(f_i)\big(1-s_i(f_i)\big);\quad\frac{\deriv f_i}{\deriv \theta}=\left(\xv^{(i)}\right)^\top$$
+    \item we get that $-\nabla_\theta \ell (\theta)=\sumin\frac{\deriv h_i}{\deriv s_i} \frac{\deriv s_i}{\deriv f_i} \frac{\deriv f_i}{\deriv \theta}$  equals\begin{align*}
+        &\sumin \left[\frac{1-y^{(i)}}{1-s(f(\theta, \xv^{(i)}))}-\frac{y^{(i)}}{s(f(\theta, \xv^{(i)}))}\right] \cdot \left[s(f(\theta, \xv^{(i)}))(1-s(f(\theta, \xv^{(i)})))\right] \left(\xv^{(i)}\right)^\top\\
+        =&\sumin\left(s\left(f\left(\theta,\xv^{(i)}\right)\right)-y^{(i)}\right)\left(\xv^{(i)}\right)^\top\in\R^{1\times m}
+    \end{align*}
+\end{itemize}
+\end{vbframe}
+
+\begin{vbframe}{Ex: Log. Regr. -- Alternative Notation}
+This example highlights how using Leibniz notation can make things easier.\\
+Alternatively, we could write this example out as follows:
+\begin{itemize}
+    \item Given the sum rule, it suffices to find the derivative of 
+\[
+-[y \log (s(f(\theta,\xv))+(1-y) \log (1-s(f(\theta,\xv))]
+\]
+\item Define $h(y,z):=-[y \log (z)+(1-y) \log (1-z)]$.
+\item Now, what we are looking for is 
+\[
+\nabla_\theta h(y,\cdot)\circ s \circ f(\cdot,\xv).
+\]
+where $f$ is a function from $\R^p$ to $\R$ and both $h$ and $s$ are functions from $\R$ to $\R$
+$\Longrightarrow$ by the chain rule
+$$
+\nabla_\theta h(y,\cdot)\circ s \circ f(\cdot,\xv)=\frac{\deriv h}{\deriv s} \frac{\deriv s}{\deriv f} \frac{\deriv f}{\deriv \theta}\in\R^{1\times p}.
+$$
+\end{itemize}\framebreak
+\begin{itemize}
+    \item Using the fact that $$\frac{\deriv h}{\deriv z}=\frac{1-y}{1-z}-\frac{y}{z};\quad\frac{\deriv s}{\deriv x}=s(x)\big(1-s(x)\big);\quad\frac{\deriv f}{\deriv \theta}=\xv$$ we get \begin{align*}
+   [\nabla_\theta h(y,\cdot)\circ s \circ f(\cdot,\xv)]_j&=\left[\frac{1-y}{1-s(f(\theta,\xv))}-\frac{y}{s(f(\theta,\xv))}\right] \cdot \left[s(f(\theta,\xv))(1-s(f(\theta,\xv)))\right]\cdot \frac{\partial f}{\partial\theta_j}\\
+   &=(s(f(\theta,\xv))-y)\xv_j
+\end{align*}
+$\Longrightarrow \nabla_\theta h(y,\cdot)\circ s \circ f(\cdot,\xv)=(s(f(\theta,\xv))-y)\xv^\top$
+\item Plugging this back into the original sum term we get $$
+-\nabla_\theta \ell (\theta)=\sumin\left(s\left(f\left(\theta,\xv^{(i)}\right)\right)-y^{(i)}\right)\left(\xv^{(i)}\right)^\top\in\R^{1\times m},
+$$ the same as before.
+\end{itemize}
+\end{vbframe}
+
+
+
+% \begin{vbframe}{Numerator layout}
+
+% \begin{itemize}
+%     \item \textbf{Matrix calculus:} collect derivative of each component of dependent variable w.r.t. each component of independent variable
+%     \item We use so-called \textbf{numerator layout} convention:
+%         \begin{align*}
+%             \frac{\partial y}{\partial\xv} &= \left(\frac{\partial y}{\partial x_1}, \cdots, \frac{\partial y}{\partial x_d}\right) = \nabla y^T \in \R^{1\times d} \\
+%             \frac{\partial\yv}{\partial x} &= \left(\frac{\partial y_1}{\partial x}, \cdots, \frac{\partial y_m}{\partial x}\right)^T \in \R^{m} \\
+%             \frac{\partial\yv}{\partial\xv} =
+%             \begin{pmatrix}
+%                 \frac{\partial y_1}{\partial\xv} \\
+%                 \vdots \\
+%                 \frac{\partial y_m}{\partial\xv} \\
+%             \end{pmatrix} &=
+%             \left(\frac{\partial\yv}{\partial x_1} \cdots \frac{\partial\yv}{\partial x_d}\right) =
+%             \begin{pmatrix}
+%                 \frac{\partial y_1}{\partial x_1} & \cdots & \frac{\partial y_1}{\partial x_d} \\
+%                 \vdots & \ddots & \vdots \\ 
+%                 \frac{\partial y_m}{\partial x_1} & \cdots & \frac{\partial y_m}{\partial x_d}
+%             \end{pmatrix} = J_\yv \in \R^{m \times d}
+%         \end{align*}
+% \end{itemize}
+
+% \end{vbframe}
+
+% \begin{vbframe}{Scalar-by-vector}
+
+% Let $\xv \in \R^d$, $y,z : \R^d \to \R$ and $\Amat$ be a matrix.
+
+% \medskip
+
+% \begin{itemize}
+%     \item If $y$ is a \textbf{constant} function: $\frac{\partial y}{\partial\xv} = \mathbf{0}^T \in \R^{1\times d}$
+%     \item \textbf{Linearity}: $\frac{\partial (a \cdot y + z)}{\partial\xv} = a\frac{\partial y}{\partial\xv} + \frac{\partial z}{\partial\xv}$ \quad ($a$ constant)
+%     \item \textbf{Product} rule: $\frac{\partial (y \cdot z)}{\partial\xv} = y \frac{\partial z}{\partial\xv} + \frac{\partial y}{\partial \xv}z$
+%     \item \textbf{Chain} rule: $\frac{\partial g(y)}{\partial\xv} = \frac{\partial g(y)}{\partial y}\frac{\partial y}{\partial \xv}$ \quad ($g$ scalar-valued function)
+%     \item \textbf{Second} derivative: $\frac{\partial^2 y}{\partial\xv \partial\xv^T} = \nabla^2 y^T$ ($=\nabla^2 y$ if~$y\in\mathcal{C}^2$) (Hessian)
+%     \item $\frac{\partial(\xv^T\Amat\xv)}{\partial\xv} =  \xv^T(\Amat+\Amat^T)$
+%     \item $\frac{\partial(\yv^T \Amat \mathbf{z})}{\partial\xv} = \yv^T \Amat \frac{\partial\mathbf{z}}{\partial\xv} + \mathbf{z}^T \Amat^T \frac{\partial\yv}{\partial\xv}$ \quad ($\yv$, $\mathbf{z}$ vector-valued functions of~$\xv$)
+% \end{itemize}
+
+% \end{vbframe}
+
+% \begin{vbframe}{Vector-by-scalar}
+
+% Let $x \in \R$ and $\yv, \mathbf{z} : \R \to \R^m$.
+
+% \medskip
+
+% \begin{itemize}
+%     \item If $\mathbf{y}$ is a \textbf{constant} function: $\frac{\partial \mathbf{y}}{\partial x} = \mathbf{0} \in \R^{m}$
+%     \item \textbf{Linearity}: $\frac{\partial (a \cdot \yv + \mathbf{z})}{\partial x} = a \frac{\partial\yv}{\partial x} + \frac{\partial \mathbf{z}}{\partial x}$ \quad ($a$ constant)
+%     \item \textbf{Chain} rule: $\frac{\partial\mathbf{g}(\yv)}{\partial x} = \frac{\partial\mathbf{g}(\yv)}{\partial\yv}\frac{\partial \yv}{\partial x}$ \quad ($\mathbf{g}$ vector-valued function)
+%     \item $\frac{\partial(\Amat\yv)}{\partial x} = \Amat\frac{\partial\yv}{\partial x}$  \quad ($\mathbf{A}$ matrix)
+% \end{itemize}
+% \end{vbframe}
+
+% \begin{vbframe}{Vector-by-vector}
+
+% Let $\xv \in \R^d$ and $\yv, \mathbf{z} : \R^d \to \R^m$.
+
+% \medskip
+
+% \begin{itemize}
+%     \item If $\yv$ is a \textbf{constant} function: $\frac{\partial\yv}{\partial\xv} = \mathbf{0} \in \R^{m \times d}$
+%     \item $\frac{\partial \mathbf{x}}{\partial \mathbf{x}} = \mathbf{I} \in \R^{d \times d}$
+%     \item \textbf{Linearity}: $\frac{\partial (a \cdot \yv + \mathbf{z})}{\partial\xv} = a \frac{\partial\yv}{\partial\xv} + \frac{\partial\mathbf{z}}{\partial\xv}$ \quad ($a$ constant)
+%     \item \textbf{Chain} rule: $\frac{\partial\mathbf{g}(\yv)}{\partial\xv} = \frac{\partial\mathbf{g}(\yv)}{\partial\yv} \frac{\partial\yv}{\partial\xv}$ \quad ($\mathbf{g}$ vector-valued function)
+%     \item $\frac{\partial(\Amat\xv)}{\partial\xv} = \Amat$, $\frac{\partial(\xv^T\mathbf{B})}{\partial\xv} = \mathbf{B}^T$ \quad ($\Amat,\mathbf{B}$ matrices)
+% \end{itemize}
+
+% \end{vbframe}
+
+% \begin{vbframe}{Example}
+
+% Consider $f : \R^2 \to \R$ with
+% \begin{equation*}
+%     f(\xv) = \exp\left(-(\xv - \mathbf{c})^T \Amat (\xv - \mathbf{c})\right),
+% \end{equation*}
+
+% \vspace{-0.5\baselineskip}
+
+% where $\mathbf{c} = (1, 1)^T$ and $\Amat = \begin{pmatrix}1 & 1/2 \\ 1/2 & 1\end{pmatrix}$.
+
+% \medskip
+
+% Compute $\nabla f(\xv)$ at $\xv^\ast = \mathbf{0}$:
+
+% \medskip
+
+% \begin{enumerate}
+%     \item Write $f(\xv) = \exp(g(\mathbf{u}(\xv)))$ with $g(\mathbf{u}) = -\mathbf{u}^T\Amat\mathbf{u}$ and $\mathbf{u}(\xv) = \xv-\mathbf{c}$
+%     \item \textbf{Chain} rule: $\frac{\partial f(\xv)}{\partial\xv} = \exp(g(\mathbf{u}(\xv))) \frac{\partial g(\mathbf{u})}{\partial\mathbf{u}} \frac{\partial\mathbf{u}(\xv)}{\partial\xv}$
+%     \item $\mathbf{u}^\ast := \mathbf{u}(\xv^\ast) = (-1,-1)^T$, $g(\mathbf{u^\ast}) = -3$
+%     \item $\frac{\partial g(\mathbf{u})}{\partial\mathbf{u}} = -2\mathbf{u}^T\Amat$, $\frac{\partial g(\mathbf{u}^\ast)}{\partial\mathbf{u}} = (3, 3)$
+%     \item \textbf{Linearity}: $\frac{\partial\mathbf{u}(\xv)}{\partial\xv} = \frac{\partial(\xv - \mathbf{c})}{\partial\xv} = \frac{\partial\xv}{\partial\xv} - \frac{\partial\mathbf{c}}{\partial\xv} = \mathbf{I}_2$
+%     \item $\nabla f(\xv^\ast) = \frac{\partial f(\xv^\ast)}{\partial{\xv}}^T = (\exp(-3) \cdot (3, 3) \cdot \mathbf{I}_2)^T = \exp(-3) \begin{pmatrix}3 \\ 3\end{pmatrix}$
+% \end{enumerate}
+
+% \end{vbframe}
+
+
+
+
+
+
+\endlecture
+
+\end{document}

@@ -2,356 +2,109 @@
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  First order methods
-  }{% Lecture title  
-  Weaknesses of GD -- Curvature
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/taylor_2D_quadratic.png
-  }{
-    \item Effects of curvature
-    \item Step size effect in GD
+\titlemeta{
+First order methods
+}{
+Weaknesses of GD -- Curvature
+}{
+figure_man/taylor_2D_quadratic.png
+}{
+\item Effects of curvature
+\item Step size effect in GD
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{vbframe}{Reminder: Local quadratic geometry}
-
-Locally approximate smooth function by quadratic Taylor polynomial:
-
-$$
-f(\xv) \approx f(\bm{\tilde{x}}) + \nabla f(\bm{\tilde{x}})^\top(\xv-\bm{\tilde{x}}) +
-\frac 12(\xv-\bm{\tilde{x}})^\top\nabla^2 f(\bm{\tilde{x}})(\xv-\bm{\tilde{x}})
-$$
-
-\vspace{-0.5\baselineskip}
-
-\begin{figure}
-	\includegraphics[width=0.5\textwidth]{figure_man/taylor_2D_quadratic.png} \\
-	\begin{footnotesize} 
-	%$f$ = grid + 2nd order Taylor $(0, 0)$ as a continuous surface. 
- Source: \url{daniloroccatano.blog}.
-	\end{footnotesize}
-\end{figure}
-
-\framebreak 
-
-Study Hessian $\mathbf{H} = \nabla^2 f(\xv^{[t]})$ in GD to discuss effect of curvature 
-
-\vspace{\baselineskip}
-
-\textbf{Recall} for quadratic forms:
-\begin{itemize}
-	\item Eigenvector $\textbf{v}_\text{max}$ ($\textbf{v}_\text{min}$) is direction of largest (smallest) curvature
-	\item $\mathbf{H}$ called ill-conditioned if $\kappa(\mathbf{H}) = |\lambda_\text{max}| / |\lambda_\text{min}|$ is large
-\end{itemize}
-
-\vspace{0.5\baselineskip}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.7\textwidth]{figure_man/ill-con.png}
-\end{figure}
-
-\end{vbframe}
-
-\begin{vbframe}{Effects of curvature}
-
-Intuitively, curvature determines reliability of a GD step
-
-\begin{figure}
-    \centering
-    \includegraphics[width=.8\textwidth]{figure_man/curvature.png}
-    \caption*{
-        \centering\small
-        Quadratic objective $f$ (blue) with gradient approximation (dashed green).
-        
-        \textbf{Left:} $f$ decreases faster than $\nabla f$ predicts.
-        \textbf{Center:} $\nabla f$ predicts decrease correctly.
-        \textbf{Right:} $f$ decreases more slowly than $\nabla f$ predicts.
-        
-        (Source: Goodfellow et al., 2016)
-    }
-\end{figure}
-
-\end{vbframe}
-% \begin{vbframe}{Second derivative and curvature}
-
-% 	To understand better how the curvature of a function influences the outcome of a gradient descent step, let us recall how curvature is described mathematically: 
-	
-% 	\begin{itemize}
-% 		\item The second derivative corresponds to the curvature of the graph of a function. 
-% 		\item The \textbf{Hessian} matrix of a function $\riskt: \R^m \to \R$ is the matrix of second-order partial derivatives
-% 		$$
-% 		H_{ij} = \frac{\partial^2}{\partial \theta_i \partial \theta_j} \riskt.
-% 		$$
-% 	\end{itemize}
-
-% \framebreak 
-
-% 	\begin{itemize}
-% 		\item The second derivative in a direction $\mathbf{d}$, %of length $1$
-% 		with $\|\mathbf{d}\| = 1$, is given by $\mathbf{d}^\top \!\Hess\,\mathbf{d}$.
-% 		\item What is the direction of the highest curvature (red direction), and what is the direction of the lowest curvature (blue)?
-% 	\end{itemize}
-	
-% 	\vspace*{-0.5cm}
-	
-% 	\begin{figure}
-% 		\begin{center}
-% 			\includegraphics{figure_man/curvature2.png}
-% 		\end{center}
-% 	\end{figure}
-
-% \framebreak
-
-% 	\begin{itemize}
-% 		\item Since $\Hess$ is real and symmetric, eigendecomposition yields
-% 		$\Hess = \mathbf{V} \mathbf{\diag(\boldsymbol{\lambda})} \mathbf{V}^{-1}$
-% 		with $\mathbf{V}$ and $\boldsymbol{\lambda}$ collecting eigenvectors and eigenvalues, respectively.
-% 		\item It can be shown, that the eigenvector $\textcolor{red}{\bm{v}_{\text{max}}}$ with the max. eigenvalue $\lambda_{\text{max}}$ points into the direction of highest curvature ($\bm{v}_{\text{max}}^\top \bm{H} \bm{v}_{\text{max}} = \lambda_{\text{max}}$), while the eigenvector $\textcolor{blue}{\bm{v}_{\text{min}}}$ with the min. eigenvalue $\lambda_{\text{min}}$ points into the direction of least curvature. 
-% 	\end{itemize}
-	
-% 	\vspace*{-0.5cm}
-	
-% 	\begin{figure}
-% 		\begin{center}
-% 			\includegraphics[width=.7\textwidth]{figure_man/curvature2.png}
-% 		\end{center}
-% 	\end{figure}
-
-% \framebreak 
-
-% 	\begin{itemize}
-% 		\item At a stationary point $\thetav$, where the gradient is 0, we can examine the eigenvalues of the Hessian to determine whether the $\thetav$ is a local maximum, minimum or saddle point: 
-% 		\vspace{-0.3cm}
-% 		\begin{align*} 
-% 		\quad\forall i: \lambda_i > 0  \, (\Hess \text{ positive definite at $\thetav$}) &\quad\Rightarrow\quad \text{minimum at $\thetav$} \\
-% 		\quad\forall i: \lambda_i < 0 \, (\Hess \text{ negative definite at $\thetav$}) &\quad\Rightarrow\quad \text{maximum at $\thetav$}\\
-% 		\exists\, i: \lambda_i < 0 \land  \exists i: \lambda_i > 0  \,(\Hess \text{ indefinit at $\thetav$}) &\quad\Rightarrow\quad \mbox{saddle point at $\thetav$}
-% 		\end{align*}
-% 	\end{itemize}
-% 	\begin{figure}
-% 		\begin{center}
-% 			\includegraphics[width=.7\textwidth]{figure_man/3dim_curvature.png}
-% 		\end{center}
-% 		\tiny{Source: Rong Ge (2016)}
-% 	\end{figure}
-
-% \end{vbframe}
-
-\begin{vbframe}{Curvature and step size in GD}
-	
-\textbf{Worst case:} $\mathbf{H}$ is ill-conditioned.
-What does this mean for GD?
-
-\begin{itemize}
-    \item Quadratic Taylor polynomial of $f$ around $\tilde{\xv}$ (with gradient $\mathbf{g} = \nabla f$)
-    $$
-        f(\xv) \approx f(\tilde{\xv}) + (\xv - \tilde{\xv})^\top \mathbf{g} + \frac{1}{2} (\xv - \tilde{\xv})^\top \mathbf{H} (\xv - \tilde{\xv})
-    $$
-    \item GD step with step size $\alpha > 0$ yields
-    $$
-        f(\bm{\tilde{x}}-\alpha \mathbf{g}) \approx f(\bm{\tilde{x}}) - \alpha \mathbf{g}^\top\mathbf{g} + \frac{1}{2}	\alpha^2 \mathbf{g}^\top \bm{H}\,\mathbf{g}
-    $$ 
-
-    \item If $\mathbf{g}^\top \bm{H} \mathbf{g} > 0$, we can solve for optimal step size $\alpha^\ast$:
-    $$
-        \alpha^\ast = \frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \bm{H}\, \mathbf{g}}
-    $$
-\end{itemize}
-
-\framebreak 
-
-\begin{itemize}
-    \setlength{\itemsep}{1em}
-    \item If $\mathbf{g}$ points along $\mathbf{v}_{\text{max}}$ (largest curvature), optimal step size is
-    $$
-        \alpha^\ast = \frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \mathbf{H} \mathbf{g}} = \frac{\mathbf{g}^\top \mathbf{g}}{\lambda_{\text{max}} \mathbf{g}^\top \mathbf{g}} = \frac{1}{\lambda_{\text{max}}}.
-    $$ 
-    $\Rightarrow$ \textit{Large} step sizes can be problematic.
-    \item If $\mathbf{g}$ points along $\mathbf{v}_{\text{min}}$ (smallest curvature), then analogously
-    $$
-        \alpha^* = \frac{1}{\lambda_{\text{min}}}.
-    $$
-    $\Rightarrow$ \textit{Small} step sizes can be problematic.
-    \item \textbf{Ideally}: Perform large step along $\mathbf{v}_\text{min}$ but small step along $\mathbf{v}_\text{max}$.
-\end{itemize}
-    
-\framebreak
-
-\begin{itemize}
-    \item What if $\mathbf{g}$ is not aligned with eigenvectors?
-    \item Consider 2D case: Decompose $\mathbf{g}$ (black) into $\textcolor{red}{\mathbf{v}_{\text{max}}}$ and $\textcolor{blue}{\mathbf{v}_{\text{min}}}$
-        \begin{figure}
-            \centering
-            \includegraphics[width=.7\textwidth]{figure_man/curvature3.png}
-        \end{figure}
-    \item Ideally, perform \textbf{large} step along $\textcolor{blue}{\mathbf{v}_{\text{min}}}$ but \textbf{small} step along $\textcolor{red}{\mathbf{v}_{\text{max}}}$
-    \item However, gradient almost only points along $\textcolor{red}{\mathbf{v}_\text{max}}$
-\end{itemize}
-
-\framebreak 
-
-\begin{itemize}
-%   \item The new risk after a \textbf{gradient descent} step is 
-%   $$
-%   \risk(\boldsymbol{\theta}^0-\alpha \mathbf{g}) \approx \risk(\boldsymbol{\theta}^0) \underbrace{- \alpha \mathbf{g}^\top\mathbf{g} + \frac{1}{2}	\alpha^2 \mathbf{g}^\top\!\Hess\,\mathbf{g}}_{:=\nu}  \,.
-%   $$ 
-% The term  $\nu$ is added to the risk $\risk$ in each gradient descent step. 
-%   \item Ill-conditioning of the Hessian matrix $\Hess$ becomes a problem, when $$\frac{1}{2}	\alpha^2 \mathbf{g}^\top\!\Hess\,\mathbf{g}^\top > \alpha \mathbf{g}^\top\mathbf{g}$$
-%   \item Ill-conditioning occurrs, if the second derivatives for a specific point differ a lot. This can be measured by the condition number. A condition number of 5, for example, means that the direction of the highest curvature has five times more curvature than the direction of the least  curvature. 
-
-% \framebreak 
-    \item GD is not aware of curvatures and can only walk along $\mathbf{g}$
-    \item Large step sizes result in \enquote{zig-zag} behaviour.
-    \item Small step sizes result in weak performance.
-\end{itemize}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{figure_man/big_small_stepsize.png}
-    \caption*{\centering Poorly conditioned quadratic form.
-        GD with large (red) and small (blue) step size.
-        For both, convergence to optimum is slow.}
-\end{figure}
-
-\framebreak
-
-\begin{itemize}
-    \item Large step sizes for ill-conditioned Hessian can even increase
-        \vspace{-0.5\baselineskip}
-        \begin{equation*}
-            f(\tilde{\xv} - \alpha \mathbf{g}) \approx f(\tilde{\xv}) - \alpha \mathbf{g}^\top \mathbf{g} + \frac{1}{2} \alpha^2 \mathbf{g}^\top \mathbf{H} \mathbf{g}
-        \end{equation*}
-        if $$\frac{1}{2} \alpha^2 \mathbf{g}^\top \mathbf{H} \mathbf{g} > \alpha \mathbf{g}^\top\mathbf{g} \quad \Leftrightarrow \quad \alpha > 2\frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \mathbf{H} \mathbf{g}}.$$
-    \item Ill-conditioning in practice: Monitor gradient norm and objective
-        \begin{figure}
-        	\centering
-        	\includegraphics[width=0.6\textwidth]{figure_man/no_critical.png}
-        	\caption*{\centering \footnotesize Source: Goodfellow et al., 2016}
-        \end{figure}
-\end{itemize}
-
-\framebreak
-
-\begin{itemize}
-    \setlength{\itemsep}{1em}
-    \item If gradient norms $\|\mathbf{g}\|$ increase, GD is not converging since $\mathbf{g} \not= 0$.
-    \item Even if $\|\mathbf{g}\|$ increases, objective may stay approximately constant:
-        \begin{equation*}
-            \underbrace{f(\bm{\tilde{x}}-\alpha \mathbf{g})}_{\text{$\approx$ constant}} \approx f(\tilde{\xv}) - \alpha \underbrace{\mathbf{g}^\top \mathbf{g}}_{\text{increases}} + \frac{1}{2} \alpha^2 \underbrace{\mathbf{g}^\top \mathbf{H} \mathbf{g}}_{\text{increases}}
-        \end{equation*}
-\end{itemize}
-
-\end{vbframe}
+\begin{framei}{Reminder: Local quadratic geometry}
+\item Locally approximate smooth function by quadratic Taylor polynomial:
+$$\fx \approx f(\xtil) + \nabla f(\xtil)^\top(\xv-\xtil) +
+\frac 12(\xv-\xtil)^\top\nabla^2 f(\xtil)(\xv-\xtil)$$
+\imageC[0.5][https://daniloroccatano.blog]{figure_man/taylor_2D_quadratic.png}
+\end{framei}
 
 
-% \section{Ill-Conditioning}
-% \begin{vbframe}{Ill-conditioned Hessian matrix} 
-	
-	
-% 	The condition number of a symmetric matrix $\bm{A}$ is given by the ratio of its min/max eigenvalues $\kappa(\bm{A}) = \frac{|\lambda_{\text{max}}|}{|\lambda_{\text{min}}|}$. A matrix is called ill-conditioned, if the condition number $\kappa(\bm{A})$ is very high. 
-	
-% 	\lz 
-	
-% 	An \textbf{ill-conditioned} Hessian matrix means that the ratio of max. / min. curvature is high, as in the example below: 
-	
-% 	\begin{center}
-% 		\includegraphics[width=0.7\textwidth]{figure_man/ill-con.png}
-% 	\end{center}
-	
-	
-% \end{vbframe}
+\begin{framei}{Reminder: Local quadratic geometry}
+\item Study Hessian $\mathbf{H} = \nabla^2 f(\xv^{[t]})$ in GD to discuss effect of curvature 
+\item \textbf{Recall} for quadratic forms:
+\begin{itemizeM}
+\item Eigenvector $\textbf{v}_\text{max}$ ($\textbf{v}_\text{min}$) is direction of largest (smallest) curvature
+\item $\mathbf{H}$ called ill-conditioned if $\kappa(\mathbf{H}) = |\lambda_\text{max}| / |\lambda_\text{min}|$ is large
+\end{itemizeM}
+\vfill
+\splitV{\imageC[0.9]{figure/ill-cond_1.png}
+}{\imageC[0.9]{figure/ill-cond_2.png}}
+\end{framei}
 
 
-
-%\begin{vbframe}{Ill-conditioned problems}
-%
-%For ill-conditioned problems, the gradient moves with a zig-zag course to the optimum, since the gradient points approximately orthogonal in the shortest direction to the minimum.
-%\lz
-%
-%Let
-%
-%$$
-%f(\xv) = \xv^\intercal \mathbf{C} \xv
-%$$
-%
-%be a 2-dimensional quadratic of the form with $\mathbf{C} = \mat{0.5 & 0  \\ 0 & 10}$ and a global optimum in the origin.\\
-%\vspace*{0.1cm}
-%Let $\bm{x}^{[0]} = (10, 1)^\intercal$ be the initialization and $\alpha = 0.1$ then the gradient descent steps are showing a zig-zagging behavior in the contour plot for the first 10 iterations.
-%
-%\framebreak
-%\begin{itemize}
-%\item Negative gradient always points perpendicular to the contour of a function which may cause a rapid change in negative gradient direction in each optimization step and hence leads to the zig-zagging behavior shown in the figure
-%\item Slows down optimization process and hence requires many steps for convergence 
-%\end{itemize}
-%\vspace*{-0.2cm}
-%\begin{center}
-%\includegraphics[width = 0.6\textwidth]{figure_man/momentum/sgd_without_momentum.png}
-%\end{center}
-
-%\framebreak
-%\textbf{Slow crawling:} may vanish rapidly close to stationary points (e.g. saddle points) and hence also slows down progress at these points
-%\textbf{Example for slow crawling and getting trapped in saddle point}\\
-%\lz
-%
-%Let
-%$$
-%f(\xv) = x_{1}^{2} - x_{2}^{2}
-%$$
-%
-%be a 2-dimensional quadratic with a saddle point in the origin.\\
-%\vspace*{0.3cm}
-%Let $\bm{x}^{[0]} = (-0.5, 0.001)^\intercal$ be the initialization and $\alpha = 0.1$ then the gradient descent steps are slowing down at the saddle point with vanishing magnitude of the gradient.
-%
-%\framebreak
-%
-%\begin{center}
-%\includegraphics[width = 0.68\textwidth, height = 0.5\textheight]{figure_man/momentum/sgd_saddlepoint.png}
-%\end{center}
-%\vspace*{-0.2cm}
-%\begin{itemize}
-%\item Slow crawling: a gradient descent step is proportional to the magnitude of the gradient $\rightarrow$ SGD starts with large steps and slows down near minimum or optimum
-%\item For some functions (like here) this behavior can also cause that gradient descent gets stuck near saddle points.
-%\end{itemize}
-%
-
-%\end{vbframe}
+\begin{framei}{Effects of curvature}
+\item Intuitively, curvature determines reliability of a GD step
+\imageC[0.8][https://www.deeplearningbook.org]{figure_man/curvature.png}
+\centering\small
+Quadratic objective $f$ (blue) with gradient approximation (dashed green). \textbf{Left:} $f$ decreases faster than $\nabla f$ predicts. \textbf{Center:} $\nabla f$ predicts decrease correctly. \textbf{Right:} $f$ decreases more slowly than $\nabla f$ predicts.
+\end{framei}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{framei}{Curvature and step size in GD}
+\item\textbf{Worst case:} $\mathbf{H}$ is ill-conditioned.What does this mean for GD?
+\vfill
+\begin{itemizeM}
+\item Quadratic Taylor polynomial of $f$ around $\tilde{\xv}$ (with gradient $\mathbf{g} = \nabla f$)
+$$f(\xv) \approx f(\xtil) + (\xv - \xtil)^\top \mathbf{g} + \frac{1}{2} (\xv - \xtil)^\top \mathbf{H} (\xv - \xtil)$$
+\item GD step with step size $\alpha > 0$ yields
+$$f(\xtil-\alpha \mathbf{g}) \approx f(\xtil) - \alpha \mathbf{g}^\top\mathbf{g} + \frac{1}{2} \alpha^2 \mathbf{g}^\top \H\,\mathbf{g}$$ 
+\item If $\mathbf{g}^\top \bm{H} \mathbf{g} > 0$, we can solve for optimal step size $\alpha^\ast$:
+$$\alpha^\ast = \frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \H\, \mathbf{g}}$$
+\end{itemizeM}
+\end{framei}
 
 
+\begin{framei}{Curvature and step size in GD}
+\item If $\mathbf{g}$ points along $\mathbf{v}_{\text{max}}$ (largest curvature), optimal step size is
+$$\alpha^\ast = \frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \H \mathbf{g}} = \frac{\mathbf{g}^\top \mathbf{g}}{\lammax \mathbf{g}^\top \mathbf{g}} = \frac{1}{\lammax}.$$ 
+$\Rightarrow$ \textit{Large} step sizes can be problematic.
+\item If $\mathbf{g}$ points along $\mathbf{v}_{\text{min}}$ (smallest curvature), then analogously
+$$\alpha^* = \frac{1}{\lammin}.$$
+$\Rightarrow$ \textit{Small} step sizes can be problematic.
+\item \textbf{Ideally}: Perform large step along $\mathbf{v}_\text{min}$ but small step along $\mathbf{v}_\text{max}$.
+\end{framei}
 
 
+\begin{framei}{Curvature and step size in GD}
+\item What if $\mathbf{g}$ is not aligned with eigenvectors?
+\item Consider 2D case: Decompose $\mathbf{g}$ (black) into $\textcolor{red}{\mathbf{v}_{\text{max}}}$ and $\textcolor{blue}{\mathbf{v}_{\text{min}}}$
+\imageC[0.7]{figure/curvature_1.png}
+\item Ideally, perform \textbf{large} step along $\textcolor{blue}{\mathbf{v}_{\text{min}}}$ but \textbf{small} step along $\textcolor{red}{\mathbf{v}_{\text{max}}}$
+\item However, gradient almost only points along $\textcolor{red}{\mathbf{v}_\text{max}}$
+\end{framei}
 
 
-% \begin{frame} {Effects of curvature}
-% \begin{itemize}
-% \item The second-order Taylor approximation (with gradient $\mathbf{g}$) around current point $\boldsymbol{\theta}^0$ is
-% \begin{equation*}
-% \risk(\boldsymbol{\theta}) = \risk(\boldsymbol{\theta}^0) + (\boldsymbol{\theta}-\boldsymbol{\theta}^0)^\top \mathbf{g} + \frac{1}{2}(\boldsymbol{\theta}-\boldsymbol{\theta}^0)^\top \!\Hess\, (\boldsymbol{\theta}-\boldsymbol{\theta}^0)
-% \end{equation*}
-% \item SGD with learning rate $\alpha$ yields new parameters $\boldsymbol{\theta}^0-\alpha g$ and new loss value
-% $$
-% \risk(\boldsymbol{\theta}^0-\alpha \mathbf{g}) = \risk(\boldsymbol{\theta}^0) - \alpha \mathbf{g}^\top\mathbf{g} + \frac{1}{2}	\alpha^2 \mathbf{g}^\top\!\Hess\,\mathbf{g}  \,.
-% $$
-% \item When $g^\top H g$ is to large, we might get $\risk(\boldsymbol{\theta}^0-\alpha \mathbf{g}) > \risk(\boldsymbol{\theta}^0)$.
-% \item If $\mathbf{g}^\top \Hess \mathbf{g}$ is positive, optimal step size is
-% $$
-% \alpha^* = \frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \!\Hess\, \mathbf{g}} \ge \frac{1}{\lambda_{\text{max}}}  \,.
-% $$
-% \end{itemize}
-% \end{frame}
+\begin{framei}{Curvature and step size in GD}
+\item GD is not aware of curvatures and can only walk along $\mathbf{g}$
+\item Large step sizes result in ``zig-zag'' behaviour.
+\item Small step sizes result in weak performance.
+\imageC[0.8]{figure/curvature_2.png}
+\centering\footnotesize Poorly conditioned quadratic form. GD with large (red) and small (blue) step size. For both, convergence to optimum is slow.
+\end{framei}
 
+
+\begin{framei}{Curvature and step size in GD}
+\item Large step sizes for ill-conditioned Hessian can even increase
+$$f(\xtil - \alpha \mathbf{g}) \approx f(\xtil) - \alpha \mathbf{g}^\top \mathbf{g} + \frac{1}{2} \alpha^2 \mathbf{g}^\top \H \mathbf{g}$$
+if $$\frac{1}{2} \alpha^2 \mathbf{g}^\top \H \mathbf{g} > \alpha \mathbf{g}^\top\mathbf{g} \quad \Leftrightarrow \quad \alpha > 2\frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \H \mathbf{g}}.$$
+\item Ill-conditioning in practice: Monitor gradient norm and objective
+\imageC[0.6][https://www.deeplearningbook.org]{figure_man/no_critical.png}
+\end{framei}
+
+
+\begin{framei}{Curvature and step size in GD}
+\item If gradient norms $\|\mathbf{g}\|$ increase, GD is not converging since $\mathbf{g} \not= 0$.
+\item Even if $\|\mathbf{g}\|$ increases, objective may stay approximately constant:
+$$\underbrace{f(\xtil-\alpha \mathbf{g})}_{\text{$\approx$ constant}} \approx f(\xtil) - \alpha \underbrace{\mathbf{g}^\top \mathbf{g}}_{\text{increases}} + \frac{1}{2} \alpha^2 \underbrace{\mathbf{g}^\top \H \mathbf{g}}_{\text{increases}}$$
+\end{framei}
 
 \endlecture
 \end{document}
-

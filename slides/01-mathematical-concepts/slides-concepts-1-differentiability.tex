@@ -3,16 +3,17 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\newcommand{\deriv}{d}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
+\titlemeta{
   Mathematical Concepts 
-  }{% Lecture title  
+  }{
   Differentiation and Derivatives
-  }{% Relative path to title page image: Can be empty but must not start with slides/
+  }{
   figure_man/tangent.png
   }{
     \item Definition of smoothness
@@ -34,7 +35,7 @@ $$
 f'(x) := \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
 $$
 
-Intuitively: $f$ can be approxed locally by a lin. fun. with slope $m = f'(x)$.
+Intuitively: $f$ can be approximated locally by a lin. fun. with slope $m = f'(x)$.
 
 \begin{figure}
     \centering
@@ -89,17 +90,20 @@ $f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-co
 
 \begin{vbframe}{Multivariate differentiability}
 
-\textbf{Definition:} $f: \mathcal{S}\subseteq \R^d \to \R$ is \textbf{differentiable} in $\xv \in \mathcal{S}$ if there exists a (continuous) linear map $\nabla f(\xv): \mathcal{S}\subseteq \R^d \to \R^d$ with %it can be locally approximated by a linear function in $\xv$.
-
+\textbf{Definition:} For a function $f: \mathcal{S}\subseteq \R^d \to \R$ of $d$ variables $x_1, \ldots, x_d$, \textbf{partial derivatives} are defined as
 $$
-\lim_{\bm{h} \to 0} \frac{f(\xv + \bm{h}) - f(\xv) - \nabla f(\xv)^T \cdot \bm{h}}{||\bm{h}||} = 0
+\begin{aligned}
+\frac{\partial f}{\partial x_1} & =\lim _{h \rightarrow 0} \frac{f\left(x_1+h, x_2, \ldots, x_d\right)-f(\boldsymbol{x})}{h} \\
+& \vdots \\
+\frac{\partial f}{\partial x_d} & =\lim _{h \rightarrow 0} \frac{f\left(x_1, \ldots, x_{d-1}, x_d+h\right)-f(\boldsymbol{x})}{h}
+\end{aligned}
 $$
 
 \begin{center}
-\includegraphics[width = 0.3\textwidth]{figure_man/differentiability_multivariate.png} \\
+\includegraphics[width = 0.25\textwidth]{figure_man/differentiability_multivariate.png} \\
 \begin{footnotesize}
-Geometrically: The function can be locally approximated by a tangent hyperplane. \\
-Source: \url{https://github.com/jermwatt/machine_learning_refined}.
+Geometrically: Similarly to the 1D case, the vector of partial derivatives can be used to determine a tangent hyperplane.
+Source: \href{https://github.com/jermwatt/machine_learning_refined}{jermwatt/machine\_learning\_refined}.
 \end{footnotesize}
 \end{center}
 
@@ -108,74 +112,100 @@ Source: \url{https://github.com/jermwatt/machine_learning_refined}.
 \begin{vbframe}{Gradient}
 
 \begin{itemize}
-    \item Linear approximation is given by the \textbf{gradient}:
+    \item Specifically, the vector of partial derivatives is called the \textbf{gradient}:
         \begin{equation*}
-            \nabla f = \frac{\partial f}{\partial x_1} \bm e_1 + \cdots + \frac{\partial f}{\partial x_d} \bm e_d =
-            \left(\frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, \ldots, \frac{\partial f}{\partial x_d}\right)^T
+        \nabla_{\xv} f \text{ or }   \nabla f := 
+            \left(\frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, \ldots, \frac{\partial f}{\partial x_d}\right)\quad\text{({\small note that this is a row vector!})}
         \end{equation*}
-    \item Elements of the gradient are called \textbf{partial derivatives}.
-    \item To compute $\partial f/\partial x_j$, regard $f$ as function of~$x_j$ only (others fixed)
+    \item This gradient of $f$ can be used to linearly approximate $f$:
+    $$
+    f(\xv+\mathbf{h})=f(\xv)+\nabla_{\xv}\fx \mathbf{h}+o(\mathbf{h})
+    $$
 \end{itemize}
 
 \vspace{0.5\baselineskip}
 
-\textbf{Example:} $\fx = x_1^2/2 + x_1 x_2 + x_2^2$ $\Rightarrow$ $\nabla \fx = (x_1 + x_2, x_1 + 2x_2)^T$
+\textbf{Example:} $\fx = x_1^2/2 + x_1 x_2 + x_2^2$ $\Rightarrow$ $\nabla \fx = (x_1 + x_2, x_1 + 2x_2)$
 
 \vspace{-0.5\baselineskip}
 
 \begin{center}
-	\includegraphics[width=0.45\textwidth]{figure_man/grad_unit_vectors.png} ~~~ \includegraphics[width=0.45\textwidth]{figure_man/gradient2.png}
+	\includegraphics[width=0.45\textwidth]{figure_man/gradient_unit_vectors.png} ~~~ \includegraphics[width=0.45\textwidth]{figure_man/gradient2.png}
 \end{center}
 
 \end{vbframe}
 
 \begin{vbframe}{Directional derivative}
 
-The \textbf{directional derivative} tells how fast $f: \mathcal{S} \to \R$ is changing w.r.t. an arbitrary direction $\bm{v}$:
+The \textbf{directional derivative} tells how fast $f: \mathcal{S}\subseteq \R^d \to \R$ is changing w.r.t. an arbitrary direction $\bm{v}$:
 
  $$
-   D_{\bm{v}} \fx := \lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h} = \nabla \fx^T \cdot \bm v.
+   D_{\bm{v}} \fx := \lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h} = \nabla \fx \bm v
  $$
 
 
 \textbf{Example: } The directional derivative for $\bm{v} = (1, 1)$ is:
 
 $$
-D_{\bm{v}} \fx = \nabla \fx^T \cdot \begin{pmatrix} 1 \\1\end{pmatrix} = \frac{\partial f}{\partial x_1} + \frac{\partial f}{\partial x_2}
+D_{\bm{v}} \fx = \nabla \fx \cdot \begin{pmatrix} 1 \\1\end{pmatrix} = \frac{\partial f}{\partial x_1} + \frac{\partial f}{\partial x_2}
 $$
 
-NB: Some people require that $||\bm{v}|| = 1$. Then, we can identify $D_{\bm{v}} \fx$ with the instantaneous rate of change in direction $\bm{v}$ -- and in our example we would have to divide by $\sqrt{2}$.
+NB: Some people require that $||\bm{v}|| = 1$. Then, we can identify $D_{\bm{v}} \fx$ with the instantaneous rate of change in direction $\bm{v}$, i.e. $\lim_{h \to 0} \frac{f(\xv + h \bm v) - \fx}{h}$ -- and in our example we would have to divide by $\sqrt{2}$.
 
 \end{vbframe}
 
-\begin{vbframe}{Properties of the gradient}
+\begin{vbframe}{Important properties of the gradient}
 
-\begin{itemize}
-	\item \textbf{Orthogonal} to level curves/surfaces of a function
+\begin{enumerate}
+	\item \textbf{Orthogonal} to level curves/surfaces of a function\,\\
 	% \item The normal vector describing the tangent plane is has $n + 1$ components, the first $n$ correspond to $\nabla f$ and the $(n + 1)-$th has the value $-1$
-	\item Points in direction of \textbf{greatest increase} of $f$
+	\item Points in direction of \textbf{greatest increase} of $f$\end{enumerate}
 	\begin{center}
-		\includegraphics[width = 0.4\textwidth]{figure_man/gradient3.png} \includegraphics[width = 0.4\textwidth]{figure_man/gradient.png}
-	\end{center}
-	\begin{footnotesize}
-    	\textbf{Proof}: Let $\bm{v}$ be a vector with $\|\bm{v}\|=1$ and $\theta$ the angle between $\bm{v}$ and $\nabla \fx$.
+		\includegraphics[width = 0.45\textwidth]{figure_man/gradient3.png} \\\includegraphics[width = 0.45\textwidth]{figure_man/gradient.png}
+	% \end{center}\begin{comment}
+	% \begin{footnotesize}
+ %    	\textbf{Proof}: Let $\bm{v}$ be a vector with $\|\bm{v}\|=1$ and $\theta$ the angle between $\bm{v}$ and $\nabla \fx$.
+ %        \begin{equation*}
+ %            D_{\bm{v}}\fx = \nabla \fx \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
+ %        \end{equation*}
+ %    	by the cosine formula for dot products and $\|\bm{v}\| = 1$.
+ %        $\cos(\theta)$ is maximal if $\theta = 0$, hence if $\bm{v}$ and $\nabla \fx$ point in the same direction.
+
+ %    	(Alternative proof: Apply Cauchy-Schwarz to $\nabla \fx \bm{v}$ and look for equality.)
+
+ %        Analogous: Negative gradient $- \nabla \fx$ points in direction of greatest \textit{de}crease
+	% \end{footnotesize}
+	% \end{comment}
+\end{center}
+\framebreak
+\begin{itemize}\setlength{\itemsep}{0.5\baselineskip}
+    \item To prove 1, consider that a \emph{level curve} of a function $f: \mathcal{S}\subseteq \R^d \to \R$ is any parametrized, differentiable curve (see \emph{implicit function theorem}) $x(t)$, $t\in\mathcal{T}\subseteq\R_{\geq 0}$ so that $f(x(t))=c$ for some constant $c$.
+    \item \textbf{Proof of 1.}: Consider a point $x_0\in\R^d$ so that $f(x_0)=c$ and $\exists t_0\in\mathcal{T}:\; x(t_0)=x_0$.\\\bigskip
+    To prove orthogonality, we want to show $\langle\nabla_{\xv}f(x_0),\frac{\deriv x}{\deriv t}(t_0)\rangle=0$.\\
+    Note that\begin{align*}
+        \left\langle\nabla_{\xv}f(x_0),\frac{\deriv x}{\deriv t}(t_0)\right\rangle&=\nabla_{\xv}f(x(t_0))\frac{\deriv x}{\deriv t}(t_0)\\
+        \text{\footnotesize By the chain rule, see slide-set ``Matrix Calculus''}&=\frac{\deriv\, (f\circ x)}{\deriv t}(t_0)
+    \end{align*}
+    Since $f\circ x$ is a constant function in $t$, the derivative will always equal zero and so $\frac{\deriv\, (f\circ x)}{\deriv t}(t_0)=0$, proving the statement.
+\end{itemize}
+\framebreak
+\begin{itemize}\setlength{\itemsep}{0.5\baselineskip}
+    \item \textbf{Proof of 2.}: Let $\bm{v}$ be a vector with $\|\bm{v}\|=1$ and $\theta$ the angle between $\bm{v}$ and $\nabla \fx$.
         \begin{equation*}
-            D_{\bm{v}}\fx = \nabla \fx^T \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
+            D_{\bm{v}}\fx = \nabla \fx \bm{v} = \|\nabla \fx\|~\|\bm{v}\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
         \end{equation*}
     	by the cosine formula for dot products and $\|\bm{v}\| = 1$.
         $\cos(\theta)$ is maximal if $\theta = 0$, hence if $\bm{v}$ and $\nabla \fx$ point in the same direction.
 
-    	(Alternative proof: Apply Cauchy-Schwarz to $\nabla \fx^T \bm{v}$ and look for equality.)
+    	\item (Alternative proof: Apply Cauchy-Schwarz to $\nabla \fx \bm{v}$ and look for equality.)
 
-        Analogous: Negative gradient $- \nabla \fx$ points in direction of greatest \textit{de}crease
-	\end{footnotesize}
+        \item Analogous: Negative gradient $- \nabla \fx$ points in direction of greatest \textit{de}crease
 \end{itemize}
-
 \framebreak
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.75\textwidth]{figure_man/branin.jpg}
+    \includegraphics[width=0.75\textwidth]{figure_man/branin.png}
     \caption*{Length of arrows is norm of their gradient}
 \end{figure}
 
@@ -184,13 +214,13 @@ NB: Some people require that $||\bm{v}|| = 1$. Then, we can identify $D_{\bm{v}}
 
 \begin{vbframe}{Jacobian Matrix}
 
-For vector-valued function~$f = (f_1,\dots,f_m)^T$, $f_j:\mathcal{S}\to\R$, the \textbf{Jacobian} matrix $J_f:\mathcal{S} \to \R^{m\times d}$ generalizes gradient by placing all $\nabla f_j$ in its rows:
+For vector-valued function~$f:\subseteq \R^d\longrightarrow\R^m,\; \xv\mapsto(f_1(\xv),\dots,f_m(\xv))^\top$, $f_j:\mathcal{S}\subseteq \R^d\to\R$, the \textbf{Jacobian} matrix $J_f:\mathcal{S}\subseteq \R^d \to \R^{m\times d}$ generalizes gradient by placing all $\nabla f_j$ in its rows:
 
 \begin{equation*}
-    J_f(\xv) = \begin{pmatrix}
-        \nabla f_1(\xv)^T \\
+    J_f(\xv) \text{ or } \nabla \fx = \begin{pmatrix}
+        \nabla f_1(\xv) \\
         \vdots \\
-        \nabla f_m(\xv)^T
+        \nabla f_m(\xv)
 	\end{pmatrix}
     =
     \begin{pmatrix}
@@ -199,6 +229,7 @@ For vector-valued function~$f = (f_1,\dots,f_m)^T$, $f_j:\mathcal{S}\to\R$, the 
         \frac{\partial f_m(\xv)}{\partial x_1} & \cdots & \frac{\partial f_m(\xv)}{\partial x_d}
 	\end{pmatrix}
 \end{equation*}
+We will mainly use the $\nabla f$ notation.
 
 \begin{itemize}
     \item Jacobian gives best linear approximation of distorted volumes
@@ -206,7 +237,7 @@ For vector-valued function~$f = (f_1,\dots,f_m)^T$, $f_j:\mathcal{S}\to\R$, the 
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\textwidth]{figure_man/Jacobian.png}
+    \includegraphics[width=0.3\textwidth]{figure_man/Jacobian.png}
     \caption*{\footnotesize Source: Wikipedia}
 \end{figure}
 
@@ -215,7 +246,7 @@ For vector-valued function~$f = (f_1,\dots,f_m)^T$, $f_j:\mathcal{S}\to\R$, the 
 
 \begin{vbframe}{Jacobian determinant}
 
-Let $f\in\mathcal{C}^1$ and~$\xv_0\in\mathcal{S}$.
+Let $f\in\mathcal{C}^1$ and~$\xv_0\in\mathcal{S}\subseteq \R^d$.
 
 
 \textbf{Inverse function theorem:} Let~$\yv_0=f(\xv_0)$.
@@ -237,29 +268,28 @@ Let $f\in\mathcal{C}^1$ and~$\xv_0\in\mathcal{S}$.
 
 \begin{vbframe}{Hessian Matrix}
 
-For real-valued function $f:\mathcal{S} \to \R$, the \textbf{Hessian} matrix $H:\mathcal{S} \to \R^{d \times d}$ contains all their second derivatives (if they exist):
+For real-valued function $f:\mathcal{S}\subseteq \R^d \to \R$, the \textbf{Hessian} matrix $\nabla^2:\mathcal{S}\subseteq \R^d \to \R^{d \times d}$ contains all their second derivatives (if they exist):
 
 \begin{equation*}
-    H(\xv) =\nabla^2 \fx = \left(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\right)_{i,j=1,\ldots,d}
+\nabla^2 \fx = \left(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\right)_{i,j=1,\ldots,d}
 \end{equation*}
 
 \medskip
 
-\textbf{Note:} Hessian of~$f$ is Jacobian of~$\nabla f$
-
+\textbf{Note:} Hessian of~$f$ is Jacobian of~$\nabla f$. Also, the Hessian is often denoted by $H(\xv)\hat{=}\nabla^2 \fx$
 \medskip
 
 \textbf{Example}: Let $f(\xv) = \sin(x_1) \cdot \cos(2x_2)$.
 Then:
 \begin{equation*}
-    H(\xv) = \begin{pmatrix}
+    \nabla^2 \fx = \begin{pmatrix}
         -\cos(2x_2)\cdot\sin(x_1) & -2\cos(x_1)\cdot\sin(2x_2) \\
         -2\cos(x_1)\cdot\sin(2x_2) & -4\cos(2x_2)\cdot\sin(x_1)
     \end{pmatrix}
 \end{equation*}
 
 \begin{itemize}
-    \item If $f\in\mathcal{C}^2$, then $H$ is symmetric
+    \item If $f\in\mathcal{C}^2$, then $\nabla^2 f$ is symmetric
     \item Many local properties (geometry, convexity, critical points) are encoded by the Hessian and its spectrum ($\rightarrow$ later)
 \end{itemize}
 
@@ -275,7 +305,7 @@ Then:
 \textbf{Example} (previous slide)\textbf{:}
 For $\bm{a}=(-\pi/2,0)^T$, we have
 \begin{equation*}
-    H(\bm{a}) = \begin{pmatrix}
+    \nabla^2 f(\bm{a}) = \begin{pmatrix}
         1 & 0 \\ 0 & 4
     \end{pmatrix}
 \end{equation*}
@@ -291,15 +321,15 @@ and thus $\lambda_{1}=4, \lambda_{2}=1$, $\bm{v}_{1}=(0, 1)^T$, and $\bm{v}_{2}=
 
 \begin{vbframe}{Lipschitz continuity}
 
-\vspace{-\baselineskip}
+%\vspace{-\baselineskip}
 
 
-Function $h : \mathcal{S} \to \R^m$ is \textbf{Lipschitz continuous} if slopes are bounded:
+Function $h : \mathcal{S}\subseteq \R^d \to \R^m$ is \textbf{Lipschitz continuous} if slopes are bounded:
 
 \vspace{-1.25\baselineskip}
 
 \begin{equation*}
-    \|h(\xv) - h(\yv)\| \leq L \|\xv - \yv\| \quad \text{for each $\xv,\yv\in\mathcal{S}$ and some~$L>0$}
+    \|h(\xv) - h(\yv)\| \leq L \|\xv - \yv\| \quad \text{for each $\xv,\yv\in\mathcal{S}\subseteq \R^d$ and some~$L>0$}
 \end{equation*}
 
 

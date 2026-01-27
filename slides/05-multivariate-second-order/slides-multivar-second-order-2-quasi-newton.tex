@@ -3,193 +3,125 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Second order methods
-  }{% Lecture title  
-  Quasi-Newton
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/NR_2.png
-  }{
-    \item Newton-Raphson vs. Quasi-Newton
-    \item SR1
-    \item BFGS
+\titlemeta{
+Second order methods
+}{
+Quasi-Newton
+}{
+figure/NR_2.png
+}{
+\item Newton-Raphson vs. Quasi-Newton
+\item SR1
+\item BFGS
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Quasi-Newton: Idea}
-
-% \framebreak
-
-% Die Aktualisierungsrichtung $\mathbf{d}_{i}$ ist eine Abstiegsrichtung für $f$ in $\mathbf{x}_{i}$
-% genau dann, wenn
-% $$
-% \mathbf{d}^\top \nabla f(\mathbf{x}_{i}) < 0.
-% $$
-% Sei $\mathbf{A}_{i}$ eine positiv definite Matrix, dann ist
-% $$
-% \mathbf{d}_{i} = - (\mathbf{A}_{i})^{-1} \nabla f(\mathbf{x}_{i})
-% $$
-% eine Abstiegsrichtung:
-% $$
-% (\mathbf{d}_{i})^\top \nabla f(\mathbf{x}_{i}) = - (\nabla f(\mathbf{x}_{i}))^\top (\mathbf{A}_{i})^{-1}
-% \nabla f(\mathbf{x}_{i}) < 0
-% $$
-% $\mathbf{A}_{i} = \nabla^2 f(\mathbf{x}_{i})$ ist für quadratische Probleme optimal, bei allgemeinen
-% Problemen muss die Hessematrix weit weg vom Optimum noch nicht einmal positiv definit sein.
-
-Start point of \textbf{QN method} is (as with NR) a Taylor approximation of the gradient, except that H is replaced by a \textbf{pd} matrix $\bm{A}^{[t]}$:
-
-\vspace*{-0.2cm}
-\begin{footnotesize}
+\begin{framei}[fs=small]{Quasi-Newton: Idea}
+\item Start point of \textbf{QN method} is (as with NR) a Taylor approximation of the gradient, except that H is replaced by a \textbf{pd} matrix $\A^{[t]}$:
 \begin{alignat*}{4}
-\nabla f(\mathbf{x}) &\approx  \nabla f(\mathbf{x}^{[t]}) + \nabla^2 f(\mathbf{x}^{[t]}) & (\mathbf{x} - \mathbf{x}^{[t]}) ~ &=& ~\mathbf{0}  &\qquad& \text{ NR} \\
-\nabla f(\mathbf{x}) &\approx \nabla f(\mathbf{x}^{[t]}) + \bm{A}^{[t]} & (\mathbf{x} - \mathbf{x}^{[t]}) ~ &=& ~ \mathbf{0} &\qquad& \text{ QN}
+\nabla f(\xv) &\approx  \nabla f(\xv^{[t]}) + \nabla^2 f(\xv^{[t]}) (\xv - \xv^{[t]}) ~ &=& ~\zero  &\qquad& \text{ NR} \\
+\nabla f(\xv) &\approx \nabla f(\xv^{[t]}) + \A^{[t]} (\xv - \xv^{[t]}) ~ &=& ~ \zero &\qquad& \text{ QN}
 \end{alignat*}
-\end{footnotesize}
-
-The update direction:
-
-\begin{footnotesize}
+\item The update direction:
 \begin{alignat*}{3}
-\bm{d}^{[t]} &= - \nabla^2 f(\mathbf{x}^{[t]})^{-1} & \nabla f(\mathbf{x}^{[t]}) &\qquad& \text{ NR} \\
-\bm{d}^{[t]} &= - (\bm{A}^{[t]})^{-1} & \nabla f(\mathbf{x}^{[t]}) &\qquad& \text{ QN} \\
+\bm{d}^{[t]} &= - \nabla^2 f(\xv^{[t]})^{-1} \nabla f(\xv^{[t]}) &\qquad& \text{ NR} \\
+\bm{d}^{[t]} &= - (\A^{[t]})^{-1} \nabla f(\xv^{[t]}) &\qquad& \text{ QN}
 \end{alignat*}
-\end{footnotesize}
-
-\framebreak
-
-%\textbf{Quasi-Newton method}:
+\end{framei}
 
 
-\begin{enumerate}
-\item Select a starting point $\mathbf{x}^{[0]}$ and initialize pd matrix
-$\mathbf{A}^{[0]}$ (can also be a diagonal matrix - a very rough approximation of Hessian).
+\begin{framei}{Quasi-Newton: Idea}
+\item Select a starting point $\xv^{[0]}$ and initialize pd matrix $\A^{[0]}$ (can also be a diagonal matrix - a very rough approximation of Hessian)
 \item Calculate update direction by solving
-
 $$
-\bm{A}^{[t]} \bm{d}^{[t]} = - \nabla f(\mathbf{x}^{[t]})
+\A^{[t]} \bm{d}^{[t]} = - \nabla f(\xv^{[t]})
 $$
+and set $\xv^{[t+1]} = \xv^{[t]} + \alpha^{[t]} \bm{d}^{[t]}$ (Step size through backtracking)
+\item Calculate an efficient update $\A^{[t+1]}$, based on $\xv^{[t]}$, $\xv^{[t+1]}$, $\nabla f(\xv^{[t]})$, $\nabla f(\xv^{[t+1]})$ and $\A^{[t]}$
+\end{framei}
 
-and set $\bm{x}^{[t+1]} = \bm{x}^{[t]} + \alpha^{[t]} \bm{d}^{[t]}$ (Step size through backtracking)
-\item Calculate an efficient update $\mathbf{A}^{[t+1]}$,\\based on $\mathbf{x}^{[t]}$,
-$\mathbf{x}^{[t+1]}$, $\nabla f(\mathbf{x}^{[t]})$, $\nabla f(\mathbf{x}^{[t+1]})$ and
-$\mathbf{A}^{[t]}$.
-\end{enumerate}
 
-\framebreak
-
-Usually the matrices $\bm{A}^{[t]}$ are calculated recursively by performing an additive update 
-
+\begin{framei}{Quasi-Newton: Idea}
+\item Usually the matrices $\A^{[t]}$ are calculated recursively by performing an additive update
 $$
-\bm{A}^{[t+1]} = \bm{A}^{[t]} + \bm{B}^{[t]}. 
+\A^{[t+1]} = \A^{[t]} + \bm{B}^{[t]}
 $$
-
-How $ \bm{B}^{[t]}$ is constructed is shown on the next slides. \\
-\textbf{Requirements} for the matrix sequence $\bm{A}^{[t]}$:
-\begin{enumerate}
-\item Symmetric pd, so that $\bm{d}^{[t]}$ are descent directions.
+\item How $\bm{B}^{[t]}$ is constructed is shown on the next slides
+\vfill
+\item \textbf{Requirements} for the matrix sequence $\A^{[t]}$:
+\begin{itemizeS}
+\item Symmetric pd, so that $\bm{d}^{[t]}$ are descent directions
 \item Low computational effort when solving LES
-
 $$
-\bm{A}^{[t]} \bm{d}^{[t]} = - \nabla f(\mathbf{x}^{[t]})
+\A^{[t]} \bm{d}^{[t]} = - \nabla f(\xv^{[t]})
 $$
-
-\item Good approximation of Hessian: The \enquote{modified} Taylor series for $\nabla f(\bm{x})$ (especially for $t \to \infty$) should provide a good approximation
-
+\item Good approximation of Hessian: The ``modified'' Taylor series for $\nabla f(\xv)$ (especially for $t \to \infty$) should provide a good approximation
 $$
-\nabla f(\mathbf{x}) \approx \nabla f(\mathbf{x}^{[t]}) +
-\bm{A}^{[t]}(\mathbf{x} - \mathbf{x}^{[t]})
+\nabla f(\xv) \approx \nabla f(\xv^{[t]}) + \A^{[t]}(\xv - \xv^{[t]})
 $$
-\end{enumerate}
+\end{itemizeS}
+\end{framei}
 
 
-
-\end{vbframe}
-
-\begin{vbframe}{Symmetric rank 1 update (SR1)}
-
-Simplest approach: symmetric rank 1 updates (\textbf{SR1}) of form
-
+\begin{framei}{Symmetric rank 1 update (SR1)}
+\item Simplest approach: symmetric rank 1 updates (\textbf{SR1}) of form
 $$
-\bm{A}^{[t+1]} \leftarrow \bm{A}^{[t]} + \bm{B}^{[t]} = \bm{A}^{[t]} + \beta \bm{u}^{[t]}(\bm{u}^{[t]})^{\top}
+\A^{[t+1]} \leftarrow \A^{[t]} + \bm{B}^{[t]} = \A^{[t]} + \beta \bm{u}^{[t]}(\bm{u}^{[t]})^T
 $$
+with appropriate vector $\bm{u}^{[t]} \in \R^n$, $\beta \in \R$
+\end{framei}
 
-with appropriate vector $\bm{u}^{[t]} \in \R^n$, $\beta \in \R$.
+
+\begin{framei}[fs=small]{Symmetric rank 1 update (SR1)}
+\item \textbf{Choice of $\bm{u}^{[t]}$:} Vectors should be chosen so that the ``modified'' Taylor series corresponds to the gradient:
+$$
+\begin{aligned}
+\nabla f(\xv) &\overset{!}{=} \nabla f(\xv^{[t+1]}) + \A^{[t+1]}(\xv - \xv^{[t+1]}) \\
+\nabla f(\xv) &= \nabla f(\xv^{[t+1]}) +  \left(\A^{[t]} + \beta \bm{u}^{[t]}(\bm{u}^{[t]})^T\right)\underbrace{(\xv - \xv^{[t+1]})}_{:= \bm{s}^{[t+1]}} \\
+\underbrace{\nabla f(\xv) - \nabla f(\xv^{[t+1]})}_{\bm{y}^{[t+1]}} &= \left(\A^{[t]} + \beta \bm{u}^{[t]} (\bm{u}^{[t]})^T\right) \bm{s}^{[t+1]} \\
+\bm{y}^{[t+1]} - \A^{[t]} \bm{s}^{[t+1]} &= \left(\beta (\bm{u}^{[t]})^T \bm{s}^{[t+1]}\right) \bm{u}^{[t]}
+\end{aligned}
+$$
+\item For $\bm{u}^{[t]} = \bm{y}^{[t+1]} - \A^{[t]} \bm{s}^{[t+1]}$ and $\beta = \frac{1}{(\bm{y}^{[t+1]} - \A^{[t]}\bm{s}^{[t+1]})^T\bm{s}^{[t+1]}}$ the equation is satisfied
+\end{framei}
 
 
-\framebreak
-
-\textbf{Choice of} $\bm{u}^{[t]}$:
-
-Vectors should be chosen so that the \enquote{modified} Taylor series corresponds to the gradient:
-
-\begin{eqnarray*}
-\nabla f(\mathbf{x}) &\overset{!}{=}& \nabla f(\mathbf{x}^{[t+1]}) +
-\bm{A}^{[t+1]}(\mathbf{x} - \mathbf{x}^{[t+1]}) \\
-\nabla f(\mathbf{x}) &=& \nabla f(\mathbf{x}^{[t+1]}) +  \left(\bm{A}^{[t]} +
-\beta \bm{u}^{[t]}(\bm{u}^{[t]})^\top\right)\underbrace{(\mathbf{x} - \mathbf{x}^{[t+1]})}_{:= \bm{s}^{[t+1]}} \\
-\underbrace{\nabla f(\mathbf{x}) - \nabla f(\mathbf{x}^{[t+1]})}_{\bm{y}^{[t+1]}} &=& \left(\bm{A}^{[t]} + \beta \bm{u}^{[t]} (\bm{u}^{[t]})^{\top}\right) \bm{s}^{[t+1]} \\
-\bm{y}^{[t+1]} - \bm{A}^{[t]} \bm{s}^{[t+1]} &=& \left(\beta (\bm{u}^{[t]})^{\top} \bm{s}^{[t+1]}\right) \bm{u}^{[t]}
-\end{eqnarray*}
-
-For $\bm{u}^{[t]} = \bm{y}^{[t+1]} - \bm{A}^{[t]} \bm{s}^{[t+1]}$ and $\beta = \frac{1}{\left(\bm{y}^{[t+1]} - \bm{A}^{[t]}\bm{s}^{[t+1]}\right)^\top\bm{s}^{[t+1]}}$ the equation is satisfied.
-
-\framebreak
-
-\textbf{Advantage}
-\begin{itemize}
+\begin{framei}{Symmetric rank 1 update (SR1)}
+\item[] \textbf{Advantage}
+\begin{itemizeS}
 \item Provides a sequence of \textbf{symmetric pd} matrices
 \item Matrices can be inverted efficiently and stable using Sherman-Morrison:
 $$
-(\bm{A} + \beta \bm{u}\bm{u}^{\top})^{-1} = \bm{A} + \beta \frac{\bm{u}\bm{u}^{\top}}{1 + \beta\bm{u}^\top\bm{u}}.
+(\A + \beta \bm{u}\bm{u}^T)^{-1} = \A + \beta \frac{\bm{u}\bm{u}^T}{1 + \beta\bm{u}^T\bm{u}}
 $$
-\end{itemize}
-
-\textbf{Disadvantage}
-\begin{itemize}
+\end{itemizeS}
+\vfill
+\item[] \textbf{Disadvantage}
+\begin{itemizeS}
 \item The constructed matrices are not necessarily pd, and the update directions $\bm{d}^{[t]}$ are therefore not necessarily descent directions
-\end{itemize}
+\end{itemizeS}
+\end{framei}
 
-\end{vbframe}
 
-\begin{vbframe}{BFGS algorithm}
-
-Instead of Rank 1 updates, the \textbf{BFGS} procedure (published simultaneously in 1970 by Broyden, Fletcher, Goldfarb and Shanno) uses rank 2 modifications of the form
-
+\begin{framei}{BFGS algorithm}
+\item Instead of Rank 1 updates, the \textbf{BFGS} procedure (published simultaneously in 1970 by Broyden, Fletcher, Goldfarb and Shanno) uses rank 2 modifications of the form
 $$
-\bm{A}^{[t]} + \beta_1 \bm{u}^{[t]}(\bm{u}^{[t]})^{\top} + \beta_2 \bm{v}^{[t]}(\bm{v}^{[t]})^{\top}
+\A^{[t]} + \beta_1 \bm{u}^{[t]}(\bm{u}^{[t]})^T + \beta_2 \bm{v}^{[t]}(\bm{v}^{[t]})^T
 $$
-
-with $\bm{s}^{[t]} := \bm{x}^{[t+1]} - \bm{x}^{[t]}$
-
-\begin{itemize}
-  \item $\bm{u}^{[t]} = \nabla f(\bm{x}^{[t+1]}) - \nabla f(\bm{x}^{[t]})$
-  \item $\bm{v}^{[t]} = \bm{A}^{[t]} \bm{s}^{[t]}$
-  \item $\beta_1 = \frac{1}{(\bm{u}^{[t]})^\top (\bm{s}^{[t]})}$
-  \item $\beta_2 = - \frac{1}{(\bm{s}^{[t]})^\top \bm{A}^{[t]} \bm{s}^{[t]}}$
-\end{itemize}
-
-The resulting matrices $\bm{A}^{[t]}$ are positive definite and the corresponding quasi-newton update directions $\bm{d}^{[t]}$ are actual descent directions.
-
-
-% \begin{itemize}
-% \item Basiert auf einer endlichen Differenzenapproximation der zweiten Ableitung.
-% \item Verwendet eine additive Aktualisierung $\mathbf{A}^{(i + 1)} = \mathbf{A}^{(i)} + \mathbf{B}^{(i)}$.
-% \item Invertierung von $\mathbf{A}^{(i)}$ lässt sich mit Hilfe der Sherman-Morrison-Formel
-% vergleichsweise effizient durchführen.
-% \end{itemize}
-
-\end{vbframe}
-
+with $\bm{s}^{[t]} := \xv^{[t+1]} - \xv^{[t]}$
+\item $\bm{u}^{[t]} = \nabla f(\xv^{[t+1]}) - \nabla f(\xv^{[t]})$
+\item $\bm{v}^{[t]} = \A^{[t]} \bm{s}^{[t]}$
+\item $\beta_1 = \frac{1}{(\bm{u}^{[t]})^T (\bm{s}^{[t]})}$
+\item $\beta_2 = - \frac{1}{(\bm{s}^{[t]})^T \A^{[t]} \bm{s}^{[t]}}$
+\vfill
+\item The resulting matrices $\A^{[t]}$ are positive definite and the corresponding quasi-Newton update directions $\bm{d}^{[t]}$ are actual descent directions
+\end{framei}
 
 \endlecture
 \end{document}
-
-
-

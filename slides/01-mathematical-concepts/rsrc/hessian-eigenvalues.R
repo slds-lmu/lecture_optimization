@@ -1,5 +1,11 @@
+# ------------------------------------------------------------------------------
+# mathematical concepts
+
+# FIG: plot hessian and eigenvalues of a quadratic form
+# ------------------------------------------------------------------------------
 library(ggplot2)
 library(ggpubr)
+# ------------------------------------------------------------------------------
 
 # Two quadratic functions
 
@@ -63,4 +69,4 @@ p3 = p3 + xlab(expression(x[1])) + ylab(expression(x[2])) + theme_bw()
 
 p = ggarrange(p1, p2, p3, nrow=1, common.legend = TRUE, legend="right")
 
-ggsave("figure_man/hessian-eigenvalues.pdf", p, width = 12, height = 4)
+ggsave("../figure_man/hessian-eigenvalues.pdf", p, width = 12, height = 4)

@@ -3,181 +3,114 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Second order methods
-  }{% Lecture title  
-  Newton-Raphson vs Gradient Descent
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/NR_2.png
-  }{
-    \item Comparison of Newton-Raphson and Gradient Descent
-    \item Pure Newton vs relaxed Newton with step size
+\titlemeta{
+Second order methods
+}{
+Newton-Raphson vs Gradient Descent
+}{
+figure/NR_2.png
+}{
+\item Comparison of Newton-Raphson and Gradient Descent
+\item Pure Newton vs relaxed Newton with step size
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Newton-Raphson and GD (Recap)}
-
-\begin{itemize}
-    \setlength{\itemsep}{0.6em}
-    \item Gradient Descent: \textbf{first order method}\\
-        $\Rightarrow$ \textit{Gradient} information, i.e., first derivatives 
-    \item Newton-Raphson: \textbf{second order method}\\
-        $\Rightarrow$ \textit{Hessian} information, i.e., second derivatives
-\end{itemize}
-
-\textbf{Gradient Descent:} 
-\begin{align*}
-\xv^{[t+1]} &= \xv^{[t]} - \alpha \nabla f(\xv^{[t]})
-\end{align*}
-
-
-\textbf{Pure Newton-Raphson:} 
-\begin{align*}
-\xv^{[t+1]} &= \xv^{[t]} - \left(\nabla^2 f(\xv^{[t]})\right)^{-1}\nabla f(\xv^{[t]})
-\end{align*}
-
-\textbf{Relaxed/Damped Newton-Raphson:} 
-\begin{equation*}
-\xv^{[t+1]} = \xv^{[t]} -\alpha \left(\nabla^2 f(\xv^{[t]})\right)^{-1}\nabla f(\xv^{[t]})
-\end{equation*}
-
-% \begin{vbframe}{Newton-Raphson}
-% Der Newton-Raphson-Algorithmus benutzt als \textbf{Abstiegsrichtung}
-% $$
-% \mathbf{d}_{i} = -(\nabla^2 f(\xv_{i}))^{-1} \nabla f(\xv_{i})
-% $$
-% Dies kann auf mehrere Arten motiviert werden:
-% \begin{itemize}
-% \item Man löst die Gleichung $\nabla f(\xv) = \mathbf{0}$, indem man den Gradienten durch
-% eine Taylorreihe erster Ordnung approximiert:
-% $$
-% \nabla f(\xv) \approx \nabla f(\xv_{i}) +
-% \nabla^2 f(\xv_{i})(\xv - \xv_{i}) = \mathbf{0}.
-% $$
-% \item Man adjustiert die Richtung $-\nabla f(\xv_{i})$ vom ``steilsten Abstieg'' an die lokale
-% Krümmung $\nabla^2 f(\xv_{i})$.
-% \end{itemize}
-% Im Vergleich zum \enquote{steilsten Abstieg}: Newton-Raphson divergiert ebenfalls leicht, hat aber quadratische
-% Konvergenz nahe beim Minimum.
-
-\end{vbframe}
-
-\begin{vbframe}{Comparison simulation set-up}
-Comparison of Newton-Raphson, relaxed NR and GD+momentum:
-{\normalsize
-\begin{itemize}\setlength{\itemsep}{0.75em} 
-    \item \textbf{Logistic regression} (log loss) simulation with $n=500$ samples and $p=11$ features, where $\thetav^{\ast}=(-5,-4,\ldots0,\ldots,4,5)^{\top}$, and $\bm{X} \sim \mathcal{N}(\bm{0}, \Sigma)$ for $\Sigma=\bm{I}$ (i.i.d.) or $\Sigma_{i,j}=0.99^{|i-j|}$ (corr. features)
-    \item To simulate response, we set $y^{(i)} \sim \mathcal{B}(\pi^{(i)}), \pi^{(i)} = \frac{1}{1+e^{-\left(\bm{x}^{(i)}\right)^{\top}\thetav^{\ast}}}$
-    \item Indep. features result in a condition number of $\approx 2.9$ while corr. features yield (moderately) bad condition number $\approx 600$
-    \item ERM has unique global minimizer (convexity) but no closed-form solution. We can approximate $\hat{\thetav}$ using \texttt{glm} solution
-    \item We als track the optimization error $\Vert \thetav - \bm{\thetah} \Vert_2$
-    \item For relaxed NR we use $\alpha=0.7$ and for GD we set $\alpha=1$, momentum to $0.8$ and use no step size control
-\end{itemize}
-}
-\end{vbframe}
+\begin{framei}{Newton-Raphson and GD (Recap)}
+\item Gradient Descent: \textbf{first order method} \\
+$\Rightarrow$ \textit{Gradient} information, i.e., first derivatives 
+\item Newton-Raphson: \textbf{second order method} \\
+$\Rightarrow$ \textit{Hessian} information, i.e., second derivatives
+\vfill
+\item[] \textbf{Gradient Descent:}
+$$
+\thetatn = \thetat - \alpha \nabla f(\thetat)
+$$
+\item[] \textbf{Pure Newton-Raphson:}
+$$
+\thetatn = \thetat - (\nabla^2 f(\thetat))^{-1}\nabla f(\thetat)
+$$
+\item[] \textbf{Relaxed/Damped Newton-Raphson:}
+$$
+\thetatn = \thetat -\alpha (\nabla^2 f(\thetat))^{-1}\nabla f(\thetat)
+$$
+\end{framei}
 
 
-%%% GD logistic
+\begin{framei}{Comparison simulation set-up}
+\item Comparison of Newton-Raphson, relaxed NR and GD+momentum:
+\item \textbf{Logistic regression} (log loss) simulation with $n=500$ samples and $p=11$ features, where $\thetav^{\ast}=(-5,-4,\ldots0,\ldots,4,5)^T$, and $\Xmat \sim \normal(\zero, \Sigma)$ for $\Sigma=\id$ (i.i.d.) or $\Sigma_{i,j}=0.99^{|i-j|}$ (corr. features)
+\item To simulate response, we set $\yi \sim \mathcal{B}(\pi^{(i)}), \pi^{(i)} = \frac{1}{1+e^{-(\xv^{(i)})^T\thetav^{\ast}}}$
+\item Indep. features result in a condition number of $\approx 2.9$ while corr. features yield (moderately) bad condition number $\approx 600$
+\item ERM has unique global minimizer (convexity) but no closed-form solution. We can approximate $\thetavh$ using \texttt{glm} solution
+\item We also track the optimization error $|| \thetav - \thetavh ||_2$
+\item For relaxed NR we use $\alpha=0.7$ and for GD we set $\alpha=1$, momentum to $0.8$ and use no step size control
+\end{framei}
 
 
-\begin{vbframe}{Logistic Regression (GD variants recap)}
-\vspace{-0.3cm}
-Recall comparison of GD variants on log. reg. in last chapter:
-\begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_med_lr_iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/04-multivariate-first-order/figure_man/simu_linmod/GD_log_coef_med.pdf}\\
-            \begin{footnotesize}
-            Dotted lines indicate global minimizers.
-                %Dashed line in test loss indicates irreducible error due to $\sigma=1$ 
-            \end{footnotesize}
-\end{figure}
-\vspace{-0.2cm}
-\textbf{GD+momentum} was fastest $\Rightarrow$ now compare w/ Newton-Raphson.\\
-\textbf{NB}: GD+momentum only converges after several thousand steps
-\end{vbframe}
-
-\begin{vbframe}{Logistic Regression (GD vs. NR)}
-\vspace{-0.4cm}
-Let's run GD vs. NR for \textbf{$1000$ steps} (independent features):
-\begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_indep_1000iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_coef_1000indep.pdf}\\
-            \begin{footnotesize}
-            Dotted lines indicate global minimizers.
-                %Dashed line in test loss indicates irreducible error due to $\sigma=1$ 
-            \end{footnotesize}
-\end{figure}
-\vspace{-0.3cm}
-\textbf{NR} and \textbf{relaxed NR} $\Rightarrow$ almost instantaneous convergence (see optimization error). Using $\alpha<1$ slightly slows down \textbf{relaxed NR}. \textbf{GD+mom} several orders of magnitude slower than NR. 
-\end{vbframe}
-
-\begin{vbframe}{Logistic Regression (GD vs. NR)}
-\vspace{-0.4cm}
-Let's run the same configuration only for \textbf{$50$ steps} to see clearer picture:
-\begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_indep_50iters.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_coef_50indep.pdf}\\
-            \begin{footnotesize}
-            Dotted lines indicate global minimizers.
-                %Dashed line in test loss indicates irreducible error due to $\sigma=1$ 
-            \end{footnotesize}
-\end{figure}
-\textbf{NR} takes $\approx 10$ steps to reach same optimization error as \textbf{GD+mom} after $20,000$ steps! \textbf{Relaxed NR} with $\alpha<1$ shows no advantage here.
-\end{vbframe}
+\begin{framei}{Logistic Regression (GD variants recap)}
+\item Recall comparison of GD variants on log. reg. in last chapter:
+\imageC[0.8]{figure_man/GD_log_med_lr_iters.pdf}
+\imageC[0.8]{figure_man/GD_log_coef_med.pdf}
+{\footnotesize Dotted lines indicate global minimizers.}
+\item \textbf{GD+momentum} was fastest $\Rightarrow$ now compare w/ Newton-Raphson
+\item \textbf{NB}: GD+momentum only converges after several thousand steps
+\end{framei}
 
 
-\begin{vbframe}{Runtime comparison (indep.)}
-\vspace{-0.2cm}
-{\small Clearly, NR makes more progress than GD per iteration. OTOH Newton steps are much more expensive than GD updates\\
-$\Rightarrow$ How do NR and GD compare wrt runtime instead of iterations (50 steps)?}
-\begin{figure}
-            \includegraphics[width=1.0\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_runtime_comparison.pdf} \\
-            %\begin{footnotesize}
-            %    Irreducible error due to additive noise is $\sigma=1$
-            %\end{footnotesize}
-\end{figure} 
-\vspace{-0.3cm}
-\textbf{Observations}:\\ 1. \textbf{NR} steps are indeed slower than \textbf{GD} steps ($\approx 3\times$ here)\\
-2. But each step NR step is so much better than GD ($\approx 2000 \times$) that per-iteration runtime advantage of GD becomes \textbf{irrelevant}\\
-\end{vbframe}
+\begin{framei}[fs=footnotesize]{Logistic Regression (GD vs. NR)}
+\item Let's run GD vs. NR for \textbf{$1000$ steps} (independent features):
+\imageC[0.7]{figure_man/simu-newton/NR_GD_log_indep_1000iters.pdf}
+\imageC[0.7]{figure_man/simu-newton/NR_GD_log_coef_1000indep.pdf}
+Dotted lines indicate global minimizers.
+\item \textbf{NR} and \textbf{relaxed NR} $\Rightarrow$ almost instantaneous convergence (see optimization error)
+\item Using $\alpha<1$ slightly slows down \textbf{relaxed NR}
+\item \textbf{GD+mom} several orders of magnitude slower than NR
+\end{framei}
 
-\begin{vbframe}{Logistic Regression (corr.)}
-\vspace{-0.4cm}
-In case of correlated features the results are very similar:
-\begin{figure}
-            \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_indep_50iters_corr.pdf} \\
-             \includegraphics[width=0.8\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_log_coef_50indep_corr.pdf}\\
-            \begin{footnotesize}
-            Dotted lines indicate global minimizers.
-                %Dashed line in test loss indicates irreducible error due to $\sigma=1$ 
-            \end{footnotesize}
-\end{figure}
-It can be noted that \textbf{NR}'s performance is unaffected by feature correlation while \textbf{GD} iterates become ``warped`` compared to before
-\end{vbframe}
 
-\begin{vbframe}{Runtime comparison (corr.)}
-\vspace{-0.2cm}
-Previous conclusions on runtime comparison for independent features carry over to correlated feature case:
-\bigskip
+\begin{framei}[fs=footnotesize]{Logistic Regression (GD vs. NR)}
+\item Let's run the same configuration only for \textbf{$50$ steps} to see clearer picture:
+\imageC[0.8]{figure_man/simu-newton/NR_GD_log_indep_50iters.pdf}
+\imageC[0.8]{figure_man/simu-newton/NR_GD_log_coef_50indep.pdf}
+Dotted lines indicate global minimizers.
+\item \textbf{NR} takes $\approx 10$ steps to reach same optimization error as \textbf{GD+mom} after $20,000$ steps!
+\item \textbf{Relaxed NR} with $\alpha<1$ shows no advantage here
+\end{framei}
 
-\begin{figure}
-            \includegraphics[width=1.0\textwidth]{slides/05-multivariate-second-order/figure_man/simu-newton/NR_GD_runtime_comparison_corr.pdf} \\
-            %\begin{footnotesize}
-            %    Irreducible error due to additive noise is $\sigma=1$
-            %\end{footnotesize}
-\end{figure} 
-\vspace{-0.3cm}
-\textbf{Observations}:\\ 1. \textbf{NR} steps are indeed slower than \textbf{GD} steps ($\approx 4\times$ here)\\
-2. Overall \textbf{NR} is strongly superior to \textbf{GD} wrt optim error and speed\\
-\end{vbframe}
+
+\begin{framei}[fs=footnotesize]{Runtime comparison (indep.)}
+\item Clearly, NR makes more progress than GD per iteration
+\item OTOH Newton steps are much more expensive than GD updates
+\item $\Rightarrow$ How do NR and GD compare wrt runtime instead of iterations (50 steps)?
+\imageC[0.9]{figure_man/simu-newton/NR_GD_runtime_comparison.pdf}
+\item[] \textbf{Observations:}
+\item \textbf{NR} steps are indeed slower than \textbf{GD} steps ($\approx 3\times$ here)
+\item But each NR step is so much better than GD ($\approx 2000 \times$) that per-iteration runtime advantage of GD becomes \textbf{irrelevant}
+\end{framei}
+
+
+\begin{framei}{Logistic Regression (corr.)}
+\item In case of correlated features the results are very similar:
+\imageC[0.8]{figure_man/simu-newton/NR_GD_log_indep_50iters_corr.pdf}
+\imageC[0.8]{figure_man/simu-newton/NR_GD_log_coef_50indep_corr.pdf}
+{\footnotesize Dotted lines indicate global minimizers.}
+\item \textbf{NR}'s performance is unaffected by feature correlation
+\item \textbf{GD} iterates become ``warped'' compared to before
+\end{framei}
+
+
+\begin{framei}{Runtime comparison (corr.)}
+\item Previous conclusions on runtime comparison for independent features carry over to correlated feature case:
+\imageC[0.95]{figure_man/simu-newton/NR_GD_runtime_comparison_corr.pdf}
+\item[] \textbf{Observations:}
+\item \textbf{NR} steps are indeed slower than \textbf{GD} steps ($\approx 4\times$ here)
+\item Overall \textbf{NR} is strongly superior to \textbf{GD} wrt optim error and speed
+\end{framei}
 
 \endlecture
 \end{document}
-
-
-

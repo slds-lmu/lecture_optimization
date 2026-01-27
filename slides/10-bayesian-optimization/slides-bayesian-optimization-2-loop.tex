@@ -3,252 +3,201 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 \input{../../latex-math/ml-mbo}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Bayesian Optimization
-  }{% Lecture title  
-  Basic BO Loop and Surrogate Modelling
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/loop_2.png
-  }{
-    \item Initial design
-    \item Surrogate modeling
-    \item Basic loop
+\titlemeta{
+Bayesian Optimization
+}{
+Basic BO Loop and Surrogate Modelling
+}{
+figure_man/loop_2.png
+}{
+\item Initial design
+\item Surrogate modeling
+\item Basic loop
 }
 
-\begin{vbframe}{Optimization via Surrogate Modeling}
-
-\textbf{Starting point:}
-\begin{itemize}
-\item We do not know the objective function $f: \mathcal{S} \to \R$
-\item But we can evaluate $f$ for a few different inputs $\xv \in \mathcal{S}$
+\begin{framei}{Optimization via Surrogate Modeling}
+\item[] \textbf{Starting point:}
+\item We do not know the objective function $f: \S \to \R$
+\item But we can evaluate $f$ for a few different inputs $\xv \in \S$
 \item For now we assume that those evaluations are noise-free
-
 \item \textbf{Idea:}
-  Use the data $\Dt = \{(\xvsi, \ysi)\}_{i = 1, \ldots t}$, $\ysi := f(\xvsi)$, to derive properties about the unknown function $f$
-\end{itemize}
+Use the data $\Dt = \{(\xvsi, \ysi)\}_{i = 1, \ldots t}$, $\ysi := f(\xvsi)$, to derive properties about the unknown function $f$
+\vfill
+\imageC[0.5]{figure_man/loop_1.png}
+\end{framei}
 
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_1.png}
-\end{center}
 
-\end{vbframe}
-
-\begin{vbframe}{Initial Design}
-
-\begin{itemize}
+\begin{framei}{Initial Design}
 \item Should cover / explore input space sufficiently:
 \begin{itemize}
-  \item Random design
-  \item Latin hypercube sampling
-  \item Sobol sampling
+\item Random design
+\item Latin hypercube sampling
+\item Sobol sampling
 \end{itemize}
 \item Type of design usually has not the largest effect
-%and unequal distances between points could even be beneficial
 \item A more important choice is the \textbf{size} of the initial design
 \begin{itemize}
-  \item Should neither be too small (bad initial fit) nor too large (spending too much budget without doing \enquote{intelligent} optimization)
-  \item Rule of thumb: $4d$
+\item Should neither be too small (bad initial fit) nor too large (spending too much budget without doing \enquote{intelligent} optimization)
+\item Rule of thumb: $4d$
 \end{itemize}
-\end{itemize}
-\end{vbframe}
+\end{framei}
 
-\begin{frame}{Latin Hypercube Sampling}
 
-\begin{columns}[T]
-\begin{column}{0.5\textwidth}
+\begin{framev}{Latin Hypercube Sampling}
+\splitVCC[0.5]{
 \begin{itemize}
 \item LHS partitions the search space into bins of equal probability
 \item Goal is to attain a more even distribution of sample points than random sampling
 \item Allow at most one sample per bin; exactly one sample per row and column
 \end{itemize}
-\end{column}
-
-\begin{column}{0.5\textwidth}
-\center
-\includegraphics[width = 0.75\textwidth]{figure_man/init_0.png}
-\includegraphics[width = 0.75\textwidth]{figure_man/init_1.png}\\
-\begin{footnotesize}
+}{
+\imageC[0.75]{figure_man/init_0.png}
+\imageC[0.75]{figure_man/init_1.png}
+\begin{footnotesize}\begin{center}
 Marginal histograms RS vs. LHS
-\end{footnotesize}
-\end{column}
-\end{columns}
+\end{center}\end{footnotesize}
+}
+\end{framev}
 
-\end{frame}
 
-\begin{frame}{Latin Hypercube Sampling}
-
-Actual sampling of points, e.g., constructed via \textbf{Maximin}:\\
+\begin{framev}{Latin Hypercube Sampling}
+Actual sampling of points, e.g., constructed via \textbf{Maximin}:
 \begin{itemize}
 \item The minimum distance between any two points in $\D$ is $2q = \min_{\xv \in \D, \xv' \in \D} \rho(\xv, \xv')$ ($\rho$ any metric, e.g., Euclidean distance)
 \item $q$ is the packing radius - the radius of the largest ball that can be placed around every design point such that no two balls overlap
 \item Goal: Find $\D$ that maximizes $2q$: $\max_{\D} \min_{\xv \in \D, \xv' \in \D} \rho(\xv, \xv')$
 \item Ensures that the design points in $\D$ are as far apart from each other as possible
 \end{itemize}
+\end{framev}
 
-\end{frame}
 
-\begin{frame}{Surrogate Modeling}
-
+\begin{framev}{Surrogate Modeling}
 Running example = minimize this \enquote{black-box}:
-
-\begin{center}
-  \includegraphics[width = 0.8\textwidth]{figure_man/loop_0.png}
-\end{center}
-
-\end{frame}
+\vfill
+\imageC[0.8]{figure_man/loop_0.png}
+\end{framev}
 
 
-
-\begin{vbframe}{Surrogate Modeling}
+\begin{framev}{Surrogate Modeling}
 \begin{enumerate}
 \item \textbf{Fit} a \textbf{regression model} $\fh: \Dt \rightarrow \R$ (blue) to extract maximum information from the design points (black) and learn properties of $f$
-\vspace{+.05cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_2.png}
-\end{center}
-
-\vspace{-.1cm}
-As we can eval $f$ without noise, we fit an interpolator
-
-\framebreak 
-
-\item Instead of the expensive $f$, we optimize the cheap 
- surrogate $\fh$ (blue) to \textbf{propose} a new point (red) for evaluation 
-\vspace{+.05cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_3.png}
-\end{center}
-
-%\vspace{-.1cm}
-%In the context of BO, model is called \textbf{surrogate}, because it is a cheap approximation of $f$, which is used in its place.
-
-\framebreak 
-
-\item We finally evaluate the newly proposed point
-\vspace{+.45cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_4.png}
-\end{center}
-
 \end{enumerate}
+\vfill
+\imageC[0.7]{figure_man/loop_2.png}
+\begin{center}
+As we can eval $f$ without noise, we fit an interpolator
+\end{center}
+\end{framev}
 
-\end{vbframe}
 
-\begin{frame}{Surrogate Modeling}
+\begin{framev}{Surrogate Modeling}
+\begin{enumerate}
+\setcounter{enumi}{1}
+\item Instead of the expensive $f$, we optimize the cheap surrogate $\fh$ (blue) to \textbf{propose} a new point (red) for evaluation 
+\end{enumerate}
+\vfill
+\imageC[0.7]{figure_man/loop_3.png}
+\end{framev}
 
+
+\begin{framev}{Surrogate Modeling}
+\begin{enumerate}
+\setcounter{enumi}{2}
+\item We finally evaluate the newly proposed point
+\end{enumerate}
+\vfill
+\imageC[0.7]{figure_man/loop_4.png}
+\end{framev}
+
+
+\begin{framev}{Surrogate Modeling}
 \begin{itemize}
-
-\only<1>{
 \item After evaluation of the new point, we \textbf{adjust} the model on the expanded dataset via (slower) refitting or a (cheaper) online update
-\vspace{+.45cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_5.png}
-\end{center}
-}
-\only<2>{
-\item We again obtain a new candidate point (red) by optimizing the cheap surrogate model function (blue) ...
-\vspace{+.45cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_6.png}
-\end{center}
-}
-
-\only<3>{
-\item ... and evaluate that candidate
-\vspace{+.45cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_7.png}
-\end{center}
-}
-
-\only<4>{
-\item We repeat: (i) \textbf{fit} the model
-\vspace{+.45cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_8.png}
-\end{center}
-}
-
-\only<5>{
-\item (ii) \textbf{propose} a new point
-\vspace{+.45cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_9.png}
-\end{center}
-}
-
-\only<6>{
-\item (iii) \textbf{evaluate} that point
-\vspace{+.45cm}
-
-\begin{center}
-  \includegraphics[width = 0.5\textwidth]{figure_man/loop_10.png}
-\end{center}
-\item We observe that the algorithm converged
-}
-
 \end{itemize}
+\vfill
+\imageC[0.7]{figure_man/loop_5.png}
+\end{framev}
 
-\end{frame}
 
-\begin{vbframe}{Basic Loop}
-
-The basic loop of our sequential optimization procedure is:
-  \begin{enumerate}
-    \item Fit surrogate model $\fh$ on previous evaluations $\Dts$
-    \item Optimize the surrogate model $\fh$ to obtain a new point $\xvsi[t+1] \coloneqq \argmin_{\xv \in \mathcal{S}} \fh(\xv)$
-    \item Evaluate $\xvsi[t+1]$ and update data $\Dt[t+1] = \Dt \cup \{(\xvsi[t+1], f(\xvsi[t+1]))\}$
-  \end{enumerate}
-
-\end{vbframe}
-
-\begin{vbframe}{Exploration vs. Exploitation}
-
-We see: We ran into a local minimum. We did not \enquote{explore} the most crucial areas and \textbf{missed} the global minimum.
-
-\vspace*{0.5cm} 
-
-\begin{columns}[T]
-\begin{column}{0.5\textwidth}
-  \includegraphics[width = \textwidth]{figure_man/loop_11.png}\end{column}
-\begin{column}{0.5\textwidth}
+\begin{framev}{Surrogate Modeling}
 \begin{itemize}
-  %\item We will define so-called acquisition functions based on the prediction of the surrogate model which we then optimize
-\item Better ways to propose points based on our model exist, so-called \textbf{acquisition functions}
-  \item Optimizing SM directly corresponds to raw / mean prediction as AQF
-  \item Results in \textbf{high exploitation but low exploration}
+\item We again obtain a new candidate point (red) by optimizing the cheap surrogate model function (blue) ...
 \end{itemize}
-\end{column}
+\vfill
+\imageC[0.7]{figure_man/loop_6.png}
+\end{framev}
 
-\end{columns}
+
+\begin{framev}{Surrogate Modeling}
+\begin{itemize}
+\item ... and evaluate that candidate
+\end{itemize}
+\vfill
+\imageC[0.7]{figure_man/loop_7.png}
+\end{framev}
 
 
-%The black line is the \enquote{unknown} black-box function the sequential optimization procedure has been applied to
-%\vspace*{0.2cm} 
-%We see: We ran into a local minimum. We did not \enquote{explore} the most crucial areas and \textbf{missed} the global minimum
+\begin{framev}{Surrogate Modeling}
+\begin{itemize}
+\item We repeat: (i) \textbf{fit} the model
+\end{itemize}
+\vfill
+\imageC[0.7]{figure_man/loop_8.png}
+\end{framev}
 
-%\vspace{+.45cm}
 
-%\begin{center}
-  %\includegraphics[width = 0.5\textwidth]{figure_man/loop_11.png}
-%\end{center}
+\begin{framev}{Surrogate Modeling}
+\begin{itemize}
+\item (ii) \textbf{propose} a new point
+\end{itemize}
+\vfill
+\imageC[0.7]{figure_man/loop_9.png}
+\end{framev}
 
-\end{vbframe} 
+
+\begin{framev}{Surrogate Modeling}
+\begin{itemize}
+\item (iii) \textbf{evaluate} that point
+\end{itemize}
+\vfill
+\imageC[0.7]{figure_man/loop_10.png}
+\spacer
+\begin{itemize}
+\item We observe that the algorithm converged
+\end{itemize}
+\end{framev}
+
+
+\begin{framev}{Basic Loop}
+The basic loop of our sequential optimization procedure is:
+\begin{enumerate}
+\item Fit surrogate model $\fh$ on previous evaluations $\Dts$
+\item Optimize the surrogate model $\fh$ to obtain a new point $\xvsi[t+1] \coloneqq \argmin_{\xv \in \S} \fh(\xv)$
+\item Evaluate $\xvsi[t+1]$ and update data $\Dt[t+1] = \Dt \cup \{(\xvsi[t+1], f(\xvsi[t+1]))\}$
+\end{enumerate}
+\end{framev}
+
+
+\begin{framev}{Exploration vs. Exploitation}
+We see: We ran into a local minimum. We did not \enquote{explore} the most crucial areas and \textbf{missed} the global minimum.
+\vfill
+\splitVCC[0.5]{
+\imageC[1]{figure_man/loop_11.png}
+}{
+\begin{itemize}
+\item Better ways to propose points based on our model exist, so-called \textbf{acquisition functions}
+\item Optimizing SM directly corresponds to raw / mean prediction as AQF
+\item Results in \textbf{high exploitation but low exploration}
+\end{itemize}
+}
+\end{framev}
 
 \endlecture
-
 \end{document}

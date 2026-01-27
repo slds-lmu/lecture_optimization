@@ -1,0 +1,283 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/optim-basics}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Mathematical Concepts 
+}{
+Quadratic functions II
+}{
+figure_man/quadratic_functions_2D_example_2_4.png
+}{
+\item Geometry of quadratic functions
+\item Spectrum of Hessian
+}
+
+% ------------------------------------------------------------------------------
+
+\begin{framei}{Properties of quadratic functions}
+\item $q(\xv) = \xv^T \A \xv + \bv^T \xv + c$
+\item Under symmetry: $\H = 2 \A$
+\item Convexity/concavity of $q$ depend on eigenvalues of $\H$
+\end{framei}
+  
+% \begin{vbframe}{Geometry of quadratic functions}
+  
+% \textbf{Example:} $\Amat = \begin{pmatrix} 2 & -1 \\ -1 & 2\end{pmatrix}$ $\implies$ $\H = 2\Amat = \begin{pmatrix} 4 & -2 \\ -2 & 4\end{pmatrix}$
+
+% \begin{itemize}
+%     \item Since~$\H$ symmetric, eigendecomposition $\H = \V\Lambda\V^T$ with
+%         \begin{equation*}
+%             \V = \begin{pmatrix}
+%                     | & | \\
+%                     \textcolor{magenta}{v_\text{max}} & \textcolor{orange}{v_\text{min}} \\
+%                     | & |
+%                 \end{pmatrix}
+%                 = \frac{1}{\sqrt{2}} \begin{pmatrix}
+%                     1 & 1 \\
+%                     -1 & 1
+%                 \end{pmatrix}
+%             \text{ orthogonal}
+%         \end{equation*}
+%         \begin{equation*}
+%             \text{and }
+%             \Lambda = \begin{pmatrix}
+%                 \textcolor{magenta}{\lambda_\text{max}} & 0 \\
+%                 0 & \textcolor{orange}{\lambda_\text{min}}
+%             \end{pmatrix}
+%             = \begin{pmatrix}6 & 0 \\ 0 & 2\end{pmatrix}.
+%         \end{equation*}
+% \end{itemize}
+
+% \vspace{-0.5\baselineskip}
+
+% \begin{figure}
+%     \includegraphics[height=0.28\textwidth,keepaspectratio]{figure_man/quadr-eigenv.png}
+% \end{figure}
+  
+% \framebreak
+    
+% \begin{itemize}
+%     \item $\textcolor{magenta}{\vv_\text{max}}$ ($\textcolor{orange}{\vv_\text{min}}$) direction of highest (lowest) curvature
+
+%         \vspace{0.25\baselineskip}
+    
+%         \begin{footnotesize}
+%             \textbf{Proof:} With $\vv=\V^T\xv$:
+
+%             \vspace{-\baselineskip}
+            
+%             \begin{equation*}
+%                 \xv^T \H \xv = \xv^T\V\Lambda\V^T\xv = \vv^T\Lambda\vv = \sum_{i=1}^d \lambda_iv_i^2 \leq \textcolor{magenta}{\lambda_\text{max}} \sum_{i=1}^d v_i^2 = \textcolor{magenta}{\lambda_\text{max}}\|\vv\|^2
+%             \end{equation*}
+%             Since $\|\vv\| = \|\xv\|$ ($\V$ orthogonal): $\max_{\|\xv\|=1} \xv^T \H \xv \leq \textcolor{magenta}{\lambda_\text{max}}$
+            
+%             Additional: $\textcolor{magenta}{\vv_\text{max}}^T \H \textcolor{magenta}{\vv_\text{max}} = \mathbf{e}_1^T\Lambda\mathbf{e}_1 = \textcolor{magenta}{\lambda_\text{max}}$
+
+%             Analogous: $\min_{\|\xv\|=1} \xv^T \H \xv \geq \textcolor{orange}{\lambda_\text{min}}$ and $\textcolor{orange}{\vv_\text{min}}^T \H \textcolor{orange}{\vv_\text{min}} = \textcolor{orange}{\lambda_\text{min}}$
+%         \end{footnotesize}
+
+%     \medskip
+
+%     \item Contour lines of any quadratic functions are ellipses \\
+%     (with eigenvectors of A as principal axes)
+%         % \vspace{0.25\baselineskip}
+    
+%         % \begin{footnotesize}
+%         % Look at $q(\xv) = \xv^T \A \xv + \bv^T \xv + c$ \\
+%         % Now use $\yv = \xv - \wv = \xv + \frac{1}{2} \A^{-1} \bv$\\
+%         % This already gives us the general form of an ellipse:\\
+%         % $\yv^T \A \yv = (\xv-\wv)^T \A (\xv-\wv) = q(\xv) + const$\\
+%         % If we use $\zv = \vv^T y$ we obtain it in standard form\\
+%         % $\sumin \lambda_i z_i^2 = \zv^T \bm{\Lambda} \zv = y^T \vv \bm{\Lambda} \vv^T y = \yv^T \A \yv = q(\xv) + const $
+%         % \end{footnotesize}
+
+        
+%         %     \textbf{Proof:} With $\vv=\V^T\xv$:
+
+%         %     \vspace{-0.5\baselineskip}
+
+%         %     \begin{equation*}
+%         %         q(\xv) = \xv^T \H \xv + \bv^T\xv + c = \vv^T\Lambda\vv + \bv^T V \vv + c =: \tilde{q}(\vv)
+%         %     \end{equation*}
+
+%         %     Now:
+%         %     \begin{equation*}
+%         %         q(\vv_j) = \mathbf{e}_j^T\Lambda\mathbf{e}_j + \bv^T V \mathbf{e}_j + c = \tilde{q}(\mathbf{e}_j)
+%         %     \end{equation*}
+
+%         %     Especially: $q(\textcolor{magenta}{\vv_\text{max}}) = \textcolor{magenta}{\lambda_\text{max}} = \tilde{q}(\mathbf{e}_1) \quad\text{and}\quad q(\textcolor{orange}{\vv_\text{min}}) = \textcolor{orange}{\lambda_\text{min}} = \tilde{q}(\mathbf{e}_d)$
+%         % \end{footnotesize}
+% \end{itemize}
+
+% Recall: \textbf{Second order condition for optimality} is \textbf{sufficient}.
+
+% \medskip
+
+% We skipped the \textbf{proof} at first, but can now catch up on it.
+
+
+%     \footnotesize
+%      If $H(\xv^\ast) \succ 0$ at stationary point~$\xv^\ast$, then $\xv^\ast$ is local minimum ($\prec$ for maximum).
+
+%      \medskip
+
+%     \textbf{Proof:}
+%     Let $\textcolor{orange}{\lambda_\text{min}}>0$ denote the smallest eigenvalue of $H(\xv^\ast)$.
+%     Then:
+    
+%     %\vspace{-1.25\baselineskip}
+    
+%     \begin{equation*}
+%         f(\xv) = f(\xv^\ast) + \underbrace{\nabla f(\xv^\ast)}_{=0}{}(\xv-\xv^\ast) + \frac{1}{2}\underbrace{(\xv-\xv^\ast)^T H(\xv^\ast)(\xv-\xv^\ast)}_{\geq \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2 \text{ (see above)}} + \underbrace{R_2(\xv,\xv^\ast)}_{=o(\|\xv-\xv^\ast\|^2)}.
+%     \end{equation*}
+
+%     Choose~$\eps>0$ s.t. $|R_2(\xv,\xv^\ast)| < \frac{1}{2} \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2$ for each~$\xv \neq \xv^\ast$ with $\|\xv-\xv^\ast\|<\eps$.
+%     Then:
+
+%     \vspace{-1.25\baselineskip}
+
+%     \begin{equation*}
+%         f(\xv) \geq f(\xv^\ast) + \underbrace{\frac{1}{2} \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2 + R_2(\xv,\xv^\ast)}_{>0} > f(\xv^\ast) \quad\text{for each $\xv \neq \xv^\ast$ with $\|\xv-\xv^\ast\|<\eps$}.
+%     \end{equation*}
+
+
+% \framebreak
+
+% If spectrum of~$\Amat$ is known, also that of $\H = 2\Amat$ is known.
+
+% \begin{itemize}
+%     \item If \textbf{all} eigenvalues of $\H$ $\overset{(>)}{\geq} 0$ ($\Leftrightarrow$ $\H \overset{(\succ)}{\succcurlyeq} 0$):
+%         \begin{itemize} 
+%             \item $q$ (strictly) convex,
+%             \item there is a (unique) global minimum. 
+%         \end{itemize}
+%     \item If \textbf{all} eigenvalues of $\H$ $\overset{(<)}{\leq} 0$ ($\Leftrightarrow$ $\H \overset{(\prec)}{\preccurlyeq} 0$):
+%         \begin{itemize} 
+%             \item $q$ (strictly) concave,
+%             \item there is a (unique) global maximum. 
+%         \end{itemize}
+%     \item If~$\H$ has both positive and negative eigenvalues ($\Leftrightarrow$ $\H$ indefinite):
+%         \begin{itemize}
+%             \item $q$ neither convex nor concave,
+%             \item there is a saddle point.
+%         \end{itemize}
+% \end{itemize}
+
+% % \begin{figure}
+% %     \includegraphics[width=0.3\textwidth, keepaspectratio]{figure_man/minmaxsaddle_2.png}
+% % \end{figure}
+
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=0.67\textwidth]{figure_man/minmaxsaddle.png}
+% \end{figure}
+
+% \end{vbframe}
+
+\begin{framei}{Geometry of quadratic functions}
+\item Example: $\Amat = \begin{pmatrix} 2 & -1 \\ -1 & 2\end{pmatrix}$ $\Rightarrow$ $\H = 2\Amat = \begin{pmatrix} 4 & -2 \\ -2 & 4\end{pmatrix}$
+\item Since $\H$ symmetric: eigendecomposition $\H = \V\Lambda\V^T$
+\begin{equation*}
+\V = \begin{pmatrix}
+| & | \\
+\textcolor{magenta}{v_\text{max}} & \textcolor{orange}{v_\text{min}} \\
+| & |
+\end{pmatrix}
+= \frac{1}{\sqrt{2}} \begin{pmatrix}
+1 & 1 \\
+-1 & 1
+\end{pmatrix}\;\text{orthogonal}
+\end{equation*}
+\begin{equation*}
+\Lambda = \begin{pmatrix}
+\textcolor{magenta}{\lambda_\text{max}} & 0 \\
+0 & \textcolor{orange}{\lambda_\text{min}}
+\end{pmatrix}
+= \begin{pmatrix}6 & 0 \\ 0 & 2\end{pmatrix}
+\end{equation*}
+\imageC[0.35]{figure_man/quadr-eigenv.png}
+\end{framei}
+
+\begin{framei}[fs=footnotesize]{Spectrum and curvature}
+\item $\vvmax$ direction of highest curvature, with curvature value $\lammax$
+$$
+\vv^T \H \vv = \vv^T \V \Lambda \V^T \vv = \wv^T \Lambda \wv = 
+\sumid \lambda_i w_i^2 \le \lammax \sumid w_i^2 = \lammax || \wv ||^2
+$$
+\item Since $|| \vv || = || \xv ||$ ($\V$ orthogonal): 
+$\max_{|| \vv || = 1} \vv^T \H \vv \le \lammax$
+\item For $\vvmax$ we obtain this upper bound:
+$\vvmax^T \H \vvmax = \mathbf{e}_1^T \Lambda \mathbf{e}_1 = \lammax$ 
+\item Analogously, $\vvmin$ direction of lowest curvature, with curvature value $\lammin$
+\item Contour lines of any quadratic function are ellipses
+% \item[] Look at $q(\xv) = \xv^T \A \xv + \bv^T \xv + c$, set $\yv = \xv - \wv = \xv + \tfrac{1}{2} \A^{-1} \bv$
+% \item[] Then $(\xv-\wv)^T \A (\xv-\wv) = \yv^T \A \yv = q(\xv) + \text{const}$
+% \item[] With $\zv = \vv^T \yv$ we obtain standard form: $\sumin \lambda_i z_i^2 = \zv^T \bm{\Lambda} \zv = \yv^T \A \yv = q(\xv) + \text{const}$
+\end{framei}
+
+\begin{framei}[fs=footnotesize]{Second order condition}
+\item Recall: Second order condition for optimality is sufficient
+\item If $H(\xv^\ast) \succ 0$ at stationary point $\xv^\ast$, then $\xv^\ast$ local minimum ($\prec$ for maximum)
+\item[] \begin{equation*}
+f(\xv) = f(\xv^\ast) + \underbrace{\nabla f(\xv^\ast)}_{=0}(\xv-\xv^\ast) + \tfrac{1}{2}\underbrace{(\xv-\xv^\ast)^T H(\xv^\ast)(\xv-\xv^\ast)}_{\ge \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2} + \underbrace{R_2(\xv,\xv^\ast)}_{=o(\|\xv-\xv^\ast\|^2)}
+\end{equation*}
+\item Choose $\eps>0$ s.t. $|R_2(\xv,\xv^\ast)| < \tfrac{1}{2} \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2$ for $\xv \neq \xv^\ast$, $\|\xv-\xv^\ast\|<\eps$
+\item[] \begin{equation*}
+f(\xv) \ge f(\xv^\ast) + \underbrace{\tfrac{1}{2} \textcolor{orange}{\lambda_\text{min}} \|\xv-\xv^\ast\|^2 + R_2(\xv,\xv^\ast)}_{>0} > f(\xv^\ast)
+\end{equation*}
+\end{framei}
+
+\begin{framei}{Eigenvalues and shape}
+\item If spectrum of $\Amat$ is known, also that of $\H = 2\Amat$ is known
+\item If all eigenvalues of $\H$ $\overset{(>)}{\ge 0}$ ($\Leftrightarrow$ $\H \overset{(\succ)}{\succcurlyeq} 0$):
+\begin{itemize}
+\item $q$ (strictly) convex
+\item (Unique) global minimum
+\end{itemize}
+\item If all eigenvalues of $\H$ $\overset{(<)}{\le 0}$ ($\Leftrightarrow$ $\H \overset{(\prec)}{\preccurlyeq} 0$):
+\begin{itemize}
+\item $q$ (strictly) concave
+\item (Unique) global maximum
+\end{itemize}
+\item If $\H$ has both positive and negative eigenvalues ($\Leftrightarrow$ $\H$ indefinite):
+\begin{itemize}
+\item $q$ neither convex nor concave
+\item there is a saddle point
+\end{itemize}
+\imageC[0.67]{figure_man/minmaxsaddle.png}
+\end{framei}
+
+\begin{framei}{Condition and curvature}
+\item $\kappa(\H) = \kappa(\Amat) = |\textcolor{magenta}{\lambda_\text{max}}| / |\textcolor{orange}{\lambda_\text{min}}|$
+\item High condition means
+\begin{itemize}
+\item $|\textcolor{magenta}{\lambda_\text{max}}| \gg |\textcolor{orange}{\lambda_\text{min}}|$
+\item Curvature along $\textcolor{magenta}{\vv_\text{max}} \gg$ along $\textcolor{orange}{\vv_\text{min}}$
+\item Problem for algorithms like gradient descent
+\end{itemize}
+\imageC[1]{figure_man/quadr-conds.png}
+{\footnotesize Left: Excellent condition. Middle: Good condition. Right: Bad condition.}
+\end{framei}
+
+\begin{framei}{Approximation of smooth functions}
+\item Any $f \in \mathcal{C}^2$ can be locally approximated by quadratic function (second order Taylor)
+\item[] \begin{equation*}
+f(\xv) \approx f(\bm{\tilde{x}}) + \nabla f(\bm{\tilde{x}})(\xv-\bm{\tilde{x}}) + \tfrac 12(\xv-\bm{\tilde{x}})^T\nabla^2 f(\bm{\tilde{x}})(\xv-\bm{\tilde{x}})
+\end{equation*}
+\imageC[0.3]{figure_man/taylor_2D_quadratic.png}
+{\footnotesize $f$ and second order approximation: dark vs bright grid. (Source: \url{daniloroccatano.blog})}
+\item $\implies$ Hessians provide information about \textbf{local} geometry of a function
+\end{framei}
+  
+\endlecture
+
+\end{document}
+  
+  

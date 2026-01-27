@@ -4,351 +4,265 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  }{% Lecture title  
-  Linear Programming
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/convex_programs.png
-  }{
-    \item Definition and different forms of an LP
-    \item Geometric intuition of LPs
-    \item Chracteristics of vertices
-    \item Simplex algorithms
+\titlemeta{
+Constrained Optimization
+}{
+Linear Programming
+}{
+figure_man/convex_programs.png
+}{
+\item Definition and different forms of an LP
+\item Geometric intuition of LPs
+\item Characteristics of vertices
+\item Simplex algorithm
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Linear programming}
-
-\textbf{Linear program} (LP):
-\begin{center}
-    optimization problem with \textbf{linear} objective function + \textbf{linear} constraints
-\end{center}
-
-\textbf{General form}
-\vspace*{-1cm}
-
-\begin{eqnarray*}
-\min_{\xv} && \mathbf{c}^\top\xv \\
-\text{s.t. } && \Amat_1\xv \le \mathbf{b}_1\\
-&& \Amat_2\xv \ge \mathbf{b}_2 \\
-&& \Amat_3\xv = \mathbf{b}_3
-\end{eqnarray*}
-
-\textbf{Examples:}\\
-\begin{minipage}{0.45\textwidth}
-    \begin{eqnarray*}
-        \min_{\xv} && \|\Amat\xv-\mathbf{b}\|_1 \Leftrightarrow\\
-        \min_{\xv,\mathbf{s}} && \one^\top\mathbf{s} \\
-        \text{s.t. } && \Amat\xv - \mathbf{b} \le \mathbf{s}\\
-        && \Amat\xv - \mathbf{b} \ge -\mathbf{s}
-    \end{eqnarray*}
-\end{minipage}
-\hfill
-\begin{minipage}{0.45\textwidth}
-    \begin{eqnarray*}
-        \min_{\xv} && \|\Amat\xv-\mathbf{b}\|_\infty \Leftrightarrow\\
-        \min_{\xv,t} && t \\
-        \text{s.t. } && \Amat\xv - \mathbf{b} \le t\one\\
-        && \Amat\xv - \mathbf{b} \ge -t\one
-    \end{eqnarray*}
-\end{minipage}
-
-\framebreak
-
-\textbf{Standard Form}:
-\vspace{-\baselineskip}
-
-\begin{eqnarray*}
-\min && \mathbf{c}^\top\xv \\
-\text{s.t. } && \Amat\xv \le \mathbf{b}\\
-&& \xv \ge \zero \\
-\end{eqnarray*}
-
-$\Amat\xv \ge \mathbf{b} \Leftrightarrow -\Amat\xv \le -\mathbf{b}$.\\
-$\Amat\xv = \mathbf{b} \Leftrightarrow \Amat\xv \le \mathbf{b},\ -\Amat\xv \le -\mathbf{b}$.\\
-$\xv = \xv^+ - \xv^-$, where $\xv^+ \ge \zero,\ \xv^- \ge \zero$.\\
-$\min_{\xv} \mathbf{c}^\top\xv \Leftrightarrow \min_{\xv^+, \xv^-} \begin{bmatrix} \mathbf{c}^\top & -\mathbf{c}^\top \end{bmatrix} \begin{bmatrix} \xv^+ \\ \xv^- \end{bmatrix}$.
-
-\framebreak
-\textbf{Equality Form}:
-\vspace{-\baselineskip}
-
-\begin{eqnarray*}
-\min && \mathbf{c}^\top\xv \\
-\text{s.t. } && \Amat\xv = \mathbf{b}\\
-&& \xv \ge \zero \\
-\end{eqnarray*}
-
-By introducing slack variables $\mathbf{s}$:
-$\Amat\xv \le \mathbf{b} \Leftrightarrow \begin{bmatrix} \Amat & \id \end{bmatrix} \begin{bmatrix} \xv \\ \mathbf{s} \end{bmatrix} = \Amat\xv + \mathbf{s} = \mathbf{b},\ \mathbf{s} \ge 0$.\\
-$\min_{\xv} \mathbf{c}^\top\xv \Leftrightarrow \min_{\xv,\mathbf{s}} \begin{bmatrix} \mathbf{c}^\top & \zero^\top \end{bmatrix} \begin{bmatrix} \xv \\ \mathbf{s} \end{bmatrix}$.
-
-\end{vbframe}
-
-\begin{vbframe}{Geometric interpretation}
-    
-\textbf{Feasible set:}
-\begin{itemize}
-    \setlength{\itemsep}{1em}
-    \item Points $\{\xv: \Amat_i^\top \xv = b_i\}$ form a hyperplane in $\R^n$.\\
-          $\Amat_i$ is perpendicular to the hyperplane and called \textbf{normal vector}.
-    \item Points $\{\xv: \Amat_i^\top \xv \le b_i\}$ lie on one side of the hyperplane, which form a convex half-space.
-    \item Points satisfying \textbf{all} inequalities form a \textbf{convex polytope}.\\
-          The intersection of convex sets is still convex, also easy to prove using definition of convex set.
-\end{itemize}
-
-\lz
-
-Polytope $\{\xv: \Amat \xv \le \mathbf{b},\ \Amat \in \R^{m \times n}\}$ is an $n$-\textbf{simplex}, i.e., 
-convex hull of $n + 1$ \textbf{affinely independent} points, which we call vertices.
-
-\framebreak
-
-There are 3 conditions for solving linear programming:
-\begin{enumerate}
-\item Feasible set is \textbf{empty} $\Rightarrow$ LP is infeasible.
-\item Feasible set is \textbf{\enquote{unbounded}}.
-\item Feasible set is \textbf{\enquote{bounded}} $\Rightarrow$ LP has at least one solution.
-\end{enumerate}
-
-\begin{center}
-    \includegraphics[width=0.9\textwidth]{figure_man/solutions-lp.png}
-\end{center}
-
-\framebreak
-
-Case 3 when LP is feasible and bounded:
-\begin{itemize}
-\item Points on the interior: never optimal, can be improved by moving along $-\mathbf{c}$
-\item Points on faces/edges: can be optimal only if the face/edge is perpendicular to $\mathbf{c}$. 
-\item Points on faces/edges not perpendicular to $\mathbf{c}$: can be improved by moving along $-\mathbf{c}$.
-\item Vertices: can also be optimal.
-\end{itemize}
-
-\begin{center}
-    \includegraphics[width=0.3\textwidth]{figure_man/opposite-direction.png}
-\end{center}
-
-\end{vbframe}
-
-\begin{vbframe}{Vertices}
-We assume that the rows of $\Amat \in \R^{m \times n}$ are linearly independent and $m \le n$ to form a bounded unempty feasible set.\\
-\lz
-$\Amat\xv = \mathbf{b}$ imposes $m$ equality constraints:
-\begin{itemize}
-    \item Each equality constraint reduces the dimension of the feasible set by 1.
-    \item Starting with $n$-dimensional space, applying $m$ independent equality constraints leaves a solution space of dimension $n-m$.
-\end{itemize}
-\lz
-$\xv \ge \zero$ imposes $n$ non-negativity.\\
-
-\framebreak
-
-While statisfying $\Amat\xv = \mathbf{b}$, the indices of a vertex vector can thus be participated into two sets:
-\begin{itemize}
-    \item $\mathcal{V}$ with $n-m$ elements: $i \in \mathcal{V} \Rightarrow x_i = 0$ (active constraints).
-    \item $\mathcal{B}$ with $m$ elements: $i \in \mathcal{B} \Rightarrow x_i \ge 0$.
-\end{itemize}
-
-\lz
-
-We have $\Amat_{\mathcal{B}}^{m\times m}\xv_{\mathcal{B}} = \mathbf{b} \Rightarrow \xv_{\mathcal{B}} = \Amat_{\mathcal{B}}^{-1}\mathbf{b}$.
-
-\lz
-\lz
-
-\textbf{Note:} While every vertex has an associated partition $(\mathcal{B}, \mathcal{V})$, not every partition corresponds to a vertex.
-\end{vbframe}
-
-\begin{vbframe}{Simplex algorithms}
-The \textbf{simplex algorithm} solves linear programs by moving from vertex to vertex of the feasible set, 
-and produces an optimal vertex.\\
-
-\lz
-
-It operates on equality-form linear programs $\Amat\xv = \mathbf{b}, \xv \ge \zero$. 
-We still assume that the rows of $\Amat \in \R^{m \times n}$ are linearly independent and $m \le n$.\\
-
-\lz
-
-The method is guaranteed to arrive at an optimal solution so long as the linear program is feasible and bounded.\\
-
-\lz
-
-The simplex algorithm operates in two phases:
-\begin{itemize}
-    \item \textbf{Initialization} phase: identifies a vertex partition.
-    \item \textbf{Optimization} phase: transitions between vertex partitions toward a partition corresponding to an optimal vertex.
-\end{itemize}
-
-\framebreak
-
-%The \textbf{first-order necessary conditions (FONCs)} for optimality are used to determine when a vertex is optimal, 
-%and to inform how to transition to a more favorable vertex.\\
-%\lz
-We construct a Lagrangian for the equality form of the linear program:
-$$L(\xv, \bm{\mu}, \bm{\lambda}) = \mathbf{c}^\top\xv - \bm{\mu}^\top\xv - \bm{\lambda}^\top(\Amat\xv - \mathbf{b})$$
-with $\bm{\mu} \ge \zero$.
-
-The optimal solution satisfies $\frac{\partial L}{\partial \xv}=0$, i.e., $\Amat^\top \bm{\lambda} + \bm{\mu} = \mathbf{c}$.
-%with the following FONCs:
-
-%\begin{itemize}
-%    \item \textbf{feasibility:} $\Amat\xv = \mathbf{b},\ \xv \ge \zero$.
-%    \item \textbf{dual feasibility:} $\bm{\mu} \ge \zero$.
-%    \item \textbf{complementary slackness:} $\bm{\mu} \odot \xv = 0$
-%    \item \textbf{stationarity:} $\Amat^\top \bm{\lambda} + \bm{\mu} = \mathbf{c}$
-%\end{itemize}
-
-%\framebreak
-
-%The FONCs are sufficient conditions for optimality for linear programs.\\
-%\lz
-%Thus, if $\bm{\mu}$ and $\bm{\lambda}$ can be computed for a given vertex and all four FONC equations are satisfied, then the vertex is optimal.\\
-%\lz
-%\lz
-We can decompose this stationarity condition into $\mathcal{B}$ and $\mathcal{V}$ components:
+\begin{framei}{Linear programming}
+\item \textbf{Linear program} (LP): optimization problem with \textbf{linear} objective function + \textbf{linear} constraints
+\item General form
 $$
-\Amat^\top \bm{\lambda} + \bm{\mu} = \mathbf{c} 
+\min_{\xv} \mathbf{c}^T\xv \quad \text{s.t. } \Amat_1\xv \le \mathbf{b}_1,\ \Amat_2\xv \ge \mathbf{b}_2,\ \Amat_3\xv = \mathbf{b}_3
+$$
+\item Examples
+\splitV[0.5]{
+$$
+\min_{\xv} \|\Amat\xv-\mathbf{b}\|_1 \Leftrightarrow
+$$
+$$
+\min_{\xv,\mathbf{s}} \one^T\mathbf{s} \quad \text{s.t. } \pm(\Amat\xv - \mathbf{b}) \le \mathbf{s}
+$$
+}{
+$$
+\min_{\xv} \|\Amat\xv-\mathbf{b}\|_\infty \Leftrightarrow
+$$
+$$
+\min_{\xv,t} t \quad \text{s.t. } \pm(\Amat\xv - \mathbf{b}) \le t\one
+$$
+}
+\end{framei}
+
+
+\begin{framei}{Linear programming: Standard Form}
+\item[] Standard Form
+$$
+\min \mathbf{c}^T\xv \quad \text{s.t. } \Amat\xv \le \mathbf{b},\ \xv \ge \zero
+$$
+\item $\Amat\xv \ge \mathbf{b} \Leftrightarrow -\Amat\xv \le -\mathbf{b}$
+\item $\Amat\xv = \mathbf{b} \Leftrightarrow \Amat\xv \le \mathbf{b},\ -\Amat\xv \le -\mathbf{b}$
+\item $\xv = \xv^+ - \xv^-$, where $\xv^+ \ge \zero,\ \xv^- \ge \zero$
+\item $\min_{\xv} \mathbf{c}^T\xv \Leftrightarrow \min_{\xv^+, \xv^-} \begin{bmatrix} \mathbf{c}^T & -\mathbf{c}^T \end{bmatrix} \begin{bmatrix} \xv^+ \\ \xv^- \end{bmatrix}$
+\end{framei}
+
+
+\begin{framei}{Linear programming: Equality Form}
+\item Equality Form
+$$
+\min \mathbf{c}^T\xv \quad \text{s.t. } \Amat\xv = \mathbf{b},\ \xv \ge \zero
+$$
+\item By introducing slack variables $\mathbf{s}$:\\
+$\Amat\xv \le \mathbf{b} \Leftrightarrow \begin{bmatrix} \Amat & \id \end{bmatrix} \begin{bmatrix} \xv \\ \mathbf{s} \end{bmatrix} = \Amat\xv + \mathbf{s} = \mathbf{b},\ \mathbf{s} \ge 0$
+\item $\min_{\xv} \mathbf{c}^T\xv \Leftrightarrow \min_{\xv,\mathbf{s}} \begin{bmatrix} \mathbf{c}^T & \zero^T \end{bmatrix} \begin{bmatrix} \xv \\ \mathbf{s} \end{bmatrix}$
+\end{framei}
+
+
+\begin{framei}{Geometric interpretation}
+\item[] \textbf{Feasible set}
+\item Points $\{\xv: \Amat_i^T \xv = b_i\}$ form a hyperplane in $\R^n$\\
+$\Amat_i$ is perpendicular to the hyperplane and called \textbf{normal vector}
+\item Points $\{\xv: \Amat_i^T \xv \le b_i\}$ lie on one side of the hyperplane, which form a convex half-space
+\item Points satisfying \textbf{all} inequalities form a \textbf{convex polytope}\\
+The intersection of convex sets is still convex
+\vfill
+\item Polytope $\{\xv: \Amat \xv \le \mathbf{b},\ \Amat \in \R^{m \times n}\}$ is an $n$-\textbf{simplex}, i.e., convex hull of $n + 1$ \textbf{affinely independent} points, which we call vertices
+\end{framei}
+
+
+\begin{framei}{Geometric interpretation}
+\item There are 3 conditions for solving linear programming:
+\begin{enumerate}
+\item Feasible set is \textbf{empty} $\Rightarrow$ LP is infeasible
+\item Feasible set is \textbf{unbounded}
+\item Feasible set is \textbf{bounded} $\Rightarrow$ LP has at least one solution
+\end{enumerate}
+\imageC[0.9]{figure_man/cons-solutions-lp.png}
+\end{framei}
+
+
+\begin{framei}{Geometric interpretation}
+\item[] \textbf{Case 3: LP is feasible and bounded}
+\item Points on the interior: never optimal, can be improved by moving along $-\mathbf{c}$
+\item Points on faces/edges: can be optimal only if the face/edge is perpendicular to $\mathbf{c}$
+\item Points on faces/edges not perpendicular to $\mathbf{c}$: can be improved by moving along $-\mathbf{c}$
+\item Vertices: can also be optimal
+\vfill
+\imageC[0.3]{figure_man/cons-opposite-direction.png}
+\end{framei}
+
+
+\begin{framei}[sep=L]{Vertices}
+\item Assume rows of $\Amat \in \R^{m \times n}$ are linearly independent and $m \le n$ to form a bounded non-empty feasible set
+\item $\Amat\xv = \mathbf{b}$ imposes $m$ equality constraints:
+\begin{itemize}
+\item Each equality constraint reduces the dimension of the feasible set by 1
+\item Starting with $n$-dim space, applying $m$ independent equality constraints leaves a solution space of dim $n-m$
+\end{itemize}
+\item $\xv \ge \zero$ imposes $n$ non-negativity constraints
+\end{framei}
+
+
+\begin{framei}[sep=L]{Vertices}
+\item While satisfying $\Amat\xv = \mathbf{b}$, the indices of a vertex vector can be partitioned into two sets:
+\begin{itemize}
+\item $\mathcal{V}$ with $n-m$ elements: $i \in \mathcal{V} \Rightarrow x_i = 0$ (active constraints)
+\item $\mathcal{B}$ with $m$ elements: $i \in \mathcal{B} \Rightarrow x_i \ge 0$
+\end{itemize}
+\item We have $\Amat_{\mathcal{B}}^{m\times m}\xv_{\mathcal{B}} = \mathbf{b} \Rightarrow \xv_{\mathcal{B}} = \Amat_{\mathcal{B}}^{-1}\mathbf{b}$
+\vfill
+\item \textbf{Note:} While every vertex has an associated partition $(\mathcal{B}, \mathcal{V})$, not every partition corresponds to a vertex
+\end{framei}
+
+
+\begin{framei}[sep=L]{Simplex algorithm}
+\item The \textbf{simplex algorithm} solves LPs by moving from vertex to vertex of the feasible set, and produces an optimal vertex
+\item Operates on equality-form LPs $\Amat\xv = \mathbf{b}, \xv \ge \zero$\\
+Assume rows of $\Amat \in \R^{m \times n}$ are linearly independent and $m \le n$
+\item Guaranteed to arrive at an optimal solution so long as the LP is feasible and bounded
+\item The simplex algorithm operates in two phases:
+\begin{itemize}
+\item \textbf{Initialization} phase: identifies a vertex partition
+\item \textbf{Optimization} phase: transitions between vertex partitions toward a partition corresponding to an optimal vertex
+\end{itemize}
+\end{framei}
+
+
+\begin{framei}{Simplex algorithm}
+\item Construct a Lagrangian for the equality form:
+$$L(\xv, \muv, \bm{\lambda}) = \mathbf{c}^T\xv - \muv^T\xv - \bm{\lambda}^T(\Amat\xv - \mathbf{b})$$
+with $\muv \ge \zero$
+\item Optimal solution satisfies $\frac{\partial L}{\partial \xv}=0$, i.e., $\Amat^T \bm{\lambda} + \muv = \mathbf{c}$
+\item Decompose stationarity condition into $\mathcal{B}$ and $\mathcal{V}$ components:
+$$
+\Amat^T \bm{\lambda} + \muv = \mathbf{c} 
 \quad \implies \quad
 \begin{cases}
-    \Amat_{\mathcal{B}}^\top \bm{\lambda} + \bm{\mu}_{\mathcal{B}} = \mathbf{c}_{\mathcal{B}} \\
-    \Amat_{\mathcal{V}}^\top \bm{\lambda} + \bm{\mu}_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}}
+\Amat_{\mathcal{B}}^T \bm{\lambda} + \muv_{\mathcal{B}} = \mathbf{c}_{\mathcal{B}} \\
+\Amat_{\mathcal{V}}^T \bm{\lambda} + \muv_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}}
 \end{cases}
 $$
+\end{framei}
 
-\framebreak
 
-We can choose $ \bm{\mu}_{\mathcal{B}} = 0 $ to satisfy $\bm{\mu} \odot \xv = 0$, since for optimality, we need $\mu_i=0$ when $x_i > 0$. 
-The value of $ \bm{\lambda} $ can be computed from $ \mathcal{B} $:
-% complementary slackness
+\begin{framei}[fs=small]{Simplex algorithm}
+\item Choose $ \muv_{\mathcal{B}} = 0 $ to satisfy $\muv \odot \xv = 0$, since for optimality, we need $\mu_i=0$ when $x_i > 0$
+\item Compute $ \bm{\lambda} $ from $ \mathcal{B} $:
 $$
-\Amat_{\mathcal{B}}^\top \bm{\lambda} + \underbrace{\bm{\mu}_{\mathcal{B}}}_{= 0} = \mathbf{c}_{\mathcal{B}} \quad \implies \quad \bm{\lambda} = \Amat_{\mathcal{B}}^{-\top} \mathbf{c}_{\mathcal{B}}
+\Amat_{\mathcal{B}}^T \bm{\lambda} + \underbrace{\muv_{\mathcal{B}}}_{= 0} = \mathbf{c}_{\mathcal{B}} \quad \implies \quad \bm{\lambda} = \Amat_{\mathcal{B}}^{-T} \mathbf{c}_{\mathcal{B}}
 $$
+\item Use this to obtain:
+\begin{align*}
+\Amat_{\mathcal{V}}^T \bm{\lambda} + \muv_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}}\\
+\muv_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}} - \Amat_{\mathcal{V}}^T \bm{\lambda}\\
+\muv_{\mathcal{V}} &= \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^T \mathbf{c}_{\mathcal{B}}
+\end{align*}
+\item Knowing $ \muv_{\mathcal{V}} $ allows us to assess optimality of the vertices\\
+If $ \muv_{\mathcal{V}} $ contains negative components, then $\muv \ge \zero$ is not satisfied and the vertex is suboptimal
+\end{framei}
 
-We can use this to obtain:
-\begin{eqnarray*}
-\Amat_{\mathcal{V}}^\top \bm{\lambda} + \bm{\mu}_{\mathcal{V}} &&=\quad \mathbf{c}_{\mathcal{V}}\\
-\bm{\mu}_{\mathcal{V}} &&=\quad \mathbf{c}_{\mathcal{V}} - \Amat_{\mathcal{V}}^\top \bm{\lambda}\\
-\bm{\mu}_{\mathcal{V}} &&=\quad \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^\top \mathbf{c}_{\mathcal{B}}
-\end{eqnarray*}
 
-\lz
-
-Knowing $ \bm{\mu}_{\mathcal{V}} $ allows us to assess the optimality of the vertices. 
-If $ \bm{\mu}_{\mathcal{V}} $ contains negative components, then $\bm{\mu} \ge \zero$ is not satisfied and the vertex is suboptimal.
-
-\framebreak
-
-Now to the optimization phase.\\
-The partition can be updated by swapping indices between $\mathcal{B}$ and $\mathcal{V}$.
-Such a swap equates to moving from one vertex along an edge of the feasible set polytope to another vertex.\\
-\lz
-A transition $ \xv \to \xv' $ between vertices must satisfy $ \Amat \xv' = \mathbf{b} $. 
-Starting with a partition defined by $ \mathcal{B} $, 
-we choose an \textbf{entering index} $ q \in \mathcal{V} $ that is to enter $ \mathcal{B} $ using one of the heuristics described near the end of this section. 
-The new vertex $ \xv' $ must satisfy:
+\begin{framei}[fs=small]{Simplex algorithm: Optimization phase}
+\item Partition can be updated by swapping indices between $\mathcal{B}$ and $\mathcal{V}$\\
+Such a swap equates to moving from one vertex along an edge of the feasible set polytope to another vertex
+\item A transition $ \xv \to \xv' $ between vertices must satisfy $ \Amat \xv' = \mathbf{b} $
+\item Starting with a partition defined by $ \mathcal{B} $, choose an \textbf{entering index} $ q \in \mathcal{V} $ that is to enter $ \mathcal{B} $ using one of the heuristics described below
+\item The new vertex $ \xv' $ must satisfy:
 $$
-\Amat \xv' = \Amat_{\mathcal{B}} \xv'_{\mathcal{B}} + \Amat_{\{q\}} x'_q = \Amat_{\mathcal{B}} \xv_{\mathcal{B}} = \Amat \xv = \mathbf{b}.
+\Amat \xv' = \Amat_{\mathcal{B}} \xv'_{\mathcal{B}} + \Amat_{\{q\}} x'_q = \Amat_{\mathcal{B}} \xv_{\mathcal{B}} = \Amat \xv = \mathbf{b}
 $$
-\lz
-One \textbf{leaving index} $ p \in \mathcal{B} $ in $ \xv_{\mathcal{B}} $ becomes zero during the transition, and is replaced by the column of $ \Amat $ corresponding to index $ q $.\\
-This action is referred to as \textbf{pivoting}.
+\item One \textbf{leaving index} $ p \in \mathcal{B} $ in $ \xv_{\mathcal{B}} $ becomes zero during the transition, and is replaced by the column of $ \Amat $ corresponding to index $ q $\\
+This action is referred to as \textbf{pivoting}
+\end{framei}
 
-\framebreak
 
-We can solve for the new design point:
+\begin{framei}{Simplex algorithm: Minimum ratio test}
+\item Solve for the new design point:
 $$
-\xv'_{\mathcal{B}} = \xv_{\mathcal{B}} - \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} x'_q.
+\xv'_{\mathcal{B}} = \xv_{\mathcal{B}} - \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} x'_q
 $$
-\lz
-A particular \textbf{leaving index} $ p \in \mathcal{B} $ becomes active when:
+\item A particular \textbf{leaving index} $ p \in \mathcal{B} $ becomes active when:
 $$
-\left( \xv'_{\mathcal{B}} \right)_p = 0 = \left( \xv_{\mathcal{B}} \right)_p - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} \right)_p x'_q.
+\left( \xv'_{\mathcal{B}} \right)_p = 0 = \left( \xv_{\mathcal{B}} \right)_p - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} \right)_p x'_q
 $$
-
 and is thus obtained by increasing $ x_q = 0 $ to $ x'_q $ with:
-$$x'_q = \frac{\left( \xv_{\mathcal{B}} \right)_p}{\left( \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} \right)_p}.$$
-\lz
-The leaving index is obtained using the \textbf{minimum ratio test}, which computes for each potential leaving index and selects the one with minimum $ x'_q $. We then swap $ p $ and $ q $ between $ \mathcal{B} $ and $ \mathcal{V} $.
+$$x'_q = \frac{\left( \xv_{\mathcal{B}} \right)_p}{\left( \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} \right)_p}$$
+\item The leaving index is obtained using the \textbf{minimum ratio test}, which computes for each potential leaving index and selects the one with minimum $ x'_q $\\
+We then swap $ p $ and $ q $ between $ \mathcal{B} $ and $ \mathcal{V} $
+\end{framei}
 
-\framebreak
+
+\begin{framei}{Simplex algorithm: Effect on objective}
+\item Effect of a transition on the obj. function can be computed using $x'_q$
+\item Objective function value at the new vertex:
+\begin{align*}
+\mathbf{c}^T \xv' &= \mathbf{c}_{\mathcal{B}}^T \xv'_{\mathcal{B}} + c_q x'_q \\
+&= \mathbf{c}_{\mathcal{B}}^T \left( \xv_{\mathcal{B}} - \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} x'_q \right) + c_q x'_q \\
+&= \mathbf{c}_{\mathcal{B}}^T \xv_{\mathcal{B}} - \mathbf{c}_{\mathcal{B}}^T \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} x'_q + c_q x'_q \\
+&= \mathbf{c}_{\mathcal{B}}^T \xv_{\mathcal{B}} - (c_q - \mu_q) x'_q + c_q x'_q \\
+&= \mathbf{c}^T \xv + \mu_q x'_q
+\end{align*}
+using $\bm{\lambda} = \Amat_{\mathcal{B}}^{-T} \mathbf{c}_{\mathcal{B}}$ and $\Amat_{\{q\}}^T\bm{\lambda}=c_q-\mu_q$
+\end{framei}
 
 
-The effect that a transition has on the objective function can be computed using $x'_q$.\\
-\lz
-
-The objective function value at the new vertex is:
-\begin{eqnarray*}
-    \mathbf{c}^\top \xv' &&=\quad \mathbf{c}_{\mathcal{B}}^\top \xv'_{\mathcal{B}} + c_q x'_q \\
-    &&=\quad \mathbf{c}_{\mathcal{B}}^\top \left( \xv_{\mathcal{B}} - \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} x'_q \right) + c_q x'_q \\
-    &&=\quad \mathbf{c}_{\mathcal{B}}^\top \xv_{\mathcal{B}} - \mathbf{c}_{\mathcal{B}}^\top \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} x'_q + c_q x'_q \\
-    &&=\quad \mathbf{c}_{\mathcal{B}}^\top \xv_{\mathcal{B}} - (c_q - \mu_q) x'_q + c_q x'_q \quad (\bm{\lambda} = \Amat_{\mathcal{B}}^{-\top} \mathbf{c}_{\mathcal{B}}, \Amat_{\{q\}}^\top\bm{\lambda}=c_q-\mu_q)\\
-    &&=\quad \mathbf{c}^\top \xv + \mu_q x'_q.
-\end{eqnarray*}
-
-\framebreak
-
-Choosing an entering index $q$ decreases the objective function value by
+\begin{framei}{Simplex algorithm: Optimality condition}
+\item Choosing an entering index $q$ decreases the obj. function value by
 $$
-\mathbf{c}^\top \xv' - \mathbf{c}^\top \xv = \mu_q x'_q.
+\mathbf{c}^T \xv' - \mathbf{c}^T \xv = \mu_q x'_q
 $$
+\item The objective function decreases only if $\mu_q$ is negative
+\item To progress toward optimality, we must choose an index $q \in \mathcal{V}$ such that $\mu_q$ is negative
+\item If all components of $\muv_{\mathcal{V}}$ are non-negative, we have found a global optimum
+\end{framei}
 
-\lz
-\lz
-The objective function decreases only if $\mu_q$ is negative.\\
-\lz
-In order to progress toward optimality, we must choose an index $q \in \mathcal{V}$ such that $\mu_q$ is negative.\\
-\lz
-If all components of $\boldsymbol{\mu}_{\mathcal{V}}$ are non-negative, we have found a global optimum.
 
-\framebreak
+\begin{framei}[fs=small]{Simplex algorithm: Heuristics}
+\item Since there can be multiple negative entries in $\muv_{\mathcal{V}}$, different heuristics can be used to select an entering index:
+\item \textbf{Greedy heuristic}: choose a $q$ that maximally reduces $\mathbf{c}^T \xv$
+\item \textbf{Dantzig's rule}: choose the $q$ with the most negative entry in $\muv$\\
+Easy to calculate, but does not guarantee the maximum reduction in $\mathbf{c}^T \xv$\\
+Also sensitive to scaling of the constraints
+\item \textbf{Bland's rule}: choose the first $q$ with a negative entry in $\muv$\\
+Tends to result in poor performance in practice when used alone\\
+Helps prevent cycles (returning to a visited vertex without decreasing objective)\\
+Usually used only after no improvements have been made for several iterations to break out of a cycle and ensure convergence
+\end{framei}
 
-Since there can be multiple negative entries in $\boldsymbol{\mu}_{\mathcal{V}}$, different heuristics can be used to select an entering index:
 
-\begin{itemize}
-    \item \textbf{Greedy heuristic}: choose a $q$ that maximally reduces $\mathbf{c}^\top \xv$.
-    \item \textbf{Dantzig's rule}: choose the $q$ with the most negative entry in $\boldsymbol{\mu}$. 
-    This rule is easy to calculate, but it does not guarantee the maximum reduction in $\mathbf{c}^\top \xv$. 
-    It is also sensitive to scaling of the constraints.
-    \item \textbf{Bland's rule}: choose the first $q$ with a negative entry in $\boldsymbol{\mu}$. 
-    When used on its own, Bland's rule tends to result in poor performance in practice. 
-    However, this rule can help us prevent cycles, which occur when we return to a vertex we have visited before without decreasing the objective function. 
-    This rule is usually used only after no improvements have been made for several iterations of a different rule to break out of a cycle and ensure convergence.
-\end{itemize}
-
-\end{vbframe}
-
-\begin{vbframe}{Examlpes}
+\begin{framev}[fs=small]{Simplex algorithm: Example}
 $\Amat_{\mathcal{V}} =
 \begin{pmatrix}
 2 & 1 & 1 & 0 \\
 -4 & 2 & 0 & 1
 \end{pmatrix},$
-$\mathbf{b} = (9, 2)^\top, \mathbf{c} = (3, -1, 0, 0)^\top$\\
-\lz
-\textbf{Solution:}
+$\mathbf{b} = (9, 2)^T, \mathbf{c} = (3, -1, 0, 0)^T$\\
+\spacer
+\textbf{Solution:}\\
 $\mathcal{V}=\{1,2\}, \mathcal{B}=\{3, 4\}$\\
-$\xv_{\mathcal{B}} = \Amat_{\mathcal{B}}^{-1}\mathbf{b} = (9, 2)^\top$\\
+$\xv_{\mathcal{B}} = \Amat_{\mathcal{B}}^{-1}\mathbf{b} = (9, 2)^T$\\
 $\bm{\lambda} =  \Amat_{\mathcal{B}}^{-1}\mathbf{c}_{\mathcal{B}} = \zero$\\
-$\bm{\mu}_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^\top \mathbf{c}_{\mathcal{B}} = (3, -1)^\top$\\
-$\bm{\mu}_{\mathcal{V}}$ contains negative elements, so our current $\mathcal{B}$ is suboptimal.\\
-We will pivot on the negative one with $q=2, - \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}}=(1,2)^\top$.\\
+$\muv_{\mathcal{V}} = \mathbf{c}_{\mathcal{V}} - \left( \Amat_{\mathcal{B}}^{-1} \Amat_{\mathcal{V}} \right)^T \mathbf{c}_{\mathcal{B}} = (3, -1)^T$\\
+\spacer
+$\muv_{\mathcal{V}}$ contains negative elements, so our current $\mathcal{B}$ is suboptimal.\\
+\spacer
+We will pivot on the negative one with $q=2, - \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}}=(1,2)^T$.\\
 This causes $x_4 = 0$, so updated $\mathcal{B}=\{2, 3\}$.\\
-In the second iteration, we find $\xv_{\mathcal{B}}=(1,8)^\top, \bm{\lambda} = (0, -\frac{1}{2})^\top, \bm{\mu}_{\mathcal{V}} = (1, \frac{1}{2})^\top.$\\
-This is optimal with no negative entry, thus we have $x^*=(0,1,8,0)^\top$
-%Calculate $x'_q = \frac{\left( \xv_{\mathcal{B}} \right)_p}{\left( \Amat_{\mathcal{B}}^{-1} \Amat_{\{q\}} \right)_p}$ 
-%and choose the minumum one with $p = 5, q = 1, x'_1 = 10$.
-%$\xv'_{\mathcal{B}} = \xv_{\mathcal{B}} - \Amat_{\mathcal{B}}^{-1} \Amat_{\{1\}}x'_1 = (10, 0, 0)$\\
-%Now new $\mathcal{B}' = \{4, 1, 6\}, \mathcal{V}' = \{5, 2, 3\}, \xv' = (10,0,0,10,0,0)$
-\end{vbframe}
+In the second iteration, we find $\xv_{\mathcal{B}}=(1,8)^T, \bm{\lambda} = (0, -\frac{1}{2})^T, \muv_{\mathcal{V}} = (1, \frac{1}{2})^T$.\\
+\spacer
+This is optimal with no negative entry, thus we have $x^*=(0,1,8,0)^T$
+\end{framev}
 
 \endlecture
 \end{document}
-
-

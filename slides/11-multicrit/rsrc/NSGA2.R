@@ -19,6 +19,8 @@ library(gridExtra)
 library(grid)
 set.seed(666)
 
+# ------------------------------------------------------------------------------
+
 # viz in objective space 2 crit
 plotObjectiveSpace2Crit = function(smoof.fun) {
   des = generateRandomDesign(n = 10000L, par.set = getParamSet(smoof.fun))

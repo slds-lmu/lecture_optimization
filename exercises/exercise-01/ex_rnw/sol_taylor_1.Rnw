@@ -6,7 +6,7 @@ Consider the bivariate function $f: \R^2 \to \R, (x_1, x_2) \mapsto \exp(\pi \cd
 	 1 & \pi \sin(\pi x_2)  \end{pmatrix}$
 	\item  $T_{1,\mathbf{a}}(\mathbf{x}) = f(\mathbf{a}) + \nabla f(\mathbf{a})^\top(\mathbf{x}-\mathbf{a}) = 1 + \pi \cdot (2, 1) \cdot (x_1, x_2 - 1)^\top = 1 - \pi + 2\pi x_1 + \pi x_2$
 	\item \begin{align*}T_{2,\mathbf{a}}(\mathbf{x}) &= T_{1,\mathbf{a}}(\mathbf{x}) + \frac{1}{2} (\mathbf{x} - \mathbf{a})^\top\nabla^2 f(\mathbf{a})(\mathbf{x} - \mathbf{a}) \\
-	&= T_{1,\mathbf{a}}(\mathbf{x}) + \frac{1}{2} \mathbf{x}^\top\nabla^2 f(\mathbf{a})\mathbf{x} + \mathbf{x}^\top\nabla^2 f(\mathbf{a})\mathbf{a} + \frac{1}{2}\mathbf{a}^\top\nabla^2 f(\mathbf{a})\mathbf{a}\end{align*}
+	&= T_{1,\mathbf{a}}(\mathbf{x}) + \frac{1}{2} \mathbf{x}^\top\nabla^2 f(\mathbf{a})\mathbf{x} - \mathbf{x}^\top\nabla^2 f(\mathbf{a})\mathbf{a} + \frac{1}{2}\mathbf{a}^\top\nabla^2 f(\mathbf{a})\mathbf{a}\end{align*}
 	With $\nabla^2 f(\mathbf{a}) = \begin{pmatrix}\pi^2  &  \pi \\
 	\pi & 0 \end{pmatrix}$ we get that 
 	\begin{align*}

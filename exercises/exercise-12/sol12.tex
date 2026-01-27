@@ -223,7 +223,7 @@
 
 \loesung{Coordinate Descent II}{
 \begin{enumerate}
-  \item Update $x_{1}$ whle fixing $x_{2}$:
+  \item Update $x_{1}$ while fixing $x_{2}$:
     We fix $x_{2} = c$ (constant).
     The function then states as $$g(x_{1}, c) = |x_{1} - c| + 0.1 (x_{1} + c).$$
     We want to choose $x_{1}$ to minimize this.
@@ -250,7 +250,7 @@
     Note that $g$ is symmetric in its arguments, therefore based on the first analysis, we conclude that again $x_{2}^{*} = c$.\\
     After updating $x_{2}$ while holding $x_{1}$ constant, we arrive at $(x_{1}^{[1]}, x_{2}^{[1]}) = (x_{1}^{[1]}, x_{1}^{[1]}) = (x_{2}^{[0]}, x_{2}^{[0]})$.\\
 
-    We observe that coordinate updates will set the respective coordinate to the value of the other constant held coordinate value and once the algorithm arrives at $x_{1} = x_{2} = c$, neither coordinate update will move the point.
+    We observe that coordinate updates will set the respective coordinate to the value of the other constant held coordinate value and once the algorithm arrives at $x_{1} = x_{2} = c$, neither coordinate update will move the point. The algorithm already reaches this point after the first coordinate update within the first iteration.
 
   \item Along the diagonal $x_{1} = x_{2} = t$, the function simplifies to $$g(t, t) = |t - t| + 0.1 (t + t) = 0.2 t.$$
     As $t \rightarrow - \infty$, $0.2 t \rightarrow - \infty$, hence the infimum of $g$ is $- \infty$.
@@ -259,18 +259,18 @@
 \end{enumerate}
 }
 
-\loesung{CMA-ES}{
-Pick $\mu = 3$ parents with highest fitness values, i.e.,
-$\text{Id} = 1,2,5$ which we denote with $\mathbf{x}_{1:\mu}$
-and respective weights $w_i = \frac{f_i}{\sum^\mu_{i=1}f_i} \approx (0.432, 0.265, 0.303)$. \\
-\begin{equation*}
-\begin{split}
-\mathbf{m}^{[1]} &= \mathbf{m}^{[0]} + 0.5 \sum^3_{i=1} w_i(\mathbf{x}_i - \mathbf{m}^{[0]}) \approx (1.140, 0.515)^\top \\
-\mathbf{C}_\mu &= \frac{1}{3-1} \sum^3_{i=1}(\mathbf{x}_i - \mathbf{m}^{[0]}))(\mathbf{x}_i - \mathbf{m}^{[0]}))^\top  \\
-& \approx \begin{pmatrix} 0.187 & -0.617 \\ -0.617 & 2.139 \end{pmatrix} \\
-\mathbf{C}^{[1]} &= 0.9\cdot\mathbf{I}_d + 0.1\cdot\mathbf{C}_\mu \\
-&\approx \begin{pmatrix} 0.919 & -0.062 \\ -0.062 & 1.114 \end{pmatrix}
-\end{split}
-\end{equation*}
-}
+% \loesung{CMA-ES}{
+% Pick $\mu = 3$ parents with highest fitness values, i.e.,
+% $\text{Id} = 1,2,5$ which we denote with $\mathbf{x}_{1:\mu}$
+% and respective weights $w_i = \frac{f_i}{\sum^\mu_{i=1}f_i} \approx (0.432, 0.265, 0.303)$. \\
+% \begin{equation*}
+% \begin{split}
+% \mathbf{m}^{[1]} &= \mathbf{m}^{[0]} + 0.5 \sum^3_{i=1} w_i(\mathbf{x}_i - \mathbf{m}^{[0]}) \approx (1.140, 0.515)^\top \\
+% \mathbf{C}_\mu &= \frac{1}{3-1} \sum^3_{i=1}(\mathbf{x}_i - \mathbf{m}^{[0]}))(\mathbf{x}_i - \mathbf{m}^{[0]}))^\top  \\
+% & \approx \begin{pmatrix} 0.187 & -0.617 \\ -0.617 & 2.139 \end{pmatrix} \\
+% \mathbf{C}^{[1]} &= 0.9\cdot\mathbf{I}_d + 0.1\cdot\mathbf{C}_\mu \\
+% &\approx \begin{pmatrix} 0.919 & -0.062 \\ -0.062 & 1.114 \end{pmatrix}
+% \end{split}
+% \end{equation*}
+% }
 \end{document}

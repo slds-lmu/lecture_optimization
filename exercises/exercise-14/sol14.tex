@@ -1,0 +1,275 @@
+\documentclass[a4paper]{article}
+\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+
+
+
+\usepackage[utf8]{inputenc}
+%\usepackage[ngerman]{babel}
+\usepackage{a4wide,paralist}
+\usepackage{amsmath, amssymb, xfrac, amsthm}
+\usepackage{dsfont}
+%\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{framed}
+\usepackage{multirow}
+\usepackage{bytefield}
+\usepackage{csquotes}
+\usepackage[breakable, theorems, skins]{tcolorbox}
+\usepackage{hyperref}
+\usepackage{cancel}
+\usepackage{bm}
+\usepackage{mathtools}
+
+
+\input{../../style/common}
+
+\tcbset{enhanced}
+
+\DeclareRobustCommand{\mybox}[2][gray!20]{%
+	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+	\fi
+}
+
+\DeclareRobustCommand{\myboxshow}[2][gray!20]{%
+%	\iffalse
+	\begin{tcolorbox}[   %% Adjust the following parameters at will.
+		breakable,
+		left=0pt,
+		right=0pt,
+		top=0pt,
+		bottom=0pt,
+		colback=#1,
+		colframe=#1,
+		width=\dimexpr\linewidth\relax,
+		enlarge left by=0mm,
+		boxsep=5pt,
+		arc=0pt,outer arc=0pt,
+		]
+		#2
+	\end{tcolorbox}
+%	\fi
+}
+
+
+%exercise numbering
+\renewcommand{\theenumi}{(\alph{enumi})}
+\renewcommand{\theenumii}{\roman{enumii}}
+\renewcommand\labelenumi{\theenumi}
+
+
+\font \sfbold=cmssbx10
+
+\setlength{\oddsidemargin}{0cm} \setlength{\textwidth}{16cm}
+
+
+\sloppy
+\parindent0em
+\parskip0.5em
+\topmargin-2.3 cm
+\textheight25cm
+\textwidth17.5cm
+\oddsidemargin-0.8cm
+\pagestyle{empty}
+
+\newcommand{\kopf}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in Machine Learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfic}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in Machine Learning \hfill Live Session #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newcommand{\kopfsl}[1]{
+\hrule
+\vspace{.15cm}
+\begin{minipage}{\textwidth}
+%akwardly i had to put \" here to make it compile correctly
+	{\sf\bf Optimization in Machine Learning \hfill Exercise sheet #1\\
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+\end{minipage}
+\vspace{.05cm}
+\hrule
+\vspace{1cm}}
+
+\newenvironment{allgemein}
+	{\noindent}{\vspace{1cm}}
+
+\newcounter{aufg}
+\newenvironment{aufgabe}[1]
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}: #1}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newcounter{loes}
+\newenvironment{loesung}[1]
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}: #1}\\ \noindent}
+	{\bigskip}
+	
+\newenvironment{bonusaufgabe}
+	{\refstepcounter{aufg}\textbf{Exercise \arabic{aufg}*\footnote{This
+	is a bonus exercise.}:}\\ \noindent}
+	{\vspace{0.5cm}}
+
+\newenvironment{bonusloesung}
+	{\refstepcounter{loes}\textbf{Solution \arabic{loes}*:}\\\noindent}
+	{\bigskip}
+
+\input{../../latex-math/basic-math.tex}
+\input{../../latex-math/basic-ml.tex}
+
+\begin{document}
+% !Rnw weave = knitr
+
+\kopfsl{14}{Multi-Criteria Optimization}
+
+\aufgabe{Concepts in Multi-Criteria Optimization}{
+
+\begin{enumerate}
+\item
+  \begin{itemize}
+    \item $\mathbf{x}^{(1)}$ with $\mathbf{f}^{(1)} = (10, 5)$ e.g., dominated by $\mathbf{x}^{(4)}$ with $\mathbf{f}^{(4)} = (6, 4)$.
+    \item $\mathbf{x}^{(2)}$ with $\mathbf{f}^{(2)} = (7, 8)$ e.g., dominated by $\mathbf{x}^{(3)}$ with $\mathbf{f}^{(3)} = (4, 6)$.
+    \item $\mathbf{x}^{(3)}$ with $\mathbf{f}^{(3)}$ not dominated.
+    \item $\mathbf{x}^{(4)}$ with $\mathbf{f}^{(4)}$ not dominated.
+    \item $\mathbf{x}^{(5)}$ with $\mathbf{f}^{(5)}$ not dominated.
+    \item $\mathbf{x}^{(6)}$ with $\mathbf{f}^{(6)}$ not dominated.
+  \end{itemize}
+  $\rightarrow$ the set of Pareto optimal points is $\mathcal{P} = \{\mathbf{x}^{(3)}, \mathbf{x}^{(4)}, \mathbf{x}^{(5)}, \mathbf{x}^{(6)}\}$.
+\item
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hldef{(ggplot2)}
+
+\hldef{solutions} \hlkwb{=} \hlkwd{data.frame}\hldef{(}\hlkwc{f1} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{10}\hldef{,} \hlnum{7}\hldef{,} \hlnum{4}\hldef{,} \hlnum{6}\hldef{,} \hlnum{9}\hldef{,} \hlnum{3}\hldef{),} \hlkwc{f2} \hldef{=} \hlkwd{c}\hldef{(}\hlnum{5}\hldef{,} \hlnum{8}\hldef{,} \hlnum{6}\hldef{,} \hlnum{4}\hldef{,} \hlnum{3}\hldef{,} \hlnum{7}\hldef{),} \hlkwc{id} \hldef{=} \hlnum{1}\hlopt{:}\hlnum{6}\hldef{)}
+\hldef{solutions}\hlopt{$}\hldef{pareto_optimal} \hlkwb{=} \hlkwd{c}\hldef{(}\hlnum{FALSE}\hldef{,} \hlnum{FALSE}\hldef{,} \hlnum{TRUE}\hldef{,} \hlnum{TRUE}\hldef{,} \hlnum{TRUE}\hldef{,} \hlnum{TRUE}\hldef{)}
+
+\hlkwd{ggplot}\hldef{(}\hlkwd{aes}\hldef{(}\hlkwc{x} \hldef{= f1,} \hlkwc{y} \hldef{= f2,} \hlkwc{colour} \hldef{= pareto_optimal),} \hlkwc{data} \hldef{= solutions)} \hlopt{+}
+  \hlkwd{geom_step}\hldef{(}\hlkwc{data} \hldef{= solutions[solutions}\hlopt{$}\hldef{pareto_optimal} \hlopt{==} \hlnum{TRUE}\hldef{, ],}
+            \hlkwc{direction} \hldef{=} \hlsng{"hv"}\hldef{,} \hlkwc{colour} \hldef{=} \hlsng{"black"}\hldef{)} \hlopt{+}
+  \hlkwd{geom_point}\hldef{()} \hlopt{+}
+  \hlkwd{geom_text}\hldef{(}\hlkwd{aes}\hldef{(}\hlkwc{x} \hldef{= f1,} \hlkwc{y} \hldef{= f2,} \hlkwc{label} \hldef{= id),}
+            \hlkwc{nudge_x} \hldef{=} \hlnum{0.25}\hldef{,} \hlkwc{nudge_y} \hldef{=} \hlnum{0.25}\hldef{,} \hlkwc{show.legend} \hldef{=} \hlnum{FALSE}\hldef{)} \hlopt{+}
+  \hlkwd{geom_point}\hldef{(}\hlkwd{aes}\hldef{(}\hlkwc{x} \hldef{= f1,} \hlkwc{y} \hldef{= f1),} \hlkwc{colour} \hldef{=} \hlsng{"black"}\hldef{,} \hlkwc{data} \hldef{=} \hlkwd{data.frame}\hldef{(}\hlkwc{f1} \hldef{=} \hlnum{15}\hldef{,} \hlkwc{f2} \hldef{=} \hlnum{15}\hldef{))} \hlopt{+}
+  \hlkwd{labs}\hldef{(}\hlkwc{x} \hldef{=} \hlkwd{expression}\hldef{(f[}\hlnum{1}\hldef{]),} \hlkwc{y} \hldef{=} \hlkwd{expression}\hldef{(f[}\hlnum{2}\hldef{]),} \hlkwc{colour} \hldef{=} \hlsng{"Pareto Optimal"}\hldef{)} \hlopt{+}
+  \hlkwd{theme_minimal}\hldef{()}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=0.75\linewidth]{figure/pareto_plot-1} 
+\end{knitrout}
+\item We can simply compute the area slices under each segment and sum them up.\\
+  For the four rectangles from left to right:
+  \begin{itemize}
+    \item $(4-3) \cdot (15-7) = 8$
+    \item $(6-4) \cdot (15-6) = 18$
+    \item $(9-6) \cdot (15-4) = 33$
+    \item $(15-9) \cdot (15-3) = 72$
+  \end{itemize}
+  $\rightarrow S(\mathcal{P}, R) = 8+18+33+72 = 131$.
+\item We start with the first front of non-dominated solutions $\mathcal{F}_{1} = \{\mathbf{x}^{(3)}, \mathbf{x}^{(4)}, \mathbf{x}^{(5)}, \mathbf{x}^{(6)}\}$.
+  After dropping these solutions, $\mathbf{x}^{(1)}$ and $\mathbf{x}^{(2)}$ remain. Neither of these solutions dominates the other solution.
+  Therefore $\mathcal{F}_{2} = \{\mathbf{x}^{(1)}, \mathbf{x}^{(2)}\}$.
+\item Crowding distance is always computed within a front. From (d) we have that $\mathbf{x}^{(3)} \in \mathcal{F}_{1}$.
+  We start with the first dimension, $f_{1}$.\\
+  First, sort the values by $f_{1}$: $(3,7),(4,6),(6,4),(9,3)$.
+  $(3, 7)$ and $(9, 3)$ are outermost and get an infinite partial distance for the $f_{1}$ dimension.
+  Normalize the values by the minimum of $3$ and maximum of $9$ among the four points.
+  For the point $\mathbf{x}^{(3)}$ (new index of $i = 2$) we compute:
+  $$\mathrm{CD}_{1}(\mathbf{x}^{(3)}) = \frac{(f_{1}^{(i+1)} - f_{1}^{(i-1)})}{(f_{1}^{(\mathrm{max})} - f_{1}^{(\mathrm{min})})} = \frac{(6 - 3)}{(9 - 3)} = 0.5.$$
+  For the second dimension, $f_{2}$, we analogously obtain:
+  $$\mathrm{CD}_{2}(\mathbf{x}^{(3)}) = \frac{(f_{2}^{(i+1)} - f_{2}^{(i-1)})}{(f_{2}^{(\mathrm{max})} - f_{2}^{(\mathrm{min})})} = \frac{(7 - 4)}{(7 - 3)} = 0.75.$$
+  $\rightarrow$ the total crowding distance is (when taking the sum) $0.5 + 0.75 = 1.25$.
+\item We know from (c) that the total dominated hypervolume is $S(\mathcal{P}, R) = 131$.
+  To compute the hypervolume contribution of $\mathbf{x}^{(5)}$, we compute the hypervolume of $\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}$ and substract it.
+  Similar computations as in (c) but now for $\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}$ yield $S(\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}, R) = 125$. Therefore $\mathbf{x}^{(5)}$ has a hypervolume contribution of $131 - 125 = 6$.
+\end{enumerate}
+}
+
+\end{document}

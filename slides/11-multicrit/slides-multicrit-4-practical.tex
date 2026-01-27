@@ -86,7 +86,7 @@ Again, we want to train a \textit{spam detector} on the popular Spam dataset%
   \item Optimizer: multi-criteria Bayesian optimization
   \begin{itemize}
     \item ParEGO with $\rho=0.05$, $s=100000$
-    \item Acquisition: Confidence Bound ($\alpha=2$)
+    \item Acquisition: Confidence Bound ($\tau=2.0$)
     \item Budget: 100 evaluations
   \end{itemize}
   \item Tuning is done on a training holdout, and the hyperparameter configs on the estimated Pareto front are validated on external test set.
@@ -115,7 +115,7 @@ Again, we want to train a \textit{spam detector} on the popular Spam dataset%
 \end{column}
 \begin{column}{0.55\textwidth}
 \begin{figure}
-\includegraphics[width=\textwidth]{slides/11-multicrit/figure_man/example_parego_spam.png}
+\includegraphics[width=\textwidth]{figure_man/example_parego_spam.png}
 \end{figure}
 \end{column}
 \end{columns}
@@ -139,11 +139,11 @@ Validate configurations on the estimated Pareto front:
   \end{tabular}
 \end{itemize}
 \end{column}
-\begin{column}{0.8\textwidth}
-\vspace{-0.3cm}
+\begin{column}{0.65\textwidth}
+\vspace{-0.2cm}
 \begin{figure}
-\includegraphics[width=0.52\textwidth]{slides/11-multicrit/figure_man/example_parego_spam_outer.png}\\
-\includegraphics[width=0.52\textwidth]{slides/11-multicrit/figure_man/example_parego_spam_outer_pareto.png}
+\includegraphics[width=0.6\textwidth]{figure_man/example_parego_spam_outer.png}\\
+\includegraphics[width=0.6\textwidth]{figure_man/example_parego_spam_outer_pareto.png}
 \end{figure}
 \end{column}
 \end{columns}
@@ -193,7 +193,7 @@ Validate configurations on the estimated Pareto front:
 \end{itemize}
 
 \begin{center}
-\includegraphics[width=0.5\linewidth]{slides/11-multicrit/figure_man/mosmafs_presentation_p14.pdf}
+\includegraphics[width=0.5\linewidth]{figure_man/mosmafs_presentation_p14.pdf}
 \end{center}
 
 \end{vbframe}
@@ -202,13 +202,13 @@ Validate configurations on the estimated Pareto front:
 \begin{vbframe}{Efficient Models - Example: Feature Selection II}
 
 \textbf{Idea}: \emph{Multi-Objective Hyperparameter Tuning and Feature Selection using Filter Ensembles}
-\lit{\href{https://arxiv.org/pdf/1912.12912.pdf}{Binder et al. 2020}}.
+\citelink{BINDER2020MULTI}.
 
 \begin{itemize}
   \item Pre-calculate multiple \emph{feature-filter} rank vectors.
 
   \begin{center}
-    \includegraphics[width=0.7\linewidth]{slides/11-multicrit/figure_man/mosmafs_presentation_p39.pdf}
+    \includegraphics[width=0.7\linewidth]{figure_man/mosmafs_presentation_p39.pdf}
   \end{center}
 
   \item New hyperparameter vector: $\conf = (\tilde{\conf}, w_1,\dots,w_p, \tau)$
@@ -244,7 +244,7 @@ Validate configurations on the estimated Pareto front:
 \end{column}
 \begin{column}{0.35\textwidth}
 \begin{figure}
-\includegraphics[width=\linewidth]{slides/11-multicrit/figure_man/mosmafs_sonar_eval_domHV.pdf}
+\includegraphics[width=\linewidth]{figure_man/mosmafs_sonar_eval_domHV.pdf}
 \end{figure}
 \end{column}
 \end{columns}
@@ -255,13 +255,13 @@ Validate configurations on the estimated Pareto front:
 \begin{vbframe}{Efficient Models - Example: FLOPS}
 
 \textbf{Goal}: Optimize \emph{accuracy} vs. \emph{FLOPS} (floating-point ops) \\
-\lit{\href{https://arxiv.org/pdf/1904.09035.pdf}{Wang et al.\ 2019}}.
+\citelink{WANG2019EVOLVING}.
 
 \bigskip
 Data: CIFAR-10 (image classification).
 
 \bigskip
-Learner: \emph{DenseNet}~\lit{\href{https://arxiv.org/pdf/1608.06993.pdf}{Huang et al.\ 2018}}:
+Learner: \emph{DenseNet} \citelink{HUANG2017DENSELY}:
 \begin{itemize}
   \item 4 dense blocks, each with multiple convolution layers that feed into each other.
   \item Blocks connected by convolution + max-pooling layers.
@@ -291,7 +291,7 @@ Training: 300 epochs, batch size 128, initial LR 0.1.
 \end{column}
 \begin{column}{0.35\textwidth}
 \begin{figure}
-\includegraphics[width=\textwidth]{slides/11-multicrit/figure_man/Wang_et_al_2019_Evolving_Deep_Neural_Networks_fig7_1.png}
+\includegraphics[width=\textwidth]{figure_man/Wang_et_al_2019_Evolving_Deep_Neural_Networks_fig7_1.png}
 \end{figure}
 \end{column}
 \end{columns}
@@ -315,12 +315,12 @@ Dataset: \texttt{Adult}
   \item Target: binary, income above 50k
   \item 14 features: \texttt{age, education, hours.per.week, marital.status, native.country, occupation, race, relationship, sex, \ldots}
 \end{itemize}
-\includegraphics[width=0.99\textwidth]{slides/11-multicrit/figure_man/dataset_adult_age_sex.png}
+\includegraphics[width=0.99\textwidth]{figure_man/dataset_adult_age_sex.png}
 \end{column}%
 \begin{column}{0.5\textwidth}
 
-\includegraphics[width=0.55\textwidth]{slides/11-multicrit/figure_man/dataset_adult_race.png}%
-\includegraphics[width=0.75\textwidth]{slides/11-multicrit/figure_man/dataset_adult_education.png}
+\includegraphics[width=0.55\textwidth]{figure_man/dataset_adult_race.png}%
+\includegraphics[width=0.75\textwidth]{figure_man/dataset_adult_education.png}
 \end{column}
 \end{columns}
 
@@ -364,7 +364,7 @@ A toy example: build a “fair” model for predicting income (binary).
 \begin{vbframe}{Fair Models - Results}
 
 \begin{center}
-\includegraphics[scale=1.0]{slides/11-multicrit/figure_man/Pfisterer_et_al_2019_Multi_Objective_fig4.pdf}
+\includegraphics[scale=1.0]{figure_man/Pfisterer_et_al_2019_Multi_Objective_fig4.pdf}
 \end{center}
 \begin{itemize}
   \item Optimizer: ParEGO + random forest surrogate, restricting $[w_i]$ to $[0.1,0.9]$ if we only care about moderate fairness/performance ranges.

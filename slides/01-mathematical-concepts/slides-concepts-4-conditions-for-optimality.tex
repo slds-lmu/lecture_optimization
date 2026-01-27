@@ -2,275 +2,147 @@
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
-
-
-%\usepackage{animate} % only use if you want the animation for Taylor2D
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  Mathematical Concepts 
-  }{% Lecture title  
-  Conditions for optimality
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/local_global_min_2D.png
-  }{
-    \item Local and global optima
-    \item First \& second order conditions
+\titlemeta{
+Mathematical Concepts 
+}{
+Conditions for optimality
+}{
+figure_man/local_global_min_2D.png
+}{
+\item Local and global optima
+\item First \& second order conditions
 }
 
-\begin{vbframe}{Definition local and global minimum}
-Given $\mathcal{S} \subseteq \R^d$, $f: \mathcal{S} \to \R$:
-\begin{itemize}
-    \item $f$ has \textbf{global minimum} in $\xv^\ast \in \mathcal{S}$, if $f(\xv^\ast) \leq \fx$ for all $\xv \in \mathcal{S}$
-    \item $f$ has a \textbf{local minimum} in $\xv^\ast\in\mathcal{S}$, if $\eps>0$ exists s.t. $f(\xv^\ast) \leq \fx$ for all $\xv \in B_\eps(\xv^\ast)$ (\enquote{$\epsilon$}-ball around $\xv^\ast$).
-\end{itemize}
+\begin{framei}{Extrema and saddle points}
+\item Given $\S \subseteq \R^d$, $f: \S \to \R$
+\item Global minimum at $\xvs$: $\fxvs \le f(\xv)$ for all $\xv \in \S$
+\item Local minimum at $\xvs$: $\exists\, \eps > 0$ s.t. $\fxvs \le f(\xv)$ for all $\xv \in S \cap B_\eps(\xvs)$ ($\eps$-ball)
+\item Analogously for global and local max
+\item We call $\xvs$ saddle point if in feasible portion of every eps-ball
+$S \cap B_\eps(\xvs)$, is at least a strictly better and a strictly worse point
+\vfill
+\splitV[0.5]{
+\imageC[0.6]{figure_man/local_global_min.png}
+}{
+\imageC[0.6]{figure_man/local_global_min_2D.png}
+}
+\begin{center}\begin{footnotesize}
+Source (left): \url{https://en.wikipedia.org/wiki/Maxima_and_minima} \quad Source (right): \url{https://wngaw.github.io/linear-regression/}
+\end{footnotesize}\end{center}
+\end{framei}
 
-\vspace*{-0.3cm}
+\begin{framei}{Existence of optima}
+\item $f: \S \to \R$
+\item If $f$ continuous and $\S$ compact: minimum and maximum exist (extreme value theorem)
+\item If $f$ discontinuous: no general existence statement
+\item Negative example, with $\S = [0,1]$:
+%FIXME: here some plots for the functions below are missing
+\begin{align*}
+f(x) = \begin{cases}
+1/x  & x > 0 \\
+0    & x = 0 \\
+-1/x & x < 0
+\end{cases}
+\end{align*}
+\end{framei}
 
+% \begin{framei}{First order condition: intuition}
+% \item At a local optimum of $f\in\mathcal{C}^1$, first-order Taylor approx. is flat
+% \item Necessary condition
+% \vfill
+% %FIXME: these figures dont look very professional, maybe we should do some of them ourselves?
+% \imageC[0.6]{figure_man/first_order.png}
+% \begin{center}\begin{footnotesize}
+% Strictly convex functions (left: univariate, right: multivariate). Tangent/hyperplane flat at optimum. Source: Watt, Machine Learning Refined (2020)
+% \end{footnotesize}\end{center}
+% \end{framei}
+
+\begin{framei}{First-order condition}
+\item Let $f: \S \to \R$, $f$ differentiable, $\xvs$ interior point of $\S$
+\item Necessary condition:\\
+If $\xvs$ is a local extremum, then $\nabla \fxvs = 0$
+\item Such points are called `stationary'
+\item Intuition: at a local extremum, the function must be flat, otherwise we can find a direction to move to a better value
+\item Not sufficient, e.g. saddle points are possible
+\vfill
+\imageC[0.6]{figure_man/first_order.png}
+%\imageC[0.8]{figure_man/saddle_points_2.png}
+% FIXME: better src handling
+Source: Watt (2020)
+\end{framei}
+
+\begin{framei}[fs=footnotesize]{Second-order condition}
+\item Let $f: \S \to \R$, $f \in \CC{2}$, $\xvs$ interior point of $\S$
+\item If $H(\xvs)$ is definite, then $\xvs$ is a strict local extremum
+\item If $H(\xvs)$ is semi-definite, then $\xvs$ is a local extremum
+\item If $H(\xvs)$ is indefinite, then $\xvs$ is a saddle point
+\item If $H(\xvs)$ is p(s)d, then $\xvs$ is a (strict) local min\\
+this implies f is locally (strictly) convex
+\item If $H(\xvs)$ is n(s)d, then $\xvs$ is a (strict) local max\\
+this implies f is locally (strictly) concave
+\item Interpretation: curvature pos (or neg) in all directions
+%FIXME: there should be a pic here
+
+\imageC[0.7]{figure_man/convex.jpg}
+
+\end{framei}
+
+
+% \begin{framev}{Quadratic forms and Hessians}
+% \imageC[0.9]{figure_man/hessian-eigenvalues.pdf}
+% \begin{center}\begin{footnotesize}
+% Three quadratic forms. Left: two positive eigenvalues. Middle: one positive, one negative. Right: one positive, one zero
+% \end{footnotesize}\end{center}
+% \end{framev}
+
+\begin{framei}{Example: Branin function}
+\item Branin function with 3 local minima   
+\splitV{
+\imageC[0.65]{figure_man/branin3d/branin2D.pdf}
+}{
+\imageC[0.65]{figure_man/branin3d/branin3D.pdf}
+}
+\item EVs of Hessian at local minima:
 \begin{center}
-    \includegraphics[width = 0.48\textwidth]{figure_man/local_global_min.png} \quad \includegraphics[width = 0.48\textwidth]{figure_man/local_global_min_2D.png} \\
-    \vspace*{0.3cm}
-    \begin{tiny}
-        Source (\textbf{left}): \url{https://en.wikipedia.org/wiki/Maxima_and_minima}. \\
-        Source (\textbf{right}): \url{https://wngaw.github.io/linear-regression/}.
-    \end{tiny}
+\begin{tabular}{c|c|c}
+        & $\lambda_1$ & $\lambda_2$ \\ \hline\hline
+Left    & 22.29       & 0.96        \\ \hline
+Middle  & 11.07       & 1.73        \\ \hline
+Right   & 11.33       & 1.69        \\
+\end{tabular}
 \end{center}
+\end{framei}
+
+\begin{framei}{Convexity and optima}
+\item $f: \S \to \R$ convex on convex set $\S$
+\item Any local minimum is global
+\item The set of minima is convex
+%FIXME: add  proofs here
+\item If $f$ strictly convex: at most one local minimum\\
+(unique global on $\S$, if it exists)
+\item Analogously for concave functions
+\end{framei}
+  
+\begin{framei}{Example}
+\item $f(x,y) = x^4 + y^4 - x^2 - y^2$
+\item $\nabla f(x,y) = (4x^3 - 2x, 4y^3 - 2y)$
+\item $H_(x,y) = 
+\begin{pmatrix}
+12x^2 - 2 &  0          \\ 
+0         & 12y^2 - 2
+\end{pmatrix}$ 
+\item At $(0,0)^T$ we have strict local max
+\item At $(\pm \frac1{\sqrt{2}}, \pm \frac1{\sqrt{2}})^T$ we have 4 strict local min
+\item At $(0, \pm \frac1{\sqrt{2}})^T$, $(\pm \frac1{\sqrt{2}}, 0)^T$ we have 4 saddle points
+% FIXME: we should have a plot here
+\end{framei}
 
-\end{vbframe}
-
-\begin{vbframe}{Existence of Optima}
-
-\dlz
-
-We regard the two main cases of $f : \mathcal{S} \to \R$:
-
-\begin{itemize}
-    \item $f$ \textbf{continuous}: If $\mathcal{S}$ is \textbf{compact}, $f$ attains a minimum and a maximum (extreme value theorem).
-    \item $f$ \textbf{discontinuous}: \textbf{No general} statement possible about existence of optima.
-\end{itemize}
-
-\lz
-
-\textbf{Example:} $\mathcal{S} = [0,1]$ compact, $f$ discontinuous with
-\begin{equation*}
-    f(x) = \begin{cases}
-        1/x & \text{if $x>0$}, \\
-        0 & \text{if $x=0$}.
-    \end{cases}
-\end{equation*}
-
-% \textbf{Note}: From now on, we assume silently that the functions considered are sufficiently smooth (i.e., when we consider a second derivative of a function, we assume that the second derivative exists and is continuous).
-
-\end{vbframe}
-
-\begin{vbframe}{First order condition for optimality}
-
-\textbf{Observation:} At an interior local optimum of~$f\in\mathcal{C}^1$, first order Taylor approximation is flat, i.e., first order derivatives are zero.
-
-\medskip
-
-This condition is therefore \textbf{necessary} and called \textbf{first order}.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\textwidth]{figure_man/first_order.png}
-    \caption*{\footnotesize
-        Strictly convex functions (\textbf{left:} univariate, \textbf{right:} multivariate) with unique local minimum, which is the global one.
-        Tangent (hyperplane) is perfectly flat at the optimum.
-        (Source: Watt, \textit{Machine Learning Refined}, 2020)}
-\end{figure}
-
-\framebreak
-
-
-\textbf{First order condition:}
-Gradient of~$f$ at local optimum $\xv^\ast \in \mathcal{S}$ is zero:
-\vspace{-0.5\baselineskip}
-\begin{equation*}
-    \nabla f(\xv^\ast) = (0,\ldots,0)^T
-\end{equation*}
-
-
-Points with zero first order derivative are called \textbf{stationary}.
-
-\medskip
-
-Condition is \textbf{not sufficient}: Not all stationary points are local optima.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.7\textwidth]{figure_man/saddle_points_2.png}
-    \captionsetup{justification=centering}
-    \caption*{\footnotesize
-        \textbf{Left:} Four points fulfill the necessary condition and are indeed optima. \\
-        \textbf{Middle:} One point fulfills the necessary condition but is not a local optimum. \\
-        \textbf{Right:} Multiple local minima and maxima. \\
-        (Source: Watt, 2020, Machine Learning Refined)}
-\end{figure}
-
-\end{vbframe}
-
-\begin{vbframe}{Second order condition for optimality}
-
-\vspace{-0.5\baselineskip}
-
-
-\textbf{Second order condition:}
-Hessian of~$f \in \mathcal{C}^2$ at stationary point $\xv^\ast \in \mathcal{S}$ is positive or negative definite:
-\vspace{-0.5\baselineskip}
-\begin{equation*}
-    H(\xv^\ast) \succ 0 \text{ or } H(\xv^\ast) \prec 0
-\end{equation*}
-
-
-\textbf{Interpretation:} Curvature of~$f$ at local optimum is either positive in all directions or negative in all directions.
-
-\vspace{0.5\baselineskip}
-
-The second order condition is \textbf{sufficient} for a stationary point.
-
-\begin{footnotesize}
-    \textbf{Proof:} Later.
-\end{footnotesize}
-
-% \begin{center}
-% \includegraphics[width = 0.3\textwidth]{figure_man/local_global_min.png} \quad \includegraphics[width = 0.3\textwidth]{figure_man/local_global_min_2D.png} \\
-% \vspace*{0.3cm}
-% \begin{tiny}
-% Two functions that are locally convex, but not globally convex. % Source (left): \url{https://en.wikipedia.org/wiki/Maxima_and_minima}. Source (right): \url{https://wngaw.github.io/linear-regression/}.
-% \end{tiny}
-% \end{center}
-
-%\textbf{Note:} For a convex function, $\nabla^2 f(\xv)$ is always p.s.d.; therefore, any stationary point is the local (also global) minimum.
-
-% \framebreak
-
-% \begin{itemize}
-% \item The necessary condition says that at every local minimum the derivative is \textbf{always} $0$. It is non-exclusive: Also at a saddle point (right plot), the derivative can be zero.
-% \item In order to make sure that a stationary point also corresponds to a local minimum, we have to require that the curvature at this point is positive.
-% \end{itemize}
-% \begin{center}
-% 	\includegraphics[width=1\textwidth, keepaspectratio]{figure_man/minmaxsaddle.png}
-% \end{center}
-
-%   \framebreak
-
-% \textbf{Example:}
-% \footnotesize
-% \begin{enumerate}
-% \item If [$f$ convex $\Leftrightarrow$ all eigenvalues of $H(\xv)$ positive], then local minimum\\
-% \item If [$f$ concave $\Leftrightarrow$ all eigenvalues of $H(\xv)$ negative], then local maximum\\
-% \item Some eigenvalues positive and some negative $\Leftrightarrow$ saddle point
-% \end{enumerate}
-
-% \vspace{0.5cm}
-
-% \begin{center}
-% \includegraphics[scale= 0.5]{figure_man/convex.jpg}
-% \end{center}
-
-
-\end{vbframe}
-
-\begin{vbframe}{Conditions for optimality and convexity}
-
-Let $f:\mathcal{S} \to \R$ be \textbf{convex}.
-Then:
-
-\begin{itemize}
-    \item Any local minimum is \textbf{also global} minimum
-    \item If $f$ \textbf{strictly convex}, $f$ has \textbf{at most one} local minimum which would also be unique global minimum on $\mathcal{S}$
-    % \item Sublevel sets $S_1 = \{\xv~|~\fx < a\}$ and $S_2 = \{\xv~|~\fx \leq a \}$, $a\in \R$, form convex sets.
-\end{itemize}
-
-\begin{center}
-    \includegraphics[width = 1\textwidth]{figure_man/hessian-eigenvalues.pdf} \\
-    % hessian-eigenvalues.R
-    % \vspace*{0.3cm}
-    \begin{footnotesize}
-        Three quadratic forms.
-        \textbf{Left:} $H(\xv^\ast)$ has two positive eigenvalues.
-        \textbf{Middle:} $H(\xv^\ast)$ has positive and negative eigenvalue.
-        \textbf{Right:} $H(\xv^\ast)$ has positive and a zero eigenvalue.
-        %Source (left): \url{https://en.wikipedia.org/wiki/Maxima_and_minima}.
-        %Source (right): \url{https://wngaw.github.io/linear-regression/}.
-    \end{footnotesize}
-\end{center}
-
-\framebreak
-
-\textbf{Example:} Branin function
-
-\vspace{-3\baselineskip}
-
-\begin{center}
-    \begin{minipage}[c]{0.4\textwidth}
-        \includegraphics[width=\textwidth]{figure_man/branin3d/branin2D.pdf}
-    \end{minipage}
-    \begin{minipage}[c]{0.4\textwidth}
-        \includegraphics[width=\textwidth]{figure_man/branin3d/branin3D.pdf}
-    \end{minipage}
-\end{center}
-
-\vspace{-3\baselineskip}
-
-Spectra of Hessians (numerically computed):
-
-\begin{table}
-    \centering
-    \begin{tabular}{c|c|c}
-               & $\lambda_1$ & $\lambda_2$ \\ \hline\hline
-        Left   & 22.29       & 0.96        \\ \hline
-        Middle & 11.07       & 1.73        \\ \hline
-        Right  & 11.33       & 1.69
-    \end{tabular}
-\end{table}
-
-% \includegraphics[width=0.4\columnwidth]{figure_man/branin3d/branin3D-optim-1.pdf}\\ \vspace*{-1.5cm}
-% \includegraphics[width=0.4\columnwidth]{figure_man/branin3d/branin3D-optim-2.pdf}\\\vspace*{-1.5cm}
-% \includegraphics[width=0.4\columnwidth]{figure_man/branin3d/branin3D-optim-3.pdf}
-
-\framebreak
-
-Definition: \textbf{Saddle point} at~$\xv$
-\begin{itemize}
-    \item $\xv$ stationary (necessary)
-    \item $H(\xv)$ indefinite, i.e., positive and negative eigenvalues (sufficient)
-\end{itemize}
-
-\lz
-
-\begin{center}
-    \includegraphics[scale=0.5]{figure_man/convex.jpg}
-\end{center}
-
-\framebreak
-
-\textbf{Examples:}
-
-\lz
-
-\begin{itemize}
-    \item $f(x,y) = x^2 - y^2$, $\nabla f(x,y) = (2x,-2y)^T$,
-
-        $H_f(x,y) = \begin{pmatrix}2 & 0 \\ 0 & -2\end{pmatrix}$
-
-        $\implies$ Saddle point at $(0,0)$ (sufficient condition met)
-
-    \vspace{\baselineskip}
-
-    \item $g(x,y) = x^4 - y^4$, $\nabla g(x,y) = (4x^3,-4y^3)^T$,
-
-        $H_g(x,y) = \begin{pmatrix}12x^2 & 0 \\ 0 & -12y^2\end{pmatrix}$
-
-        $\implies$ Saddle point at $(0,0)$ (sufficient condition \textbf{not} met)
-\end{itemize}
-
-\end{vbframe}
 
 \endlecture
 

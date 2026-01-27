@@ -148,7 +148,7 @@
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
 	{\sf\bf Optimization in Machine Learning \hfill Exercise sheet #1\\
-	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2025/2026}
 \end{minipage}
 \vspace{.05cm}
 \hrule
@@ -160,7 +160,7 @@
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
 	{\sf\bf Optimization in Machine Learning \hfill Live Session #1\\
-	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2025/2026}
 \end{minipage}
 \vspace{.05cm}
 \hrule
@@ -172,7 +172,7 @@
 \begin{minipage}{\textwidth}
 %akwardly i had to put \" here to make it compile correctly
 	{\sf\bf Optimization in Machine Learning \hfill Exercise sheet #1\\
-	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2024/2025}
+	 \url{https://slds-lmu.github.io/website_optimization/} \hfill WS 2025/2026}
 \end{minipage}
 \vspace{.05cm}
 \hrule
@@ -224,14 +224,14 @@ Find the maximizer of the posterior density. What do you observe?
 \item In logistic regression, we model the conditional probability $\P(y = 1|\mathbf{x}^{(i)}) = \frac{1}{1 + \exp(-\bm{\theta}^\top \mathbf{x}^{(i)})}$ of the target $y \in \{0, 1\}$ given a feature vector $\mathbf{x}^{(i)}.$
 From this it follows that $\P(y = y^{(i)}|\mathbf{x}^{(i)}) = \P(y = 1|\mathbf{x}^{(i)})^{y^{(i)}}(1-\P(y = 1|\mathbf{x}^{(i)})^{1-y^{(i)}}.$ With this derive the empirical risk $\mathcal{R}_{\text{emp}}$ as shown in the lecture following the maximum likelihood principle. (Assume the observations are independent)
 \item Show that $\mathcal{R}_{\text{emp}}$ of a) is convex.
-\item Show that the first primal form of the linear SVM with soft constraints \\
+\item Show that the second primal form of the linear SVM $\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}} \sum^n_{i=1}\max(1-y^{(i)}(\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0), 0) + \lambda\Vert\bm{\theta}\Vert^2_2$ is a convex problem.
+\item \textit{Bonus:} Show that the first primal form of the linear SVM with soft constraints \\
 $\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}, \zeta^{(i)}} \frac{1}{2}\Vert\bm{\theta}\Vert^2_2 + C\sum^n_{i=1}\zeta^{(i)}$ s.t. 
 $y^{(i)}\left( \bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0\right) \geq 1 - \zeta^{(i)} \quad \forall i \in \{1,\dots,n\}$ and $\zeta^{(i)} \geq 0 \quad \forall i \in \{1, \dots, n\}$
 and its second primal form \\
 $\min_{\mathbf{\bm{\theta}, \bm{\theta}_0}} \sum^n_{i=1}\max(1-y^{(i)}(\bm{\theta}^\top\mathbf{x}^{(i)} + \bm{\theta}_0), 0) + \lambda\Vert\bm{\theta}\Vert^2_2$
 are equivalent. What is the functional relationship between $C$ and $\lambda$? \\
 \textit{Hint}: Try to insert the combined constraints into their associated objective.
-\item Show that the second primal form of the linear SVM is a convex problem
 \end{enumerate}
 }
 \end{document}

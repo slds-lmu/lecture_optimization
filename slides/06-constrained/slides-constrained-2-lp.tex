@@ -3,830 +3,157 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
-
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  }{% Lecture title  
-  Linear Programming
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/convex_programs.png
-  }{
-    \item Instances of LPs underlying statistical estimation
-    \item Definition of an LP
-    \item Geometric intuition of LPs
+\titlemeta{
+Constrained Optimization
+}{
+Linear Programming
+}{
+figure_man/convex_programs.png
+}{
+\item Instances of LPs underlying statistical estimation
+\item Definition of an LP
+\item Geometric intuition of LPs
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{vbframe}{Linear programming}
-
-\textbf{Linear problems} (LP):
-\begin{center}
-    \textbf{linear} objective function + \textbf{linear} constraints
-\end{center}
-
-\textbf{Example:}
-
-\vspace*{-1cm}
-\begin{footnotesize}
-\begin{eqnarray*}
-\min && - x_1 - x_2 \\
-\text{s.t. } && x_1 + 2x_2 \le 1\\
-&& 2x_1 + x_2 \le 1 \\
-&& x_1, x_2 \ge 0
-\end{eqnarray*}
-\end{footnotesize}
-
-\begin{center}
-\includegraphics[width = 0.3\textwidth]{figure_man/linear-pro-example.png}
-\end{center}
-
-%<<echo = F>>=
-%# plot polytope
-%plotPoly = function(A, b) {
-
-%  p = ggplot(data = data.frame(x = 0), mapping = aes(x = x))
-%  p = p + geom_point(x = 0, y = 0, size = 2, color = "green")
-
-%  for (i in 1:dim(A)[1]) {
-%    p = p + geom_abline(intercept = b[i] / A[i, 2], slope = - A[i, 1] / A[i, 2], color = "green")
-%  }
-
-%  p = p + geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), color = "green")
-%  p = p + geom_segment(aes(x = -Inf, y = 0, xend = Inf, yend = 0), color = "green")
-
-%  combs = combn(1:dim(A)[1], 2)
-
-%  V = matrix(0, 0, 2)
-
-%  for (i in 1:dim(combs)[2]) {
-
-%    ind = combs[, i]
-
-%    if (det(A[ind, ]) != 0) {
-%      sol = solve(A[ind, ], b[ind])
-
-%      if (all(A %*% sol <= b)) {
-%        V = rbind(V, solve(A[ind, ], b[ind]))
-%        p = p + geom_point(x = sol[1], y = sol[2], color = "green", size = 2)
-%      }
-%    }
-%  }
-
-%  V = as.data.frame(V)
-
-%  center = apply(V, 2, mean)
-%  Vdiff = V - center
-
-%  ordering = vector(length = 0)
-
-%  for (i in 1:dim(Vdiff)[1]) {
-%    ordering = cbind(ordering, atan2(Vdiff[i, 1], Vdiff[i, 2]))
-%  }
-
-%  V = V[order(ordering), ]
-
-%  p = p + geom_polygon(data = V, aes(x = V1, y = V2), fill = "green", alpha = 0.1)
-
-%  p = p + coord_equal() + xlab(expression(x[1])) + ylab(expression(x[2]))
+\begin{framei}{Linear programming}
+\item \textbf{Linear problems} (LP): linear objective + linear constraints
+\item \textbf{Example:}
+$$
+\min - x_1 - x_2 \quad \text{s.t. } x_1 + 2x_2 \le 1, \; 2x_1 + x_2 \le 1, \; x_1, x_2 \ge 0
+$$
+\imageC[0.60]{figure_man/cons-linear-pro-example.png}
+\end{framei}
 
 
-%  p = p + xlim(c(0, 1)) + ylim(c(0, 1)) + theme_bw()
-
-%  p
-%}
-%@
-
-%\vspace*{-0.5cm}
-
-%<<echo = F, out.width = '50%', fig.align='center', warning = F>>=
-%A = matrix(c(1, 2, -1, 0, 2, 1, 0, -1), ncol = 2)
-%b = c(1, 1, 0, 0)
-
-%plotPoly(A, b)
-%@
-
-
-\begin{itemize}
+\begin{framei}{LP examples: Quantile regression}
 \item \textbf{(Sparse) Quantile regression}:
+$$
+\min_{\beta_0,\bm{\beta}} \frac{1}{n}\sumin \rho_\tau \left(\yi - \beta_0 -  \bm{\beta}^T\xi\right) \quad \text{s.t. } \|\bm{\beta}\|_1 \le t
+$$
+where $\beta_0 \in \R$ and $\bm{\beta} \in \R^p$ are coefficients, and $\rho_\tau$, $\tau \in [0,1]$, is the check function:
+$$
+\rho_\tau(s) =
+\begin{cases}
+\tau \cdot s & \text{if } s>0, \\
+-(1-\tau)\cdot s & \text{if } s\le0.
+\end{cases}
+$$
+\item \textbf{Case $\tau = 1/2$:} Median regression (a.k.a.\ least absolute errors (LAE), least absolute deviations (LAD))
+\item Parameter $t \geq 0$ determines regularization
+\end{framei}
 
-\vspace{-\baselineskip}
 
-\begin{eqnarray*}
-    \min_{\beta_0,\bm{\beta}} && \frac{1}{n}\sum_{i = 1}^n \rho_\tau \left(y^{(i)} - \beta_0 -  \bm{\beta}^\top\xv^{(i)}\right) \\
-\text{s.t. } && \|\bm{\beta}\|_1 \le t
-\end{eqnarray*}
-where $\beta_0 \in \R$ and $\bm{\beta} \in \R^p$ are coefficients, and $\rho_\tau$, $\tau \in [0,1]$, is the check function defined as
-\begin{equation*}
-    \rho_\tau(s) =
-    \begin{cases}
-        \tau \cdot s & \text{if } s>0, \\
-        -1(1-\tau)\cdot s & \text{if } s\le0.
-    \end{cases}
-\end{equation*}
-
-\textbf{Case $\tau = 1/2$:} Median regression (a.k.a. least absolute errors (LAE), least absolute deviations (LAD))
-
-\medskip
-
-Parameter $t \geq 0$ determines regularization.
-
+\begin{framei}{LP examples: Dantzig selector}
 \item \textbf{Dantzig selector}:
+$$
+\min_{\bm{\beta}\in \R^p} \|\bm{\beta}\|_1 \quad \text{s.t. } \| \Xmat^T (\Xmat \bm{\beta} - \yv)\|_\infty \le \lambda
+$$
+where $\yv \in \R^n$, $\Xmat \in \R^{n \times p}$, and $\lambda > 0$ is a tuning parameter
+\item The infinity norm is defined as $\| x \|_\infty = \max\{|x_1|, \dots, |x_n|\}$
+\item Similar to (and behaves similar to) the Lasso
+\item Introduced for variable selection by Tao and Cand\`es
+\item Details about LPs in statistical estimation: see \href{https://etd.ohiolink.edu/apexprod/rws_etd/send_file/send?accession=osu1222035715&disposition=inline}{\beamergotobutton{PhD thesis of Yonggong Gao}}
+\end{framei}
 
-\begin{eqnarray*}
-\min_{\bm{\beta}\in \R^p} && \|\bm{\beta}\|_1 \\
-\text{s.t. } && \| \Xmat^\top (\Xmat \bm{\beta} - \bm{y})\|_\infty \le \lambda \,
-\end{eqnarray*}
-\end{itemize}
 
-where $\bm{y} \in \R^n$, $\Xmat \in \R^{n \times p}$, and $\lambda > 0$ is a tuning parameter. The infinity norm is defined as $\| x \|_\infty = \max\{|x_1|, \dots, |x_i|, \ldots, |x_n|\}$ is  
+\begin{framei}[sep=L]{LP: Standard form}
+\item LPs can be formulated in \textbf{standard form}:
+$$
+\max_{\xv \in \R^n} \mathbf{c}^T\xv \quad \text{s.t. } \Amat\xv \le \bv, \; \xv \ge 0
+$$
+with $\Amat \in \R^{m\times n}$, $\bv \in \R^m$
+\item Constraints are to be understood \textbf{componentwise}
+\item $\xv \ge 0$: ``non-negativity constraint''
+\item $\mathbf{c}$: ``cost vector''
+\end{framei}
 
-\lz
 
-The Dantzig selector is similar (and behaves similar) to the Lasso and was introduced for variable selection in the seminal paper by Terence Tao and Emmanuel Cand\`es (see moodle page for reference).
+\begin{framei}[sep=L]{LP: Converting to standard form}
+\item $\min \longleftrightarrow \max$: multiply objective function by $-1$
+\item $\leq \; \longleftrightarrow \; \geq$: multiply inequality by $-1$
+\item $= \; \longleftrightarrow \; \leq,\geq$: replace $\mathbf{a}_i^T\xv=b_i$ by $\mathbf{a}_i^T\xv\ge b_i$ \textit{and} $\mathbf{a}_i^T\xv\le b_i$
+\item No non-negativity constraint: replace $x_i$ by $x_i^+ - x_i^-$ with $x_i^+, x_i^- \ge 0$ (positive and negative part)
+\end{framei}
 
-\lz
 
-Details about LPs in statistical estimation can be found, e.g., in the PhD thesis of \href{ttps://etd.ohiolink.edu/apexprod/rws_etd/send_file/send?accession=osu1222035715&disposition=inline}{\beamergotobutton{Yonggong Gao}}). 
+\begin{framei}[sep=L]{LP: Standard form example}
+\item Example:
+$$
+\min - x_1 - x_2 \quad \text{s.t. } x_1 + 2x_2 \le 1, \; 2x_1 + x_2 \le 1, \; x_1, x_2 \ge 0
+$$
+\item Can also be formulated as:
+$$
+\max (1, 1) \begin{pmatrix} x_1 \\ x_2 \end{pmatrix} \quad \text{s.t. }  \begin{pmatrix}  1 &  2 \\  2 &  1 \end{pmatrix} \xv \le \begin{pmatrix}  1 \\  1 \end{pmatrix}, \; \xv \ge 0
+$$
+\end{framei}
 
-\framebreak
 
-LPs can be formulated in the \textbf{standard form}:
+\begin{framei}{Geometric interpretation: Feasible set}
+\item $i$-th inequality constraint: $\mathbf{a}_i^T \xv \le b_i$
+\item Points $\{ \xv: \mathbf{a}_i^T \xv = b_i\}$ form a hyperplane in $\R^n$ \\
+($\mathbf{a}_i$ is perpendicular to the hyperplane and called \textbf{normal vector})
+\item Points $\{\xv: \mathbf{a}_i^T \xv \ge b_i\}$ lie on the side of the hyperplane into which the normal vector points (``half-space'')
+\item Each inequality divides the space into two halves
+\item \textbf{Claim:} Points satisfying \textbf{all} inequalities form a \textbf{convex polytope}
+\imageC[0.5]{figure_man/cons-linear-pro-example.png}
+\end{framei}
 
-\vspace*{-0.5cm}
 
-\begin{eqnarray*}
-\max_{\xv \in \R^n} && \mathbf{c}^\top\xv\\
-\text{s.t. } && \Amat\xv \le \mathbf{b} \\
-&& \xv \ge 0
-\end{eqnarray*}
-with $\Amat \in \R^{m\times n}$, $\mathbf{b} \in \R^m$
-
-\medskip
-
+\begin{framei}[sep=L]{Geometric interpretation: Polytopes}
+\item A \textbf{polytope} is a generalized polygon in arbitrary dimensions
+\item A polytope consists of several sub-polytopes:
 \begin{itemize}
-    \item Constraints are to be understood \textbf{componentwise}
-    \item $\xv \ge 0$: \enquote{non-negativity constraint}
-    \item $\mathbf{c}$: \enquote{cost vector}
-\end{itemize}
-
-%
-% \begin{eqnarray*}
-% &&\min_{\xv \in \R^n} f(\xv)\\
-% \text{u. d. N. } && g_i(\xv) \le 0, h_j(\xv) = 0,
-% \end{eqnarray*}
-%
-% wobei $f: \R^n \to \R$, $g_i: \R^n \to \R$, $h_j: \R^n \to \R$ lineare Funktionen sind.
-
-\framebreak
-
-General LPs can be converted to standard form:
-
-\begin{itemize}
-    \setlength{\itemsep}{1em}
-    \item $\min \longleftrightarrow \max$: multiply objective function by $-1$
-    \item $\leq \; \longleftrightarrow \; \geq$: multiply inequality by $-1$
-    \item $= \; \longleftrightarrow \; \leq,\geq$: replace $\mathbf{a}_i^\top\xv=b_i$ by $\mathbf{a}_i^\top\xv\ge b_i$ \textit{and} $\mathbf{a}_i^\top\xv\le b_i$
-    \item No non-negativity constraint: replace $x_i$ by $x_i^+ - x_i^-$ with $x_i^+, x_i^- \ge 0$ (positive and negative part)
-\end{itemize}
-
-% In the following we assume that the LP is given in standard form.
-
-\framebreak
-
-\textbf{Example:}
-
-\vspace{-\baselineskip}
-
-\begin{eqnarray*}
-\min && - x_1 - x_2 \\
-\text{s.t. } && x_1 + 2x_2 \le 1\\
-&& 2x_1 + x_2 \le 1 \\
-&& x_1, x_2 \ge 0
-\end{eqnarray*}
-
-can also be formulated as
-
-\vspace*{-\baselineskip}
-
-\begin{eqnarray*}
-\max && (1, 1) \begin{pmatrix} x_1 \\ x_2 \end{pmatrix} \\
-\text{s.t. } &&  \begin{pmatrix}  1 &  2 \\  2 &  1 \end{pmatrix} \xv \le \begin{pmatrix}  1 \\  1
-\end{pmatrix} \\
-&& \xv \ge 0
-\end{eqnarray*}
-
-\end{vbframe}
-
-
-\begin{vbframe}{Geometric interpretation}
-
-Linear programming can be interpreted geometrically.
-
-\lz
-
-\textbf{Feasible set:}
-\begin{itemize}
-    \setlength{\itemsep}{1em}
-    \item $i$-th inequality constraint: $\mathbf{a}_i^\top \xv \le b_i$
-    \item Points $\{ \xv: \mathbf{a}_i^\top \xv = b_i\}$ form a hyperplane in $\R^n$ \\
-        ($\mathbf{a}_i$ is perpendicular to the hyperplane and called \textbf{normal vector})
-    \item Points $\{\xv: \mathbf{a}_i^\top \xv \ge b_i\}$ lie on the side of the hyperplane into which the normal vector points (\enquote{half-space})
-
-    % \begin{center}
-    %     \includegraphics[height=0.4\textheight,keepaspectratio]{figure_man/geo-interpretation.png}
-    % \end{center}
-
-
-%<<fig.align='center', out.width='80%', echo = F, warning = F>>=
-%f = function(x) b[1] / A[1, 2] - b[1] / A[1, 2] * x
-
-%p = ggplot(data = data.frame(x = 0))
-%p = p + geom_abline(slope = - b[1] / A[1, 2], intercept =  b[1] / A[1, 2], color = "green")
-%p = p + geom_polygon(data = data.frame(x = c(-5, 5, 5, -5), y = c(-5, -5, f(5), f(-5))), aes(x = x, y = y), fill = "green", alpha = 0.1)
-%p = p + geom_segment(aes(x = 0, y = f(0), xend = 0 - A[1, 1], yend = f(0) - A[1, 2]), arrow = arrow(length = unit(0.03, "npc")), color = "green")
-
-%p = p + xlab(expression(x[1])) + ylab(expression(x[2]))
-
-%p = p + theme_bw() + coord_equal()
-
-%p = p + xlim(c(-5, 5))
-%p = p + ylim(c(-5, 5))
-
-%p
-%@
-
-\framebreak
-
-\item Each inequality divides the space into two halves.
-\item \textbf{Claim:} Points satisfying \textbf{all} inequalities form a \textbf{convex polytope}.
-\end{itemize}
-
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{figure_man/linear-pro-example.png}
-\end{center}
-
-
-%<<echo = F, out.width = '60%', fig.align='center', warning = F>>=
-%plotPoly(A, b)
-%@
-
-
-\framebreak
-
-Geometry: A \textbf{polytope} is a generalized polygon in arbitrary dimensions.
-
-\medskip
-
-A polytope consists of several sub-polytopes:
-\begin{itemize}
-    \setlength{\itemsep}{1em}
     \item $0$-polytope: point
     \item $1$-polytope: line
     \item $2$-polytope: polygon, ...
 \end{itemize}
-
-\medskip
-
-\textbf{General:}
+\item \textbf{General:}
 \begin{itemize}
-    \setlength{\itemsep}{1em}
-    \item $d$-polytope is formed from several $(d-1)$-polytopes (\enquote{facets})
+    \item $d$-polytope is formed from several $(d-1)$-polytopes (``facets'')
     \item $(d-1)$-polytope is formed from several $(d-2)$-polytopes
 \end{itemize}
-
-\framebreak
-
-\textbf{Observe:} Points $\{\xv: \mathbf{a}_i^\top \xv = b_i\}$ lie on the boundary of the polytope.
-
-\medskip
-
-\begin{itemize}
-    \item Polytope $\{ \xv: \Amat \xv \le \mathbf{b}\}$ is convex: For $\xv_1,\xv_2 \in \mathcal{S}$ and $t \in [0, 1]$
-        \begin{align*}
-            \Amat(\xv_1 + t(\xv_2 - \xv_1)) &= \Amat\xv_1 + t(\Amat\xv_2 - \Amat\xv_1) \\
-            &= (1 -t)\underbrace{\Amat\xv_1}_{\le \mathbf{b}} + t\underbrace{\Amat\xv_2}_{\le \mathbf{b}} \\ &\le (1 - t) \mathbf{b} + t \mathbf{b} = \mathbf{b}
-        \end{align*}
-    \item Polytope $\{ \xv: \Amat \xv \le \mathbf{b}\}$ is an $n$-\textbf{simplex}, i.e.,
-        \begin{center}
-            convex hull of $n + 1$ \textit{affinely independent} points
-        \end{center}
-\end{itemize}
-
-\framebreak
-
-\textbf{Objective function:}
-\begin{itemize}
-    \item \textbf{Linear case:} Contour lines form a hyperplane
-    \item \textbf{Observe:} $\mathbf{c}$ is gradient and perpendicular to contour lines
-    % \item The value of the function becomes smaller when we go in the direction of the \textbf{negative gradient} $- \mathbf{c}$.
-    % \vspace{\baselineskip}
-    % \begin{center}
-    %     \includegraphics[width=0.45\textwidth]{figure_man/negative-gradient.png}
-    % \end{center}
+\end{framei}
 
 
-%<<echo = F, out.width = '80%', fig.align='center', warning = F>>=
-%f =  function(x, z) - z - x
-%dd = expand.grid(x = seq(-2, 2, by = 0.01), z = seq(-2, 2, by = 1 / 6))
-%dd %>% rowwise %>% mutate(y = f(x = x, z = z)) -> dd2
+\begin{framei}[sep=L]{Geometric interpretation: Convexity}
+\item Points $\{\xv: \mathbf{a}_i^T \xv = b_i\}$ lie on the boundary of the polytope
+\item Polytope $\{ \xv: \Amat \xv \le \bv\}$ is convex: For $\xv_1,\xv_2 \in \S$ and $t \in [0, 1]$
+$$
+\Amat(\xv_1 + t(\xv_2 - \xv_1)) = \Amat\xv_1 + t(\Amat\xv_2 - \Amat\xv_1) = (1 -t)\underbrace{\Amat\xv_1}_{\le \bv} + t\underbrace{\Amat\xv_2}_{\le \bv} \le (1 - t) \bv + t \bv = \bv
+$$
+\item Polytope $\{ \xv: \Amat \xv \le \bv\}$ is an $n$-\textbf{simplex}, i.e., convex hull of $n + 1$ \textit{affinely independent} points
+\end{framei}
 
-%p = ggplot() + geom_path(data = dd2, aes(x, y, col = z, group = z))
-%p = p + scale_colour_gradientn(colours = terrain.colors(10))
-%p = p + theme_bw() + xlim(c(0, 1)) + ylim(c(0, 1))
-%p = p + xlab("x1") + ylab("x2") + labs(colour = "y")
-%p = p + geom_segment(aes(x = 0.5, y = 0.5, xend = 0.625, yend = 0.625), arrow = arrow(length = unit(0.03, "npc")))
-%p = p + geom_text(aes(x = 0.5, y = 0.5, label = "-c"), hjust = -1.5, vjust = -0.4, size = 5)
 
-%p = p + coord_equal()
+\begin{framei}{Geometric interpretation: Objective function}
+\item \textbf{Linear case:} Contour lines form a hyperplane
+\item \textbf{Observe:} $\mathbf{c}$ is gradient and perpendicular to contour lines
+\item Solution ``touches'' the polygon
+\imageC[0.65]{figure_man/cons-opposite-direction.png}
+\end{framei}
 
-%p
-%@
 
-% \framebreak
-\item Solution \enquote{touches} the polygon
-
-\medskip
-
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{figure_man/opposite-direction.png}
-\end{center}
-
-%<<echo = F, out.width = '80%', fig.align='center', warning = FALSE, message = FALSE>>=
-%p = plotPoly(A, b)
-
-%p = p + geom_path(data = dd2, aes(x, y, col = z, group = z))
-
-%p = p + scale_colour_gradientn(colours = terrain.colors(5))
-%p = p + xlab("x1") + ylab("x2") + labs(colour = "y") + theme_bw()
-
-%p = p + geom_abline(intercept = 2 / 3, slope = - 1, color = "black")
-%p = p + geom_segment(aes(x = 1 / 3, y = 1 / 3, xend = 1 / 3 + 0.1, yend = 1 / 3 + 0.1), arrow = arrow(length = unit(0.03, "npc")))
-%p = p + geom_text(aes(x = 1 / 3, y = 1 / 3, label = "-c"), hjust = -1.5, vjust = -0.4, size = 5)
-
-%p = p + coord_equal()
-
-%p
-%@
-
-\end{itemize}
-
-\end{vbframe}
-
-\begin{vbframe}{Solutions to LP}
-
-There are 3 ways to solve linear programming:
-
+\begin{framev}{Solutions to LP}
+There are 3 cases for linear programming:
 \begin{enumerate}
 \item Feasible set is \textbf{empty} $\Rightarrow$ LP is infeasible
-\item Feasible set is \textbf{\enquote{unbounded}}
-\item Feasible set is \textbf{\enquote{bounded}} $\Rightarrow$ LP has at least one solution
+\item Feasible set is \textbf{unbounded}
+\item Feasible set is \textbf{bounded} $\Rightarrow$ LP has at least one solution
 \end{enumerate}
+\imageC[1]{figure_man/cons-solutions-lp.png}
+\end{framev}
 
-\vspace{\baselineskip}
 
-\begin{center}
-    \includegraphics[width=0.9\textwidth]{figure_man/solutions-lp.png}
-\end{center}
-
-
-\framebreak
-
-\begin{itemize}
-\item If LP is solvable and constrained (neither case 1 nor case 2), there is always an optimal point that can  \textbf{not} be convexly combined from other points in the polytope.
-\item The optimal solution is then a corner, edge or side of the polytope.
-\end{itemize}
-
-
-\end{vbframe}
-
-% \section{Algorithms for LP}
-
-% \begin{vbframe}{Simplex algorithm}
-
-% The Simplex algorithm is the most important method for solving Linear programming. It was published in 1947 by Georg Dantzig.
-
-% \lz
-
-% \textbf{Basic idea:} start from an arbitrary corner of the polytope. Run along this edge as long as the solution improves. Find a new edge, ...
-
-% \lz
-
-% \textbf{Output:} a path along the corners of the polytope that ends at the optimal point of the polytope.
-
-% \lz
-
-% Since linear programming is a \textbf{convex} optimization problem, the optimal corner found in this way is also a global optimum.
-
-% \framebreak
-
-% \begin{center}
-% \includegraphics[width = 0.6\textwidth]{figure_man/simplex.png}
-% \end{center}
-
-% \framebreak
-
-% The simplex algorithm can be divided into two steps:
-
-% \begin{itemize}
-% \item \textbf{Phase I:} determination of a \textbf{starting point}
-% \item \textbf{Phase II:} determination of the \textbf{optimal solution}
-% \end{itemize}
-
-% To be able to start, a starting point must first be found in \textbf{Phase I}, i.e. a feasible corner $\xv_0$.
-
-% \lz
-
-% In \textbf{phase II} this solution is iteratively improved by searching for an edge that improves the solution and running along it to the next corner.
-
-% \framebreak
-
-% \textbf{Phase I}:
-
-% One way to find a starting point $\xv_0$ is to solve a auxiliary linear problem with artificial variables $\bm{\epsilon}$:
-
-% \begin{eqnarray*}
-% \min_{\epsilon_1, ..., \epsilon_m} && \sum_{i = 1}^m \epsilon_i \\
-% \text{s.t. } && \Amat \xv + \bm{\epsilon} \ge \mathbf{b} \\
-% && \epsilon_1, ..., \epsilon_m \ge 0\\
-% && \xv \ge 0
-% \end{eqnarray*}
-
-% \begin{itemize}
-% \item A feasible starting point for the auxiliary problem is $\xv = \bm{0}$ and $\epsilon_i = \begin{cases} 0 & \text{if } b_i < 0 \\
-% b_i & \text{if } b_i \ge 0
-% \end{cases}$
-% \item We then apply phase II of the simplex algorithm to the auxiliary problem.
-% \item If the original problem has a feasible solution, then the optimal solution of the auxiliary problem \textbf{must} be $\bm{\epsilon} = (0, ..., 0)$ (all artificial variables disappear) and the objective function is $0$.
-% \item If we find a solution with $\bm{\epsilon} = \bm{0}$, then we have found a valid starting point.
-% \item If we do not find a solution with $\bm{\epsilon} = \bm{0}$, the problem can not be solved.
-% \end{itemize}
-
-% \framebreak
-
-% \textbf{Example:}
-
-% \begin{eqnarray*}
-% \min_{\xv \in \R^2} && -x_1 - x_2 \\
-% \text{s.t. } && x_1 - x_2 \ge - 0.5 \\
-% && - x_1 - 2 x_2 \ge - 2 \\
-% && - 2x_1 - x_2 \ge - 2 \\
-% && - x_1 + x_2 \ge - 0.5 \\
-% && \xv \ge 0
-% \end{eqnarray*}
-
-% A starting point is the corner $\bm{(0, 0)}$.
-
-% \framebreak
-
-% \begin{center}
-% \includegraphics[width = 0.6\textwidth]{figure_man/simplex_implementation/iter1.png}
-% \end{center}
-
-% \framebreak
-
-% \begin{center}
-% \includegraphics[width = 0.6\textwidth]{figure_man/simplex_implementation/iter2.png}
-% \end{center}
-
-% \framebreak
-
-% \begin{center}
-% \includegraphics[width = 0.6\textwidth]{figure_man/simplex_implementation/iter3.png}
-% \end{center}
-
-% \framebreak
-
-% \begin{center}
-% \includegraphics[width = 0.6\textwidth]{figure_man/simplex_implementation/iter4.png}
-% \end{center}
-
-% \end{vbframe}
-
-% % \begin{vbframe}{Komplexität des Simplex Algorithmus}
-% %
-% % \end{vbframe}
-
-% \section{Duality}
-
-% \begin{vbframe}{Duality: introductory example}
-
-% \textbf{Example:}
-
-% A bakery sells brownies for $50$ ct and mini cheesecakes for $80$ ct each. The two products contain the following ingredients
-
-% \begin{center}
-% \begin{tabular}{ r c c c}
-%     & \text{Chocolate} & \text{Sugar} & \text{Creamcheese} \\
-%     \hline
-%   \text{Brownie} & 3 & 2 & 2 \\
-%   \text{Cheesecake} & 0 & 4 & 5
-% \end{tabular}
-% \end{center}
-
-% A student wants to minimize his expenses, but at the same time eat at least $6$ units of chocolate, $10$ units of sugar and $8$ units of creamcheese.
-
-% \framebreak
-
-% He is therefore confronted with the following optimization problem:
-
-% \begin{eqnarray*}
-% \min_{\xv\in \R^2} && 50x_1 + 80x_2 \\
-% \text{s.t. } && 3x_1 \ge 6 \\
-% && 2x_1 + 4x_2 \ge 10 \\
-% && 2x_1 + 5x_2 \ge 8 \\
-% && \xv \ge 0
-% \end{eqnarray*}
-
-% \framebreak
-
-% The solution of the Simplex algorithm:
-% \vspace{0.3cm}
-
-% \footnotesize
-% \begin{verbbox}
-% res = solveLP(cvec = c, bvec = b, Amat = A)
-% summary(res)
-% ##
-% ##
-% ## Results of Linear Programming / Linear Optimization
-% ##
-% ## Objective function (Minimum): 220
-% ##
-% ## Solution
-% ## opt
-% ## 1 2.0
-% ## 2 1.5
-% \end{verbbox}
-% \col
-
-% %<<echo = F>>=
-% %A = - matrix(c(3, 2, 2, 0, 4, 5), ncol = 2)
-% %b = - c(6, 10, 8)
-% %c = c(50, 80)
-% %@
-
-% %<<>>=
-% %res = solveLP(cvec = c, bvec = b, Amat = A)
-% %summary(res)
-% %@
-
-% \framebreak
-% \normalsize
-% The baker informs the supplier that he needs at least $6$ units of chocolate, $10$ units of sugar and $8$ units of creamcheese to meet the student's requirements.
-
-% \lz
-
-% The supplier asks himself how he must set the prices for chocolate, sugar and creamcheese ($\alpha_1, \alpha_2, \alpha_3$) such that he can
-
-% \begin{itemize}
-% \item maximize his revenue
-% $$
-% \max_{\bm{\alpha} \in \R^3}6 \alpha_1 + 10 \alpha_2 + 8 \alpha_3
-% $$
-% \item and at the same time ensure that the baker buys from him (purchase cost $\le$ selling price)
-% \begin{eqnarray*}
-% 3\alpha_1 + 2\alpha_2 + 2\alpha_3 &\le& 50 \qquad \text{Brownie} \\
-% 4\alpha_2 + 5\alpha_3 &\le& 80 \qquad \text{Cheesecake}
-% \end{eqnarray*}
-
-% \end{itemize}
-
-% \framebreak
-
-% The presented example is known as a \textbf{dual problem}. The variables $\alpha_i$ are called \textbf{dual variables}.
-
-% \lz
-
-% In an economic context, dual variables can often be interpreted as \textbf{shadow prices} for certain goods.
-
-% \lz
-
-% If we solve the dual problem, we see that the dual problem has the same objective function value as the primal problem. This is later referred to as \textbf{strong duality}.
-
-% % \lz
-% %
-% % Der Lieferant sollte eine Einheit Schokolade für mindestens $\alpha_1$ verkaufen, der Bäcker aber höchstens zu $\alpha_1$ einkaufen.
-% \framebreak
-% \footnotesize
-% \begin{verbbox}
-% res = solveLP(cvec = c, bvec = b, Amat = A, maximum = T)
-% summary(res)
-% ##
-% ##
-% ## Results of Linear Programming / Linear Optimization
-% ##
-% ## Objective function (Maximum): 220
-% ##
-% ## Solution
-% ## opt
-% ## 1 3.333333
-% ## 2 20.000000
-% ## 3 0.000000
-% \end{verbbox}
-% \col
-
-% %<<echo = F>>=
-% %A = matrix(c(3, 0, 2, 4, 2, 5), ncol = 3)
-% %b = c(50, 80)
-% %c = c(6, 10, 8)
-% %@
-
-% %<<>>=
-% %res = solveLP(cvec = c, bvec = b, Amat = A, maximum = T)
-% %summary(res)
-% %@
-
-
-% % \textbf{Beispiel:} Eine Firma stellt Tische und Stühle her und verkauft diese für $30$ Euro (Tisch),  $20$ Euro (Stuhl). Hierfür gibt es $3$ Maschinen, die jeweils nur eine gewisse Zeit zur Verfügung stehen.
-% %
-% % \lz
-% %
-% % In der Tabelle ist aufgelistet, wie viel Stunden die jeweilige Maschine für Stuhl bzw. Tisch benötigt.
-% %
-% % \begin{center}
-% % \begin{tabular}{ r | c c | c}
-% %   \text{Maschine}  & \text{Stuhl} & \text{Tisch} & \text{Verfügbarkeit (in h)} \\
-% %     \hline
-% %   M_1 & 3 & 2 & 2 \\
-% %   M_2 & 0 & 4 & 5 \\
-% %   M_3 & 0 & 4 & 5
-% %
-% % \end{tabular}
-% % \end{center}
-
-% \end{vbframe}
-
-% \normalsize
-% \begin{vbframe}{Mathematical intuition}
-
-% The example explained duality from an economic point of view. But what is the mathematical intuition behind duality?
-
-% \lz
-
-% \textbf{Idea: } In minimization problems one is often interested in \textbf{lower bounds} of the objective function. How could we derive a lower bound for the problem above?
-
-% \lz
-
-% If we \enquote{skilfully} multiply the three inequalities by factors and add factors (similar to a linear system), we can find a lower bound.
-
-% \framebreak
-% \vspace*{-1.6cm}
-
-% \begin{eqnarray*}
-% \min_{\xv\in \R^2} && 50x_1 + 80x_2  \\
-% \text{s.t. } && 3x_1 \ge 6 \quad \vert\textcolor{green}{\cdot 5}\\
-% && 2x_1 + 4x_2 \ge 10 \quad \vert \textcolor{green}{\cdot 5} \\
-% && 2x_1 + 5x_2 \ge 8 \quad \vert \textcolor{green}{\cdot 12} \\
-% && \xv \ge 0
-% \end{eqnarray*}
-
-% \vspace*{-0.2cm}
-
-% If we add up the constraints we obtain
-
-% \vspace*{-0.5cm}
-% \begin{eqnarray*}
-% & & \textcolor{green}{5} \cdot (3x_1) + \textcolor{green}{5} \cdot (2x_1 + 4x_2) + \textcolor{green}{12} \cdot (2x_1 + 5x_2)
-% \\ &=& 15x_1 + 10x_1 + 24x_1 + 20x_2 + 60x_2 = 49 x_1 + 80 x_2 \\
-% &\ge& 30 + 50 + 96 = 176
-% \end{eqnarray*}
-
-% Since $x_1 \ge 0$ we found a lower bound because
-
-% $$
-% 50x_1 + 80 x_2 \ge 49 x_1 + 80 x_2 \ge 176.
-% $$
-
-% \framebreak
-
-% Maybe we could have transformed the equations more cleverly and then found a \textbf{better} lower bound. We replace the multipliers $5, 5, 12$ with $\alpha_1, \alpha_2, \alpha_3$ and demand (as a condition for a lower bound).
-
-% % \begin{eqnarray*}
-% % \min_{\xv\in \R^2} && 50x_1 + 80x_2  \\
-% % \text{u. d. N. } && 3x_1 \ge 6 \quad \vert \textcolor{green}{\cdot \alpha_1}\\
-% % && 2x_1 + 4x_2 \ge 10 \quad \vert \textcolor{green}{\cdot \alpha_2} \\
-% % && 2x_1 + 5x_2 \ge 8 \quad \vert \textcolor{green}{\cdot \alpha_3} \\
-% % && \xv \ge 0
-% % \end{eqnarray*}
-% %
-% % \framebreak
-
-% \vspace*{-0.5cm}
-
-% \begin{eqnarray*}
-% && 50x_1 + 80x_2 \ge \textcolor{green}{\alpha_1} (3x_1) + \textcolor{green}{\alpha_2} (2x_1 + 4x_2) + \textcolor{green}{\alpha_3} (2x_1 + 5x_2) \\ &=& (3 \textcolor{green}{\alpha_1} + 2  \textcolor{green}{\alpha_2} + 2 \textcolor{green}{\alpha_3}) x_1 + (4  \textcolor{green}{\alpha_2} + 5 \textcolor{green}{\alpha_3}) x_2
-% \end{eqnarray*}
-
-% or equivalently
-
-% \vspace*{-0.5cm}
-% \begin{eqnarray*}
-% 3 \textcolor{green}{\alpha_1} + 2  \textcolor{green}{\alpha_2} + 2 \textcolor{green}{\alpha_3} \le 50, \\
-% 4  \textcolor{green}{\alpha_2} + 5 \textcolor{green}{\alpha_3} \le 80.
-% \end{eqnarray*}
-
-% The lower bound (right-hand side of the inequality) is given by
-
-% $$
-% \textcolor{green}{\alpha_1} \cdot 6 + \textcolor{green}{\alpha_2} \cdot 10 + \textcolor{green}{\alpha_3} \cdot 8.
-% $$
-
-% \framebreak
-
-% We are interested in a \textbf{largest possible} lower bound, because it gives us the most information. As an optimization problem
-
-% \begin{eqnarray*}
-% \max_{\bm{\alpha} \in \R^3} && 6 \alpha_1 + 10 \alpha_2 + 8 \alpha_3 \\
-% \text{s.t. } && 3\alpha_1 + 2\alpha_2 + 2\alpha_3 \le 50 \\
-% && 4\alpha_2 + 5\alpha_3 \le 80\\
-% && \bm{\alpha} \ge 0.
-% \end{eqnarray*}
-
-
-% \end{vbframe}
-
-
-
-% \begin{vbframe}{Duality}
-
-% We denote
-
-% \vspace*{-0.2cm}
-% \begin{eqnarray*}
-% \max_{\bm{\alpha} \in \R^m} && g(\bm{\alpha}) := \bm{\alpha}^\top\mathbf{b}\\
-% \text{s.t. } && \bm{\alpha}^\top\Amat \le \mathbf{c}^\top \\
-% && \bm{\alpha} \ge 0
-% \end{eqnarray*}
-
-% as the \textbf{dual problem} of
-
-% \begin{eqnarray*}
-% \min_{\xv \in \R^n} && f(\xv) := \mathbf{c}^\top\xv\\
-% \text{s.t. } && \Amat\xv \ge \mathbf{b} \\
-% && \xv \ge 0
-% \end{eqnarray*}
-
-% (\textbf{primal problem}).
-
-% \framebreak
-
-% Duality overview:
-
-% \begin{footnotesize}
-% \begin{center}
-%     \begin{tabular}{c | c | c | c}
-%     & $\begin{array}{c} \text{Primal} \\ \text{(minimize)} \end{array}$ & $\begin{array}{c} \text{Dual} \\ \text{(maximize)} \end{array}$ \\
-%     \hline
-%     \multirow{3}{*}{$\begin{array}{c} \text{condition} \end{array}$} & $\le$ & $\le 0$ & \multirow{3}{*}{variable} \\
-%   & $\ge$ & $\ge 0$ & \\
-%     & $=$ & unconstrained & \\
-%     \hline
-%     \multirow{3}{*}{variable} & $\ge 0 $ & $\le$ & \multirow{3}{*}{$\begin{array}{c} \text{condition} \end{array}$}\\
-%     & $\le 0$ &  $\ge$ & \\
-%     & unconstrained & $=$ & \\
-% \hline
-%     \end{tabular}
-% \end{center}
-% \end{footnotesize}
-% \end{vbframe}
-
-% \begin{vbframe}{Duality theorem}
-
-% In general, the \textbf{weak duality theorem}$^{(*)}$ applies to all feasible $\xv, \bm{\alpha}$
-
-% $$
-% g(\bm{\alpha}) = \bm{\alpha}^\top\mathbf{b} \le \mathbf{c}^\top\xv  = f(\xv)
-% $$
-
-% The value of the dual function is therefore \textbf{always} a lower bound for the objective function value of the primal problem.
-
-% \lz
-
-% \textbf{Proof:}
-% $\bm{\alpha}^\top\mathbf{b} \overset{\Amat \xv \ge b}{\le}\bm{\alpha}^\top\Amat \xv \overset{\bm{\alpha}^\top\Amat \le \mathbf{c}^\top}{\le}\mathbf{c}^\top\xv$
-
-% \framebreak
-
-% The \textbf{strong duality theorem} states that if one of the two problems has a constrained solution, then the other also has a constrained solution. The objective function values are the same in this case.
-
-% $$
-% g(\bm{\alpha}^*) = (\bm{\alpha}^*)^\top\mathbf{b} = \mathbf{c}^\top\xv^* = f(\xv^*).
-% $$
-
-% In this case, the dual problem can be solved instead of the primal problem, which can lead to enormous runtime advantages, especially with many constraints and few variables.
-
-% \lz
-
-% The \textbf{dual simplex algorithm}, which has emerged as a standard procedure for Linear programming, is based on this idea.
-
-
-% \end{vbframe}
+\begin{framei}[sep=L]{Solutions to LP}
+\item If LP is solvable and constrained (neither case 1 nor case 2), there is always an optimal point that can \textbf{not} be convexly combined from other points in the polytope
+\item The optimal solution is then a corner, edge or side of the polytope
+\end{framei}
 
 \endlecture
 \end{document}
-
-

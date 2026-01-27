@@ -3,70 +3,50 @@
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-\titlemeta{% Chunk title (example: CART, Forests, Boosting, ...), can be empty
-  }{% Lecture title  
-  Other forms of duality
-  }{% Relative path to title page image: Can be empty but must not start with slides/
-  figure_man/fenchel.png
-  }{
-    \item Dual norms
-    \item Conjugate functions
-    \item Fenchel duality
-    \item Examples in statistics 
+\titlemeta{
+Constrained Optimization
+}{
+Other forms of duality
+}{
+figure_man/fenchel.png
+}{
+\item Dual norms
+\item Conjugate functions
+\item Fenchel duality
+\item Examples in statistics 
 }
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{vbframe}{Constrained minimization and dual norms}
 
-Consider the problem of norm minimization under linear constraints
-in its primal form:
-
-\begin{eqnarray*}
- \min_{\xv \in \R^d} && \| \bm{x} \| \\
-\text{s.t. } &&  \bm{G} \bm{x} = \bm{h}\,,\\
-\end{eqnarray*}
-
-where $\| \cdot \|$ is some norm function. For instance, if the norm is the $L1$ norm, this problem is the famous  \href{https://en.wikipedia.org/wiki/Basis_pursuit
-}{\beamergotobutton{basis pursuit}} problem.
-
-\lz
-
-\textbf{Question:} Is there a more straightforward way to solve constrained optimization problems involving norms?
-
-\framebreak
-
-Here, the concept of the dual norm from functional analysis can be helpful.
+\begin{framei}{Constrained minimization and dual norms}
+\item Consider norm minimization under linear constraints in its primal form:
+$$
+\min_{\xv \in \R^d} \| \xv \| \quad \text{s.t. } \bm{G} \xv = \bm{h}
+$$
+\item $\| \cdot \|$ is some norm function
+\item If the norm is the $L_1$ norm, this is the famous basis pursuit problem \sourceref{https://en.wikipedia.org/wiki/Basis_pursuit}
+\vfill
+\item \textbf{Question:} Is there a more straightforward way to solve constrained optimization problems involving norms?
+\end{framei}
 
 
-\textbf{Definition:}  Let $\| \bm{x} \|$ be the norm of $\bm{x}$. Then the dual norm $\| \bm{x} \|_*$ is defined as 
-
-\begin{equation*}
- \| \bm{x} \|_* = \max_{\|\bm{z}\| \le 1} \bm{z}^T\bm{x}  
-\end{equation*}
-
-Using this definition, one can show that if $\| \bm{x} \|$ is a norm and $\| \bm{x} \|_*$ is the dual norm
-of it, $\| \bm{z}^T \bm{x} \| \le \| \bm{z} \| \| \bm{x} \|_{*}$ holds.
-
-\lz
-
-\textbf{Examples:} The dual norm of the Lp norm $\| \cdot \|_p$ is the
-Lq norm $\| \cdot \|_q$ where it holds that $1/p + 1/q = 1$. 
-
-
-\framebreak
-
-\end{vbframe}
-
-\begin{vbframe}{Constrained problems and conjugate functions}
-
-
-
-\end{vbframe}
-
+\begin{framei}{Constrained minimization and dual norms}
+\item The concept of the \textbf{dual norm} from functional analysis can help
+\item[] \textbf{Definition} Let $\| \xv \|$ be the norm of $\xv$. The dual norm $\| \xv \|_*$ is defined as
+$$
+\| \xv \|_* = \max_{\|\zv\| \le 1} \zv^T \xv
+$$
+\item If $\| \xv \|$ is a norm and $\| \xv \|_*$ its dual norm, then
+$$
+| \zv^T \xv | \le \| \zv \| \| \xv \|_*
+$$
+\vfill
+\item[] \textbf{Example} The dual norm of the $L_p$ norm $\| \cdot \|_p$ is the $L_q$ norm $\| \cdot \|_q$ where $1/p + 1/q = 1$
+\end{framei}
 
 \endlecture
 \end{document}

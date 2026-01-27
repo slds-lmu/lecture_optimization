@@ -208,102 +208,58 @@
 
 \kopfsl{2}{Mathematical Concepts 2}
 
-
-\loesung{Matrix Calculus}{
+\loesung{Convexity}{
 
 \begin{enumerate}
-	%
-	\item $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}} = 
-	\frac{\partial \Vert \mathbf{u}  \Vert^2_2}{\partial \mathbf{u}} \frac{\partial \mathbf{u}}{\partial \mathbf{x}} = 
-	\frac{\partial  \mathbf{u}^\top\mathbf{u}}{\partial \mathbf{u}} \frac{\partial \mathbf{x} - \mathbf{c}}{\partial \mathbf{x}} = 
-	\frac{\partial  \mathbf{u}^\top\mathbf{I}\mathbf{u}}{\partial \mathbf{u}}(\mathbf{I} - \mathbf{0}) = \mathbf{u}^\top(\mathbf{I} + \mathbf{I}^\top) = 2(\mathbf{x} - \mathbf{c})^\top
-	$
-	\item $\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert_2}{\partial
-	\mathbf{x}} = \frac{\partial \sqrt{\Vert \mathbf{x} - \mathbf{c}  \Vert_2^2}}{\partial
-	\mathbf{x}} = \frac{0.5}{ \sqrt{\Vert \mathbf{x} - \mathbf{c}  \Vert_2^2}}\frac{\partial \Vert \mathbf{x} - \mathbf{c}  \Vert^2_2}{\partial \mathbf{x}} \overset{(a)}{=} \frac{(\mathbf{x} - \mathbf{c})^\top}{\Vert \mathbf{x} - \mathbf{c}  \Vert_2}$
-	
-	\item $\frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}} = \frac{\partial \mathbf{u}^\top \mathbf{I} \mathbf{v}}{\partial \mathbf{x}} = \mathbf{u}^\top \mathbf{I} \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \mathbf{I}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} = 
-	\mathbf{u}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}}$
-	
-\item $\frac{\partial \mathbf{Y}^\top \mathbf{u}}{\partial\mathbf{x}} = \frac{\partial\begin{pmatrix}\mathbf{y}_1^\top \mathbf{u} \\ \vdots \\ \mathbf{y}_d^\top \mathbf{u}\end{pmatrix}}{\partial \mathbf{x}} \overset{(c)}{=} \begin{pmatrix}	\mathbf{y}_1^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} + \mathbf{u}^\top \frac{\partial  \mathbf{y}_1}{\partial \mathbf{x}} \\ \vdots \\
-\mathbf{y}_d^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} + \mathbf{u}^\top \frac{\partial  \mathbf{y}_d}{\partial \mathbf{x}}
-\end{pmatrix}$ 
-	
-	\item Note for $\mathbf{y}:\R^d\rightarrow\R^d, \mathbf{x}\mapsto\mathbf{y}(\mathbf{x})$ the $i-$th column of $\frac{\partial\mathbf{y}}{\partial\mathbf{x}}$ is $\frac{\partial\mathbf{y}}{\partial x_i}$.
-	  With this it follows that \\
-	  \begin{align*}
-      \frac{\partial^2 \mathbf{u}^\top \mathbf{v}}{\partial \mathbf{x}\partial\mathbf{x}^\top} &= \frac{\partial}{\partial\mathbf{x}} \left( \frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial\mathbf{x}^\top} \right) \\
-      &= \frac{\partial}{\partial\mathbf{x}} \left[ \left( \frac{\partial \mathbf{u}^\top \mathbf{v}}{\partial\mathbf{x}} \right)^\top \right] \\
-    &\overset{(c)}{=} \frac{\partial ( \mathbf{u}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} + \mathbf{v}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} )^\top}{\partial\mathbf{x}} \\
-      &= \frac{\partial \left( \left(\frac{\partial  \mathbf{v}}{\partial \mathbf{x}}\right)^\top \mathbf{u} + \left(\frac{\partial  \mathbf{u}}{\partial \mathbf{x}}\right)^\top \mathbf{v}\right)}{\partial\mathbf{x}} \\
-      &\overset{(d)}{=} \begin{pmatrix}
-                          \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_1\partial \mathbf{x}} + \frac{\partial\mathbf{v}}{\partial x_1}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}} \\
-                          \vdots \\
-                          \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_d\partial \mathbf{x}} + \frac{\partial\mathbf{v}}{\partial x_d}^\top \frac{\partial  \mathbf{u}}{\partial \mathbf{x}}
-                         \end{pmatrix}^\top
-                         +
-                         \begin{pmatrix}
-                           \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_1\partial \mathbf{x}} + \frac{\partial\mathbf{u}}{\partial x_1}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}} \\
-                           \vdots \\
-                           \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_d\partial \mathbf{x}} + \frac{\partial\mathbf{u}}{\partial x_d}^\top \frac{\partial  \mathbf{v}}{\partial \mathbf{x}}
-                         \end{pmatrix}^\top \\
-      &= \begin{pmatrix}
-            \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_1\partial \mathbf{x}} \\
-            \vdots \\
-            \mathbf{u}^\top \frac{\partial^2  \mathbf{v}}{\partial x_d\partial \mathbf{x}}
-         \end{pmatrix}^\top
-         + \frac{\partial \mathbf{u}}{\partial \mathbf{x}} \left(\frac{\partial \mathbf{v}}{\partial \mathbf{x}}\right)^\top
-         + \frac{\partial \mathbf{v}}{\partial \mathbf{x}} \left(\frac{\partial \mathbf{u}}{\partial \mathbf{x}}\right)^\top
-         + \begin{pmatrix}
-            \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_1\partial \mathbf{x}} \\
-            \vdots \\
-            \mathbf{v}^\top \frac{\partial^2  \mathbf{u}}{\partial x_d\partial \mathbf{x}} 
-           \end{pmatrix}^\top
-    \end{align*}
+\item Let $x,y \in \R$ and $t \in [0, 1]$ then it holds that
+\begin{align*}
+(f + g)(x + t(y-x)) &= f(x + t(y-x)) + g(x + t(y-x)) \\
+&\leq f(x) + t(f(y)-f(x)) + g(x) + t(g(y)-g(x)) & \text{($f,g$ are convex)} \\
+& = f(x) + g(x) + t(f(y) + g(y) -(f(x) + g(x))) \\
+& = (f + g)(x) + t((f + g)(y) - (f + g)(x)).
+\end{align*}
+\item Let $x,y \in \R$ and $t \in [0, 1]$ then it holds that
+\begin{align*}
+(g \circ f)(x + t(y-x)) &= g(f(x + t(y-x))) \\
+&\leq g(f(x) + t(f(y)-f(x))) &\text{($g$ is non-decreasing, $f$ is convex)}\\
+&\leq g(f(x)) + t(g(f(y)) - g(f(x)))) & \text{($g$ is convex)} \\
+&= (g\circ f)(x) + t((g \circ f)(y) - (g \circ f)(x)).
+\end{align*}
+
 \end{enumerate}
 }
 
-\loesung{Optimality in 1d}{
+\loesung{Convexity}{
 
-Let $f: [-1,2] \rightarrow \R, x \mapsto \exp(x^3 - 2x^2)$
+Consider the bivariate function $f: \R^2 \to \R, (x_1, x_2) \mapsto \exp(\pi \cdot x_1) - \sin(\pi \cdot x_2) + \pi \cdot x_1 \cdot x_2$
+
 \begin{enumerate}
-	%
-	\item $f'(x) = \exp(x^3 - 2x^2)\cdot(3x^2 - 4x)$
-	\item 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(ggplot2)}
-
-\hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{exp}\hlstd{(x}\hlopt{^}\hlnum{3} \hlopt{-} \hlnum{2}\hlopt{*}\hlstd{x}\hlopt{^}\hlnum{2}\hlstd{)}
-\hlstd{df} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlkwd{f}\hlstd{(x)} \hlopt{*} \hlstd{(}\hlnum{3}\hlopt{*}\hlstd{x}\hlopt{^}\hlnum{2} \hlopt{-} \hlnum{4}\hlopt{*}\hlstd{x)}
-
-\hlkwd{ggplot}\hlstd{(}\hlkwd{data.frame}\hlstd{(}\hlkwc{x} \hlstd{=} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlkwc{by}\hlstd{=}\hlnum{0.005}\hlstd{)),} \hlkwd{aes}\hlstd{(x))} \hlopt{+}
-  \hlkwd{geom_function}\hlstd{(}\hlkwc{fun} \hlstd{= f,} \hlkwd{aes}\hlstd{(}\hlkwc{linetype} \hlstd{=} \hlstr{"f"}\hlstd{))} \hlopt{+}
-  \hlkwd{geom_function}\hlstd{(}\hlkwc{fun} \hlstd{= df,} \hlkwd{aes}\hlstd{(}\hlkwc{linetype} \hlstd{=} \hlstr{"f'"}\hlstd{))}    \hlopt{+}
-  \hlkwd{scale_linetype_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{"Function"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=0.5\linewidth]{figure/1d-plot-1} 
-\end{knitrout}
-	\item $f$ is continuously differentiable $\Rightarrow$ candidates can only be stationary points and boundary points. \\
-	Find stationary points, i.e., points where \\ 
-	$f'(x) = 0 \iff  \underbrace{\exp(x^3 - 2x^2)}_{>0}\cdot(3x^2 - 4x) = 0 \iff 3x^2 - 4x = 0 \iff x(3x - 4) = 0 .$ \\
-	$\Rightarrow x_1 = 0, x_2 = 4/3.$
-	The other candidates are boundary points, i.e., $x_3 = -1, x_4 = 2.$
-	\item $f''(x) = \exp(x^3 - 2x^2)\cdot(3x^2 - 4x)^2 + \exp(x^3 - 2x^2)\cdot(6x - 4)$ \\
-	\item $f''(x_1) = \exp(0)\cdot(- 4) < 0$ \\
-	  $\Rightarrow x_1$ is a local maximum \\[\baselineskip]
-	  $f''(x_2) = \exp((4/3)^3 - 2(4/3)^2)\cdot(4) > 0$ \\
-	  $\Rightarrow x_2$ is a local minimum. \\[\baselineskip]
-	  The boundary points $x_3$ and $x_4$ are not considered as \textit{local} optima.
-	\item $f(x_1) = \exp(0) = 1$ \\
-	 $f(x_2) = \exp((4/3)^3 - 2(4/3)^2) \approx 0.3057$ \\
-	  $f(x_3) = \exp(-3) \approx 0.05$ \\
-	  $f(x_4) = \exp(0) = 1$ \\
-	  $\Rightarrow x_1, x_4$ are global maxima.
-	  $x_3$ is global minimum.
-	
+\item	$\nabla f(\mathbf{x}) = \pi \cdot (\exp(\pi x_1) +   x_2,  -\cos(\pi x_2) +  x_1)$
+	\item $\nabla^2 f(\mathbf{x}) = \pi \cdot \begin{pmatrix}\pi \exp(\pi x_1) &  1 \\
+	 1 & \pi \sin(\pi x_2)  \end{pmatrix}$
+	\item  $T_{1,\mathbf{a}}(\mathbf{x}) = f(\mathbf{a}) + \nabla f(\mathbf{a})^\top(\mathbf{x}-\mathbf{a}) = 1 + \pi \cdot (2, 1) \cdot (x_1, x_2 - 1)^\top = 1 - \pi + 2\pi x_1 + \pi x_2$
+	\item \begin{align*}T_{2,\mathbf{a}}(\mathbf{x}) &= T_{1,\mathbf{a}}(\mathbf{x}) + \frac{1}{2} (\mathbf{x} - \mathbf{a})^\top\nabla^2 f(\mathbf{a})(\mathbf{x} - \mathbf{a}) \\
+	&= T_{1,\mathbf{a}}(\mathbf{x}) + \frac{1}{2} \mathbf{x}^\top\nabla^2 f(\mathbf{a})\mathbf{x} - \mathbf{x}^\top\nabla^2 f(\mathbf{a})\mathbf{a} + \frac{1}{2}\mathbf{a}^\top\nabla^2 f(\mathbf{a})\mathbf{a}\end{align*}
+	With $\nabla^2 f(\mathbf{a}) = \begin{pmatrix}\pi^2  &  \pi \\
+	\pi & 0 \end{pmatrix}$ we get that 
+	\begin{align*}
+	T_{2,\mathbf{a}}(\mathbf{x}) = T_{1,\mathbf{a}}(\mathbf{x}) &+ 0.5\pi^2x_1^2 \\
+	  &+ \pi x_1 x_2 - \pi x_1 \\
+	  &+ 0.
+	\end{align*}.
+	\item $T_{2,\mathbf{a}}(\mathbf{x})$ is multivariate polynomial of degree 2 which means its Hessian is constant and we can directly see that $\mathbf{H}:= \nabla^2 T_{2,\mathbf{a}}(\mathbf{x}) = \nabla^2 f(\mathbf{a}).$
+	For the eigenvalues of the Hessian it must hold that
+	\begin{align*}
+	&\det (\mathbf{H} - \lambda\mathbf{I}) &= 0 \\
+	\iff& \det \begin{pmatrix}\pi^2 - \lambda & \pi \\ 
+	\pi & -\lambda\end{pmatrix} &= 0 
+ \\
+		\iff& (\pi^2 - \lambda) \cdot (-\lambda) - \pi^2 &= 0 \\
+		\iff& \lambda^2 -\pi^2\lambda - \pi^2 &= 0.
+		\end{align*}
+	From which it follows that
+	$\lambda_{1,2} = \frac{\pi^2 \pm \sqrt{\pi^4 + 4\pi^2}}{2} \Rightarrow \lambda_1 \approx 10.785, \lambda_2 \approx -0.915.$ Since $\lambda_2 < 0\;T_{2,\mathbf{a}}$  is not convex.
 \end{enumerate}
 }
+
 \end{document}
