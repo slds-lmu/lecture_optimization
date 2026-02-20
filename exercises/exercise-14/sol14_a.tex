@@ -209,6 +209,7 @@
 
 \kopfsl{14}{Multi-Criteria Optimization}
 
+\loesung{}
 \aufgabe{Concepts in Multi-Criteria Optimization}{
 
 \begin{enumerate}
@@ -244,31 +245,47 @@
 \end{kframe}
 \includegraphics[width=0.75\linewidth]{figure/pareto_plot-1} 
 \end{knitrout}
-\item We can simply compute the area slices under each segment and sum them up.\\
-  For the four rectangles from left to right:
-  \begin{itemize}
-    \item $(4-3) \cdot (15-7) = 8$
-    \item $(6-4) \cdot (15-6) = 18$
-    \item $(9-6) \cdot (15-4) = 33$
-    \item $(15-9) \cdot (15-3) = 72$
-  \end{itemize}
-  $\rightarrow S(\mathcal{P}, R) = 8+18+33+72 = 131$.
-\item We start with the first front of non-dominated solutions $\mathcal{F}_{1} = \{\mathbf{x}^{(3)}, \mathbf{x}^{(4)}, \mathbf{x}^{(5)}, \mathbf{x}^{(6)}\}$.
-  After dropping these solutions, $\mathbf{x}^{(1)}$ and $\mathbf{x}^{(2)}$ remain. Neither of these solutions dominates the other solution.
-  Therefore $\mathcal{F}_{2} = \{\mathbf{x}^{(1)}, \mathbf{x}^{(2)}\}$.
-\item Crowding distance is always computed within a front. From (d) we have that $\mathbf{x}^{(3)} \in \mathcal{F}_{1}$.
-  We start with the first dimension, $f_{1}$.\\
-  First, sort the values by $f_{1}$: $(3,7),(4,6),(6,4),(9,3)$.
-  $(3, 7)$ and $(9, 3)$ are outermost and get an infinite partial distance for the $f_{1}$ dimension.
-  Normalize the values by the minimum of $3$ and maximum of $9$ among the four points.
-  For the point $\mathbf{x}^{(3)}$ (new index of $i = 2$) we compute:
-  $$\mathrm{CD}_{1}(\mathbf{x}^{(3)}) = \frac{(f_{1}^{(i+1)} - f_{1}^{(i-1)})}{(f_{1}^{(\mathrm{max})} - f_{1}^{(\mathrm{min})})} = \frac{(6 - 3)}{(9 - 3)} = 0.5.$$
-  For the second dimension, $f_{2}$, we analogously obtain:
-  $$\mathrm{CD}_{2}(\mathbf{x}^{(3)}) = \frac{(f_{2}^{(i+1)} - f_{2}^{(i-1)})}{(f_{2}^{(\mathrm{max})} - f_{2}^{(\mathrm{min})})} = \frac{(7 - 4)}{(7 - 3)} = 0.75.$$
-  $\rightarrow$ the total crowding distance is (when taking the sum) $0.5 + 0.75 = 1.25$.
-\item We know from (c) that the total dominated hypervolume is $S(\mathcal{P}, R) = 131$.
-  To compute the hypervolume contribution of $\mathbf{x}^{(5)}$, we compute the hypervolume of $\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}$ and substract it.
-  Similar computations as in (c) but now for $\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}$ yield $S(\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}, R) = 125$. Therefore $\mathbf{x}^{(5)}$ has a hypervolume contribution of $131 - 125 = 6$.
+}
+% \item We can simply compute the area slices under each segment and sum them up.\\
+%   For the four rectangles from left to right:
+%   \begin{itemize}
+%     \item $(4-3) \cdot (15-7) = 8$
+%     \item $(6-4) \cdot (15-6) = 18$
+%     \item $(9-6) \cdot (15-4) = 33$
+%     \item $(15-9) \cdot (15-3) = 72$
+%   \end{itemize}
+%   $\rightarrow S(\mathcal{P}, R) = 8+18+33+72 = 131$.
+% \item We start with the first front of non-dominated solutions $\mathcal{F}_{1} = \{\mathbf{x}^{(3)}, \mathbf{x}^{(4)}, \mathbf{x}^{(5)}, \mathbf{x}^{(6)}\}$.
+%   After dropping these solutions, $\mathbf{x}^{(1)}$ and $\mathbf{x}^{(2)}$ remain. Neither of these solutions dominates the other solution.
+%   Therefore $\mathcal{F}_{2} = \{\mathbf{x}^{(1)}, \mathbf{x}^{(2)}\}$.
+% \item Crowding distance is always computed within a front. From (d) we have that $\mathbf{x}^{(3)} \in \mathcal{F}_{1}$.
+%   We start with the first dimension, $f_{1}$.\\
+%   First, sort the values by $f_{1}$: $(3,7),(4,6),(6,4),(9,3)$.
+%   $(3, 7)$ and $(9, 3)$ are outermost and get an infinite partial distance for the $f_{1}$ dimension.
+%   Normalize the values by the minimum of $3$ and maximum of $9$ among the four points.
+%   For the point $\mathbf{x}^{(3)}$ (new index of $i = 2$) we compute:
+%   $$\mathrm{CD}_{1}(\mathbf{x}^{(3)}) = \frac{(f_{1}^{(i+1)} - f_{1}^{(i-1)})}{(f_{1}^{(\mathrm{max})} - f_{1}^{(\mathrm{min})})} = \frac{(6 - 3)}{(9 - 3)} = 0.5.$$
+%   For the second dimension, $f_{2}$, we analogously obtain:
+%   $$\mathrm{CD}_{2}(\mathbf{x}^{(3)}) = \frac{(f_{2}^{(i+1)} - f_{2}^{(i-1)})}{(f_{2}^{(\mathrm{max})} - f_{2}^{(\mathrm{min})})} = \frac{(7 - 4)}{(7 - 3)} = 0.75.$$
+%   $\rightarrow$ the total crowding distance is (when taking the sum) $0.5 + 0.75 = 1.25$.
+% \item We know from (c) that the total dominated hypervolume is $S(\mathcal{P}, R) = 131$.
+%   To compute the hypervolume contribution of $\mathbf{x}^{(5)}$, we compute the hypervolume of $\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}$ and substract it.
+%   Similar computations as in (c) but now for $\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}$ yield $S(\mathcal{P} \setminus \{\mathbf{x}^{(5)}\}, R) = 125$. Therefore $\mathbf{x}^{(5)}$ has a hypervolume contribution of $131 - 125 = 6$.
+
+\loesung{CMA-ES}{
+Pick $\mu = 3$ parents with highest fitness values, i.e.,
+$\text{Id} = 1,2,5$ which we denote with $\mathbf{x}_{1:\mu}$
+and respective weights $w_i = \frac{f_i}{\sum^\mu_{i=1}f_i} \approx (0.432, 0.265, 0.303)$. \\
+\begin{equation*}
+\begin{split}
+\mathbf{m}^{[1]} &= \mathbf{m}^{[0]} + 0.5 \sum^3_{i=1} w_i(\mathbf{x}_i - \mathbf{m}^{[0]}) \approx (1.140, 0.515)^\top \\
+\mathbf{C}_\mu &= \frac{1}{3-1} \sum^3_{i=1}(\mathbf{x}_i - \mathbf{m}^{[0]}))(\mathbf{x}_i - \mathbf{m}^{[0]}))^\top  \\
+& \approx \begin{pmatrix} 0.187 & -0.617 \\ -0.617 & 2.139 \end{pmatrix} \\
+\mathbf{C}^{[1]} &= 0.9\cdot\mathbf{I}_d + 0.1\cdot\mathbf{C}_\mu \\
+&\approx \begin{pmatrix} 0.919 & -0.062 \\ -0.062 & 1.114 \end{pmatrix}
+\end{split}
+\end{equation*}
+}
 \end{enumerate}
 }
 
