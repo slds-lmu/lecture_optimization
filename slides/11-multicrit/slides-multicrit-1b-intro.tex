@@ -1,0 +1,544 @@
+\documentclass[11pt,compress,t,notes=noshow,xcolor=table]{beamer}
+
+\usepackage{algorithm}
+\usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
+%\usepackage[boxed,vlined]{algorithm2e}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/ml-mbo}
+\input{../../latex-math/optim-basics}
+\input{macros}
+
+% -- Macros from original code --------------------------------------
+\newcommand{\xx}{\conf}     % x of the optimizer
+\newcommand{\xxi}[1][i]{\lambda_{#1}} % i-th component of xx
+\newcommand{\XX}{\pcs}     % search space / domain of f
+\newcommand{\f}{\cost}     % objective function
+\newcommand{\yy}{\cost}    % outcome of objective function
+% -------------------------------------------------------------------
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+% Example adaptation of the old \title / \subtitle to the new style:
+\titlemeta{%
+  Multi-criteria Optimization % chunk title
+}{%
+  Introduction              % lecture title
+}{%
+  figure_man/expedia-5-1.pdf % example path to a title image (optional)
+}{%
+  \item What is multi-criteria optimization?
+  \item Motivating examples
+  \item Pareto optimality
+}
+
+% % -------------------------------------------------------------------
+% \begin{vbframe}{Introductory example}
+
+% Often we want to solve optimization problems concerning several goals.
+
+% \bigskip
+% \textbf{General applications:}
+% \begin{itemize}
+% \item Medicine: maximum effect, but minimum side effect of a drug.
+% \item Finances: maximum return, but minimum risk of an equity portfolio.
+% \item Production planning: maximum revenue, but minimum costs.
+% \item Booking a hotel: maximum rating, but minimum costs.
+% \end{itemize}
+
+% \bigskip
+% \textbf{In machine learning:}
+% \begin{itemize}
+% \item Sparse models: maximum predictive performance, but minimal number of features.
+% \item Fast models: maximum predictive performance, but short prediction time.
+% \item ...
+% \end{itemize}
+
+% \framebreak
+
+% \textbf{Example}: Choose the best hotel by maximizing ratings subject to a maximum price per night.
+
+% \bigskip
+% \textbf{Problems}:
+% \begin{itemize}
+%  \item The result depends on how we select the maximum price; different price bounds give different solutions.
+%  \item We could also choose a minimum rating and optimize the price.
+%  \item The more objectives we include, the harder it gets to fix cutoffs like these.
+% \end{itemize}
+
+% \bigskip
+% \textbf{Goal}: Find a more general approach to solve multi-criteria problems.
+
+% \begin{center}
+% \includegraphics[width=0.35\linewidth]{figure_man/booking1.png}
+% \quad
+% \includegraphics[width=0.35\linewidth]{figure_man/booking2.png}
+% \end{center}
+
+% When booking a hotel: find the hotel with
+% \begin{itemize}
+% \item minimum price per night (\textbf{costs}), and
+% \item maximum user rating (\textbf{performance}).
+% \end{itemize}
+
+% \begin{footnotesize}
+% Since our standard is to minimize objectives, we minimize negative ratings.
+% \end{footnotesize}
+
+% \framebreak
+
+% The objectives often conflict with each other:
+% \begin{itemize}
+% \item Lower price $\to$ usually lower hotel rating.
+% \item Better rating $\to$ usually higher price.
+% \end{itemize}
+
+% Example: (negative) average rating by hotel guests (1--5) vs.\ average price per night.
+
+% \bigskip
+% \begin{center}
+% \includegraphics[width=0.8\textwidth]{figure_man/expedia-1-1.pdf}
+% \end{center}
+
+% \framebreak
+
+% {\footnotesize
+% We cannot directly establish a total order on the objective space:
+% \begin{itemize}
+%   \item Left: A hotel with rating 4 for 89~Euro 
+%         \((\textcolor{green}{\cost^{(1)}} = (89, -4.0))\) 
+%         is better than a hotel for 108~Euro with the same rating
+%         \((\textcolor{red}{\cost^{(2)}} = (108, -4.0))\).
+%   \item Right: How to decide if 
+%         \(\textcolor{orange}{\cost^{(1)}}=(89, -4.0)\) is better or worse than 
+%         \(\textcolor{orange}{\cost^{(2)}}=(95, -4.5)\)?
+%   \item How much is one \emph{rating point} worth?
+% \end{itemize}
+
+% \begin{center}
+% \includegraphics[scale=1]{figure_man/expedia-2-1.pdf}
+% \end{center}
+
+% \vspace{-0.1cm}
+
+% Let \(\cost = (\text{price}, -\text{rating})\). The candidate 
+% \(\textcolor{green}{\cost^{(1)}}=(89,-4.0)\)
+% dominates 
+% \(\textcolor{red}{\cost^{(2)}}=(108,-4.0)\). 
+% That is, \(\textcolor{green}{\cost^{(1)}}\) is at least as good 
+% in every dimension, and strictly better in one dimension.
+% Hence $\textcolor{green}{\cost^{(1)}} \prec \textcolor{red}{\cost^{(2)}}$. But for
+% \(\textcolor{orange}{\cost^{(1)}}=(89,-4.0)\) and \(\textcolor{orange}{\cost^{(2)}}=(95,-4.5)\)
+% we cannot say any is strictly better.
+
+
+% }
+
+
+% \end{vbframe}
+
+% % -------------------------------------------------------------------
+% \begin{vbframe}{How to define optimality?}
+
+
+% \begin{itemize}\setlength{\itemsep}{0.1em}
+%   \item We call these \textbf{incomparable} (or \emph{equivalent} in the Pareto sense):
+% \[
+% \textcolor{orange}{\cost^{(1)}} 
+%    \not\prec 
+% \textcolor{orange}{\cost^{(2)}} 
+% \quad\text{and}\quad
+% \textcolor{orange}{\cost^{(2)}} 
+%    \not\prec 
+% \textcolor{orange}{\cost^{(1)}}.
+% \]
+% \item All such non-dominated points form the \textbf{Pareto front}.
+% \end{itemize}
+
+% \bigskip
+% \begin{columns}[c]
+%         \column{0.5\textwidth}
+%         \includegraphics[width=\textwidth]{figure_man/expedia-4-1.pdf}
+        
+%         \column{0.5\textwidth}
+%         \includegraphics[width=\textwidth]{figure_man/expedia-5-1.pdf}
+%     \end{columns}
+
+% \end{vbframe}
+
+% % -------------------------------------------------------------------
+% \begin{vbframe}{Definition: multi-criteria optimization}
+
+% A \textbf{multi-criteria optimization problem} is defined by
+% \[
+% \min_{\conf \in \pcs}  \cost(\conf) 
+% \;\;\Leftrightarrow\;\;
+% \min_{\conf \in \pcs} 
+% \bigl(\cost_1(\conf), \cost_2(\conf), \dots, \cost_m(\conf)\bigr),
+% \]
+% with \(\pcs \subset \mathbb{R}^n\) and a multi-criteria objective function
+% \(\cost: \pcs \to \mathbb{R}^m,\; m \ge 2.\)
+
+% \begin{itemize}
+% \item \textbf{Goal:} minimize multiple target functions simultaneously.
+% \item \((\cost_1(\conf), \dots, \cost_m(\conf))^\top\) maps each candidate 
+%       \(\conf\) into the objective space \(\mathbb{R}^m\).
+% \item Typically no single best solution exists, as the objectives are often 
+%       in conflict and cannot be totally ordered in \(\mathbb{R}^m\).
+% \item W.l.o.g.\ we always minimize.
+% \item Also called multi-objective optimization, Pareto optimization, etc.
+% \end{itemize}
+
+% \end{vbframe}
+
+% % -------------------------------------------------------------------
+% \begin{vbframe}{Pareto sets and Pareto optimality}
+
+% \textbf{Definition:}
+
+% Given 
+% \[
+% \min_{\conf \in \pcs} 
+%    \bigl(\cost_1(\conf), \dots, \cost_m(\conf)\bigr), 
+% \quad \cost_i: \pcs \to \mathbb{R}.
+% \]
+
+% \begin{itemize}
+%   \item A candidate \(\conf^{(1)}\) \textbf{(Pareto-)dominates} \(\conf^{(2)}\) 
+%         if \(\cost(\conf^{(1)}) \prec \cost(\conf^{(2)})\), i.e.:
+%     \begin{enumerate}
+%       \item \(\cost_i(\conf^{(1)}) \le \cost_i(\conf^{(2)})\) for all \(i\),
+%       \item \(\cost_j(\conf^{(1)}) < \cost_j(\conf^{(2)})\) for at least one \(j\).
+%     \end{enumerate}
+%     \item A candidate \(\optconf\) not dominated by any other candidate is 
+%           \textbf{Pareto optimal}.
+%     \item The set of all Pareto optimal candidates is the \textbf{Pareto set} 
+%           \(\mathcal{P} = \{\conf \in \pcs \mid \nexists \,\tilde{\conf} :
+%                \cost(\tilde{\conf}) \prec \cost(\conf)\}\).
+%     \item \(\mathcal{F} = \cost(\mathcal{P})\), the \textbf{Pareto front}, 
+%           is the image of that set in objective space.
+% \end{itemize}
+
+% \end{vbframe}
+
+% % -------------------------------------------------------------------
+% \begin{vbframe}{Example: One objective function}
+
+% We consider 
+% \[
+% \min_{x} \cost(x) = (x - 1)^2, 
+% \quad 0 \le x \le 3.
+% \]
+% The optimum is at \(x^* = 1\).
+
+% %\bigskip
+% \begin{center}
+% \includegraphics[width=0.5\textwidth]{figure_man/graph1.png}
+% \end{center}
+
+% \end{vbframe}
+
+% % -------------------------------------------------------------------
+% \begin{vbframe}{Example: Two target functions}
+
+% We extend the above problem to two objectives 
+% \(\cost_1(x) = (x - 1)^2\) 
+% and 
+% \(\cost_2(x) = 3(x - 2)^2\). Thus
+% \[
+%   \min_{x} \cost(x) 
+%     = \bigl(\cost_1(x),\, \cost_2(x)\bigr),
+%   \quad 0 \le x \le 3.
+% \]
+
+% \begin{center}
+% \includegraphics[width=0.5\textwidth]{figure_man/graph2.png}
+% \end{center}
+
+% \framebreak
+
+% Visualizing both objectives:
+% $\bigl(\cost_1(x), \;\cost_2(x)\bigr)
+% $
+% for all \(x \in [0,3]\) in the objective space:
+
+% \begin{center}
+% \includegraphics[width=0.45\textwidth]{figure_man/graph3.png}
+% \end{center}
+
+% The Pareto front is shown in green. 
+
+% \end{vbframe}
+
+% % -------------------------------------------------------------------
+% \begin{vbframe}{A-priori vs. A-posteriori}
+
+% \begin{itemize}
+% \item The Pareto set is a set of equally valid solutions.
+% \item Often, we only want a \textbf{single} solution in practice.
+% \item Without extra info, there is no unique best solution: one must choose 
+%       based on further criteria (cost constraints, business preference, etc.).
+% \end{itemize}
+
+% \bigskip
+% Two overall strategies:
+% \begin{itemize}
+% \item \textbf{A-priori approach}: incorporate user preferences \emph{before} the optimization.
+% \item \textbf{A-posteriori approach}: first find (an approximation of) the entire Pareto set, 
+%       then let the user choose.
+% \end{itemize}
+
+% \end{vbframe}
+
+% % -------------------------------------------------------------------
+% \begin{vbframe}{A-priori procedure}
+
+% \textbf{Example: Weighted total}
+
+% $$ \min_{\conf} \sum_{i=1}^m w_i \cost_i(\conf) $$
+
+% \textbf{Prior knowledge}:
+% ``One rating point is worth 50~Euro to this customer.''
+
+% \[
+% \min_{\text{Hotel}} \text{(Price)} \;-\; 50 \times \text{(Rating)}.
+% \]
+% \vspace{-0.2cm}
+% \begin{center}
+% \includegraphics[width=0.6\textwidth]{figure_man/expedia-9-1.pdf}
+% \end{center}
+
+% \framebreak
+
+% \textbf{Example: Lexicographic method}
+
+% \textbf{Prior knowledge}: The rating is more important than the price.
+% Hence we optimize the rating first, then the price among those best ratings:
+
+% \begin{center}
+% \includegraphics[width=1\textwidth]{figure_man/expedia-10-1.pdf}
+% \end{center}
+
+% \framebreak
+% \vspace{-0.3cm}
+% Lexicographic approach in general:
+
+% {\small
+% \[
+% \begin{aligned}
+% \yy_1^* &= \min_{\conf \in \pcs} \;\cost_1(\conf),\\
+% \yy_2^* &= \min_{\substack{\conf \in \pcs:\\ \cost_1(\conf)=\yy_1^*}} \;\cost_2(\conf),\\
+% \yy_3^* &= \min_{\substack{\conf \in \pcs:\\ \cost_1(\conf)=\yy_1^*,\,\cost_2(\conf)=\yy_2^*}}
+%           \;\cost_3(\conf),\\
+% &\quad\vdots
+% \end{aligned}
+% \]
+% }
+
+% But different orderings yield different solutions.
+
+% %\framebreak
+% {\footnotesize
+% \textbf{Summary (a-priori)}:
+% \vspace{-0.1cm}
+% \begin{itemize}\setlength{\itemsep}{0.7em}
+% \item Implicit assumption: single-objective optimization is “easy.”
+% \item We get only \emph{one} solution, which depends strongly on the chosen weighting/order/etc.
+% \item Varying these parameters systematically can produce several solutions, but may miss large parts of the non-dominated set.
+% \end{itemize}
+% }
+
+
+% \end{vbframe}
+
+% % -------------------------------------------------------------------
+% \begin{vbframe}{A-posteriori procedure}
+
+% {\footnotesize
+% A-posteriori methods aim to
+% \begin{itemize}
+%   \item find \emph{all} optimal candidates (or a good approximation of them),
+%   \item let the user pick a single solution based on personal preferences or 
+%         additional info (e.g.\ hotel location).
+% \end{itemize}
+% Hence, a-posteriori methods are more general.
+% }
+% %\framebreak
+
+% {\footnotesize
+% \textbf{Example}: 
+% All Pareto-optimal hotels are shown on the left. 
+% User then picks from that subset on the right, based on hidden preferences 
+% (location, brand loyalty, etc.):
+% }
+% %\bigskip
+% \begin{center}
+% \includegraphics[scale=0.8]{figure_man/expedia-11-1.pdf}
+% \end{center}
+
+% \end{vbframe}
+
+
+\begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions I}
+  \item \textbf{Weighted sum scalarization} solves:
+  \[\xvs := \argmin_{\xv \in \S } \sum_{i=1}^m w_i \f_i(\xv)\]
+  We can show that this approach can find Pareto-optimal solutions.
+  \item Without loss of generality we can assume $\sumid w_i =1$.
+  \item \textbf{Theorem:} If $w_i>0$ for all $i$, then $\xvs$ is Pareto-optimal.
+  \\[0.5cm]
+  \textbf{Proof.} Suppose $\xvs$ is not Pareto-optimal, i.e., there exists $\xv$ such that $\f_i(\xv) \leq \f_i(\xvs)$ for all $i$ and $\f_j(\xv) < \f_j(\xv^*)$ for at least one $j$. Then,
+  \[\sum_{i=1}^m w_i \f_i(\xv) < \sumid w_i \f_i(\xvs),\]
+  which contradicts the definition of $\xvs$ as the minimizer.
+  \end{framei}
+
+
+\begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions II}
+  \item Not all Pareto-optimal solutions can be found by solving
+    \[\xvs := \argmin_{\xv \in \S } \sum_{i=1}^m w_i \f_i(\xv)\]
+  \item \textbf{Example:} We find three out of the five Pareto-optimal solutions:
+  \imageC[0.7]{figure_man/expedia_weighted_sum.pdf}
+\end{framei}
+
+\begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions III}
+  \item \textbf{Example:} $\cost_1(x) = (x-1)^2$ and $\cost_2(x) = 3(x-2)^2$ with
+  \[
+  \min_{x} \cost(x)
+    = \bigl(\cost_1(x),\, \cost_2(x)\bigr),
+  \quad 0 \le x \le 3.
+  \]
+  \item Use $0 \le x \le 3$ with $300$ steps ($100$ non-dominated points).
+  \item Use $w_1 \in (0,1)$ with $100$ steps and $w_2=1-w_1$.
+  \imageC[0.7]{figure_man/expedia-weighted-pareto_100.pdf}
+  \item Not all Pareto-optimal solutions are found.
+  \end{framei}
+
+\begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions IV}
+  \item \textbf{Example:} $\cost_1(x) = (x-1)^2$ and $\cost_2(x) = 3(x-2)^2$ with
+  \[
+  \min_{x} \cost(x)
+    = \bigl(\cost_1(x),\, \cost_2(x)\bigr),
+  \quad 0 \le x \le 3.
+  \]
+  \item Use $0 \le x \le 3$ with $300$ steps ($100$ non-dominated points).
+  \item Using $w_1$ with $300$ steps yields all Pareto-optimal solutions:
+  \imageC[0.7]{figure_man/expedia-weighted-pareto_300.pdf}
+  \item Under which conditions can we find all Pareto-optimal solutions?
+  \end{framei}
+
+\begin{framev}{Finding Pareto-optimal solutions V}
+  \textbf{Theorem (Geoffrion, 1968):} Let $\S$ be \underline{convex} and assume $\cost_1,\dots,\cost_d$ are \underline{convex}. Then $\xvs \in \S$ is \underline{properly} Pareto-optimal if and only if
+  $\xvs$ is an optimal solution of
+    \[\min_{\xv \in \S } \sum_{i=1}^m w_i \cost_i(\xv)\]
+  with strictly positive weights $w_i$ for all $i$.
+\begin{itemize}
+  \item For convex functions and convex search spaces, we can find all \underline{properly} Pareto-optimal solutions using weighted sum scalarization.
+  \item \textbf{Proper Pareto-optimal solution}: Exclude solutions where an arbitrary small improvement in one objective leads to an arbitrary large deterioration in another objective.
+\end{itemize}
+  \end{framev}
+
+\begin{framev}{Finding Pareto-optimal solutions VI}
+  \textbf{Definition (Geoffrion, 1968):} A Pareto-optimal solution $\xvs \in \S$ is called \textbf{properly} Pareto-optimal, if there exists a constant $M>0$ such that for all $i$ and ${\xv} \in \S$ with $\cost_i(\xv) < \cost_i(\xvs)$ there exists an index $j$, such that $\cost_j(\xvs) < \cost_j(\xv)$ and
+  \[ \frac{\cost_i(\xvs)-\cost_i(\xv)}{\cost_j(\xv)-\cost_j(\xvs)} \leq M\]
+  \textbf{Example:} $\cost_1(x) =(x-1)^2$ and $\cost_2(x) = 3(x-2)^2$ for $0 \le x \le 3$.
+  \begin{itemize}
+    \item Pareto-optimal solutions are $x \in [1,2]$ (as exercise).
+    \item $\xs=1$ is not properly Pareto-optimal.
+    \\
+    \textbf{Proof.} For $\xs=1$ we have $\cost_1(\xs)=0$ and $\cost_2(\xs)=3$. Let $x=1+\epsilon$ for $\epsilon>0$, then $\cost_2(x)<\cost_2(\xs)$ and $\cost_1(x)>\cost_1(\xs)$. Then,
+    \[\frac{\cost_2(\xs)-\cost_2(x)}{\cost_1(x)-\cost_1(\xs)} = \frac{3- 3(\epsilon-1)^2}{\epsilon^2} =\frac{6\epsilon-3\epsilon^2}{\epsilon^2}\to \infty \text{ for } \epsilon \to 0\]
+  \end{itemize}
+  \end{framev}
+
+
+\begin{framei}{Finding Pareto-optimal solutions VI}
+  \item Convexity is required to find properly Pareto-optimal solutions
+  \item In non-convex settings: Often poor coverage of the Pareto front.
+  \item \textbf{Example:} $\S = \{\xv \in \mathbb{R}^2: x_1^2+x_2^2 \geq 1\}$ with $\cost_1(\xv) = x_1$ and $\cost_2(\xv)=x_2$.
+  \item {\color{orange}Pareto front:} $\mathcal{F} = \{\xv \in \mathbb{R}^2: x_1^2+x_2^2=1\}$
+  \item {\color{blue}Weighted sum scalarization} only finds {\color{blue}$\xv^{(1)}$} and {\color{blue}$\xv^{(2)}$}
+  \imageC[0.4]{figure_man/example_unit_arc.pdf}
+\end{framei}
+
+
+\begin{framei}{Finding Pareto-optimal solutions VII}
+    \item \textbf{Alternative:} $\epsilon$-constraint method
+    \[\xv^* := \arg\min_{\xv \in \mathcal{S}} \cost_1(\xv) \quad \text{s.t. } \cost_{2}(\xv) \leq \epsilon_2.\]
+
+    \item By varying $\epsilon_i$ we can find different Pareto-optimal solutions:
+    \imageC[0.5]{figure_man/example_epsilon_constraint.pdf}
+\end{framei}
+
+\begin{framei}{Finding Pareto-optimal solutions VIII}
+    \item General form of the $\epsilon$-constraint method:
+    \[\xv^* := \arg\min_{\xv \in \mathcal{S}} \cost_i(\xv) \quad \text{s.t. } \cost_j(\xv) \leq \epsilon_j, \quad j=1,\dots,m, j \neq i.\]
+    \item Are solutions found by the $\epsilon$-constraint method Pareto-optimal?
+    \item \textbf{Theorem:} If $\xv^*$ is the \underline{unique} optimal solution of the $\epsilon$-constraint method \underline{for some} index $i$, then $\xv^*$ is Pareto-optimal.
+    \\[0.5cm]
+    \textbf{Proof.} Suppose $\xv^*$ is not Pareto-optimal. Then there exists $\xv \in \mathcal{S}$, such that $\cost_i(\xv) \leq \cost_i(\xv^*)$ for all $i = 1, \dots, m$ and $\cost_j(\xv) < \cost_j(\xv^*)$ for at least one $j \in \{1, \dots, m\}$.
+    Since $\xv^*$ is feasible for the $\epsilon$-constraint problem, it follows that $\cost_i(\xv) \leq \cost_i(\xv^*) \leq \epsilon_i$, so $\xv$ is also feasible.
+    Moreover, $\cost_1(\xv) \leq \cost_1(\xv^*)$, and since $\xv^*$ is the unique minimizer of $\text{cost}_1$, we must have $\xv = \xv^*$, which is a contradiction.
+\end{framei}
+
+\begin{framei}{Finding Pareto-optimal solutions IX}
+    \item Can the $\epsilon$-constraint method find all Pareto-optimal solutions?
+        \[\xv^* := \arg\min_{\xv \in \mathcal{S}} \cost_i(\xv) \quad \text{s.t. } \cost_j(\xv) \leq \epsilon_j, \quad j=1,\dots,m, j \neq i.\]
+    \item \textbf{Theorem:} $\xv^* \in \S$ is Pareto-optimal if and only if there exists $\mathbf{\epsilon} \in \mathbb{R}^m$ such that $\xv^*$ is an optimal solution \underline{for all} $i=1,\dots,m$.
+    \\[0.5cm]
+    \textbf{Proof.} ``$\Rightarrow$'' Suppose $\xv^*$ is not an optimal solution of the $\epsilon$-constraint problem. Then define $\mathbf{\epsilon}=\cost(\xv*)$, and there exists $\xv \in \S$ with $\cost_i(\xv) <\cost_i(\xv^*)$ and $f_j(\xv) \leq \epsilon_j = \cost_j(\xv^*)$, which contradicts the Pareto-optimality of $\xv^*$.
+    \\
+    ``$\Leftarrow$'' Suppose $\xv^*$ is not Pareto-optimal. Then there exists $\xv \in \S$, such that $\cost_i(\xv) < \cost_i(\xv^*)$ for at least one $i \in \{1, \dots, m\}$ and $\cost_j(\xv) \leq \cost_j(\xv^*)$ for all $j = 1, \dots, m$.
+    Since $\xv^*$ is a solution of the $\epsilon$-constraint problem, it follows that $\cost_j(\xv) \leq \cost_j(\xv^*) \leq \epsilon_j$, so $\xv$ satisfies the constraints, which contradicts the optimality of $\xv^*$ for the $\epsilon$-constraint problem and index $i$.
+\end{framei}
+
+
+% -------------------------------------------------------------------
+\begin{vbframe}{Evaluation of solutions}
+
+\begin{columns}
+\begin{column}{0.5\textwidth}
+{\footnotesize A common measure for the performance of a set of candidates 
+\(\mathcal{P}\subset\pcs\) is the \textbf{dominated hypervolume}:
+\[
+S(\mathcal{P},R) 
+  = \lambda\Bigl(
+      \bigcup_{\tilde{\conf}\in \mathcal{P}} 
+         \{\;\conf \;\mid\; 
+              \tilde{\conf}\prec \conf \prec R
+         \}
+    \Bigr),
+\]
+where \(\lambda(\cdot)\) is the Lebesgue measure and R a pre-specified reference point every point in the set must dominate}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figure_man/dominated_hypervolume.png}
+\end{center}
+\end{column}
+\end{columns}
+
+% add here sentence about reference point
+% "and R is a pre-specified reference point and every point in the set must dominate it" (such as maximum +1 of all objectives
+
+%\framebreak
+
+{\footnotesize
+\begin{itemize}
+\item HV is measured w.r.t.\ the reference point \(R\), often chosen so each 
+      component is a known “worst” (upper bound) for that objective.
+\item HV is also called the \textbf{S-metric}.
+\item Its computation is \(\mathcal{O}(n^{m-1})\) in the number of points 
+      and dimension \(m\).
+\item Efficient algorithms exist for small \(m\). 
+      In ML, we rarely exceed \(m=3\) in practice.
+\end{itemize}
+}
+
+\end{vbframe}
+
+% -------------------------------------------------------------------
+\endlecture
+\end{document}
