@@ -27,20 +27,20 @@ figure_man/expedia-5-1.pdf
 
 \begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions I}
 \item \textbf{Weighted sum scalarization} solves:
-\[\xvs := \argmin_{\xv \in \S } \sum_{i=1}^m w_i f_i(\xv)\]
+\[\xvs := \argmin_{\xv \in \S } \sumim w_i f_i(\xv)\]
 We can show that this approach can find Pareto-optimal solutions.
 \item Without loss of generality we can assume $\sumid w_i =1$.
 \item \textbf{Theorem:} If $w_i>0$ for all $i$, then $\xvs$ is Pareto-optimal.
 \\[0.5cm]
-\textbf{Proof.} Suppose $\xvs$ is not Pareto-optimal, i.e., there exists $\xv$ such that $f_i(\xv) \leq f_i(\xvs)$ for all $i$ and $f_j(\xv) < f_j(\xv^*)$ for at least one $j$. Then,
-\[\sum_{i=1}^m w_i f_i(\xv) < \sumid w_i f_i(\xvs),\]
+\textbf{Proof.} Suppose $\xvs$ is not Pareto-optimal, i.e., there exists $\xv$ such that $f_i(\xv) \leq f_i(\xvs)$ for all $i$ and $f_j(\xv) < f_j(\xvs)$ for at least one $j$. Then,
+\[\sumim w_i f_i(\xv) < \sumid w_i f_i(\xvs),\]
 which contradicts the definition of $\xvs$ as the minimizer.
 \end{framei}
 
 
 \begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions II}
 \item Not all Pareto-optimal solutions can be found by solving
-\[\xvs := \argmin_{\xv \in \S } \sum_{i=1}^m w_i f_i(\xv)\]
+\[\xvs := \argmin_{\xv \in \S } \sumim w_i f_i(\xv)\]
 \item \textbf{Example:} We find three out of the five Pareto-optimal solutions:
 \imageC[0.7]{figure_man/expedia_weighted_sum.pdf}
 \end{framei}
@@ -74,7 +74,7 @@ which contradicts the definition of $\xvs$ as the minimizer.
 \begin{framev}{Finding Pareto-optimal solutions V}
 \textbf{Theorem (Geoffrion, 1968):} Let $\S$ be \underline{convex} and assume $f_1,\dots,f_d$ are \underline{convex}. Then $\xvs \in \S$ is \underline{properly} Pareto-optimal if and only if
 $\xvs$ is an optimal solution of
-\[\min_{\xv \in \S } \sum_{i=1}^m w_i f_i(\xv)\]
+\[\min_{\xv \in \S } \sumim w_i f_i(\xv)\]
 with strictly positive weights $w_i$ for all $i$.
 \begin{itemize}
 \item For convex functions and convex search spaces, we can find all \underline{properly} Pareto-optimal solutions using weighted sum scalarization.
@@ -90,8 +90,8 @@ with strictly positive weights $w_i$ for all $i$.
 \item Pareto-optimal solutions are $x \in [1,2]$ (as exercise).
 \item $\xs=1$ is not properly Pareto-optimal.
 \\
-\textbf{Proof.} For $\xs=1$ we have $f_1(\xs)=0$ and $f_2(\xs)=3$. Let $x=1+\epsilon$ for $\epsilon>0$, then $f_2(x)<f_2(\xs)$ and $f_1(x)>f_1(\xs)$. Then,
-\[\frac{f_2(\xs)-f_2(x)}{f_1(x)-f_1(\xs)} = \frac{3- 3(\epsilon-1)^2}{\epsilon^2} =\frac{6\epsilon-3\epsilon^2}{\epsilon^2}\to \infty \text{ for } \epsilon \to 0\]
+\textbf{Proof.} For $\xs=1$ we have $f_1(\xs)=0$ and $f_2(\xs)=3$. Let $x=1+\eps$ for $\eps>0$, then $f_2(x)<f_2(\xs)$ and $f_1(x)>f_1(\xs)$. Then,
+\[\frac{f_2(\xs)-f_2(x)}{f_1(x)-f_1(\xs)} = \frac{3- 3(\eps-1)^2}{\eps^2} =\frac{6\eps-3\eps^2}{\eps^2}\to \infty \text{ for } \eps \to 0\]
 \end{itemize}
 \end{framev}
 
@@ -99,41 +99,41 @@ with strictly positive weights $w_i$ for all $i$.
 \begin{framei}{Finding Pareto-optimal solutions VI}
 \item Convexity is required to find properly Pareto-optimal solutions
 \item In non-convex settings: Often poor coverage of the Pareto front.
-\item \textbf{Example:} $\S = \{\xv \in \mathbb{R}^2: x_1^2+x_2^2 \geq 1\}$ with $f_1(\xv) = x_1$ and $f_2(\xv)=x_2$.
-\item {\color{orange}Pareto front:} $\mathcal{F} = \{\xv \in \mathbb{R}^2: x_1^2+x_2^2=1\}$
+\item \textbf{Example:} $\S = \{\xv \in \R^2: x_1^2+x_2^2 \geq 1\}$ with $f_1(\xv) = x_1$ and $f_2(\xv)=x_2$.
+\item {\color{orange}Pareto front:} $\mathcal{F} = \{\xv \in \R^2: x_1^2+x_2^2=1\}$
 \item {\color{blue}Weighted sum scalarization} only finds {\color{blue}$\xv^{(1)}$} and {\color{blue}$\xv^{(2)}$}
 \imageC[0.4]{figure_man/example_unit_arc.pdf}
 \end{framei}
 
 
 \begin{framei}{Finding Pareto-optimal solutions VII}
-\item \textbf{Alternative:} $\epsilon$-constraint method
-\[\xv^* := \arg\min_{\xv \in \mathcal{S}} f_1(\xv) \quad \text{s.t. } f_{2}(\xv) \leq \epsilon_2.\]
+\item \textbf{Alternative:} $\eps$-constraint method
+\[\xvs := \argmin_{\xv \in \S} f_1(\xv) \quad \text{s.t. } f_{2}(\xv) \leq \eps_2.\]
 
-\item By varying $\epsilon_i$ we can find different Pareto-optimal solutions:
+\item By varying $\eps_i$ we can find different Pareto-optimal solutions:
 \imageC[0.5]{figure_man/example_epsilon_constraint.pdf}
 \end{framei}
 
 \begin{framei}{Finding Pareto-optimal solutions VIII}
-\item General form of the $\epsilon$-constraint method:
-\[\xv^* := \arg\min_{\xv \in \mathcal{S}} f_i(\xv) \quad \text{s.t. } f_j(\xv) \leq \epsilon_j, \quad j=1,\dots,m, j \neq i.\]
-\item Are solutions found by the $\epsilon$-constraint method Pareto-optimal?
-\item \textbf{Theorem:} If $\xv^*$ is the \underline{unique} optimal solution of the $\epsilon$-constraint method \underline{for some} index $i$, then $\xv^*$ is Pareto-optimal.
+\item General form of the $\eps$-constraint method:
+\[\xvs := \argmin_{\xv \in \S} f_i(\xv) \quad \text{s.t. } f_j(\xv) \leq \eps_j, \quad j=1,\dots,m, j \neq i.\]
+\item Are solutions found by the $\eps$-constraint method Pareto-optimal?
+\item \textbf{Theorem:} If $\xvs$ is the \underline{unique} optimal solution of the $\eps$-constraint method \underline{for some} index $i$, then $\xvs$ is Pareto-optimal.
 \\[0.5cm]
-\textbf{Proof.} Suppose $\xv^*$ is not Pareto-optimal. Then there exists $\xv \in \mathcal{S}$, such that $f_i(\xv) \leq f_i(\xv^*)$ for all $i = 1, \dots, m$ and $f_j(\xv) < f_j(\xv^*)$ for at least one $j \in \{1, \dots, m\}$.
-Since $\xv^*$ is feasible for the $\epsilon$-constraint problem, it follows that $f_i(\xv) \leq f_i(\xv^*) \leq \epsilon_i$, so $\xv$ is also feasible.
-Moreover, $f_1(\xv) \leq f_1(\xv^*)$, and since $\xv^*$ is the unique minimizer of $\text{cost}_1$, we must have $\xv = \xv^*$, which is a contradiction.
+\textbf{Proof.} Suppose $\xvs$ is not Pareto-optimal. Then there exists $\xv \in \S$, such that $f_i(\xv) \leq f_i(\xvs)$ for all $i = 1, \dots, m$ and $f_j(\xv) < f_j(\xvs)$ for at least one $j \in \{1, \dots, m\}$.
+Since $\xvs$ is feasible for the $\eps$-constraint problem, it follows that $f_i(\xv) \leq f_i(\xvs) \leq \eps_i$, so $\xv$ is also feasible.
+Moreover, $f_1(\xv) \leq f_1(\xvs)$, and since $\xvs$ is the unique minimizer of $\text{cost}_1$, we must have $\xv = \xvs$, which is a contradiction.
 \end{framei}
 
 \begin{framei}{Finding Pareto-optimal solutions IX}
-\item Can the $\epsilon$-constraint method find all Pareto-optimal solutions?
-\[\xv^* := \arg\min_{\xv \in \mathcal{S}} f_i(\xv) \quad \text{s.t. } f_j(\xv) \leq \epsilon_j, \quad j=1,\dots,m, j \neq i.\]
-\item \textbf{Theorem:} $\xv^* \in \S$ is Pareto-optimal if and only if there exists $\mathbf{\epsilon} \in \mathbb{R}^m$ such that $\xv^*$ is an optimal solution \underline{for all} $i=1,\dots,m$.
+\item Can the $\eps$-constraint method find all Pareto-optimal solutions?
+\[\xvs := \argmin_{\xv \in \S} f_i(\xv) \quad \text{s.t. } f_j(\xv) \leq \eps_j, \quad j=1,\dots,m, j \neq i.\]
+\item \textbf{Theorem:} $\xvs \in \S$ is Pareto-optimal if and only if there exists $\mathbf{\eps} \in \R^m$ such that $\xvs$ is an optimal solution \underline{for all} $i=1,\dots,m$.
 \\[0.5cm]
-\textbf{Proof.} ``$\Rightarrow$'' Suppose $\xv^*$ is not an optimal solution of the $\epsilon$-constraint problem. Then define $\mathbf{\epsilon}=f(\xv*)$, and there exists $\xv \in \S$ with $f_i(\xv) <f_i(\xv^*)$ and $f_j(\xv) \leq \epsilon_j = f_j(\xv^*)$, which contradicts the Pareto-optimality of $\xv^*$.
+\textbf{Proof.} ``$\Rightarrow$'' Suppose $\xvs$ is not an optimal solution of the $\eps$-constraint problem. Then define $\mathbf{\eps}=f(\xvs)$, and there exists $\xv \in \S$ with $f_i(\xv) <f_i(\xvs)$ and $f_j(\xv) \leq \eps_j = f_j(\xvs)$, which contradicts the Pareto-optimality of $\xvs$.
 \\
-``$\Leftarrow$'' Suppose $\xv^*$ is not Pareto-optimal. Then there exists $\xv \in \S$, such that $f_i(\xv) < f_i(\xv^*)$ for at least one $i \in \{1, \dots, m\}$ and $f_j(\xv) \leq f_j(\xv^*)$ for all $j = 1, \dots, m$.
-Since $\xv^*$ is a solution of the $\epsilon$-constraint problem, it follows that $f_j(\xv) \leq f_j(\xv^*) \leq \epsilon_j$, so $\xv$ satisfies the constraints, which contradicts the optimality of $\xv^*$ for the $\epsilon$-constraint problem and index $i$.
+``$\Leftarrow$'' Suppose $\xvs$ is not Pareto-optimal. Then there exists $\xv \in \S$, such that $f_i(\xv) < f_i(\xvs)$ for at least one $i \in \{1, \dots, m\}$ and $f_j(\xv) \leq f_j(\xvs)$ for all $j = 1, \dots, m$.
+Since $\xvs$ is a solution of the $\eps$-constraint problem, it follows that $f_j(\xv) \leq f_j(\xvs) \leq \eps_j$, so $\xv$ satisfies the constraints, which contradicts the optimality of $\xvs$ for the $\eps$-constraint problem and index $i$.
 \end{framei}
 
 

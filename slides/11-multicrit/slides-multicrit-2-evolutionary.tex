@@ -215,10 +215,10 @@ Red: High CD \quad Blue: Low CD
 \begin{vbframe}{Hypervolume contribution}
 
 \textbf{S-Metric-Selection} uses the \emph{hypervolume contribution} $\Delta s(\xv,\mathcal{P})$ of each individual:
-\[
+$$
 \Delta s(\xv, \mathcal{P})
 = S(\mathcal{P}, R) - S\bigl(\mathcal{P}\setminus\{\xv\},\,R\bigr),
-\]
+$$
 where $S(\cdot,R)$ is the dominated HV w.r.t.\ reference point $R$.
 
 {\small
@@ -252,7 +252,7 @@ $t \gets 0$\;
 Create exactly one offspring $\mathbf{q}$ by recombination + mutation\;
 Perform non-dominated sorting on $(\mathcal{P}_t \cup \{\mathbf{q}\})$\;
 Let $\mathcal{F}_k$ be the last front\;
-$\tilde{\xv} \gets \arg\min_{\xv \in \mathcal{F}_k} \Delta s\bigl(\xv,\mathcal{F}_k\bigr)$\;
+$\tilde{\xv} \gets \argmin_{\xv \in \mathcal{F}_k} \Delta s\bigl(\xv,\mathcal{F}_k\bigr)$\;
 $\mathcal{P}_{t+1} \gets \bigl(\mathcal{P}_t \cup \{\mathbf{q}\}\bigr)\setminus\{\tilde{\xv}\}$\;
 $t \gets t + 1$\;
 }

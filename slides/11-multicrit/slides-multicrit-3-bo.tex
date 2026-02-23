@@ -51,18 +51,18 @@ We will now extend BO to multiple cost functions.
 \SetKwInOut{Result}{Result}
 
 \Require{Search space $\S$, cost function $f$, acquisition function $u$, 
-predictive model $\hat{f}$, maximal number of function evaluations $T$}
-\Result{Best configuration $\hat{\xv}$ (based on $\D$ or $\hat{f}$)}
+predictive model $\fh$, maximal number of function evaluations $T$}
+\Result{Best configuration $\hat{\xv}$ (based on $\D$ or $\fh$)}
 
 Initialize data $\D^{(0)}$ with initial observations\;
 \For{$t \gets 1$ \KwTo $T$}{
-Fit predictive model $\hat{f}^{(t)}$ on $\D^{(t-1)}$\;
+Fit predictive model $\fh^{(t)}$ on $\D^{(t-1)}$\;
 
 Select next query point:
 $\xv^{(t)} 
 \;\in\; 
 \argmax_{\xv \in \S}
-u\!\Bigl(\xv;\,\D^{(t-1)},\;\hat{f}^{(t)}\Bigr)$
+u\!\Bigl(\xv;\,\D^{(t-1)},\;\fh^{(t)}\Bigr)$
 
 Query $f(\xv^{(t)})$\;
 
@@ -87,9 +87,9 @@ Update data:
 \textbf{Goal}: Extend Bayesian optimization to multiple cost functions
 
 \[
-\min_{\xv \in \S}  f(\xv)
+\min_{\xv \in \S}  \fx
 \quad \Leftrightarrow \quad
-\min_{\xv \in \S} \bigl(f_1(\xv), f_2(\xv), \dots, f_m(\xv)\bigr).
+\min_{\xv \in \S} \bigl(\fkx[1], \fkx[2], \dots, \fkx[m]\bigr).
 \]
 
 \medskip
@@ -109,7 +109,7 @@ There are two basic approaches:
 \textbf{Idea:} Aggregate all cost functions
 
 \[
-\min_{\xv \in \S} \sum_{i = 1}^m w_i f_i(\xv)
+\min_{\xv \in \S} \sum_{i = 1}^m w_i \fkx[i]
 \quad\quad
 \text{with} \quad w_i \ge 0
 \]
@@ -136,8 +136,8 @@ adapting the general algorithm.
 Scalarize the cost functions using the augmented Chebychev norm / achievement function
 
 \[
-f = \max_{i=1,\dots,m}\bigl(w_i f_i(\xv)\bigr) 
-+ \rho \sum_{i=1}^m w_i f_i(\xv),
+f = \max_{i=1,\dots,m}\bigl(w_i \fkx[i]\bigr) 
++ \rho \sum_{i=1}^m w_i \fkx[i],
 \]
 
 \begin{itemize}
@@ -163,15 +163,15 @@ with $\lvert W \rvert = \binom{s+m-1}{m-1}$.
 \includegraphics[scale=0.08]{figure_man/parego_viz.png}
 \end{center}
 
-$\quad f = \max_{i=1,\dots,m}\bigl(w_i f_i(\xv)\bigr) 
-+ \rho \sum_{i=1}^m w_i f_i(\xv)$,
+$\quad f = \max_{i=1,\dots,m}\bigl(w_i \fkx[i]\bigr) 
++ \rho \sum_{i=1}^m w_i \fkx[i]$,
 \begin{scriptsize}
 \begin{itemize}
 \item The norm consists of two components:
 \begin{itemize}
-\item $\max_{i}\bigl(w_i f_i(\xv)\bigr)$ 
+\item $\max_{i}\bigl(w_i \fkx[i]\bigr)$ 
 considers only the maximum weighted cost.
-\item $\sum_{i} w_if_i(\xv)$ is the weighted sum of all costs.
+\item $\sum_{i} w_i\fkx[i]$ is the weighted sum of all costs.
 \end{itemize}
 \item $\rho$ controls the trade-off between these parts.
 \item By randomizing the weights $w$ in each iteration (and keeping $\rho$ small), 
@@ -196,10 +196,10 @@ Pareto-optimal.
 
 \Require{{\small Search space $\S$,
 cost function $f$,
-acquisition function $u$, predictive model $\hat{f}$,
+acquisition function $u$, predictive model $\fh$,
 maximal number of function evaluations $T$, $\rho$, $l$, $s$}}
 \Result{Best configuration $\hat{\xv}$
-(according to $\D$ or $\hat{f}$)}
+(according to $\D$ or $\fh$)}
 
 Initialize data $\D^{(0)}$ with initial observations\;
 
@@ -209,15 +209,15 @@ Sample $w \in W = \bigl\{(w_1,\dots,w_m) \,\mid\,
     l \in \{0,\dots,s\}\bigr\}$\;
 
 Compute scalarization:
-$c^{(t)} = \max_{i}\bigl(w_i f_i(\xv)\bigr) 
-+ \rho \sum_{i}w_if_i(\xv)$
+$c^{(t)} = \max_{i}\bigl(w_i \fkx[i]\bigr) 
++ \rho \sum_{i}w_i\fkx[i]$
 
-Fit predictive model $\hat{f}^{(t)}$ on 
+Fit predictive model $\fh^{(t)}$ on 
 $\D^{(t-1)}$\;
 
 Select next query point:
 $\xv^{(t)} \in \argmax_{\xv \in \S} 
-u(\xv; \D^{(t-1)}, \hat{f}^{(t)})$
+u(\xv; \D^{(t-1)}, \fh^{(t)})$
 
 Query $f(\xv^{(t)})$\;
 
@@ -250,7 +250,7 @@ $\max(0, \; S(\mathcal{P} \cup \xv, R) \;-\; S(\mathcal{P}, R))$
 \vspace{-0.8cm}
 
 \begin{itemize}
-\item Fit $m$ single-objective surrogate models $\hat{f}_1, \dots, \hat{f}_m$.
+\item Fit $m$ single-objective surrogate models $\fh_1, \dots, \fh_m$.
 \item Acquisition function uses all surrogate models simultaneously.
 \item Still a single-objective optimization problem (of acquisition itself).
 \end{itemize}
@@ -288,7 +288,7 @@ This method is referred to as
 
 \[
 u_{EI, \mathcal{H}}(\xv) 
-= \int_{-\infty}^{\infty} p\bigl(f \mid \xv\bigr)
+= \int_{-\infty}^{\infty} \pdf\bigl(f \mid \xv\bigr)
 \times \bigl[\,
 S(\mathcal{P} \cup \xv, R) \;-\; S(\mathcal{P}, R)
 \bigr]\; df
@@ -296,7 +296,7 @@ S(\mathcal{P} \cup \xv, R) \;-\; S(\mathcal{P}, R)
 
 \begin{itemize}
 \item Direct extension of $u_{EI}$ to the hypervolume criterion.
-\item $p(f \mid \xv)$ is the joint predictive density of all surrogate models at $\xv$.
+\item $\pdf(f \mid \xv)$ is the joint predictive density of all surrogate models at $\xv$.
 \item With independent GPs per objective, this factorizes over $m$ univariate normals.
 \item Exact integral feasible for $m \le 3$, else simulation-based.
 \end{itemize}
@@ -323,7 +323,7 @@ Further HV-based acquisitions:
 \Require{Search space $\S$,
 cost function $f$,
 acquisition function $u$, 
-predictive model(s) $\hat{f}_1,\dots,\hat{f}_m$,
+predictive model(s) $\fh_1,\dots,\fh_m$,
 maximal number of function evaluations $T$}
 \Result{Best configuration $\hat{\xv}$}
 
@@ -331,7 +331,7 @@ Initialize data $\D^{(0)}$ with initial observations\;
 
 \For{$t=1$ \KwTo $T$}{
 Fit predictive models 
-$\hat{f}_1^{(t)}, \dots, \hat{f}_m^{(t)}$
+$\fh_1^{(t)}, \dots, \fh_m^{(t)}$
 on $\D^{(t-1)}$\;
 
 Select next query point:\\
@@ -339,7 +339,7 @@ $\xv^{(t)} \in \argmax_{\xv \in \S}
 u\!\Bigl(
 \xv;\,
 \D^{(t-1)},\,
-\hat{f}_1^{(t)},\dots,\hat{f}_m^{(t)}
+\fh_1^{(t)},\dots,\fh_m^{(t)}
 \Bigr)$
 
 Query $f(\xv^{(t)})$\;

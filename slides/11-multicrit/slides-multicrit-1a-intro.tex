@@ -157,20 +157,20 @@ we cannot say any is strictly better.
 
 A \textbf{multi-criteria optimization problem} is defined by
 \[
-\min_{\xv \in \S}  f(\xv) 
+\min_{\xv \in \S}  \fx 
 \;\;\Leftrightarrow\;\;
 \min_{\xv \in \S} 
 \bigl(f_1(\xv), f_2(\xv), \dots, f_m(\xv)\bigr),
 \]
-with \(\S \subset \mathbb{R}^n\) and a multi-criteria objective function
-\(f: \S \to \mathbb{R}^m,\; m \ge 2.\)
+with \(\S \subset \R^n\) and a multi-criteria objective function
+\(f: \S \to \R^m,\; m \ge 2.\)
 
 \begin{itemize}
 \item \textbf{Goal:} minimize multiple target functions simultaneously.
 \item \((f_1(\xv), \dots, f_m(\xv))^\top\) maps each candidate 
-\(\xv\) into the objective space \(\mathbb{R}^m\).
+\(\xv\) into the objective space \(\R^m\).
 \item Typically no single best solution exists, as the objectives are often 
-in conflict and cannot be totally ordered in \(\mathbb{R}^m\).
+in conflict and cannot be totally ordered in \(\R^m\).
 \item W.l.o.g.\ we always minimize.
 \item Also called multi-objective optimization, Pareto optimization, etc.
 \end{itemize}
@@ -185,7 +185,7 @@ Given
 \[
 \min_{\xv \in \S} 
 \bigl(f_1(\xv), \dots, f_m(\xv)\bigr), 
-\quad f_i: \S \to \mathbb{R}.
+\quad f_i: \S \to \R.
 \]
 
 \begin{itemize}
@@ -198,8 +198,8 @@ if \(f(\xv^{(1)}) \prec f(\xv^{(2)})\), i.e.:
 \item A candidate \(\xv^{\ast}\) not dominated by any other candidate is 
 \textbf{Pareto optimal}.
 \item The set of all Pareto optimal candidates is the \textbf{Pareto set} 
-\(\mathcal{P} = \{\xv \in \S \mid \nexists \,\tilde{\xv} :
-  f(\tilde{\xv}) \prec f(\xv)\}\).
+\(\mathcal{P} = \{\xv \in \S \mid \nexists \,\xtil :
+  f(\xtil) \prec \fx\}\).
 \item \(\mathcal{F} = f(\mathcal{P})\), the \textbf{Pareto front}, 
 is the image of that set in objective space.
 \end{itemize}
@@ -213,7 +213,7 @@ We consider
 \min_{x} f(x) = (x - 1)^2, 
 \quad 0 \le x \le 3.
 \]
-The optimum is at \(x^* = 1\).
+The optimum is at \(\xs = 1\).
 
 \begin{center}
 \includegraphics[width=0.5\textwidth]{figure_man/graph1.png}
