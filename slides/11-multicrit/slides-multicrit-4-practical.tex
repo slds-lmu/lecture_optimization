@@ -1,379 +1,310 @@
 \documentclass[11pt,compress,t,notes=noshow,xcolor=table]{beamer}
 
-\usepackage{algorithm}
-\usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
-
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-mbo}
-\input{slides/11-multicrit/macros}
-
-%\newcommand{\a}[0]{\mathbf{a}}
-%\newcommand{\y}[0]{\mathbf{y}}
-\newcommand{\q}[0]{\mathbf{q}}
-%\newcommand{\Xspace}[0]{\mathcal{X}}
-\newcommand{\inducer}{\mathcal{I}}
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-% Example adaptation to the new style:
-\titlemeta{%
-  Multi-criteria Optimization % Chunk title
-}{%
-  Practical Applications     % Lecture title
-}{%
-  figure_man/example_parego_spam.png % optional path to title image
-}{%
-  \item ROC optimization
-  \item Efficient models
-  \item Fairness considerations
+\titlemeta{
+Multi-criteria Optimization
+}{
+Practical Applications
+}{
+figure_man/example_parego_spam.png
+}{
+\item ROC optimization
+\item Efficient models
+\item Fairness considerations
 }
 
-% -------------------------------------------------------------------
-\begin{vbframe}{Practical Applications in Machine Learning}
-%{\small
+\begin{framev}[fs=small]{Practical Applications in Machine Learning}
 \textbf{ROC Optimization}: Balance \emph{true positive} and \emph{false positive} rates
-\begin{itemize}{\small
-  \item Typically used in unbalanced classification with unspecified costs.
-  \item Could also consider other ROC metrics, e.g., \emph{positive predicted value} or \emph{false discovery rate}}
-\end{itemize}
+\begin{itemizeM}
+\item Typically used in unbalanced classification with unspecified costs.
+\item Could also consider other ROC metrics, e.g., \emph{positive predictive value} or \emph{false discovery rate}
+\end{itemizeM}
 
 \textbf{Efficient Models}:
 Balance \emph{predictive performance} with \emph{prediction time}, \emph{energy consumption}, and/or \emph{model size}.
-\begin{itemize}{\small
-  \item Time: production models need to predict fast.
-  \item Size / Energy: model might be deployed on a mobile/edge device with power constraints}
-\end{itemize}
+\begin{itemizeM}
+\item Time: production models need to predict fast.
+\item Size / Energy: model might be deployed on a mobile/edge device with power constraints
+\end{itemizeM}
 
-\textbf{Sparse Models}: 
-Balance \emph{predictive performance} and \emph{number of used features}—for cost efficiency or interpretability.
+\textbf{Sparse Models}:
+Balance \emph{predictive performance} and \emph{number of used features}---for cost efficiency or interpretability.
 
-\textbf{Fair Models}: 
+\textbf{Fair Models}:
 Balance \emph{predictive performance} and \emph{fairness}.
-\begin{itemize} {\small
-  \item Model should not disadvantage certain subgroups (e.g.\ by gender).
-  \item Multiple approaches exist to quantify fairness}
-\end{itemize}
-%}
-\end{vbframe}
+\begin{itemizeM}
+\item Model should not disadvantage certain subgroups (e.g.\ by gender).
+\item Multiple approaches exist to quantify fairness
+\end{itemizeM}
+\end{framev}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{ROC Optimization - Setup}
+\begin{framev}{ROC Optimization - Setup}
 
-Again, we want to train a \textit{spam detector} on the popular Spam dataset%
-\footnote{\url{https://archive.ics.uci.edu/ml/datasets/spambase}}.
+Again, we want to train a \textit{spam detector} on the popular Spam dataset.
+\sourceref{https://archive.ics.uci.edu/ml/datasets/spambase}
 
-\vspace{-0.2cm}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
+\splitV[0.5]{
 \begin{itemize}
-  \item Learner: SVM with RBF kernel
-  \item Hyperparameters:
-  \begin{tabular}{rl}
-    \texttt{cost} & $[2^{-15}, 2^{15}]$ \\
-    $\gamma$      & $[2^{-15}, 2^{15}]$ \\
-    Threshold $t$ & $[0,1]$ 
-  \end{tabular}
-  \item Objective: \emph{minimize} false positive rate (FPR) and \emph{maximize} true positive rate (TPR), via 5-fold CV
+\item Learner: SVM with RBF kernel
+\item Hyperparameters:
+\begin{tabular}{rl}
+\texttt{cost} & $[2^{-15}, 2^{15}]$ \\
+$\gamma$      & $[2^{-15}, 2^{15}]$ \\
+Threshold $t$ & $[0,1]$
+\end{tabular}
+\item Objective: \emph{minimize} false positive rate (FPR) and \emph{maximize} true positive rate (TPR), via 5-fold CV
 \end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
+}{
 \begin{itemize}
-  \item Optimizer: multi-criteria Bayesian optimization
-  \begin{itemize}
-    \item ParEGO with $\rho=0.05$, $s=100000$
-    \item Acquisition: Confidence Bound ($\tau=2.0$)
-    \item Budget: 100 evaluations
-  \end{itemize}
-  \item Tuning is done on a training holdout, and the hyperparameter configs on the estimated Pareto front are validated on external test set.
+\item Optimizer: multi-criteria Bayesian optimization
+\begin{itemize}
+\item ParEGO with $\rho=0.05$, $s=100000$
+\item Acquisition: Confidence Bound ($\tau=2.0$)
+\item Budget: 100 evaluations
 \end{itemize}
-\end{column}
-\end{columns}
-\vspace{0.1cm}
+\item Tuning is done on a training holdout, and the hyperparameter configs on the estimated Pareto front are validated on external test set.
+\end{itemize}
+}
+\vfill
 {\footnotesize The threshold $t$ could also be optimized post-hoc separately.}
 
-\end{vbframe}
+\end{framev}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{ROC Optimization - Result I}
+\begin{framev}{ROC Optimization - Result I}
 
-\begin{columns}
-\begin{column}{0.45\textwidth}
+\splitV[0.45]{
 \begin{itemize}
-  \item Compared to \emph{random search}, many \emph{ParEGO} evaluations lie on the Pareto front.
-  \item The \emph{ParEGO} Pareto front dominates most random-search solutions.
-  \item Dominated hypervolume (w.r.t. reference point $(0,1)$):
-  \begin{tabular}{rl}
-    \emph{ParEGO:} & 0.965\\
-    \emph{random:} & 0.959
-  \end{tabular}
+\item Compared to \emph{random search}, many \emph{ParEGO} evaluations lie on the Pareto front.
+\item The \emph{ParEGO} Pareto front dominates most random-search solutions.
+\item Dominated hypervolume (w.r.t. reference point $(0,1)$):
+\begin{tabular}{rl}
+\emph{ParEGO:} & 0.965\\
+\emph{random:} & 0.959
+\end{tabular}
 \end{itemize}
-\end{column}
-\begin{column}{0.55\textwidth}
-\begin{figure}
-\includegraphics[width=\textwidth]{figure_man/example_parego_spam.png}
-\end{figure}
-\end{column}
-\end{columns}
+}{
+\imageC[1]{figure_man/example_parego_spam.png}
+}
 
-\end{vbframe}
+\end{framev}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{ROC Optimization - Result II}
+\begin{framev}{ROC Optimization - Result II}
 
-\begin{columns}
-\begin{column}{0.42\textwidth}
+\splitV[0.42]{
 Validate configurations on the estimated Pareto front:
 \begin{itemize}
-  \item The performance changes slightly on a new holdout set.
-  \item TPR improved a bit, but FPR got slightly worse.
-  \item Some configs become dominated once tested on the new holdout.
-  \item Dominated hypervolume on the validation set:
-  \begin{tabular}{rl}
-    \emph{ParEGO:} & 0.960\\
-    \emph{random:} & 0.961
-  \end{tabular}
+\item The performance changes slightly on a new holdout set.
+\item TPR improved a bit, but FPR got slightly worse.
+\item Some configs become dominated once tested on the new holdout.
+\item Dominated hypervolume on the validation set:
+\begin{tabular}{rl}
+\emph{ParEGO:} & 0.960\\
+\emph{random:} & 0.961
+\end{tabular}
 \end{itemize}
-\end{column}
-\begin{column}{0.65\textwidth}
-\vspace{-0.2cm}
-\begin{figure}
-\includegraphics[width=0.6\textwidth]{figure_man/example_parego_spam_outer.png}\\
-\includegraphics[width=0.6\textwidth]{figure_man/example_parego_spam_outer_pareto.png}
-\end{figure}
-\end{column}
-\end{columns}
+}{
+\imageC[0.6]{figure_man/example_parego_spam_outer.png}
+\imageC[0.6]{figure_man/example_parego_spam_outer_pareto.png}
+}
 
-\end{vbframe}
+\end{framev}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{Efficient Models - Overview}
-
+\begin{framei}{Efficient Models - Overview}
+\item ``Efficiency'' can refer to:
 \begin{itemize}
-  \item “Efficiency” can refer to:
-    \begin{itemize}
-      \item Memory consumption
-      \item Training or prediction time
-      \item Number of features used
-      \item Energy consumption
-      \item \ldots
-    \end{itemize}
-  \item Some hyperparameters strongly impact efficiency:
-    \begin{itemize}
-      \item Number of trees (RF, GBDT)
-      \item Number, size, type of layers (NN)
-      \item L1 regularization strength
-    \end{itemize}
-  \item Others might have no direct influence on efficiency.
-  \item Typical scenario: searching over multiple algorithms with different cost–performance trade-offs.
+\item Memory consumption
+\item Training or prediction time
+\item Number of features used
+\item Energy consumption
+\item \ldots
 \end{itemize}
+\item Some hyperparameters strongly impact efficiency:
+\begin{itemize}
+\item Number of trees (RF, GBDT)
+\item Number, size, type of layers (NN)
+\item L1 regularization strength
+\end{itemize}
+\item Others might have no direct influence on efficiency.
+\item Typical scenario: searching over multiple algorithms with different cost--performance trade-offs.
+\end{framei}
 
-\end{vbframe}
-
-% -------------------------------------------------------------------
-\begin{vbframe}{Efficient Models - Example: Feature Selection I}
+\begin{framev}{Efficient Models - Example: Feature Selection I}
 
 \textbf{Goal}: Identify an informative subset of features with minimal drop in performance vs. using all features.
 
 \[
-\min_{\conf\in \pcs,\; s\in \{0,1\}^p}
-  \Bigl(
-    \widehat{GE}\bigl(\inducer(\dataset,\conf,s)\bigr),\;
-    \frac{1}{p}\sum_{i=1}^p s_i
-  \Bigr).
+\min_{\xv\in \S,\; s\in \{0,1\}^p}
+\Bigl(
+\widehat{GE}\bigl(\ind(\D,\xv,s)\bigr),\;
+\frac{1}{p}\sum_{i=1}^p s_i
+\Bigr).
 \]
 
 \begin{itemize}
-  \item Typically, feature selection and hyperparameter tuning happen in separate steps.
-  \item Alternatively, search a good subset $s$ and hyperparams $\conf$ \emph{simultaneously}.
+\item Typically, feature selection and hyperparameter tuning happen in separate steps.
+\item Alternatively, search a good subset $s$ and hyperparams $\xv$ \emph{simultaneously}.
 \end{itemize}
 
-\begin{center}
-\includegraphics[width=0.5\linewidth]{figure_man/mosmafs_presentation_p14.pdf}
-\end{center}
+\imageC[0.5]{figure_man/mosmafs_presentation_p14.pdf}
 
-\end{vbframe}
+\end{framev}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{Efficient Models - Example: Feature Selection II}
+\begin{framev}{Efficient Models - Example: Feature Selection II}
 
 \textbf{Idea}: \emph{Multi-Objective Hyperparameter Tuning and Feature Selection using Filter Ensembles}
-\citelink{BINDER2020MULTI}.
+\furtherreading{BINDER2020MULTI}.
 
 \begin{itemize}
-  \item Pre-calculate multiple \emph{feature-filter} rank vectors.
+\item Pre-calculate multiple \emph{feature-filter} rank vectors.
 
-  \begin{center}
-    \includegraphics[width=0.7\linewidth]{figure_man/mosmafs_presentation_p39.pdf}
-  \end{center}
+\imageC[0.7]{figure_man/mosmafs_presentation_p39.pdf}
 
-  \item New hyperparameter vector: $\conf = (\tilde{\conf}, w_1,\dots,w_p, \tau)$
-  \begin{itemize}
-    \item $\tilde{\conf}$: learner hyperparameters
-    \item $(w_1,\dots,w_p)$: weights for each filter ranking
-    \item $\tau\in [0,1]$: fraction of features to keep
-  \end{itemize}
+\item New hyperparameter vector: $\xv = (\tilde{\xv}, w_1,\dots,w_p, \tau)$
+\begin{itemize}
+\item $\tilde{\xv}$: learner hyperparameters
+\item $(w_1,\dots,w_p)$: weights for each filter ranking
+\item $\tau\in [0,1]$: fraction of features to keep
+\end{itemize}
 \end{itemize}
 
-\end{vbframe}
+\end{framev}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{Efficient Models - Example: Feature Selection III}
+\begin{framev}{Efficient Models - Example: Feature Selection III}
 
-\textbf{Joint FS + HP search} on \texttt{Sonar} data%
+\textbf{Joint FS + HP search} on \texttt{Sonar} data
 \footnote{Only tuning error is shown}:
 
-\begin{columns}
-\begin{column}{0.65\textwidth}
+\splitV[0.65]{
 \begin{itemize}
-  \item Learner: SVM (RBF kernel).
-  \item Hyperparams:
-    \begin{tabular}{rl}
-      \texttt{cost} & $[2^{-10},2^{10}]$ \\
-      $\gamma$      & $[2^{-10},2^{10}]$ \\
-      $(w_1,\dots,w_p)$ & $[0,1]^p$ \\
-      $\tau$        & $[0,1]$
-    \end{tabular}
-  \item Objective: minimize misclassification + fraction of selected features.
-  \item Optimizer: ParEGO + random forest surrogate + LCB acquisition, 15 batch proposals, budget 2000 evals.
+\item Learner: SVM (RBF kernel).
+\item Hyperparams:
+\begin{tabular}{rl}
+\texttt{cost} & $[2^{-10},2^{10}]$ \\
+$\gamma$      & $[2^{-10},2^{10}]$ \\
+$(w_1,\dots,w_p)$ & $[0,1]^p$ \\
+$\tau$        & $[0,1]$
+\end{tabular}
+\item Objective: minimize misclassification + fraction of selected features.
+\item Optimizer: ParEGO + random forest surrogate + LCB acquisition, 15 batch proposals, budget 2000 evals.
 \end{itemize}
-\end{column}
-\begin{column}{0.35\textwidth}
-\begin{figure}
-\includegraphics[width=\linewidth]{figure_man/mosmafs_sonar_eval_domHV.pdf}
-\end{figure}
-\end{column}
-\end{columns}
+}{
+\imageC[1]{figure_man/mosmafs_sonar_eval_domHV.pdf}
+}
 
-\end{vbframe}
+\end{framev}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{Efficient Models - Example: FLOPS}
+\begin{framev}{Efficient Models - Example: FLOPS}
 
 \textbf{Goal}: Optimize \emph{accuracy} vs. \emph{FLOPS} (floating-point ops) \\
-\citelink{WANG2019EVOLVING}.
+\furtherreading{WANG2019EVOLVING}.
 
 \bigskip
 Data: CIFAR-10 (image classification).
 
 \bigskip
-Learner: \emph{DenseNet} \citelink{HUANG2017DENSELY}:
+Learner: \emph{DenseNet} \furtherreading{HUANG2017DENSELY}:
 \begin{itemize}
-  \item 4 dense blocks, each with multiple convolution layers that feed into each other.
-  \item Blocks connected by convolution + max-pooling layers.
+\item 4 dense blocks, each with multiple convolution layers that feed into each other.
+\item Blocks connected by convolution + max-pooling layers.
 \end{itemize}
 
 Training: 300 epochs, batch size 128, initial LR 0.1.
 
-\end{vbframe}
+\end{framev}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{Efficient Models - Example: FLOPS (cont.)}
+\begin{framev}{Efficient Models - Example: FLOPS (cont.)}
 
-\begin{columns}
-\begin{column}{0.65\textwidth}
+\splitV[0.65]{
 \begin{itemize}
-  \item Objectives: \emph{accuracy} vs. \emph{FLOPS per observation}.
-  \item Search space:
-    \begin{tabular}{rl}
-      \texttt{growth rate}~($k$)       & $[8,32]$ \\
-      \texttt{layers in 1st block}     & $[4,6]$ \\
-      \texttt{layers in 2nd block}     & $[4,12]$ \\
-      \texttt{layers in 3rd block}     & $[4,24]$ \\
-      \texttt{layers in 4th block}     & $[4,16]$ 
-    \end{tabular}
-  \item Tuner: \emph{Particle Swarm Optimization}, population 20, budget 400.
+\item Objectives: \emph{accuracy} vs. \emph{FLOPS per observation}.
+\item Search space:
+\begin{tabular}{rl}
+\texttt{growth rate}~($k$)       & $[8,32]$ \\
+\texttt{layers in 1st block}     & $[4,6]$ \\
+\texttt{layers in 2nd block}     & $[4,12]$ \\
+\texttt{layers in 3rd block}     & $[4,24]$ \\
+\texttt{layers in 4th block}     & $[4,16]$ 
+\end{tabular}
+\item Tuner: \emph{Particle Swarm Optimization}, population 20, budget 400.
 \end{itemize}
-\end{column}
-\begin{column}{0.35\textwidth}
-\begin{figure}
-\includegraphics[width=\textwidth]{figure_man/Wang_et_al_2019_Evolving_Deep_Neural_Networks_fig7_1.png}
-\end{figure}
-\end{column}
-\end{columns}
+}{
+\imageC[1]{figure_man/Wang_et_al_2019_Evolving_Deep_Neural_Networks_fig7_1.png}
+}
 
 {\footnotesize “Growth rate” = \# of feature maps added each layer.}
 
-\end{vbframe}
+\end{framev}
 
-% -------------------------------------------------------------------
+\begin{framev}[fs=small]{Fair Models - The \texttt{Adult} dataset}
 
-
-\begin{vbframe}{Fair Models - The \texttt{Adult} dataset}
-
-\begin{columns}
-\begin{column}{0.5\textwidth}
+\splitV[0.5]{
 Dataset: \texttt{Adult}
 \begin{itemize}
-  \scriptsize
-  \item  Source: US Census database, 1994, \url{https://www.openml.org/d/1590}.
-  \item 48842 observations
-  \item Target: binary, income above 50k
-  \item 14 features: \texttt{age, education, hours.per.week, marital.status, native.country, occupation, race, relationship, sex, \ldots}
+\item Source: US Census database, 1994, \url{https://www.openml.org/d/1590}.
+\item 48842 observations
+\item Target: binary, income above 50k
+\item 14 features: \texttt{age, education, hours.per.week, marital.status, native.country, occupation, race, relationship, sex, \ldots}
 \end{itemize}
-\includegraphics[width=0.99\textwidth]{figure_man/dataset_adult_age_sex.png}
-\end{column}%
-\begin{column}{0.5\textwidth}
+\image[0.99]{figure_man/dataset_adult_age_sex.png}
+}{
+\imageC[0.55]{figure_man/dataset_adult_race.png}
+\imageC[0.75]{figure_man/dataset_adult_education.png}
+}
 
-\includegraphics[width=0.55\textwidth]{figure_man/dataset_adult_race.png}%
-\includegraphics[width=0.75\textwidth]{figure_man/dataset_adult_education.png}
-\end{column}
-\end{columns}
+\end{framev}
 
-\end{vbframe}
-
-% -------------------------------------------------------------------
-\begin{vbframe}{Fair Models - Setup}
+\begin{framev}[fs=small]{Fair Models - Setup}
 
 A toy example: build a “fair” model for predicting income (binary).
 
-\begin{itemize}{\small
-  \item Learner: XGBoost
-  \item Hyperparams:
-    \begin{tabular}{rl}
-      \texttt{eta} & $[0.01, 0.2]$ \\
-      \texttt{gamma} & $[2^{-7}, 2^6]$ \\
-      \texttt{max\_depth} & $\{2, \dots, 20\}$ \\
-      \texttt{colsample\_bytree} & $[0.5,1]$ \\
-      \texttt{colsample\_bylevel} & $[0.5,1]$ \\
-      \texttt{lambda} & $[2^{-10},2^{10}]$ \\
-      \texttt{alpha} & $[2^{-10},2^{10}]$ \\
-      \texttt{subsample} & $[0.5,1]$
-    \end{tabular}
-  \item Objective: \emph{misclassification error} vs. \emph{unfairness}.
-  \item We define “unfairness” as the absolute difference in F1-scores between male/female sub-populations:
-  \[
-    \loss_{\mathrm{fair}} := 
-      \Bigl|\,
-        \mathrm{F1}(y_f,\fh(\x_f)) 
-          \;-\;
-        \mathrm{F1}(y_m,\fh(\x_m))
-      \Bigr|.
-  \]}
+\begin{itemize}
+\item Learner: XGBoost
+\item Hyperparams:
+\begin{tabular}{rl}
+\texttt{eta} & $[0.01, 0.2]$ \\
+\texttt{gamma} & $[2^{-7}, 2^6]$ \\
+\texttt{max\_depth} & $\{2, \dots, 20\}$ \\
+\texttt{colsample\_bytree} & $[0.5,1]$ \\
+\texttt{colsample\_bylevel} & $[0.5,1]$ \\
+\texttt{lambda} & $[2^{-10},2^{10}]$ \\
+\texttt{alpha} & $[2^{-10},2^{10}]$ \\
+\texttt{subsample} & $[0.5,1]$
+\end{tabular}
+\item Objective: \emph{misclassification error} vs. \emph{unfairness}.
+\item We define ``unfairness'' as the absolute difference in F1-scores between male/female sub-populations:
+\[
+L_{\mathrm{fair}} :=
+\Bigl|\,
+\mathrm{F1}(y_f,\fh(\xv_f))
+\; - \;
+\mathrm{F1}(y_m,\fh(\xv_m))
+\Bigr|.
+\]
 \end{itemize}
 
 \textbf{Note}: This is a simplistic example. Real fairness questions often need more careful definitions and domain knowledge.
 
-\end{vbframe}
+\end{framev}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{Fair Models - Results}
+\begin{framev}{Fair Models - Results}
 
-\begin{center}
-\includegraphics[scale=1.0]{figure_man/Pfisterer_et_al_2019_Multi_Objective_fig4.pdf}
-\end{center}
+\imageC[1]{figure_man/Pfisterer_et_al_2019_Multi_Objective_fig4.pdf}
 \begin{itemize}
-  \item Optimizer: ParEGO + random forest surrogate, restricting $[w_i]$ to $[0.1,0.9]$ if we only care about moderate fairness/performance ranges.
-  \item In this example, hyperparams do indeed influence the fairness measure.
-  \item But in practice, changing standard HPs often \emph{won’t} suffice to ensure fairness.
+\item Optimizer: ParEGO + random forest surrogate, restricting $[w_i]$ to $[0.1,0.9]$ if we only care about moderate fairness/performance ranges.
+\item In this example, hyperparams do indeed influence the fairness measure.
+\item But in practice, changing standard HPs often \emph{won't} suffice to ensure fairness.
 \end{itemize}
 
-\end{vbframe}
+\end{framev}
 
-% -------------------------------------------------------------------
 \endlecture
 \end{document}

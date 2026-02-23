@@ -1,42 +1,30 @@
 \documentclass[11pt,compress,t,notes=noshow,xcolor=table]{beamer}
 
 \usepackage{algorithm}
-% or \usepackage{algpseudocode} for a more modern environment
 \usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-mbo}
-\input{macros}
-
-% -- Macros from original code --------------------------------------
-\newcommand{\q}[0]{\mathbf{q}}
-\newcommand{\xx}{\conf}     % x of the optimizer
-\newcommand{\xxi}[1][i]{\lambda_{#1}} % i-th component of xx
-\newcommand{\XX}{\pcs}     % search space / domain of f
-\newcommand{\f}{\cost}     % objective function
-% \newcommand{\y}{\cost}    % (commented out in original code)
-% -------------------------------------------------------------------
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-% Adaptation of the old \title / \subtitle to the new style:
-\titlemeta{%
-  Multi-criteria Optimization % chunk title
-}{%
-  Evolutionary Approaches    % lecture title
-}{%
-  figure_man/NSGA2_steps.png % optional title image path
-}{%
-  \item EMOAs and population-based approach
-  \item NSGA-II
-  \item SMS-EMOA
+\titlemeta{
+Multi-criteria Optimization
+}{
+Evolutionary Approaches
+}{
+figure_man/NSGA2_steps.png
+}{
+\item EMOAs and population-based approach
+\item NSGA-II
+\item SMS-EMOA
 }
 
-% -------------------------------------------------------------------
 \begin{vbframe}{A-posteriori methods and evolutionary algorithms}
 
 Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over time to approximate the Pareto front.
@@ -49,27 +37,27 @@ Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over
 \begin{figure}
 \centering
 \begin{tikzpicture}[node distance=-1.8cm, auto,]
-  \begin{footnotesize}
-    \node (init) {Initialize population};
-    \node[below = 0.1cm of init](rating1) {Eval population};
-    \node[below = 0.1cm of rating1](selection1) {Parent selection};
-    \node[below = 0.1cm of selection1](variation) {Variation};
-    \node[below = 0.1cm of variation](rating2) {Eval offspring};
-    \node[below = 0.1cm of rating2](selection2) {Survival selection};
-    \node[below = 0.1cm of selection2](stop) {Stop};
-    \node[below = 0.2cm of stop](dummy2) {};
-    \node[below = 0.2cm of stop](dummy3) {};
-    \node[right = 0.01cm of dummy3](dummy4) {yes};
-    \node[left = 0.2cm of rating2](dummy1) {no};
-    \draw[->] (init) to (rating1);
-    \draw[->] (rating1) to (selection1);
-    \draw[->] (selection1) to (variation);
-    \draw[->] (variation) to (rating2);
-    \draw[->] (rating2) to (selection2);
-    \draw[->] (selection2) to (stop);
-    \draw[->] (stop) to (dummy2);
-    \draw[->] (stop) to [bend left=90, looseness=2](selection1);
-  \end{footnotesize}
+\begin{footnotesize}
+\node (init) {Initialize population};
+\node[below = 0.1cm of init](rating1) {Eval population};
+\node[below = 0.1cm of rating1](selection1) {Parent selection};
+\node[below = 0.1cm of selection1](variation) {Variation};
+\node[below = 0.1cm of variation](rating2) {Eval offspring};
+\node[below = 0.1cm of rating2](selection2) {Survival selection};
+\node[below = 0.1cm of selection2](stop) {Stop};
+\node[below = 0.2cm of stop](dummy2) {};
+\node[below = 0.2cm of stop](dummy3) {};
+\node[right = 0.01cm of dummy3](dummy4) {yes};
+\node[left = 0.2cm of rating2](dummy1) {no};
+\draw[->] (init) to (rating1);
+\draw[->] (rating1) to (selection1);
+\draw[->] (selection1) to (variation);
+\draw[->] (variation) to (rating2);
+\draw[->] (rating2) to (selection2);
+\draw[->] (selection2) to (stop);
+\draw[->] (stop) to (dummy2);
+\draw[->] (stop) to [bend left=90, looseness=2](selection1);
+\end{footnotesize}
 \end{tikzpicture}
 \end{figure}
 \end{center}
@@ -90,38 +78,31 @@ Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over
 
 \end{vbframe}
 
-% -------------------------------------------------------------------
 \begin{vbframe}{Basic EA template loop}
 
 \begin{algorithm2e}[H]
-\SetAlgoLined         % or \DontPrintSemicolon, whichever style you prefer
+\SetAlgoLined
 \caption{Basic EA template loop}
-%\KwCommentSty{}       % optional: adjust comment style if you like
 
-% If you want input / output placeholders, you can do:
-% \KwIn{$\XX$ search space, population size $\mu, \lambda$, \dots}
-% \KwOut{A set of evaluated solutions \dots}
-
-Initialize and evaluate population $\mathcal{P}_0 \subset \XX$ with $|\mathcal{P}_0| = \mu$\;
+Initialize and evaluate population $\mathcal{P}_0 \subset \S$ with $|\mathcal{P}_0| = \mu$\;
 $t \gets 0$\;
 
-\Repeat{\textit{Stop criterion is fulfilled}}{%
-  Select parents from $\mathcal{P}_t$ and generate offspring $\mathcal{Q}_t$, with $|\mathcal{Q}_t| = \lambda$\;
-  Select $\mu$ survivors to form $\mathcal{P}_{t+1}$\;
-  $t \gets t + 1$\;
+\Repeat{\textit{Stop criterion is fulfilled}}{
+Select parents from $\mathcal{P}_t$ and generate offspring $\mathcal{Q}_t$, with $|\mathcal{Q}_t| = \lambda$\;
+Select $\mu$ survivors to form $\mathcal{P}_{t+1}$\;
+$t \gets t + 1$\;
 }
 \end{algorithm2e}
 
 
 \bigskip
 \begin{itemize}
-  \item As in standard EAs, we have parent selection, variation, and survival selection.
-  \item For multi-objective EAs (EMOAs), ranking solutions by “fitness” is no longer straightforward. We need special selection strategies (non-dominated sorting, etc.).
+\item As in standard EAs, we have parent selection, variation, and survival selection.
+\item For multi-objective EAs (EMOAs), ranking solutions by “fitness” is no longer straightforward. We need special selection strategies (non-dominated sorting, etc.).
 \end{itemize}
 
 \end{vbframe}
 
-% -------------------------------------------------------------------
 \begin{vbframe}{NSGA-II}
 
 The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by
@@ -131,15 +112,14 @@ The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by
 \item Follows a $(\mu + \lambda)$ strategy for survival.
 \item Any standard variation operators (like polynomial mutation, SBX) can be used.
 \item Parent and survival selection both use:
-  \begin{enumerate}
-    \item \textbf{Non-dominated sorting (NDS)} as the main ranking criterion,
-    \item \textbf{Crowding distance} as a tie-break.
-  \end{enumerate}
+\begin{enumerate}
+\item \textbf{Non-dominated sorting (NDS)} as the main ranking criterion,
+\item \textbf{Crowding distance} as a tie-break.
+\end{enumerate}
 \end{itemize}
 
 \end{vbframe}
 
-% -------------------------------------------------------------------
 \begin{vbframe}{NSGA-II: non-dominated sorting (I)}
 
 NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{F}_2 \prec \mathcal{F}_3 \prec ... $.
@@ -147,12 +127,12 @@ NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{
 \begin{columns}
 \begin{column}{0.4\textwidth}
 \begin{itemize}{\small
-    \item $\mathcal{F}_1$ is non-dominated, 
-      each $\xx \in \mathcal{F}_2$ is dominated, but only by points in $\mathcal{F}_1$, 
-      each $\xx \in \mathcal{F}_3$ is dominated, but only by points in $\mathcal{F}_1$ and $\mathcal{F}_2$, 
-      and so on. 
-    \item We can easily compute the partitioning by computing all non-dominated points  $\mathcal{F}_1$,
-        removing them, then computing the next layer of non-dominated points $\mathcal{F}_2$, and so on.}
+\item $\mathcal{F}_1$ is non-dominated, 
+each $\xv \in \mathcal{F}_2$ is dominated, but only by points in $\mathcal{F}_1$, 
+each $\xv \in \mathcal{F}_3$ is dominated, but only by points in $\mathcal{F}_1$ and $\mathcal{F}_2$, 
+and so on. 
+\item We can easily compute the partitioning by computing all non-dominated points  $\mathcal{F}_1$,
+removing them, then computing the next layer of non-dominated points $\mathcal{F}_2$, and so on.}
 \end{itemize}
 \end{column}
 
@@ -166,7 +146,6 @@ NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{
 
 \end{vbframe}
 
-% -------------------------------------------------------------------
 \begin{vbframe}{NSGA-II: non-dominated sorting (II)}
 
 For \textbf{survival} in $(\mu + \lambda)$ selection:
@@ -190,7 +169,6 @@ $\to$ \emph{crowding distance} sorting.
 
 \end{vbframe}
 
-% -------------------------------------------------------------------
 \begin{vbframe}{NSGA-II: crowding distance (I)}
 
 \textbf{Idea}: Prefer individuals that are more “spread out” (less crowded).
@@ -204,7 +182,6 @@ Right: better spread.
 
 \end{vbframe}
 
-% -------------------------------------------------------------------
 \begin{vbframe}{NSGA-II: crowding distance (II)}
 
 \begin{columns}
@@ -235,20 +212,12 @@ Red: High CD \quad Blue: Low CD
 
 \end{vbframe}
 
-% -------------------------------------------------------------------
-% (Commented-out SPEA-2 section from original)
-
-% \begin{vbframe}{SPEA-2}
-% ...
-% \end{vbframe}
-
-% -------------------------------------------------------------------
 \begin{vbframe}{Hypervolume contribution}
 
-\textbf{S-Metric-Selection} uses the \emph{hypervolume contribution} $\Delta s(\xx,\mathcal{P})$ of each individual:
+\textbf{S-Metric-Selection} uses the \emph{hypervolume contribution} $\Delta s(\xv,\mathcal{P})$ of each individual:
 \[
-  \Delta s(\xx, \mathcal{P})
-  = S(\mathcal{P}, R) - S\bigl(\mathcal{P}\setminus\{\xx\},\,R\bigr),
+\Delta s(\xv, \mathcal{P})
+= S(\mathcal{P}, R) - S\bigl(\mathcal{P}\setminus\{\xv\},\,R\bigr),
 \]
 where $S(\cdot,R)$ is the dominated HV w.r.t.\ reference point $R$.
 
@@ -271,7 +240,6 @@ where $S(\cdot,R)$ is the dominated HV w.r.t.\ reference point $R$.
 }
 \end{vbframe}
 
-% -------------------------------------------------------------------
 \begin{vbframe}{SMS-EMOA algorithm}
 
 \begin{algorithm2e}[H]
@@ -281,32 +249,14 @@ Generate initial population $\mathcal{P}_0$ of size $\mu$\;
 $t \gets 0$\;
 
 \Repeat{\textit{Termination}}{
-  Create exactly one offspring $\q$ by recombination + mutation\;
-  Perform non-dominated sorting on $(\mathcal{P}_t \cup \{\q\})$\;
-  Let $\mathcal{F}_k$ be the last front\;
-  $\tilde{\xx} \gets \arg\min_{\xx \in \mathcal{F}_k} \Delta s\bigl(\xx,\mathcal{F}_k\bigr)$\;
-  $\mathcal{P}_{t+1} \gets \bigl(\mathcal{P}_t \cup \{\q\}\bigr)\setminus\{\tilde{\xx}\}$\;
-  $t \gets t + 1$\;
+Create exactly one offspring $\mathbf{q}$ by recombination + mutation\;
+Perform non-dominated sorting on $(\mathcal{P}_t \cup \{\mathbf{q}\})$\;
+Let $\mathcal{F}_k$ be the last front\;
+$\tilde{\xv} \gets \arg\min_{\xv \in \mathcal{F}_k} \Delta s\bigl(\xv,\mathcal{F}_k\bigr)$\;
+$\mathcal{P}_{t+1} \gets \bigl(\mathcal{P}_t \cup \{\mathbf{q}\}\bigr)\setminus\{\tilde{\xv}\}$\;
+$t \gets t + 1$\;
 }
 \end{algorithm2e}
-
-%\begin{algorithm}[H]
-%  \begin{center}
-%  \caption{SMS-EMOA}
-%  \begin{algorithmic}[1]
-%    \STATE Generate initial population $\mathcal{P}_0$ of size $\mu$
-%    \STATE $t \leftarrow 0$
-%    \REPEAT
-%      \STATE Create exactly \emph{one} offspring $\q$ by recombination + mutation
-%      \STATE Perform non-dominated sorting on $\mathcal{P}_t \cup \{\q\}$
-%      \STATE Let $\mathcal{F}_k$ be the last front
-%      \STATE $\tilde{\xx} \leftarrow \arg\min_{\xx \in \mathcal{F}_k} \Delta s\bigl(\xx,\mathcal{F}_k\bigr)$
-%      \STATE $\mathcal{P}_{t+1} \leftarrow \bigl(\mathcal{P}_t \cup \{\q\}\bigr)\setminus\{\tilde{\xx}\}$
-%      \STATE $t \leftarrow t + 1$
-%    \UNTIL{Termination}
-%  \end{algorithmic}
-%  \end{center}
-%\end{algorithm}
 
 \begin{itemize}\setlength{\itemsep}{0.3em}{\footnotesize
 \item As soon as we exceed size $\mu+1$, remove the worst HV contributor from the \emph{last front}.
@@ -315,6 +265,5 @@ $t \gets 0$\;
 \end{itemize}
 \end{vbframe}
 
-% -------------------------------------------------------------------
 \endlecture
 \end{document}
