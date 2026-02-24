@@ -46,9 +46,9 @@ Balance \emph{predictive performance} and \emph{fairness}.
 
 
 \begin{framev}{ROC Optimization - Setup}
-Again, we want to train a \textit{spam detector} on the popular Spam dataset.
-\sourceref{https://archive.ics.uci.edu/ml/datasets/spambase}
-\splitV[0.5]{
+Again, we want to train a \textit{spam detector} on the popular Spam dataset. \sourceref{https://archive.ics.uci.edu/ml/datasets/spambase}\\
+\spacer
+\splitV[0.45]{
 \begin{itemizeM}
 \item Learner: SVM with RBF kernel
 \item Hyperparameters:
@@ -89,7 +89,7 @@ The threshold $t$ could also be optimized post-hoc separately.
 \end{tabular}
 \end{itemizeM}
 }{
-\imageC[1]{figure_man/example_parego_spam.png}
+\image[1]{figure_man/example_parego_spam.png}
 }
 \end{framev}
 
@@ -108,8 +108,8 @@ Validate configurations on the estimated Pareto front:
 \end{tabular}
 \end{itemizeM}
 }{
-\imageC[0.6]{figure_man/example_parego_spam_outer.png}
-\imageC[0.6]{figure_man/example_parego_spam_outer_pareto.png}
+\imageR[0.75]{figure_man/example_parego_spam_outer.png}
+\imageR[0.75]{figure_man/example_parego_spam_outer_pareto.png}
 }
 \end{framev}
 
@@ -153,7 +153,8 @@ $$
 
 \begin{framev}{Efficient Models - Example: Feature Selection II}
 \textbf{Idea}: \emph{Multi-Objective Hyperparameter Tuning and Feature Selection using Filter Ensembles}
-\furtherreading{BINDER2020MULTI}.
+\furtherreading{BINDER2020MULTI}.\\
+\spacer
 \begin{itemizeM}
 \item Pre-calculate multiple \emph{feature-filter} rank vectors.
 \imageC[0.7]{figure_man/mosmafs_presentation_p39.pdf}
@@ -169,7 +170,8 @@ $$
 
 \begin{framev}{Efficient Models - Example: Feature Selection III}
 \textbf{Joint FS + HP search} on \texttt{Sonar} data
-\footnote{Only tuning error is shown}:
+\footnote{Only tuning error is shown}:\\
+\spacer
 \splitV[0.65]{
 \begin{itemizeM}
 \item Learner: SVM (RBF kernel).
@@ -184,18 +186,18 @@ $\tau$        & $[0,1]$
 \item Optimizer: ParEGO + random forest surrogate + LCB acquisition, 15 batch proposals, budget 2000 evals.
 \end{itemizeM}
 }{
-\imageC[1]{figure_man/mosmafs_sonar_eval_domHV.pdf}
+\image[1]{figure_man/mosmafs_sonar_eval_domHV.pdf}
 }
 \end{framev}
 
 
 \begin{framev}{Efficient Models - Example: FLOPS}
 \textbf{Goal}: Optimize \emph{accuracy} vs. \emph{FLOPS} (floating-point ops) \\
-\furtherreading{WANG2019EVOLVING}.
+\furtherreading{WANG2019EVOLVING}.\\
 \spacer
-Data: CIFAR-10 (image classification).
+Data: CIFAR-10 (image classification).\\
 \spacer
-Learner: \emph{DenseNet} \furtherreading{HUANG2017DENSELY}:
+Learner: \emph{DenseNet} \furtherreading{HUANG2017DENSELY}:\\
 \begin{itemizeM}
 \item 4 dense blocks, each with multiple convolution layers that feed into each other.
 \item Blocks connected by convolution + max-pooling layers.
@@ -220,7 +222,8 @@ Training: 300 epochs, batch size 128, initial LR 0.1.
 \end{itemizeM}
 }{
 \imageC[1]{figure_man/Wang_et_al_2019_Evolving_Deep_Neural_Networks_fig7_1.png}
-}
+}\\
+\spacer
 \begin{footnotesize}
 “Growth rate” = \# of feature maps added each layer.
 \end{footnotesize}
@@ -228,7 +231,7 @@ Training: 300 epochs, batch size 128, initial LR 0.1.
 
 
 \begin{framev}[fs=small]{Fair Models - The \texttt{Adult} dataset}
-\splitV[0.5]{
+\splitV[0.6]{
 Dataset: \texttt{Adult}
 \begin{itemizeM}
 \item Source: US Census database, 1994. \sourceref{https://www.openml.org/d/1590}
@@ -238,8 +241,8 @@ Dataset: \texttt{Adult}
 \end{itemizeM}
 \image[0.99]{figure_man/dataset_adult_age_sex.png}
 }{
-\imageC[0.55]{figure_man/dataset_adult_race.png}
-\imageC[0.75]{figure_man/dataset_adult_education.png}
+\image[0.55]{figure_man/dataset_adult_race.png}
+\image[0.70]{figure_man/dataset_adult_education.png}
 }
 \end{framev}
 

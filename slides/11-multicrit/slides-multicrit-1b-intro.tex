@@ -52,7 +52,7 @@ $$
 $$
 \item Use $0 \le x \le 3$ with $300$ steps ($100$ non-dominated points).
 \item Use $w_1 \in (0,1)$ with $100$ steps and $w_2=1-w_1$.
-\imageC[0.7]{figure_man/expedia-weighted-pareto_100.pdf}
+\imageC[0.9]{figure_man/expedia-weighted-pareto_100.pdf}
 \item Not all Pareto-optimal solutions are found.
 \end{framei}
 
@@ -66,7 +66,7 @@ $$
 $$
 \item Use $0 \le x \le 3$ with $300$ steps ($100$ non-dominated points).
 \item Using $w_1$ with $300$ steps yields all Pareto-optimal solutions:
-\imageC[0.7]{figure_man/expedia-weighted-pareto_300.pdf}
+\imageC[0.9]{figure_man/expedia-weighted-pareto_300.pdf}
 \item Under which conditions can we find all Pareto-optimal solutions?
 \end{framei}
 
@@ -76,6 +76,7 @@ $$
 $\xvs$ is an optimal solution of
 $$\min_{\xv \in \S } \sumim w_i f_i(\xv)$$
 with strictly positive weights $w_i$ for all $i$.
+\spacer
 \begin{itemize}
 \item For convex functions and convex search spaces, we can find all \underline{properly} Pareto-optimal solutions using weighted sum scalarization.
 \item \textbf{Proper Pareto-optimal solution}: Exclude solutions where an arbitrary small improvement in one objective leads to an arbitrary large deterioration in another objective.
@@ -137,8 +138,8 @@ Since $\xvs$ is a solution of the $\eps$-constraint problem, it follows that $f_
 \end{framei}
 
 
-\begin{framev}[fs=footnotesize]{Evaluation of solutions}
-\splitV[0.5]{
+\begin{framev}[fs=small]{Evaluation of solutions}
+\splitV[0.55]{
 A common measure for the performance of a set of candidates
 $\mathcal{P}\subset\S$ is the \textbf{dominated hypervolume}:
 $$
@@ -152,7 +153,7 @@ S(\mathcal{P},R)
 $$
 where $\lambda(\cdot)$ is the Lebesgue measure and $R$ a pre-specified reference point that every point in the set must dominate.
 }{
-\imageC[0.6]{figure_man/dominated_hypervolume.png}
+\imageC[0.8]{figure_man/dominated_hypervolume.png}
 }
 \begin{itemize}
 \item HV is measured w.r.t.\ the reference point $R$, often chosen so each

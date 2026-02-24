@@ -26,11 +26,9 @@ figure_man/NSGA2_steps.png
 }
 
 \begin{framev}{A-posteriori methods and evolutionary algorithms}
-Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over time to approximate the Pareto front.
-\vfill
-\splitVTT[0.3]
-{
-\centering
+Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over time to approximate the Pareto front.\\
+\spacer
+\splitV[0.35]{
 \begin{footnotesize}
 \begin{tikzpicture}[node distance=-1.8cm, auto]
 \node (init) {Initialize population};
@@ -41,6 +39,8 @@ Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over
 \node[below = 0.1cm of rating2](selection2) {Survival selection};
 \node[below = 0.1cm of selection2](stop) {Stop};
 \node[below = 0.2cm of stop](dummy2) {};
+\node[below = 0.2cm of stop](dummy3) {};
+\node[right = 0.01cm of dummy3](dummy4) {yes};
 \node[left = 0.2cm of rating2](dummy1) {no};
 \draw[->] (init) to (rating1);
 \draw[->] (rating1) to (selection1);
@@ -52,11 +52,9 @@ Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over
 \draw[->] (stop) to [bend left=90, looseness=2](selection1);
 \end{tikzpicture}
 \end{footnotesize}
+}{
+\image[1]{figure_man/NSGA2_steps.png}
 }
-{
-\imageC[0.98]{figure_man/NSGA2_steps.png}
-}
-\vfill
 \begin{itemizeM}[small]
 \item Population-based search approximates a whole Pareto set in one run.
 \item The main steps (initialize, select, vary, survive, repeat) mirror standard EAs but must handle multiple objectives.
@@ -87,6 +85,7 @@ $t \gets t + 1$\;
 \begin{framev}{NSGA-II}
 The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by
 \furtherreading{DEB2002FAST}.
+\spacer
 \begin{itemize}
 \item Follows a $(\mu + \lambda)$ strategy for survival.
 \item Any standard variation operators (like polynomial mutation, SBX) can be used.
@@ -100,8 +99,9 @@ The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by
 
 
 \begin{framev}{NSGA-II: non-dominated sorting (I)}
-NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{F}_2 \prec \mathcal{F}_3 \prec ... $.
-\splitVTT[0.4]{
+NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{F}_2 \prec \mathcal{F}_3 \prec ... $.\\
+\spacer
+\splitV[0.4]{
 \begin{itemizeM}[small]
 \item $\mathcal{F}_1$ is non-dominated, 
 each $\xv \in \mathcal{F}_2$ is dominated, but only by points in $\mathcal{F}_1$, 
@@ -111,7 +111,7 @@ and so on.
 removing them, then computing the next layer of non-dominated points $\mathcal{F}_2$, and so on.
 \end{itemizeM}
 }{
-\imageC[0.9]{figure_man/NSGA2_NDS.png}
+\image[1]{figure_man/NSGA2_NDS.png}
 }
 \end{framev}
 
@@ -125,7 +125,7 @@ For \textbf{survival} in $(\mu + \lambda)$ selection:
 \end{itemize}
 \imageC[0.45]{figure_man/NSGA2_2.png}
 \textbf{But}: Which individuals survive from this partially included front?  
-$\to$ \emph{crowding distance} sorting.
+$\to$ \emph{crowding distance} sorting.\\
 \spacer
 \begin{small}
 (NDS is also used for parent selection with binary tournaments.)
@@ -135,14 +135,15 @@ $\to$ \emph{crowding distance} sorting.
 
 \begin{framev}{NSGA-II: crowding distance (I)}
 \textbf{Idea}: Prefer individuals that are more ``spread out'' (less crowded).
-\imageC[0.8]{figure_man/NSGA2_CS1.png}
+\vfill
+\image[1]{figure_man/NSGA2_CS1.png}
 Left: not good, solutions bunched up.  
 Right: better spread.
 \end{framev}
 
 
 \begin{framev}{NSGA-II: crowding distance (II)}
-\splitVTT[0.55]{
+\splitV[0.55]{
 \textbf{Crowding distance}:
 For each objective $f_j$:
 \begin{itemize}
@@ -153,11 +154,10 @@ For each objective $f_j$:
 \end{itemize}
 Then sum (or average) across all $m$ objectives to get the final crowding score.
 }{
-\imageC[0.95]{figure_man/NSGA2_CS2.png}
-\spacer
-\begin{footnotesize}
+\image[1]{figure_man/NSGA2_CS2.png}
+\begin{center}\begin{footnotesize}
 Red: High CD \quad Blue: Low CD
-\end{footnotesize}
+\end{footnotesize}\end{center}
 }
 \end{framev}
 
@@ -168,9 +168,10 @@ $$
 \Delta s(\xv, \mathcal{P})
 = S(\mathcal{P}, R) - S\bigl(\mathcal{P}\setminus\{\xv\},\,R\bigr),
 $$
-where $S(\cdot,R)$ is the dominated HV w.r.t.\ reference point $R$.
+where $S(\cdot,R)$ is the dominated HV w.r.t.\ reference point $R$.\\
+\vfill
 \begin{small}
-\splitVTT[0.5]{
+\splitV[0.5]{
 \begin{itemize}
 \item Dark rectangles: unique HV part dominated only by that dot
 \item Gray cross: reference point $R$.
@@ -178,7 +179,7 @@ where $S(\cdot,R)$ is the dominated HV w.r.t.\ reference point $R$.
 \item This is used by the SMS-EMOA to remove individuals in survival selection.
 \end{itemize}
 }{
-\imageC[0.8]{figure_man/hv_contrib.png}
+\image[1]{figure_man/hv_contrib.png}
 }
 \end{small}
 \end{framev}

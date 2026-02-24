@@ -53,11 +53,16 @@ Often we want to solve optimization problems concerning several goals.
 \end{itemize}
 \spacer
 \textbf{Goal}: Find a more general approach to solve multi-criteria problems.
+\end{framev}
+
+
+\begin{framev}{Introductory example}
 \splitV[0.5]{
-\imageC[0.7]{figure_man/booking1.png}
+\imageC[0.8]{figure_man/booking1.png}
 }{
-\imageC[0.7]{figure_man/booking2.png}
+\imageC[0.8]{figure_man/booking2.png}
 }
+\vfill
 When booking a hotel: find the hotel with
 \begin{itemize}
 \item minimum price per night (\textbf{costs}), and
@@ -183,7 +188,7 @@ $$
 \quad 0 \le x \le 3.
 $$
 The optimum is at $\xs = 1$.
-\imageC[0.5]{figure_man/graph1.png}
+\imageC[0.55]{figure_man/graph1.png}
 \end{framev}
 
 
@@ -197,7 +202,7 @@ $$
 = \bigl(f_1(x),\, f_2(x)\bigr),
 \quad 0 \le x \le 3.
 $$
-\imageC[0.5]{figure_man/graph2.png}
+\imageC[0.55]{figure_man/graph2.png}
 \end{framev}
 
 
@@ -205,7 +210,7 @@ $$
 Visualizing both objectives:
 $\bigl(f_1(x), \;f_2(x)\bigr)$
 for all $x \in [0,3]$ in the objective space:
-\imageC[0.45]{figure_man/graph3.png}
+\imageC[0.55]{figure_man/graph3.png}
 The Pareto front is shown in green.
 \end{framev}
 
@@ -237,7 +242,8 @@ $$
 
 
 \begin{framev}{A-priori procedure}
-\textbf{Example: Lexicographic method}
+\textbf{Example: Lexicographic method}\\
+\spacer
 \textbf{Prior knowledge}: The rating is more important than the price.
 Hence we optimize the rating first, then the price among those best ratings:
 \imageC[1]{figure_man/expedia-10-1.pdf}
@@ -255,9 +261,9 @@ f_3^* &= \min_{\substack{\xv \in \S:\\ f_1(\xv)=f_1^*,\,f_2(\xv)=f_2^*}}
 &\quad\vdots
 \end{aligned}
 $$
-But different orderings yield different solutions.
-\textbf{Summary (a-priori)}:
+But different orderings yield different solutions.\\
 \spacer
+\textbf{Summary (a-priori)}:
 \begin{itemize}\setlength{\itemsep}{0.7em}
 \item Implicit assumption: single-objective optimization is ``easy.''
 \item We get only \emph{one} solution, which depends strongly on the chosen weighting/order/etc.
@@ -273,7 +279,8 @@ A-posteriori methods aim to
 \item let the user pick a single solution based on personal preferences or 
 additional info (e.g.\ hotel location).
 \end{itemize}
-Hence, a-posteriori methods are more general.
+Hence, a-posteriori methods are more general.\\
+\spacer
 \textbf{Example}: 
 All Pareto-optimal hotels are shown on the left. 
 User then picks from that subset on the right, based on hidden preferences 

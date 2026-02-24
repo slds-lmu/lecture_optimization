@@ -79,7 +79,7 @@ $$
 \min_{\xv \in \S}  \fx
 \quad \Leftrightarrow \quad
 \min_{\xv \in \S} \bigl(\fkx[1], \fkx[2], \dots, \fkx[m]\bigr).
-$$
+$$\\
 \spacer
 There are two basic approaches:
 \begin{enumerate}
@@ -160,7 +160,6 @@ Pareto-optimal.
 
 \begin{framev}[fs=small]{ParEGO Algorithm}
 \begin{center}
-\begin{minipage}{0.95\textwidth}
 \begin{algorithm}[H]
 \setcounter{AlgoLine}{0}
 \SetKwInOut{Require}{Require}
@@ -171,20 +170,14 @@ acquisition function $u$, predictive model $\fh$,
 maximal number of function evaluations $T$, $\rho$, $l$, $s$}
 \Result{Best configuration $\hat{\xv}$
 (according to $\D$ or $\fh$)}
-Initialize data $\D^{(0)}$ with initial observations\;
+Initialize data $\D^{(0)}$ with initial observations\;\\
 \For{$t=1$ \KwTo $T$}{
-Sample $w \in W = \bigl\{(w_1,\dots,w_m) \,\mid\, 
-\sum w_i=1,\, w_i=\tfrac{l}{s},
-l \in \{0,\dots,s\}\bigr\}$\;
+Sample $w \in W = \bigl\{(w_1,\dots,w_m) \,\mid\, \sum w_i=1,\, w_i=\tfrac{l}{s}, l \in \{0,\dots,s\}\bigr\}$\;\\
 Compute scalarization:
-$c^{(t)} = \max_{i}\bigl(w_i \fkx[i]\bigr) 
-+ \rho \sum_{i}w_i\fkx[i]$
-Fit predictive model $\fh^{(t)}$ on 
-$\D^{(t-1)}$\;
-Select next query point:
-$\xv^{(t)} \in \argmax_{\xv \in \S} 
-u(\xv; \D^{(t-1)}, \fh^{(t)})$
-Query $f(\xv^{(t)})$\;
+$c^{(t)} = \max_{i}\bigl(w_i \fkx[i]\bigr) + \rho \sum_{i}w_i\fkx[i]$\\
+Fit predictive model $\fh^{(t)}$ on $\D^{(t-1)}$\;\\
+Select next query point: $\xv^{(t)} \in \argmax_{\xv \in \S} u(\xv; \D^{(t-1)}, \fh^{(t)})$\\
+Query $f(\xv^{(t)})$\;\\
 Update data: 
 $$
 \D^{(t)} \leftarrow \D^{(t-1)}
@@ -193,7 +186,6 @@ $$
 }
 \caption*{ParEGO loop}
 \end{algorithm}
-\end{minipage}
 \end{center}
 \end{framev}
 
@@ -202,7 +194,7 @@ $$
 \textbf{Idea:} Define acquisition function that directly models the contribution to the dominated hypervolume (HV):
 $\max(0, \; S(\mathcal{P} \cup \xv, R) \;-\; S(\mathcal{P}, R))$
 \begin{center}
-\imageC[0.7]{figure_man/hv_contribution.pdf}
+\imageC[0.8]{figure_man/hv_contribution.pdf}
 \end{center}
 \begin{itemize}
 \item Fit $m$ single-objective surrogate models $\fh_1, \dots, \fh_m$.
@@ -216,7 +208,7 @@ $\max(0, \; S(\mathcal{P} \cup \xv, R) \;-\; S(\mathcal{P}, R))$
 Using the Lower Confidence Bound $u_{\text{LCB},1}(\xv),\dots,u_{\text{LCB},m}(\xv)$,
 one can form an \emph{optimistic} estimate of the hypervolume contribution:
 \begin{center}
-\imageC[0.8]{figure_man/hv_contribution_2.pdf}
+\imageC[0.9]{figure_man/hv_contribution_2.pdf}
 \end{center}
 \textbf{Problem:} HV-contribution can be zero across large regions where the lower confidence bound is already dominated.
 \begin{itemize}
@@ -261,25 +253,14 @@ Further HV-based acquisitions:
 \setcounter{AlgoLine}{0}
 \SetKwInOut{Require}{Require}
 \SetKwInOut{Result}{Result}
-\Require{Search space $\S$,
-cost function $f$,
-acquisition function $u$, 
-predictive model(s) $\fh_1,\dots,\fh_m$,
-maximal number of function evaluations $T$}
+\Require{Search space $\S$, cost function $f$, acquisition function $u$, predictive model(s) $\fh_1,\dots,\fh_m$, maximal number of function evaluations $T$}
 \Result{Best configuration $\hat{\xv}$}
-Initialize data $\D^{(0)}$ with initial observations\;
+Initialize data $\D^{(0)}$ with initial observations\;\\
 \For{$t=1$ \KwTo $T$}{
-Fit predictive models 
-$\fh_1^{(t)}, \dots, \fh_m^{(t)}$
-on $\D^{(t-1)}$\;
+Fit predictive models $\fh_1^{(t)}, \dots, \fh_m^{(t)}$ on $\D^{(t-1)}$\;\\
 Select next query point:\\
-$\xv^{(t)} \in \argmax_{\xv \in \S}
-u\!\Bigl(
-\xv;\,
-\D^{(t-1)},\,
-\fh_1^{(t)},\dots,\fh_m^{(t)}
-\Bigr)$
-Query $f(\xv^{(t)})$\;
+$\xv^{(t)} \in \argmax_{\xv \in \S} u\!\Bigl(\xv;\, \D^{(t-1)},\, \fh_1^{(t)},\dots,\fh_m^{(t)} \Bigr)$
+Query $f(\xv^{(t)})$\;\\
 Update data: 
 $$
 \D^{(t)} \leftarrow \D^{(t-1)}
