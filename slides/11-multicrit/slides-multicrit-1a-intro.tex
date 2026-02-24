@@ -1,8 +1,5 @@
 \documentclass[11pt,compress,t,notes=noshow,xcolor=table]{beamer}
 
-\usepackage{algorithm}
-\usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
-
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
@@ -25,9 +22,9 @@ figure_man/expedia-5-1.pdf
 \item Pareto optimality
 }
 
-\begin{vbframe}{Introductory example}
+\begin{framev}{Introductory example}
 Often we want to solve optimization problems concerning several goals.
-\bigskip
+\spacer
 \textbf{General applications:}
 \begin{itemize}
 \item Medicine: maximum effect, but minimum side effect of a drug.
@@ -35,102 +32,84 @@ Often we want to solve optimization problems concerning several goals.
 \item Production planning: maximum revenue, but minimum costs.
 \item Booking a hotel: maximum rating, but minimum costs.
 \end{itemize}
-
-\bigskip
+\spacer
 \textbf{In machine learning:}
 \begin{itemize}
 \item Sparse models: maximum predictive performance, but minimal number of features.
 \item Fast models: maximum predictive performance, but short prediction time.
 \item ...
 \end{itemize}
+\end{framev}
 
-\framebreak
 
+\begin{framev}{Introductory example}
 \textbf{Example}: Choose the best hotel by maximizing ratings subject to a maximum price per night.
-
-\bigskip
+\spacer
 \textbf{Problems}:
 \begin{itemize}
 \item The result depends on how we select the maximum price; different price bounds give different solutions.
 \item We could also choose a minimum rating and optimize the price.
 \item The more objectives we include, the harder it gets to fix cutoffs like these.
 \end{itemize}
-
-\bigskip
+\spacer
 \textbf{Goal}: Find a more general approach to solve multi-criteria problems.
-
-\begin{center}
-\includegraphics[width=0.35\linewidth]{figure_man/booking1.png}
-\quad
-\includegraphics[width=0.35\linewidth]{figure_man/booking2.png}
-\end{center}
-
+\splitV[0.5]{
+\imageC[0.7]{figure_man/booking1.png}
+}{
+\imageC[0.7]{figure_man/booking2.png}
+}
 When booking a hotel: find the hotel with
 \begin{itemize}
 \item minimum price per night (\textbf{costs}), and
 \item maximum user rating (\textbf{performance}).
 \end{itemize}
-
 \begin{footnotesize}
 Since our standard is to minimize objectives, we minimize negative ratings.
 \end{footnotesize}
+\end{framev}
 
-\framebreak
 
+\begin{framev}{Introductory example}
 The objectives often conflict with each other:
 \begin{itemize}
 \item Lower price $\to$ usually lower hotel rating.
 \item Better rating $\to$ usually higher price.
 \end{itemize}
-
 Example: (negative) average rating by hotel guests (1--5) vs.\ average price per night.
+\spacer
+\imageC[0.8]{figure_man/expedia-1-1.pdf}
+\end{framev}
 
-\bigskip
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figure_man/expedia-1-1.pdf}
-\end{center}
-
-\framebreak
-
-{\footnotesize
+\begin{framev}[fs=footnotesize]{Introductory example}
 We cannot directly establish a total order on the objective space:
 \begin{itemize}
 \item Left: A hotel with rating 4 for 89~Euro 
-\((\textcolor{green}{f^{(1)}} = (89, -4.0))\) 
+$(\textcolor{green}{f^{(1)}} = (89, -4.0))$ 
 is better than a hotel for 108~Euro with the same rating
-\((\textcolor{red}{f^{(2)}} = (108, -4.0))\).
+$(\textcolor{red}{f^{(2)}} = (108, -4.0))$.
 \item Right: How to decide if 
-\(\textcolor{orange}{f^{(1)}}=(89, -4.0)\) is better or worse than 
-\(\textcolor{orange}{f^{(2)}}=(95, -4.5)\)?
+$\textcolor{orange}{f^{(1)}}=(89, -4.0)$ is better or worse than 
+$\textcolor{orange}{f^{(2)}}=(95, -4.5)$?
 \item How much is one \emph{rating point} worth?
 \end{itemize}
-
-\begin{center}
-\includegraphics[scale=1]{figure_man/expedia-2-1.pdf}
-\end{center}
-
-\vspace{-0.1cm}
-
-Let \(f = (\text{price}, -\text{rating})\). The candidate 
-\(\textcolor{green}{f^{(1)}}=(89,-4.0)\)
+\imageC[0.9]{figure_man/expedia-2-1.pdf}
+\spacer
+Let $f = (\text{price}, -\text{rating})$. The candidate 
+$\textcolor{green}{f^{(1)}}=(89,-4.0)$
 dominates 
-\(\textcolor{red}{f^{(2)}}=(108,-4.0)\). 
-That is, \(\textcolor{green}{f^{(1)}}\) is at least as good 
+$\textcolor{red}{f^{(2)}}=(108,-4.0)$. 
+That is, $\textcolor{green}{f^{(1)}}$ is at least as good 
 in every dimension, and strictly better in one dimension.
 Hence $\textcolor{green}{f^{(1)}} \prec \textcolor{red}{f^{(2)}}$. But for
-\(\textcolor{orange}{f^{(1)}}=(89,-4.0)\) and \(\textcolor{orange}{f^{(2)}}=(95,-4.5)\)
-we cannot say any is strictly better.
-}
+$\textcolor{orange}{f^{(1)}}=(89,-4.0)$ and $\textcolor{orange}{f^{(2)}}=(95,-4.5)$
+we cannot say either is strictly better.
+\end{framev}
 
 
-\end{vbframe}
-
-\begin{vbframe}{How to define optimality?}
-
-
+\begin{framev}{How to define optimality?}
 \begin{itemize}\setlength{\itemsep}{0.1em}
 \item We call these \textbf{incomparable} (or \emph{equivalent} in the Pareto sense):
-\[
+$$
 \textcolor{orange}{f^{(1)}} 
 \not\prec 
 \textcolor{orange}{f^{(2)}} 
@@ -138,201 +117,156 @@ we cannot say any is strictly better.
 \textcolor{orange}{f^{(2)}} 
 \not\prec 
 \textcolor{orange}{f^{(1)}}.
-\]
+$$
 \item All such non-dominated points form the \textbf{Pareto front}.
 \end{itemize}
+\spacer
+\splitV[0.5]{
+\imageC[1]{figure_man/expedia-4-1.pdf}
+}{
+\imageC[1]{figure_man/expedia-5-1.pdf}
+}
+\end{framev}
 
-\bigskip
-\begin{columns}[c]
-\column{0.5\textwidth}
-\includegraphics[width=\textwidth]{figure_man/expedia-4-1.pdf}
 
-\column{0.5\textwidth}
-\includegraphics[width=\textwidth]{figure_man/expedia-5-1.pdf}
-\end{columns}
-
-\end{vbframe}
-
-\begin{vbframe}{Definition: multi-criteria optimization}
-
+\begin{framev}{Definition: multi-criteria optimization}
 A \textbf{multi-criteria optimization problem} is defined by
-\[
+$$
 \min_{\xv \in \S}  \fx 
 \;\;\Leftrightarrow\;\;
 \min_{\xv \in \S} 
 \bigl(f_1(\xv), f_2(\xv), \dots, f_m(\xv)\bigr),
-\]
-with \(\S \subset \R^n\) and a multi-criteria objective function
-\(f: \S \to \R^m,\; m \ge 2.\)
-
+$$
+with $\S \subset \R^n$ and a multi-criteria objective function
+$f: \S \to \R^m,\; m \ge 2.$
 \begin{itemize}
 \item \textbf{Goal:} minimize multiple target functions simultaneously.
-\item \((f_1(\xv), \dots, f_m(\xv))^\top\) maps each candidate 
-\(\xv\) into the objective space \(\R^m\).
+\item $(f_1(\xv), \dots, f_m(\xv))^\top$ maps each candidate 
+$\xv$ into the objective space $\R^m$.
 \item Typically no single best solution exists, as the objectives are often 
-in conflict and cannot be totally ordered in \(\R^m\).
+in conflict and cannot be totally ordered in $\R^m$.
 \item W.l.o.g.\ we always minimize.
 \item Also called multi-objective optimization, Pareto optimization, etc.
 \end{itemize}
+\end{framev}
 
-\end{vbframe}
 
-\begin{vbframe}{Pareto sets and Pareto optimality}
-
+\begin{framev}{Pareto sets and Pareto optimality}
 \textbf{Definition:}
-
 Given 
-\[
+$$
 \min_{\xv \in \S} 
 \bigl(f_1(\xv), \dots, f_m(\xv)\bigr), 
 \quad f_i: \S \to \R.
-\]
-
+$$
 \begin{itemize}
-\item A candidate \(\xv^{(1)}\) \textbf{(Pareto-)dominates} \(\xv^{(2)}\) 
-if \(f(\xv^{(1)}) \prec f(\xv^{(2)})\), i.e.:
+\item A candidate $\xv^{(1)}$ \textbf{(Pareto-)dominates} $\xv^{(2)}$ 
+if $f(\xv^{(1)}) \prec f(\xv^{(2)})$, i.e.:
 \begin{enumerate}
-\item \(f_i(\xv^{(1)}) \le f_i(\xv^{(2)})\) for all \(i\),
-\item \(f_j(\xv^{(1)}) < f_j(\xv^{(2)})\) for at least one \(j\).
+\item $f_i(\xv^{(1)}) \le f_i(\xv^{(2)})$ for all $i$,
+\item $f_j(\xv^{(1)}) < f_j(\xv^{(2)})$ for at least one $j$.
 \end{enumerate}
-\item A candidate \(\xv^{\ast}\) not dominated by any other candidate is 
+\item A candidate $\xv^{\ast}$ not dominated by any other candidate is 
 \textbf{Pareto optimal}.
 \item The set of all Pareto optimal candidates is the \textbf{Pareto set} 
-\(\mathcal{P} = \{\xv \in \S \mid \nexists \,\xtil :
-  f(\xtil) \prec \fx\}\).
-\item \(\mathcal{F} = f(\mathcal{P})\), the \textbf{Pareto front}, 
+$\mathcal{P} = \{\xv \in \S \mid \nexists \,\xtil :
+  f(\xtil) \prec \fx\}$.
+\item $\mathcal{F} = f(\mathcal{P})$, the \textbf{Pareto front}, 
 is the image of that set in objective space.
 \end{itemize}
+\end{framev}
 
-\end{vbframe}
-
-\begin{vbframe}{Example: One objective function}
-
+\begin{framev}{Example: One objective function}
 We consider 
-\[
+$$
 \min_{x} f(x) = (x - 1)^2, 
 \quad 0 \le x \le 3.
-\]
-The optimum is at \(\xs = 1\).
+$$
+The optimum is at $\xs = 1$.
+\imageC[0.5]{figure_man/graph1.png}
+\end{framev}
 
-\begin{center}
-\includegraphics[width=0.5\textwidth]{figure_man/graph1.png}
-\end{center}
 
-\end{vbframe}
-
-\begin{vbframe}{Example: Two target functions}
-
+\begin{framev}{Example: Two target functions}
 We extend the above problem to two objectives 
-\(f_1(x) = (x - 1)^2\) 
+$f_1(x) = (x - 1)^2$ 
 and 
-\(f_2(x) = 3(x - 2)^2\). Thus
-\[
+$f_2(x) = 3(x - 2)^2$. Thus
+$$
 \min_{x} f(x) 
 = \bigl(f_1(x),\, f_2(x)\bigr),
 \quad 0 \le x \le 3.
-\]
+$$
+\imageC[0.5]{figure_man/graph2.png}
+\end{framev}
 
-\begin{center}
-\includegraphics[width=0.5\textwidth]{figure_man/graph2.png}
-\end{center}
 
-\framebreak
-
+\begin{framev}{Example: Two target functions}
 Visualizing both objectives:
-$\bigl(f_1(x), \;f_2(x)\bigr)
-$
-for all \(x \in [0,3]\) in the objective space:
+$\bigl(f_1(x), \;f_2(x)\bigr)$
+for all $x \in [0,3]$ in the objective space:
+\imageC[0.45]{figure_man/graph3.png}
+The Pareto front is shown in green.
+\end{framev}
 
-\begin{center}
-\includegraphics[width=0.45\textwidth]{figure_man/graph3.png}
-\end{center}
 
-The Pareto front is shown in green. 
-
-\end{vbframe}
-
-\begin{vbframe}{A-priori vs. A-posteriori}
-
-\begin{itemize}
+\begin{framei}{A-priori vs. A-posteriori}
 \item The Pareto set is a set of equally valid solutions.
 \item Often, we only want a \textbf{single} solution in practice.
 \item Without extra info, there is no unique best solution: one must choose 
 based on further criteria (cost constraints, business preference, etc.).
-\end{itemize}
-
-\bigskip
+\spacer
 Two overall strategies:
-\begin{itemize}
 \item \textbf{A-priori approach}: incorporate user preferences \emph{before} the optimization.
 \item \textbf{A-posteriori approach}: first find (an approximation of) the entire Pareto set, 
 then let the user choose.
-\end{itemize}
+\end{framei}
 
-\end{vbframe}
 
-\begin{vbframe}{A-priori procedure}
-
+\begin{framev}{A-priori procedure}
 \textbf{Example: Weighted total}
-
 $$ \min_{\xv} \sum_{i=1}^m w_i f_i(\xv) $$
-
 \textbf{Prior knowledge}:
 ``One rating point is worth 50~Euro to this customer.''
-
-\[
+$$
 \min_{\text{Hotel}} \text{(Price)} \;-\; 50 \times \text{(Rating)}.
-\]
-\vspace{-0.2cm}
-\begin{center}
-\includegraphics[width=0.6\textwidth]{figure_man/expedia-9-1.pdf}
-\end{center}
+$$
+\spacer
+\imageC[0.6]{figure_man/expedia-9-1.pdf}
+\end{framev}
 
-\framebreak
 
+\begin{framev}{A-priori procedure}
 \textbf{Example: Lexicographic method}
-
 \textbf{Prior knowledge}: The rating is more important than the price.
 Hence we optimize the rating first, then the price among those best ratings:
+\imageC[1]{figure_man/expedia-10-1.pdf}
+\end{framev}
 
-\begin{center}
-\includegraphics[width=1\textwidth]{figure_man/expedia-10-1.pdf}
-\end{center}
 
-\framebreak
-\vspace{-0.3cm}
+\begin{framev}[fs=small]{A-priori procedure}
 Lexicographic approach in general:
-
-{\small
-\[
+$$
 \begin{aligned}
 f_1^* &= \min_{\xv \in \S} \;f_1(\xv),\\
 f_2^* &= \min_{\substack{\xv \in \S:\\ f_1(\xv)=f_1^*}} \;f_2(\xv),\\
-f_3^* &= \min_{\substack{\xv \in \S:\\ f_1(\xv)=f_1^*,\,f_2(\xv)=y_2^*}}
+f_3^* &= \min_{\substack{\xv \in \S:\\ f_1(\xv)=f_1^*,\,f_2(\xv)=f_2^*}}
 \;f_3(\xv),\\
 &\quad\vdots
 \end{aligned}
-\]
-}
-
+$$
 But different orderings yield different solutions.
-
-{\footnotesize
 \textbf{Summary (a-priori)}:
-\vspace{-0.1cm}
+\spacer
 \begin{itemize}\setlength{\itemsep}{0.7em}
-\item Implicit assumption: single-objective optimization is “easy.”
+\item Implicit assumption: single-objective optimization is ``easy.''
 \item We get only \emph{one} solution, which depends strongly on the chosen weighting/order/etc.
 \item Varying these parameters systematically can produce several solutions, but may miss large parts of the non-dominated set.
 \end{itemize}
-}
+\end{framev}
 
 
-\end{vbframe}
-
-\begin{vbframe}{A-posteriori procedure}
-
-{\footnotesize
+\begin{framev}[fs=footnotesize]{A-posteriori procedure}
 A-posteriori methods aim to
 \begin{itemize}
 \item find \emph{all} optimal candidates (or a good approximation of them),
@@ -340,20 +274,12 @@ A-posteriori methods aim to
 additional info (e.g.\ hotel location).
 \end{itemize}
 Hence, a-posteriori methods are more general.
-}
-
-{\footnotesize
 \textbf{Example}: 
 All Pareto-optimal hotels are shown on the left. 
 User then picks from that subset on the right, based on hidden preferences 
 (location, brand loyalty, etc.):
-}
-
-\begin{center}
-\includegraphics[scale=0.8]{figure_man/expedia-11-1.pdf}
-\end{center}
-
-\end{vbframe}
+\imageC[0.8]{figure_man/expedia-11-1.pdf}
+\end{framev}
 
 \endlecture
 \end{document}
