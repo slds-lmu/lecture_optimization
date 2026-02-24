@@ -1,8 +1,6 @@
 \documentclass[11pt,compress,t,notes=noshow,xcolor=table]{beamer}
 
 \usepackage{algorithm}
-\usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
-\usepackage{comment}
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
@@ -42,33 +40,22 @@ We will now extend BO to multiple cost functions.
 
 \begin{framev}{Recap: Bayesian Optimization}
 \begin{center}
-\begin{minipage}{0.95\textwidth}
-\begin{algorithm2e}[H]
-\caption*{Bayesian optimization loop}
-\SetKwInOut{Require}{Require}
-\SetKwInOut{Result}{Result}
-\Require{Search space $\S$, cost function $f$, acquisition function $u$, 
-predictive model $\fh$, maximal number of function evaluations $T$}
-\Result{Best configuration $\hat{\xv}$ (based on $\D$ or $\fh$)}
-Initialize data $\D^{(0)}$ with initial observations\;
-\For{$t \gets 1$ \KwTo $T$}{
-Fit predictive model $\fh^{(t)}$ on $\D^{(t-1)}$\;
-Select next query point:
-$\xv^{(t)} 
-\;\in\; 
-\argmax_{\xv \in \S}
-u\!\Bigl(\xv;\,\D^{(t-1)},\;\fh^{(t)}\Bigr)$
-Query $f(\xv^{(t)})$\;
-Update data:
-$$
-\D^{(t)}
-\;\leftarrow\; 
-\D^{(t-1)}
-\;\cup\;\{\langle \xv^{(t)},\;f(\xv^{(t)}) \rangle \}
-$$
-}
-\end{algorithm2e}
-\end{minipage}
+\begin{algorithm}[H]
+\caption{Bayesian optimization loop}
+\begin{algorithmic}[1]
+\Require Search space $\S$, cost function $f$, acquisition function $u$, predictive model $\fh$, maximal number of function evaluations $T$
+\Ensure Best configuration $\hat{\xv}$ (based on $\D$ or $\fh$)
+\State Initialize data $\D^{(0)}$ with initial observations
+\For{$t \gets 1$ to $T$}
+\State Fit predictive model $\fh^{(t)}$ on $\D^{(t-1)}$
+\State Select next query point:
+\State $\xv^{(t)} \in \argmax_{\xv \in \S} u\!\Bigl(\xv;\,\D^{(t-1)},\;\fh^{(t)}\Bigr)$
+\State Query $f(\xv^{(t)})$
+\State Update data:
+\State $\D^{(t)} \leftarrow \D^{(t-1)} \cup \{\langle \xv^{(t)},\;f(\xv^{(t)}) \rangle \}$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 \end{center}
 \end{framev}
 
@@ -161,30 +148,20 @@ Pareto-optimal.
 \begin{framev}[fs=small]{ParEGO Algorithm}
 \begin{center}
 \begin{algorithm}[H]
-\setcounter{AlgoLine}{0}
-\SetKwInOut{Require}{Require}
-\SetKwInOut{Result}{Result}
-\Require{Search space $\S$,
-cost function $f$,
-acquisition function $u$, predictive model $\fh$,
-maximal number of function evaluations $T$, $\rho$, $l$, $s$}
-\Result{Best configuration $\hat{\xv}$
-(according to $\D$ or $\fh$)}
-Initialize data $\D^{(0)}$ with initial observations\;\\
-\For{$t=1$ \KwTo $T$}{
-Sample $w \in W = \bigl\{(w_1,\dots,w_m) \,\mid\, \sum w_i=1,\, w_i=\tfrac{l}{s}, l \in \{0,\dots,s\}\bigr\}$\;\\
-Compute scalarization:
-$c^{(t)} = \max_{i}\bigl(w_i \fkx[i]\bigr) + \rho \sum_{i}w_i\fkx[i]$\\
-Fit predictive model $\fh^{(t)}$ on $\D^{(t-1)}$\;\\
-Select next query point: $\xv^{(t)} \in \argmax_{\xv \in \S} u(\xv; \D^{(t-1)}, \fh^{(t)})$\\
-Query $f(\xv^{(t)})$\;\\
-Update data: 
-$$
-\D^{(t)} \leftarrow \D^{(t-1)}
-\cup \{\langle \xv^{(t)}, f(\xv^{(t)}) \rangle\}
-$$
-}
-\caption*{ParEGO loop}
+\caption{ParEGO loop}
+\begin{algorithmic}[1]
+\Require Search space $\S$, cost function $f$, acquisition function $u$, predictive model $\fh$, maximal number of function evaluations $T$, $\rho$, $l$, $s$
+\Ensure Best configuration $\hat{\xv}$ (according to $\D$ or $\fh$)
+\State Initialize data $\D^{(0)}$ with initial observations
+\For{$t = 1$ to $T$}
+\State Sample $w \in W = \bigl\{(w_1,\dots,w_m) \,\mid\, \sum w_i = 1,\, w_i = \tfrac{l}{s}, l \in \{0,\dots,s\}\bigr\}$
+\State Compute scalarization: $c^{(t)} = \max_{i}\bigl(w_i \fkx[i]\bigr) + \rho \sum_{i}w_i\fkx[i]$
+\State Fit predictive model $\fh^{(t)}$ on $\D^{(t-1)}$
+\State Select next query point: $\xv^{(t)} \in \argmax_{\xv \in \S} u(\xv; \D^{(t-1)}, \fh^{(t)})$
+\State Query $f(\xv^{(t)})$
+\State Update data: $\D^{(t)} \leftarrow \D^{(t-1)} \cup \{\langle \xv^{(t)}, f(\xv^{(t)}) \rangle\}$
+\EndFor
+\end{algorithmic}
 \end{algorithm}
 \end{center}
 \end{framev}
@@ -248,28 +225,21 @@ Further HV-based acquisitions:
 
 \begin{framev}{Hypervolume-based BO Algorithm}
 \begin{center}
-\begin{minipage}{0.8\textwidth}
 \begin{algorithm}[H]
-\setcounter{AlgoLine}{0}
-\SetKwInOut{Require}{Require}
-\SetKwInOut{Result}{Result}
-\Require{Search space $\S$, cost function $f$, acquisition function $u$, predictive model(s) $\fh_1,\dots,\fh_m$, maximal number of function evaluations $T$}
-\Result{Best configuration $\hat{\xv}$}
-Initialize data $\D^{(0)}$ with initial observations\;\\
-\For{$t=1$ \KwTo $T$}{
-Fit predictive models $\fh_1^{(t)}, \dots, \fh_m^{(t)}$ on $\D^{(t-1)}$\;\\
-Select next query point:\\
-$\xv^{(t)} \in \argmax_{\xv \in \S} u\!\Bigl(\xv;\, \D^{(t-1)},\, \fh_1^{(t)},\dots,\fh_m^{(t)} \Bigr)$
-Query $f(\xv^{(t)})$\;\\
-Update data: 
-$$
-\D^{(t)} \leftarrow \D^{(t-1)}
-\cup \{\langle \xv^{(t)},f(\xv^{(t)})\rangle\}
-$$
-}
-\caption*{Hypervolume-based Bayesian optimization loop}
+\caption{Hypervolume-based Bayesian optimization loop}
+\begin{algorithmic}[1]
+\Require Search space $\S$, cost function $f$, acquisition function $u$, predictive model(s) $\fh_1,\dots,\fh_m$, maximal number of function evaluations $T$
+\Ensure Best configuration $\hat{\xv}$
+\State Initialize data $\D^{(0)}$ with initial observations
+\For{$t = 1$ to $T$}
+\State Fit predictive models $\fh_1^{(t)}, \dots, \fh_m^{(t)}$ on $\D^{(t-1)}$
+\State Select next query point:
+\State $\xv^{(t)} \in \argmax_{\xv \in \S} u\!\Bigl(\xv;\, \D^{(t-1)},\, \fh_1^{(t)},\dots,\fh_m^{(t)} \Bigr)$
+\State Query $f(\xv^{(t)})$
+\State Update data: $\D^{(t)} \leftarrow \D^{(t-1)} \cup \{\langle \xv^{(t)},f(\xv^{(t)})\rangle\}$
+\EndFor
+\end{algorithmic}
 \end{algorithm}
-\end{minipage}
 \end{center}
 \end{framev}
 

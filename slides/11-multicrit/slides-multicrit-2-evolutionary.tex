@@ -1,7 +1,5 @@
 \documentclass[11pt,compress,t,notes=noshow,xcolor=table]{beamer}
-
 \usepackage{algorithm}
-\usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
@@ -63,17 +61,19 @@ Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over
 
 
 \begin{framev}{Basic EA template loop}
-\begin{algorithm2e}[H]
-\SetAlgoLined
+\begin{algorithm}[H]
 \caption{Basic EA template loop}
-Initialize and evaluate population $\mathcal{P}_0 \subset \S$ with $|\mathcal{P}_0| = \mu$\;
-$t \gets 0$\;
-\Repeat{\textit{Stop criterion is fulfilled}}{
-Select parents from $\mathcal{P}_t$ and generate offspring $\mathcal{Q}_t$, with $|\mathcal{Q}_t| = \lambda$\;
-Select $\mu$ survivors to form $\mathcal{P}_{t+1}$\;
-$t \gets t + 1$\;
-}
-\end{algorithm2e}
+\begin{enumerate}
+\item Initialize and evaluate population $\mathcal{P}_0 \subset \S$ with $|\mathcal{P}_0| = \mu$.
+\item Set $t \gets 0$.
+\item Repeat until the stop criterion is fulfilled:
+\begin{enumerate}
+\item Select parents from $\mathcal{P}_t$ and generate offspring $\mathcal{Q}_t$, with $|\mathcal{Q}_t| = \lambda$.
+\item Select $\mu$ survivors to form $\mathcal{P}_{t+1}$.
+\item Set $t \gets t + 1$.
+\end{enumerate}
+\end{enumerate}
+\end{algorithm}
 \vfill
 \begin{itemize}
 \item As in standard EAs, we have parent selection, variation, and survival selection.
@@ -186,25 +186,27 @@ where $S(\cdot,R)$ is the dominated HV w.r.t.\ reference point $R$.\\
 
 
 \begin{framev}{SMS-EMOA algorithm}
-\begin{algorithm2e}[H]
-\SetAlgoLined
+\begin{algorithm}[H]
 \caption{SMS-EMOA}
-Generate initial population $\mathcal{P}_0$ of size $\mu$\;
-$t \gets 0$\;
-\Repeat{\textit{Termination}}{
-Create exactly one offspring $\mathbf{q}$ by recombination + mutation\;
-Perform non-dominated sorting on $(\mathcal{P}_t \cup \{\mathbf{q}\})$\;
-Let $\mathcal{F}_k$ be the last front\;
-$\tilde{\xv} \gets \argmin_{\xv \in \mathcal{F}_k} \Delta s\bigl(\xv,\mathcal{F}_k\bigr)$\;
-$\mathcal{P}_{t+1} \gets \bigl(\mathcal{P}_t \cup \{\mathbf{q}\}\bigr)\setminus\{\tilde{\xv}\}$\;
-$t \gets t + 1$\;
-}
-\end{algorithm2e}
-\begin{itemizeM}[footnotesize]
+\begin{enumerate}
+\item Generate initial population $\mathcal{P}_0$ of size $\mu$.
+\item Set $t \gets 0$.
+\item Repeat until termination:
+\begin{enumerate}
+\item Create exactly one offspring $\mathbf{q}$ by recombination and mutation.
+\item Perform non-dominated sorting on $(\mathcal{P}_t \cup \{\mathbf{q}\})$.
+\item Let $\mathcal{F}_k$ be the last front.
+\item Set $\tilde{\xv} \gets \argmin_{\xv \in \mathcal{F}_k} \Delta s\bigl(\xv,\mathcal{F}_k\bigr)$.
+\item Set $\mathcal{P}_{t+1} \gets \bigl(\mathcal{P}_t \cup \{\mathbf{q}\}\bigr)\setminus\{\tilde{\xv}\}$.
+\item Set $t \gets t + 1$.
+\end{enumerate}
+\end{enumerate}
+\end{algorithm}
+\begin{itemizeS}[footnotesize]
 \item As soon as we exceed size $\mu+1$, remove the worst HV contributor from the \emph{last front}.
 \item That way, each iteration keeps exactly $\mu$ individuals.
 \item Ranking is primarily by front membership; hypervolume contribution is the tiebreak.
-\end{itemizeM}
+\end{itemizeS}
 \end{framev}
 
 \endlecture
