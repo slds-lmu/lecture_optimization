@@ -39,6 +39,7 @@ Left: Fit parabola (dashed) and propose minimum (red) as new point. Middle: Swit
 }}
 \end{frame}
 
+
 \begin{framei}[sep=L]{Quadratic interpolation comments}
 \item Quadratic interpolation \textbf{not robust}. The following may happen:
 \begin{itemizeL}
@@ -48,6 +49,7 @@ Left: Fit parabola (dashed) and propose minimum (red) as new point. Middle: Swit
 \end{itemizeL}
 \item Algorithm must then abort, finding a global minimum is not guaranteed
 \end{framei}
+
 
 \begin{framei}[sep=L]{Brent's method}
 \item Brent's algorithm \furtherreading{BRENT1973} alternates between golden ratio search and quadratic interpolation as follows: 
@@ -76,5 +78,4 @@ But GR needs $\approx 45$ iters, Brent only $\approx 15$ for same tolerance
 \end{framei}
 
 \endlecture
-
 \end{document}
