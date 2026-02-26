@@ -27,6 +27,7 @@ figure_man/himmelblau-iter3_probabilities
 \item Local search strategy with random option to accept worse values
 \end{framei}
 
+
 \begin{framei}{Simple stochastic local search}
 \item Given is a multivariate objective function $f(\xv)$
 \item Define a local neighborhood area $V(\xv)$ for a given $\xv$
@@ -47,21 +48,23 @@ $\Rightarrow$ Danger of ending up in local minima
 \item \textbf{Metropolis:} accept candidates from previous rejection range ($\Delta f > 0$) with probability $\P(\text{accept} \,|\, \Delta f) = \exp(-\Delta f / T)$
 \item $T$ denotes \enquote{temperature}
 \begin{figure}
-\imageC[0.9]{figure_man/metropolis-algorithm.png}
+\imageC[0.6]{figure_man/metropolis-algorithm.png}
 \caption*{
 \footnotesize
 Simulated annealing: Colors correspond to $\P(\text{accept})$}
 \end{figure}
 \end{framei}
 
+
 \begin{framei}{Metopolis algorithm}
 \item Parameter $T$ describes temperature/progress of the system
 \item High temperatures correspond to high probability of accepting worse $\xv$
 \item Local minima can be escaped, but no convergence can be achieved at \textit{constant} temperature
 \item We come across an important principle of optimization: \textbf{exploration (high T) vs. exploitation (low T)}
-\lz
+\spacer
 \imageC[0.6]{figure_man/metropolis-algorithm2.png}
 \end{framei}
+
 
 \begin{framei}{Simulated Annealing}
 \item Start with high temperature to explore whole space
@@ -76,6 +79,7 @@ $$T^{[t]} = T^{[0]} \left( 1 - \frac{t}{t_{\text{max}}} \right)$$
 Strongly depends on objective function
 \end{framei}
 
+
 \begin{framei}[fs=normalsize,sep=L]{Analogy to metallurgy}
 \item Simulated annealing draws analogy between a cooling process (e.g. a metal or liquid) and an optimization problem.
 \item If cooling of a liquid material (amount of atoms) is too fast, it solidifies in suboptimal configuration, slow cooling produces crystals with optimal structure (minimum energy stage)
@@ -85,4 +89,3 @@ Strongly depends on objective function
 
 \endlecture
 \end{document}
-

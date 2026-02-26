@@ -32,9 +32,11 @@ $$\mathcal{A}(f_i^*, A) = \left\{ \xv : A(\xv) = f_i^*\right\}$$
 is called \textit{attraction area}/\textit{basin of attraction} of $f_i^*$ for algorithm $A$
 \end{framei}
 
+
 \begin{framev}{Attraction Areas}
 \imageC[1]{figure_man/metropolis-example-nelder.png}
 \end{framev}
+
 
 \begin{vbframe}{Multi-starts}
 Levy function:
@@ -52,6 +54,7 @@ Distribution of results ($y$ values):
 ## 0.0000  0.1099     0.5356    2.4351  1.9809     18.3663
 \end{verbatim}
 \end{vbframe}
+
 
 \begin{framev}{multi-starts}
 Idea: use multiple starting points $\xv^{[1]}, \ldots, \xv^{[k]}$ for algorithm A
@@ -81,7 +84,7 @@ Idea: use multiple starting points $\xv^{[1]}, \ldots, \xv^{[k]}$ for algorithm 
 
 \begin{vbframe}{multi-starts}
 BFGS with Multistart gives us the true minimum of the Levy function:\\
-\lz
+\spacer
 \begin{verbbox}
 iters = 20 # number of starts
 xbest = c(runif(1, -2, 2), runif(1, -2, 2))
@@ -96,14 +99,14 @@ res = optim(par = c(x1, x2), fn = f, method = "BFGS")
 }
 \end{verbbox}
 \theverbbox\\
-\lz
+\spacer
 \begin{verbbox}
 if (res$value < f(xbest)) {
 xbest = res$par
 }
 \end{verbbox}
 \theverbbox\\
-\lz
+\spacer
 \begin{verbbox}
 xbest
 ## [1] 1 1
@@ -111,8 +114,5 @@ xbest
 \theverbbox
 \end{vbframe}
 
-
 \endlecture
 \end{document}
-
-

@@ -33,11 +33,12 @@ figure_man/Nelder04.png
 \end{itemize}
 \end{framei}
 
+
 \begin{framev}{nelder-mead method}
 A version of the Nelder-Mead method:\\
-\lz
+\spacer
 Initialization: choose $d + 1$ random, affinely independent points $\vb_i$\\ ($\vb_i$ are vertices: corner points of the simplex/polytope)
-\lz
+\spacer
 \begin{enumerate}
 \item[1.] Order points according to ascending function values
 $$f(\vb_1) \leq f(\vb_2) \leq \ldots \leq f(\vb_d) \leq f(\vb_{d + 1})$$
@@ -45,6 +46,7 @@ with $\vb_1$ best point, $\vb_{d + 1}$ worst point
 \end{enumerate}
 \imageC[0.5]{figure_man/Nelder01.png}
 \end{framev}
+
 
 \begin{framev}{nelder-mead method}
 \begin{enumerate}
@@ -54,6 +56,7 @@ $$\bar{\vb} = \frac{1}{d} \sum_{i = 1}^d \vb_i.$$
 \splitV{\imageC[0.98]{figure_man/Nelder02.png}}{\imageC[0.98]{figure_man/Nelder03.png}}
 \end{framev}
 
+
 \begin{framev}{nelder-mead method}
 \begin{enumerate}
 \item[3.] Reflection: compute reflection point
@@ -62,18 +65,19 @@ with $\rho > 0$.
 Compute $f(\vb_r)$.
 \end{enumerate}
 \imageC[0.43]{figure_man/Nelder04.png} 
-\lz
+\spacer
 Note: Default value for reflection coefficient: $\rho = 1$
 \end{framev}
+
 
 \begin{framev}{nelder-mead method}
 Distinguish three cases:\\
 \begin{itemizeL}
 \item Case 1: $f(\vb_1) \leq f(\vb_r) < f(\vb_d)$
-\lz
+\spacer
 $\Rightarrow$ Accept $\vb_r$ and discard $\vb_{d + 1}$
 \end{itemizeL}
-\lz
+\spacer
 \splitVCC[0.57]{
 \begin{itemizeS}
 \item Case 2: $f(\vb_r) < f(\vb_1)$
@@ -82,9 +86,10 @@ $$\vb_e = \bar{\vb} + \chi (\vb_{r} - \bar{\vb}), \quad \chi > 1$$
 We discard $\vb_{d + 1}$ and accept the better of $\vb_r$ and $\vb_e$
 \end{itemizeS}
 }{\imageC[1]{figure_man/Nelder06.png}}\\
-\lz
+\spacer
 Note: default value for expansion coefficient: $\chi = 2$
 \end{framev}
+
 
 \begin{framev}{nelder-mead method}
 \begin{itemize}
@@ -104,6 +109,7 @@ Note: default values for contraction and shrinking coefficients $\gamma = \sigma
 \end{enumerate}
 \end{framev}
 
+
 \begin{framev}{nelder-mead summary}
 Advantages:
 \begin{itemize}
@@ -120,7 +126,7 @@ Visualization:
 \begin{center}
 \url{http://www.benfrederickson.com/numerical-optimization/}
 \end{center}
-\lz
+\spacer
 Note: Nelder-Mead is default method of \texttt{R} function \texttt{optim()}\\
 If gradient is available and cheap, L-BFGS is preferred
 \end{framev}
@@ -134,6 +140,7 @@ $$\min_{\xv} f(x_1,x_2) = x_1^{2} + x_2^{2} + x_1\cdot \sin x_2 + x_2 \cdot \sin
 \only<4>{\imageC[0.9]{figure_man/nm_animation2d_4.PNG}}
 \end{framev}
 
+
 \begin{framev}{Nelder-Mead vs. GD}
 %% http://www.benfrederickson.com/numerical-optimization/
 \splitVCC{\imageC[0.85]{figure_man/nm_gd_cities_1.PNG}}{\imageC[0.85]{figure_man/nm_gd_cities_2.PNG}}
@@ -144,6 +151,7 @@ For 10 cities, gradient descent (top) converges well for a suitable learning rat
 Nelder-Mead (bottom) fails to converge, even after many iterations.}
 \end{framev}
 
+
 \begin{framev}{Nelder-Mead vs. GD}
 \splitVCC{\imageC[0.85]{figure_man/nm_gd_cities_5.PNG}}{\imageC[0.85]{figure_man/nm_gd_cities_6.PNG}}
 \splitVCC{\imageC[0.85]{figure_man/nm_gd_cities_7.PNG}}{\imageC[0.85]{figure_man/nm_gd_cities_8.PNG}}
@@ -151,7 +159,5 @@ Nelder-Mead (bottom) fails to converge, even after many iterations.}
 However, gradient descent (top) still works}
 \end{framev}
 
-
 \endlecture
 \end{document}
-

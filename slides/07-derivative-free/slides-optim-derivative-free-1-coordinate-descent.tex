@@ -26,6 +26,7 @@ figure_man/Coordinate_descent.png
 \imageC[0.42][https://en.wikipedia.org/wiki/Coordinate_descent]{figure_man/Coordinate_descent.png}
 \end{framei}
 
+
 \begin{framev}{coordinate descent}
 \begin{itemize}
 \item Minimum is determined with (exact/inexact) line search
@@ -42,16 +43,18 @@ f(\xv) = g(\xv) + \sum_{i=1}^d h_i(x_i),
 \end{itemize}
 \end{framev}
 
+
 \begin{framev}{coordinate descent}
 No convergence in general for convex functions, counterexample:
 \imageC[0.6][https://en.wikipedia.org/wiki/Coordinate_descent]{figure_man/Nonsmooth_coordinate_descent.png}
 \end{framev}
 
+
 \begin{framev}{Example: linear regression}
 Minimize LM with L2 loss via CD
 $$\min g(\thetav) = \min_{\thetav} \frac{1}{2}\sumin \left(y^{(i)} - \thetav^\top \xi\right)^2 = \min_{\thetav} \frac{1}{2}\|\yv - \Xmat \thetav\|^2 $$
 where $\yv \in \R^n$, $\Xmat \in \R^{n \times d}$ with columns $\xv_1, \ldots, \xv_d \in \R^n$\\
-\lz
+\spacer
 Assume orthogonal design for intuition, i.e., $\Xmat^\top \Xmat = I_d$:
 \begin{align*}
 g(\thetav) &= \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav - \yv^\top \Xmat \thetav  \\
@@ -60,6 +63,7 @@ g(\thetav) &= \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav - \yv^\t
 $^{(*)}$ $\Xmat \thetav = \xv_1 \theta_1 + \xv_2 \theta_2 + \cdots + \xv_d \theta_d = \sum_{k = 1}^d \xv_k \theta_k$
 \end{framev}
 
+
 \begin{framei}{example: linear regression}
 \item Exact CD update in direction $j$:
 $$\frac{\partial{g}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j$$
@@ -67,12 +71,13 @@ $$\frac{\partial{g}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j$$
 \item Repeat this update for all $\theta_j$
 \end{framei}
 
+
 \begin{framev}{Soft thresholding}
 Minimize LM with L2 loss and L1 regularization via CD
 $$\min_{\thetav} h(\thetav) = \min_{\thetav} \frac{1}{2}\|\yv - \Xmat \thetav\|^2 + \lambda \|\thetav\|_1$$
 Note that $h(\thetav) = \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav  - \sum_{k = 1}^d (\yv^\top \xv_k \theta_k + \lambda|\theta_k|)$\\
 Again assume $\Xmat^\top \Xmat = I_d$. Since $|\cdot|$ not differentiable, distinguish cases:
-\lz
+\spacer
 {\footnotesize
 \begin{itemize}
 \item \textbf{Case 1:} $\theta_j > 0$.
@@ -85,6 +90,7 @@ $$0 = \frac{\partial{h}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j
 \end{itemize}}
 \end{framev}
 
+
 \begin{framev}{soft thresholding}
 We can write the solution as: 
 $$\theta^\ast_{j, \text{Lasso}} =
@@ -94,9 +100,9 @@ $$\theta^\ast_{j, \text{Lasso}} =
 0 &  \text{ if }  \theta^\ast_j \in [- \lambda, \lambda],
 \end{cases}$$
 This operation is called soft thresholding\\
-\lz
+\spacer
 Coefs for which solution to unregularized problem is smaller than threshold ($|\thetav^\ast_j| < \lambda$) are shrunk to zero
-\lz
+\spacer
 NB: Derivation of soft thresholding operator not trivial (subgradients)
 \end{framev}
 
@@ -110,7 +116,7 @@ just current point \\
 $\Rightarrow$ Good implementation can achieve state-of-the-art performance
 \item Applicable for non-differentiable (but convex separable) objectives
 \end{itemizeL}
-\lz
+\spacer
 Examples:
 \begin{itemizeL}
 \item Lasso regression, Lasso GLM, graphical Lasso
