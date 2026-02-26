@@ -82,36 +82,6 @@ $\widehat{\text{GE}}$ general. err. with metric $\rho$ and estim. with resamplin
 \end{framev}
 
 
-% \begin{vbframe}{Example 3: Feature sel. (constrained)}
-% With prior knowledge / preferences on max. number of features $k$:
-% \begin{eqnarray*}
-% \min_{\textbf{s} \in \{0, 1\}^p} \widehat{\text{GE}}(\mathcal{I}, \mathcal{J}, \rho, \bm{s}), \quad \sum\nolimits_{i = 1}^p s_i \le k, 
-% \end{eqnarray*}
-% \begin{figure}[!tbp]
-%   \centering
-%   \begin{minipage}[b]{0.5\textwidth}
-%     \includegraphics[width =\textwidth]{figure_man/pipeline.png}
-%   \end{minipage}
-%   \hfill
-%   \begin{minipage}[b]{0.4\textwidth}
-%     \includegraphics[width =\textwidth]{figure_man/subsetsize.png}
-%   \end{minipage}
-% \end{figure}
-% \framebreak
-% \lz 
-% \textbf{Problem characteristics}:
-% \begin{itemize}
-% 	\item Black-box: Objective not available in analytical form
-% 	\item Discrete: $\mathcal{S}$ is discrete
-% 	\item Constrained 
-% 	\item Noisy: Function evaluations depend on resampling	
-% 	\item Expensive (depending on training time of learner $\ind$)
-% \end{itemize}
-% \lz 
-% Complexity of the problem is reduced with $k$: Lower $k$ $\to$ less possible values for $\bm{s}$. 
-% \end{vbframe}
-
-
 \begin{framev}{Example 3: Feature sel. (multiobjective)}
 Feature selection is usually inherently multi-objective,
 with model sparsity as a 2nd trade-off target:
@@ -168,23 +138,6 @@ is very challenging:
 \image[1][https://ceur-ws.org/Vol-2846/paper22.pdf]{figure_man/landscapes2.jpg}
 }
 \end{framev}
-
-
-% \begin{framev}{More black-box problems}
-% Black-box problems from engineering: \textbf{oil well placement}
-% \spacer
-% \splitV[0.65]{
-% \begin{itemize}
-% \item The goal is to determine the optimal locations and operation parameters for wells in oil reservoirs
-% \item Basic premise: achieving maximum revenue from oil while minimizing operating costs
-% \item In addition, the objective function is subject to complex combinations of geological, economical, petrophysical and fluiddynamical constraints
-% \item Each function evaluation requires several computationally expensive reservoir simulations while taking uncertainty in the reservoir description into account
-% \end{itemize}
-% }{
-% \image[0.9][https://doi.org/10.1007/s13202-019-0710-1]{figure_man/oil_well_problem.jpg}\\
-% {\footnotesize Oil saturation at various depths with possible location of wells.}
-% }
-% \end{framev}
 
 \endlecture
 \end{document}
