@@ -155,9 +155,3 @@ p <- ggplot(multimod.dat,aes(x = x, y = y, color = col)) + geom_line() +
 
 p
 ggsave("../figure/metropolis-example-nelder.png", p)
-#################
-
-
-
-
-

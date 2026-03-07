@@ -11,7 +11,7 @@
 \titlemeta{}{
 Simulated Annealing
 }{
-figure_man/himmelblau-iter3_probabilities
+figure/himmelblau-iter3_probabilities
 }{
 \item Motivation
 \item Metropolis algorithm
@@ -35,7 +35,7 @@ figure_man/himmelblau-iter3_probabilities
 \item Calculate $f(\xv^{[t+1]})$
 \item If $\Delta f = f(\xv^{[t+1]}) - f(\xv^{[t]}) < 0$, $\xv^{[t+1]}$ is accepted as new solution, otherwise a new proposal from neighborhood is sampled
 \begin{figure}
-\imageC[0.68]{figure_man/metropolis-local-search.png}
+\imageC[0.68]{figure/metropolis-local-search.png}
 \caption*{stoch. local search: acceptance range in green and rejection in red}
 \end{figure}
 \end{framei}
@@ -48,7 +48,7 @@ $\Rightarrow$ Danger of ending up in local minima
 \item \textbf{Metropolis:} accept candidates from previous rejection range ($\Delta f > 0$) with probability $\P(\text{accept} \,|\, \Delta f) = \exp(-\Delta f / T)$
 \item $T$ denotes \enquote{temperature}
 \begin{figure}
-\imageC[0.6]{figure_man/metropolis-algorithm.png}
+\imageC[0.6]{figure/metropolis-algorithm.png}
 \caption*{
 \footnotesize
 Simulated annealing: Colors correspond to $\P(\text{accept})$}
@@ -62,7 +62,7 @@ Simulated annealing: Colors correspond to $\P(\text{accept})$}
 \item Local minima can be escaped, but no convergence can be achieved at \textit{constant} temperature
 \item We come across an important principle of optimization: \textbf{exploration (high T) vs. exploitation (low T)}
 \spacer
-\imageC[0.6]{figure_man/metropolis-algorithm2.png}
+\imageC[0.6]{figure/metropolis-algorithm2.png}
 \end{framei}
 
 
