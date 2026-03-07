@@ -162,7 +162,7 @@ g = g + labs(
 if (interactive()) {
   print(g)
 }
-ggsave("../figure_man/example_parego_spam.png", g, height = 5, width = 6)
+ggsave("../figure/example_parego_spam.png", g, height = 5, width = 6)
 
 emoa::dominated_hypervolume(points = t(as.matrix(opdf[tuner == "rs", .(fpr,1-tpr)])), ref = c(1,1))
 # 0.9586348
@@ -184,7 +184,7 @@ g = g + labs(title = "Tuning Validation: SVM on spam dataset", subtitle = "posit
 if (interactive()) {
   print(g)
 }
-ggsave("../figure_man/example_parego_spam_outer.png", g, height = 5, width = 6)
+ggsave("../figure/example_parego_spam_outer.png", g, height = 5, width = 6)
 
 # outer pareto
 
@@ -203,7 +203,7 @@ g = g + labs(title = "Tuning Validation: SVM on spam dataset", subtitle = "posit
 if (interactive()) {
   print(g)
 }
-ggsave("../figure_man/example_parego_spam_outer_pareto.png", g, height = 5, width = 6)
+ggsave("../figure/example_parego_spam_outer_pareto.png", g, height = 5, width = 6)
 
 
 

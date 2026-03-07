@@ -4,6 +4,8 @@
 # FIG: plot levy function
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(plotly)
 
 # ------------------------------------------------------------------------------
@@ -28,4 +30,4 @@ p <- plot_ly() %>% add_surface(x = x1, y = x2, z = z) %>%
     ))
 
 
-htmlwidgets::saveWidget(p, "../figure_man/levy.html", selfcontained = TRUE)
+htmlwidgets::saveWidget(p, "../figure/levy.html", selfcontained = TRUE)

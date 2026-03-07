@@ -4,6 +4,8 @@
 # FIG: quadratic function related plots (function, eigen-decomposition)
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
 library(gridExtra)
 library(BBmisc)
@@ -75,7 +77,7 @@ plot_direction_along_eigenvector = function(grid, eigenval, col) {
 p1 = ggplot(data.frame(x = c(-2, 2)), aes(x)) + stat_function(fun = function(x) x^2, colour = "orange") + ylim(c(0, 4))
 p2 = ggplot(data.frame(x = c(-2, 2)), aes(x)) + stat_function(fun = function(x) - x^2, colour = "blue") + ylim(c(-4, 0)) 
 
-ggsave("../figure_man/quadratic_functions_1D.png", grid.arrange(p1, p2, nrow = 1), width = 6, height = 3)
+ggsave("../figure/quadratic_functions_1D.png", grid.arrange(p1, p2, nrow = 1), width = 6, height = 3)
 
 
 
@@ -84,7 +86,7 @@ ggsave("../figure_man/quadratic_functions_1D.png", grid.arrange(p1, p2, nrow = 1
 p3 = p1 + stat_function(fun = function(x) 2 * x^2, colour = "darkgreen") 
 p4 = p2 + stat_function(fun = function(x) - 3 * x^2, colour = "violet") 
 
-ggsave("../figure_man/quadratic_functions_1D_curvature.png", grid.arrange(p3, p4, nrow = 1), width = 6, height = 3)
+ggsave("../figure/quadratic_functions_1D_curvature.png", grid.arrange(p3, p4, nrow = 1), width = 6, height = 3)
 
 
 ## quadratic_functions_1D_derivative.png
@@ -98,7 +100,7 @@ plist = lapply(seq_row(df), function(i) {
 	p1 = p1 + geom_abline(data = df[i, ], aes(intercept = intercept, slope = slope))
 })
 
-ggsave("../figure_man/quadratic_functions_1D_derivative.png", do.call(grid.arrange, c(plist, nrow = 1)), width = 12, height = 3)
+ggsave("../figure/quadratic_functions_1D_derivative.png", do.call(grid.arrange, c(plist, nrow = 1)), width = 12, height = 3)
 
 
 
@@ -113,7 +115,7 @@ grid = compute_grid_data(seq(-3, 3, by = 0.01), seq(-3, 3, by = 0.01), f)$grid
 
 ## quadratic_functions_2D_diag_1.png
 p = plot_contour_data(f, grid)
-ggsave(filename = "../figure_man/quadratic_functions_2D_example_diag_1.png", p, width = 3, height = 3)
+ggsave(filename = "../figure/quadratic_functions_2D_example_diag_1.png", p, width = 3, height = 3)
 
 
 v1 = c(1, 0); e1 = 2
@@ -123,13 +125,13 @@ v2 = c(0, 1); e2 = 1
 p1 = plot_eigenvector(p, v1, "orange") + coord_fixed()
 p2 = plot_direction_along_eigenvector(grid, e1, "orange") + ylim(c(0, 8))
 
-ggsave("../figure_man/quadratic_functions_2D_example_diag_2.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
+ggsave("../figure/quadratic_functions_2D_example_diag_2.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
 
 # quadratic_functions_2D_diag_3.png
 p1 = plot_eigenvector(p1, v2, "magenta")
 p2 = plot_direction_along_eigenvector(grid, e2, "magenta") + ylim(c(0, 8))
 
-ggsave("../figure_man/quadratic_functions_2D_example_diag_3.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
+ggsave("../figure/quadratic_functions_2D_example_diag_3.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
 
 
 
@@ -146,12 +148,12 @@ grid = griddata$grid
 colors = griddata$color
 z = griddata$z
 
-png("../figure_man/quadratic_functions_2D_example_1_1.png")
+png("../figure/quadratic_functions_2D_example_1_1.png")
 persp(x, y, z, col = colors, phi = 30, theta = -20, border = NA, xlab = "x1", ylab = "x2", zlab = "y")
 dev.off()
 
 p = plot_contour_data(f, grid)
-ggsave("../figure_man/quadratic_functions_2D_example_1_2.png", p, width = 3, height = 3)
+ggsave("../figure/quadratic_functions_2D_example_1_2.png", p, width = 3, height = 3)
 
 
 v1 = c(1, 0); e1 = 2.5
@@ -161,13 +163,13 @@ v2 = c(0, 1); e2 = 2.5
 p1 = plot_eigenvector(p, v1, "black") + coord_fixed()
 p2 = plot_direction_along_eigenvector(grid, e1, "black") + ylim(c(0, 8))
 
-ggsave("../figure_man/quadratic_functions_2D_example_1_3.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
+ggsave("../figure/quadratic_functions_2D_example_1_3.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
 
 # quadratic_functions_2D_diag_3.png
 p1 = plot_eigenvector(p1, v2, "black")
 p2 = plot_direction_along_eigenvector(grid, e2, "black") + ylim(c(0, 8))
 
-ggsave("../figure_man/quadratic_functions_2D_example_1_4.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
+ggsave("../figure/quadratic_functions_2D_example_1_4.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
 
 
 v1 = c(1, 1); e1 = 2
@@ -177,15 +179,15 @@ v2 = c(-1, 1); e2 = 3
 p1 = plot_eigenvector(p, v1, "orange") + coord_fixed()
 p2 = plot_direction_along_eigenvector(grid, e1, "orange") + ylim(c(0, 8))
 
-ggsave("../figure_man/quadratic_functions_2D_example_1_5.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
+ggsave("../figure/quadratic_functions_2D_example_1_5.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
 
 # quadratic_functions_2D_diag_3.png
 p1 = plot_eigenvector(p1, v2, "magenta")
 p2 = plot_direction_along_eigenvector(grid, e2, "magenta") + ylim(c(0, 8))
 
-ggsave("../figure_man/quadratic_functions_2D_example_1_6.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
+ggsave("../figure/quadratic_functions_2D_example_1_6.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
 
-ggsave("../figure_man/quadratic_functions_2D_example_1_7.png", p1, width = 4, height = 3)
+ggsave("../figure/quadratic_functions_2D_example_1_7.png", p1, width = 4, height = 3)
 
 
 
@@ -203,7 +205,7 @@ grid = griddata$grid
 colors = griddata$color
 z = griddata$z
 
-png("../figure_man/quadratic_functions_2D_example_2_1.png")
+png("../figure/quadratic_functions_2D_example_2_1.png")
 persp(x, y, z, col = colors, phi = 30, theta = -20, border = NA, xlab = "x1", ylab = "x2", zlab = "y")
 dev.off()
 
@@ -216,13 +218,13 @@ v2 = c(1 + sqrt(2), 1); e2 = lambda2 = 2 * sqrt(2)
 p1 = plot_eigenvector(p, v1, "orange") + coord_fixed()
 p2 = plot_direction_along_eigenvector(grid, e1, "orange") + ylim(c(-8, 8))
 
-ggsave("../figure_man/quadratic_functions_2D_example_2_2.png", p1, width = 4, height = 3)
+ggsave("../figure/quadratic_functions_2D_example_2_2.png", p1, width = 4, height = 3)
 
 # quadratic_functions_2D_diag_3.png
 p1 = plot_eigenvector(p1, v2, "magenta")
 p2 = plot_direction_along_eigenvector(grid, e2, "magenta") + ylim(c(-8, 8))
 
-ggsave("../figure_man/quadratic_functions_2D_example_2_3.png", p1, width = 4, height = 3)
+ggsave("../figure/quadratic_functions_2D_example_2_3.png", p1, width = 4, height = 3)
 
 
 p1 = ggplot(data = grid, aes(x = x, y = y, z = f)) 
@@ -230,7 +232,7 @@ p1 = p1 + geom_raster(aes(fill = f)) + geom_contour(colour = "white") + xlab("x1
 p1 = plot_eigenvector(p1, v1, "orange") + coord_fixed() + guides(fill = FALSE)
 p1 = plot_eigenvector(p1, v2, "magenta")
 
-ggsave("../figure_man/quadratic_functions_2D_example_2_4.png", grid.arrange(p1, nrow = 1), width = 4, height = 3)
+ggsave("../figure/quadratic_functions_2D_example_2_4.png", grid.arrange(p1, nrow = 1), width = 4, height = 3)
 
 
 
@@ -253,7 +255,7 @@ zfacet = z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
 # Recode facet z-values into color indices
 facetcol = cut(zfacet, nbcol)
 
-png("../figure_man/quadratic_functions_2D_bad_cond_1.png")
+png("../figure/quadratic_functions_2D_bad_cond_1.png")
 persp(x, y, z, col = colors[facetcol], phi = 30, theta = -20, border = NA, xlab = "x1", ylab = "x2", zlab = "y")
 dev.off()
 
@@ -266,7 +268,7 @@ p = p + geom_point(data = data.frame(x = 0, y = 0), aes(x = x, y = y), colour = 
 p = p + xlab("x1") + ylab("x2")
 p = p + guides(fill = FALSE) + theme_minimal()
 
-ggsave("../figure_man/quadratic_functions_2D_bad_cond_2.png", p, width = 3, height = 3)
+ggsave("../figure/quadratic_functions_2D_bad_cond_2.png", p, width = 3, height = 3)
 
 
 

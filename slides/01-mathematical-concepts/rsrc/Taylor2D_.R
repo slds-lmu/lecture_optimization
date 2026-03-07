@@ -5,6 +5,8 @@
 #      the Taylor series approximations (1st and 2nd order)
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(plotly)
 library(pracma)
 
@@ -80,7 +82,7 @@ for (i in 1:length(camera_views)) {
   
   # Save each plot as an HTML file
   fig
-  file_name <- paste0("../figure_man/Taylor2D_1st", names[i], ".html")
+  file_name <- paste0("../figure/Taylor2D_1st", names[i], ".html")
   htmlwidgets::saveWidget(fig, file_name, selfcontained = TRUE)
 }
 
@@ -101,6 +103,6 @@ for (i in 1:length(camera_views)) {
   
   # Save each plot as an HTML file
   fig
-  file_name <- paste0("../figure_man/Taylor2D_2nd-", names[i], ".html")
+  file_name <- paste0("../figure/Taylor2D_2nd-", names[i], ".html")
   htmlwidgets::saveWidget(fig, file_name, selfcontained = TRUE)
 }

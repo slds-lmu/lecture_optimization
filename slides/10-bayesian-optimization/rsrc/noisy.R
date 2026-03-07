@@ -39,7 +39,7 @@ g = ggplot() +
   ylim(c(-2, 2.2)) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/noisy_0.png"), plot = g, width = 5, height = 4)
+ggsave(file.path("../figure/noisy_0.png"), plot = g, width = 5, height = 4)
 
 surrogate = srlrn(lrn("regr.km", covtype = "matern5_2", optim.method = "BFGS", nugget.stability = 10^-8), archive = instance$archive)
 surrogate$update()
@@ -75,9 +75,9 @@ g_noisy = ggplot(aes(x = x, y = y), data = grid) +
   ylim(c(-2, 2.4)) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/noisy_1.png"), plot = g, width = 5, height = 4)
+ggsave(file.path("../figure/noisy_1.png"), plot = g, width = 5, height = 4)
 
-ggsave(file.path("../figure_man/noisy_2.png"), plot = g_noisy, width = 5, height = 4)
+ggsave(file.path("../figure/noisy_2.png"), plot = g_noisy, width = 5, height = 4)
 
 acq_function = acqf("aei", surrogate = surrogate_noisy)
 acq_function$surrogate$update()
@@ -106,7 +106,7 @@ aei = ggplot(aes(x = x, y = aei), data = grid) +
   ylab("AEI") +
   theme_minimal()
 
-ggsave(file.path("../figure_man/noisy_3.png"), plot = g / aei, width = 5, height = 4)
+ggsave(file.path("../figure/noisy_3.png"), plot = g / aei, width = 5, height = 4)
 
 rp_instance = instance$clone(deep = TRUE)
 rp_instance$archive$data[, y := surrogate_noisy$predict(instance$archive$data[, instance$archive$cols_x, with = FALSE])$mean]
@@ -140,7 +140,7 @@ ei = ggplot(aes(x = x, y = ei), data = grid) +
   ylab("EI") +
   theme_minimal()
 
-ggsave(file.path("../figure_man/noisy_4.png"), plot = g / ei, width = 5, height = 4)
+ggsave(file.path("../figure/noisy_4.png"), plot = g / ei, width = 5, height = 4)
 
 final_instance = instance$clone(deep = TRUE)
 final_instance$archive$clear()
@@ -157,5 +157,5 @@ g = ggplot() +
   ylim(c(-2, 2.2)) +
   theme_minimal()
 
-ggsave(file.path("../figure_man/noisy_5.png"), plot = g, width = 5, height = 4)
+ggsave(file.path("../figure/noisy_5.png"), plot = g, width = 5, height = 4)
 

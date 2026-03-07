@@ -66,5 +66,5 @@ grid = setup.grid(20)
 
 Pl = plot.grid(grid)
 
-ggsave("../figure_man/grid.png", Pl)
+ggsave("../figure/grid.png", Pl)
 

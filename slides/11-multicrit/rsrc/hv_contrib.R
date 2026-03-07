@@ -5,6 +5,8 @@
 #      in a two-objective optimization problem.
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
 
 # ------------------------------------------------------------------------------
@@ -36,6 +38,6 @@ pl = pl + xlim(0,10) + ylim(0, 10)
 pl = pl + geom_text(data = dd[-n,], aes(x = f1+1, y = f2+0.5, label = paste("HVC =",hvc)), size = 3)
 pl = pl +  annotate("text", x = dd$f1[j_worst]-0.5, y = dd$f2[j_worst]-0.5, size = 5, parse = TRUE, label = as.character(expression(tilde(lambda))))
 
-ggsave("../figure_man/hv_contrib.png", pl, width = 3, height = 3)
+ggsave("../figure/hv_contrib.png", pl, width = 3, height = 3)
 
 

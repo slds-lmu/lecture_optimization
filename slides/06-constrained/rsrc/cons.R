@@ -4,6 +4,8 @@
 # FIG: plot linear constraints
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(knitr)
 library(linprog)
 library(snow)
@@ -72,7 +74,7 @@ plotPoly = function(A, b) {
 A = matrix(c(1, 2, -1, 0, 2, 1, 0, -1), ncol = 2)
 b = c(1, 1, 0, 0)
 
-ggsave("../figure_man/cons-linear-pro-example.png", plotPoly(A, b))
+ggsave("../figure/cons-linear-pro-example.png", plotPoly(A, b))
 ###############
 
 
@@ -90,7 +92,7 @@ p = p + theme_bw() + coord_equal()
 p = p + xlim(c(-5, 5))
 p = p + ylim(c(-5, 5))
 
-ggsave("../figure_man/cons-geo-interpretation.png", p)
+ggsave("../figure/cons-geo-interpretation.png", p)
 
 #################
 
@@ -108,7 +110,7 @@ p = p + geom_text(aes(x = 0.5, y = 0.5, label = "-c"), hjust = -1.5, vjust = -0.
 
 p = p + coord_equal()
 
-ggsave("../figure_man/cons-negative-gradient.png", p)
+ggsave("../figure/cons-negative-gradient.png", p)
 
 #################
 
@@ -126,7 +128,7 @@ p = p + geom_text(aes(x = 1 / 3, y = 1 / 3, label = "-c"), hjust = -1.5, vjust =
 
 p = p + coord_equal()
 
-ggsave("../figure_man/cons-opposite-direction.png", p)
+ggsave("../figure/cons-opposite-direction.png", p)
 
 ####################
 
@@ -174,4 +176,4 @@ p3 = p3 + xlab(expression(paste(x[1]))) + xlab(expression(paste(x[2])))
 p3 = p3 + xlim(c(0, 1)) + ylim(c(0, 1)) + theme_bw()
 
 p = grid.arrange(p1, p2, p3, ncol = 3)
-ggsave("../figure_man/cons-solutions-lp.png", p)
+ggsave("../figure/cons-solutions-lp.png", p)

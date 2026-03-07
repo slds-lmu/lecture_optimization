@@ -41,15 +41,15 @@ visualizer$add_optimization_trace(
   show_title = FALSE,
   show_legend = FALSE
 )
-
-visualizer$save(
-  filename = "../figure/gradient-descent-example_1.png"
+visualizer$plot(
+  show_title = FALSE,
+  show_legend = FALSE
 )
+# "../figure-man/gradient-descent-example_1.png" is a manually created screenshot
+
 
 visualizer$plot(flatten = TRUE,
   show_title = FALSE,
   show_legend = FALSE
 )
-visualizer$save(
-  filename = "../figure/gradient-descent-example_2.png"
-)
+# "../figure-man/gradient-descent-example_2.png" is a manually created screenshot

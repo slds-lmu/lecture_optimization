@@ -3,8 +3,10 @@
 
 # FIG: plot hessian and eigenvalues of a quadratic form
 # ------------------------------------------------------------------------------
+set.seed(1L)
+
 library(ggplot2)
-library(ggpubr)
+library(patchwork)
 # ------------------------------------------------------------------------------
 
 # Two quadratic functions
@@ -67,6 +69,8 @@ p3 = ggplot(data = df, aes(x = Var1, y = Var2, z = y)) + geom_contour_filled()
 p3 = p3 + xlab(expression(x[1])) + ylab(expression(x[2])) + theme_bw()
 
 
-p = ggarrange(p1, p2, p3, nrow=1, common.legend = TRUE, legend="right")
+p = p1 + p2 + p3 +
+  plot_layout(nrow = 1, guides = "collect") &
+  theme(legend.position = "right")
 
-ggsave("../figure_man/hessian-eigenvalues.pdf", p, width = 12, height = 4)
+ggsave("../figure/hessian-eigenvalues.pdf", p, width = 12, height = 4)

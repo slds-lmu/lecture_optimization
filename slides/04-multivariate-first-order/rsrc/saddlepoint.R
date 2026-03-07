@@ -42,4 +42,4 @@ p = plotly::layout(
   ),
   height = 500
 )
-plotly::save_image(p, "../figure/saddlepoint.png", width = 700, height = 500)
+# ../figure-man/saddlepoint.png is a manually created screenshot

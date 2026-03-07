@@ -1,5 +1,7 @@
 # comparison of NR and GD, show that NR converges much faster (good starting point)
 
+set.seed(1L)
+
 library(ggplot2)
 library(vistool)
 library(rlang)

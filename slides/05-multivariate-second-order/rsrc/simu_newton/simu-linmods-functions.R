@@ -15,9 +15,8 @@
 library(MASS)
 library(ggplot2)
 library(gridExtra)
-library(ggpubr)
 library(grid)
-#library(cowplot)
+library(patchwork)
 library(reshape2)
 
 set.seed(123)
@@ -711,31 +710,9 @@ plot_optimization_results <- function(loss_histories, test_loss_histories, l2_di
     )) +
     common_theme
   
-  # Extract legend
-  legend_grob <- ggpubr::get_legend(p1)
-  
-  # Remove legends from individual plots
-  p1 <- p1 + theme(legend.position = "none")
-  p2 <- p2 + theme(legend.position = "none")
-  p3 <- p3 + theme(legend.position = "none")
-  
-  # Combine plots
-  combined_plots <- ggpubr::ggarrange(
-    p1, p2, p3,
-    ncol = 3,
-    nrow = 1,
-    align = "hv"
-  )
-  
-  # Add legend below the combined plots
-  final_plot <- ggpubr::ggarrange(
-    combined_plots,
-    legend_grob,
-    ncol = 1,
-    heights = c(1, 0.15)  # Adjust the height ratio as needed
-  )
-  
-  return(final_plot)
+  p1 + p2 + p3 +
+    plot_layout(ncol = 3, guides = "collect") &
+    theme(legend.position = "bottom")
 }
 
 
@@ -813,15 +790,7 @@ plot_coef_paths <- function(beta_histories, method_names, beta_true,
     plots[[i]] <- p
   }
   
-  # Combine plots
-  combined_plot <- ggpubr::ggarrange(
-    plotlist = plots[methods_to_show %in% method_names],
-    ncol = length(methods_to_show),
-    nrow = 1,
-    align = "hv"
-  )
-  
-  return(combined_plot)
+  wrap_plots(Filter(Negate(is.null), plots), ncol = length(methods_to_show))
 }
 
 ################################################################################
@@ -866,21 +835,10 @@ plot_runtime_comparison <- function(loss_histories, test_loss_histories, l2_diff
          title = "Parameter optimization error") +
     plot_theme
   
-  # Extract legend
-  legend <- get_legend(
-    p1 + 
-      theme(legend.key.size = unit(1.2, "cm"))
-  )
-  
-  # Combine plots
-  combined_plot <- ggarrange(
-    p1 + theme(legend.position = "none"),
-    p2 + theme(legend.position = "none"),
-    ncol = 2,
-    legend.grob = legend,
-    legend = "bottom"
-  )
-  
-  return(combined_plot)
+  p1 + p2 +
+    plot_layout(ncol = 2, guides = "collect") &
+    theme(
+      legend.position = "bottom",
+      legend.key.size = unit(1.2, "cm")
+    )
 }
-

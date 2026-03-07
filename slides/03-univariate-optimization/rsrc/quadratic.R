@@ -4,6 +4,8 @@
 # FIG: plot quadratic interpolation process
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
 library(latex2exp)
 library(grid)
@@ -101,7 +103,7 @@ quadratic.interpolation = function(a, b, fun, max.iter = 10) {
 
     g = grid_arrange_shared_legend(p1, p2, p3, ncol = 3)
     
-    ggsave(paste("../figure_man/quadratic", iter+1, ".pdf", sep = ""), g, width = 9, height = 4)
+    ggsave(paste("../figure/quadratic", iter+1, ".pdf", sep = ""), g, width = 9, height = 4)
 
     int = interpolate(fun = fun, xl = d["xleft", "x"], xr = d["xright", "x"], xb = d["xbest", "x"])
 

@@ -6,6 +6,8 @@
 #   (2) same function as a contour map, with marked concavity.
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
 library(plotly)
 
@@ -69,7 +71,7 @@ fig_3d <- fig_3d %>%
 )
 
 fig_3d
-htmlwidgets::saveWidget(fig_3d, "../figure_man/hessian_3d.html", selfcontained = TRUE)
+htmlwidgets::saveWidget(fig_3d, "../figure/hessian_3d.html", selfcontained = TRUE)
 
 # Contour plot
 contour_plot <- ggplot(grid, aes(x = x, y = y, z = z)) +
@@ -95,4 +97,4 @@ contour_plot <- ggplot(grid, aes(x = x, y = y, z = z)) +
   theme_minimal()
 
 contour_plot
-ggsave("../figure_man/hessian_contour.png", contour_plot, width = 10, height = 8)
+ggsave("../figure/hessian_contour.png", contour_plot, width = 10, height = 8)

@@ -4,6 +4,8 @@
 # FIG: plot gradients
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
 library(plotly)
 library(pracma)
@@ -31,7 +33,7 @@ zfacet = z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
 # Recode facet z-values into color indices
 facetcol = cut(zfacet, nbcol)
 
-png("../figure_man/gradient5.png")
+png("../figure/gradient5.png")
 persp(x, y, z, col = colors[facetcol], phi = 30, theta = -30, border = NA, xlab = "x1", ylab = "x2", zlab = "y")
 dev.off()
 
@@ -46,7 +48,7 @@ p = p + geom_segment(data = data.frame(x = sqrt(0.125), y = sqrt(0.125), xend = 
 p = p + guides(fill = FALSE) + theme_void()
 
 p
-ggsave(filename = "../figure_man/gradient1.png", p, height=4, width=4)
+ggsave(filename = "../figure/gradient1.png", p, height=4, width=4)
 
 
 # Define function f(x, y)
@@ -97,7 +99,7 @@ p <- ggplot(grid, aes(x = x, y = y, z = z)) +
   theme(axis.text = element_blank(), axis.ticks = element_blank()) +
   coord_fixed()
 
-ggsave(filename = "../figure_man/gradient_unit_vectors.png", p)
+ggsave(filename = "../figure/gradient_unit_vectors.png", p)
 
 # 3D Surface Plot
 fig <- plot_ly(
@@ -121,4 +123,4 @@ fig <- layout(
 )
 
 fig
-htmlwidgets::saveWidget(fig, "../figure_man/gradient2.html", selfcontained = TRUE)
+htmlwidgets::saveWidget(fig, "../figure/gradient2.html", selfcontained = TRUE)

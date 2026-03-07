@@ -4,6 +4,8 @@
 # FIG: plot taylor polynomial of 0-4 orders for sin(x).
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
 library(dplyr)
 
@@ -49,4 +51,4 @@ plot <- ggplot(df, aes(x = x, y = y, color = order)) +
   )
 
 plot
-ggsave("../figure_man/taylor_univariate.png", plot, width = 10, height = 8)
+ggsave("../figure/taylor_univariate.png", plot, width = 10, height = 8)

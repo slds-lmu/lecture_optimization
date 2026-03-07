@@ -57,7 +57,7 @@ plot3d = plot_ly() %>%
         add_annotations(text = "z", xref="paper", yref="paper", x=1.05, xanchor="left",
             y=1, yanchor="bottom", legendtitle=TRUE, showarrow=FALSE)
 
-htmlwidgets::saveWidget(plot3d, "../figure_man/himmelblau-Fun3D.html", selfcontained = TRUE)
+htmlwidgets::saveWidget(plot3d, "../figure/himmelblau-Fun3D.html", selfcontained = TRUE)
 
 #2.1 2d contour plot
 
@@ -65,7 +65,7 @@ p = ggplot() + stat_contour_filled(data = grid, aes(x = x1, y = x2, z = y)) + xl
 # p = p + geom_point(data = data.frame(x = 0, y = 1), aes(x = x, y = y), colour = "orange")
 p = p + guides(fill = "none") + theme_bw()
 p
-ggsave("../figure_man/himmelblau-Fun2D.pdf", p, height = 3, width=3)
+ggsave("../figure/himmelblau-Fun2D.pdf", p, height = 3, width=3)
 
 #3 Simulated Annealing algorithm
 #3.1 set start value x; set current best point 'xbest'; generate sequence of temperatures;
@@ -131,7 +131,7 @@ for (k in 1:length(PAacceptiter)) {
 
   # For title page of slides 
   if (k == 3) {
-    ggsave(paste0("../figure_man/himmelblau-iter", k, "_probabilities.pdf"), p1, height = 4, width = 5)
+    ggsave(paste0("../figure/himmelblau-iter", k, "_probabilities.pdf"), p1, height = 4, width = 5)
   }
 
   df = PAacceptiter[[k]]
@@ -156,11 +156,11 @@ for (k in 1:length(PAacceptiter)) {
 
   # For title page of slides 
   if (k == 3) {
-    ggsave(paste0("../figure_man/himmelblau-iter", k, "_probabilities.pdf"), p2, height = 4, width = 5)
+    ggsave(paste0("../figure/himmelblau-iter", k, "_probabilities.pdf"), p2, height = 4, width = 5)
   }
 
   g = grid.arrange(p1, p2, nrow = 1)
 
-  ggsave(paste0("../figure_man/himmelblau-iter", k, ".pdf"), g, height = 4, width = 10)
+  ggsave(paste0("../figure/himmelblau-iter", k, ".pdf"), g, height = 4, width = 10)
 }
 

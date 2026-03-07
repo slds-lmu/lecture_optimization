@@ -70,7 +70,7 @@ cb = ggplot(aes(x = x, y = cb), data = grid) +
   theme_minimal()
 
 g / cb
-ggsave("../figure_man/bayesian_loop_lcb_0.png", plot = g / cb, width = 5, height = 4)
+ggsave("../figure/bayesian_loop_lcb_0.png", plot = g / cb, width = 5, height = 4)
 
 set(grid, j = "y_min", value = prediction$mean - 5 * prediction$se)
 set(grid, j = "y_max", value = prediction$mean + 5 * prediction$se)
@@ -100,7 +100,7 @@ cb = ggplot(aes(x = x, y = cb), data = grid) +
   theme_minimal()
 
 g / cb
-ggsave("../figure_man/bayesian_loop_lcb_1.png", plot = g / cb, width = 5, height = 4)
+ggsave("../figure/bayesian_loop_lcb_1.png", plot = g / cb, width = 5, height = 4)
 
 set(grid, j = "y_min", value = prediction$mean - 10 * prediction$se)
 set(grid, j = "y_max", value = prediction$mean + 10 * prediction$se)
@@ -130,5 +130,5 @@ cb = ggplot(aes(x = x, y = cb), data = grid) +
   theme_minimal()
 
 g / cb
-ggsave("../figure_man/bayesian_loop_lcb_2.png", plot = g / cb, width = 5, height = 4)
+ggsave("../figure/bayesian_loop_lcb_2.png", plot = g / cb, width = 5, height = 4)
 

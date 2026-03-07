@@ -4,6 +4,8 @@
 # DATA: benchmark result data.
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(mlr)
 library(mlrMBO)
 library(batchtools)
@@ -97,6 +99,3 @@ if (!fs::file_exists("benchmark_res.rds")) {
   })
   saveRDS(res, "benchmark_res.rds")
 }
-
-
-

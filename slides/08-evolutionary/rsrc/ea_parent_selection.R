@@ -4,6 +4,8 @@
 # FIG: plot fitness for ea parent to select
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
 library(dplyr)
 
@@ -24,4 +26,4 @@ p = ggplot(df, aes(x="", y=probability, fill=fitness)) +
   geom_text(aes(label = fitness), color = "white",
             position = position_stack(vjust = 0.5))
 p
-ggsave("../figure_man/ea_parent_selection.pdf", p, width = 5, height = 5)
+ggsave("../figure/ea_parent_selection.pdf", p, width = 5, height = 5)

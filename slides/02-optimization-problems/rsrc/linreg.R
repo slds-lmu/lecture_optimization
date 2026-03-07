@@ -1,6 +1,6 @@
 set.seed(314L)
 library(vistool)
-library(ggpubr)
+library(patchwork)
 
 # Simulate a linear regression task once for all plots.
 n = 1000L
@@ -97,14 +97,7 @@ plot_ridge = render_linreg(
 )
 
 # Combine the vistool plots into a single layout.
-combined = ggpubr::ggarrange(
-  plot_unreg,
-  plot_lasso,
-  plot_ridge,
-  ncol = 3,
-  nrow = 1,
-  common.legend = TRUE,
-  legend = "right"
-)
+combined = plot_unreg + plot_lasso + plot_ridge +
+  plot_layout(ncol = 3)
 
 ggplot2::ggsave("../figure/linreg.png", combined, width = 8, height = 3)

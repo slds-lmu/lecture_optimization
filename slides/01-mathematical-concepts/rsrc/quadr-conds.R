@@ -3,6 +3,8 @@
 
 # FIG: contour plot for quadratic form with different eigenvalues
 # ------------------------------------------------------------------------------
+set.seed(1L)
+
 library(ggplot2)
 library(plotly)
 # ------------------------------------------------------------------------------
@@ -50,5 +52,5 @@ fig <- subplot(fig1, fig2, fig3) %>%
   )
 
 
-htmlwidgets::saveWidget(fig, "../figure_man/quadr-conds.html", selfcontained = TRUE)
+htmlwidgets::saveWidget(fig, "../figure/quadr-conds.html", selfcontained = TRUE)
 

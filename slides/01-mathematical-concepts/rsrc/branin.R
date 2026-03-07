@@ -4,6 +4,8 @@
 # FIG: plot negative gradients on contour plot of branin function
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(DiceKriging)
 library(rootSolve)
 
@@ -34,7 +36,7 @@ p7g <- -gradient(branin, p7) / 2000
 
 # PLOT -------------------------------------------------------------------------
 
-png(filename = "../figure_man/branin.png", width = 800, height = 600)
+png(filename = "../figure/branin.png", width = 800, height = 600)
 
 plot.new()
 contour(x.grid,y.grid,z.grid,40)

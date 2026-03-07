@@ -4,8 +4,10 @@
 # FIG: plot influence of step size
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
-library(ggpubr)
+library(patchwork)
 library(rootSolve)
 
 theme_set(theme_bw())
@@ -88,7 +90,8 @@ p1
 p2 = ggplot(data = progress, aes(x = t, y = y, color = stepsize)) + geom_line()
 p2
 
-p = ggarrange(p1, p2, nrow = 1, common.legend = TRUE, legend = "right")
+p = p1 + p2 +
+  plot_layout(nrow = 1, guides = "collect") &
+  theme(legend.position = "right")
 p
-ggsave(filename = "../figure_man/fixed_vs_adaptive.pdf", p, width = 9, height = 2.5)
-
+ggsave(filename = "../figure/fixed_vs_adaptive.pdf", p, width = 9, height = 2.5)

@@ -4,6 +4,8 @@
 # FIG: plot 2d taylor series
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(plotly)
 
 # ------------------------------------------------------------------------------
@@ -33,4 +35,4 @@ p = plot_ly() %>% add_surface(x = x1, y = x2, z = z) %>% add_surface(x = x1, y =
     ))
 
 p
-htmlwidgets::saveWidget(p, "../figure_man/taylor2D.html", selfcontained = TRUE)
+htmlwidgets::saveWidget(p, "../figure/taylor2D.html", selfcontained = TRUE)

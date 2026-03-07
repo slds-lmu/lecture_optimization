@@ -4,6 +4,8 @@
 # FIG: plot bisection method process
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(knitr)
 library(microbenchmark)
 library(snow)
@@ -43,4 +45,4 @@ plot = plot + xlab(expression(alpha)) + ylab("y")
 plot = plot + xlim(c(0, 4)) + ylim(c(-2, 3)) + theme_bw()
 
 plot
-ggsave("../figure_man/armijo.pdf", plot, width = 6, height = 4)
+ggsave("../figure/armijo.pdf", plot, width = 6, height = 4)

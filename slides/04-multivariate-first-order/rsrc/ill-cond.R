@@ -28,10 +28,10 @@ vis$plot(
 	show_title = FALSE,
 	show_legend = FALSE
 )
-vis$save("../figure/ill-cond_1.png")
+# ../figure-man/ill-cond_1.png is a manually created screenshot
 
 vis$plot(
 	flatten = TRUE,
 	show_title = FALSE
 )
-vis$save("../figure/ill-cond_2.png")
+# ../figure-man/ill-cond_2.png is a manually created screenshot

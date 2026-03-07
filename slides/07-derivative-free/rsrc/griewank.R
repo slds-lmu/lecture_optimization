@@ -4,6 +4,8 @@
 # FIG: plot griewank function
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(plotly)
 
 # ------------------------------------------------------------------------------
@@ -27,4 +29,4 @@ p <- plot_ly() %>% add_surface(x = x1, y = x2, z = z) %>%
     ))
 p
 
-htmlwidgets::saveWidget(p, "../figure_man/griewank.html", selfcontained = TRUE)
+htmlwidgets::saveWidget(p, "../figure/griewank.html", selfcontained = TRUE)

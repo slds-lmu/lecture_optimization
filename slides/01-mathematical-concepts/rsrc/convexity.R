@@ -4,6 +4,8 @@
 # FIG: plot convexity characteristics
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
 library(gridExtra)
 
@@ -22,7 +24,7 @@ p = p + geom_segment(aes(x = 1, y = 1, xend = 4, yend = 4), lty = 2) + geom_text
 p = p + geom_point(aes(x = 2.5, y = 0.25), color = "blue", size = 4) + geom_text(x = 3.2, y = 0.25, label = "f(x + t[y - x])", color = "blue", size = 6) + theme_bw()
 p
 
-ggsave("../figure_man/convexity_1.pdf", p, width = 6, height = 4)
+ggsave("../figure/convexity_1.pdf", p, width = 6, height = 4)
 
 
 
@@ -33,7 +35,7 @@ p = p + geom_segment(aes(x = 0, y = 1, xend = 2, yend = 0), lty = 2) + geom_text
 p = p + geom_point(aes(x = 1, y = 0), color = "blue", size = 4) + geom_text(x = 1, y = -0.2, label = "f(x + t[y - x])", color = "blue", size = 6) + theme_bw()
 p
 
-ggsave("../figure_man/convexity_2.pdf", p, width = 6, height = 4)
+ggsave("../figure/convexity_2.pdf", p, width = 6, height = 4)
 
 
 p1 = ggplot(data = data.frame(x = 0), mapping = aes(x = x)) + stat_function(fun = f1) + xlim(c(0.5, 4.5))
@@ -49,4 +51,4 @@ p3 = p3 + geom_point(data = data.frame(x = -1.3, y = f3(-1.3)), aes(x = x, y = y
 p3 = p3 + geom_point(data = data.frame(x = 1.13, y = f3(1.13)), aes(x = x, y = y), colour = "orange", size = 2)
 p3
 
-ggsave("../figure_man/convexity_3.pdf", grid.arrange(p1, p2, p3, nrow = 1), width = 12, height = 4)
+ggsave("../figure/convexity_3.pdf", grid.arrange(p1, p2, p3, nrow = 1), width = 12, height = 4)

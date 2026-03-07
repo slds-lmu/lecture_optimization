@@ -11,7 +11,6 @@ library(mlr3mbo)
 library(mlr3learners)
 library(mlr3misc)
 library(ggplot2)
-library(pammtools)
 library(patchwork)
 library(adagio)
 
@@ -33,7 +32,7 @@ g = ggplot(aes(x = x1, y = x2), data = xdt[method == "random"]) +
   labs(title = "Random Design", x = expression(x[1]), y = expression(x[2])) +
   theme_minimal()
 
-ggsave("../figure_man/black_box_0.png", plot = g, width = 5, height = 4)
+ggsave("../figure/black_box_0.png", plot = g, width = 5, height = 4)
 
 g = ggplot(aes(x = x1, y = x2), data = xdt[method == "gs"]) +
   geom_point(size = 3L) +
@@ -41,7 +40,7 @@ g = ggplot(aes(x = x1, y = x2), data = xdt[method == "gs"]) +
   labs(title = "Grid Design", x = expression(x[1]), y = expression(x[2])) +
   theme_minimal()
 
-ggsave("../figure_man/black_box_1.png", plot = g, width = 5, height = 4)
+ggsave("../figure/black_box_1.png", plot = g, width = 5, height = 4)
 
 objective = ObjectiveRFunDt$new(
  fun = function(xdt) data.table(y = -20.0 * exp(-0.2 * sqrt(0.5 * (xdt$x1^2 + xdt$x2^2))) - 
@@ -93,11 +92,14 @@ results = map_dtr(1:10, function(i) {
 agg = results[, .(mean_best = mean(best), se_best = sd(best) / sqrt(.N)), by = .(iter, method)]
 
 g = ggplot(aes(x = iter, y = mean_best, colour = method, fill = method), data = agg) +
+  geom_ribbon(
+    aes(ymin = mean_best - se_best, ymax = mean_best + se_best),
+    colour = NA,
+    alpha = 0.25
+  ) +
   geom_step() +
-  geom_stepribbon(aes(x = iter, min = mean_best - se_best, max = mean_best + se_best), colour = NA, alpha = 0.25) +
   labs(x = "Nr. Function Evaluations", y = "Best Objective Value", colour = "Method", fill = "Method") +
   theme_minimal() +
   theme(legend.position = "bottom")
 
-ggsave("../figure_man/black_box_2.png", plot = g, width = 5, height = 4)
-
+ggsave("../figure/black_box_2.png", plot = g, width = 5, height = 4)
