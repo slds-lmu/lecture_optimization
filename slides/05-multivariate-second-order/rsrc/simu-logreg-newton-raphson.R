@@ -15,8 +15,18 @@ library(reshape2)
 
 set.seed(123)
 
-# Save outputs under the chapter figure directory when run from `rsrc/simu_newton`.
-dir.create("../../figure/simu-newton/", recursive = TRUE, showWarnings = FALSE)
+output_dir <- "../figure/simu-newton"
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
+
+save_plot <- function(plot, filename, width, height) {
+  ggsave(
+    filename = file.path(output_dir, paste0(filename, ".png")),
+    plot = plot,
+    width = width,
+    height = height,
+    dpi = 300
+  )
+}
 
 # ------------------------------------------------------------------------------
 
@@ -75,12 +85,8 @@ pl <- plot_optimization_results(
   xaxis = "iterations",
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
-# Save as PNG/PDF
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_indep_50iters.png", plot = pl, width = 15, 
-       height = 5, dpi = 300)
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_indep_50iters.pdf", plot = pl, 
-       width = 15, height = 5, device = cairo_pdf)
-print(pl)
+# Save the figure used on the slides
+save_plot(plot = pl, filename = "NR_GD_log_indep_50iters", width = 15, height = 5)
 
 # Generate coefficient path plots
 pl_coef <- plot_coef_paths(
@@ -89,13 +95,8 @@ pl_coef <- plot_coef_paths(
   beta_true = results$beta_true,
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
-# Save the coefficient paths plot
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_coef_50indep.png", 
-       plot = pl_coef, width = 15, height = 4, dpi = 300)
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_coef_50indep.pdf", 
-       plot = pl_coef, width = 15, height = 4, device = cairo_pdf)
-
-plot(pl_coef)
+# Save the figure used on the slides
+save_plot(plot = pl_coef, filename = "NR_GD_log_coef_50indep", width = 15, height = 4)
 
 # Generate runtime comparison plot
 pl_runtime <- plot_runtime_comparison(
@@ -107,13 +108,8 @@ pl_runtime <- plot_runtime_comparison(
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
 
-# Save the runtime comparison plot
-ggsave(filename = "../../figure/simu-newton/NR_GD_runtime_comparison.png", 
-       plot = pl_runtime, width = 15, height = 6, dpi = 300)
-ggsave(filename = "../../figure/simu-newton/NR_GD_runtime_comparison.pdf", 
-       plot = pl_runtime, width = 15, height = 6, device = cairo_pdf)
-
-print(pl_runtime)
+# Save the figure used on the slides
+save_plot(plot = pl_runtime, filename = "NR_GD_runtime_comparison", width = 15, height = 6)
 
 ################################################################################
 ################################################################################
@@ -156,12 +152,8 @@ pl <- plot_optimization_results(
   xaxis = "iterations",
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
-# Save as PNG/PDF
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_indep_1000iters.png", plot = pl, width = 15, 
-       height = 5, dpi = 300)
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_indep_1000iters.pdf", plot = pl, 
-       width = 15, height = 5, device = cairo_pdf)
-print(pl)
+# Save the figure used on the slides
+save_plot(plot = pl, filename = "NR_GD_log_indep_1000iters", width = 15, height = 5)
 
 # Generate coefficient path plots
 pl_coef <- plot_coef_paths(
@@ -170,13 +162,8 @@ pl_coef <- plot_coef_paths(
   beta_true = results$beta_true,
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
-# Save the coefficient paths plot
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_coef_1000indep.png", 
-       plot = pl_coef, width = 15, height = 4, dpi = 300)
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_coef_1000indep.pdf", 
-       plot = pl_coef, width = 15, height = 4, device = cairo_pdf)
-
-plot(pl_coef)
+# Save the figure used on the slides
+save_plot(plot = pl_coef, filename = "NR_GD_log_coef_1000indep", width = 15, height = 4)
 
 ################################################################################
 ################################################################################
@@ -219,12 +206,8 @@ pl <- plot_optimization_results(
   xaxis = "iterations",
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
-# Save as PNG/PDF
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_indep_50iters_corr.png", plot = pl, width = 15, 
-       height = 5, dpi = 300)
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_indep_50iters_corr.pdf", plot = pl, 
-       width = 15, height = 5, device = cairo_pdf)
-print(pl)
+# Save the figure used on the slides
+save_plot(plot = pl, filename = "NR_GD_log_indep_50iters_corr", width = 15, height = 5)
 
 # Generate coefficient path plots
 pl_coef <- plot_coef_paths(
@@ -233,13 +216,8 @@ pl_coef <- plot_coef_paths(
   beta_true = results$beta_true,
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
-# Save the coefficient paths plot
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_coef_50indep_corr.png", 
-       plot = pl_coef, width = 15, height = 4, dpi = 300)
-ggsave(filename = "../../figure/simu-newton/NR_GD_log_coef_50indep_corr.pdf", 
-       plot = pl_coef, width = 15, height = 4, device = cairo_pdf)
-
-plot(pl_coef)
+# Save the figure used on the slides
+save_plot(plot = pl_coef, filename = "NR_GD_log_coef_50indep_corr", width = 15, height = 4)
 
 # Generate runtime comparison plot
 pl_runtime <- plot_runtime_comparison(
@@ -251,10 +229,5 @@ pl_runtime <- plot_runtime_comparison(
   methods_to_show = c("Newton-Raphson", "Newton-Raphson+step size", "GD+mom")
 )
 
-# Save the runtime comparison plot
-ggsave(filename = "../../figure/simu-newton/NR_GD_runtime_comparison_corr.png", 
-       plot = pl_runtime, width = 15, height = 6, dpi = 300)
-ggsave(filename = "../../figure/simu-newton/NR_GD_runtime_comparison_corr.pdf", 
-       plot = pl_runtime, width = 15, height = 6, device = cairo_pdf)
-
-print(pl_runtime)
+# Save the figure used on the slides
+save_plot(plot = pl_runtime, filename = "NR_GD_runtime_comparison_corr", width = 15, height = 6)
