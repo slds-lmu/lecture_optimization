@@ -68,7 +68,6 @@ for (mom in c(0, 0.5)) {
   p = p + ylim(c(0, 130)) 
   p = p + annotate("text",label=paste0("Momentum: ",mom), x=50, y=10)
   print(p)
-  ggsave(filename = paste0("../figure/gradient_descent_NN_300_history_",mom,".pdf"), p, width = 4, height = 3)
 }
 
 
@@ -90,4 +89,3 @@ p = ggplot(data = df, aes(x = epoch, y = loss, colour = bs_fraction)) + geom_lin
 # p = p + ylim(c(0, 130)) 
 p = p + theme_bw() + ggtitle("SGD with different batch sizes")
 p
-ggsave(filename = "../figure/gradient_descent_NN_SGD_vs_no_SGD.pdf", width = 5, height = 3)

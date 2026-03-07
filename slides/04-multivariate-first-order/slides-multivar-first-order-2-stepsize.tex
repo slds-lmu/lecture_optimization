@@ -46,7 +46,7 @@ Steps of line searches for $f(\xv) = 10 x_1^2 + x_2^2/2$
 $$f(x) = \begin{cases}
 \frac{1}{2} x^2 & \text{if $|x| \le \delta$}, \\
 \delta \cdot (|x|- 1 / 2 \cdot \delta) & \text{otherwise}.\end{cases}$$
-\imageC{figure_man/fixed_vs_adaptive.pdf}
+\imageC{figure/fixed_vs_adaptive.pdf}
 \begin{center}\begin{footnotesize}
 GD with small constant (\textbf{red}), large constant (\textbf{green}), and diminishing (\textbf{blue}) step size
 \end{footnotesize}\end{center}
@@ -69,7 +69,7 @@ $\Rightarrow$ univariate optimization methods
 
 \begin{framei}{Armijo rule}
 \item[] 
-\imageC[0.5]{figure_man/armijo.pdf}
+\imageC[0.5]{figure/armijo.pdf}
 \onslide<1>{
 \item\textbf{Inexact line search:} Minimize objective ``sufficiently'' without computing optimal step size exactly
 \item Common condition to guarantee ``sufficient'' decrease: \textbf{Armijo rule}}
