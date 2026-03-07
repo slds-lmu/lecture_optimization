@@ -14,7 +14,7 @@ Bayesian Optimization
 }{
 Noisy Bayesian Optimization
 }{
-figure_man/noisy_2.png
+figure/noisy_2.png
 }{
 \item Noisy surrogate modeling
 \item Noisy acquisition functions
@@ -26,7 +26,7 @@ In many real-life applications, we cannot access the true function values $f(\xv
 $$f(\xv) + \eps(\xv)$$
 For the sake of simplicity, we assume $\eps(\xv) \sim \normal(0, \sigma_{\eps}^2)$ for now\\
 \vfill
-\imageC[0.5]{figure_man/noisy_0.png}
+\imageC[0.5]{figure/noisy_0.png}
 \end{framev}
 
 
@@ -59,7 +59,7 @@ In case of noisy evaluations, a nugget-effect GP (GP regression) should be used 
 \spacer
 The posterior predictive distribution for a new test point $\xv \in \mathcal{S}$ under a GP assuming homoscedastic noise ($\sigma_{\eps}^2$) is:
 }{
-\imageC[1]{figure_man/noisy_2.png}
+\imageC[1]{figure/noisy_2.png}
 }
 \vfill
 $$
@@ -99,7 +99,7 @@ $$
 $$
 The penalty is justified to \enquote{account for the diminishing return of additional replicates as the predictions become more accurate} (\sourceref{https://link.springer.com/article/10.1007/s10898-005-2454-3})
 }{
-\imageC[1]{figure_man/noisy_3.png}
+\imageC[1]{figure/noisy_3.png}
 }
 \vfill
 \begin{itemize}
@@ -115,9 +115,9 @@ Clean noise from the model and then apply a general acquisition function (EI, PI
 The RP suggests to build \textbf{two models}: a nugget-effect GP (regression model; left) and then, on the predictions from the first model (grey), an interpolating GP (right)
 \vfill
 \splitVCC[0.5]{
-\imageC[1]{figure_man/noisy_2.png}
+\imageC[1]{figure/noisy_2.png}
 }{
-\imageC[1]{figure_man/noisy_4.png}
+\imageC[1]{figure/noisy_4.png}
 }
 \end{framev}
 
@@ -134,9 +134,9 @@ The RP suggests to build \textbf{two models}: a nugget-effect GP (regression mod
 \end{algorithm}
 \vfill
 \splitVCC[0.5]{
-\imageC[1]{figure_man/noisy_2.png}
+\imageC[1]{figure/noisy_2.png}
 }{
-\imageC[1]{figure_man/noisy_4.png}
+\imageC[1]{figure/noisy_4.png}
 }
 \end{framev}
 
@@ -151,7 +151,7 @@ Another problem is the identification of a final best point:
 \end{itemize}
 \end{itemize}
 \vfill
-\imageC[0.5]{figure_man/noisy_5.png}
+\imageC[0.5]{figure/noisy_5.png}
 \end{framev}
 
 
