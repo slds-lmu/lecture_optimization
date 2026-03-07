@@ -63,7 +63,7 @@ The problem is called
 \item $\D = \left(\xi[1], ..., \xi[n]\right) \overset{\text{i.i.d.}}{\sim} f(\xv ~|~ \mu, \sigma)$ with $\sigma = 1$:
 $$ f(\xv ~|~ \mu, \sigma) = \frac{1}{\sqrt{2 \pi \sigma^{2}}}~\exp\left(\frac{-(\xv-\mu)^{2}}{2\sigma^{2}}\right) $$
 \item \textbf{Goal:} Find $\mu \in \R$ which makes observed data most likely
-\imageC[0.5]{figure_man/ml_normal_example_dnorm.pdf}
+\imageC[0.5]{figure/ml_normal_example_dnorm.pdf}
 \end{framei}
 
 
@@ -72,7 +72,7 @@ $$ f(\xv ~|~ \mu, \sigma) = \frac{1}{\sqrt{2 \pi \sigma^{2}}}~\exp\left(\frac{-(
 $$ \mathcal{L}(\mu~|~\D)= \prod_{i=1}^{n} f\left(\xi~|~\mu, 1\right) = (2\pi)^{-n/2}\exp\left(-\frac{1}{2} \sum_{i=1}^{n} (\xi-\mu)^{2} \right) $$
 \item \textbf{Neg. log-likelihood:}
 $$ - \ell(\mu, \D) = - \log \mathcal{L}(\mu~|~\D) = \frac{n}{2} \log(2\pi) + \frac{1}{2} \sum_{i=1}^{n} (\xi-\mu)^{2} $$
-\imageC[0.4]{figure_man/ml_normal_example_negloglike_nooptim.pdf}
+\imageC[0.4]{figure/ml_normal_example_negloglike_nooptim.pdf}
 \end{framei}
 
 
@@ -80,7 +80,7 @@ $$ - \ell(\mu, \D) = - \log \mathcal{L}(\mu~|~\D) = \frac{n}{2} \log(2\pi) + \fr
 \item[] $$ \min_{\mu \in \R} - \ell(\mu, \D). $$
 \item can be solved analytically (setting the first deriv. to $0$) since it is a quadratic function:
 $$ -\frac{\partial \ell(\mu, \D)}{\partial \mu} = \sumin \left(\xi - \mu\right) = 0 \quad \Leftrightarrow \quad \hat \mu = \frac{1}{n} \sumin \xi $$
-\imageC[0.4]{figure_man/ml_normal_example_negloglike.pdf}
+\imageC[0.4]{figure/ml_normal_example_negloglike.pdf}
 \end{framei}
 
 
