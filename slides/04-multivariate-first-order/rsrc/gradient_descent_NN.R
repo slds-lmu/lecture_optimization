@@ -91,27 +91,3 @@ p = ggplot(data = df, aes(x = epoch, y = loss, colour = bs_fraction)) + geom_lin
 p = p + theme_bw() + ggtitle("SGD with different batch sizes")
 p
 ggsave(filename = "../figure/gradient_descent_NN_SGD_vs_no_SGD.pdf", width = 5, height = 3)
-
-ggsave(filename = "../figure/gradient_descent_NN_SGD_vs_no_SGD_2.pdf", width = 5, height = 3)
-
-
-## DIFFERENT OPTIMIZERS 
-set_nn_seed(1111)
-
-epochs = 50
-bsf = 1 / 200 # batch size 
-lr = 0.005
-
-out = lapply(c("optimizer_sgd", "optimizer_adam", "optimizer_rmsprop"), function(opts) {
-  history = train_model(data_task, epochs = epochs, optimizer = opts, bs_fraction = bsf, lr = lr)
-  cbind(data.frame(loss = history_loss(history)), bs_fraction = bsf, epoch = 1:epochs, optimizer = opts)
-})
-
-df = do.call(rbind, out)
-df$bs_fraction = as.factor(df$bs_fraction)
-
-p = ggplot(data = df, aes(x = log(epoch), y = loss, colour = optimizer)) + geom_line()
-# p = p + ylim(c(0, 130)) 
-p = p + theme_bw() + ggtitle("Different optimizers")
-p
-ggsave(filename = "../figure/gradient_descent_NN_ADAM_SGD_RMS_ADAGRAD.pdf", width = 5, height = 3)
