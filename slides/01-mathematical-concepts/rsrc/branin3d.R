@@ -82,32 +82,3 @@ mypoints <- trans3d(xx,yy,zz,pmat = p)
 points(mypoints,pch = 16,col = 2)
 
 dev.off()
-
-
-# Zoom in optimum one
-
-for (i in 1:3) {
-
-	x1 = seq(xx[i] - 1, xx[i] + 1, by = 0.1)
-	x2 = seq(yy[i] - 1, yy[i] + 1, by = 0.1)
-	z = outer(x1, x2, braninm)
-
-	nrz <- nrow(z)
-	ncz <- ncol(z)
-	jet.colors <- colorRampPalette( c("blue", "green", "yellow", "orange", "red") )
-	nbcol <- 100
-	color <- jet.colors(nbcol)
-	# Compute the z-value at the facet centres
-	zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
-	# Recode facet z-values into color indices
-	facetcol <- cut(zfacet, nbcol)
-
-	# 3D PLOT 
-	pdf(paste0("../figure/branin3d/branin3D-optim-", i, ".pdf"),5,7.5, colormodel = "cmyk")
-	par(xaxs = "i", yaxs = "i")
-	p = persp(x1, x2, z, col = color[facetcol], theta = 15, phi = 20)
-	mypoints <- trans3d(xx[i],yy[i],zz[i],pmat = p)
-	points(mypoints,pch = 16,col = 2)
-
-	dev.off()
-}

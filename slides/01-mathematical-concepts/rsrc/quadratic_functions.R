@@ -106,36 +106,6 @@ ggsave("../figure/quadratic_functions_1D_derivative.png", do.call(grid.arrange, 
 
 
 
-# Multivariate example: Diagonal matrix  
-
-
-f = function(x, y) 2 * x^2 + y^2
-
-grid = compute_grid_data(seq(-3, 3, by = 0.01), seq(-3, 3, by = 0.01), f)$grid
-
-## quadratic_functions_2D_diag_1.png
-p = plot_contour_data(f, grid)
-ggsave(filename = "../figure/quadratic_functions_2D_example_diag_1.png", p, width = 3, height = 3)
-
-
-v1 = c(1, 0); e1 = 2
-v2 = c(0, 1); e2 = 1
-
-# quadratic_functions_2D_diag_2.png
-p1 = plot_eigenvector(p, v1, "orange") + coord_fixed()
-p2 = plot_direction_along_eigenvector(grid, e1, "orange") + ylim(c(0, 8))
-
-ggsave("../figure/quadratic_functions_2D_example_diag_2.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
-
-# quadratic_functions_2D_diag_3.png
-p1 = plot_eigenvector(p1, v2, "magenta")
-p2 = plot_direction_along_eigenvector(grid, e2, "magenta") + ylim(c(0, 8))
-
-ggsave("../figure/quadratic_functions_2D_example_diag_3.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
-
-
-
-
 # Multidimensional Example (I)
 
 f = function(x, y) 2 * x^2 - 2 * x * y + 2 * y^2
@@ -155,44 +125,6 @@ dev.off()
 p = plot_contour_data(f, grid)
 ggsave("../figure/quadratic_functions_2D_example_1_2.png", p, width = 3, height = 3)
 
-
-v1 = c(1, 0); e1 = 2.5
-v2 = c(0, 1); e2 = 2.5
-
-# quadratic_functions_2D_diag_2.png
-p1 = plot_eigenvector(p, v1, "black") + coord_fixed()
-p2 = plot_direction_along_eigenvector(grid, e1, "black") + ylim(c(0, 8))
-
-ggsave("../figure/quadratic_functions_2D_example_1_3.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
-
-# quadratic_functions_2D_diag_3.png
-p1 = plot_eigenvector(p1, v2, "black")
-p2 = plot_direction_along_eigenvector(grid, e2, "black") + ylim(c(0, 8))
-
-ggsave("../figure/quadratic_functions_2D_example_1_4.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
-
-
-v1 = c(1, 1); e1 = 2
-v2 = c(-1, 1); e2 = 3
-
-# quadratic_functions_2D_diag_2.png
-p1 = plot_eigenvector(p, v1, "orange") + coord_fixed()
-p2 = plot_direction_along_eigenvector(grid, e1, "orange") + ylim(c(0, 8))
-
-ggsave("../figure/quadratic_functions_2D_example_1_5.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
-
-# quadratic_functions_2D_diag_3.png
-p1 = plot_eigenvector(p1, v2, "magenta")
-p2 = plot_direction_along_eigenvector(grid, e2, "magenta") + ylim(c(0, 8))
-
-ggsave("../figure/quadratic_functions_2D_example_1_6.png", grid.arrange(p1, p2, nrow = 1), width = 8, height = 3)
-
-ggsave("../figure/quadratic_functions_2D_example_1_7.png", p1, width = 4, height = 3)
-
-
-
-
-
 # Multidimensional Example (II)
 
 f = function(x, y) (-1) * x^2 - 2 * x * y + y^2
@@ -202,29 +134,9 @@ y = seq(-3, 3, by = 0.05)
 
 griddata = compute_grid_data(x, y, f)
 grid = griddata$grid
-colors = griddata$color
-z = griddata$z
-
-png("../figure/quadratic_functions_2D_example_2_1.png")
-persp(x, y, z, col = colors, phi = 30, theta = -20, border = NA, xlab = "x1", ylab = "x2", zlab = "y")
-dev.off()
-
-p = ggplot() + xlim(c(-3, 3)) + ylim(c(-3, 3))
 
 v1 = c(1 - sqrt(2), 1); e1 = - sqrt(2)
 v2 = c(1 + sqrt(2), 1); e2 = lambda2 = 2 * sqrt(2)
-
-# quadratic_functions_2D_diag_2.png
-p1 = plot_eigenvector(p, v1, "orange") + coord_fixed()
-p2 = plot_direction_along_eigenvector(grid, e1, "orange") + ylim(c(-8, 8))
-
-ggsave("../figure/quadratic_functions_2D_example_2_2.png", p1, width = 4, height = 3)
-
-# quadratic_functions_2D_diag_3.png
-p1 = plot_eigenvector(p1, v2, "magenta")
-p2 = plot_direction_along_eigenvector(grid, e2, "magenta") + ylim(c(-8, 8))
-
-ggsave("../figure/quadratic_functions_2D_example_2_3.png", p1, width = 4, height = 3)
 
 
 p1 = ggplot(data = grid, aes(x = x, y = y, z = f)) 
@@ -254,21 +166,6 @@ colors<-col.pal(nbcol)
 zfacet = z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
 # Recode facet z-values into color indices
 facetcol = cut(zfacet, nbcol)
-
-png("../figure/quadratic_functions_2D_bad_cond_1.png")
-persp(x, y, z, col = colors[facetcol], phi = 30, theta = -20, border = NA, xlab = "x1", ylab = "x2", zlab = "y")
-dev.off()
-
-grid <- expand.grid(x = x, y = y)
-grid$f = sapply(seq_len(nrow(grid)), function(i) f(grid[i, 1], grid[i, 2]))
-
-p = ggplot() + stat_contour(data = grid, aes(x = x, y = y, z = f)) 
-# p = p + geom_point(data = data.frame(x = 0, y = 1), aes(x = x, y = y), colour = "orange")
-p = p + geom_point(data = data.frame(x = 0, y = 0), aes(x = x, y = y), colour = "blue", size = 3)
-p = p + xlab("x1") + ylab("x2")
-p = p + guides(fill = FALSE) + theme_minimal()
-
-ggsave("../figure/quadratic_functions_2D_bad_cond_2.png", p, width = 3, height = 3)
 
 
 
