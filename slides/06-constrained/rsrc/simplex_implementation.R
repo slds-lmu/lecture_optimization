@@ -138,7 +138,7 @@ plotPoly = function(A, b) {
 }
 
 
-for (i in 1:dim(V)[1]) {
+for (i in 1:min(4, dim(V)[1])) {
   p1 = plotPoly(A, b) + ggtitle(paste("Iteration", i))
   p1 = p1 + geom_abline(data = V[1:i, ], aes(intercept = intercept, slope = slope), lty = 2)
   # p1 = p1 + geom_segment(data = V[1:i, ], aes(x = x1, y = x2, xend = x1 - 0.4 * cost[1], yend = x2 - 0.4 * cost[2]), arrow = arrow(length = unit(0.03, "npc")))

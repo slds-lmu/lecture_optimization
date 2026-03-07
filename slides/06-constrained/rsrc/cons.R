@@ -78,39 +78,9 @@ ggsave("../figure/cons-linear-pro-example.png", plotPoly(A, b))
 ###############
 
 
-f = function(x) b[1] / A[1, 2] - b[1] / A[1, 2] * x
-
-p = ggplot(data = data.frame(x = 0))
-p = p + geom_abline(slope = - b[1] / A[1, 2], intercept =  b[1] / A[1, 2], color = "green")
-p = p + geom_polygon(data = data.frame(x = c(-5, 5, 5, -5), y = c(-5, -5, f(5), f(-5))), aes(x = x, y = y), fill = "green", alpha = 0.1)
-p = p + geom_segment(aes(x = 0, y = f(0), xend = 0 - A[1, 1], yend = f(0) - A[1, 2]), arrow = arrow(length = unit(0.03, "npc")), color = "green")
-
-p = p + xlab(expression(x[1])) + ylab(expression(x[2]))
-
-p = p + theme_bw() + coord_equal()
-
-p = p + xlim(c(-5, 5))
-p = p + ylim(c(-5, 5))
-
-ggsave("../figure/cons-geo-interpretation.png", p)
-
-#################
-
-
 f =  function(x, z) - z - x
 dd = expand.grid(x = seq(-2, 2, by = 0.01), z = seq(-2, 2, by = 1 / 6))
 dd %>% rowwise %>% mutate(y = f(x = x, z = z)) -> dd2
-
-p = ggplot() + geom_path(data = dd2, aes(x, y, col = z, group = z))
-p = p + scale_colour_gradientn(colours = terrain.colors(10))
-p = p + theme_bw() + xlim(c(0, 1)) + ylim(c(0, 1))
-p = p + xlab("x1") + ylab("x2") + labs(colour = "y")
-p = p + geom_segment(aes(x = 0.5, y = 0.5, xend = 0.625, yend = 0.625), arrow = arrow(length = unit(0.03, "npc")))
-p = p + geom_text(aes(x = 0.5, y = 0.5, label = "-c"), hjust = -1.5, vjust = -0.4, size = 5)
-
-p = p + coord_equal()
-
-ggsave("../figure/cons-negative-gradient.png", p)
 
 #################
 
@@ -127,7 +97,6 @@ p = p + geom_segment(aes(x = 1 / 3, y = 1 / 3, xend = 1 / 3 + 0.1, yend = 1 / 3 
 p = p + geom_text(aes(x = 1 / 3, y = 1 / 3, label = "-c"), hjust = -1.5, vjust = -0.4, size = 5)
 
 p = p + coord_equal()
-
 ggsave("../figure/cons-opposite-direction.png", p)
 
 ####################
