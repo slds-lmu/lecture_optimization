@@ -16,7 +16,7 @@ Multi-criteria Optimization
 }{
 Evolutionary Approaches
 }{
-figure_man/NSGA2_steps.png
+figure/NSGA2_steps.png
 }{
 \item EMOAs and population-based approach
 \item NSGA-II
@@ -51,7 +51,7 @@ Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over
 \end{tikzpicture}
 \end{footnotesize}
 }{
-\image[1]{figure_man/NSGA2_steps.png}
+\image[1]{figure/NSGA2_steps.png}
 }
 \begin{itemizeM}[small]
 \item Population-based search approximates a whole Pareto set in one run.
@@ -111,7 +111,7 @@ and so on.
 removing them, then computing the next layer of non-dominated points $\mathcal{F}_2$, and so on.
 \end{itemizeM}
 }{
-\image[1]{figure_man/NSGA2_NDS.png}
+\image[1]{figure/NSGA2_NDS.png}
 }
 \end{framev}
 
@@ -136,7 +136,7 @@ $\to$ \emph{crowding distance} sorting.\\
 \begin{framev}{NSGA-II: crowding distance (I)}
 \textbf{Idea}: Prefer individuals that are more ``spread out'' (less crowded).
 \vfill
-\image[1]{figure_man/NSGA2_CS1.png}
+\image[1]{figure/NSGA2_CS1.png}
 Left: not good, solutions bunched up.  
 Right: better spread.
 \end{framev}
@@ -154,7 +154,7 @@ For each objective $f_j$:
 \end{itemize}
 Then sum (or average) across all $m$ objectives to get the final crowding score.
 }{
-\image[1]{figure_man/NSGA2_CS2.png}
+\image[1]{figure/NSGA2_CS2.png}
 \begin{center}\begin{footnotesize}
 Red: High CD \quad Blue: Low CD
 \end{footnotesize}\end{center}
@@ -179,7 +179,7 @@ where $S(\cdot,R)$ is the dominated HV w.r.t.\ reference point $R$.\\
 \item This is used by the SMS-EMOA to remove individuals in survival selection.
 \end{itemize}
 }{
-\image[1]{figure_man/hv_contrib.png}
+\image[1]{figure/hv_contrib.png}
 }
 \end{small}
 \end{framev}

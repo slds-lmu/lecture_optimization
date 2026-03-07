@@ -56,8 +56,8 @@ plotSpace = function(w1, w2) {
   g
 }
 
-p = plotSpace(0.9, 0.1) + plotSpace(0.49, 0.51) + plotSpace(0.1, 0.9) +
+plotSpace(0.9, 0.1) + plotSpace(0.49, 0.51) + plotSpace(0.1, 0.9) +
   plot_layout(nrow = 1, guides = "collect") &
   theme(legend.position = "bottom")
 if (interactive()) print(p)
-ggsave("../figure/parego_viz.png", p, height = 3, width = 8)
+# ../figure_man/parego_viz is a cropped version

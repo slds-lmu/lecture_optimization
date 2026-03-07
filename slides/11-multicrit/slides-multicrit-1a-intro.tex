@@ -15,7 +15,7 @@ Multi-criteria Optimization
 }{
 Introduction
 }{
-figure_man/expedia-5-1.pdf
+figure/expedia-5-1.pdf
 }{
 \item What is multi-criteria optimization?
 \item Motivating examples
@@ -82,7 +82,7 @@ The objectives often conflict with each other:
 \end{itemize}
 Example: (negative) average rating by hotel guests (1--5) vs.\ average price per night.
 \spacer
-\imageC[0.8]{figure_man/expedia-1-1.pdf}
+\imageC[0.8]{figure/expedia-1-1.pdf}
 \end{framev}
 
 \begin{framev}[fs=footnotesize]{Introductory example}
@@ -97,7 +97,7 @@ $\textcolor{orange}{f^{(1)}}=(89, -4.0)$ is better or worse than
 $\textcolor{orange}{f^{(2)}}=(95, -4.5)$?
 \item How much is one \emph{rating point} worth?
 \end{itemize}
-\imageC[0.9]{figure_man/expedia-2-1.pdf}
+\imageC[0.9]{figure/expedia-2-1.pdf}
 \spacer
 Let $f = (\text{price}, -\text{rating})$. The candidate 
 $\textcolor{green}{f^{(1)}}=(89,-4.0)$
@@ -127,9 +127,9 @@ $$
 \end{itemize}
 \spacer
 \splitV[0.5]{
-\imageC[1]{figure_man/expedia-4-1.pdf}
+\imageC[1]{figure/expedia-4-1.pdf}
 }{
-\imageC[1]{figure_man/expedia-5-1.pdf}
+\imageC[1]{figure/expedia-5-1.pdf}
 }
 \end{framev}
 
@@ -188,7 +188,7 @@ $$
 \quad 0 \le x \le 3.
 $$
 The optimum is at $\xs = 1$.
-\imageC[0.55]{figure_man/graph1.png}
+\imageC[0.55]{figure/graph1.png}
 \end{framev}
 
 
@@ -202,7 +202,7 @@ $$
 = \bigl(f_1(x),\, f_2(x)\bigr),
 \quad 0 \le x \le 3.
 $$
-\imageC[0.55]{figure_man/graph2.png}
+\imageC[0.55]{figure/graph2.png}
 \end{framev}
 
 
@@ -210,7 +210,7 @@ $$
 Visualizing both objectives:
 $\bigl(f_1(x), \;f_2(x)\bigr)$
 for all $x \in [0,3]$ in the objective space:
-\imageC[0.55]{figure_man/graph3.png}
+\imageC[0.55]{figure/graph3.png}
 The Pareto front is shown in green.
 \end{framev}
 
@@ -237,7 +237,7 @@ $$
 \min_{\text{Hotel}} \text{(Price)} \;-\; 50 \times \text{(Rating)}.
 $$
 \spacer
-\imageC[0.6]{figure_man/expedia-9-1.pdf}
+\imageC[0.6]{figure/expedia-9-1.pdf}
 \end{framev}
 
 
@@ -246,7 +246,7 @@ $$
 \spacer
 \textbf{Prior knowledge}: The rating is more important than the price.
 Hence we optimize the rating first, then the price among those best ratings:
-\imageC[1]{figure_man/expedia-10-1.pdf}
+\imageC[1]{figure/expedia-10-1.pdf}
 \end{framev}
 
 
@@ -285,7 +285,7 @@ Hence, a-posteriori methods are more general.\\
 All Pareto-optimal hotels are shown on the left. 
 User then picks from that subset on the right, based on hidden preferences 
 (location, brand loyalty, etc.):
-\imageC[0.8]{figure_man/expedia-11-1.pdf}
+\imageC[0.8]{figure/expedia-11-1.pdf}
 \end{framev}
 
 \endlecture
