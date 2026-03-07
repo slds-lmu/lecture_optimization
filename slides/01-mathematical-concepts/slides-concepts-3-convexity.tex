@@ -46,9 +46,9 @@ $\xv + t (\yv - \xv) \in \S$
 $$ f(\xv + t(\yv - \xv)) \le f(\xv) + t(f(\yv) - f(\xv)) $$
 \item Intuition: Connecting line for any $\xv, \yv \in \S$ above function $f$
 \splitV{
-\imageC[0.48]{figure_man/convexity_1.pdf}
+\imageC[0.48]{figure/convexity_1.pdf}
 }{
-\imageC[0.48]{figure_man/convexity_2.pdf}
+\imageC[0.48]{figure/convexity_2.pdf}
 }
 Left: Strictly convex function; Right: Convex, but not strictly
 \item Strictly convex if $<$ instead of $\le$
@@ -67,7 +67,7 @@ f\left(x + t(y - x)\right) &= |x + t(y - x)| = |(1 - t) x + t \cdot y| \\
 % https://sboyles.github.io/teaching/ce377k/convexity.pdf
 \item Concave: $f(x) = \log(x)$\\
 \item Neither: $f(x) = \exp(-x^2)$ (but log-concave)
-\imageC[0.45]{figure_man/conv_conc_functions.png}
+\imageC[0.45]{figure/conv_conc_functions.png}
 \end{framei}
 
 
@@ -92,7 +92,7 @@ h(\xv + t(\yv-\xv)) &= g(f(\xv + t(\yv-\xv))) \\
 \item $f$ convex \\
 $\Longleftrightarrow$ \\
 $f(\yv) \geq f(\xv) + \nabla f(\xv) (\yv-\xv)$ for all $\xv \ne \yv \in \S$
-\imageC[0.4]{figure_man/conv-first-order-cond.png}
+\imageC[0.4]{figure/conv-first-order-cond.png}
 \item Strictly convex if $>$ instead of $\ge$
 \end{framei}
 
