@@ -136,7 +136,7 @@ old_ei_argmax = ei_argmax
 
 instance$eval_batch(ei_argmax[, "x", with = FALSE])
 
-for (i in 4:11) {
+for (i in 4:4) {
   data = instance$archive$data
   ydt = data[, instance$archive$cols_y, with = FALSE]
   ydt = Map(function(y) (y - min(y, na.rm = TRUE)) / diff(range(y, na.rm = TRUE)), ydt)  # scale y to [0, 1]
@@ -182,4 +182,3 @@ for (i in 4:11) {
   
   instance$eval_batch(ei_argmax[, "x", with = FALSE])
 }
-

@@ -46,17 +46,6 @@ set(grid_gp52, j = "y_hat", value = prediction_gp52$mean)
 set(grid_gp52, j = "y_min", value = prediction_gp52$mean - prediction_gp52$se)
 set(grid_gp52, j = "y_max", value = prediction_gp52$mean + prediction_gp52$se)
 
-g = ggplot(aes(x = x, y = y), data = grid_gp52) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave(file.path("../figure/surrogate_0.png"), plot = g, width = 5, height = 4)
-
 ranger = LearnerRegrRangerCustom$new()
 ranger$param_set$values$num.trees = 1000L
 ranger$param_set$values$min.node.size = 1L

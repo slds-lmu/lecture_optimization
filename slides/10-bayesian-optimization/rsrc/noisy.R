@@ -57,15 +57,6 @@ set(grid, j = "y_noisy_hat", value = prediction_noisy$mean)
 set(grid, j = "y_noisy_min", value = prediction_noisy$mean - prediction_noisy$se)
 set(grid, j = "y_noisy_max", value = prediction_noisy$mean + prediction_noisy$se)
 
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.4)) +
-  theme_minimal()
-
 g_noisy = ggplot(aes(x = x, y = y), data = grid) +
   geom_line() +
   geom_line(aes(x = x, y = y_noisy_hat), colour = "steelblue", linetype = 2) +
@@ -74,8 +65,6 @@ g_noisy = ggplot(aes(x = x, y = y), data = grid) +
   xlim(c(0, 1)) +
   ylim(c(-2, 2.4)) +
   theme_minimal()
-
-ggsave(file.path("../figure/noisy_1.png"), plot = g, width = 5, height = 4)
 
 ggsave(file.path("../figure/noisy_2.png"), plot = g_noisy, width = 5, height = 4)
 
@@ -158,4 +147,3 @@ g = ggplot() +
   theme_minimal()
 
 ggsave(file.path("../figure/noisy_5.png"), plot = g, width = 5, height = 4)
-
