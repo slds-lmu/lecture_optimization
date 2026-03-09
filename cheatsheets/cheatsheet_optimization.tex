@@ -1,7 +1,7 @@
 %\documentclass{beamer}
 \documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
-\usepackage[orientation=landscape,size=a0,scale=1.4,debug]{beamerposter}
+\usepackage[orientation=landscape,size=a0,scale=1.4]{beamerposter}
 \mode<presentation>{\usetheme{mlr}}
 
 \usepackage[utf8]{inputenc} % UTF-8
@@ -22,7 +22,6 @@
 \usepackage{longtable}
 \usepackage{enumerate}
 \usepackage[absolute,overlay]{textpos}
-\usepackage{psfrag}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{eqnarray}
@@ -41,7 +40,7 @@
 \input{../../latex-math/basic-ml.tex}
 {}
 
-\title{Optimization :\,: CHEAT SHEET} % Package title in header, \, adds thin space between ::
+\title{Optimization :\,: CHEAT SHEET} % Preserve original header styling
 \newcommand{\packagedescription}{ % Package description in header
 	The \textbf{I2ML}: Introduction to ML course offers an introductory and applied overview of "supervised" ML. It is organized as a digital lecture.
 }
@@ -190,7 +189,7 @@
  						\hspace*{1ex} % random variables (RV) are denoted in uppercase letters \\
  						\hspace*{1ex}
 						\begin{codebox}
-							 $\thetab, \thetah \in \Theta$ : parameter $\thetab$ of a distribution and its estimate $\thetah$
+							 $\thetav, \thetavh \in \Theta$ : parameter $\thetav$ of a distribution and its estimate $\thetavh$
 						\end{codebox}
  						\hspace*{1ex}
 						\begin{codebox}
@@ -205,37 +204,38 @@
 							 $\phi$, $\Phi$ : density, distribution function of a standard normal random variable
 						\end{codebox}
 						\hspace*{1ex} % Subscripts $(\mu, \sigma^2)$ indicate the mean and the variance. \\
-						\begin{codebox}
-							 $X \sim U(a, b)$ : $X$ is sampled uniformly from the intervall $[a, b]$
-						\end{codebox}
-						\hspace*{1ex}
-						\begin{codebox}
-							 $X \sim \mathcal{N}(\mu, \sigma^2)$ : $X$ is a Gaussian RV with mean $\mu$ and variance $\sigma^2$
-						\end{codebox}
-						\hspace*{1ex}
-						\begin{codebox}
-							 $\bm{X} \sim \mathcal{N}(\bm{\mu}, \bm{\Sigma})$ : $\bm{X}$ is a Gaussian random vector
-						\end{codebox}
-						\hspace*{1ex} usually, $\bm{\mu}$ denotes the mean and $\Sigma$ the covariance matrix; the mean and covariance might also be denoted by $\bm{m}$ and $\bm{C}$\\
-						\begin{codebox}
-							 $\mathcal{L}(\thetab), \ell(\thetab): \Theta \to \R$ : likelihood function / log-likelihood function
-						\end{codebox}
-						\hspace*{1ex} the log likelihood is defined as $\ell(\thetab) := \log \mathcal{L}(\thetab)$		
-
-					\end{myblock}					
-					\vfill
-					}
+					\end{myblock}
+						\vfill
+						}
 			\end{minipage}
 		\end{beamercolorbox}
 	\end{column}
 	\begin{column}{.31\textwidth}
 		\begin{beamercolorbox}[center]{postercolumn}
-			\begin{minipage}{.98\textwidth}
-				\parbox[t][\columnheight]{\textwidth}{
-		
-					\begin{myblock}{Machine Learning}
-						\begin{codebox}
-							$\Xspace, \Yspace$ : input space, and label / output space 
+				\begin{minipage}{.98\textwidth}
+					\parbox[t][\columnheight]{\textwidth}{
+						\begin{myblock}{Probability Theory and Statistics (cont.)}
+							\begin{codebox}
+								 $X \sim U(a, b)$ : $X$ is sampled uniformly from the intervall $[a, b]$
+							\end{codebox}
+							\hspace*{1ex}
+							\begin{codebox}
+								 $X \sim \mathcal{N}(\mu, \sigma^2)$ : $X$ is a Gaussian RV with mean $\mu$ and variance $\sigma^2$
+							\end{codebox}
+							\hspace*{1ex}
+							\begin{codebox}
+								 $\bm{X} \sim \mathcal{N}(\bm{\mu}, \bm{\Sigma})$ : $\bm{X}$ is a Gaussian random vector
+							\end{codebox}
+							\hspace*{1ex} usually, $\bm{\mu}$ denotes the mean and $\Sigma$ the covariance matrix; the mean and covariance might also be denoted by $\bm{m}$ and $\bm{C}$\\
+							\begin{codebox}
+								 $\mathcal{L}(\thetav), \ell(\thetav): \Theta \to \R$ : likelihood function / log-likelihood function
+							\end{codebox}
+							\hspace*{1ex} the log likelihood is defined as $\ell(\thetav) := \log \mathcal{L}(\thetav)$
+						\end{myblock}
+
+						\begin{myblock}{Machine Learning}
+							\begin{codebox}
+								$\Xspace, \Yspace$ : input space, and label / output space 
 						\end{codebox}
 						\hspace*{1ex}
 						\begin{codebox}
@@ -245,9 +245,9 @@
 						\begin{codebox}
 							 $f: \Xspace \to \R^g$ : model
 						\end{codebox}
-						\hspace*{1ex} usually, $f$ is parameterized by a parameter $\thetab \in \Theta$; we write $f = f(\cdot ~|~ \thetab)$ (e.g. $\fxt = \thetab^\top \xv$)\\
+						\hspace*{1ex} usually, $f$ is parameterized by a parameter $\thetav \in \Theta$; we write $f = f(\cdot ~|~ \thetav)$ (e.g. $\fxt = \thetav^\top \xv$)\\
 						\begin{codebox}
-							 $\thetab, \thetah \in \Theta$ : model parameter and its estimate
+							 $\thetav, \thetavh \in \Theta$ : model parameter and its estimate
 						\end{codebox}
 						\hspace*{1ex}
 						\begin{codebox}
@@ -257,7 +257,7 @@
 						\begin{codebox}
 							 $\risk: \Theta \to \R$ : empirical risk function
 						\end{codebox}
-						\hspace*{1ex} the (empirical) risk maps a parameter $\thetab$, which parameterizes the model $f(\cdot ~|~ \thetab)$, to the sum of losses
+						\hspace*{1ex} the (empirical) risk maps a parameter $\thetav$, which parameterizes the model $f(\cdot ~|~ \thetav)$, to the sum of losses
 						$\risket = \sumin L(\yi, \fxit)$
 					\end{myblock}
 				}
@@ -290,12 +290,12 @@
 						\end{codebox}
 						\hspace*{1ex} 
 						\begin{codebox}
-							$\min\limits_{\thetab \in \Theta} \risket$ : empirical risk minimization (ERM) problem
+							$\min\limits_{\thetav \in \Theta} \risket$ : empirical risk minimization (ERM) problem
 						\end{codebox}
 						\hspace*{1ex} \textbf{Note:} We often consider the ERM problem in ML as an example of an optimization problem. In this case, we switch from the general optimization notation to the ML notation: 
 						\begin{itemize}
 							\item We optimize the function $\risket$ (instead of $f$); $f$ instead denotes the ML model
-							\item We optimize over $\thetab \in \Theta$ (instead over $\xv \in \mathcal{S}$) 
+							\item We optimize over $\thetav \in \Theta$ (instead over $\xv \in \mathcal{S}$) 
 						\end{itemize}
 						% All further notation changes accordingly. \\
 						\hspace*{1ex}			

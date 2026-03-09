@@ -87,4 +87,3 @@ vis_surface$plot(
   y_lab = "theta_1",
   z_lab = "L(theta)"
 )
-# ml_linreg_example_3.png is a manually created screenshot
