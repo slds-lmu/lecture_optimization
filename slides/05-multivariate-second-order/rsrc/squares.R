@@ -4,6 +4,8 @@
 # FIG: fit an exponential model to a dataset using nonlinear least squares (nls)
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(knitr)
 library(microbenchmark)
 library(snow)
@@ -26,6 +28,8 @@ plot = plot + geom_smooth(method = "nls", formula = y ~ a*exp(b*x),method.args =
 plot = plot + geom_point(aes(x = x, y = pred))
 plot = plot + geom_segment(aes(x = x, y = y, xend = x, yend = pred), color = "red")
 plot = plot + theme_bw()
-plot
+if (interactive()) print(plot)
 
-ggsave("../figure_man/squares.png", width = 4, height = 3)
+set.seed(1L)
+
+ggsave("../figure/squares.png", width = 4, height = 3)

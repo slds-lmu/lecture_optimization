@@ -2,6 +2,8 @@
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
 \usepackage[export]{adjustbox}
 
 
@@ -14,10 +16,6 @@
 %FIXME: do a macro for "equivalent"
 % macro for C1, C2
 
-
-% Local macros for this chunk only
-\renewcommand{\S}{\mathcal{S}}
-
 \titlemeta{
 Mathematical Concepts 
 }{
@@ -28,7 +26,6 @@ figure_man/convex.png
 \item Convex sets
 \item Convex functions
 }
-
 
 \begin{framei}{Convex sets}
 \item Set $\S \subseteq \R^d$ is convex, if $\forall \xv, \yv \in \S$ and $\forall t \in [0, 1]$:
@@ -42,21 +39,23 @@ $\xv + t (\yv - \xv) \in \S$
 }
 \end{framei}
 
+
 \begin{framei}{Convex functions}
 \item Let $f: \S \to \R$, $\S$ convex
 \item $f$ is convex if $\forall \xv, \yv \in \S$ and $\forall t \in [0, 1]$:
-$$ f(\xv + t(\yv - \xv)) \le f(\xv) + t(f(\mathbf{y}) - f(\xv)) $$
+$$ f(\xv + t(\yv - \xv)) \le f(\xv) + t(f(\yv) - f(\xv)) $$
 \item Intuition: Connecting line for any $\xv, \yv \in \S$ above function $f$
 \splitV{
-\imageC[0.48]{figure_man/convexity_1.pdf}
+\imageC[0.48]{figure/convexity_1.pdf}
 }{
-\imageC[0.48]{figure_man/convexity_2.pdf}
+\imageC[0.48]{figure/convexity_2.pdf}
 }
 Left: Strictly convex function; Right: Convex, but not strictly
 \item Strictly convex if $<$ instead of $\le$
 \item Concave (strictly) if inequality holds with $\ge$ ($>$)
 \item NB: $f$ (strictly) concave $\Leftrightarrow$ $-f$ (strictly) convex
 \end{framei}
+
 
 \begin{framei}{Some Examples}
 \item Convex: $f(x) = |x|$\\
@@ -68,7 +67,7 @@ f\left(x + t(y - x)\right) &= |x + t(y - x)| = |(1 - t) x + t \cdot y| \\
 % https://sboyles.github.io/teaching/ce377k/convexity.pdf
 \item Concave: $f(x) = \log(x)$\\
 \item Neither: $f(x) = \exp(-x^2)$ (but log-concave)
-\imageC[0.45]{figure_man/conv_conc_functions.png}
+\imageC[0.45]{figure/conv_conc_functions.png}
 \end{framei}
 
 
@@ -93,19 +92,20 @@ h(\xv + t(\yv-\xv)) &= g(f(\xv + t(\yv-\xv))) \\
 \item $f$ convex \\
 $\Longleftrightarrow$ \\
 $f(\yv) \geq f(\xv) + \nabla f(\xv) (\yv-\xv)$ for all $\xv \ne \yv \in \S$
-\imageC[0.4]{figure_man/conv-first-order-cond.png}
+\imageC[0.4]{figure/conv-first-order-cond.png}
 \item Strictly convex if $>$ instead of $\ge$
 \end{framei}
 
 
 \begin{framei}{Second order condition}
-\item For $f \in \mathcal{C}^2$: can characterize convexity via Hessian
-\item $f$ convex $\Longleftrightarrow$ $H(\xv)$ psd for $\xv \in \S$ $\forall \xv \in \S$
+\item For $f \in \CC{2}$: can characterize convexity via Hessian
+\item $f$ convex $\Longleftrightarrow$ $H(\xv)$ psd $\forall \xv \in \S$
 \item $f$ strictly convex if $H(\xv)$ pd $\forall \xv \in \S$
 \lz
 \item To check global convexity, either verify the direct definition of psd by showing that $\bm{v}^T H(\xv) \bm{v} \geq 0$ for all $\bm{v} \in \R^d$ and all $\xv$,\\
-or, equivalently, check that all eigenvalues $\lambda_i$ of all $H(\xv)$ satisfy $\lambda_i \geq 0$ for all $\xv \in \mathcal{S}$
+or, equivalently, check that all eigenvalues $\lambda_i$ of all $H(\xv)$ satisfy $\lambda_i \geq 0$ for all $\xv \in \S$
 \end{framei}
+
 
 \begin{framei}{Second order condition}
 \item Example:
@@ -113,7 +113,7 @@ $$f(\xv) = x_1^2 + x_2^2 - 2x_1x_2; \quad
 \nabla f(\xv) = \begin{pmatrix}2x_1 - 2x_2 \\ 2x_2 - 2x_1\end{pmatrix}^T; \quad 
 H(\xv) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}$$
 \imageC[0.3]{figure_man/convex-example.png}
-\item $f$ is convex since $H(\xv)$ is p.s.d. for all $\xv\in\mathcal{S}$:
+\item $f$ is convex since $H(\xv)$ is p.s.d. for all $\xv\in\S$:
 \begin{align*}
 \mathbf{v}^T\begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}\mathbf{v} &= 2v_1^2 - 2v_1v_2 -2v_1v_2 + 2v_2^2 \\
 &= 2v_1^2 - 4v_1v_2 + 2v_2^2 = 2 (v_1 - v_2)^2 \ge 0
@@ -126,7 +126,6 @@ H(\xv) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}$$
 \item For a convex function, every local optimum is also a global one \\
 $\Rightarrow$ No need for involved global optimizers, local ones are enough
 \item A strictly convex function has at most one optimal point
-
 \item \enquote{... in fact, the great watershed in optimization isn't between linearity and nonlinearity, but convexity and nonconvexity.}\\
 -- R. Tyrrell Rockafellar. \textit{SIAM Review}, 1993
 \imageC[0.55]{figure_man/rockafellar-siam-rev.png}

@@ -4,12 +4,14 @@
 # FIG: plot first-order condition
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 x0 <- 0.1
 
 f1 <- function(x) { x^2 }
 f2 <- function(x) { x0^2 + 2*x0 * (x-x0) }
 
-png("../figure_man/conv-first-order-cond.png", width=400, height=300)
+png("../figure/conv-first-order-cond.png", width=400, height=300)
 
 a <- -0.3
 b <- 0.7

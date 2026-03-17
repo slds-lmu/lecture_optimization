@@ -1,320 +1,213 @@
 \documentclass[11pt,compress,t,notes=noshow,xcolor=table]{beamer}
-
 \usepackage{algorithm}
-% or \usepackage{algpseudocode} for a more modern environment
-\usepackage[ruled,vlined,algo2e,linesnumbered]{algorithm2e}
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/ml-mbo}
-\input{macros}
-
-% -- Macros from original code --------------------------------------
-\newcommand{\q}[0]{\mathbf{q}}
-\newcommand{\xx}{\conf}     % x of the optimizer
-\newcommand{\xxi}[1][i]{\lambda_{#1}} % i-th component of xx
-\newcommand{\XX}{\pcs}     % search space / domain of f
-\newcommand{\f}{\cost}     % objective function
-% \newcommand{\y}{\cost}    % (commented out in original code)
-% -------------------------------------------------------------------
+\input{../../latex-math/optim-basics}
 
 \title{Optimization in Machine Learning}
 
 \begin{document}
 
-% Adaptation of the old \title / \subtitle to the new style:
-\titlemeta{%
-  Multi-criteria Optimization % chunk title
-}{%
-  Evolutionary Approaches    % lecture title
-}{%
-  figure_man/NSGA2_steps.png % optional title image path
-}{%
-  \item EMOAs and population-based approach
-  \item NSGA-II
-  \item SMS-EMOA
+\titlemeta{
+Multi-criteria Optimization
+}{
+Evolutionary Approaches
+}{
+figure/NSGA2_steps.png
+}{
+\item EMOAs and population-based approach
+\item NSGA-II
+\item SMS-EMOA
 }
 
-% -------------------------------------------------------------------
-\begin{vbframe}{A-posteriori methods and evolutionary algorithms}
-
-Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over time to approximate the Pareto front.
-
-\vspace{-0.6cm}
-
-\begin{columns}
-\begin{column}{0.3\textwidth}
-\begin{center}
-\begin{figure}
-\centering
-\begin{tikzpicture}[node distance=-1.8cm, auto,]
-  \begin{footnotesize}
-    \node (init) {Initialize population};
-    \node[below = 0.1cm of init](rating1) {Eval population};
-    \node[below = 0.1cm of rating1](selection1) {Parent selection};
-    \node[below = 0.1cm of selection1](variation) {Variation};
-    \node[below = 0.1cm of variation](rating2) {Eval offspring};
-    \node[below = 0.1cm of rating2](selection2) {Survival selection};
-    \node[below = 0.1cm of selection2](stop) {Stop};
-    \node[below = 0.2cm of stop](dummy2) {};
-    \node[below = 0.2cm of stop](dummy3) {};
-    \node[right = 0.01cm of dummy3](dummy4) {yes};
-    \node[left = 0.2cm of rating2](dummy1) {no};
-    \draw[->] (init) to (rating1);
-    \draw[->] (rating1) to (selection1);
-    \draw[->] (selection1) to (variation);
-    \draw[->] (variation) to (rating2);
-    \draw[->] (rating2) to (selection2);
-    \draw[->] (selection2) to (stop);
-    \draw[->] (stop) to (dummy2);
-    \draw[->] (stop) to [bend left=90, looseness=2](selection1);
-  \end{footnotesize}
+\begin{framev}{A-posteriori methods and evolutionary algorithms}
+Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over time to approximate the Pareto front.\\
+\spacer
+\splitV[0.35]{
+\begin{footnotesize}
+\begin{tikzpicture}[node distance=-1.8cm, auto]
+\node (init) {Initialize population};
+\node[below = 0.1cm of init](rating1) {Eval population};
+\node[below = 0.1cm of rating1](selection1) {Parent selection};
+\node[below = 0.1cm of selection1](variation) {Variation};
+\node[below = 0.1cm of variation](rating2) {Eval offspring};
+\node[below = 0.1cm of rating2](selection2) {Survival selection};
+\node[below = 0.1cm of selection2](stop) {Stop};
+\node[below = 0.2cm of stop](dummy2) {};
+\node[below = 0.2cm of stop](dummy3) {};
+\node[right = 0.01cm of dummy3](dummy4) {yes};
+\node[left = 0.2cm of rating2](dummy1) {no};
+\draw[->] (init) to (rating1);
+\draw[->] (rating1) to (selection1);
+\draw[->] (selection1) to (variation);
+\draw[->] (variation) to (rating2);
+\draw[->] (rating2) to (selection2);
+\draw[->] (selection2) to (stop);
+\draw[->] (stop) to (dummy2);
+\draw[->] (stop) to [bend left=90, looseness=2](selection1);
 \end{tikzpicture}
-\end{figure}
-\end{center}
-\end{column}
-\hspace{0.2cm}
-\begin{column}{0.7\textwidth}
-\begin{center}
-\vspace{0.7cm}
-\includegraphics[width=0.98\textwidth]{figure_man/NSGA2_steps.png}
-\end{center}
-\end{column}
-\end{columns}
-
-\begin{itemize}{\small
-\item Population-based search approximates a whole Pareto set in one run.
-\item The main steps (initialize, select, vary, survive, repeat) mirror standard EAs but must handle multiple objectives.}
-\end{itemize}
-
-\end{vbframe}
-
-% -------------------------------------------------------------------
-\begin{vbframe}{Basic EA template loop}
-
-\begin{algorithm2e}[H]
-\SetAlgoLined         % or \DontPrintSemicolon, whichever style you prefer
-\caption{Basic EA template loop}
-%\KwCommentSty{}       % optional: adjust comment style if you like
-
-% If you want input / output placeholders, you can do:
-% \KwIn{$\XX$ search space, population size $\mu, \lambda$, \dots}
-% \KwOut{A set of evaluated solutions \dots}
-
-Initialize and evaluate population $\mathcal{P}_0 \subset \XX$ with $|\mathcal{P}_0| = \mu$\;
-$t \gets 0$\;
-
-\Repeat{\textit{Stop criterion is fulfilled}}{%
-  Select parents from $\mathcal{P}_t$ and generate offspring $\mathcal{Q}_t$, with $|\mathcal{Q}_t| = \lambda$\;
-  Select $\mu$ survivors to form $\mathcal{P}_{t+1}$\;
-  $t \gets t + 1$\;
+\end{footnotesize}
+}{
+\image[1]{figure/NSGA2_steps.png}
 }
-\end{algorithm2e}
+\begin{itemizeM}[small]
+\item Population-based search approximates a whole Pareto set in one run.
+\item The main steps (initialize, select, vary, survive, repeat) mirror standard EAs but must handle multiple objectives.
+\end{itemizeM}
+\end{framev}
 
 
-\bigskip
+\begin{framev}{Basic EA template loop}
+\begin{algorithm}[H]
+\caption{Basic EA template loop}
+\begin{enumerate}
+\item Initialize and evaluate population $\mathcal{P}_0 \subset \S$ with $|\mathcal{P}_0| = \mu$.
+\item Set $t \gets 0$.
+\item Repeat until the stop criterion is fulfilled:
+\begin{enumerate}
+\item Select parents from $\mathcal{P}_t$ and generate offspring $\mathcal{Q}_t$, with $|\mathcal{Q}_t| = \lambda$.
+\item Select $\mu$ survivors to form $\mathcal{P}_{t+1}$.
+\item Set $t \gets t + 1$.
+\end{enumerate}
+\end{enumerate}
+\end{algorithm}
+\vfill
 \begin{itemize}
-  \item As in standard EAs, we have parent selection, variation, and survival selection.
-  \item For multi-objective EAs (EMOAs), ranking solutions by “fitness” is no longer straightforward. We need special selection strategies (non-dominated sorting, etc.).
+\item As in standard EAs, we have parent selection, variation, and survival selection.
+\item For multi-objective EAs (EMOAs), ranking solutions by ``fitness'' is no longer straightforward. We need special selection strategies (non-dominated sorting, etc.).
 \end{itemize}
+\end{framev}
 
-\end{vbframe}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{NSGA-II}
-
+\begin{framev}{NSGA-II}
 The \textbf{non-dominated sorting genetic algorithm (NSGA-II)} was published by
-\cite{DEB2002FAST}.
-
+\furtherreading{DEB2002FAST}.
+\spacer
 \begin{itemize}
 \item Follows a $(\mu + \lambda)$ strategy for survival.
 \item Any standard variation operators (like polynomial mutation, SBX) can be used.
 \item Parent and survival selection both use:
-  \begin{enumerate}
-    \item \textbf{Non-dominated sorting (NDS)} as the main ranking criterion,
-    \item \textbf{Crowding distance} as a tie-break.
-  \end{enumerate}
+\begin{enumerate}
+\item \textbf{Non-dominated sorting (NDS)} as the main ranking criterion,
+\item \textbf{Crowding distance} as a tie-break.
+\end{enumerate}
 \end{itemize}
+\end{framev}
 
-\end{vbframe}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{NSGA-II: non-dominated sorting (I)}
+\begin{framev}{NSGA-II: non-dominated sorting (I)}
+NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{F}_2 \prec \mathcal{F}_3 \prec ... $.\\
+\spacer
+\splitV[0.4]{
+\begin{itemizeM}[small]
+\item $\mathcal{F}_1$ is non-dominated, 
+each $\xv \in \mathcal{F}_2$ is dominated, but only by points in $\mathcal{F}_1$, 
+each $\xv \in \mathcal{F}_3$ is dominated, but only by points in $\mathcal{F}_1$ and $\mathcal{F}_2$, 
+and so on. 
+\item We can easily compute the partitioning by computing all non-dominated points  $\mathcal{F}_1$,
+removing them, then computing the next layer of non-dominated points $\mathcal{F}_2$, and so on.
+\end{itemizeM}
+}{
+\image[1]{figure/NSGA2_NDS.png}
+}
+\end{framev}
 
-NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{F}_2 \prec \mathcal{F}_3 \prec ... $.
 
-\begin{columns}
-\begin{column}{0.4\textwidth}
-\begin{itemize}{\small
-    \item $\mathcal{F}_1$ is non-dominated, 
-      each $\xx \in \mathcal{F}_2$ is dominated, but only by points in $\mathcal{F}_1$, 
-      each $\xx \in \mathcal{F}_3$ is dominated, but only by points in $\mathcal{F}_1$ and $\mathcal{F}_2$, 
-      and so on. 
-    \item We can easily compute the partitioning by computing all non-dominated points  $\mathcal{F}_1$,
-        removing them, then computing the next layer of non-dominated points $\mathcal{F}_2$, and so on.}
-\end{itemize}
-\end{column}
-
-\begin{column}{0.6\textwidth}
-\vspace{0.3cm}
-\begin{center}
-\includegraphics[width = 0.9\textwidth]{figure_man/NSGA2_NDS.png}
-\end{center}
-\end{column}
-\end{columns}
-
-\end{vbframe}
-
-% -------------------------------------------------------------------
-\begin{vbframe}{NSGA-II: non-dominated sorting (II)}
-
+\begin{framev}{NSGA-II: non-dominated sorting (II)}
 For \textbf{survival} in $(\mu + \lambda)$ selection:
 \begin{itemize}
 \item We rank all $\mu + \lambda$ individuals by front index.
 \item We start filling the next population from $\mathcal{F}_1$ upward.
 \item If front $\mathcal{F}_i$ cannot fully fit (because we would exceed $\mu$), we partially fill with a subset of $\mathcal{F}_i$.
 \end{itemize}
-
-\begin{center}
-\includegraphics[width=0.45\linewidth]{figure_man/NSGA2_2.png}
-\end{center}
-
+\imageC[0.45]{figure_man/NSGA2.png}
 \textbf{But}: Which individuals survive from this partially included front?  
-$\to$ \emph{crowding distance} sorting.
-
-\smallskip
-\footnotesize
+$\to$ \emph{crowding distance} sorting.\\
+\spacer
+\begin{small}
 (NDS is also used for parent selection with binary tournaments.)
-\normalsize
+\end{small}
+\end{framev}
 
-\end{vbframe}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{NSGA-II: crowding distance (I)}
-
-\textbf{Idea}: Prefer individuals that are more “spread out” (less crowded).
-
-\begin{center}
-\includegraphics[height=0.55\textheight]{figure_man/NSGA2_CS1.png}
-\end{center}
-
+\begin{framev}{NSGA-II: crowding distance (I)}
+\textbf{Idea}: Prefer individuals that are more ``spread out'' (less crowded).
+\vfill
+\image[1]{figure/NSGA2_CS1.png}
 Left: not good, solutions bunched up.  
 Right: better spread.
+\end{framev}
 
-\end{vbframe}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{NSGA-II: crowding distance (II)}
-
-\begin{columns}
-\begin{column}{0.55\textwidth}
+\begin{framev}{NSGA-II: crowding distance (II)}
+\splitV[0.55]{
 \textbf{Crowding distance}:
-
 For each objective $f_j$:
 \begin{itemize}
 \item Sort points by $f_j$ (in ascending order).
 \item Normalize $f_j$ values to [0, 1].
-\item “Border” points (lowest/highest $f_j$) get infinite distance (ensuring they always survive if possible).
+\item ``Border'' points (lowest/highest $f_j$) get infinite distance (ensuring they always survive if possible).
 \item For internal points, distance is difference in $f_j$-values between next neighbors.
 \end{itemize}
 Then sum (or average) across all $m$ objectives to get the final crowding score.
-\end{column}
-
-\begin{column}{0.45\textwidth}
-\begin{center}
-\includegraphics[width=0.95\textwidth]{figure_man/NSGA2_CS2.png}
-\medskip
-
-\begin{footnotesize}
+}{
+\image[1]{figure/NSGA2_CS2.png}
+\begin{center}\begin{footnotesize}
 Red: High CD \quad Blue: Low CD
-\end{footnotesize}
-\end{center}
-\end{column}
-\end{columns}
+\end{footnotesize}\end{center}
+}
+\end{framev}
 
-\end{vbframe}
 
-% -------------------------------------------------------------------
-% (Commented-out SPEA-2 section from original)
-
-% \begin{vbframe}{SPEA-2}
-% ...
-% \end{vbframe}
-
-% -------------------------------------------------------------------
-\begin{vbframe}{Hypervolume contribution}
-
-\textbf{S-Metric-Selection} uses the \emph{hypervolume contribution} $\Delta s(\xx,\mathcal{P})$ of each individual:
-\[
-  \Delta s(\xx, \mathcal{P})
-  = S(\mathcal{P}, R) - S\bigl(\mathcal{P}\setminus\{\xx\},\,R\bigr),
-\]
-where $S(\cdot,R)$ is the dominated HV w.r.t.\ reference point $R$.
-
-{\small
-\begin{columns}
-\begin{column}{0.5\textwidth}
+\begin{framev}{Hypervolume contribution}
+\textbf{S-Metric-Selection} uses the \emph{hypervolume contribution} $\Delta s(\xv,\mathcal{P})$ of each individual:
+$$
+\Delta s(\xv, \mathcal{P})
+= S(\mathcal{P}, R) - S\bigl(\mathcal{P}\setminus\{\xv\},\,R\bigr),
+$$
+where $S(\cdot,R)$ is the dominated HV w.r.t.\ reference point $R$.\\
+\vfill
+\begin{small}
+\splitV[0.5]{
 \begin{itemize}
 \item Dark rectangles: unique HV part dominated only by that dot
 \item Gray cross: reference point $R$.
-\item The individual with the smallest HV contribution is “least important” for covering objective space.
+\item The individual with the smallest HV contribution is ``least important'' for covering objective space.
 \item This is used by the SMS-EMOA to remove individuals in survival selection.
 \end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{center}
-\includegraphics[width=0.8\textwidth]{figure_man/hv_contrib.png}
-\end{center}
-\end{column}
-\end{columns}
+}{
+\image[1]{figure/hv_contrib.png}
 }
-\end{vbframe}
+\end{small}
+\end{framev}
 
-% -------------------------------------------------------------------
-\begin{vbframe}{SMS-EMOA algorithm}
 
-\begin{algorithm2e}[H]
-\SetAlgoLined
+\begin{framev}{SMS-EMOA algorithm}
+\begin{algorithm}[H]
 \caption{SMS-EMOA}
-Generate initial population $\mathcal{P}_0$ of size $\mu$\;
-$t \gets 0$\;
-
-\Repeat{\textit{Termination}}{
-  Create exactly one offspring $\q$ by recombination + mutation\;
-  Perform non-dominated sorting on $(\mathcal{P}_t \cup \{\q\})$\;
-  Let $\mathcal{F}_k$ be the last front\;
-  $\tilde{\xx} \gets \arg\min_{\xx \in \mathcal{F}_k} \Delta s\bigl(\xx,\mathcal{F}_k\bigr)$\;
-  $\mathcal{P}_{t+1} \gets \bigl(\mathcal{P}_t \cup \{\q\}\bigr)\setminus\{\tilde{\xx}\}$\;
-  $t \gets t + 1$\;
-}
-\end{algorithm2e}
-
-%\begin{algorithm}[H]
-%  \begin{center}
-%  \caption{SMS-EMOA}
-%  \begin{algorithmic}[1]
-%    \STATE Generate initial population $\mathcal{P}_0$ of size $\mu$
-%    \STATE $t \leftarrow 0$
-%    \REPEAT
-%      \STATE Create exactly \emph{one} offspring $\q$ by recombination + mutation
-%      \STATE Perform non-dominated sorting on $\mathcal{P}_t \cup \{\q\}$
-%      \STATE Let $\mathcal{F}_k$ be the last front
-%      \STATE $\tilde{\xx} \leftarrow \arg\min_{\xx \in \mathcal{F}_k} \Delta s\bigl(\xx,\mathcal{F}_k\bigr)$
-%      \STATE $\mathcal{P}_{t+1} \leftarrow \bigl(\mathcal{P}_t \cup \{\q\}\bigr)\setminus\{\tilde{\xx}\}$
-%      \STATE $t \leftarrow t + 1$
-%    \UNTIL{Termination}
-%  \end{algorithmic}
-%  \end{center}
-%\end{algorithm}
-
-\begin{itemize}\setlength{\itemsep}{0.3em}{\footnotesize
+\begin{enumerate}
+\item Generate initial population $\mathcal{P}_0$ of size $\mu$.
+\item Set $t \gets 0$.
+\item Repeat until termination:
+\begin{enumerate}
+\item Create exactly one offspring $\mathbf{q}$ by recombination and mutation.
+\item Perform non-dominated sorting on $(\mathcal{P}_t \cup \{\mathbf{q}\})$.
+\item Let $\mathcal{F}_k$ be the last front.
+\item Set $\tilde{\xv} \gets \argmin_{\xv \in \mathcal{F}_k} \Delta s\bigl(\xv,\mathcal{F}_k\bigr)$.
+\item Set $\mathcal{P}_{t+1} \gets \bigl(\mathcal{P}_t \cup \{\mathbf{q}\}\bigr)\setminus\{\tilde{\xv}\}$.
+\item Set $t \gets t + 1$.
+\end{enumerate}
+\end{enumerate}
+\end{algorithm}
+\begin{itemizeS}[footnotesize]
 \item As soon as we exceed size $\mu+1$, remove the worst HV contributor from the \emph{last front}.
 \item That way, each iteration keeps exactly $\mu$ individuals.
-\item Ranking is primarily by front membership; hypervolume contrib. is the tiebreak.}
-\end{itemize}
-\end{vbframe}
+\item Ranking is primarily by front membership; hypervolume contribution is the tiebreak.
+\end{itemizeS}
+\end{framev}
 
-% -------------------------------------------------------------------
 \endlecture
 \end{document}

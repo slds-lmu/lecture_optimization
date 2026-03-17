@@ -1,0 +1,166 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Evolutionary Algorithms
+}{
+Introduction
+}{
+figure_man/ea.eps
+}{
+\item Evolutionary algorithms
+\item Encoding
+\item Parent selection, variation, survival selection
+}
+
+\begin{framev}{Evolutionary Algorithms}
+\textbf{Evolutionary algorithms} (EA) are a class of stochastic, metaheuristic optimization techniques whose mode of operation is inspired by the evolution of natural organisms.
+\spacer
+{\footnotesize
+History of evolutionary algorithms:
+\begin{itemize}
+\item \textbf{Genetic algorithms}: Use binary problem representation, therefore closest to the biological model of evolution.
+\item \textbf{Evolution strategies}: Use direct problem representation, e.g., vector of real numbers.
+\item \textbf{Genetic programming}: Create structures that convert an input into a fixed output (e.g. computer programs); solution candidates are represented as trees.
+\item \textbf{Evolutionary programming}: Similar to genetic programming, but solution candidates are not represented by trees, but by finite state machines.
+\end{itemize}
+The boundaries between the terms become increasingly blurred and are often used synonymously.
+}
+\end{framev}
+
+
+\begin{framev}{Structure of an evolutionary algorithm}
+\imageC[0.9]{figure_man/ea.eps}
+\end{framev}
+
+
+\begin{framev}[fs=small]{Notation and Terminology}
+\begin{itemize}
+\item A chromosome is a set of parameters which encodes a proposed solution to the problem that the genetic algorithm is trying to solve. The chromosome is often represented as a binary string, although a wide variety of other data structures are also used.\\
+\item The set of all solutions is known as the population.
+\end{itemize}
+\spacer
+\begin{center}
+\begin{tabular}{c|c}
+\textbf{Symbols} & \textbf{EA Terminology} \\
+\hline\hline \\
+solution candidate $\xv \in \S$ & chromosome of an individual \\ [0.2em]
+$x_j$  & $j$-th gene of chromosome \\[0.2em]
+set of candidates $P$ with $\mu = |P|$ & population and size \\[0.2em]
+$\lambda$ & number of generated offsprings \\[0.2em]
+$f: \S \to \R$ & fitness function
+\end{tabular}
+\end{center}
+\textbf{Note}: Unintuitively, we are minimizing fitness because we always minimize $f$ by convention.
+\end{framev}
+
+
+\begin{framev}{Encoding}
+Encoding of chromosomes is the first step of solving a problem with EAs.
+Technically: Mapping from \textbf{genotype} to \textbf{phenotype}.
+Encoding depends on the problem, and eventually decides performance of problem solving.
+\textbf{Encoding methods}:
+\begin{itemize}
+\item Binary encoding: Strings of 0s and 1s
+\item Real value encoding: Real values
+\end{itemize}
+\imageC[0.5]{figure_man/encoding_binary_numeric.png}% https://docs.google.com/presentation/d/12v81ZaLxJUgXVUBy3VdW0y6q7OKHS_6lFcQym3yeYsg/edit#slide=id.p
+\end{framev}
+
+
+\begin{framev}{Encoding}
+\begin{itemize}
+\item Tree encoding: Tree objects
+\end{itemize}
+\imageC[0.5]{figure_man/encoding_tree_1.png}
+\imageC[0.5][https://www.scribd.com/document/430241958/genetic-algorithm]{figure_man/encoding_tree_2.png}
+\begin{small}
+Floor planning problem. Given are $n$ circuits of different area requirements. Goal: arrange them into a floor layout so that all circuits are placed in a minimum layout. Each solution candidate can be represented by a tree.
+\end{small}
+\end{framev}
+
+
+\begin{framei}{Step 1: Initialize population}
+\item Evolutionary algorithms start with generating initial population $P = \{\xv^{(1)}, ..., \xv^{(\mu)}\}$.
+\item Usually: Initialize uniformly at random.
+\item Introducing prior knowledge possible.
+\item Population is evaluated: objective function is computed for each initial individual.
+\item Initialization influences quality of solution, so many EAs employ \textit{restarts} with new randomly generated initial populations.
+\end{framei}
+
+
+\begin{framev}[fs=small]{Step 2: parent selection}
+Choose a number of $\lambda$ parents pairs creating $\lambda$ offsprings.
+\begin{itemize}
+\item \textbf{Neutral selection:} Draw parents uniformly at random.
+\item \textbf{Fitness-proportional / Roulette wheel selection:} Draw individuals with probability proportional to their fitness.
+\item \textbf{Tournament selection:} Randomly select $k$ individuals for a "tournament group" and pick the best one (according to fitness value).
+\end{itemize}
+\vfill
+\splitVCC[0.35]{
+\imageC[1]{figure/ea_parent_selection.pdf}
+}{
+\imageC[1]{figure_man/tournament_selection.png}
+}
+\begin{footnotesize}\begin{center}
+\textbf{Left:} Fitness-proportional selection.
+Fitness values of $\mu = 10$ individuals are converted into probabilities.
+\textbf{Right:} Tournament selection.
+\end{center}\end{footnotesize}
+\end{framev}
+
+
+\begin{framev}{Step 3: variation}
+New individuals (offsprings) are generated from parents.
+\begin{itemize}
+\item Recombination/Crossover: Combine two parents into offspring.
+\item Mutation: Modify the offspring locally.
+\end{itemize}
+Sometimes only one of both operations is performed.
+\spacer
+\imageC[0.9]{figure_man/rec-and-mut.png}
+\textbf{Note: } Particular operation depends on encoding.
+Examples for binary and numeric encodings follow later.
+\end{framev}
+
+
+\begin{framev}{Step 4: Survival selection}
+Choosing surviving individuals.
+Two common strategies are:
+\spacer
+\begin{itemizeL}
+\item \textbf{$(\mu, \lambda)$-selection:}
+Select $\mu$ best individuals \textit{only from set of offsprings} ($\lambda \ge \mu$ necessary).
+\textbf{But:} Best individual can get lost!
+\item \textbf{$(\mu + \lambda)$-selection:}
+Select $\mu$ best individuals from set of $\mu$ parents and $\lambda$ offsprings
+\textbf{Now:} Best individual certainly survives.
+\end{itemizeL}
+\end{framev}
+
+
+\begin{framei}{Evolutionary Algorithms}
+\item \textbf{Advantages}
+\item Simple but enough to solve complex problems
+\item All parameter types possible in general
+\item Highly parallelizable
+\item Flexible through different variation operations
+\spacer
+\item \textbf{Disadvantages}
+\item Little mathematical rigor (for realistic, complex EAs)
+\item Hard to find balance between exploration and exploitation
+\item Quite some parameters, hard to determine them
+\item Customization necessary for complex problems
+\item Not suitable for expensive problems like HPO as large number of function evaluations necessary
+\end{framei}
+
+\endlecture
+\end{document}

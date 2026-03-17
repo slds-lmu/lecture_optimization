@@ -4,8 +4,10 @@
 # FIG: plot gradeint descent for linear model
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
-library(ggpubr)
+library(patchwork)
 
 theme_set(theme_bw())
 
@@ -16,7 +18,7 @@ X = as.matrix(cbind(1, x))
 Y = as.matrix(1 + 2 * x + rnorm(length(x), sd = 1))
 
 p = ggplot(data = data.frame(x = x, y = Y), aes(x = x, y = y)) + geom_point() + geom_smooth(method='lm')
-p
+if (interactive()) print(p)
 
 th0 = c(0, 0)
 alpha = 0.1
@@ -37,13 +39,13 @@ for (t in 1:30) {
 
 
 p1 = ggplot(data = as.data.frame(progress), aes(x = t, y = R)) + geom_line() + xlim(c(1, nrow(progress)))
-p1
+if (interactive()) print(p1)
 
 p2 = p + geom_abline(data = as.data.frame(progress), aes(intercept = theta0, slope = theta1, colour = t), alpha = 0.5)
-p2
+if (interactive()) print(p2)
 
-p = ggarrange(p1, p2, nrow = 1, common.legend = TRUE, legend = "right")
-p
-ggsave(filename = "../figure_man/gradient_descent_lm.pdf", p, width = 7, height = 2.5)
-
-
+p = p1 + p2 +
+  plot_layout(nrow = 1, guides = "collect") &
+  theme(legend.position = "right")
+if (interactive()) print(p)
+ggsave(filename = "../figure/gradient_descent_lm.pdf", p, width = 7, height = 2.5)

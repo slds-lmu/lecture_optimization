@@ -7,6 +7,8 @@
 #   (3) not convex nor concave exp(-x^2)
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
 library(dplyr)
 
@@ -62,5 +64,5 @@ plot <- ggplot() +
   )
 
 
-plot
-ggsave("../figure_man/conv_conc_functions.png", plot, width = 10, height = 8)
+if (interactive()) print(plot)
+ggsave("../figure/conv_conc_functions.png", plot, width = 10, height = 8)

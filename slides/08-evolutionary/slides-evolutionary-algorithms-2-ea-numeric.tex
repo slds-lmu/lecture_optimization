@@ -1,0 +1,133 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Evolutionary Algorithms
+}{
+ES / Numerical Encodings
+}{
+figure/1dim-ackley-func-selection.png
+}{
+\item Recombination 
+\item Mutation 
+\item A few simple examples
+}
+
+\begin{framev}{Recombination for numeric}
+Options for recombination of two individuals $\xv, \tilde{\xv} \in \R^d$: 
+\begin{itemize}
+\item \textbf{Uniform crossover}: Choose gene $j$ of parent 1 with probability $p$ and of parent 2 with probability $1-p$
+\item \textbf{Intermediate recombination}: Offspring is created from mean of two parents: $\frac{1}{2}(\xv + \tilde{\xv})$
+\item \textbf{Simulated Binary Crossover (SBX)}: generate \textbf{two offspring}
+$$
+\bar{\xv} \pm \frac{1}{2} \beta (\tilde{\xv} - \xv), \; \bar{\xv} = \frac{1}{2} (\xv + \tilde{\xv}), \; \text{$\beta \in \unitint$ uniformly at random}
+$$
+\end{itemize}
+\vfill
+\splitV[0.62]{
+\imageC[1]{figure_man/ea_recombination_uniform.png} % https://docs.google.com/presentation/d/12v81ZaLxJUgXVUBy3VdW0y6q7OKHS_6lFcQym3yeYsg/edit#slide=id.p
+}{
+\imageC[1]{figure/ea_recombination_numeric.pdf}
+}
+\end{framev}
+
+
+\begin{framev}[fs=footnotesize]{Mutation for numeric}
+\textbf{Mutation:} Individuals get modified
+\medskip
+\textbf{Example} for $\xv \in \R^d$:
+\begin{itemize}
+\item \textbf{Uniform mutation:} Select random gene $x_j$ and replace it by uniformly distributed value (within feasible range).
+\item \textbf{Gauss mutation:} $\xv \pm \normal(0, \sigma \mathbf{I})$
+\item \textbf{Polynomial mutation:} Use a different distribution instead of normal distribution
+\end{itemize}
+\vfill
+\imageC[0.45][https://www.researchgate.net/publication/262320509_Analysing_mutation_schemes_for_real-parameter_genetic_algorithms]{figure_man/polynomial_mutation.png}
+\end{framev}
+
+
+\begin{framev}[fs=small]{Example of an evolutionary algorithm}
+(Simple) EA on 1-dim Ackley function on $[-30, 30]$.
+Usually, for optimizing a function $f : \R^d \to \R$, individuals are encoded as real vectors $\xv \in \R^d$.
+\medskip
+\vfill
+\imageC[0.6]{figure/1dim-ackley-func.png}
+\end{framev}
+
+
+\begin{framev}{Example of an evolutionary algorithm}
+Random initial population with size $\mu = 10$
+\medskip
+\vfill
+\imageC[0.6]{figure/1dim-ackley-func-2.png}
+\end{framev}
+
+
+\begin{framev}{Example 1: Ackley function}
+We choose $\lambda = 5$ offspring by neutral selection (red individuals).
+\vfill
+\imageC[0.6]{figure/1dim-ackley-func-neutral-selec.png}
+\end{framev}
+
+
+\begin{framev}{Example 1: Ackley function}
+Use Gaussian mutation with $\sigma=2$, but without recombination.
+\medskip
+\vfill
+\imageC[0.6]{figure/1dim-ackley-func-gaussian-mutation.png}
+\end{framev}
+
+
+\begin{framev}{Example 1: Ackley function}
+Use $(\mu + \lambda)$ selection.
+Selected individuals are marked in green.
+\medskip
+\vfill
+\imageC[0.6]{figure/1dim-ackley-func-selection.png}
+\end{framev}
+
+
+\begin{framev}{Example 1: Ackley function}
+After $50$ iterations: 
+\vfill
+\imageC{figure/1dim-ackley-func-final.png}
+\end{framev}
+
+
+\begin{framev}{Example 2: Grid of balls}
+Consider a grid in which $n$ balls with random radius are placed.
+\vfill
+\imageC[0.55]{figure/grid.png}
+\vfill
+\textbf{Aim:} Find the circle with the largest possible radius in the grid that does \textbf{not} intersect with the other existing circles.
+\begin{itemize}
+\item What is the fitness function?
+\item How is the population defined?
+\end{itemize}
+Implementation: \url{https://juliambr.shinyapps.io/balls/}
+\end{framev}
+
+
+\begin{framev}{Example 2: Grid of balls}
+In our example, the chromosome of an individual is the center of a circle, so the chromosomes are encoded as 2-dimensional real vectors $\xv = (x_1, x_2) \in \R^2$.\\
+\spacer
+The population $P \subset \R^2$ is given as a set of circle centers.\\
+\spacer
+The fitness function evaluates an individual $\xv \in P$ based on the distance to the nearest neighboring gray circle $k$.
+$$
+f(\xv) = \min_{k \in \text{Grid}} \text{distance} (k, \xv),
+$$
+where the distance is defined as $0$ if a circle center is within the radius of a circle of the grid.
+This function is to be maximized: we are looking for the largest circle that does not touch any of the gray circles.
+\end{framev}
+
+\endlecture
+\end{document}

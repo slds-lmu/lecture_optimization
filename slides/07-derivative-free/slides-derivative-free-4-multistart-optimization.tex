@@ -1,0 +1,118 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\usepackage{verbatimbox}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{}{ 
+Multi-Start Optimization
+}{
+figure_man/levy.png
+}{
+\item Multimodal functions
+\item Basins of Attractions
+\item Simple multi-start procedure
+}
+
+\begin{framei}{Motivation}
+\item So far: derivative-free methods for unimodal objective function (exception: simulated annealing)
+\item With multimodal objective functions, methods converge to local minima.
+\item Optimum found may differ for different starting values $\xv^{[0]}$
+\item Attraction areas:
+\item Let $f_1^*, \ldots, f_k^*$ be local minimum values of $f$ with $f_i^* \neq f_j^* \quad \forall i \neq j$.
+\item Notation: $A(\xv^{[0]})$ denotes result of algorithm $A$ started at $\xv^{[0]}$
+\item Then: Set
+$$\mathcal{A}(f_i^*, A) = \left\{ \xv : A(\xv) = f_i^*\right\}$$
+is called \textit{attraction area}/\textit{basin of attraction} of $f_i^*$ for algorithm $A$
+\end{framei}
+
+
+\begin{framev}{Attraction Areas}
+\imageC[1]{figure/metropolis-example-nelder.png}
+\end{framev}
+
+
+\begin{vbframe}{Multi-starts}
+Levy function:
+$$f(\xv) = \sin^2(3\pi x_1) + (x_1 - 1)^2 [1 + \sin^2(3\pi x_2)] + (x_2 -1)^2[1 + \sin^2(2\pi x_2)]$$
+\splitVCC{
+\begin{itemizeM}
+\item Global minimum: $f(\xv^*) = 0$ at $\xv^* = (1,1)^\top$
+\item Optimize $f$ by BFGS method with random starting point in $[-2,2]^2$ and collect result
+\item Repeat $100$ times
+\end{itemizeM}
+}{\imageC[0.9]{figure_man/levy.png}}
+Distribution of results ($y$ values):
+\begin{verbatim}
+## Min.    1st Qu.    Median    Mean    3rd Qu.    Max.
+## 0.0000  0.1099     0.5356    2.4351  1.9809     18.3663
+\end{verbatim}
+\end{vbframe}
+
+
+\begin{framev}{multi-starts}
+Idea: use multiple starting points $\xv^{[1]}, \ldots, \xv^{[k]}$ for algorithm A
+\begin{algorithm}[H]
+\begin{footnotesize}
+\begin{center}
+\caption{Multistart optimization}
+\begin{algorithmic}[1]
+\State Given: optimization algorithm $A(\cdot)$, $f: \mathcal{S} \mapsto \R, \xv \mapsto f(\xv)$
+\State $k = 0$
+\Repeat
+\State Draw starting point  $\xv^{[k]}$ from $\mathcal{S}$ (e.g. uniform if $\mathcal{S}$ is of finite volume)
+\If{k = 0}  $\hat{\xv}= \xv^{[0]}$
+\EndIf
+\State Initialize algorithm with start value $\xv^{[k]} \Rightarrow \tilde{\xv} = A(\xv^{[k]})$
+\If{$f(\tilde{\xv}) < f(\hat{\xv})$}  $\hat{\xv} = \tilde{\xv}$
+\EndIf
+\State k = k + 1
+\Until{Stop criterion fulfilled}\\
+\Return{$\hat{\xv}$}
+\end{algorithmic}
+\end{center}
+\end{footnotesize}
+\end{algorithm}
+\end{framev}
+
+
+\begin{vbframe}{multi-starts}
+BFGS with Multistart gives us the true minimum of the Levy function:\\
+\spacer
+\begin{verbbox}
+iters = 20 # number of starts
+xbest = c(runif(1, -2, 2), runif(1, -2, 2))
+\end{verbbox}
+\theverbbox
+\vspace{0.4cm}
+\begin{verbbox}
+for (i in 1:iters) {
+x1 = runif(1, -2, 2)
+x2 = runif(1, -2, 2)
+res = optim(par = c(x1, x2), fn = f, method = "BFGS")
+}
+\end{verbbox}
+\theverbbox\\
+\spacer
+\begin{verbbox}
+if (res$value < f(xbest)) {
+xbest = res$par
+}
+\end{verbbox}
+\theverbbox\\
+\spacer
+\begin{verbbox}
+xbest
+## [1] 1 1
+\end{verbbox}
+\theverbbox
+\end{vbframe}
+
+\endlecture
+\end{document}

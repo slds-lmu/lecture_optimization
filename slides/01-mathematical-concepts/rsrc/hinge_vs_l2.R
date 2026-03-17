@@ -4,6 +4,8 @@
 # FIG: plot hinge loss vs l2 loss, 0-1 loss
 # ------------------------------------------------------------------------------
 
+set.seed(1L)
+
 library(ggplot2)
 library(reshape)
 theme_set(theme_bw())
@@ -29,6 +31,5 @@ names(df) = c("x", "Loss", "y")
 # PLOT -------------------------------------------------------------------------
 
 p = ggplot(data = df, aes(x = x, y = y, colour = Loss)) + geom_line()
-p
-ggsave("../figure_man/hinge_vs_l2.pdf", p, width = 3, height = 2)
-
+if (interactive()) print(p)
+ggsave("../figure/hinge_vs_l2.pdf", p, width = 3, height = 2)

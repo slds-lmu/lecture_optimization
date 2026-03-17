@@ -7,60 +7,97 @@
 #   also includes 3D surface visualization of predictions.
 # ------------------------------------------------------------------------------
 
-library(keras)
-library(mlr3keras)
-library(mlr3pipelines)
+library(keras3)
+library(tensorflow)
 
 # ------------------------------------------------------------------------------
 
-build_model = function(optimizer, momentum, lr) {     
-  model = keras_model_sequential() %>%
-      layer_dense(units = 2L, input_shape = 2L) %>%
-      layer_dense(units = 2L, activation = "sigmoid") %>%
-      layer_dense(units = 2L, activation = "linear") %>%
-      layer_dense(units = 1L)
-  
-  if (optimizer == "optimizer_sgd") {
-    model %>% compile(
-    loss = "mse",
-    optimizer = get(optimizer)(momentum = momentum, lr = lr),
-    metrics = list("mean_absolute_error"))
-  } else {
-    model %>% compile(
-    loss = "mse",
-    optimizer = get(optimizer)(lr = lr),
-    metrics = list("mean_absolute_error"))    
-  }
+set_nn_seed = function(seed) {
+  set.seed(as.integer(seed))
+  tensorflow::set_random_seed(as.integer(seed))
 }
 
-train_model = function(task, task_predict = NULL, epochs, optimizer = "optimizer_sgd", momentum = 0, plot_surface = FALSE, bs_fraction = 1, lr = 0.01) {
-  
-  po_scale = PipeOpScale$new()
-
-  learner = lrn("regr.keras")  ### statt epochs for-loop -> Plot nach Index
-  
-  learner$param_set$values$epochs = epochs
-  learner$param_set$values$model = build_model(optimizer = optimizer, lr = lr, momentum = momentum)
-  learner$param_set$values$validation_split = 0
-  learner$param_set$values$batch_size = task$nrow * bs_fraction
-  
-  keras_500 = GraphLearner$new(po_scale %>>% learner)
-
-  keras_500$train(task)
-  
-  history = keras_500$model$regr.keras$model$history
-
-  z = matrix(data=NA, nrow=length(x1_scale), ncol=length(x2_scale))
-
-  for(i in 1:length(x1_scale)) {
-    for (j in 1:length(x2_scale)) {
-      task_predict = data.table(x1 = x1_scale[i], x2 = x2_scale[j])
-      z[i,j] = keras_500$predict_newdata(task_predict)$data$response
-    }
+build_optimizer = function(optimizer, momentum, lr) {
+  if (optimizer == "optimizer_sgd") {
+    return(optimizer_sgd(learning_rate = lr, momentum = momentum))
   }
 
+  if (!exists(optimizer, mode = "function")) {
+    stop(sprintf("Unknown optimizer: %s", optimizer))
+  }
+
+  get(optimizer)(learning_rate = lr)
+}
+
+build_model = function(optimizer, momentum, lr) {
+  model = keras_model_sequential(
+    input_shape = c(2L),
+    layers = list(
+      layer_dense(units = 2L),
+      layer_dense(units = 2L, activation = "sigmoid"),
+      layer_dense(units = 2L, activation = "linear"),
+      layer_dense(units = 1L)
+    )
+  )
+
+  model$compile(
+    loss = "mse",
+    optimizer = build_optimizer(optimizer = optimizer, momentum = momentum, lr = lr),
+    metrics = list("mean_absolute_error")
+  )
+
+  model
+}
+
+history_loss = function(history) {
+  unlist(history$history$loss)
+}
+
+train_model = function(task, task_predict = NULL, epochs, optimizer = "optimizer_sgd",
+                       momentum = 0, plot_surface = FALSE, bs_fraction = 1,
+                       lr = 0.01) {
+  task_data = as.data.frame(task$data())
+  x_train = as.matrix(task_data[, task$feature_names, drop = FALSE])
+  y_train = as.numeric(task_data[[task$target_names]])
+
+  x_center = colMeans(x_train)
+  x_scale = apply(x_train, 2, stats::sd)
+  x_scale[x_scale == 0] = 1
+
+  x_train_scaled = op_array(
+    unclass(scale(x_train, center = x_center, scale = x_scale)),
+    dtype = "float32"
+  )
+  y_train = op_array(y_train, dtype = "float32")
+  batch_size = as.integer(max(1L, round(task$nrow * bs_fraction)))
+
+  model = build_model(optimizer = optimizer, lr = lr, momentum = momentum)
+  history = model$fit(
+    x = x_train_scaled,
+    y = y_train,
+    epochs = as.integer(epochs),
+    batch_size = batch_size,
+    validation_split = 0,
+    verbose = 0
+  )
+
+  prediction_grid = expand.grid(x1 = x1_scale, x2 = x2_scale)
+  prediction_grid_scaled = op_array(
+    unclass(scale(
+      as.matrix(prediction_grid),
+      center = x_center,
+      scale = x_scale
+    )),
+    dtype = "float32"
+  )
+  z = matrix(
+    as.numeric(model$predict(prediction_grid_scaled, verbose = 0)),
+    nrow = length(x1_scale),
+    ncol = length(x2_scale)
+  )
+
   if (plot_surface) {
-    pdf(paste0("../figure_man/gradient_descent_NN_", epochs, "_surface_", momentum,".pdf"), 5, 5, colormodel = "cmyk")
+    pdf(paste0("../figure/gradient_descent_NN_", epochs, "_surface_", momentum,".pdf"), 5, 5, colormodel = "cmyk")
 
     persp3D(x = x1_scale, y = x2_scale, z = z, xlab = "x1", ylab = "x2", zlab = "y",
         expand = 0.5, d = 2, phi = 10, theta = -60, resfac = 2,
@@ -73,5 +110,4 @@ train_model = function(task, task_predict = NULL, epochs, optimizer = "optimizer
   }
 
   return(history)
-
 }

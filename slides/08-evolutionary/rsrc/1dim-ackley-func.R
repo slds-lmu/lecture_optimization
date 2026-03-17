@@ -13,6 +13,28 @@ library(reshape2)
 library(mlr)
 library(gridExtra)
 
+# Small compatibility implementation for the old (mu + lambda) Ackley example.
+evaluate_population = function(population, objective) {
+  vapply(population, objective, numeric(1L))
+}
+
+mutate_gaussian = function(population, sdev, lower, upper) {
+  lapply(population, function(individual) {
+    mutated = individual + stats::rnorm(length(individual), sd = sdev)
+    pmin(upper, pmax(lower, mutated))
+  })
+}
+
+select_mu_plus_lambda = function(population, offspring, fitness, fitness_offspring, mu) {
+  combined_population = c(population, offspring)
+  combined_fitness = c(fitness, fitness_offspring)
+  keep = order(combined_fitness)[seq_len(mu)]
+
+  list(
+    population = combined_population[keep],
+    fitness = combined_fitness[keep]
+  )
+}
 
 
 fn = makeAckleyFunction(1L)
@@ -20,27 +42,26 @@ fn = makeAckleyFunction(1L)
 pl = autoplot(fn, show.optimum = F, length.out = 1000L)
 pl = pl + theme_bw()
 
-ggsave("figure_man/1dim-ackley-func.png", pl, width = 5, height = 4)
+ggsave("../figure/1dim-ackley-func.png", pl, width = 5, height = 4)
 
 
 # initialize evolutionary algorithm
 MU = 10L; LAMBDA = 5L; MAX.ITER = 50L
 lower = - 30
 upper = 30
-control = initECRControl(fn)
-control = registerECROperator(control, "mutate", mutGauss, sdev = 2, lower = lower, upper = upper)
-control = registerECROperator(control, "selectForSurvival", selGreedy)
-
-
 set.seed(1212)
-population = genReal(MU, getNumberOfParameters(fn), lower, upper)
-fitness = evaluateFitness(control, population)
+population = replicate(
+  MU,
+  runif(getNumberOfParameters(fn), min = lower, max = upper),
+  simplify = FALSE
+)
+fitness = evaluate_population(population, fn)
 pl = autoplot(fn, show.optimum = F, length.out = 1000L)
 df = data.frame(x = unlist(population), y = as.numeric(fitness))
 pl = pl + geom_point(data = df, mapping = aes(x = x, y = y), size = 3) + theme_bw()
-pl
+if (interactive()) print(pl)
 
-ggsave("figure_man/1dim-ackley-func-2.png", pl, width = 5, height = 4)
+ggsave("../figure/1dim-ackley-func-2.png", pl, width = 5, height = 4)
 
 
 
@@ -50,13 +71,13 @@ idx = sample(1:MU, LAMBDA)
 pl = pl + geom_point(data = df[idx, ], mapping = aes(x = x, y = y), colour = "red", size = 3)
 pl = pl + ggtitle("Neutral Selection")
 
-ggsave("figure_man/1dim-ackley-func-neutral-selec.png", pl, width = 5, height = 4)
+ggsave("../figure/1dim-ackley-func-neutral-selec.png", pl, width = 5, height = 4)
 
 
 
 
-offspring = mutate(control, population[idx], p.mut = 1)
-fitness.o = evaluateFitness(control, offspring)
+offspring = mutate_gaussian(population[idx], sdev = 2, lower = lower, upper = upper)
+fitness.o = evaluate_population(offspring, fn)
 df.o = data.frame(x = unlist(offspring), y = as.numeric(fitness.o))
 
 pl = pl + geom_point(data = df.o, aes(x = x, y = y), color = "red", size = 3)
@@ -66,11 +87,11 @@ pl2 = pl + geom_segment(data = data.frame(x = df[idx, ]$x, y = df[idx, ]$y, xend
 pl2 = pl2 + ggtitle("Gaussian Mutation")
 
 
-ggsave("figure_man/1dim-ackley-func-gaussian-mutation.png", pl2, width = 5, height = 4)
+ggsave("../figure/1dim-ackley-func-gaussian-mutation.png", pl2, width = 5, height = 4)
 
 
 
-sel = replaceMuPlusLambda(control, population, offspring, fitness, fitness.o)
+sel = select_mu_plus_lambda(population, offspring, fitness, fitness.o, mu = MU)
 population = sel$population
 fitness = sel$fitness
 df = data.frame(x = unlist(population), y = as.numeric(fitness))
@@ -79,7 +100,7 @@ pl = pl + geom_point(data = df, aes(x = x, y = y), color = "green", fill = "gree
 pl = pl + geom_hline(yintercept = max(df$y), lty = 2)
 pl = pl + ggtitle(expression(paste("(",mu, "+" ,lambda,")-selection")))
 
-ggsave("figure_man/1dim-ackley-func-selection.png", pl, width = 5, height = 4)
+ggsave("../figure/1dim-ackley-func-selection.png", pl, width = 5, height = 4)
 
 
 best_individual = c()
@@ -90,10 +111,10 @@ for (i in seq_len(MAX.ITER)) {
     # sample lambda individuals at random
     idx = sample(1:MU, LAMBDA)
     # generate offspring by mutation and evaluate their fitness
-    offspring = mutate(control, population[idx], p.mut = 1)
-    fitness.o = evaluateFitness(control, offspring)
+    offspring = mutate_gaussian(population[idx], sdev = 2, lower = lower, upper = upper)
+    fitness.o = evaluate_population(offspring, fn)
     # now select the best out of the union of population and offspring
-    sel = replaceMuPlusLambda(control, population, offspring, fitness, fitness.o)
+    sel = select_mu_plus_lambda(population, offspring, fitness, fitness.o, mu = MU)
     population = sel$population
 
     fitness = sel$fitness
@@ -110,5 +131,6 @@ pl = autoplot(fn, show.optimum = F, length.out = 1000L)
 p2 = pl + theme_bw()
 p2 = p2 + geom_point(data = pops, aes(x = x, y = y, colour = iteration ))
 
-p = grid.arrange(p1, p2, nrow = 1)
-ggsave("figure_man/1dim-ackley-func-final.png", p, height = 4, width = 8)
+p = arrangeGrob(p1, p2, nrow = 1)
+if (interactive()) grid::grid.draw(p)
+ggsave("../figure/1dim-ackley-func-final.png", p, height = 4, width = 8)

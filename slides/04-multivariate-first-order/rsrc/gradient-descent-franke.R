@@ -68,11 +68,12 @@ for (i in seq_along(optimizers)) {
 }
 
 visualizer$set_theme(my_theme)
-visualizer$plot(
-  show_title = FALSE,
-  show_legend = TRUE,
-
-)
+if (interactive()) {
+  visualizer$plot(
+    show_title = FALSE,
+    show_legend = TRUE
+  )
+}
 
 visualizer$save(
   filename = "../figure/gradient-descent-franke_1.png"

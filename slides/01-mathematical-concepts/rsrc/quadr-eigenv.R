@@ -3,6 +3,8 @@
 
 # FIG: plot eigen-vectors of quadratic form
 # ------------------------------------------------------------------------------
+set.seed(1L)
+
 v1 = c(1, -1) / sqrt(2)
 v2 = c(1, 1) / sqrt(2)
 l1 = 3
@@ -28,7 +30,7 @@ z <- outer(x, y, FUN = function(x, y) {
   })
 })
 
-png("../figure_man/quadr-eigenv.png", width = 400, height = 400)
+png("../figure/quadr-eigenv.png", width = 400, height = 400)
 
 par(xaxt = "n", yaxt = "n", mar = c(0, 0, 0, 0))
 contour(x, y, z, drawlabels = FALSE, nlevels = 6)

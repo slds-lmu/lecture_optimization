@@ -6,11 +6,8 @@
 #   (2)	Brent’s Method
 # ------------------------------------------------------------------------------
 
-library(Rmpfr)
 library(ggplot2)
-library(gridExtra)
 library(latex2exp)
-library(ggpubr)
 
 set.seed(1234)
 
@@ -28,6 +25,36 @@ neg_log_lik = function(theta) {
   return(y)
 }
 
+golden_ratio_trace = function(fn, lower, upper, tol = 1e-10, max_iter = 1000L) {
+  phi = (sqrt(5) - 1) / 2
+  left = lower
+  right = upper
+  c_point = right - phi * (right - left)
+  d_point = left + phi * (right - left)
+  f_c = fn(c_point)
+  f_d = fn(d_point)
+
+  iter = 0L
+  while ((right - left) > tol && iter < max_iter) {
+    iter = iter + 1L
+    if (f_c < f_d) {
+      right = d_point
+      d_point = c_point
+      f_d = f_c
+      c_point = right - phi * (right - left)
+      f_c = fn(c_point)
+    } else {
+      left = c_point
+      c_point = d_point
+      f_c = f_d
+      d_point = left + phi * (right - left)
+      f_d = fn(d_point)
+    }
+  }
+
+  invisible((left + right) / 2)
+}
+
 theta_grid = seq(0.75, 1.25, length.out = 1000)
 y = sapply(theta_grid, neg_log_lik)
 df = data.frame(theta = theta_grid, y = y)
@@ -37,18 +64,18 @@ p = ggplot(data = df, aes(x = theta_grid, y = y)) + geom_line() + xlab(TeX('$\\l
 thetav = list()
 out = list()
 
-optimizeR(neg_log_lik, lower = 0.5, upper = 1.5, trace = TRUE, method = "GoldenRatio", tol = 1e-10)
+golden_ratio_trace(neg_log_lik, lower = 0.5, upper = 1.5, tol = 1e-10)
 
 archive = data.frame(iter = 1:length(thetav), x = unlist(thetav), y = unlist(out), Method = "GoldenRatio")
 
 thetav = list()
 out = list()
 
-optimizeR(neg_log_lik, lower = 0.5, upper = 1.5, trace = TRUE, tol = 1e-10)
+stats::optimize(neg_log_lik, lower = 0.5, upper = 1.5, tol = 1e-10)
 
 archive = rbind(archive, data.frame(iter = 1:length(thetav), x = unlist(thetav), y = unlist(out), Method = "Brent"))
 
 p = p + geom_point(data = archive, aes(x = x, y = y, colour = Method), alpha = 0.5) + theme(axis.text.y=element_blank())
 
-p
-ggsave("../figure_man/poisson.pdf", p, width = 4, height = 2)
+if (interactive()) print(p)
+ggsave("../figure/poisson.pdf", p, width = 4, height = 2)

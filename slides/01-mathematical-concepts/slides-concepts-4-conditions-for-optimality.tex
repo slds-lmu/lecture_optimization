@@ -21,20 +21,17 @@ figure_man/local_global_min_2D.png
 
 \begin{framei}{Extrema and saddle points}
 \item Given $\S \subseteq \R^d$, $f: \S \to \R$
-\item Global minimum at $\xvs$: $\fxvs \le f(\xv)$ for all $\xv \in \S$
-\item Local minimum at $\xvs$: $\exists\, \eps > 0$ s.t. $\fxvs \le f(\xv)$ for all $\xv \in S \cap B_\eps(\xvs)$ ($\eps$-ball)
+\item Global minimum at $\xvs$: $\fxvs \le \fx$ for all $\xv \in \S$
+\item Local minimum at $\xvs$: $\exists\, \eps > 0$ s.t. $\fxvs \le \fx$ for all $\xv \in \S \cap B_\eps(\xvs)$ ($\eps$-ball)
 \item Analogously for global and local max
 \item We call $\xvs$ saddle point if in feasible portion of every eps-ball
-$S \cap B_\eps(\xvs)$, is at least a strictly better and a strictly worse point
+$\S \cap B_\eps(\xvs)$, is at least a strictly better and a strictly worse point
 \vfill
 \splitV[0.5]{
-\imageC[0.6]{figure_man/local_global_min.png}
+\imageC[0.9][https://en.wikipedia.org/wiki/Maxima_and_minima]{figure_man/local_global_min.png}
 }{
-\imageC[0.6]{figure_man/local_global_min_2D.png}
+\imageC[0.9][https://wngaw.github.io/linear-regression/]{figure_man/local_global_min_2D.png}
 }
-\begin{center}\begin{footnotesize}
-Source (left): \url{https://en.wikipedia.org/wiki/Maxima_and_minima} \quad Source (right): \url{https://wngaw.github.io/linear-regression/}
-\end{footnotesize}\end{center}
 \end{framei}
 
 \begin{framei}{Existence of optima}
@@ -52,29 +49,16 @@ f(x) = \begin{cases}
 \end{align*}
 \end{framei}
 
-% \begin{framei}{First order condition: intuition}
-% \item At a local optimum of $f\in\mathcal{C}^1$, first-order Taylor approx. is flat
-% \item Necessary condition
-% \vfill
-% %FIXME: these figures dont look very professional, maybe we should do some of them ourselves?
-% \imageC[0.6]{figure_man/first_order.png}
-% \begin{center}\begin{footnotesize}
-% Strictly convex functions (left: univariate, right: multivariate). Tangent/hyperplane flat at optimum. Source: Watt, Machine Learning Refined (2020)
-% \end{footnotesize}\end{center}
-% \end{framei}
 
 \begin{framei}{First-order condition}
 \item Let $f: \S \to \R$, $f$ differentiable, $\xvs$ interior point of $\S$
 \item Necessary condition:\\
 If $\xvs$ is a local extremum, then $\nabla \fxvs = 0$
-\item Such points are called `stationary'
+\item Such points are called ``stationary''
 \item Intuition: at a local extremum, the function must be flat, otherwise we can find a direction to move to a better value
 \item Not sufficient, e.g. saddle points are possible
 \vfill
-\imageC[0.6]{figure_man/first_order.png}
-%\imageC[0.8]{figure_man/saddle_points_2.png}
-% FIXME: better src handling
-Source: Watt (2020)
+\imageC[0.6][https://github.com/jermwatt/machine_learning_refined]{figure_man/first_order.png}
 \end{framei}
 
 \begin{framei}[fs=footnotesize]{Second-order condition}
@@ -83,30 +67,20 @@ Source: Watt (2020)
 \item If $H(\xvs)$ is semi-definite, then $\xvs$ is a local extremum
 \item If $H(\xvs)$ is indefinite, then $\xvs$ is a saddle point
 \item If $H(\xvs)$ is p(s)d, then $\xvs$ is a (strict) local min\\
-this implies f is locally (strictly) convex
+this implies $f$ is locally (strictly) convex
 \item If $H(\xvs)$ is n(s)d, then $\xvs$ is a (strict) local max\\
-this implies f is locally (strictly) concave
+this implies $f$ is locally (strictly) concave
 \item Interpretation: curvature pos (or neg) in all directions
-%FIXME: there should be a pic here
-
 \imageC[0.7]{figure_man/convex.jpg}
-
 \end{framei}
 
-
-% \begin{framev}{Quadratic forms and Hessians}
-% \imageC[0.9]{figure_man/hessian-eigenvalues.pdf}
-% \begin{center}\begin{footnotesize}
-% Three quadratic forms. Left: two positive eigenvalues. Middle: one positive, one negative. Right: one positive, one zero
-% \end{footnotesize}\end{center}
-% \end{framev}
 
 \begin{framei}{Example: Branin function}
 \item Branin function with 3 local minima   
 \splitV{
-\imageC[0.65]{figure_man/branin3d/branin2D.pdf}
+\imageC[0.65]{figure/branin3d/branin2D.pdf}
 }{
-\imageC[0.65]{figure_man/branin3d/branin3D.pdf}
+\imageC[0.65]{figure/branin3d/branin3D.pdf}
 }
 \item EVs of Hessian at local minima:
 \begin{center}
@@ -128,24 +102,20 @@ Right   & 11.33       & 1.69        \\
 (unique global on $\S$, if it exists)
 \item Analogously for concave functions
 \end{framei}
+
   
 \begin{framei}{Example}
 \item $f(x,y) = x^4 + y^4 - x^2 - y^2$
 \item $\nabla f(x,y) = (4x^3 - 2x, 4y^3 - 2y)$
-\item $H_(x,y) = 
-\begin{pmatrix}
+\item $H(x,y) = \mat{
 12x^2 - 2 &  0          \\ 
 0         & 12y^2 - 2
-\end{pmatrix}$ 
+}$ 
 \item At $(0,0)^T$ we have strict local max
 \item At $(\pm \frac1{\sqrt{2}}, \pm \frac1{\sqrt{2}})^T$ we have 4 strict local min
 \item At $(0, \pm \frac1{\sqrt{2}})^T$, $(\pm \frac1{\sqrt{2}}, 0)^T$ we have 4 saddle points
 % FIXME: we should have a plot here
 \end{framei}
 
-
 \endlecture
-
 \end{document}
-
-

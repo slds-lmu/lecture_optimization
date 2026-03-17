@@ -13,7 +13,6 @@ library(ggplot2)
 library(patchwork)
 library(R6)
 library(checkmate)
-library(pammtools)
 library(mlr3misc)
 
 source("LearnerRegrRangerCustom.R")
@@ -46,17 +45,6 @@ grid_gp52 = copy(grid)
 set(grid_gp52, j = "y_hat", value = prediction_gp52$mean)
 set(grid_gp52, j = "y_min", value = prediction_gp52$mean - prediction_gp52$se)
 set(grid_gp52, j = "y_max", value = prediction_gp52$mean + prediction_gp52$se)
-
-g = ggplot(aes(x = x, y = y), data = grid_gp52) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave(file.path("../figure_man/surrogate_0.png"), plot = g, width = 5, height = 4)
 
 ranger = LearnerRegrRangerCustom$new()
 ranger$param_set$values$num.trees = 1000L
@@ -117,7 +105,7 @@ set(grid_rf4, j = "y_max", value = prediction_rf4$mean + prediction_rf4$se)
 g_rf1 = ggplot(aes(x = x, y = y), data = grid_rf1) +
   geom_line() +
   geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
+  geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
   geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
   xlim(c(0, 1)) +
   ylim(c(-2, 2.4)) +
@@ -127,7 +115,7 @@ g_rf1 = ggplot(aes(x = x, y = y), data = grid_rf1) +
 g_rf2 = ggplot(aes(x = x, y = y), data = grid_rf2) +
   geom_line() +
   geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
+  geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
   geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
   xlim(c(0, 1)) +
   ylim(c(-2, 2.4)) +
@@ -137,7 +125,7 @@ g_rf2 = ggplot(aes(x = x, y = y), data = grid_rf2) +
 g_rf3 = ggplot(aes(x = x, y = y), data = grid_rf3) +
   geom_line() +
   geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
+  geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
   geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
   xlim(c(0, 1)) +
   ylim(c(-2, 2.4)) +
@@ -147,14 +135,14 @@ g_rf3 = ggplot(aes(x = x, y = y), data = grid_rf3) +
 g_rf4 = ggplot(aes(x = x, y = y), data = grid_rf4) +
   geom_line() +
   geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
+  geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
   geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
   xlim(c(0, 1)) +
   ylim(c(-2, 2.4)) +
   labs(title = "Bootstrap & Random Splits") +
   theme_minimal()
 
-ggsave(file.path("../figure_man/surrogate_1.png"), plot = (g_rf1 + g_rf2) / (g_rf3 + g_rf4), width = 10, height = 8)
+ggsave(file.path("../figure/surrogate_1.png"), plot = (g_rf1 + g_rf2) / (g_rf3 + g_rf4), width = 10, height = 8)
 
 objective = ObjectiveRFunDt$new(
  fun = function(xdt) data.table(y = -20.0 * exp(-0.2 * sqrt(0.5 * (xdt$x1^2 + xdt$x2^2))) - 
@@ -223,11 +211,14 @@ results = map_dtr(1:10, function(i) {
 agg = results[, .(mean_best = mean(best), se_best = sd(best) / sqrt(.N)), by = .(iter, method)]
 
 g = ggplot(aes(x = iter, y = mean_best, colour = method, fill = method), data = agg) +
+  geom_ribbon(
+    aes(ymin = mean_best - se_best, ymax = mean_best + se_best),
+    colour = NA,
+    alpha = 0.25
+  ) +
   geom_step() +
-  geom_stepribbon(aes(x = iter, min = mean_best - se_best, max = mean_best + se_best), colour = NA, alpha = 0.25) +
   labs(x = "Nr. Function Evaluations", y = "Best Objective Value", colour = "Method", fill = "Method") +
   theme_minimal() +
   theme(legend.position = "bottom")
 
-ggsave(file.path("../figure_man/surrogate_2.png"), plot = g, width = 5, height = 4)
-
+ggsave(file.path("../figure/surrogate_2.png"), plot = g, width = 5, height = 4)
