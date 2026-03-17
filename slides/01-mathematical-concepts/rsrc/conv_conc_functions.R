@@ -64,5 +64,5 @@ plot <- ggplot() +
   )
 
 
-plot
+if (interactive()) print(plot)
 ggsave("../figure/conv_conc_functions.png", plot, width = 10, height = 8)

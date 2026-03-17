@@ -66,6 +66,5 @@ p = p + annotate("text", x = x[1] + 0.6, y = x[2] - 0.8, colour = "red", label =
 temp <- paste("270")
 p = p + annotate("text", x = x[1] - 0.2, y = x[2] + 0.8, colour = "red", label = temp, parse = TRUE, size = 2)
 
-p
+if (interactive()) print(p)
 ggsave(filename = "../figure/descent_direction.pdf", p, width = 3, height = 3)
-

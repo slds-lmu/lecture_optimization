@@ -144,5 +144,6 @@ p3 = p3 + ggtitle("Case 3")
 p3 = p3 + xlab(expression(paste(x[1]))) + xlab(expression(paste(x[2])))
 p3 = p3 + xlim(c(0, 1)) + ylim(c(0, 1)) + theme_bw()
 
-p = grid.arrange(p1, p2, p3, ncol = 3)
+p = arrangeGrob(p1, p2, p3, ncol = 3)
+if (interactive()) grid::grid.draw(p)
 ggsave("../figure/cons-solutions-lp.png", p)

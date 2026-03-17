@@ -27,10 +27,10 @@ df = data.frame(lambda = lambda, f = f)
 optimum = optimize(likelihood, interval = c(0, 1), maximum = TRUE)
 
 p = ggplot() + geom_line(data = df, aes(x = lambda, y = f)) + geom_point(data = data.frame(x = optimum$maximum, y = optimum$objective), aes(x = x, y = y), colour = "blue") + xlab("x")
-p
+if (interactive()) print(p)
 ggsave("../figure/ml_poisson_example_1.pdf", p, width = 3, height = 2)
 
 
 p = ggplot() + geom_line(data = df, aes(x = lambda, y = - f)) + geom_point(data = data.frame(x = optimum$maximum, y = - optimum$objective), aes(x = x, y = y), colour = "blue") + xlab("x")
-p
+if (interactive()) print(p)
 ggsave("../figure/ml_poisson_example_2.pdf", p, width = 3, height = 2)

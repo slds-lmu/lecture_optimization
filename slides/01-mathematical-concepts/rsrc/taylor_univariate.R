@@ -50,5 +50,5 @@ plot <- ggplot(df, aes(x = x, y = y, color = order)) +
     legend.text = element_text(size = 15)
   )
 
-plot
+if (interactive()) print(plot)
 ggsave("../figure/taylor_univariate.png", plot, width = 10, height = 8)

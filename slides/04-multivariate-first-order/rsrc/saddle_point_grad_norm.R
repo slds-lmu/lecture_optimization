@@ -27,7 +27,6 @@ gnorm = data.frame(grad_norm = unlist(lapply(p, function(pp) {
 gnorm$iter = 1:nrow(gnorm)
 
 p = ggplot(data = gnorm, aes(x = iter, y = grad_norm)) + geom_line() + theme_bw()
-p
+if (interactive()) print(p)
 
 ggsave(filename = "../figure/saddle_point_grad_norm.pdf", p, width = 9, height = 2.5)
-

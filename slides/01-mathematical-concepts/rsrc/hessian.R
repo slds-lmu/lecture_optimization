@@ -58,5 +58,5 @@ contour_plot <- ggplot(grid, aes(x = x, y = y, z = z)) +
   ) +
   theme_minimal()
 
-contour_plot
+if (interactive()) print(contour_plot)
 # ../figure_man/hessian_contour.png" is a manually created screenshot

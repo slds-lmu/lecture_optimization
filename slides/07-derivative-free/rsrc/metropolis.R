@@ -153,5 +153,5 @@ p <- ggplot(multimod.dat,aes(x = x, y = y, color = col)) + geom_line() +
                      labels = c(expression(x[1]), expression(x[2]))) +
   guides(size = guide_legend(override.aes = list(size = 3))) + theme_bw()
 
-p
+if (interactive()) print(p)
 ggsave("../figure/metropolis-example-nelder.png", p)

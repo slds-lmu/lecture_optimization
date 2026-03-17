@@ -75,9 +75,9 @@ ackley_vis = as_visualizer(
 	x1_limits = c(-1.5, 1.5),
 	x2_limits = c(-2.0, 1.7)
 )
-ackley_vis$plot(show_title = FALSE)
+if (interactive()) ackley_vis$plot(show_title = FALSE)
 # ../figure-man/ackley_0a.png is a manual screenshot
-ackley_vis$plot(show_title = FALSE, flatten = TRUE)
+if (interactive()) ackley_vis$plot(show_title = FALSE, flatten = TRUE)
 # ../figure-man/ackley_0b.png is a manual screenshot
 
 ackley_vis$add_contours(levels = 40L)
@@ -97,7 +97,7 @@ ackley_contour = ackley_vis$plot(
 	show_title = FALSE,
 	show_legend = TRUE
 )
-ackley_contour
+if (interactive()) print(ackley_contour)
 ackley_widget = plotly::layout(
   ackley_contour,
   scene = list(

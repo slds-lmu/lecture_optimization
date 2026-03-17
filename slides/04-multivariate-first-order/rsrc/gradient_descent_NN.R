@@ -88,4 +88,4 @@ df$bs_fraction = as.factor(df$bs_fraction)
 p = ggplot(data = df, aes(x = epoch, y = loss, colour = bs_fraction)) + geom_line()
 # p = p + ylim(c(0, 130)) 
 p = p + theme_bw() + ggtitle("SGD with different batch sizes")
-p
+if (interactive()) print(p)

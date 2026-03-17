@@ -59,7 +59,7 @@ fitness = evaluate_population(population, fn)
 pl = autoplot(fn, show.optimum = F, length.out = 1000L)
 df = data.frame(x = unlist(population), y = as.numeric(fitness))
 pl = pl + geom_point(data = df, mapping = aes(x = x, y = y), size = 3) + theme_bw()
-pl
+if (interactive()) print(pl)
 
 ggsave("../figure/1dim-ackley-func-2.png", pl, width = 5, height = 4)
 
@@ -131,5 +131,6 @@ pl = autoplot(fn, show.optimum = F, length.out = 1000L)
 p2 = pl + theme_bw()
 p2 = p2 + geom_point(data = pops, aes(x = x, y = y, colour = iteration ))
 
-p = grid.arrange(p1, p2, nrow = 1)
+p = arrangeGrob(p1, p2, nrow = 1)
+if (interactive()) grid::grid.draw(p)
 ggsave("../figure/1dim-ackley-func-final.png", p, height = 4, width = 8)

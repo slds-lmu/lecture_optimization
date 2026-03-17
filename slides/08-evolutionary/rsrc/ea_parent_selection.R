@@ -25,5 +25,5 @@ p = ggplot(df, aes(x="", y=probability, fill=fitness)) +
   coord_polar("y", start=0) + theme_void() + 
   geom_text(aes(label = fitness), color = "white",
             position = position_stack(vjust = 0.5))
-p
+if (interactive()) print(p)
 ggsave("../figure/ea_parent_selection.pdf", p, width = 5, height = 5)

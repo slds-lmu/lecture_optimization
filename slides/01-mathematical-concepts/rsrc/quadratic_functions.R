@@ -77,7 +77,8 @@ plot_direction_along_eigenvector = function(grid, eigenval, col) {
 p1 = ggplot(data.frame(x = c(-2, 2)), aes(x)) + stat_function(fun = function(x) x^2, colour = "orange") + ylim(c(0, 4))
 p2 = ggplot(data.frame(x = c(-2, 2)), aes(x)) + stat_function(fun = function(x) - x^2, colour = "blue") + ylim(c(-4, 0)) 
 
-ggsave("../figure/quadratic_functions_1D.png", grid.arrange(p1, p2, nrow = 1), width = 6, height = 3)
+combined_1d = arrangeGrob(p1, p2, nrow = 1)
+ggsave("../figure/quadratic_functions_1D.png", combined_1d, width = 6, height = 3)
 
 
 
@@ -86,7 +87,8 @@ ggsave("../figure/quadratic_functions_1D.png", grid.arrange(p1, p2, nrow = 1), w
 p3 = p1 + stat_function(fun = function(x) 2 * x^2, colour = "darkgreen") 
 p4 = p2 + stat_function(fun = function(x) - 3 * x^2, colour = "violet") 
 
-ggsave("../figure/quadratic_functions_1D_curvature.png", grid.arrange(p3, p4, nrow = 1), width = 6, height = 3)
+combined_1d_curvature = arrangeGrob(p3, p4, nrow = 1)
+ggsave("../figure/quadratic_functions_1D_curvature.png", combined_1d_curvature, width = 6, height = 3)
 
 
 ## quadratic_functions_1D_derivative.png
@@ -100,7 +102,8 @@ plist = lapply(seq_row(df), function(i) {
 	p1 = p1 + geom_abline(data = df[i, ], aes(intercept = intercept, slope = slope))
 })
 
-ggsave("../figure/quadratic_functions_1D_derivative.png", do.call(grid.arrange, c(plist, nrow = 1)), width = 12, height = 3)
+combined_1d_derivative = do.call(arrangeGrob, c(plist, nrow = 1))
+ggsave("../figure/quadratic_functions_1D_derivative.png", combined_1d_derivative, width = 12, height = 3)
 
 
 
@@ -144,7 +147,8 @@ p1 = p1 + geom_raster(aes(fill = f)) + geom_contour(colour = "white") + xlab("x1
 p1 = plot_eigenvector(p1, v1, "orange") + coord_fixed() + guides(fill = FALSE)
 p1 = plot_eigenvector(p1, v2, "magenta")
 
-ggsave("../figure/quadratic_functions_2D_example_2_4.png", grid.arrange(p1, nrow = 1), width = 4, height = 3)
+combined_2d_example = arrangeGrob(p1, nrow = 1)
+ggsave("../figure/quadratic_functions_2D_example_2_4.png", combined_2d_example, width = 4, height = 3)
 
 
 
@@ -166,7 +170,6 @@ colors<-col.pal(nbcol)
 zfacet = z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
 # Recode facet z-values into color indices
 facetcol = cut(zfacet, nbcol)
-
 
 
 

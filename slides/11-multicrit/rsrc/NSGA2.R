@@ -77,8 +77,8 @@ for (i in snapshot_iters) {
   assign(paste("p", i, sep = ""), value = pl)
 }
 
-g = grid.arrange(p1, p3, p10, ncol = 3)
-g
+g = arrangeGrob(p1, p3, p10, ncol = 3)
+if (interactive()) grid::grid.draw(g)
 ggsave(g, file = "../figure/NSGA2_steps.png", width = 8, height = 4)
 
 
@@ -94,7 +94,7 @@ popdf$Front = factor(sorted$ranks, ordered = TRUE, levels = ranks)
 
 pl = p + geom_point(data = popdf[popdf$Front %in% ranks, ], aes(x = X1, y = X2, colour = Front)) 
 pl = pl + geom_line(data = popdf[popdf$Front %in% ranks, ], aes(x = X1, y = X2, colour = Front), lty = 2)
-pl
+if (interactive()) print(pl)
 ggsave(pl, file = "../figure/NSGA2_NDS.png", width = 4, height = 3)
 
 
@@ -120,7 +120,8 @@ pl2 = pl + geom_point(data = F3[order(cd, decreasing = TRUE)[1:5], ], aes(x = X1
 pl2 = pl2 + theme(legend.position = "none")
 pl2 = pl2 
 
-g = grid.arrange(pl1, pl2, ncol = 2)
+g = arrangeGrob(pl1, pl2, ncol = 2)
+if (interactive()) grid::grid.draw(g)
 
 ggsave(g, file = "../figure/NSGA2_CS1.png", width = 6, height = 3)
 
@@ -141,5 +142,5 @@ pl1 = pl1 + theme(legend.position = "none")
 pl1 = pl1 + geom_line(data = F3, aes(x = X1, y = X2), lty = 2)
 pl1 = pl1 + geom_rect(data = cuboids, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, colour = point, fill = point), alpha = 0.2)
 pl1 = pl1 + geom_point(data = cuboids, aes(x = x, y = y, colour = point, fill = point), size = 3)
-pl1
+if (interactive()) print(pl1)
 ggsave(pl1, file = "../figure/NSGA2_CS2.png", width = 3, height = 3)

@@ -28,7 +28,7 @@ plot = plot + geom_smooth(method = "nls", formula = y ~ a*exp(b*x),method.args =
 plot = plot + geom_point(aes(x = x, y = pred))
 plot = plot + geom_segment(aes(x = x, y = y, xend = x, yend = pred), color = "red")
 plot = plot + theme_bw()
-plot
+if (interactive()) print(plot)
 
 set.seed(1L)
 

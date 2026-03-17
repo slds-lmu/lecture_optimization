@@ -77,5 +77,5 @@ archive = rbind(archive, data.frame(iter = 1:length(thetav), x = unlist(thetav),
 
 p = p + geom_point(data = archive, aes(x = x, y = y, colour = Method), alpha = 0.5) + theme(axis.text.y=element_blank())
 
-p
+if (interactive()) print(p)
 ggsave("../figure/poisson.pdf", p, width = 4, height = 2)

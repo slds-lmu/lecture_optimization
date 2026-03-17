@@ -110,5 +110,5 @@ p = p + expand_limits(x=c(0, 17))
 p = p + geom_text(data=unique_sum, aes(x=16, y=iteration, label=sum), show.legend = FALSE)
 p = p + theme_bw()
 
-p
+if (interactive()) print(p)
 ggsave("../figure/one_max_example.pdf", p, width = 7, height = 4)

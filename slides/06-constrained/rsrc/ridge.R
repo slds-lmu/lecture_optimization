@@ -62,13 +62,15 @@ vis$add_points(
     color = "#f6e05e",
     annotations = "$\\hat{\\theta}$")
 
-vis$plot(
-  x_lab = "$\\theta_1$",
-  y_lab = "$\\theta_2$",
-  show_legend = FALSE,
-  show_title = FALSE,
-  latex = TRUE
-)
+if (interactive()) {
+  vis$plot(
+    x_lab = "$\\theta_1$",
+    y_lab = "$\\theta_2$",
+    show_legend = FALSE,
+    show_title = FALSE,
+    latex = TRUE
+  )
+}
 vis$save("../figure/ridge-unregularized.png")
 
 ridge_lambda = 5
@@ -88,13 +90,15 @@ vis_ridge$add_contours(
     color = "#f6e05e",
     annotations = "$\\hat{\\theta}$")
 
-vis_ridge$plot(
-  x_lab = "$\\theta_1$",
-  y_lab = "$\\theta_2$",
-  show_legend = FALSE,
-  show_title = FALSE,
-  latex = TRUE
-)
+if (interactive()) {
+  vis_ridge$plot(
+    x_lab = "$\\theta_1$",
+    y_lab = "$\\theta_2$",
+    show_legend = FALSE,
+    show_title = FALSE,
+    latex = TRUE
+  )
+}
 vis_ridge$save("../figure/ridge-penalized.png")
 
 ball_radius = sqrt(sum(theta_ridge^2))
@@ -125,5 +129,5 @@ p = vis_constrained$plot(
 )
 
 constraint_plot = p + constraint_layer
-constraint_plot
+if (interactive()) print(constraint_plot)
 ggsave(plot = constraint_plot, "../figure/ridge-constrained.png")

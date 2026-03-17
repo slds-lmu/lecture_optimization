@@ -31,6 +31,5 @@ names(df) = c("x", "Loss", "y")
 # PLOT -------------------------------------------------------------------------
 
 p = ggplot(data = df, aes(x = x, y = y, colour = Loss)) + geom_line()
-p
+if (interactive()) print(p)
 ggsave("../figure/hinge_vs_l2.pdf", p, width = 3, height = 2)
-

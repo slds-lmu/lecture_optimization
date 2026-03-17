@@ -51,7 +51,7 @@ yy <- c(12.275, 2.275, 2.475)
 p = ggplot(data = df, aes(x = Var1, y = Var2, z = y)) + geom_contour_filled()
 p = p + xlab(expression(x[1])) + ylab(expression(x[2])) + theme_bw()
 p = p + geom_point(data = data.frame(x = xx, y = yy), aes(x = x, y = y), color = "#F8766D")
-p
+if (interactive()) print(p)
 ggsave("../figure/branin3d/branin2D.pdf", p, width = 6, height = 4)
 
 

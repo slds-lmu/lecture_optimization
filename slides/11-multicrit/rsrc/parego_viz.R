@@ -56,7 +56,7 @@ plotSpace = function(w1, w2) {
   g
 }
 
-plotSpace(0.9, 0.1) + plotSpace(0.49, 0.51) + plotSpace(0.1, 0.9) +
+p = plotSpace(0.9, 0.1) + plotSpace(0.49, 0.51) + plotSpace(0.1, 0.9) +
   plot_layout(nrow = 1, guides = "collect") &
   theme(legend.position = "bottom")
 if (interactive()) print(p)

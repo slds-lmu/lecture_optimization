@@ -140,7 +140,7 @@ bic$min = apply(bic[, 1:(ncol(bic) - 1)], 1, min)
 p = ggplot(data = bic.melt, aes(x = iteration, y = value)) + geom_boxplot() + theme_bw()
 p = p + xlab("Iteration") + ylab("BIC") + ggtitle("Fitness values (BIC) of the population per iteration")
 p = p + geom_line(data = bic, aes(x = iteration, y = min, colour = "red")) + labs(colour = " ") + scale_colour_manual(values = "red", labels = "Best individual") + theme(legend.position = "bottom")
-p
+if (interactive()) print(p)
 
 ggsave("../figure/var-selection1.png", p)
 
@@ -154,7 +154,7 @@ melted$value = as.factor(melted$value)
 p = ggplot() + geom_point(data = melted, aes(x = variable, y = iteration), size = 7, alpha = 0.1, colour = "grey") + theme_bw()
 p = p + geom_point(data = melted[melted$value == 1, ], aes(x = variable, y = iteration), colour = "green", size = 3) + ylab("Iteration")
 p = p + ggtitle("Included variables (green) per iteration (y-axis)")
-p
+if (interactive()) print(p)
 
 
 ggsave("../figure/var-selection2.png", p)

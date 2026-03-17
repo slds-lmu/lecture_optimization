@@ -40,7 +40,7 @@ calcAcceptanceProbs = function(f, xcurr, grid, tempcurr){
 p = ggplot() + stat_contour_filled(data = grid, aes(x = x1, y = x2, z = y)) + xlab(expression(x[1])) + ylab(expression(x[2]))    
 # p = p + geom_point(data = data.frame(x = 0, y = 1), aes(x = x, y = y), colour = "orange")
 p = p + guides(fill = "none") + theme_bw()
-p
+if (interactive()) print(p)
 
 #3 Simulated Annealing algorithm
 #3.1 set start value x; set current best point 'xbest'; generate sequence of temperatures;
@@ -138,5 +138,6 @@ for (k in 1:length(PAacceptiter)) {
     next
   }
 
-  grid.arrange(p1, p2, nrow = 1)
+  combined_plot = arrangeGrob(p1, p2, nrow = 1)
+  if (interactive()) grid::grid.draw(combined_plot)
 }
