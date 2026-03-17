@@ -14,6 +14,13 @@ theme_set(theme_bw())
 
 # ------------------------------------------------------------------------------
 
+null_device_opened = FALSE
+
+if (!interactive()) {
+	grDevices::pdf(NULL)
+	null_device_opened = TRUE
+}
+
 # Helper functions
 
 compute_grid_data = function(xrange, yrange, fun) {
@@ -172,4 +179,7 @@ zfacet = z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
 facetcol = cut(zfacet, nbcol)
 
 
+if (null_device_opened) {
+	grDevices::dev.off()
+}
 
