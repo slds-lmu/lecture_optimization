@@ -19,7 +19,7 @@ Univariate optimization
 }{
 Golden ratio
 }{
-figure_man/golden-ratio-6.png
+figure/golden-ratio-6.png
 }{
 \item Simple nesting procedure
 \item Golden ratio 
@@ -29,7 +29,7 @@ figure_man/golden-ratio-6.png
 Let $f: \R \to \R$ (search over interval $(\xleft,\xright)$ in practice)\\
 \spacer 
 \textbf{Goal}: Iteratively improve eval points. Assume function $-f$ is unimodal. Will not rely on gradients, so this also works for black-box problems.
-\imageC{figure_man/golden-ratio-0.png}
+\imageC{figure/golden-ratio-0.png}
 \end{framev}
 
 
@@ -38,81 +38,55 @@ Let $f: \R \to \R$\\
 \spacer 
 \only<1>{
 Always maintain three points: left, right, and current best
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-1.png}
-\end{textblock*}
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-1.png}
 }
 \only<2>{
 Propose random interval point (def. optimal new proposal later)
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-2.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-2.png}
 }
 \only<3>{
 Compare proposal against current best
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-3.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-3.png}
 }
 \only<4>{
 If it is better: proposal becomes current best
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-4.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-4.png}
 }
 \only<5>{
 New search interval: around current best 
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-5.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-5.png}
 }
 \only<6>{
 Propose a random point  
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-6.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-6.png}
 }
 \only<7>{
 Compare proposal against current best
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-7.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-7.png}
 }
 \only<8>{
 If it is better: proposal becomes current best
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-8.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-8.png}
 }
 \only<9>{
 New search interval: around current best
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-9.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-9.png}
 }
 \only<10>{
 Propose a random point
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-10.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-10.png}
 }
 \only<11>{
 Compare proposal against current best 
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-11.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-11.png}
 }
 \only<12>{
 If it is better: proposal becomes current best
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-12.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-12.png}
 }
 \only<13>{
 New search interval: around current best
-\begin{textblock*}{\linewidth}(0cm,0cm) 
-\image[1]{figure_man/golden-ratio-13.png}
-\end{textblock*} 
+\imageFixed{1cm}{2.5cm}[1]{figure/golden-ratio-13.png}
 }
 \end{frame}
 
@@ -129,7 +103,7 @@ New search interval: around current best
 \end{itemize}
 \item New interval: points around $\xbest$
 \end{itemize}
-\image{figure_man/golden-ratio-summary.png}
+\image{figure/golden-ratio-summary.png}
 \end{framei}
 
 
