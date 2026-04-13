@@ -19,7 +19,7 @@ Univariate optimization
 }{
 Golden ratio
 }{
-figure/golden-ratio-6.png
+figure/goldensec.png
 }{
 \item Simple nesting procedure
 \item Golden ratio 
@@ -107,59 +107,54 @@ New search interval: around current best
 \end{framei}
 
 
-\begin{framev}{golden ratio}
+\begin{framev}[align=top]{golden ratio}
 Key question: How can $\xnew$ be chosen better than randomly? 
 \begin{itemizeM}
 \item Insight 1: Always in bigger subinterval to maximize reduction
 \item Insight 2: $\xnew$ symmetrically to $\xbest$ for uniform reduction
 \end{itemizeM}
-\imageC[1.0]{figure_man/goldensec-0.png}
+\imageC[1]{figure/goldensec-0.png}
 \vspace{-1cm}
 Consider two hypothetical outcomes for $\xnew$: $f_{new, a}$ and $f_{new, b}$
 \end{framev}
 
 
-\begin{framev}{golden ratio}
+\begin{framev}[align=top]{golden ratio}
 If outcome is $f_{new, a}$, $\xbest$ remains best and we search around $\xbest$: $$[\xleft, \xnew]$$
-\vfill
-\imageC[1.0]{figure_man/goldensec-1.png}
+\imageFixed{1cm}{2.5cm}[1]{figure/goldensec-1.png}
 \end{framev}
 
 
-\begin{framev}{golden ratio}
+\begin{framev}[align=top]{golden ratio}
 If $f_{new, b}$ is outcome, $\xnew$ becomes best point and search around $\xnew$: $$[\xbest, \xright]$$
-\vfill
-\imageC[1.0]{figure_man/goldensec-3.png}
+\imageFixed{1cm}{2.5cm}[1]{figure/goldensec-3.png}
 \end{framev}
 
 
-\begin{framev}{golden ratio}
+\begin{framev}[align=top]{golden ratio}
 For uniform reduction the two potential intervals must be equal-sized: 
 \begin{equation*}
 b := \xright - \xbest = \xnew - \xleft
 \end{equation*}
-\vfill
-\imageC[1.0]{figure_man/goldensec-3.png}
+\imageFixed{1cm}{2.5cm}[1]{figure/goldensec-3.png}
 \end{framev}
 
 
-\begin{framev}{golden ratio}
+\begin{framev}[align=top]{golden ratio}
 One iteration ahead: require again the intervals to be of same size. 
 $$c := \xbest - \xleft = \xright - \xnew$$
-\vfill
-\imageC[1.0]{figure_man/goldensec-4.png}
+\imageFixed{1cm}{2.5cm}[1]{figure/goldensec-4.png}
 \end{framev}
 
 
-\begin{framev}{golden ratio}
+\begin{framev}[align=top]{golden ratio}
 To summarize, we require: 
-\begin{eqnarray*}
-a &=& \xright-\xleft, \\
-b &=& \xright - \xbest = \xnew - \xleft \\
-c &=& \xbest - \xleft = \xright - \xnew
-\end{eqnarray*}
-\vfill
-\imageC[0.5]{figure_man/goldensec.png}
+\begin{align*}
+a &= \xright-\xleft, \\
+b &= \xright - \xbest = \xnew - \xleft \\
+c &= \xbest - \xleft = \xright - \xnew
+\end{align*}
+\imageC[0.6]{figure/goldensec.png}
 \end{framev}
 
 
@@ -169,11 +164,11 @@ c &=& \xbest - \xleft = \xright - \xnew
 $$\varphi := \frac{b}{a} = \frac{c}{b}$$
 $$\varphi^2 = \frac{b}{a} \cdot \frac{c}{b} = \frac{c}{a}$$
 \item Divide $a = b + c$ by $a$:
-\begin{eqnarray*}
-\frac{a}{a} &=& \frac{b}{a} + \frac{c}{a} \\
-1 &=& \varphi + \varphi^2 \\
-0 &=& \varphi^2 + \varphi - 1
-\end{eqnarray*}
+\begin{align*}
+\frac{a}{a} &= \frac{b}{a} + \frac{c}{a} \\
+1 &= \varphi + \varphi^2 \\
+0 &= \varphi^2 + \varphi - 1
+\end{align*}
 \item Unique positive solution is $\varphi = \frac{\sqrt{5}-1}{2} \approx 0.618$
 \end{framei}
 
@@ -181,14 +176,14 @@ $$\varphi^2 = \frac{b}{a} \cdot \frac{c}{b} = \frac{c}{a}$$
 \begin{framei}[fs=normalsize,sep=L]{golden ratio}
 \item With $\xnew$ we always go $\varphi$ percentage points into the interval
 \item Given $\xleft$ and $\xright$ it follows
-\begin{eqnarray*}
-\xbest&=&\xright-\varphi(\xright-\xleft)\\
-&=&\xleft+(1-\varphi)(\xright-\xleft)
-\end{eqnarray*}
+\begin{align*}
+\xbest&=\xright-\varphi(\xright-\xleft)\\
+&=\xleft+(1-\varphi)(\xright-\xleft)
+\end{align*}
 and due to symmetry
-\begin{eqnarray*}
-\xnew&=& \xleft+\varphi(\xright-\xleft)\\ &=& \xright-(1-\varphi)(\xright-\xleft).
-\end{eqnarray*}
+\begin{align*}
+\xnew&= \xleft+\varphi(\xright-\xleft)\\ &= \xright-(1-\varphi)(\xright-\xleft).
+\end{align*}
 \end{framei}
 
 

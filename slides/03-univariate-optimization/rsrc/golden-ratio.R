@@ -1,9 +1,5 @@
-# ------------------------------------------------------------------------------
-# univariate optimization
-#
-# FIG: recreate the simple nesting / golden-ratio animation frames with a
-# modern ggplot2 style and save them to ../figure/.
-# ------------------------------------------------------------------------------
+# create the simple nesting / golden-ratio animation frames with ggplot2
+# and save them to ../figure/.
 
 set.seed(1L)
 
