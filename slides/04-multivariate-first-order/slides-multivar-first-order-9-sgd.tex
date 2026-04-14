@@ -115,14 +115,13 @@ Black line shows average value across multiple runs
 
 
 \begin{frame}{Erratic behavior of SGD}
-\textbf{Example:} $g(\xv) = \sum_{i = 1}^5 g_i(\xv)$, $g_i$ quadratic, batch size $m = 1$
-\vfill
-\only<1>{\image[0.8]{figure_man/sgd_example_iter_1.png}}
-\only<2>{\image[0.8]{figure_man/sgd_example_iter_2.png}}
-\only<3>{\image[0.8]{figure_man/sgd_example_iter_3.png}}
-\only<4>{\image[0.8]{figure_man/sgd_example_iter_4.png}}
-\only<5>{\image[0.8]{figure_man/sgd_example_iter_5.png}\\}
-\only<5>{\small In iteration $5$, SGD performs a suboptimal move away from the minimum.}
+\textbf{Example:} $g(\xv) = \sum_{i = 1}^5 g_i(\xv)$, $g_i$ quadratic, batch size $m = 1$\\
+\only<5>{\small In iteration $5$, SGD performs a suboptimal move away from the minimum:}
+\only<1>{\imageFixed{0.5cm}{2cm}[0.95]{figure_man/sgd_example_iter_1.png}}
+\only<2>{\imageFixed{0.5cm}{2cm}[0.95]{figure_man/sgd_example_iter_2.png}}
+\only<3>{\imageFixed{0.5cm}{2cm}[0.95]{figure_man/sgd_example_iter_3.png}}
+\only<4>{\imageFixed{0.5cm}{2cm}[0.95]{figure_man/sgd_example_iter_4.png}}
+\only<5>{\imageFixed{0.5cm}{2cm}[0.95]{figure_man/sgd_example_iter_5.png}}
 \end{frame}
 
 

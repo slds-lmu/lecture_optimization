@@ -64,7 +64,6 @@ Angle between $\nabla \fx$ and $\mathbf{d}$ must be $\in (90^{\circ}, 270^{\circ
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
-\vspace*{-0.2cm}
 \begin{tiny}
 NB: Terminology is sometimes ambiguous: ``line search'' can refer to Step 4 (selecting the step size that decreases $f(\xv)$) and can mean umbrella term for iterative descent algorithms. \par
 \end{tiny}\vfill
@@ -121,28 +120,28 @@ where $\fxt$ is a neural network with 2 hidden layers (2 units each).
 \end{framei}
 
 
-\begin{framei}{ERM for NN with GD}
-\item[] After $10$ iters of GD:
-\splitVCC{
-\imageC{figure_man/gradient_descent_NN_10_surface.pdf}}
-{\imageC{figure_man/gradient_descent_NN_300_history.pdf}}
-\end{framei}
+\begin{framev}[align=top]{ERM for NN with GD}
+After $10$ iters of GD:
+\splitV{
+\imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_10_surface.pdf}}
+{\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history.pdf}}
+\end{framev}
 
 
-\begin{framei}{ERM for NN with GD}
-\item[] After $100$ iters of GD: 
-\splitVCC{
-\imageC{figure_man/gradient_descent_NN_100_surface.pdf}} 
-{\imageC{figure_man/gradient_descent_NN_300_history.pdf}}
-\end{framei}
+\begin{framev}[align=top]{ERM for NN with GD}
+After $100$ iters of GD: 
+\splitV{
+\imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_100_surface.pdf}}
+{\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history.pdf}}
+\end{framev}
 
 
-\begin{framei}{ERM for NN with GD}
-\item[] After $300$ iters of GD (note the zig-zag-behavior after iter. 200):
-\splitVCC{
-\imageC{figure_man/gradient_descent_NN_300_surface.pdf}}
-{\imageC{figure_man/gradient_descent_NN_300_history.pdf}}
-\end{framei}
+\begin{framev}[align=top]{ERM for NN with GD}
+After $300$ iters of GD (note the zig-zag-behavior after iter. 200):
+\splitV{
+\imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_300_surface.pdf}}
+{\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history.pdf}}
+\end{framev}
 
 
 \begin{framei}[fs=footnotesize]{GD for ERM: Pseudoresiduals}
