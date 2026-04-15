@@ -1,0 +1,266 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+\newcommand{\alphav}{\bm{\alpha}}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Constrained Optimization
+}{
+Norm-Constrained Optimization
+}{
+figure/norm_constrained_circle.pdf
+}{
+\item Why norm constraints appear in machine learning
+\item Sphere constraints, orthogonality, and eigenvector problems
+\item Lagrangian relaxation for a nonconvex constrained problem
+\item Smallest and largest eigenvectors, with PCA links
+}
+
+\begin{framev}[fs=small]{Why Norm Constraints Matter}
+\splitVTT[0.48]{
+\textbf{Common forms}
+$$
+\min_{\xv} f(\xv)
+\qquad
+\text{s.t. }
+\qquad
+\|\xv\|_2 \le r
+$$
+$$
+\max_{\xv} \xv^\top \A \xv
+\qquad
+\text{s.t. }
+\qquad
+\|\xv\|_2 = 1
+$$
+
+\begin{itemize}
+\item A norm bound limits scale and keeps the search in a compact region.
+\item A unit-norm equality removes arbitrary scaling, so the variable represents a \textbf{direction}.
+\item In ML, this shows up in PCA, SVD, and spectral methods.
+\end{itemize}
+}{
+\imageC[0.88]{figure/norm_constrained_circle.pdf}
+}
+\end{framev}
+
+
+\begin{framei}[fs=small]{Single-Vector Case: Rayleigh Quotient}
+\item Assume $\A \in \R^{d \times d}$ is symmetric.
+\item For one direction, the core problem is
+$$
+\min_{\|\xv\|_2 = 1} \xv^\top \A \xv
+\qquad \text{or} \qquad
+\max_{\|\xv\|_2 = 1} \xv^\top \A \xv.
+$$
+\item Because $\|\xv\|_2 = 1$, the objective equals the \textbf{Rayleigh quotient}
+$$
+R_{\A}(\xv) := \frac{\xv^\top \A \xv}{\|\xv\|_2^2}.
+$$
+\item The feasible set is the unit sphere, so the search is over directions only.
+\item The extremizers are eigenvectors of $\A$:
+$$
+\min_{\|\xv\|_2 = 1} \xv^\top \A \xv = \lambda_{\min}(\A),
+\qquad
+\max_{\|\xv\|_2 = 1} \xv^\top \A \xv = \lambda_{\max}(\A).
+$$
+\item The book's multi-vector problem is the orthogonal extension of this fact.
+\end{framei}
+
+
+\begin{framei}[fs=small]{General Problem: $k$ Orthogonal Directions}
+\item We revisit the norm-constrained problem
+$$
+\begin{aligned}
+\min_{\xv_1,\dots,\xv_k} \quad & \sumik \xv_i^\top \A \xv_i \\
+\text{s.t.} \quad & \|\xv_i\|_2^2 = 1, \qquad i = 1,\dots,k, \\
+& \xv_i^\top \xv_j = 0, \qquad 1 \le i < j \le k.
+\end{aligned}
+$$
+\item Here, $\A$ is symmetric and $k \le d$.
+\item Interpretation: choose $k$ mutually orthogonal unit directions whose total quadratic energy is as small as possible.
+\item The orthogonality constraints avoid selecting the same direction multiple times.
+\item Important caveat: even with a quadratic objective, the sphere and orthogonality constraints make the feasible set \textbf{nonconvex}.
+\end{framei}
+
+
+\begin{framei}[fs=small]{Lagrangian Relaxation}
+\item As in the textbook, relax the \textbf{unit-norm equalities} but keep orthogonality explicit:
+$$
+H(\xv_1,\dots,\xv_k,\alphav)
+:=
+\sumik \xv_i^\top \A \xv_i
+-
+\sumik \alpha_i \big(\|\xv_i\|_2^2 - 1\big).
+$$
+\item The corresponding dual function is
+$$
+L(\alphav)
+:=
+\min_{\substack{\xv_1,\dots,\xv_k \\
+\xv_i^\top \xv_j = 0,\ i \neq j}}
+H(\xv_1,\dots,\xv_k,\alphav).
+$$
+\item Because we relax \textbf{equality} constraints, the multipliers $\alpha_i$ are sign-unrestricted.
+\item We do \emph{not} have to relax every constraint: keeping orthogonality explicit makes the algebra cleaner.
+\item The minus sign in front of $\alpha_i$ is convenient because the multipliers will turn into eigenvalues.
+\end{framei}
+
+
+\begin{framei}[fs=small]{Stationarity Gives Eigenvalue Equations}
+\item Differentiate the Lagrangian with respect to each primal vector:
+$$
+\nabla_{\xv_i} H
+=
+2 \A \xv_i - 2 \alpha_i \xv_i.
+$$
+\item Setting the gradient to zero gives
+$$
+\A \xv_i = \alpha_i \xv_i,
+\qquad i = 1,\dots,k.
+$$
+\item Therefore, every stationary feasible direction must be an \textbf{eigenvector} of $\A$.
+\item The Lagrange multipliers $\alpha_i$ are exactly the corresponding \textbf{eigenvalues}.
+\item Symmetry of $\A$ is crucial: it guarantees an orthonormal eigenbasis, so the orthogonality constraints can be satisfied automatically.
+\end{framei}
+
+
+\begin{framei}[fs=small]{Eliminating the Primal Variables}
+\item Substitute the stationarity relation $\A \xv_i = \alpha_i \xv_i$ back into the dual function:
+$$
+\begin{aligned}
+L(\alphav)
+&=
+\min_{\substack{\xv_1,\dots,\xv_k \\
+\text{orthogonal}}}
+\sumik \xv_i^\top \A \xv_i
+-
+\sumik \alpha_i \big(\|\xv_i\|_2^2 - 1\big) \\
+&=
+\min_{\substack{\xv_1,\dots,\xv_k \\
+\text{orthogonal eigenvectors}}}
+\sumik \alpha_i \xv_i^\top \xv_i
+-
+\sumik \alpha_i \big(\|\xv_i\|_2^2 - 1\big) \\
+&=
+\min_{\text{selected eigenvalues}} \sumik \alpha_i.
+\end{aligned}
+$$
+\item So after eliminating the primal variables, the relaxed objective is just the sum of the chosen eigenvalues.
+\item Minimizing over feasible orthogonal eigenvectors therefore selects the \textbf{smallest $k$ eigenvalues} of $\A$.
+\end{framei}
+
+
+\begin{framei}[fs=small]{Result for the Minimization Variant}
+\item Let $\lambda_1 \le \lambda_2 \le \dots \le \lambda_d$ be the eigenvalues of $\A$, with associated orthonormal eigenvectors $\vv_1,\dots,\vv_d$.
+\item Then the optimal primal solution is
+$$
+\xv_i^\ast = \vv_i,
+\qquad i = 1,\dots,k,
+$$
+\item up to arbitrary orthogonal rotations inside eigenspaces with repeated eigenvalues.
+\item Primal and dual optimum coincide:
+$$
+p^\ast = d^\ast = \sum_{i=1}^k \lambda_i.
+$$
+\item Hence there is \textbf{no duality gap}, even though the original constrained problem is generally nonconvex.
+\end{framei}
+
+
+\begin{framei}[fs=small]{Why This Example Is Interesting}
+\item Strong duality is usually introduced for \textbf{convex} constrained problems.
+\item Here, that standard convexity story does \emph{not} apply automatically:
+\begin{itemize}
+\item $\A$ may be indefinite, so $\xv^\top \A \xv$ need not be convex
+\item the sphere and orthogonality constraints are nonconvex
+\end{itemize}
+\item Yet the Lagrangian relaxation still recovers the exact optimum because the stationarity equations force the solution onto the eigenstructure of a symmetric matrix.
+\item This is the main lesson of the section:
+\vfill
+\oneliner{Duality can sometimes solve special nonconvex norm-constrained problems exactly when the constraint geometry and algebra line up well.}
+\end{framei}
+
+
+\begin{framev}[fs=small]{Maximization Variant}
+\splitVTT[0.48]{
+The maximization problem is
+$$
+\begin{aligned}
+\max_{\xv_1,\dots,\xv_k} \quad & \sumik \xv_i^\top \A \xv_i \\
+\text{s.t.} \quad & \|\xv_i\|_2^2 = 1, \\
+& \xv_i^\top \xv_j = 0.
+\end{aligned}
+$$
+
+\begin{itemize}
+\item The derivation is analogous.
+\item The optimizer picks the \textbf{largest $k$ eigenvalues} and their eigenvectors.
+\item For $k=1$:
+$$
+\max_{\|\xv\|_2 = 1} \xv^\top \A \xv = \lambda_{\max}(\A).
+$$
+\end{itemize}
+}{
+\imageC[0.98]{figure/norm_constrained_spectrum.pdf}
+}
+\end{framev}
+
+
+\begin{framev}[fs=small]{ML Connection: Principal Components}
+\splitVTT[0.50]{
+\textbf{PCA}
+$$
+\max_{\|\vv\|_2 = 1} \vv^\top \Sigma \vv
+$$
+finds the direction of largest variance.
+
+\begin{itemize}
+\item PC1 is the dominant eigenvector of the covariance matrix $\Sigma$.
+\item Further components add the orthogonality constraint $\vv_i^\top \vv_j = 0$.
+\item PCA is a direct norm-constrained eigenvector problem.
+\end{itemize}
+}{
+\imageC[0.80]{figure/norm_constrained_pca.pdf}
+}
+\end{framev}
+
+
+\begin{framei}[fs=small]{Other ML Links}
+\item \textbf{Spectral clustering:} use the smallest eigenvectors of a graph Laplacian to embed nodes before clustering.
+\item \textbf{SVD:} dominant singular vectors solve norm-constrained extremal problems for $\mathbf{M}^\top \mathbf{M}$ and $\mathbf{M}\mathbf{M}^\top$.
+\item \textbf{Low-rank representation learning:} orthogonality and norm constraints help extract nonredundant latent directions.
+\item The recurring pattern is always the same:
+\begin{itemize}
+\item a quadratic or bilinear objective
+\item unit-norm constraints to remove scale ambiguity
+\item orthogonality constraints to get several distinct directions
+\end{itemize}
+\item That is why eigenvalue problems show up repeatedly across machine learning.
+\end{framei}
+
+
+\begin{framev}{Take-Away}
+\begin{enumerate}
+\item Norm constraints often turn \enquote{find the best vector} into \enquote{find the best direction}.
+\item For symmetric quadratic objectives, stationary points on the unit sphere are eigenvectors.
+\item Adding orthogonality gives the top-$k$ or bottom-$k$ eigenvector problem.
+\item In this special case, Lagrangian relaxation recovers the exact solution.
+\end{enumerate}
+
+\vfill
+\oneliner{Minimization picks the smallest eigenvectors; maximization picks the largest ones.}
+
+\vfill
+Next, we compare when primal feasible updates and dual reformulations are the more useful viewpoint.
+\end{framev}
+
+\endlecture
+\end{document}

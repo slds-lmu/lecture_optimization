@@ -1,0 +1,189 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+\newcommand{\alphav}{\bm{\alpha}}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Constrained Optimization
+}{
+Primal Versus Dual Methods
+}{
+figure/primal_dual_views.pdf
+}{
+\item Compare primal and dual viewpoints for the same constrained problem
+\item Understand why dual methods are not automatically superior or required for kernels
+\item Relate computational cost to the number of variables $d$ and data points $n$
+\item See why approximate primal solutions are often easier to interpret and use
+}
+
+\begin{framei}[fs=small]{Two Viewpoints for the Same Problem}
+\item The primal solves the original constrained problem
+$$
+\min_{\wv \in \S} F(\wv),
+$$
+directly in the model parameters $\wv$.
+\item The dual solves
+$$
+\max_{\alphav \ge \zero} L(\alphav),
+\qquad
+L(\alphav)=\min_{\wv} H(\wv,\alphav),
+$$
+in the multiplier variables $\alphav$.
+\item Thus, primal and dual methods come from the same Lagrangian, but they optimize in different coordinates.
+\item Primal iterates live in the original parameter space; dual iterates live in multiplier space and usually need a recovery step back to $\wv$.
+\item The main practical differences are dimension, constraint structure, computational cost, and interpretability.
+\end{framei}
+
+
+\begin{framei}[fs=small]{Duality Is a Reformulation}
+\item The dual is created from the same Lagrangian as before:
+$$
+H(\wv,\alphav) = F(\wv) + \sum_{i=1}^m \alpha_i g_i(\wv),
+\qquad
+\alphav \ge \zero.
+$$
+\item Passing from primal to dual does \textbf{not} remove optimization difficulty; it changes the coordinates of the problem.
+\item In practice, deriving the dual often introduces one multiplier per constraint, extra sign or box constraints on these multipliers, and a mapping back from $\alphav$ to $\wv$.
+\item Hence the relevant question is not \enquote{primal or dual in general?}
+\item The relevant question is:
+\oneliner{Which representation best matches the dimension, constraints, and approximation needs of the current problem?}
+\end{framei}
+
+
+\begin{framev}[fs=footnotesize]{Kernel Methods: Dual Helpful, Not Essential}
+\splitVTT[0.53]{
+\textbf{Linear SVM in the primal}
+$$
+\min_{\wv}
+\frac{\lambda}{2}\|\wv\|_2^2
++
+\sum_{i=1}^n \max\left\{1 - y^{(i)} {\xv^{(i)}}^\top \wv, 0\right\}
+$$
+
+\textbf{Soft-margin SVM in the dual}
+$$
+\max_{\alphav}
+\quad
+\sum_{i=1}^n \alpha_i
+-
+\frac{1}{2}
+\sum_{i=1}^n \sum_{j=1}^n
+\alpha_i \alpha_j y^{(i)} y^{(j)} k_{ij}
+$$
+\vspace{-0.2cm}
+$$
+\text{s.t. }
+\quad
+0 \le \alpha_i \le C,
+\qquad
+\sum_{i=1}^n \alpha_i y^{(i)} = 0
+$$
+}{
+\begin{itemize}
+\item The dual depends only on similarities $k_{ij}$, so replacing dot products by a kernel is immediate.
+\item But the primal SVM is already a valid unconstrained optimization problem once the hinge loss is written inside the objective.
+\item Therefore, kernel methods require similarities, not duality itself; via the representer viewpoint, many regularized primal solutions can also be written in similarity form.
+\item Duality is useful here, but it is \textbf{not} the only reasonable way to solve or kernelize the model.
+\end{itemize}
+}
+\end{framev}
+
+
+\begin{framev}[fs=footnotesize]{Which Side Is Computationally Cheaper?}
+\splitVTT[0.49]{
+\textbf{Primal:} $\Xmat^\top \Xmat \in \R^{d \times d}$
+
+\textbf{Dual:} $\mathbf{K} = \Xmat \Xmat^\top \in \R^{n \times n}$
+
+\begin{itemize}
+\item The primal typically works with a \textbf{scatter matrix} of size $d \times d$.
+\item The dual typically works with a \textbf{similarity matrix} of size $n \times n$.
+\item Core storage and linear-algebra cost are therefore often $\order(d^2)$ versus $\order(n^2)$.
+\item If $d < n$, primal methods are often cheaper.
+\item If $n < d$, dual methods can be cheaper.
+\item For very large $n$, storing $\mathbf{K}$ can already be the bottleneck.
+\end{itemize}
+}{
+\imageC[0.98]{figure/primal_dual_regimes.pdf}
+}
+\end{framev}
+
+
+\begin{framei}[fs=small]{Approximate Solutions Often Favor the Primal}
+\item For convex problems with strong duality, the \textbf{optimal values} satisfy
+$$
+p^\ast = d^\ast.
+$$
+\item But this equality holds at optimality; it does \textbf{not} say that an approximately optimal dual iterate already gives a good primal model.
+\item In the SVM, the primal weight vector is recovered from the dual variables via
+$$
+\wv(\alphav) = \sum_{i=1}^n \alpha_i y^{(i)} \xv^{(i)}.
+$$
+\item A dual iterate with a good objective value can still translate to a poor primal model if the primal-dual relations are not yet accurate enough.
+\item By contrast, primal methods directly optimize the objective we actually care about in the original variables.
+\item This makes early stopping and numerical approximation easier to interpret in the primal.
+\end{framei}
+
+
+\begin{framev}[fs=small]{Interpretability of Intermediate Iterates}
+\splitVTT[0.50]{
+\textbf{Primal iterates}
+\begin{itemize}
+\item are coefficient vectors, probabilities, portfolio weights, or separating hyperplanes
+\item can be inspected, constrained, or used directly during optimization
+\item are often meaningful even before full convergence
+\end{itemize}
+}{
+\textbf{Dual iterates}
+\begin{itemize}
+\item are multipliers, shadow prices, or point weights
+\item are useful diagnostically, but are one step removed from the final model
+\item usually need a primal recovery step before interpretation or deployment
+\end{itemize}
+
+\vspace{0.2cm}
+\oneliner{If computation stops early, a current primal iterate is usually easier to justify and communicate.}
+}
+\end{framev}
+
+
+\begin{framei}[fs=small]{When Primal Methods Are the Default Choice}
+\item Primal methods are usually attractive when projections, coordinate slices, or barrier terms are simple enough to compute.
+\item They are especially natural when $d$ is smaller than or comparable to $n$, so the feature-space representation is compact.
+\item They are often preferable when we want interpretable parameters, coefficient bounds, sparsity patterns, or direct control over feasibility.
+\item They are also a good default when the primal can be written as a simple unconstrained or lightly constrained objective, as in hinge-loss or regularized risk formulations.
+\item In these settings, there is often little reason to pay the extra indirection of a dual reformulation.
+\end{framei}
+
+
+\begin{framei}[fs=small]{When Dual Methods Can Still Be Attractive}
+\item Dual methods become appealing when the number of points $n$ is much smaller than the number of variables $d$.
+\item They can be convenient when the dual constraints are structurally simpler than the original primal constraints, often box constraints plus a few equalities.
+\item They are also useful when the model is naturally expressed through similarities or kernel evaluations and the matrix $\mathbf{K}$ is still manageable.
+\item The dual objective provides lower bounds, and the multipliers themselves can carry information about active constraints or influential observations.
+\item Thus, dual methods remain valuable, but only when the reformulation clearly exploits useful structure.
+\end{framei}
+
+
+\begin{framev}{Take-Away}
+\begin{enumerate}
+\item Primal and dual methods are two views of the same constrained optimization problem.
+\item Duality is powerful, but it is not automatically better and it is not required for kernel methods.
+\item Computationally, the choice is often driven by dimension: $d < n$ tends to favor primal methods, while $n < d$ can favor dual methods.
+\item For approximate solutions, primal iterates are usually easier to interpret, evaluate, and stop early.
+\end{enumerate}
+
+\vfill
+\oneliner{Practical rule: use a primal method whenever it is simple enough; move to the dual only when the reformulation clearly buys something.}
+\end{framev}
+
+\endlecture
+\end{document}

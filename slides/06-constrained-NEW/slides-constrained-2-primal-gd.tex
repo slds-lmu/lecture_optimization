@@ -1,0 +1,238 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Constrained Optimization
+}{
+Primal Gradient Descent Methods
+}{
+figure/primal_gd_projected_step.pdf
+}{
+\item Why unconstrained GD fails under constraints
+\item Projected gradient descent and projected gradients
+\item Equality, box, and general convex constraints
+\item Convergence facts and ML examples
+}
+
+\begin{framev}[fs=small]{Why Constraints Break GD}
+\splitVTT[0.46]{
+\textbf{Problem}
+$$
+\min_{\xv \in \S} \fx,
+$$
+with $\S \subsetneq \R^d$.
+
+\textbf{Vanilla GD step}
+$$
+\zv^{[t+1]} = \xv^{[t]} - \alpha_t \nabla f(\xv^{[t]}).
+$$
+
+\begin{itemize}
+\item $\xv^{[t]}$ can be feasible while $\zv^{[t+1]} \notin \S$.
+\item Primal methods modify or repair the step so every iterate stays inside $\S$.
+\end{itemize}
+}{
+\imageC[0.95]{figure/primal_gd_projected_step.pdf}
+}
+\end{framev}
+
+
+\begin{framev}{Projected Gradient Descent}
+\begin{algorithm}[H]
+\caption{Projected Gradient Descent}
+\begin{algorithmic}[1]
+\State Choose a feasible start $\xv^{[0]} \in \S$
+\While{stopping criterion not met}
+\State $\zv^{[t+1]} \gets \xv^{[t]} - \alpha_t \nabla f(\xv^{[t]})$
+\State $\xv^{[t+1]} \gets \Pi_{\S}(\zv^{[t+1]})$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+\vspace*{-0.2cm}
+\begin{itemize}
+\item The projection operator is
+$$
+\Pi_{\S}(\zv) := \argmin_{\xv \in \S} \|\xv - \zv\|_2^2.
+$$
+\item If the tentative point is already feasible, the projection does nothing.
+\item For a closed convex set $\S$, the Euclidean projection is unique.
+\end{itemize}
+\end{framev}
+
+
+\begin{framei}[fs=small]{Projected Gradients and Optimality}
+\item A constrained optimum $\xvs$ is no longer characterized by $\nabla f(\xvs) = \zero$.
+\item Instead, for every $\alpha > 0$,
+$$
+\xvs = \Pi_{\S}\big(\xvs - \alpha \nabla f(\xvs)\big)
+$$
+is the fixed-point condition for first-order optimality over a convex set.
+\item Define the \textbf{projected gradient mapping}
+$$
+G_{\alpha}(\xv) := \frac{1}{\alpha}\big(\xv - \Pi_{\S}(\xv - \alpha \nabla f(\xv))\big).
+$$
+\item $G_{\alpha}(\xv) = \zero$ is the constrained analogue of $\nabla f(\xv) = \zero$.
+\item If $\S = \R^d$, then $\Pi_{\S}$ is the identity and $G_{\alpha}(\xv) = \nabla f(\xv)$.
+\item Practical stopping rules therefore monitor $\|G_{\alpha}(\xv^{[t]})\|_2$ or the decrease in $f(\xv^{[t]})$.
+\end{framei}
+
+
+\begin{framev}{Equality Constraints: Feasible Directions}
+\splitVTT[0.48]{
+\textbf{Problem}
+$$
+\min \fx \qquad \text{s.t. } \qquad \Amat \xv = \bv.
+$$
+
+\textbf{Feasible directions}
+$$
+\Amat \mathbf{d}^{[t]} = \zero.
+$$
+
+\begin{itemize}
+\item The raw negative gradient usually violates feasibility.
+\item Hence we descend only along the tangent / null-space directions.
+\end{itemize}
+}{
+\imageC[0.96]{figure/primal_gd_equality.pdf}
+}
+\end{framev}
+
+
+\begin{framei}[fs=small]{Equality Constraints: Algebraic Form}
+\item Assume the rows of $\Amat \in \R^{m \times d}$ are linearly independent.
+\item The orthogonal projector onto the feasible directions is
+$$
+\Pi_{\mathrm{null}(\Amat)} = \id - \Amat^\top(\Amat \Amat^\top)^{-1}\Amat.
+$$
+\item Therefore, the projected-GD update becomes
+$$
+\xv^{[t+1]} = \xv^{[t]} - \alpha_t \Pi_{\mathrm{null}(\Amat)} \nabla f(\xv^{[t]}).
+$$
+\item Equivalent viewpoint: parameterize all feasible points as
+$$
+\xv = \xv_0 + \mathbf{N}\zv, \qquad \Amat \xv_0 = \bv, \qquad \Amat \mathbf{N} = \zero,
+$$
+and run ordinary GD on the reduced variable $\zv$.
+\item Equality constraints are therefore often simpler than general inequalities: feasibility is linear, and the feasible directions have an explicit subspace structure.
+\end{framei}
+
+
+\begin{framev}[fs=small]{Box Constraints: Clipping}
+\splitVTT[0.52]{
+\textbf{Feasible set}
+$$
+\S = \left\{\xv \in \R^d \mid
+\begin{array}{l}
+l_j \le x_j \le u_j \\
+j = 1,\dots,d
+\end{array}
+\right\},
+$$
+
+\textbf{Projection}
+$$
+\left[\Pi_{\S}(\zv)\right]_j
+= \min\{u_j, \max\{l_j, z_j\}\}.
+$$
+
+\begin{itemize}
+\item Each coordinate is clipped independently.
+\item No linear system and no QP solve.
+\end{itemize}
+}{
+\imageC[0.95]{figure/primal_gd_box.pdf}
+}
+\end{framev}
+
+
+\begin{framei}[fs=small]{General Convex Constraints}
+\item For any closed convex feasible set $\S$, projected GD still takes the form
+$$
+\xv^{[t+1]} = \argmin_{\xv \in \S} \left\| \xv - \big(\xv^{[t]} - \alpha_t \nabla f(\xv^{[t]})\big) \right\|_2^2.
+$$
+\item The key question is therefore not only how hard it is to differentiate $f$, but also how hard it is to compute $\Pi_{\S}$.
+\item Examples with cheap projectors:
+\begin{itemize}
+\item affine sets and linear equalities
+\item box constraints and nonnegativity constraints
+\item simplices and some norm balls
+\end{itemize}
+\item Examples with more expensive projectors:
+\begin{itemize}
+\item general polyhedra $\{\xv \mid \Amat \xv \le \bv\}$
+\item complicated nonlinear convex constraint sets
+\end{itemize}
+\item This dependence on constraint structure is a recurring theme throughout constrained optimization.
+\end{framei}
+
+
+\begin{framei}[fs=small]{ML Examples for Primal Projected Methods}
+\item \textbf{Nonnegative least squares}
+$$
+\min_{\wv} \|\Xmat \wv - \yv\|_2^2 \qquad \text{s.t. } \qquad \wv \ge \zero
+$$
+uses the box/nonnegativity projector.
+\item \textbf{Probability vectors} in multinomial models satisfy
+$$
+\thetav \ge \zero, \qquad \one^\top \thetav = 1,
+$$
+so every step must remain on the simplex.
+\item \textbf{Bounded parameter models} and \textbf{budget constraints} naturally yield lower and upper bounds on variables.
+\item In all of these cases, the \enquote{primal} viewpoint is intuitive:
+\begin{itemize}
+\item work directly with the original coefficients
+\item keep iterates feasible
+\item exploit the geometry of the feasible set
+\end{itemize}
+\end{framei}
+
+
+\begin{framei}[fs=small]{Step Sizes and Convergence}
+\item Assume $f$ is convex with $L$-Lipschitz continuous gradient and $\S$ is closed and convex.
+\item With a constant step size $0 < \alpha_t \le 1 / L$ or with backtracking line search, projected GD keeps all iterates feasible and converges to a minimizer.
+\item Typical rates mirror unconstrained GD:
+\begin{itemize}
+\item convex case: $f(\xv^{[t]}) - f(\xvs) = \order(1/t)$
+\item $\mu$-strongly convex case: linear convergence
+\end{itemize}
+\item The computational cost per iteration is
+$$
+\text{one gradient evaluation} + \text{one projection}.
+$$
+\item Hence projected GD is attractive exactly when the projector is simple enough that this extra step is cheap.
+\end{framei}
+
+
+\begin{framev}{Take-Away}
+\begin{enumerate}
+\item Start from a feasible point.
+\item Take a standard gradient step in the original variables.
+\item Project back onto the feasible set.
+\item Exploit structure aggressively:
+\end{enumerate}
+
+\begin{itemize}
+\item equalities $\rightarrow$ null-space / tangent-space projection
+\item box constraints $\rightarrow$ clipping
+\item simple convex sets $\rightarrow$ specialized projectors
+\end{itemize}
+
+\vfill
+\oneliner{Projected GD is the default primal baseline when projection onto $\S$ is cheap.}
+
+\vfill
+Next, we ask what happens when we update only one coordinate at a time.
+\end{framev}
+
+\endlecture
+\end{document}

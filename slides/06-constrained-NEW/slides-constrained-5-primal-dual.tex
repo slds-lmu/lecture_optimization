@@ -1,0 +1,256 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+\newcommand{\alphav}{\bm{\alpha}}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Constrained Optimization
+}{
+Penalty-Based and Primal-Dual Methods
+}{
+figure/primal_dual_penalty_barrier.pdf
+}{
+\item Quadratic penalties for violated constraints
+\item Log-barrier and interior-point ideas
+\item Why penalty / barrier parameters must change over time
+\item Barrier stationarity as a perturbed KKT system
+}
+
+\begin{framev}[fs=footnotesize]{Penalty and Barrier Ideas}
+\splitVTT[0.47]{
+\textbf{Starting point:}
+$\min_{\wv \in \R^d} F(\wv)$
+subject to $f_i(\wv) \le 0$ and $h_j(\wv) = 0$.
+
+\begin{itemize}
+\item \textbf{Penalty methods} move the constraints into the objective and charge for violations.
+\item \textbf{Barrier methods} modify the objective so strongly near the boundary that iterates stay strictly feasible.
+\item Both solve a sequence of relaxed problems and already hint at dual multipliers.
+\end{itemize}
+}{
+\centering
+\includegraphics[width=0.98\linewidth]{figure/primal_dual_penalty_barrier.pdf}
+}
+\end{framev}
+
+
+\begin{framev}[fs=footnotesize]{Penalty Method with One Constraint}
+\splitVTT[0.54]{
+Trust-region type problem:
+$\min_{\wv} F(\wv)$
+subject to $\|\wv - \mathbf{a}\|_2^2 \le \delta^2$.
+
+\begin{itemize}
+\item Solve the unconstrained problem first; if it is feasible, stop.
+\item Otherwise minimize
+$$
+R(\wv,\alpha)
+:=
+F(\wv)
++
+\alpha
+\left(
+\max\left\{\|\wv - \mathbf{a}\|_2^2 - \delta^2,\, 0\right\}
+\right)^2.
+$$
+\item The penalty is zero inside the feasible set; larger $\alpha$ pushes the minimizer inward.
+\end{itemize}
+}{
+\centering
+\includegraphics[width=0.94\linewidth]{figure/primal_dual_penalty_path.pdf}
+}
+\end{framev}
+
+
+\begin{framei}[fs=small]{Why Feasible Relaxed Solutions Are Enough}
+\item In penalty methods, feasible points receive \textbf{no extra cost} beyond the original objective.
+\item Therefore, if the minimizer of the relaxed problem happens to be feasible for the original constraints, then that point is also optimal for the original constrained problem.
+\item This leads to a simple continuation strategy:
+\begin{enumerate}
+\item choose an initial penalty weight $\alpha_0 > 0$
+\item minimize $R(\wv,\alpha_t)$ approximately
+\item if the result is feasible, stop
+\item otherwise increase $\alpha_t$ and solve again
+\end{enumerate}
+\item A common choice is geometric growth, for example $\alpha_{t+1} = 2 \alpha_t$.
+\item The solution from the previous outer step is a natural warm start for the next relaxed problem.
+\end{framei}
+
+
+\begin{framei}[fs=footnotesize]{General Quadratic Penalty Relaxation}
+\item Consider the convex constrained problem
+$$
+\min_{\wv} F(\wv)
+\qquad
+\text{s.t. }
+\qquad
+f_i(\wv) \le 0,\; i=1,\dots,m,
+\qquad
+h_j(\wv) = 0,\; j=1,\dots,k.
+$$
+\item A standard quadratic penalty relaxation is
+$$
+R(\wv,\alpha)
+:=
+F(\wv)
++
+\frac{\alpha}{2}
+\left(
+\sum_{i=1}^m \max\{0,f_i(\wv)\}^2
++
+\sum_{j=1}^k h_j(\wv)^2
+\right),
+\qquad \alpha > 0.
+$$
+\item Inequality constraints are penalized only when violated; equality constraints are penalized whenever they are nonzero.
+\item If $F$ and all $f_i$ are convex and each $h_j$ is linear, then $R(\cdot,\alpha)$ is convex for $\alpha > 0$.
+\item Its gradient is
+$$
+\nabla_{\wv} R(\wv,\alpha)
+=
+\nabla F(\wv)
++
+\alpha \sum_{i=1}^m \max\{f_i(\wv),0\}\nabla f_i(\wv)
++
+\alpha \sum_{j=1}^k h_j(\wv)\nabla h_j(\wv).
+$$
+\end{framei}
+
+
+\begin{framei}[fs=footnotesize]{Penalty Methods: Practical Behavior}
+\item Penalty relaxations are attractive because they let us reuse unconstrained solvers such as GD, coordinate descent, or Newton-type methods.
+\item However, the iterates of the relaxed problem need \textbf{not} be feasible while $\alpha$ is still moderate.
+\item Choosing an enormous penalty weight from the start is usually a bad idea:
+\begin{itemize}
+\item the penalty term dominates the geometry
+\item the relaxed objective becomes ill-conditioned
+\item descent methods can bounce or converge very slowly
+\end{itemize}
+\item Therefore, one usually starts with a smaller $\alpha$, solves a reasonably conditioned relaxed problem, and then increases $\alpha$ gradually.
+\item Exact feasibility is often only approached in later outer iterations, once the penalty weight is large enough.
+\end{framei}
+
+
+\begin{framev}[fs=footnotesize]{Barrier Methods}
+\splitVTT[0.52]{
+For inequalities written as $f_i(\wv) \ge 0$, barrier methods solve
+relaxed interior problems.
+
+\begin{itemize}
+\item The logarithmic barrier objective is
+$$
+B(\wv,\mu)
+:=
+F(\wv) - \mu \sum_{i=1}^m \log\big(f_i(\wv)\big).
+$$
+\item It is defined only for \textbf{strictly feasible} points with $f_i(\wv) > 0$, so barrier methods keep all iterates inside the feasible region.
+\end{itemize}
+}{
+\centering
+\includegraphics[width=0.94\linewidth]{figure/primal_dual_barrier_path.pdf}
+}
+\end{framev}
+
+
+\begin{framei}[fs=small]{Barrier Gradient and Continuation}
+\item For the logarithmic barrier, the gradient is
+$$
+\nabla_{\wv} B(\wv,\mu)
+=
+\nabla F(\wv)
+-
+\mu \sum_{i=1}^m \frac{\nabla f_i(\wv)}{f_i(\wv)}.
+$$
+\item As soon as one approaches the boundary $f_i(\wv) \to 0^+$, the term $\nabla f_i(\wv) / f_i(\wv)$ becomes very large.
+\item This is the barrier effect: the objective rises sharply near the boundary and prevents infeasible steps.
+\item The continuation strategy is the reverse of penalty methods:
+\begin{itemize}
+\item start with a relatively large barrier weight $\mu$
+\item solve the barrier problem
+\item reduce $\mu$ and warm-start the next solve
+\end{itemize}
+\item Large $\mu$ keeps the iterate well inside the feasible region; small $\mu$ allows it to move closer to the true constrained optimum.
+\item If $F$ is convex and each $f_i$ is concave, then $B(\cdot,\mu)$ is convex for $\mu > 0$.
+\end{framei}
+
+
+\begin{framev}[fs=footnotesize]{Barrier as a Primal-Dual Method}
+\splitVTT[0.52]{
+Barrier stationarity is
+$$
+\nabla F(\wv)
+-
+\mu \sum_{i=1}^m \frac{\nabla f_i(\wv)}{f_i(\wv)}
+=
+\zero,
+$$
+while Lagrangian stationarity is
+$
+\nabla F(\wv) - \sum_{i=1}^m \alpha_i \nabla f_i(\wv) = \zero.
+$
+
+This suggests
+$$
+\alpha_i \approx \frac{\mu}{f_i(\wv)}
+\qquad \Longrightarrow \qquad
+\alpha_i f_i(\wv) \approx \mu.
+$$
+As $\mu \to 0$, this becomes the KKT condition $\alpha_i f_i(\wv)=0$.
+}{
+\centering
+\includegraphics[width=0.90\linewidth]{figure/primal_dual_central_path.pdf}
+}
+\end{framev}
+
+
+\begin{framei}[fs=footnotesize]{A Generic Primal-Dual Update Pattern}
+\item Penalty methods change one scalar weight between outer iterations.
+\item A more explicit primal-dual method keeps one multiplier per constraint and works with an augmented Lagrangian such as
+$$
+\mathcal{L}_{\rho}(\wv,\alphav)
+:=
+F(\wv)
++
+\sum_{i=1}^m \alpha_i g_i(\wv)
++
+\frac{\rho}{2}\sum_{i=1}^m \max\{0,g_i(\wv)\}^2.
+$$
+\item Then one alternates between
+$$
+\wv^{[t+1]} \approx \argmin_{\wv} \mathcal{L}_{\rho}(\wv,\alphav^{[t]})
+\qquad \text{and} \qquad
+\alpha_i^{[t+1]}
+=
+\max\{0,\alpha_i^{[t]} + \eta_\alpha g_i(\wv^{[t+1]})\}.
+$$
+\item Violated constraints increase their multipliers; inactive constraints keep small or zero multipliers.
+\item Augmented-Lagrangian and interior-point methods differ in the exact relaxation, but they share the same principle: update the primal variables and update or infer dual pressure on the constraints.
+\item This is the sense in which these methods \textbf{blend primal and dual optimization}.
+\end{framei}
+
+
+\begin{framev}[fs=footnotesize]{Take-Away}
+\begin{itemize}
+\item \textbf{Penalty methods:} add violation costs and increase $\alpha$ until feasibility is reached or closely approximated.
+\item \textbf{Barrier methods:} keep iterates strictly feasible and decrease $\mu$ to approach the optimum from the interior.
+\item \textbf{Primal-dual view:} relaxed stationarity already contains multiplier information and leads to perturbed KKT conditions.
+\item \textbf{Trade-off:} penalties are simple but allow infeasible iterates; barriers preserve feasibility but require an interior start and careful continuation.
+\end{itemize}
+
+\vfill
+\oneliner{All three ideas solve a sequence of easier problems; the real difference is how feasibility is controlled along that sequence.}
+
+\vfill
+Next, we exploit especially simple constraint geometry for norm-constrained optimization.
+\end{framev}
+
+\endlecture
+\end{document}

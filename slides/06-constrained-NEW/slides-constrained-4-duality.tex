@@ -1,0 +1,295 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+\newcommand{\alphav}{\bm{\alpha}}
+\newcommand{\betav}{\bm{\beta}}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Constrained Optimization
+}{
+Lagrangian Relaxation and Duality
+}{
+figure/duality_minimax.pdf
+}{
+\item Relax constraints with Lagrange multipliers
+\item Dual function, weak duality, and strong duality
+\item Min-max ordering, saddle points, and KKT conditions
+\item Example: deriving the hinge-loss SVM dual
+}
+
+\begin{framev}[fs=footnotesize]{Why Move to the Dual?}
+\splitVTT[0.48]{
+\textbf{Primal problem}
+$$
+\begin{aligned}
+\min_{\wv \in \R^d} \quad & F(\wv) \\
+\text{s.t.} \quad & g_i(\wv) \le 0, \quad i = 1,\dots,m
+\end{aligned}
+$$
+
+\begin{itemize}
+\item Primal methods enforce feasibility directly in the original variables.
+\item Dual methods \textbf{relax} the constraints and attach nonnegative multipliers to violations.
+\item Each fixed multiplier vector $\alphav$ yields a \textbf{lower bound}; maximizing over $\alphav$ tightens it.
+\end{itemize}
+}{
+\imageC[0.97]{figure/duality_lower_bound.pdf}
+}
+\end{framev}
+
+
+\begin{framei}[fs=small]{Lagrangian Relaxation}
+\item For inequality constraints, define the Lagrangian minimax objective
+$$
+H(\wv,\alphav) := F(\wv) + \sum_{i=1}^m \alpha_i g_i(\wv),
+\qquad
+\alphav \ge \zero.
+$$
+\item The corresponding \textbf{dual function} is the relaxed optimum at fixed multipliers:
+$$
+L(\alphav) := \min_{\wv} H(\wv,\alphav).
+$$
+\item The minimization is only with respect to $\wv$; the multiplier vector $\alphav$ is held fixed.
+\item Why $\alpha_i \ge 0$? If $g_i(\wv) > 0$, then the violated constraint increases the objective by $\alpha_i g_i(\wv)$.
+\item If $g_i(\wv) < 0$, the term can decrease the objective, which is why $L(\alphav)$ is a lower bound rather than a direct replacement for the primal.
+\item Equality constraints $h_j(\wv)=0$ are handled by adding $\sum_j \beta_j h_j(\wv)$ with sign-unrestricted multipliers $\beta_j \in \R$.
+\end{framei}
+
+
+\begin{framei}[fs=small]{Weak Duality}
+\item For any feasible $\wv$ and any multiplier vector $\alphav \ge \zero$,
+$$
+H(\wv,\alphav)
+=
+F(\wv) + \sum_{i=1}^m \alpha_i g_i(\wv)
+\le
+F(\wv),
+$$
+because each $g_i(\wv) \le 0$ and each $\alpha_i \ge 0$.
+\item Taking the minimum over $\wv$ on the left yields
+$$
+L(\alphav) = \min_{\wv} H(\wv,\alphav) \le F(\wv)
+\qquad \text{for every feasible } \wv.
+$$
+\item In particular, if $p^\ast$ denotes the optimal primal value, then
+$$
+L(\alphav) \le p^\ast
+\qquad \forall \alphav \ge \zero.
+$$
+\item Maximizing this lower bound gives the \textbf{dual problem}
+$$
+d^\ast
+:=
+\max_{\alphav \ge \zero} L(\alphav)
+=
+\max_{\alphav \ge \zero} \min_{\wv} H(\wv,\alphav),
+$$
+and therefore
+$$
+d^\ast \le p^\ast.
+$$
+\item This universal lower-bound property is called \textbf{weak duality}.
+\end{framei}
+
+
+\begin{framev}[fs=footnotesize]{Ordering Matters: Min-Max vs.\ Max-Min}
+\splitVTT[0.45]{
+\textbf{Dual:}
+$$
+d^\ast = \max_{\alphav \ge \zero} \min_{\wv} H(\wv,\alphav)
+$$
+
+\textbf{Primal:}
+$$
+p^\ast = \min_{\wv} \max_{\alphav \ge \zero} H(\wv,\alphav)
+$$
+
+\begin{itemize}
+\item Always,
+$$
+\max_{\alphav} \min_{\wv} H(\wv,\alphav)
+\le
+\min_{\wv} \max_{\alphav} H(\wv,\alphav).
+$$
+\item Without convex-concave structure, changing the order can change the value substantially.
+\item If $H$ is convex in $\wv$ and concave in $\alphav$, a saddle point can make the two orders equal.
+\end{itemize}
+}{
+\imageC[0.97]{figure/duality_minimax.pdf}
+}
+\end{framev}
+
+
+\begin{framei}[fs=small]{The Primal Is the Reversed Minimax}
+\item Fix the primal variable $\wv$ and maximize $H(\wv,\alphav)$ over $\alphav \ge \zero$.
+\item If $\wv$ violates any constraint, say $g_k(\wv) > 0$, then
+$$
+\max_{\alphav \ge \zero} H(\wv,\alphav) = \infty,
+$$
+because we can send $\alpha_k \rightarrow \infty$.
+\item If $\wv$ is feasible, then each penalty term satisfies $\alpha_i g_i(\wv) \le 0$, so the maximum is achieved at $\alphav = \zero$:
+$$
+\max_{\alphav \ge \zero} H(\wv,\alphav) = F(\wv).
+$$
+\item Therefore,
+$$
+\min_{\wv} \max_{\alphav \ge \zero} H(\wv,\alphav)
+=
+\min_{\wv \in \S} F(\wv)
+=
+p^\ast.
+$$
+\item Primal and dual thus optimize the \textbf{same} Lagrangian objective, but in different orders:
+$$
+p^\ast = \min_{\wv} \max_{\alphav \ge \zero} H(\wv,\alphav),
+\qquad
+d^\ast = \max_{\alphav \ge \zero} \min_{\wv} H(\wv,\alphav).
+$$
+\end{framei}
+
+
+\begin{framei}[fs=small]{Strong Duality and Slater's Condition}
+\item Weak duality always gives
+$$
+d^\ast \le p^\ast.
+$$
+\item To obtain equality, we usually need convex structure:
+\begin{itemize}
+\item $F(\wv)$ convex
+\item each $g_i(\wv)$ convex
+\item hence $H(\wv,\alphav)$ convex in $\wv$ and linear, therefore concave, in $\alphav$
+\end{itemize}
+\item A standard qualification is \textbf{Slater's condition}: there exists at least one strictly feasible point $\wv_0$ such that
+$$
+g_i(\wv_0) < 0
+\qquad \forall i=1,\dots,m.
+$$
+\item Under convexity plus Slater's condition, the duality gap disappears:
+$$
+d^\ast = p^\ast.
+$$
+\item This is \textbf{strong duality}, and it is what makes dual optimization so useful in many machine-learning problems.
+\end{framei}
+
+
+\begin{framei}[fs=small]{KKT Conditions}
+\item For convex problems with strong duality, optimality is characterized by the \textbf{Karush-Kuhn-Tucker (KKT)} conditions.
+\item For inequality-constrained problems, a pair $(\wv^\ast,\alphav^\ast)$ is optimal if and only if:
+\item \textbf{Primal feasibility:}
+$$
+g_i(\wv^\ast) \le 0
+\qquad \forall i
+$$
+\item \textbf{Dual feasibility:}
+$$
+\alphav^\ast \ge \zero
+$$
+\item \textbf{Complementary slackness:}
+$$
+\alpha_i^\ast g_i(\wv^\ast) = 0
+\qquad \forall i
+$$
+\item \textbf{Stationarity:}
+$$
+\nabla F(\wv^\ast) + \sum_{i=1}^m \alpha_i^\ast \nabla g_i(\wv^\ast) = \zero
+$$
+\item Interpretation: inactive constraints have $\alpha_i^\ast = 0$, while active constraints can have nonzero multipliers.
+\end{framei}
+
+
+\begin{framei}[fs=small]{General Recipe for Deriving a Dual}
+\item \textbf{1. Start from a constrained primal.} Introduce slack variables if they simplify the objective or the constraints.
+\item \textbf{2. Form the Lagrangian} $H(\wv,\alphav,\betav)$ by attaching a multiplier to each constraint.
+\item \textbf{3. Eliminate primal variables} by computing
+$$
+L(\alphav,\betav) = \min_{\wv} H(\wv,\alphav,\betav).
+$$
+Usually this is done via stationarity conditions with respect to the primal variables.
+\item \textbf{4. Substitute back} to obtain a pure optimization problem in the dual variables, together with any remaining sign or box constraints.
+\item \textbf{5. Solve the dual} and then recover the primal optimum from the stationarity relations.
+\item In many important examples, deriving the dual is mostly algebra: differentiate, substitute, simplify, and interpret the remaining constraints.
+\end{framei}
+
+
+\begin{framei}[fs=small]{ML Example: SVM Primal and Stationarity}
+\item Start from the soft-margin SVM with slack variables:
+$$
+\min_{\wv,\xi_1,\dots,\xi_n}
+\frac{1}{2}\|\wv\|_2^2 + C \sum_{i=1}^n \xi_i
+$$
+$$
+\text{s.t. }
+\qquad
+1 - y^{(i)} {\xv^{(i)}}^\top \wv - \xi_i \le 0,
+\qquad
+\xi_i \ge 0.
+$$
+\item Introduce multipliers $\alpha_i \ge 0$ for the margin constraints and $\gamma_i \ge 0$ for the nonnegativity constraints.
+\item Stationarity with respect to the primal variables gives
+$$
+\wv = \sum_{i=1}^n \alpha_i y^{(i)} \xv^{(i)},
+\qquad
+C - \alpha_i - \gamma_i = 0.
+$$
+\item Since $\gamma_i \ge 0$, the dual variables satisfy the box constraints
+$$
+0 \le \alpha_i \le C.
+$$
+\item The first relation already shows a key interpretation:
+the optimal weight vector is a linear combination of training points.
+\end{framei}
+
+
+\begin{framei}[fs=small]{ML Example: Resulting SVM Dual}
+\item Eliminating the primal variables leaves the dual quadratic program
+$$
+\max_{\substack{0 \le \alpha_i \le C \\ i=1,\dots,n}}
+\left[
+\sum_{i=1}^n \alpha_i
+-
+\frac{1}{2}
+\sum_{i=1}^n \sum_{j=1}^n
+\alpha_i \alpha_j y^{(i)} y^{(j)} {\xv^{(i)}}^\top \xv^{(j)}
+\right].
+$$
+\item This is a \textbf{box-constrained} optimization problem in the dual variables only.
+\item Once the optimal multipliers are known, the primal separator follows from
+$$
+\wv^\ast = \sum_{i=1}^n \alpha_i^\ast y^{(i)} \xv^{(i)}.
+$$
+\item Only points with $\alpha_i^\ast > 0$ contribute to $\wv^\ast$; these are the \textbf{support vectors}.
+\item The dual is especially attractive because it depends on the data only through dot products ${\xv^{(i)}}^\top \xv^{(j)}$, which later enables kernel methods.
+\end{framei}
+
+
+\begin{framev}{Take-Away}
+\begin{enumerate}
+\item Lagrangian relaxation converts constraints into multiplier variables.
+\item The dual value is a lower bound:
+$$
+d^\ast = \max_{\alphav \ge \zero} \min_{\wv} H(\wv,\alphav) \le p^\ast.
+$$
+\item The primal uses the same objective in reversed order:
+$$
+p^\ast = \min_{\wv} \max_{\alphav \ge \zero} H(\wv,\alphav).
+$$
+\item For convex problems with Slater's condition, strong duality and the KKT conditions let us solve and certify optimality through the dual.
+\end{enumerate}
+
+\vfill
+\oneliner{Dual methods are especially attractive when the Lagrangian lets us eliminate many primal variables and leaves a simpler problem in the multipliers.}
+
+\vfill
+Next, we look at penalty-based and primal-dual methods that blend both viewpoints.
+\end{framev}
+
+\endlecture
+\end{document}
