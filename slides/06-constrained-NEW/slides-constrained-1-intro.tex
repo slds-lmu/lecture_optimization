@@ -1,0 +1,102 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Constrained Optimization
+}{
+Introduction
+}{
+figure/intro_feasible_region.pdf
+}{
+\item Optimization over a feasible region
+\item Why unconstrained updates can leave feasibility
+\item Primal and dual viewpoints
+\item Constraint structure: convex / linear versus norm constraints
+}
+
+\begin{framev}[fs=footnotesize]{Optimization Over a Feasible Region}
+\textbf{General form}
+$$
+\min_{\xv \in \R^d} f(\xv)
+\qquad
+\text{s.t. } \qquad
+g_i(\xv) \le 0,\; i=1,\dots,m,
+\qquad
+h_j(\xv) = 0,\; j=1,\dots,\ell.
+$$
+\textbf{Feasible set}
+$$
+\S := \left\{\xv \in \R^d \mid g_i(\xv) \le 0,\; h_j(\xv)=0 \right\}.
+$$
+\spacer
+\splitV[0.50]{
+\begin{itemize}
+\item Constrained optimization minimizes $f$ only over $\S$, not over all of $\R^d$.
+\item The unconstrained minimizer can lie outside $\S$, so the constrained optimum often lies on the boundary.
+\item Toy problem for this chapter:
+\begin{align*}
+\min_{\wv \in [0,1]\times[0,0.9]} (w_1 - 1.2)^2 &+ (w_1 - 1.2)(w_2 - 0.2)\\
+&+ (w_2 - 0.2)^2.
+\end{align*}
+\end{itemize}
+}{
+\image[1]{figure/intro_feasible_region.pdf}
+}
+\end{framev}
+
+
+\begin{framev}[fs=footnotesize]{Why Unconstrained Methods Need Adaptation}
+\textbf{Vanilla gradient step}
+$$
+\zv^{[t+1]} = \xv^{[t]} - \alpha_t \nabla f(\xv^{[t]}).
+$$
+\vfill
+\splitV[0.50]{
+\begin{itemize}
+\item Even if $\xv^{[t]} \in \S$, the tentative point $\zv^{[t+1]}$ may satisfy $\zv^{[t+1]} \notin \S$.
+\item The same issue appears for coordinate descent and Newton-type methods: their natural unconstrained updates need not respect the constraints.
+\item Constrained optimization therefore modifies the update rule, repairs an infeasible trial point, or reformulates the problem.
+\end{itemize}
+}{
+\imageC[0.96]{figure/intro_unconstrained_step.pdf}
+}
+\end{framev}
+
+
+\begin{framev}[fs=footnotesize]{Two Viewpoints}
+\textbf{Primal methods}
+\begin{itemize}
+\item work directly in the original variables
+\item keep iterates feasible or repair a tentative step
+\end{itemize}
+\textbf{Dual methods}
+\begin{itemize}
+\item relax constraints with Lagrange multipliers
+\item optimize the resulting problem in multiplier space
+\end{itemize}
+\textbf{Bridge methods}
+Penalty and barrier methods sit between both viewpoints and connect directly to primal-dual interior-point ideas.
+\imageC[0.60]{figure/intro_primal_dual_roadmap.pdf}
+\end{framev}
+
+
+\begin{framev}[fs=footnotesize]{Constraint Structure Matters}
+\textbf{There is no single best constrained optimizer.}
+\begin{itemize}
+\item The right method depends strongly on how the feasible set is described and how expensive it is to enforce.
+\item \textbf{Linear / convex constraints:} affine sets, boxes, simplices, and general convex regions often admit projections, coordinate slices, and duality / KKT structure.
+\item \textbf{Norm constraints:} balls, spheres, and orthogonality constraints lead to special geometry used in eigenvalue problems and PCA.
+\end{itemize}
+\imageC[0.98]{figure/intro_constraint_classes.pdf}
+\end{framev}
+
+\endlecture
+\end{document}

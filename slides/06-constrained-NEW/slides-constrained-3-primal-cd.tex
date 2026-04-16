@@ -23,80 +23,83 @@ figure/primal_cd_path.pdf
 }
 
 \begin{framev}[fs=small]{Why Coordinate Descent Fits Constraints}
-\splitVTT[0.46]{
 \textbf{Problem}
 $$
-\min_{\wv \in \S} F(\wv).
+\min_{\xv \in \S} F(\xv).
 $$
-
+\vfill
+\splitV[0.46]{
 \begin{itemize}
 \item A full gradient step can violate several constraints at once.
 \item Fixing the other coordinates reduces feasibility to a one-dimensional slice of $\S$.
 \item For convex $\S$, that slice is an interval and therefore easy to search.
 \end{itemize}
 }{
-\imageC[0.65]{figure/primal_cd_intervals.pdf}
+\imageC[1]{figure/primal_cd_intervals.pdf}
 }
 \end{framev}
 
 
 \begin{framei}[fs=small]{Constrained Coordinate Descent}
-\item Start from a feasible point $\wv^{[0]} \in \S$ and choose the active coordinate $i_t$ cyclically or at random.
+\item Start from a feasible point $\xv^{[0]} \in \S$ and choose the active coordinate $i_t$ cyclically or at random.
 \item For the current iterate, compute the feasible slice
 $$
-I_t := \left\{ z \in \R \mid (\wv_{-i_t}^{[t]}, z) \in \S \right\},
+I_t := \left\{ z \in \R \mid (\xv_{-i_t}^{[t]}, z) \in \S \right\},
 $$
-where $\wv_{-i_t}^{[t]}$ denotes all coordinates except the active one.
+where $\xv_{-i_t}^{[t]}$ denotes all coordinates except the active one.
 \item Solve the one-dimensional constrained problem
 $$
-w_{i_t}^{[t+1]} \in \argmin_{z \in I_t} F(\wv_{-i_t}^{[t]}, z).
+x_{i_t}^{[t+1]} \in \argmin_{z \in I_t} F(\xv_{-i_t}^{[t]}, z).
 $$
 \item Keep all other coordinates unchanged:
 $$
-w_j^{[t+1]} = w_j^{[t]} \qquad \forall j \neq i_t.
+x_j^{[t+1]} = x_j^{[t]} \qquad \forall j \neq i_t.
 $$
 \item One full pass over all coordinates is a \textbf{sweep}; \textbf{block coordinate descent} updates groups instead of single variables.
 \end{framei}
 
 
 \begin{framei}[fs=small]{Convex Sets Give Interval Subproblems}
-\item For a feasible point $\wv$ and coordinate $i$, define the slice
+\item For a feasible point $\xv$ and coordinate $i$, define the slice
 $$
-I_i(\wv) := \left\{ z \in \R \mid (w_1,\dots,w_{i-1},z,w_{i+1},\dots,w_d) \in \S \right\}.
+I_i(\xv) := \left\{ z \in \R \mid (x_1,\dots,x_{i-1},z,x_{i+1},\dots,x_d) \in \S \right\}.
 $$
-\item Geometrically, $I_i(\wv)$ is the intersection of $\S$ with an affine line parallel to axis $i$.
-\item If $\S$ is convex, then $I_i(\wv)$ is a convex subset of $\R$, hence an interval.
+\item Geometrically, $I_i(\xv)$ is the intersection of $\S$ with an affine line parallel to axis $i$.
+\item If $\S$ is convex, then $I_i(\xv)$ is a convex subset of $\R$, hence an interval.
 \item Therefore, if $F$ is convex, each coordinate step solves a \textbf{univariate convex problem over an interval}.
 \item The hard part is no longer a full $d$-dimensional update, but computing the interval endpoints and minimizing along that slice.
 \item This is why coordinate descent is especially appealing when the constraints have simple coordinate-wise structure.
 \end{framei}
 
 
-\begin{framei}[fs=small]{Worked Example: One Coordinate Step}
-\item Consider optimizing $F(w_1,w_2,w_3)$ subject to
-$$
-w_1^2 - w_1 w_2 + \frac{w_2^2}{4} + 3 w_2 w_3 + 4 w_3^2 \le 4,
-$$
-$$
-2 w_1 + w_2 - 3 w_3 \le 4.
-$$
-\item In a coordinate-descent step, fix $w_2 = 2$ and $w_3 = 0$, and optimize only $w_1$.
-\item Plugging these values into the constraints gives
-$$
-w_1^2 - 2 w_1 - 3 = (w_1 - 3)(w_1 + 1) \le 0,
-\qquad
-w_1 \le 1.
-$$
-\item Hence
-$$
-w_1 \in [-1,3] \cap (-\infty,1] = [-1,1].
-$$
-\item The subproblem becomes
-$$
-\min_{w_1 \in [-1,1]} G(w_1),
-\qquad
-G(w_1) := F(w_1,2,0).
-$$
+\begin{framei}[fs=scriptsize]{Toy Example: One Coordinate Slice}
+\item Reuse the box-constrained quadratic
+\[
+\min_{\wv \in [0,1] \times [0,0.9]}
+F(\wv)
+=
+(w_1 - 1.2)^2
++
+(w_1 - 1.2)(w_2 - 0.2)
++
+(w_2 - 0.2)^2.
+\]
+\item Start from the feasible point $\wv^{[t]} = (0.2,0.8)^\top$ and update only $w_1$.
+\item The 1D subproblem is
+\[
+\min_{0 \le z \le 1} F(z,0.8)
+=
+\min_{0 \le z \le 1}
+\Big((z - 1.2)^2 + 0.6(z - 1.2) + 0.36\Big).
+\]
+\item Stationarity gives
+\[
+\frac{d}{dz}F(z,0.8) = 2(z - 1.2) + 0.6 = 0
+\qquad \Longrightarrow \qquad
+\hat z = 0.9.
+\]
+\item Because $\hat z \in [0,1]$, the exact coordinate update is $w_1^{[t+1]} = 0.9$.
+\item The next $w_2$ step solves $w_2 \leftarrow \Pi_{[0,0.9]}(0.8 - 0.5 w_1)$ and moves toward $\wv^\ast = (1,0.3)^\top$.
 \end{framei}
 
 
@@ -112,12 +115,13 @@ $$
 z^\ast = \Pi_{[a,b]}(\hat z).
 $$
 \item If no closed form exists, one can still solve the univariate problem cheaply by line search or a few Newton steps.
+\item In practice, exact minimization is often replaced by a sufficiently improving approximate coordinate step.
 \item Coordinate descent therefore replaces one hard multivariate problem by many cheap one-dimensional problems.
 \end{framei}
 
 
 \begin{framev}[fs=small]{Box Constraints Are Especially Friendly}
-\splitVTT[0.50]{
+\splitV[0.50]{
 \textbf{Feasible set}
 $$
 \S = \left\{\wv \in \R^d \mid
@@ -127,20 +131,24 @@ j = 1,\dots,d
 \end{array}
 \right\}.
 $$
-
 \textbf{Coordinate slice}
 $$
 I_i(\wv) = [l_i, u_i].
 $$
-
+}{
+\imageC[1]{figure/primal_cd_path.pdf}
+}
 \begin{itemize}
 \item The interval does not depend on the other coordinates.
+\item On the toy example, the exact updates are
+\[
+w_1 \leftarrow \Pi_{[0,1]}(1.3 - 0.5 w_2),
+\qquad
+w_2 \leftarrow \Pi_{[0,0.9]}(0.8 - 0.5 w_1).
+\]
 \item In 2D, coordinate descent moves along horizontal and vertical segments.
 \item Every step stays feasible without a global projection.
 \end{itemize}
-}{
-\imageC[0.92]{figure/primal_cd_path.pdf}
-}
 \end{framev}
 
 
@@ -155,25 +163,24 @@ $$
 \item $\mathbf{D} \in \R^{n \times d}$ is the feature matrix, $\wv \in \R^d$ the coefficient vector, and $\yv \in \R^n$ the response vector.
 \item For fixed coordinates except $w_i$, the objective is a simple univariate quadratic over the interval $[l_i,u_i]$.
 \item Hence box regression can be solved by coordinate descent with exact closed-form coordinate updates.
-\item \textbf{Special case}: nonnegative least squares uses $l_i = 0$ and no finite upper bound.
+\item \textbf{Special case}: nonnegative least squares is recovered with $l_i = 0$, no finite upper bounds, and $\lambda = 0$.
 \end{framei}
 
 
 \begin{framev}[fs=small]{Truncated Coordinate Update for Box Regression}
-\splitVTT[0.58]{
+\splitV[0.58]{
 Let $\mathbf{d}_i$ be column $i$ of $\mathbf{D}$ and let
 $$
 \mathbf{r} = \yv - \mathbf{D}\wv
 $$
-be the current residual vector.
-
+be the current residual vector.\\
+\vfill
 \textbf{Unconstrained update}
 $$
 w_i \leftarrow
 \frac{w_i \|\mathbf{d}_i\|_2^2 + \mathbf{d}_i^\top \mathbf{r}}
 {\|\mathbf{d}_i\|_2^2 + \lambda}
 $$
-
 \textbf{Constrained update}
 $$
 w_i \leftarrow
@@ -186,15 +193,16 @@ $$
 T_i(x) = \min\{u_i, \max\{l_i, x\}\}
 $$
 }{
-\imageC[0.90]{figure/primal_cd_truncation.pdf}
+\imageC[0.85]{figure/primal_cd_truncation.pdf}
 }
 \end{framev}
 
 
 \begin{framei}[fs=small]{Practical Remarks}
-\item Coordinate descent is attractive when each slice $I_i(\wv)$ is easy to compute and the one-dimensional minimizer is cheap.
+\item Coordinate descent is attractive when each slice $I_i(\xv)$ is easy to compute and the one-dimensional minimizer is cheap.
 \item Box, nonnegativity, and other separable constraints are ideal because each coordinate update only needs a clipping step.
 \item For convex smooth objectives, cyclic or randomized coordinate descent converges; strong convexity often yields linear rates.
+\item In large linear models, the residual vector can be maintained incrementally after each coordinate update instead of recomputing $\mathbf{D}\wv$ from scratch.
 \item Block coordinate descent can be preferable when variables are strongly coupled.
 \item Limitations remain important: for general coupled constraints, computing the slice itself may already be expensive.
 \item Coordinate descent can also stall at coordinate-wise minima in more difficult nonsmooth or nonconvex settings.
@@ -208,12 +216,7 @@ $$
 \item Solve the resulting one-dimensional problem over an interval.
 \item Sweep cyclically, randomly, or in blocks.
 \end{enumerate}
-
-\vfill
-\oneliner{Primal coordinate descent is most useful when constraint structure makes each coordinate slice simple, especially for box-type constraints.}
-
-\vfill
-Next, we switch from primal feasible updates to Lagrangian relaxation and duality.
+\oneliner{Primal coordinate descent is most useful when constraint structure makes each coordinate slice simple, especially for box-type constraints such as our toy problem.}
 \end{framev}
 
 \endlecture

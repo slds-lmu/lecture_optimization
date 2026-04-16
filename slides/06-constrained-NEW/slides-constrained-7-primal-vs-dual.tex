@@ -40,6 +40,7 @@ in the multiplier variables $\alphav$.
 \item Thus, primal and dual methods come from the same Lagrangian, but they optimize in different coordinates.
 \item Primal iterates live in the original parameter space; dual iterates live in multiplier space and usually need a recovery step back to $\wv$.
 \item The main practical differences are dimension, constraint structure, computational cost, and interpretability.
+\item This final section is a decision guide: when does staying primal buy more than reformulating?
 \end{framei}
 
 
@@ -58,66 +59,75 @@ $$
 \end{framei}
 
 
-\begin{framev}[fs=footnotesize]{Kernel Methods: Dual Helpful, Not Essential}
-\splitVTT[0.53]{
+\begin{framev}[fs=scriptsize]{Toy Example}
+Reuse
+\[
+\min_{\wv} F(\wv) = (w_1 - 1.2)^2 + (w_1 - 1.2)(w_2 - 0.2) + (w_2 - 0.2)^2
+\]
+\[
+\text{s.t. }\qquad 0 \le w_1 \le 1, \qquad 0 \le w_2 \le 0.9.
+\]
+\spacer
+\splitV[0.50]{
+\begin{itemize}
+\item Primal view: $2$ variables, cheap clipping, direct feasible iterates.
+\item Dual view: $4$ nonnegative multipliers, one for each box wall.
+\item At the solution, only one multiplier is nonzero:
+\[
+\alphav^\ast=(0,0.3,0,0)^\top.
+\]
+\item This is exactly the kind of low-dimensional problem where the primal view stays simpler than the reformulation.
+\end{itemize}
+}{
+\imageC[0.90]{figure/duality_box_kkt.pdf}
+}
+\end{framev}
+
+
+\begin{framev}[fs=scriptsize]{Kernel Methods: Dual Helpful, Not Essential}
+\splitV[0.54]{
 \textbf{Linear SVM in the primal}
 $$
-\min_{\wv}
-\frac{\lambda}{2}\|\wv\|_2^2
-+
-\sum_{i=1}^n \max\left\{1 - y^{(i)} {\xv^{(i)}}^\top \wv, 0\right\}
+\begin{aligned}
+\min_{\wv,b} \quad &
+\frac{1}{2}\|\wv\|_2^2 \\
+& + C \sum_{i=1}^n \max\left\{1 - y^{(i)} \big({\xv^{(i)}}^\top \wv + b\big), 0\right\}
+\end{aligned}
 $$
 
 \textbf{Soft-margin SVM in the dual}
-$$
-\max_{\alphav}
-\quad
-\sum_{i=1}^n \alpha_i
--
-\frac{1}{2}
-\sum_{i=1}^n \sum_{j=1}^n
-\alpha_i \alpha_j y^{(i)} y^{(j)} k_{ij}
-$$
-\vspace{-0.2cm}
-$$
-\text{s.t. }
-\quad
-0 \le \alpha_i \le C,
-\qquad
-\sum_{i=1}^n \alpha_i y^{(i)} = 0
-$$
+\begin{align*}
+\max_{\alphav} \quad & \sum_{i=1}^n \alpha_i - \frac{1}{2} \sum_{i=1}^n \sum_{j=1}^n \alpha_i \alpha_j y^{(i)} y^{(j)} k_{ij} \\
+\text{s.t.} \quad & 0 \le \alpha_i \le C, \qquad \sum_{i=1}^n \alpha_i y^{(i)} = 0
+\end{align*}
 }{
 \begin{itemize}
 \item The dual depends only on similarities $k_{ij}$, so replacing dot products by a kernel is immediate.
 \item But the primal SVM is already a valid unconstrained optimization problem once the hinge loss is written inside the objective.
-\item Therefore, kernel methods require similarities, not duality itself; via the representer viewpoint, many regularized primal solutions can also be written in similarity form.
+\item Therefore, kernel methods require similarities, not duality itself; for many kernel regularization problems, the representer theorem shows that the solution lies in the span of training-point similarities.
 \item Duality is useful here, but it is \textbf{not} the only reasonable way to solve or kernelize the model.
 \end{itemize}
 }
 \end{framev}
 
 
-\begin{framev}[fs=footnotesize]{Which Side Is Computationally Cheaper?}
-\splitVTT[0.49]{
-\textbf{Primal:} $\Xmat^\top \Xmat \in \R^{d \times d}$
-
-\textbf{Dual:} $\mathbf{K} = \Xmat \Xmat^\top \in \R^{n \times n}$
-
+\begin{framev}[fs=scriptsize]{Which Side Is Computationally Cheaper?}
+\splitV[0.47]{
+\textbf{Primal side:} updates in parameter space $\wv \in \R^d$\\
+\textbf{Dual / kernel side:} updates in multiplier space $\alphav \in \R^n$
 \begin{itemize}
-\item The primal typically works with a \textbf{scatter matrix} of size $d \times d$.
-\item The dual typically works with a \textbf{similarity matrix} of size $n \times n$.
-\item Core storage and linear-algebra cost are therefore often $\order(d^2)$ versus $\order(n^2)$.
-\item If $d < n$, primal methods are often cheaper.
-\item If $n < d$, dual methods can be cheaper.
-\item For very large $n$, storing $\mathbf{K}$ can already be the bottleneck.
+\item Many primal solvers scale with feature operations and the parameter dimension $d$.
+\item Many dual or kernel solvers scale with sample operations and sometimes with a dense Gram matrix $\mathbf{K}$ of size $n \times n$.
+\item The true cost depends on solver choice, sparsity, and whether dense scatter / Gram matrices are formed at all.
+\item Useful regime heuristic: $d \ll n$ often favors primal methods, $n \ll d$ can favor dual methods, and very large $n$ makes dense kernel matrices expensive.
 \end{itemize}
 }{
-\imageC[0.98]{figure/primal_dual_regimes.pdf}
+\imageC[0.70]{figure/primal_dual_regimes.pdf}
 }
 \end{framev}
 
 
-\begin{framei}[fs=small]{Approximate Solutions Often Favor the Primal}
+\begin{framei}[fs=footnotesize]{Approximate Solutions Often Favor the Primal}
 \item For convex problems with strong duality, the \textbf{optimal values} satisfy
 $$
 p^\ast = d^\ast.
@@ -128,8 +138,8 @@ $$
 \wv(\alphav) = \sum_{i=1}^n \alpha_i y^{(i)} \xv^{(i)}.
 $$
 \item A dual iterate with a good objective value can still translate to a poor primal model if the primal-dual relations are not yet accurate enough.
-\item By contrast, primal methods directly optimize the objective we actually care about in the original variables.
-\item This makes early stopping and numerical approximation easier to interpret in the primal.
+\item By contrast, primal methods directly optimize the objective we actually care about in the original variables, so early stopping is easier to interpret.
+\item A dual lower bound still helps: the gap $F(\wv) - L(\alphav)$ is a stopping certificate even if the main algorithm runs in the primal.
 \end{framei}
 
 
@@ -148,10 +158,8 @@ $$
 \item are useful diagnostically, but are one step removed from the final model
 \item usually need a primal recovery step before interpretation or deployment
 \end{itemize}
-
-\vspace{0.2cm}
-\oneliner{If computation stops early, a current primal iterate is usually easier to justify and communicate.}
 }
+\oneliner{If computation stops early, a current primal iterate is usually easier to justify and communicate.}
 \end{framev}
 
 
@@ -177,10 +185,9 @@ $$
 \begin{enumerate}
 \item Primal and dual methods are two views of the same constrained optimization problem.
 \item Duality is powerful, but it is not automatically better and it is not required for kernel methods.
-\item Computationally, the choice is often driven by dimension: $d < n$ tends to favor primal methods, while $n < d$ can favor dual methods.
+\item Computationally, dimension gives a useful regime heuristic: $d < n$ often favors primal methods, while $n < d$ can favor dual methods.
 \item For approximate solutions, primal iterates are usually easier to interpret, evaluate, and stop early.
 \end{enumerate}
-
 \vfill
 \oneliner{Practical rule: use a primal method whenever it is simple enough; move to the dual only when the reformulation clearly buys something.}
 \end{framev}

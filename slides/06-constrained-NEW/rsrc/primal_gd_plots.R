@@ -1,6 +1,7 @@
 library(ggplot2)
 library(grid)
 library(gridExtra)
+source("box_toy_geometry.R")
 
 theme_set(
   theme_minimal(base_size = 13) +
@@ -228,89 +229,99 @@ ggsave("../figure/primal_gd_equality.pdf", p2, width = 7.2, height = 5.0)
 # Figure 3: box constraints => coordinate-wise clipping
 # -----------------------------------------------------------------------------
 
-box_center <- c(1.30, 1.10)
-box_hessian <- matrix(c(1.20, 0.25, 0.25, 1.45), nrow = 2)
-
-box_value <- function(x1, x2) {
-  quad_value(x1, x2, center = box_center, H = box_hessian)
-}
-
-box_grad <- function(x) {
-  quad_grad(x, center = box_center, H = box_hessian)
-}
-
-box_grid <- expand.grid(
-  x1 = seq(-0.05, 1.40, length.out = 220),
-  x2 = seq(-0.05, 1.40, length.out = 220)
+box_grid <- box_toy_grid(
+  x1_lim = c(-0.02, 1.30),
+  x2_lim = c(-0.02, 0.98),
+  n1 = 240,
+  n2 = 220
 )
-box_grid$z <- box_value(box_grid$x1, box_grid$x2)
 
-box_base <- function(title) {
-  ggplot() +
-    geom_contour(
-      data = box_grid,
-      aes(x = x1, y = x2, z = z),
-      bins = 9,
-      color = cols$contour,
-      linewidth = 0.35
-    ) +
-    geom_rect(
-      aes(xmin = 0, xmax = 1, ymin = 0, ymax = 1),
-      fill = cols$feasible_fill,
-      color = cols$feasible_line,
-      linewidth = 1.1,
-      alpha = 0.9
-    ) +
-    coord_equal(xlim = c(-0.02, 1.32), ylim = c(-0.02, 1.32), expand = FALSE) +
-    labs(x = expression(x[1]), y = expression(x[2]), title = title) +
-    theme(
-      legend.position = "none",
-      panel.border = element_blank(),
-      axis.line = element_line(color = "grey40")
-    )
-}
+x_t_box <- c(0.22, 0.78)
+alpha_box <- 0.72
+raw_box <- x_t_box - alpha_box * box_toy_grad(x_t_box)
+proj_box <- box_toy_project(raw_box)
 
-box_panel <- function(x_t_box, alpha_box, title) {
-  raw_box <- x_t_box - alpha_box * box_grad(x_t_box)
-  proj_box <- pmin(pmax(raw_box, 0), 1)
-
-  box_base(title) +
-    geom_segment(
-      aes(x = x_t_box[1], y = x_t_box[2], xend = raw_box[1], yend = raw_box[2]),
-      color = cols$raw_step,
-      linewidth = 1.05,
-      arrow = arrow(length = unit(0.18, "cm"))
-    ) +
-    geom_segment(
-      aes(x = raw_box[1], y = raw_box[2], xend = proj_box[1], yend = proj_box[2]),
-      color = cols$projected_step,
-      linewidth = 1.05,
-      arrow = arrow(length = unit(0.18, "cm"))
-    ) +
-    geom_point(
-      data = data.frame(
-        x1 = c(x_t_box[1], raw_box[1], proj_box[1]),
-        x2 = c(x_t_box[2], raw_box[2], proj_box[2]),
-        kind = factor(c("start", "raw", "proj"))
+p3 <- ggplot() +
+  geom_contour(
+    data = box_grid,
+    aes(x = x1, y = x2, z = z),
+    bins = 10,
+    color = cols$contour,
+    linewidth = 0.35
+  ) +
+  geom_rect(
+    aes(
+      xmin = box_toy_bounds$w1[1],
+      xmax = box_toy_bounds$w1[2],
+      ymin = box_toy_bounds$w2[1],
+      ymax = box_toy_bounds$w2[2]
+    ),
+    fill = cols$feasible_fill,
+    color = cols$feasible_line,
+    linewidth = 1.1,
+    alpha = 0.9
+  ) +
+  geom_segment(
+    aes(x = x_t_box[1], y = x_t_box[2], xend = raw_box[1], yend = raw_box[2]),
+    color = cols$raw_step,
+    linewidth = 1.08,
+    arrow = arrow(length = unit(0.18, "cm"))
+  ) +
+  geom_segment(
+    aes(x = raw_box[1], y = raw_box[2], xend = proj_box[1], yend = proj_box[2]),
+    color = cols$projected_step,
+    linewidth = 1.08,
+    arrow = arrow(length = unit(0.18, "cm"))
+  ) +
+  geom_point(
+    data = data.frame(
+      x1 = c(
+        x_t_box[1],
+        raw_box[1],
+        proj_box[1],
+        box_toy_center[1],
+        box_toy_optimum[1]
       ),
-      aes(x = x1, y = x2, fill = kind),
-      shape = 21,
-      size = 2.9,
-      color = "white",
-      stroke = 0.35,
-      show.legend = FALSE
-    ) +
-    scale_fill_manual(
-      values = c(
-        start = cols$point,
-        raw = cols$raw_step,
-        proj = cols$projected_step
+      x2 = c(
+        x_t_box[2],
+        raw_box[2],
+        proj_box[2],
+        box_toy_center[2],
+        box_toy_optimum[2]
+      ),
+      kind = factor(
+        c("start", "raw", "proj", "unconstrained", "optimum"),
+        levels = c("start", "raw", "proj", "unconstrained", "optimum")
       )
+    ),
+    aes(x = x1, y = x2, fill = kind),
+    shape = 21,
+    size = 3.0,
+    color = "white",
+    stroke = 0.35,
+    show.legend = FALSE
+  ) +
+  scale_fill_manual(
+    values = c(
+      start = cols$point,
+      raw = cols$raw_step,
+      proj = cols$projected_step,
+      unconstrained = cols$raw_step,
+      optimum = cols$optimum
     )
-}
+  ) +
+  annotate("text", x = 0.46, y = 0.98, label = "feasible box", color = cols$feasible_line, size = 4.5, fontface = "bold") +
+  annotate("text", x = x_t_box[1] - 0.02, y = x_t_box[2] + 0.10, label = "w[t]", parse = TRUE, color = cols$point, size = 4.2) +
+  annotate("text", x = raw_box[1] + 0.03, y = raw_box[2] + 0.08, label = "raw GD step", color = cols$raw_step, size = 4.0) +
+  annotate("text", x = proj_box[1] - 0.02, y = proj_box[2] + 0.09, label = "after clipping", color = cols$projected_step, size = 4.0) +
+  annotate("text", x = box_toy_center[1] + 0.01, y = box_toy_center[2] - 0.12, label = "unconstrained minimum", color = cols$raw_step, size = 4.0) +
+  annotate("text", x = box_toy_optimum[1] - 0.10, y = box_toy_optimum[2] - 0.12, label = "constrained optimum", color = cols$optimum, size = 4.0) +
+  coord_equal(xlim = c(-0.02, 1.30), ylim = c(-0.02, 0.98), expand = FALSE) +
+  labs(x = expression(w[1]), y = expression(w[2])) +
+  theme(
+    legend.position = "none",
+    panel.border = element_blank(),
+    axis.line = element_line(color = "grey40")
+  )
 
-p3_left <- box_panel(c(0.72, 0.46), alpha_box = 0.60, title = "One bound")
-p3_right <- box_panel(c(0.28, 0.22), alpha_box = 0.72, title = "Two bounds")
-
-p3 <- arrangeGrob(p3_left, p3_right, ncol = 2)
-ggsave("../figure/primal_gd_box.pdf", p3, width = 9.4, height = 4.8)
+ggsave("../figure/primal_gd_box.pdf", p3, width = 7.4, height = 5.0)

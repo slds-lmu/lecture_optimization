@@ -2,12 +2,12 @@ library(ggplot2)
 library(gridExtra)
 
 theme_set(
-  theme_minimal(base_size = 13) +
+  theme_minimal(base_size = 14) +
     theme(
       panel.grid.minor = element_blank(),
-      plot.title = element_text(face = "bold", size = 13),
-      plot.subtitle = element_text(size = 11),
-      axis.title = element_text(size = 11)
+      plot.title = element_text(face = "bold", size = 14),
+      plot.subtitle = element_text(size = 12),
+      axis.title = element_text(size = 12)
     )
 )
 
@@ -153,10 +153,10 @@ p_regime <- ggplot(regime_df, aes(x = log_n, y = log_d, fill = pref)) +
   ) +
   annotate("text", x = 3.55, y = 2.35, label = "d < n\nprimal often cheaper", color = "white", size = 4.2, fontface = "bold") +
   annotate("text", x = 2.35, y = 3.62, label = "n < d\ndual often cheaper", color = "white", size = 4.2, fontface = "bold") +
-  annotate("text", x = 3.78, y = 4.15, label = "n = d", color = cols$dark, size = 4.0, fontface = "bold", angle = 45) +
+  annotate("text", x = 3.78, y = 4.15, label = "n = d", color = cols$dark, size = 4.2, fontface = "bold", angle = 45) +
   labs(
-    title = "Dimension regime",
-    subtitle = "Which representation has the smaller core matrix?",
+    title = "Dimension regime heuristic",
+    subtitle = "actual cost still depends on solver, sparsity, and matrix formation",
     x = expression(log[10] * "(number of points n)"),
     y = expression(log[10] * "(number of variables d)")
   ) +
@@ -190,8 +190,8 @@ p_sizes <- ggplot(size_df, aes(x = scenario, y = entries, fill = matrix_type)) +
     values = c(cols$primal, cols$dual)
   ) +
   labs(
-    title = "Concrete matrix sizes",
-    subtitle = "Example: core matrix entry counts",
+    title = "If dense core matrices are formed",
+    subtitle = "example: entry counts for two opposite regimes",
     x = NULL,
     y = "entries (log scale)",
     fill = "matrix"
@@ -201,5 +201,5 @@ p_sizes <- ggplot(size_df, aes(x = scenario, y = entries, fill = matrix_type)) +
     legend.position = "top"
   )
 
-regimes_plot <- arrangeGrob(p_regime, p_sizes, ncol = 2)
-ggsave("../figure/primal_dual_regimes.pdf", regimes_plot, width = 10.0, height = 4.6)
+regimes_plot <- arrangeGrob(p_regime, p_sizes, ncol = 1)
+ggsave("../figure/primal_dual_regimes.pdf", regimes_plot, width = 4.8, height = 10.2)

@@ -22,25 +22,23 @@ figure/primal_gd_projected_step.pdf
 \item Convergence facts and ML examples
 }
 
-\begin{framev}[fs=small]{Why Constraints Break GD}
-\splitVTT[0.46]{
+\begin{framev}[fs=footnotesize]{Why Constraints Break GD}
+\splitV[0.46]{
 \textbf{Problem}
 $$
-\min_{\xv \in \S} \fx,
+\min_{\xv \in \S} \fx, \text{ with } \S \subsetneq \R^d
 $$
-with $\S \subsetneq \R^d$.
-
 \textbf{Vanilla GD step}
 $$
 \zv^{[t+1]} = \xv^{[t]} - \alpha_t \nabla f(\xv^{[t]}).
 $$
-
 \begin{itemize}
 \item $\xv^{[t]}$ can be feasible while $\zv^{[t+1]} \notin \S$.
 \item Primal methods modify or repair the step so every iterate stays inside $\S$.
+\item Roadmap: feasible updates first, relaxation next, then hybrid methods.
 \end{itemize}
 }{
-\imageC[0.95]{figure/primal_gd_projected_step.pdf}
+\imageC[0.92]{figure/primal_gd_projected_step.pdf}
 }
 \end{framev}
 
@@ -76,6 +74,10 @@ $$
 \xvs = \Pi_{\S}\big(\xvs - \alpha \nabla f(\xvs)\big)
 $$
 is the fixed-point condition for first-order optimality over a convex set.
+\item Equivalently, the negative gradient must lie in the normal cone:
+$$
+-\nabla f(\xvs) \in N_{\S}(\xvs).
+$$
 \item Define the \textbf{projected gradient mapping}
 $$
 G_{\alpha}(\xv) := \frac{1}{\alpha}\big(\xv - \Pi_{\S}(\xv - \alpha \nabla f(\xv))\big).
@@ -87,7 +89,7 @@ $$
 
 
 \begin{framev}{Equality Constraints: Feasible Directions}
-\splitVTT[0.48]{
+\splitV[0.48]{
 \textbf{Problem}
 $$
 \min \fx \qquad \text{s.t. } \qquad \Amat \xv = \bv.
@@ -127,27 +129,33 @@ and run ordinary GD on the reduced variable $\zv$.
 \end{framei}
 
 
-\begin{framev}[fs=small]{Box Constraints: Clipping}
-\splitVTT[0.52]{
-\textbf{Feasible set}
+\begin{framev}[fs=scriptsize]{Toy Example: Box Constraints}
+\textbf{Toy problem}
 $$
-\S = \left\{\xv \in \R^d \mid
-\begin{array}{l}
-l_j \le x_j \le u_j \\
-j = 1,\dots,d
-\end{array}
-\right\},
+\min_{\wv \in \S}
+F(\wv)
+:=
+(w_1 - 1.2)^2
++
+(w_1 - 1.2)(w_2 - 0.2)
++
+(w_2 - 0.2)^2
+$$
+$$
+\S = [0,1] \times [0,0.9].
 $$
 
+\splitV[0.52]{
 \textbf{Projection}
-$$
-\left[\Pi_{\S}(\zv)\right]_j
-= \min\{u_j, \max\{l_j, z_j\}\}.
-$$
+\begin{align*}
+\left[\Pi_{\S}(\zv)\right]_1 &= \min\{1, \max\{0, z_1\}\},\\
+\left[\Pi_{\S}(\zv)\right]_2 &= \min\{0.9, \max\{0, z_2\}\}.
+\end{align*}
 
 \begin{itemize}
-\item Each coordinate is clipped independently.
-\item No linear system and no QP solve.
+\item The unconstrained minimizer is $(1.2,0.2)$, so it lies just outside the box.
+\item A projected-GD step repairs only the violated coordinates by clipping.
+\item We reuse this same box-constrained quadratic in the next sections.
 \end{itemize}
 }{
 \imageC[0.95]{figure/primal_gd_box.pdf}
@@ -219,19 +227,14 @@ $$
 \item Take a standard gradient step in the original variables.
 \item Project back onto the feasible set.
 \item Exploit structure aggressively:
-\end{enumerate}
-
 \begin{itemize}
 \item equalities $\rightarrow$ null-space / tangent-space projection
 \item box constraints $\rightarrow$ clipping
 \item simple convex sets $\rightarrow$ specialized projectors
 \end{itemize}
-
+\end{enumerate}
 \vfill
 \oneliner{Projected GD is the default primal baseline when projection onto $\S$ is cheap.}
-
-\vfill
-Next, we ask what happens when we update only one coordinate at a time.
 \end{framev}
 
 \endlecture

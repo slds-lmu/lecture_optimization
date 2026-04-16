@@ -5,7 +5,7 @@
 \input{../../latex-math/basic-ml}
 \input{../../latex-math/optim-basics}
 
-\newcommand{\alphav}{\bm{\alpha}}
+\newcommand{\Lambdamat}{\bm{\Lambda}}
 
 \title{Optimization in Machine Learning}
 
@@ -20,12 +20,11 @@ figure/norm_constrained_circle.pdf
 }{
 \item Why norm constraints appear in machine learning
 \item Sphere constraints, orthogonality, and eigenvector problems
-\item Lagrangian relaxation for a nonconvex constrained problem
-\item Smallest and largest eigenvectors, with PCA links
+\item Matrix Lagrangian stationarity and variational eigenvalue theorems
+\item Smallest and largest invariant subspaces, with PCA links
 }
 
 \begin{framev}[fs=small]{Why Norm Constraints Matter}
-\splitVTT[0.48]{
 \textbf{Common forms}
 $$
 \min_{\xv} f(\xv)
@@ -41,14 +40,14 @@ $$
 \qquad
 \|\xv\|_2 = 1
 $$
-
+\splitV[0.48]{
 \begin{itemize}
 \item A norm bound limits scale and keeps the search in a compact region.
 \item A unit-norm equality removes arbitrary scaling, so the variable represents a \textbf{direction}.
 \item In ML, this shows up in PCA, SVD, and spectral methods.
 \end{itemize}
 }{
-\imageC[0.88]{figure/norm_constrained_circle.pdf}
+\image[1]{figure/norm_constrained_circle.pdf}
 }
 \end{framev}
 
@@ -72,194 +71,176 @@ $$
 \qquad
 \max_{\|\xv\|_2 = 1} \xv^\top \A \xv = \lambda_{\max}(\A).
 $$
-\item The book's multi-vector problem is the orthogonal extension of this fact.
+\item The multi-vector problem is the orthogonal extension of this fact.
 \end{framei}
 
 
-\begin{framei}[fs=small]{General Problem: $k$ Orthogonal Directions}
-\item We revisit the norm-constrained problem
+\begin{framei}[fs=small]{Matrix Form for $k$ Orthogonal Directions}
+\item Stack the directions into a matrix
 $$
-\begin{aligned}
-\min_{\xv_1,\dots,\xv_k} \quad & \sumik \xv_i^\top \A \xv_i \\
-\text{s.t.} \quad & \|\xv_i\|_2^2 = 1, \qquad i = 1,\dots,k, \\
-& \xv_i^\top \xv_j = 0, \qquad 1 \le i < j \le k.
-\end{aligned}
+\Xmat := [\xv_1,\dots,\xv_k] \in \R^{d \times k}.
 $$
-\item Here, $\A$ is symmetric and $k \le d$.
-\item Interpretation: choose $k$ mutually orthogonal unit directions whose total quadratic energy is as small as possible.
-\item The orthogonality constraints avoid selecting the same direction multiple times.
-\item Important caveat: even with a quadratic objective, the sphere and orthogonality constraints make the feasible set \textbf{nonconvex}.
+\item Then
+$$
+\sumik \xv_i^\top \A \xv_i = \trace(\Xmat^\top \A \Xmat),
+\qquad
+\|\xv_i\|_2 = 1 \text{ and } \xv_i^\top \xv_j = 0
+\iff
+\Xmat^\top \Xmat = \id_k.
+$$
+\item The minimization problem becomes
+$$
+\min_{\Xmat \in \R^{d \times k}} \trace(\Xmat^\top \A \Xmat)
+\qquad
+\text{s.t. } \qquad
+\Xmat^\top \Xmat = \id_k.
+$$
+\item Interpretation: choose an orthonormal $k$-dimensional subspace with minimum total quadratic energy.
+\item Important caveat: the feasible set $\{\Xmat \mid \Xmat^\top \Xmat = \id_k\}$ is \textbf{nonconvex}.
 \end{framei}
 
 
-\begin{framei}[fs=small]{Lagrangian Relaxation}
-\item As in the textbook, relax the \textbf{unit-norm equalities} but keep orthogonality explicit:
+\begin{framei}[fs=small]{Matrix Lagrangian Stationarity}
+\item Use one symmetric matrix multiplier $\Lambdamat \in \R^{k \times k}$ for the whole orthogonality constraint:
 $$
-H(\xv_1,\dots,\xv_k,\alphav)
+\mathcal{L}(\Xmat,\Lambdamat)
 :=
-\sumik \xv_i^\top \A \xv_i
+\trace(\Xmat^\top \A \Xmat)
 -
-\sumik \alpha_i \big(\|\xv_i\|_2^2 - 1\big).
+\trace\!\big(\Lambdamat(\Xmat^\top \Xmat - \id_k)\big).
 $$
-\item The corresponding dual function is
+\item Stationarity with respect to $\Xmat$ gives
 $$
-L(\alphav)
-:=
-\min_{\substack{\xv_1,\dots,\xv_k \\
-\xv_i^\top \xv_j = 0,\ i \neq j}}
-H(\xv_1,\dots,\xv_k,\alphav).
-$$
-\item Because we relax \textbf{equality} constraints, the multipliers $\alpha_i$ are sign-unrestricted.
-\item We do \emph{not} have to relax every constraint: keeping orthogonality explicit makes the algebra cleaner.
-\item The minus sign in front of $\alpha_i$ is convenient because the multipliers will turn into eigenvalues.
-\end{framei}
-
-
-\begin{framei}[fs=small]{Stationarity Gives Eigenvalue Equations}
-\item Differentiate the Lagrangian with respect to each primal vector:
-$$
-\nabla_{\xv_i} H
+\nabla_{\Xmat} \mathcal{L}
 =
-2 \A \xv_i - 2 \alpha_i \xv_i.
+2 \A \Xmat - 2 \Xmat \Lambdamat
+=
+\zero
+\qquad \Longrightarrow \qquad
+\A \Xmat = \Xmat \Lambdamat.
 $$
-\item Setting the gradient to zero gives
-$$
-\A \xv_i = \alpha_i \xv_i,
-\qquad i = 1,\dots,k.
-$$
-\item Therefore, every stationary feasible direction must be an \textbf{eigenvector} of $\A$.
-\item The Lagrange multipliers $\alpha_i$ are exactly the corresponding \textbf{eigenvalues}.
-\item Symmetry of $\A$ is crucial: it guarantees an orthonormal eigenbasis, so the orthogonality constraints can be satisfied automatically.
+\item This simultaneously handles unit norms and orthogonality; we no longer need one scalar multiplier per column.
+\item Teaching point: this is better viewed as \textbf{Lagrangian stationarity plus spectral structure}, not as a loose scalar \enquote{dual derivation}.
 \end{framei}
 
 
-\begin{framei}[fs=small]{Eliminating the Primal Variables}
-\item Substitute the stationarity relation $\A \xv_i = \alpha_i \xv_i$ back into the dual function:
+\begin{framei}[fs=small]{From Stationarity to Invariant Subspaces}
+\item The relation
 $$
-\begin{aligned}
-L(\alphav)
-&=
-\min_{\substack{\xv_1,\dots,\xv_k \\
-\text{orthogonal}}}
-\sumik \xv_i^\top \A \xv_i
--
-\sumik \alpha_i \big(\|\xv_i\|_2^2 - 1\big) \\
-&=
-\min_{\substack{\xv_1,\dots,\xv_k \\
-\text{orthogonal eigenvectors}}}
-\sumik \alpha_i \xv_i^\top \xv_i
--
-\sumik \alpha_i \big(\|\xv_i\|_2^2 - 1\big) \\
-&=
-\min_{\text{selected eigenvalues}} \sumik \alpha_i.
-\end{aligned}
+\A \Xmat = \Xmat \Lambdamat
 $$
-\item So after eliminating the primal variables, the relaxed objective is just the sum of the chosen eigenvalues.
-\item Minimizing over feasible orthogonal eigenvectors therefore selects the \textbf{smallest $k$ eigenvalues} of $\A$.
+\item means that the column space $\operatorname{span}(\Xmat)$ is an \textbf{invariant subspace} of $\A$.
+\item Because $\A$ is symmetric, we can choose an orthonormal basis inside that subspace that diagonalizes $\Lambdamat$:
+$$
+\A \Xmat
+=
+\Xmat \operatorname{diag}(\lambda_{i_1},\dots,\lambda_{i_k}).
+$$
+\item In that basis, the columns of $\Xmat$ are eigenvectors of $\A$.
+\item Any rotated basis $\Xmat \mathbf{Q}$ with $\mathbf{Q}^\top \mathbf{Q} = \id_k$ spans the same subspace and has the same objective value.
+\end{framei}
+
+
+\begin{framei}[fs=small]{Variational Characterization}
+\item The multi-vector problem is solved by the \textbf{Ky Fan / Courant-Fischer principle}.
+\item If $\lambda_1 \le \lambda_2 \le \dots \le \lambda_d$ are the eigenvalues of $\A$, then
+$$
+\min_{\Xmat^\top \Xmat = \id_k} \trace(\Xmat^\top \A \Xmat)
+=
+\sum_{i=1}^k \lambda_i,
+$$
+\[
+\max_{\Xmat^\top \Xmat = \id_k} \trace(\Xmat^\top \A \Xmat)
+=
+\sum_{i=d-k+1}^d \lambda_i.
+\]
+\item This is the theorem-backed extension of the Rayleigh quotient from one vector to $k$ orthonormal vectors.
+\item The theorem chooses an optimal \textbf{subspace}; the particular orthonormal basis inside that subspace is secondary.
 \end{framei}
 
 
 \begin{framei}[fs=small]{Result for the Minimization Variant}
-\item Let $\lambda_1 \le \lambda_2 \le \dots \le \lambda_d$ be the eigenvalues of $\A$, with associated orthonormal eigenvectors $\vv_1,\dots,\vv_d$.
-\item Then the optimal primal solution is
+\item Let $\lambda_1 \le \lambda_2 \le \dots \le \lambda_d$ be the eigenvalues of $\A$, with orthonormal eigenvectors $\vv_1,\dots,\vv_d$.
+\item Any minimizer satisfies
 $$
-\xv_i^\ast = \vv_i,
-\qquad i = 1,\dots,k,
+\operatorname{span}(\Xmat^\ast)
+=
+\operatorname{span}(\vv_1,\dots,\vv_k)
+\qquad
+\text{when } \lambda_k < \lambda_{k+1}.
 $$
-\item up to arbitrary orthogonal rotations inside eigenspaces with repeated eigenvalues.
-\item Primal and dual optimum coincide:
-$$
-p^\ast = d^\ast = \sum_{i=1}^k \lambda_i.
-$$
-\item Hence there is \textbf{no duality gap}, even though the original constrained problem is generally nonconvex.
-\end{framei}
-
-
-\begin{framei}[fs=small]{Why This Example Is Interesting}
-\item Strong duality is usually introduced for \textbf{convex} constrained problems.
-\item Here, that standard convexity story does \emph{not} apply automatically:
-\begin{itemize}
-\item $\A$ may be indefinite, so $\xv^\top \A \xv$ need not be convex
-\item the sphere and orthogonality constraints are nonconvex
-\end{itemize}
-\item Yet the Lagrangian relaxation still recovers the exact optimum because the stationarity equations force the solution onto the eigenstructure of a symmetric matrix.
-\item This is the main lesson of the section:
-\vfill
-\oneliner{Duality can sometimes solve special nonconvex norm-constrained problems exactly when the constraint geometry and algebra line up well.}
+\item More generally, if eigenvalues are repeated, any orthonormal basis of the corresponding optimal invariant subspace is optimal.
+\item The optimal value is
+\[
+p^\ast = \sum_{i=1}^k \lambda_i.
+\]
+\item So the key object is the optimal \textbf{subspace}, not one fixed ordered list of basis vectors.
 \end{framei}
 
 
 \begin{framev}[fs=small]{Maximization Variant}
-\splitVTT[0.48]{
-The maximization problem is
-$$
-\begin{aligned}
-\max_{\xv_1,\dots,\xv_k} \quad & \sumik \xv_i^\top \A \xv_i \\
-\text{s.t.} \quad & \|\xv_i\|_2^2 = 1, \\
-& \xv_i^\top \xv_j = 0.
-\end{aligned}
-$$
-
+\splitV[0.5]{
+The maximization problem keeps the same feasible set,
+\[
+\max_{\Xmat^\top \Xmat = \id_k} \trace(\Xmat^\top \A \Xmat),
+\]
+but chooses the dominant invariant subspace.
 \begin{itemize}
-\item The derivation is analogous.
-\item The optimizer picks the \textbf{largest $k$ eigenvalues} and their eigenvectors.
+\item The optimizer picks the \textbf{largest $k$ eigenvalues}.
+\item Any orthonormal basis of the span of the corresponding top-$k$ eigenvectors is optimal.
 \item For $k=1$:
-$$
+\[
 \max_{\|\xv\|_2 = 1} \xv^\top \A \xv = \lambda_{\max}(\A).
-$$
+\]
 \end{itemize}
 }{
-\imageC[0.98]{figure/norm_constrained_spectrum.pdf}
+\imageC[0.75]{figure/norm_constrained_spectrum.pdf}
 }
 \end{framev}
 
 
 \begin{framev}[fs=small]{ML Connection: Principal Components}
-\splitVTT[0.50]{
 \textbf{PCA}
 $$
-\max_{\|\vv\|_2 = 1} \vv^\top \Sigma \vv
+\max_{\Xmat^\top \Xmat = \id_k} \trace(\Xmat^\top \Sigma \Xmat)
 $$
-finds the direction of largest variance.
-
+finds the principal subspace of largest variance.\\
+\spacer
+\splitV[0.45]{
 \begin{itemize}
 \item PC1 is the dominant eigenvector of the covariance matrix $\Sigma$.
-\item Further components add the orthogonality constraint $\vv_i^\top \vv_j = 0$.
-\item PCA is a direct norm-constrained eigenvector problem.
+\item Further components add orthogonality and therefore recover the top-$k$ eigenspace.
+\item PCA is exactly a norm-constrained eigenvalue problem in the maximization form.
 \end{itemize}
 }{
-\imageC[0.80]{figure/norm_constrained_pca.pdf}
+\image[1]{figure/norm_constrained_pca.pdf}
 }
 \end{framev}
 
 
-\begin{framei}[fs=small]{Other ML Links}
-\item \textbf{Spectral clustering:} use the smallest eigenvectors of a graph Laplacian to embed nodes before clustering.
-\item \textbf{SVD:} dominant singular vectors solve norm-constrained extremal problems for $\mathbf{M}^\top \mathbf{M}$ and $\mathbf{M}\mathbf{M}^\top$.
-\item \textbf{Low-rank representation learning:} orthogonality and norm constraints help extract nonredundant latent directions.
-\item The recurring pattern is always the same:
+\begin{framei}[fs=small]{Why This Special Nonconvex Case Still Works}
+\item The feasible set $\{\Xmat \mid \Xmat^\top \Xmat = \id_k\}$ is nonconvex, so the usual convex-duality story does \emph{not} apply automatically.
+\item Exact solvability comes from special algebra:
 \begin{itemize}
-\item a quadratic or bilinear objective
-\item unit-norm constraints to remove scale ambiguity
-\item orthogonality constraints to get several distinct directions
+\item symmetry gives an orthonormal eigenbasis
+\item stationarity forces an invariant subspace
+\item the variational theorem identifies which subspace is optimal
 \end{itemize}
-\item That is why eigenvalue problems show up repeatedly across machine learning.
+\item \textbf{Spectral clustering:} typically uses the smallest nontrivial eigenvectors of a graph Laplacian to embed nodes before clustering.
+\item \textbf{SVD:} dominant singular vectors solve norm-constrained extremal problems for $\mathbf{M}^\top \mathbf{M}$ and $\mathbf{M}\mathbf{M}^\top$.
+\item This is why eigenvalue problems show up repeatedly across machine learning: the geometry and the linear algebra match perfectly.
 \end{framei}
 
 
 \begin{framev}{Take-Away}
 \begin{enumerate}
 \item Norm constraints often turn \enquote{find the best vector} into \enquote{find the best direction}.
-\item For symmetric quadratic objectives, stationary points on the unit sphere are eigenvectors.
-\item Adding orthogonality gives the top-$k$ or bottom-$k$ eigenvector problem.
-\item In this special case, Lagrangian relaxation recovers the exact solution.
+\item In matrix form, orthogonality is the single constraint $\Xmat^\top \Xmat = \id_k$.
+\item Stationarity gives an invariant subspace equation $\A \Xmat = \Xmat \Lambdamat$.
+\item Variational eigenvalue theorems then identify the optimal bottom-$k$ or top-$k$ subspace.
 \end{enumerate}
-
 \vfill
-\oneliner{Minimization picks the smallest eigenvectors; maximization picks the largest ones.}
-
-\vfill
-Next, we compare when primal feasible updates and dual reformulations are the more useful viewpoint.
+\oneliner{Minimization picks the smallest eigenspace; maximization picks the largest one.}
 \end{framev}
 
 \endlecture

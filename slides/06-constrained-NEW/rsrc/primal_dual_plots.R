@@ -1,14 +1,15 @@
 library(ggplot2)
 library(grid)
 library(gridExtra)
+source("box_toy_geometry.R")
 
 theme_set(
-  theme_minimal(base_size = 13) +
+  theme_minimal(base_size = 14) +
     theme(
       panel.grid.minor = element_blank(),
-      plot.title = element_text(face = "bold", size = 13),
-      plot.subtitle = element_text(size = 10.8),
-      axis.title = element_text(size = 12)
+      plot.title = element_text(face = "bold", size = 14),
+      plot.subtitle = element_text(size = 12),
+      axis.title = element_text(size = 13)
     )
 )
 
@@ -24,33 +25,15 @@ cols <- list(
 )
 
 # -----------------------------------------------------------------------------
-# Shared geometry: quadratic objective + circular feasible set
+# Shared geometry: recurring box-constrained quadratic
 # -----------------------------------------------------------------------------
 
-objective_center <- c(1.70, 0.28)
-radius <- sqrt(sum(objective_center^2))
-u <- objective_center / radius
-
-objective_value <- function(x1, x2, center = objective_center) {
-  0.5 * ((x1 - center[1])^2 + (x2 - center[2])^2)
-}
-
-circle_points <- function(r = 1, n = 500) {
-  theta <- seq(0, 2 * pi, length.out = n)
-  data.frame(
-    x1 = r * cos(theta),
-    x2 = r * sin(theta)
-  )
-}
-
-grid_df <- expand.grid(
-  x1 = seq(-1.20, 2.05, length.out = 280),
-  x2 = seq(-1.15, 1.35, length.out = 240)
+grid_df <- box_toy_grid(
+  x1_lim = c(-0.02, 1.30),
+  x2_lim = c(-0.02, 0.98),
+  n1 = 260,
+  n2 = 220
 )
-grid_df$z <- objective_value(grid_df$x1, grid_df$x2)
-
-circle_df <- circle_points(1)
-opt_boundary <- u
 
 base_panel <- function(title, subtitle) {
   ggplot() +
@@ -61,9 +44,13 @@ base_panel <- function(title, subtitle) {
       color = cols$contour,
       linewidth = 0.34
     ) +
-    geom_polygon(
-      data = circle_df,
-      aes(x = x1, y = x2),
+    geom_rect(
+      aes(
+        xmin = box_toy_bounds$w1[1],
+        xmax = box_toy_bounds$w1[2],
+        ymin = box_toy_bounds$w2[1],
+        ymax = box_toy_bounds$w2[2]
+      ),
       fill = cols$feasible_fill,
       color = cols$feasible_line,
       linewidth = 1.15,
@@ -71,8 +58,8 @@ base_panel <- function(title, subtitle) {
     ) +
     geom_point(
       data = data.frame(
-        x1 = c(objective_center[1], opt_boundary[1]),
-        x2 = c(objective_center[2], opt_boundary[2]),
+        x1 = c(box_toy_center[1], box_toy_optimum[1]),
+        x2 = c(box_toy_center[2], box_toy_optimum[2]),
         kind = c("unconstrained", "constrained")
       ),
       aes(x = x1, y = x2, fill = kind),
@@ -88,32 +75,32 @@ base_panel <- function(title, subtitle) {
         constrained = cols$optimum
       )
     ) +
+  annotate(
+    "text",
+    x = 0.48,
+    y = 0.98,
+    label = "feasible box",
+    color = cols$feasible_line,
+    size = 4.5,
+    fontface = "bold"
+  ) +
     annotate(
       "text",
-      x = -0.30,
-      y = 1.12,
-      label = "feasible set",
-      color = cols$feasible_line,
-      size = 4.2,
-      fontface = "bold"
-    ) +
+    x = box_toy_center[1] + 0.02,
+    y = box_toy_center[2] - 0.13,
+    label = "unconstrained\nminimum",
+    color = cols$unconstrained,
+    size = 4.0
+  ) +
     annotate(
       "text",
-      x = objective_center[1] - 0.05,
-      y = objective_center[2] - 0.16,
-      label = "unconstrained\nminimum",
-      color = cols$unconstrained,
-      size = 3.7
-    ) +
-    annotate(
-      "text",
-      x = opt_boundary[1] - 0.06,
-      y = opt_boundary[2] + 0.18,
-      label = "constrained optimum",
-      color = cols$optimum,
-      size = 3.8
-    ) +
-    coord_equal(xlim = c(-1.15, 1.95), ylim = c(-1.05, 1.25), expand = FALSE) +
+    x = box_toy_optimum[1] - 0.08,
+    y = box_toy_optimum[2] - 0.14,
+    label = "constrained optimum",
+    color = cols$optimum,
+    size = 4.1
+  ) +
+    coord_equal(xlim = c(-0.02, 1.30), ylim = c(-0.02, 0.98), expand = FALSE) +
     labs(
       title = title,
       subtitle = subtitle,
@@ -130,24 +117,16 @@ base_panel <- function(title, subtitle) {
 # Figure 1: penalty continuation approaches the boundary from outside
 # -----------------------------------------------------------------------------
 
-penalty_alphas <- c(0.18, 0.55, 2.40)
+penalty_rhos <- c(0.35, 1.20, 4.50)
 
-penalty_radius <- function(alpha) {
-  objective <- function(t) {
-    0.5 * (t - radius)^2 + 0.5 * alpha * pmax(t^2 - 1, 0)^2
-  }
-  optimize(objective, interval = c(0, radius + 0.15))$minimum
-}
-
-penalty_pts <- data.frame(alpha = penalty_alphas)
-penalty_pts$r <- vapply(penalty_alphas, penalty_radius, numeric(1))
-penalty_pts$x1 <- penalty_pts$r * u[1]
-penalty_pts$x2 <- penalty_pts$r * u[2]
+penalty_pts <- data.frame(rho = penalty_rhos)
+penalty_pts$x1 <- 1 + 0.6 / (3 + 2 * penalty_pts$rho)
+penalty_pts$x2 <- 0.3 - 0.3 / (3 + 2 * penalty_pts$rho)
 penalty_pts$idx <- seq_len(nrow(penalty_pts))
 
 penalty_path <- base_panel(
   title = "Quadratic penalty path",
-  subtitle = expression(R(w, alpha) == F(w) + alpha / 2 %.% max(0, g(w))^2)
+  subtitle = "larger rho reduces the infeasible overshoot"
 ) +
   geom_path(
     data = penalty_pts,
@@ -167,20 +146,19 @@ penalty_path <- base_panel(
   ) +
   annotate(
     "text",
-    x = penalty_pts$x1 + c(0.05, 0.05, 0.02),
-    y = penalty_pts$x2 + c(-0.10, 0.10, 0.12),
-    label = c(expression(alpha[1]), expression(alpha[2]), expression(alpha[3])),
-    parse = TRUE,
+    x = penalty_pts$x1 + c(0.02, 0.02, 0.02),
+    y = penalty_pts$x2 + c(-0.08, 0.07, 0.10),
+    label = sprintf("rho = %.2f", penalty_pts$rho),
     color = cols$penalty,
-    size = 4.0
+    size = 3.8
   ) +
   annotate(
     "text",
-    x = 1.16,
-    y = -0.58,
-    label = expression(alpha %*% up),
+    x = 1.10,
+    y = 0.08,
+    label = "outside -> boundary",
     color = cols$penalty,
-    size = 4.1,
+    size = 4.0,
     fontface = "bold"
   )
 
@@ -190,23 +168,35 @@ ggsave("../figure/primal_dual_penalty_path.pdf", penalty_path, width = 5.2, heig
 # Figure 2: barrier continuation approaches the boundary from inside
 # -----------------------------------------------------------------------------
 
-barrier_mus <- c(0.55, 0.22, 0.07)
+barrier_mus <- c(0.16, 0.06, 0.02)
 
-barrier_radius <- function(mu) {
-  objective <- function(t) {
-    0.5 * (t - radius)^2 - mu * log(1 - t^2)
+barrier_objective <- function(w, mu) {
+  if (w[1] <= 0 || w[1] >= 1 || w[2] <= 0 || w[2] >= 0.9) {
+    return(Inf)
   }
-  optimize(objective, interval = c(0, 0.999))$minimum
+  box_toy_value(w[1], w[2]) -
+    mu * (log(w[1]) + log(1 - w[1]) + log(w[2]) + log(0.9 - w[2]))
 }
 
 barrier_pts <- data.frame(mu = barrier_mus, idx = seq_along(barrier_mus))
-barrier_pts$r <- vapply(barrier_mus, barrier_radius, numeric(1))
-barrier_pts$x1 <- barrier_pts$r * u[1]
-barrier_pts$x2 <- barrier_pts$r * u[2]
+start <- c(0.52, 0.44)
+for (i in seq_along(barrier_mus)) {
+  fit <- optim(
+    par = start,
+    fn = barrier_objective,
+    mu = barrier_mus[i],
+    method = "L-BFGS-B",
+    lower = c(1e-4, 1e-4),
+    upper = c(1 - 1e-4, 0.9 - 1e-4)
+  )
+  barrier_pts$x1[i] <- fit$par[1]
+  barrier_pts$x2[i] <- fit$par[2]
+  start <- fit$par
+}
 
 barrier_path <- base_panel(
   title = "Log-barrier path",
-  subtitle = expression(B(w, mu) == F(w) - mu %.% log(delta^2 - w[1]^2 - w[2]^2))
+  subtitle = "smaller mu moves the iterate toward the active wall from inside"
 ) +
   geom_path(
     data = barrier_pts,
@@ -226,20 +216,19 @@ barrier_path <- base_panel(
   ) +
   annotate(
     "text",
-    x = barrier_pts$x1 + c(-0.03, 0.03, 0.02),
-    y = barrier_pts$x2 + c(0.18, 0.15, -0.11),
-    label = c(expression(mu[1]), expression(mu[2]), expression(mu[3])),
-    parse = TRUE,
+    x = barrier_pts$x1 + c(-0.02, 0.03, 0.03),
+    y = barrier_pts$x2 + c(0.14, 0.11, -0.10),
+    label = sprintf("mu = %.2f", barrier_pts$mu),
     color = cols$barrier,
-    size = 4.0
+    size = 3.8
   ) +
   annotate(
     "text",
-    x = 0.93,
-    y = -0.56,
-    label = expression(mu %*% downarrow),
+    x = 0.78,
+    y = 0.08,
+    label = "interior -> boundary",
     color = cols$barrier,
-    size = 4.1,
+    size = 4.0,
     fontface = "bold"
   )
 
@@ -294,35 +283,26 @@ central_path <- ggplot(central_df, aes(x = slack, y = lambda, color = mu)) +
     "text",
     x = 1.72,
     y = 1.95,
-    label = "alpha_i f_i(w) = mu",
+    label = "lambda_i s_i = mu",
     color = "grey20",
-    size = 4.3,
+    size = 4.7,
     fontface = "bold"
   ) +
   annotate(
     "text",
-    x = 1.56,
-    y = 0.16,
-    label = "complementary slackness:\nalpha_i f_i(w) = 0",
+    x = 0.46,
+    y = 2.08,
+    label = "mu decreases",
     color = cols$optimum,
-    size = 3.9
-  ) +
-  annotate(
-    "segment",
-    x = 1.05,
-    y = 0.72,
-    xend = 0.47,
-    yend = 0.22,
-    arrow = arrow(length = unit(0.16, "cm")),
-    color = "grey25",
-    linewidth = 0.8
+    size = 4.0,
+    fontface = "bold"
   ) +
   coord_cartesian(xlim = c(0, 2.25), ylim = c(0, 2.35), expand = FALSE) +
   labs(
-    title = "Central path in primal-dual interior-point methods",
-    subtitle = "Each curve keeps slack positive while the barrier parameter decreases",
-    x = expression("constraint slack " * f[i](w)),
-    y = expression("estimated multiplier " * alpha[i])
+    title = "Central path",
+    subtitle = "positive slack and positive multiplier while the barrier parameter decreases",
+    x = expression("slack " * s[i]),
+    y = expression("multiplier " * lambda[i])
   ) +
   theme(
     axis.line = element_blank(),
@@ -330,4 +310,4 @@ central_path <- ggplot(central_df, aes(x = slack, y = lambda, color = mu)) +
     legend.title = element_blank()
   )
 
-ggsave("../figure/primal_dual_central_path.pdf", central_path, width = 6.3, height = 4.8)
+ggsave("../figure/primal_dual_central_path.pdf", central_path, width = 6.4, height = 4.9)

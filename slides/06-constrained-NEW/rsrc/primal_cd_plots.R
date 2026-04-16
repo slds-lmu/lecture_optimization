@@ -1,6 +1,7 @@
 library(ggplot2)
 library(grid)
 library(gridExtra)
+source("box_toy_geometry.R")
 
 theme_set(
   theme_minimal(base_size = 13) +
@@ -99,29 +100,12 @@ ggsave("../figure/primal_cd_intervals.pdf", p1, width = 7.3, height = 5.1)
 # Figure 2: Coordinate descent path in a box
 # -----------------------------------------------------------------------------
 
-box_center <- c(1.35, 0.05)
-box_hessian <- matrix(c(1.40, 0.45, 0.45, 1.10), nrow = 2)
-
-box_value <- function(x1, x2) {
-  quad_value(x1, x2, center = box_center, H = box_hessian)
-}
-
-coord_update_x1 <- function(x2) {
-  unclipped <- box_center[1] - box_hessian[1, 2] / box_hessian[1, 1] * (x2 - box_center[2])
-  pmin(pmax(unclipped, 0), 1)
-}
-
-coord_update_x2 <- function(x1) {
-  unclipped <- box_center[2] - box_hessian[1, 2] / box_hessian[2, 2] * (x1 - box_center[1])
-  pmin(pmax(unclipped, 0), 0.9)
-}
-
 path_pts <- matrix(NA_real_, nrow = 5, ncol = 2)
-path_pts[1, ] <- c(0.14, 0.76)
-path_pts[2, ] <- c(coord_update_x1(path_pts[1, 2]), path_pts[1, 2])
-path_pts[3, ] <- c(path_pts[2, 1], coord_update_x2(path_pts[2, 1]))
-path_pts[4, ] <- c(coord_update_x1(path_pts[3, 2]), path_pts[3, 2])
-path_pts[5, ] <- c(path_pts[4, 1], coord_update_x2(path_pts[4, 1]))
+path_pts[1, ] <- c(0.20, 0.80)
+path_pts[2, ] <- c(box_toy_coord_update_x1(path_pts[1, 2]), path_pts[1, 2])
+path_pts[3, ] <- c(path_pts[2, 1], box_toy_coord_update_x2(path_pts[2, 1]))
+path_pts[4, ] <- c(box_toy_coord_update_x1(path_pts[3, 2]), path_pts[3, 2])
+path_pts[5, ] <- c(path_pts[4, 1], box_toy_coord_update_x2(path_pts[4, 1]))
 path_df <- data.frame(
   x1 = path_pts[, 1],
   x2 = path_pts[, 2],
@@ -134,14 +118,12 @@ path_seg_df <- data.frame(
   yend = path_pts[-1, 2]
 )
 
-box_grid <- expand.grid(
-  x1 = seq(-0.02, 1.40, length.out = 220),
-  x2 = seq(-0.02, 0.98, length.out = 220)
+box_grid <- box_toy_grid(
+  x1_lim = c(-0.02, 1.30),
+  x2_lim = c(-0.02, 0.98),
+  n1 = 220,
+  n2 = 220
 )
-box_grid$z <- box_value(box_grid$x1, box_grid$x2)
-
-opt_box <- c(coord_update_x1(coord_update_x2(1)), coord_update_x2(1))
-opt_box <- c(1, coord_update_x2(1))
 
 p2 <- ggplot() +
   geom_contour(
@@ -152,7 +134,12 @@ p2 <- ggplot() +
     linewidth = 0.35
   ) +
   geom_rect(
-    aes(xmin = 0, xmax = 1, ymin = 0, ymax = 0.9),
+    aes(
+      xmin = box_toy_bounds$w1[1],
+      xmax = box_toy_bounds$w1[2],
+      ymin = box_toy_bounds$w2[1],
+      ymax = box_toy_bounds$w2[2]
+    ),
     fill = cols$feasible_fill,
     color = cols$feasible_line,
     linewidth = 1.15,
@@ -181,18 +168,27 @@ p2 <- ggplot() +
     stroke = 0.35
   ) +
   geom_point(
-    aes(x = opt_box[1], y = opt_box[2]),
+    aes(x = box_toy_optimum[1], y = box_toy_optimum[2]),
     fill = cols$optimum,
     color = "white",
     shape = 21,
     size = 3.2,
     stroke = 0.35
   ) +
-  annotate("text", x = 0.57, y = 0.97, label = "box-constrained feasible set", color = cols$feasible_line, size = 4.4, fontface = "bold") +
-  annotate("text", x = 0.25, y = 0.82, label = "start", color = cols$point, size = 4.0) +
-  annotate("text", x = 0.52, y = 0.70, label = "x1 update", color = cols$path, size = 4.0) +
-  annotate("text", x = 0.89, y = 0.48, label = "x2 update", color = cols$path, size = 4.0, angle = 90) +
-  annotate("text", x = 0.84, y = 0.13, label = "constrained optimum", color = cols$optimum, size = 4.1) +
+  geom_point(
+    aes(x = box_toy_center[1], y = box_toy_center[2]),
+    fill = cols$clip,
+    color = "white",
+    shape = 21,
+    size = 3.0,
+    stroke = 0.35
+  ) +
+  annotate("text", x = 0.53, y = 0.97, label = "recurring toy: box-constrained quadratic", color = cols$feasible_line, size = 4.2, fontface = "bold") +
+  annotate("text", x = 0.27, y = 0.84, label = "start", color = cols$point, size = 4.0) +
+  annotate("text", x = 0.58, y = 0.73, label = "w1 update", color = cols$path, size = 4.0) +
+  annotate("text", x = 0.95, y = 0.55, label = "w2 update", color = cols$path, size = 4.0, angle = 90) +
+  annotate("text", x = box_toy_center[1] - 0.01, y = box_toy_center[2] - 0.11, label = "unconstrained minimum", color = cols$clip, size = 4.0) +
+  annotate("text", x = 0.82, y = 0.14, label = "constrained optimum", color = cols$optimum, size = 4.1) +
   coord_equal(xlim = c(-0.02, 1.30), ylim = c(-0.02, 0.98), expand = FALSE) +
   labs(x = expression(w[1]), y = expression(w[2])) +
   theme(
@@ -238,6 +234,6 @@ make_trunc_panel <- function(center, lower = 0.15, upper = 1.00, title) {
 
 p3_left <- make_trunc_panel(center = 0.62, title = "No clipping")
 p3_right <- make_trunc_panel(center = 1.22, title = "Clip to upper bound")
-p3 <- arrangeGrob(p3_left, p3_right, ncol = 2)
+p3 <- arrangeGrob(p3_left, p3_right, ncol = 1)
 
-ggsave("../figure/primal_cd_truncation.pdf", p3, width = 9.4, height = 4.4)
+ggsave("../figure/primal_cd_truncation.pdf", p3, width = 4.4, height = 9.4)

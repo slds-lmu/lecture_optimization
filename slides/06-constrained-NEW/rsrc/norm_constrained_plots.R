@@ -12,12 +12,12 @@ script_dir <- if (file.info(script_path)$isdir) script_path else dirname(script_
 figure_dir <- file.path(script_dir, "..", "figure")
 
 theme_set(
-  theme_minimal(base_size = 13) +
+  theme_minimal(base_size = 14) +
     theme(
       panel.grid.minor = element_blank(),
-      plot.title = element_text(face = "bold", size = 13),
-      plot.subtitle = element_text(size = 11),
-      axis.title = element_text(size = 12)
+      plot.title = element_text(face = "bold", size = 14),
+      plot.subtitle = element_text(size = 12),
+      axis.title = element_text(size = 13)
     )
 )
 
@@ -139,13 +139,13 @@ make_spectrum_panel <- function(select_kind) {
   df <- spec_df
   if (select_kind == "min") {
     df$selected <- ifelse(df$idx <= k, "selected", "other")
-    title <- "Minimization variant"
-    subtitle <- "pick the smallest k eigenvalues"
+    title <- "Minimization"
+    subtitle <- "choose the bottom-k eigenspace"
     select_col <- cols$min_dir
   } else {
     df$selected <- ifelse(df$idx > nrow(df) - k, "selected", "other")
-    title <- "Maximization variant"
-    subtitle <- "pick the largest k eigenvalues"
+    title <- "Maximization"
+    subtitle <- "choose the top-k eigenspace"
     select_col <- cols$max_dir
   }
 
@@ -167,9 +167,9 @@ make_spectrum_panel <- function(select_kind) {
 
 p2_left <- make_spectrum_panel("min")
 p2_right <- make_spectrum_panel("max")
-p2 <- arrangeGrob(p2_left, p2_right, ncol = 2)
+p2 <- arrangeGrob(p2_left, p2_right, ncol = 1)
 
-ggsave(file.path(figure_dir, "norm_constrained_spectrum.pdf"), p2, width = 10.0, height = 4.4)
+ggsave(file.path(figure_dir, "norm_constrained_spectrum.pdf"), p2, width = 4.8, height = 10.2)
 
 # -----------------------------------------------------------------------------
 # Figure 3: PCA as a norm-constrained eigenvector problem
