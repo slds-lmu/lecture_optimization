@@ -110,18 +110,18 @@ ParEGO Example, initial design and true Pareto front in black ...
 \end{framev}
 
 
-\begin{framev}{ParEGO}
+\begin{framev}[align=top]{ParEGO}
 ... standardize objectives, obtain scalarized objective via augmented Tchebycheff norm, fit SM and optimize EI ...
-\vfill
-\imageC[1]{figure/multicrit_3.png}
+\imageFixed{1cm}{2.5cm}[1]{figure/multicrit_3.png}
 \end{framev}
 
 
-\begin{framev}{ParEGO}
+\begin{framev}[align=top]{ParEGO}
 ... note that the specific scalarization is different at each iteration!
-\vfill
-\imageC[1]{figure/multicrit_4.png}
+\imageFixed{1cm}{2.5cm}[1]{figure/multicrit_4.png}
+\begin{textblock*}{\linewidth}(0.1\linewidth,8cm)
 The grey point visualizes the candidate we choose to evaluate in the previous iteration
+\end{textblock*}
 \end{framev}
 
 
@@ -131,11 +131,12 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 
 
 \foreach \figbase in {hv_plot, hv_contr_plot, sms_plot} {
-\begin{framev}{SMS-EGO}
+\begin{framev}[align=top]{SMS-EGO}
 Individual models for each objective $f_i$\\
-\vspace{1em}
+\spacer
 Single-objective optimization of aggregating acquisition function: \\
 Calculate contribution of the confidence bound of candidate to the current front approximation
+\vfill
 \splitV[0.55]{
 \begin{itemize}
 \item Calculate LCB for each objective
@@ -143,7 +144,7 @@ Calculate contribution of the confidence bound of candidate to the current front
 \item For $\varepsilon$-dominated ($\prec_{\varepsilon}$) solutions, a penalty is added
 \end{itemize}
 }{
-\imageC[1]{figure_man/\figbase.pdf}
+\imageFixed{8cm}{3cm}[1]{figure_man/\figbase.pdf}
 }
 \end{framev}
 }

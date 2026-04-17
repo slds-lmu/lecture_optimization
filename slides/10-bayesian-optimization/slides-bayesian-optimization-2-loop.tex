@@ -78,100 +78,85 @@ Actual sampling of points, e.g., constructed via \textbf{Maximin}:
 \end{framev}
 
 
-\begin{framev}{Surrogate Modeling}
+\begin{framev}[align=top]{Surrogate Modeling}
 Running example = minimize this \enquote{black-box}:
-\vfill
-\imageC[0.8]{figure/loop_0.png}
+\imageFixed{2.5cm}{3cm}[0.8]{figure/loop_0.png}
 \end{framev}
 
 
-\begin{framev}{Surrogate Modeling}
+\begin{framev}[align=top]{Surrogate Modeling}
 \begin{enumerate}
-\item \textbf{Fit} a \textbf{regression model} $\fh: \Dt \rightarrow \R$ (blue) to extract maximum information from the design points (black) and learn properties of $f$
+\item \textbf{Fit} a \textbf{regression model} $\fh: \Dt \rightarrow \R$ (blue) to extract maximum information from the design points (black) and learn properties of $f$\\
+$\Rightarrow$ As we can eval $f$ without noise, we fit an interpolator
 \end{enumerate}
-\vfill
-\imageC[0.7]{figure/loop_2.png}
-\begin{center}
-As we can eval $f$ without noise, we fit an interpolator
-\end{center}
+\imageFixed{2.5cm}{3cm}[0.8]{figure/loop_2.png}
 \end{framev}
 
 
-\begin{framev}{Surrogate Modeling}
+\begin{framev}[align=top]{Surrogate Modeling}
 \begin{enumerate}
 \setcounter{enumi}{1}
 \item Instead of the expensive $f$, we optimize the cheap surrogate $\fh$ (blue) to \textbf{propose} a new point (red) for evaluation 
 \end{enumerate}
-\vfill
-\imageC[0.7]{figure/loop_3.png}
+\imageFixed{2.5cm}{3cm}[0.8]{figure/loop_3.png}
 \end{framev}
 
 
-\begin{framev}{Surrogate Modeling}
+\begin{framev}[align=top]{Surrogate Modeling}
 \begin{enumerate}
 \setcounter{enumi}{2}
 \item We finally evaluate the newly proposed point
 \end{enumerate}
-\vfill
-\imageC[0.7]{figure/loop_4.png}
+\imageFixed{2.5cm}{3cm}[0.8]{figure/loop_4.png}
 \end{framev}
 
 
-\begin{framev}{Surrogate Modeling}
+\begin{framev}[align=top]{Surrogate Modeling}
 \begin{itemize}
 \item After evaluation of the new point, we \textbf{adjust} the model on the expanded dataset via (slower) refitting or a (cheaper) online update
 \end{itemize}
-\vfill
-\imageC[0.7]{figure/loop_5.png}
+\imageFixed{2.5cm}{3cm}[0.8]{figure/loop_5.png}
 \end{framev}
 
 
-\begin{framev}{Surrogate Modeling}
+\begin{framev}[align=top]{Surrogate Modeling}
 \begin{itemize}
 \item We again obtain a new candidate point (red) by optimizing the cheap surrogate model function (blue) ...
 \end{itemize}
-\vfill
-\imageC[0.7]{figure/loop_6.png}
+\imageFixed{2.5cm}{3cm}[0.8]{figure/loop_6.png}
 \end{framev}
 
 
-\begin{framev}{Surrogate Modeling}
+\begin{framev}[align=top]{Surrogate Modeling}
 \begin{itemize}
 \item ... and evaluate that candidate
 \end{itemize}
-\vfill
-\imageC[0.7]{figure/loop_7.png}
+\imageFixed{2.5cm}{3cm}[0.8]{figure/loop_7.png}
 \end{framev}
 
 
-\begin{framev}{Surrogate Modeling}
+\begin{framev}[align=top]{Surrogate Modeling}
 \begin{itemize}
 \item We repeat: (i) \textbf{fit} the model
 \end{itemize}
-\vfill
-\imageC[0.7]{figure/loop_8.png}
+\imageFixed{2.5cm}{3cm}[0.8]{figure/loop_8.png}
 \end{framev}
 
 
-\begin{framev}{Surrogate Modeling}
+\begin{framev}[align=top]{Surrogate Modeling}
 \begin{itemize}
 \item (ii) \textbf{propose} a new point
 \end{itemize}
-\vfill
-\imageC[0.7]{figure/loop_9.png}
+\imageFixed{2.5cm}{3cm}[0.8]{figure/loop_9.png}
 \end{framev}
 
 
-\begin{framev}{Surrogate Modeling}
+\begin{framev}[align=top]{Surrogate Modeling}
 \begin{itemize}
-\item (iii) \textbf{evaluate} that point
+\item (iii) \textbf{evaluate} that point\\
+$\Rightarrow$ We observe that the algorithm converged
 \end{itemize}
-\vfill
-\imageC[0.7]{figure/loop_10.png}
-\spacer
-\begin{itemize}
-\item We observe that the algorithm converged
-\end{itemize}
+\imageFixed{2.5cm}{3cm}[0.8]{figure/loop_10.png}
 \end{framev}
 
 
