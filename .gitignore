@@ -105,3 +105,8 @@ code-demos/code_demo_limo.R
 #  OS-specific temp/preview files   #
 #-----------------------------------#
 *.DS_Store
+
+#-----------------------------------#
+# Literature 4 material development #
+#-----------------------------------#
+literature
