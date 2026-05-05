@@ -20,28 +20,26 @@ figure_man/gd.png
 \item GD steps in eigenspace
 }
 
-\begin{framei}{Quadratic forms \& GD}
+\begin{framei}[align=top]{Quadratic forms \& GD}
 \item We consider the quadratic function $q(\xv) = \xv^T \Amat \xv - \bv^T \xv$
 \item We assume that the Hessian $\H = 2 \Amat$ has full rank
 \item We assume $q$ is convex, so $\Amat$ is psd
 \item The optimal solution is $\xvs = \frac{1}{2} \Amat^{-1} \bv$
 \item With $\nabla q(\xv) = 2 \Amat \xv - \bv$, gradient descent iterates as
-\vfill
 $$
 \xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \bv)
 $$
-\imageC[0.45][http://doi.org/10.23915/distill.00006]{figure_man/gd.png}
+\imageFixed{4.5cm}{5cm}[0.65][http://doi.org/10.23915/distill.00006]{figure_man/gd.png}
 \end{framei}
 
 
-\begin{framei}{Eigendecomposition of quadratic forms}
+\begin{framei}[align=top]{Eigendecomposition of quadratic forms}
 \item We want to work in the coordinate system induced by $q$
 \item \textbf{Recall:} That system is given by the eigenvectors of $\H = 2\Amat$
 \item Eigendecomposition: $\Amat = \V \bm{\Lambda} \V^T$
 \item $\V$ contains eigenvectors $\vv_i$ and $\bm{\Lambda} = \diag(\lambda_1, \dots, \lambda_n)$ stores eigenvalues
 \item Change of basis: $\wv^{[t]} = \V^T (\xv^{[t]} - \xvs)$
-\vfill
-\imageC[0.45]{figure_man/gd_eigenspace.png}
+\imageFixed{4.5cm}{5cm}[0.65]{figure_man/gd_eigenspace.png}
 \end{framei}
 
 

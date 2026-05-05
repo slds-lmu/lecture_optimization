@@ -43,7 +43,7 @@ $$\xvs := \argmin_{\xv \in \S } \sumim w_i f_i(\xv)$$
 \end{framei}
 
 
-\begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions III}
+\begin{framei}[align=top, sep=0.5em]{Finding Pareto-optimal solutions III}
 \item \textbf{Example:} $f_1(x) = (x-1)^2$ and $f_2(x) = 3(x-2)^2$ with
 $$
 \min_{x} f(x)
@@ -52,12 +52,14 @@ $$
 $$
 \item Use $0 \le x \le 3$ with $300$ steps ($100$ non-dominated points).
 \item Use $w_1 \in (0,1)$ with $100$ steps and $w_2=1-w_1$.
-\imageC[0.9]{figure_man/expedia-weighted-pareto_100.pdf}
+\imageFixed{1cm}{4cm}[1]{figure_man/expedia-weighted-pareto_100.pdf}
+\begin{textblock*}{\linewidth}(1.5cm,8.5cm)
 \item Not all Pareto-optimal solutions are found.
+\end{textblock*}
 \end{framei}
 
 
-\begin{framei}[sep=0.5em]{Finding Pareto-optimal solutions IV}
+\begin{framei}[align=top, sep=0.5em]{Finding Pareto-optimal solutions IV}
 \item \textbf{Example:} $f_1(x) = (x-1)^2$ and $f_2(x) = 3(x-2)^2$ with
 $$
 \min_{x} f(x)
@@ -66,8 +68,10 @@ $$
 $$
 \item Use $0 \le x \le 3$ with $300$ steps ($100$ non-dominated points).
 \item Using $w_1$ with $300$ steps yields all Pareto-optimal solutions:
-\imageC[0.9]{figure_man/expedia-weighted-pareto_300.pdf}
+\imageFixed{1cm}{4cm}[1]{figure_man/expedia-weighted-pareto_300.pdf}
+\begin{textblock*}{\linewidth}(1.5cm,8.5cm)
 \item Under which conditions can we find all Pareto-optimal solutions?
+\end{textblock*}
 \end{framei}
 
 
@@ -97,21 +101,21 @@ $$\frac{f_2(\xs)-f_2(x)}{f_1(x)-f_1(\xs)} = \frac{3- 3(\eps-1)^2}{\eps^2} =\frac
 \end{framev}
 
 
-\begin{framei}{Finding Pareto-optimal solutions VII}
+\begin{framei}[align=top]{Finding Pareto-optimal solutions VII}
 \item Convexity is required to find properly Pareto-optimal solutions
 \item In non-convex settings: Often poor coverage of the Pareto front.
 \item \textbf{Example:} $\S = \{\xv \in \R^2: x_1^2+x_2^2 \geq 1\}$ with $f_1(\xv) = x_1$ and $f_2(\xv)=x_2$.
 \item {\color{orange}Pareto front:} $\mathcal{F} = \{\xv \in \R^2: x_1^2+x_2^2=1\}$
 \item {\color{blue}Weighted sum scalarization} only finds {\color{blue}$\xv^{(1)}$} and {\color{blue}$\xv^{(2)}$}
-\imageC[0.4]{figure_man/example_unit_arc.pdf}
+\imageFixed{4cm}{4.3cm}[0.65]{figure_man/example_unit_arc.pdf}
 \end{framei}
 
 
-\begin{framei}{Finding Pareto-optimal solutions VIII}
+\begin{framei}[align=top]{Finding Pareto-optimal solutions VIII}
 \item \textbf{Alternative:} $\eps$-constraint method
 $$\xvs := \argmin_{\xv \in \S} f_1(\xv) \quad \text{s.t. } f_{2}(\xv) \leq \eps_2.$$
 \item By varying $\eps_i$ we can find different Pareto-optimal solutions:
-\imageC[0.5]{figure_man/example_epsilon_constraint.pdf}
+\imageFixed{4cm}{4.3cm}[0.65]{figure_man/example_epsilon_constraint.pdf}
 \end{framei}
 
 

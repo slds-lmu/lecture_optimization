@@ -132,12 +132,11 @@ If gradient is available and cheap, L-BFGS is preferred
 \end{framev}
 
 
-\begin{framev}{Nelder-Mead Visualization in 2D}
+\begin{framev}[align=top]{Nelder-Mead Visualization in 2D}
 $$\min_{\xv} f(x_1,x_2) = x_1^{2} + x_2^{2} + x_1\cdot \sin x_2 + x_2 \cdot \sin x_1 $$ 
-\only<1>{\imageC[0.9]{figure_man/nm_animation2d_1.PNG}}
-\only<2>{\imageC[0.9]{figure_man/nm_animation2d_2.PNG}}
-\only<3>{\imageC[0.9]{figure_man/nm_animation2d_3.PNG}}
-\only<4>{\imageC[0.9]{figure_man/nm_animation2d_4.PNG}}
+\foreach \i in {1, 2, 3, 4}{
+\only<\i>{\imageFixed{2.5cm}{2.5cm}[0.9]{figure_man/nm_animation2d_\i.PNG}}
+}
 \end{framev}
 
 
