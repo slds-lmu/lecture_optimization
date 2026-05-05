@@ -1,0 +1,88 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{}{
+Simulated Annealing
+}{
+figure_man/himmelblau-iter3_probabilities
+}{
+\item Motivation
+\item Metropolis algorithm
+\item Simulated Annealing
+}
+
+\begin{framei}[fs=normalsize,sep=L]{Introduction}
+\item Heuristics for optimization of complex objectives\\ (multivariate, non-linear, non-convex)
+\item Procedure for finding good solutions to complex problems
+\item Does not guarantee optimal/best result (global optimum), but usually good solutions
+\item Goal for complex optimization problems: avoid \enquote{getting stuck} in local optima
+\item Often used for difficult discrete problems as well
+\item Local search strategy with random option to accept worse values
+\end{framei}
+
+\begin{framei}{Simple stochastic local search}
+\item Given is a multivariate objective function $f(\xv)$
+\item Define a local neighborhood area $V(\xv)$ for a given $\xv$
+\item Sample proposal $\xv^{[t+1]}$ uniformly at random from $V(\xv^{[t]})$
+\item Calculate $f(\xv^{[t+1]})$
+\item If $\Delta f = f(\xv^{[t+1]}) - f(\xv^{[t]}) < 0$, $\xv^{[t+1]}$ is accepted as new solution, otherwise a new proposal from neighborhood is sampled
+\begin{figure}
+\imageC[0.68]{figure_man/metropolis-local-search.png}
+\caption*{stoch. local search: acceptance range in green and rejection in red}
+\end{figure}
+\end{framei}
+
+
+\begin{framei}{Metropolis algorithm}
+\item Simple stochastic local search strongly depends on $\xv^{[0]}$ and the neighborhood \\
+$\Rightarrow$ Danger of ending up in local minima
+\item \textbf{Idea:} allow worse candidates with some probability
+\item \textbf{Metropolis:} accept candidates from previous rejection range ($\Delta f > 0$) with probability $\P(\text{accept} \,|\, \Delta f) = \exp(-\Delta f / T)$
+\item $T$ denotes \enquote{temperature}
+\begin{figure}
+\imageC[0.9]{figure_man/metropolis-algorithm.png}
+\caption*{
+\footnotesize
+Simulated annealing: Colors correspond to $\P(\text{accept})$}
+\end{figure}
+\end{framei}
+
+\begin{framei}{Metopolis algorithm}
+\item Parameter $T$ describes temperature/progress of the system
+\item High temperatures correspond to high probability of accepting worse $\xv$
+\item Local minima can be escaped, but no convergence can be achieved at \textit{constant} temperature
+\item We come across an important principle of optimization: \textbf{exploration (high T) vs. exploitation (low T)}
+\lz
+\imageC[0.6]{figure_man/metropolis-algorithm2.png}
+\end{framei}
+
+\begin{framei}{Simulated Annealing}
+\item Start with high temperature to explore whole space
+\item Slowly reduce temperature to converge \\
+$\Rightarrow$ Sequence of descending temperatures $T^{[t]}, t \in \N$
+\item Procedure is called simulated annealing
+\item Temperature is often kept constant several iterations in a row to explore the space, then multiplied by coefficient $0<c<1$: 
+$$T^{[t+1]} = c \cdot T^{[t]}$$
+\item Other strategies possible, for example: 
+$$T^{[t]} = T^{[0]} \left( 1 - \frac{t}{t_{\text{max}}} \right)$$
+\item Many different strategies for choosing neighborhood\\
+Strongly depends on objective function
+\end{framei}
+
+\begin{framei}[fs=normalsize,sep=L]{Analogy to metallurgy}
+\item Simulated annealing draws analogy between a cooling process (e.g. a metal or liquid) and an optimization problem.
+\item If cooling of a liquid material (amount of atoms) is too fast, it solidifies in suboptimal configuration, slow cooling produces crystals with optimal structure (minimum energy stage)
+\item Consider atoms of the liquid as a system with many degrees of freedom, analogy to optimization problem of a multivariate function
+\item Minimum energy stage corresponds to optimum of objective function
+\end{framei}
+
+\endlecture
+\end{document}
+

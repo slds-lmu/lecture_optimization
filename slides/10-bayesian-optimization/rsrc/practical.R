@@ -43,5 +43,5 @@ g = ggplot(aes(x = x1, y = x2, z = ei), data = grid) +
   labs(x = expression(x[1]), y = expression(x[2])) +
   theme_minimal()
 
-ggsave(file.path("../figure/practical.png"), plot = g, width = 5, height = 4)
+ggsave(file.path("../figure_man/practical.png"), plot = g, width = 5, height = 4)
 

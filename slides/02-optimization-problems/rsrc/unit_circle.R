@@ -4,8 +4,6 @@
 # FIG: contour plot of x + y with unit circle
 # ------------------------------------------------------------------------------
 
-set.seed(1L)
-
 library(ggplot2)
 library(dplyr)
 
@@ -54,4 +52,5 @@ plot <- ggplot() +
   ) +
   coord_fixed()  # Ensure aspect ratio is 1:1
 
-ggsave("../figure/unit_circle.png", plot, width = 8, height = 6)
+plot
+ggsave("../figure_man/unit_circle.png", plot, width = 8, height = 6)

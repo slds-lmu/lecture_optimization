@@ -14,7 +14,7 @@ Bayesian Optimization
 }{
 Posterior Uncertainty and Acquisition Functions II
 }{
-figure/bayesian_loop_sm_normal_fmin.png
+figure_man/bayesian_loop_sm_normal_fmin.png
 }{
 \item Probability of improvement
 \item Expected improvement
@@ -28,9 +28,9 @@ $$
 where $\Phi(\cdot)$ is the standard normal cdf (assuming Gaussian posterior)
 \vfill
 \splitV[0.48]{
-\imageC[1]{figure/bayesian_loop_sm_normal_fmin.png}
+\imageC[1]{figure_man/bayesian_loop_sm_normal_fmin.png}
 }{
-\imageC[1]{figure/bayesian_loop_pi_0.png}
+\imageC[1]{figure_man/bayesian_loop_pi_0.png}
 }
 \spacer
 \footnotesize
@@ -58,21 +58,21 @@ $$
 \end{framev}
 
 
-\begin{framei}{Probability of Improvement}
-\item The PI does not take the size of the improvement into account
-\item Often it will propose points close to the current $\fmin$\\
+\begin{framev}{Probability of Improvement}
+The PI does not take the size of the improvement into account
+Often it will propose points close to the current $\fmin$\\
 \spacer
 We use the PI (red line) to propose the next point ...
 \vfill
-\imageC[0.6]{figure/bayesian_loop_pi_1.png}
+\imageC[0.6]{figure_man/bayesian_loop_pi_1.png}
 The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{PI}}(\xv)$
-\end{framei}
+\end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 ... evaluate that point, refit the SM and propose the next point
 \vfill
-\imageC[0.7]{figure/bayesian_loop_pi_2.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_2.png}
 (grey point = prev point from last iter)
 \end{framev}
 
@@ -80,49 +80,49 @@ The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{PI}}(\xv)$
 \begin{framev}{Probability of Improvement}
 ...
 \vfill
-\imageC[0.7]{figure/bayesian_loop_pi_3.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_3.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 In our example, using the PI results in spending plenty of time optimizing the local optimum ...
 \vfill
-\imageC[0.7]{figure/bayesian_loop_pi_4.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_4.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 ...
 \vfill
-\imageC[0.7]{figure/bayesian_loop_pi_5.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_5.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 ...
 \vfill
-\imageC[0.7]{figure/bayesian_loop_pi_6.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_6.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 ...
 \vfill
-\imageC[0.7]{figure/bayesian_loop_pi_7.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_7.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 ... eventually, we explore other regions ...
 \vfill
-\imageC[0.7]{figure/bayesian_loop_pi_8.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_8.png}
 \end{framev}
 
 
 \begin{framev}{Probability of Improvement}
 ...
 \vfill
-\imageC[0.7]{figure/bayesian_loop_pi_9.png}
+\imageC[0.7]{figure_man/bayesian_loop_pi_9.png}
 \end{framev}
 
 
@@ -133,9 +133,9 @@ a_{\text{EI}}(\xv) = \E(\max\{\fmin - Y(\xv), 0\})
 $$
 \vfill
 \splitV[0.48]{
-\imageC[1]{figure/bayesian_loop_sm_normal_fmin.png}
+\imageC[1]{figure_man/bayesian_loop_sm_normal_fmin.png}
 }{
-\imageC[1]{figure/bayesian_loop_pi_0.png}
+\imageC[1]{figure_man/bayesian_loop_pi_0.png}
 }
 \vfill
 \begin{small}\begin{itemize}
@@ -169,7 +169,7 @@ $$
 \begin{framev}{Expected Improvement}
 We use the EI (red line) to propose the next point ...
 \vfill
-\imageC[0.7]{figure/bayesian_loop_1.png}
+\imageC[0.7]{figure_man/bayesian_loop_1.png}
 \vfill
 The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
 \end{framev}
@@ -178,7 +178,7 @@ The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
 \begin{framev}{Expected Improvement}
 ... evaluate that point, refit the SM and propose the next point
 \vfill
-\imageC[0.7]{figure/bayesian_loop_2.png}
+\imageC[0.7]{figure_man/bayesian_loop_2.png}
 \vfill
 (grey point = prev point from last iter)
 \end{framev}
@@ -187,27 +187,27 @@ The red point depicts $\argmax_{\xv \in \mathcal{S}} a_{\text{EI}}(\xv)$
 \begin{framev}{Expected Improvement}
 ...
 \vfill
-\imageC[0.7]{figure/bayesian_loop_3.png}
+\imageC[0.7]{figure_man/bayesian_loop_3.png}
 \end{framev}
 
 
 \begin{framev}{Expected Improvement}
 ...
 \vfill
-\imageC[0.7]{figure/bayesian_loop_4.png}
+\imageC[0.7]{figure_man/bayesian_loop_4.png}
 \end{framev}
 
 
 \begin{framev}{Expected Improvement}
 ...
 \vfill
-\imageC[0.7]{figure/bayesian_loop_5.png}
+\imageC[0.7]{figure_man/bayesian_loop_5.png}
 \end{framev}
 
 
 \begin{framev}{Expected Improvement}
 The EI is capable of exploration and quickly proposes promising points in areas we have not visited yet
-\imageC[0.7]{figure/bayesian_loop_6.png}
+\imageC[0.7]{figure_man/bayesian_loop_6.png}
 Here, also a result of well-calibrated uncertainty $\sh(\xv)$ of our GP.
 \end{framev}
 

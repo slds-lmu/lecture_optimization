@@ -84,7 +84,7 @@ render_logreg(
 
 regularized_limits = list(x1 = c(-0.25, 0.5), x2 = c(-0.25, 0.5))
 for (alpha in c(0, 0.5, 1)) {
-  for (lambda in c(0.1, 1)) {
+  for (lambda in c(0.1, 1, 5)) {
     render_logreg(
       xmat = xmat,
       y = response,

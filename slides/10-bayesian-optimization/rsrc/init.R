@@ -36,7 +36,7 @@ g = ggplot(aes(x = x1, y = x2), data = xdt[method == "random"]) +
 
 g = ggMarginal(g, type = "histogram", bins = 11)
 
-ggsave("../figure/init_0.png", plot = g, width = 5, height = 4)
+ggsave("../figure_man/init_0.png", plot = g, width = 5, height = 4)
 
 g = ggplot(aes(x = x1, y = x2), data = xdt[method == "lhs"]) +
   geom_point(size = 3L) +
@@ -47,5 +47,5 @@ g = ggplot(aes(x = x1, y = x2), data = xdt[method == "lhs"]) +
 
 g = ggMarginal(g, type = "histogram", bins = 11)
 
-ggsave("../figure/init_1.png", plot = g, width = 5, height = 4)
+ggsave("../figure_man/init_1.png", plot = g, width = 5, height = 4)
 

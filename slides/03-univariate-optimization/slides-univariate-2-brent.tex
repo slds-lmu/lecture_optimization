@@ -34,11 +34,10 @@ Similar to golden ratio procedure but select $\xnew$ differently: $\xnew$ as min
 $$(\xleft, \fleft), (\xbest, \fbest), (\xright, \fright)$$ 
 \foreach \i in {1, 2, 3, 4, 5}{
 \only<\i>{
-\image{figure/quadratic\i.pdf}
+\image{figure_man/quadratic\i.pdf}
 Left: Fit parabola (dashed) and propose minimum (red) as new point. Middle: Switch / not switch with $\xbest$. Right: New interval. 
 }}
 \end{frame}
-
 
 \begin{framei}[sep=L]{Quadratic interpolation comments}
 \item Quadratic interpolation \textbf{not robust}. The following may happen:
@@ -49,7 +48,6 @@ Left: Fit parabola (dashed) and propose minimum (red) as new point. Middle: Swit
 \end{itemizeL}
 \item Algorithm must then abort, finding a global minimum is not guaranteed
 \end{framei}
-
 
 \begin{framei}[sep=L]{Brent's method}
 \item Brent's algorithm \furtherreading{BRENT1973} alternates between golden ratio search and quadratic interpolation as follows: 
@@ -72,10 +70,11 @@ Left: Fit parabola (dashed) and propose minimum (red) as new point. Middle: Swit
 \begin{equation*}
 - \ell(\lambda, \mathcal{D}) = - \log \prodin  f(\xii | \lambda) =  - \sumin \log f(\xii | \lambda) 
 \end{equation*}
-\imageC[0.7]{figure/poisson.pdf}
+\imageC[0.7]{figure_man/poisson.pdf}
 GR and Brent converge to global min at $x^\ast \approx 1$ \\
 But GR needs $\approx 45$ iters, Brent only $\approx 15$ for same tolerance
 \end{framei}
 
 \endlecture
+
 \end{document}

@@ -5,8 +5,6 @@
 #       and customer ratings using Expedia data.
 # ------------------------------------------------------------------------------
 
-set.seed(1L)
-
 library(ggplot2)
 library(gridExtra)
 
@@ -18,8 +16,8 @@ p = ggplot(data = df, aes(x = mean_price, y = - mean_rating)) + geom_point(size 
 p = p + theme_bw()
 p = p + ylim(c(- 5.5, -2))
 p = p + xlab("Price per night") + ylab("Rating")
-if (interactive()) print(p)
-ggsave("../figure/expedia-1-1.pdf", p, height=2, width=4)
+p
+ggsave("../figure_man/expedia-1-1.pdf", p, height=2, width=4)
 
 p1 = ggplot(data = df, aes(x = mean_price, y = - mean_rating)) + geom_point(size = 1.5)
 p1 = p1 + geom_point(data = df[16:17, ], aes(x = mean_price, y = - mean_rating), size = 2, colour = c("green", "red"))
@@ -33,10 +31,11 @@ p2 = p2 + theme_bw()
 p2 = p2 + ylim(c(-5.5, -2))
 p2 = p2 + xlab("Price per night") + ylab("Rating")
 
-p <- arrangeGrob(p1, p2, ncol = 2)
-if (interactive()) grid::grid.draw(p)
-ggsave("../figure/expedia-2-1.pdf", p, height=2, width=6.5)
-ggsave("../figure/expedia-4-1.pdf", p2, height=2, width=4)
+p <- grid.arrange(p1, p2, ncol = 2)
+p
+ggsave("../figure_man/expedia-2-1.pdf", p, height=2, width=6.5)
+ggsave("../figure_man/expedia-3-1.pdf", p1, height=2, width=4)
+ggsave("../figure_man/expedia-4-1.pdf", p2, height=2, width=4)
 
 df$mean_rating = - df$mean_rating
 P = df[order(df$mean_rating, df$mean_price,decreasing=FALSE),]
@@ -49,25 +48,28 @@ p2 = p2 + theme_bw()
 p2 = p2 + ylim(c(-5, -2))
 p2 = p2 + xlab("Price per night") + ylab("Rating")
 
-ggsave("../figure/expedia-5-1.pdf", p2, height=2, width=4)
+ggsave("../figure_man/expedia-5-1.pdf", p2, height=2, width=4)
 
 fun = function(x) (x - 1)^2
 p = ggplot(data.frame(x = c(0, 3)), aes(x)) + stat_function(fun = fun)
 p = p + geom_point(x = 1, y = 0, color = "green", size = 3)
 p = p + theme_bw() + ylab("c") + xlab(expression(lambda))
-if (interactive()) print(p)
+p
+ggsave("../figure_man/expedia-6-1.pdf", p, height=3, width=3)
 
 fun1 = function(x) (x - 1)^2
 fun2 = function(x) 3 * (x - 2)^2
 p = ggplot(data.frame(x = c(0, 3)), aes(x)) + stat_function(fun = fun1) + stat_function(fun = fun2, color = "blue")
 p = p + theme_bw()
-if (interactive()) print(p)
+p
+ggsave("../figure_man/expedia-7-1.pdf", p, height=3, width=3)
 
 x = seq(0, 3, length.out = 1000)
 xpareto = seq(1, 2, length.out = 1000)
 
 p2 = ggplot() + geom_point(data = data.frame(f1 = fun1(x), f2 = fun2(x)), aes(x = f1, y = f2), size = 0.05) + geom_point(data = data.frame(f1 = fun1(xpareto), f2 = fun2(xpareto)), aes(x = f1, y = f2), color = "green", size = 0.05) + theme_bw()
-if (interactive()) print(p2)
+p2
+ggsave("../figure_man/expedia-8-1.pdf", p2, height=3, width=3)
 
 df$apriori = df$mean_price + 50 * df$mean_rating
 
@@ -86,9 +88,9 @@ p2 = p2 + theme_bw()
 p2 = p2 + ylim(c(-5, -2))
 p2 = p2 + xlab("Price per night") + ylab("Rating")
 
-p <- arrangeGrob(p1, p2, ncol = 2)
-if (interactive()) grid::grid.draw(p)
-ggsave("../figure/expedia-9-1.pdf", p, height=2, width=4)
+p <- grid.arrange(p1, p2, ncol = 2)
+p
+ggsave("../figure_man/expedia-9-1.pdf", p, height=2, width=4)
 
 p1 = ggplot(data = df, aes(x = mean_price, y = mean_rating)) + geom_point(size = 2)
 p1 = p1 + geom_point(data = df[df$mean_rating == -5, ], aes(x = mean_price, y = mean_rating), size = 2, colour = "orange")
@@ -100,9 +102,8 @@ p1 = p1 + xlab("Price per night") + ylab("Rating")
 p2 = p1 + geom_point(data = df[(df$mean_rating == - 5.0 & df$mean_price < 150), ], colour = "green", size = 2)
 p2 = p2 + ggtitle("2) min. price")
 
-p <- arrangeGrob(p1, p2, ncol = 2)
-if (interactive()) grid::grid.draw(p)
-ggsave("../figure/expedia-10-1.pdf", p, height=2, width=6.5)
+p <- grid.arrange(p1, p2, ncol = 2)
+ggsave("../figure_man/expedia-10-1.pdf", p, height=2, width=6.5)
 
 P = df[order(df$mean_rating, df$mean_price,decreasing=FALSE),]
 P = P[which(!duplicated(cummin(P$mean_price))),]
@@ -117,8 +118,8 @@ p1 = p1 + xlab("Price per night") + ylab("Rating")
 
 p2 = p1 + geom_point(data = P[P$mean_rating == -4.5, ], aes(x = mean_price, y = mean_rating), colour = "green", size = 2)
 
-g = arrangeGrob(p1, p2, ncol = 2)
-ggsave("../figure/expedia-11-1.pdf", p, height=2, width=6.5)
+g = grid.arrange(p1, p2, ncol = 2)
+ggsave("../figure_man/expedia-11-1.pdf", p, height=2, width=6.5)
 
 x = seq(-1, 4, length.out = 1000)
 lin = 3 * 0.4 - 2 * x
@@ -127,8 +128,9 @@ p2 = ggplot() + geom_point(data = data.frame(f1 = fun1(x), f2 = fun2(x)), aes(x 
 p2 = p2 + geom_line(aes(x = x, y = lin)) + ylim(c(-3, 25))
 p2 = p2 + geom_point(aes(x = 0.36, y = 0.48), colour = "green", size = 3)
 p2 = p2 + theme_bw()
-if (interactive()) print(p2)
+p2
 
+ggsave("../figure_man/expedia-12-1.pdf", p2, height=3, width=3)
 
 f1 = function(x) 0.01 * sum(x^2) - 2
 f2 = function(x) 0.01 * sum(c(0.1, 0.3) * (x - c(-10, 20))^2)
@@ -143,4 +145,5 @@ melt = reshape2::melt(grid, id.vars = c("x1", "x2"))
 p = ggplot(data = melt) + geom_raster(aes(x = x1, y = x2, fill = value))
 p = p + geom_contour(aes(x = x1, y = x2, z = value, colour = variable), bins = 15)
 p = p + ylim(c(-20, 40)) + xlim(c(-20, 40)) + theme_bw()
-if (interactive()) print(p)
+p
+ggsave("../figure_man/expedia-13-1.pdf", p)

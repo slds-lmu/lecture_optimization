@@ -44,7 +44,7 @@ $$\argmin_{\xv} f(\xv)$$
 \item \textbf{Definition:} $\mathbf{d}\in \R^d$ is a \textbf{descent direction} in $\xv$ if
 $$D_\mathbf{d} f(\xv) = \nabla f(\xv) ^T \mathbf{d} < 0 \text{ (neg. directional derivative)}$$
 \begin{figure}
-\imageC[0.4]{figure/descent_direction.pdf}
+\imageC[0.4]{figure_man/descent_direction.pdf}
 \begin{footnotesize}
 Angle between $\nabla \fx$ and $\mathbf{d}$ must be $\in (90^{\circ}, 270^{\circ})$. 
 \end{footnotesize}
@@ -84,7 +84,7 @@ Key questions:
 \end{itemizeS}
 \vfill
 \item Using $\mathbf{d} = - \nabla \fx$ is called \textbf{gradient descent}. 
-\splitV{\imageC[0.9]{figure_man/gradient-descent-example_1.png}}{\imageC{figure_man/gradient-descent-example_2.png}}
+\splitV{\imageC[0.9]{figure/gradient-descent-example_1.png}}{\imageC{figure/gradient-descent-example_2.png}}
 \begin{center}\begin{footnotesize}
 GD for $f(x_1, x_2) = - \sin(x_1) \cdot \frac{1}{2\pi} \exp\left( (x_2 - \pi / 2)^2 \right)$ with sensibly chosen step size $\alpha^{[t]}$. 
 \end{footnotesize}\end{center}
@@ -107,8 +107,8 @@ $100$ iters of GD with const $\alpha = 10^{-4}$.
 \item Let $\D = \Dset$ and minimize 
 $$\risket = \sumin (\thetav^\top \xi - \yi)^2$$
 \textbf{NB: } For illustration, we use GD even though closed-form solution exists. GD-like (more adv.) approaches like this MIGHT make sense for large data, though.
-\item\textbf{Gradient: } $$\nabla_{\thetav}\risket = \frac{\partial \risket}{\partial \thetav} = -2 \sumin (\yi - \thetav^{\top} \xv^{(i)}) \xv^{(i)}$$ 
-\imageC[0.8]{figure/gradient_descent_lm.pdf}
+\item\textbf{Gradient: } $$\nabla_{\thetav}\risket(\thetav) = \frac{\partial \risket(\thetav)}{\partial \thetav} = -2 \sumin (\yi - \thetav^{\top} \xv^{(i)}) \xv^{(i)}$$ 
+\imageC[0.8]{figure_man/gradient_descent_lm.pdf}
 \end{framei}
 
 
@@ -117,7 +117,7 @@ $$\risket = \sumin (\thetav^\top \xi - \yi)^2$$
 $$\risket = \sumin \left(\fxt - \yi\right)^2$$
 where $\fxt$ is a neural network with 2 hidden layers (2 units each). 
 \vspace{-0.7cm}
-\imageC[0.6]{figure/gradient_descent_NN_0.pdf}
+\imageC[0.6]{figure_man/gradient_descent_NN_0.pdf}
 \end{framei}
 
 

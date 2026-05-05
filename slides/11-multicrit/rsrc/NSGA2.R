@@ -15,7 +15,6 @@
 library(smoof)
 library(ggplot2)
 library(ecr)
-library(mco)
 library(gridExtra)
 library(grid)
 set.seed(666)
@@ -46,44 +45,34 @@ fn = makeMultiObjectiveFunction(name = "Min-Ex",
 lower = getLower(ps)
 upper = getUpper(ps)
 
-POP_SIZE = 24L
+MU = 25L
+LAMBDA = 20L
+mutator = setup(mutPolynomial, eta = 25, p = 0.2, lower = lower, upper = upper)
+recombinator = setup(recSBX, eta = 15, p = 0.7, lower = lower, upper = upper)
 
-run_nsga2_snapshot = function(generations) {
-  set.seed(666)
-  mco::nsga2(
-    fn,
-    idim = 2L,
-    odim = 2L,
-    lower.bounds = lower,
-    upper.bounds = upper,
-    popsize = POP_SIZE,
-    generations = generations,
-    cprob = 0.7,
-    cdist = 15,
-    mprob = 0.2,
-    mdist = 25
-  )
-}
+res = ecr(fitness.fun = fn, lower = lower, upper = upper, mu = MU, lambda = LAMBDA, representation = "float", survival.strategy = "plus", 
+  parent.selector = selSimple, mutator = mutator, 
+  recombinator = recombinator, survival.selector = selNondom, 
+  log.pop = TRUE, terminators = list(stopOnIters(max.iter = 10L)))
 
 p = plotObjectiveSpace2Crit(fn)
-snapshot_iters = c(1L, 3L, 5L, 10L)
-populations = lapply(snapshot_iters, run_nsga2_snapshot)
-names(populations) = as.character(snapshot_iters)
+populations = getPopulations(res$log)
 
-for (i in snapshot_iters) {
-  popdf = data.frame(populations[[as.character(i)]]$value)
+for (i in c(1, 3, 5, 10)) {
+  popdf = data.frame(t(populations[[i]]$fitness))
   pl = p + geom_point(data = popdf, aes(x = X1, y = X2), colour = "blue")
   pl = pl + ggtitle(paste("Iteration", i))
   assign(paste("p", i, sep = ""), value = pl)
 }
 
-g = arrangeGrob(p1, p3, p10, ncol = 3)
-if (interactive()) grid::grid.draw(g)
-ggsave(g, file = "../figure/NSGA2_steps.png", width = 8, height = 4)
+g = grid.arrange(p1, p3, p10, ncol = 3)
+g
+ggsave(g, file = "../figure_man/NSGA2_steps.png", width = 8, height = 4)
 
 
 # non-dominated sorting
-pop = t(populations[["1"]]$value)
+
+pop = populations[[1]]$fitness
 sorted = doNondominatedSorting(pop)
 rank_max = max(sorted$ranks)
 ranks = 1:rank_max
@@ -94,20 +83,14 @@ popdf$Front = factor(sorted$ranks, ordered = TRUE, levels = ranks)
 
 pl = p + geom_point(data = popdf[popdf$Front %in% ranks, ], aes(x = X1, y = X2, colour = Front)) 
 pl = pl + geom_line(data = popdf[popdf$Front %in% ranks, ], aes(x = X1, y = X2, colour = Front), lty = 2)
-if (interactive()) print(pl)
-ggsave(pl, file = "../figure/NSGA2_NDS.png", width = 4, height = 3)
+pl
+ggsave(pl, file = "../figure_man/NSGA2_NDS.png", width = 4, height = 3)
 
 
 # Crowd Sort - Example 1
-front_sizes = table(sorted$ranks)
-front_candidates = as.integer(names(front_sizes[front_sizes >= 3]))
-front_plot = if (3L %in% front_candidates) 3L else front_candidates[1L]
-if (is.na(front_plot)) {
-  front_plot = 1L
-}
+front_plot = 3
 F3 = popdf[which(popdf$Front == front_plot), ]
 row.names(F3) <- seq_len(nrow(F3))
-F3 = F3[stats::complete.cases(F3[, c("X1", "X2")]), ]
 cd = computeCrowdingDistance(t(as.matrix(F3[, c("X1", "X2")])))
 
 pl = p + geom_point(data = F3, aes(x = X1, y = X2), alpha = 0.3)
@@ -120,10 +103,9 @@ pl2 = pl + geom_point(data = F3[order(cd, decreasing = TRUE)[1:5], ], aes(x = X1
 pl2 = pl2 + theme(legend.position = "none")
 pl2 = pl2 
 
-g = arrangeGrob(pl1, pl2, ncol = 2)
-if (interactive()) grid::grid.draw(g)
+g = grid.arrange(pl1, pl2, ncol = 2)
 
-ggsave(g, file = "../figure/NSGA2_CS1.png", width = 6, height = 3)
+ggsave(g, file = "../figure_man/NSGA2_CS1.png", width = 6, height = 3)
 
 
 cdo = order(cd, decreasing = TRUE)[c(5, length(cd)-1)]
@@ -142,5 +124,9 @@ pl1 = pl1 + theme(legend.position = "none")
 pl1 = pl1 + geom_line(data = F3, aes(x = X1, y = X2), lty = 2)
 pl1 = pl1 + geom_rect(data = cuboids, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, colour = point, fill = point), alpha = 0.2)
 pl1 = pl1 + geom_point(data = cuboids, aes(x = x, y = y, colour = point, fill = point), size = 3)
-if (interactive()) print(pl1)
-ggsave(pl1, file = "../figure/NSGA2_CS2.png", width = 3, height = 3)
+pl1
+ggsave(pl1, file = "../figure_man/NSGA2_CS2.png", width = 3, height = 3)
+
+
+
+

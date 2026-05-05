@@ -27,12 +27,10 @@ vis_line = as_visualizer(
   x1_limits = c(0, 5)
 )
 vis_line$add_training_data(color = "#1f77b4")
-if (interactive()) {
-  vis_line$plot(
-    show_title = FALSE,
-    show_legend = FALSE
-  )
-}
+vis_line$plot(
+  show_title = FALSE,
+  show_legend = FALSE
+)
 vis_line$save("../figure/ml_linreg_example_1.png", width = 3, height = 2.5)
 
 # Shared linear objective for contour and surface views
@@ -64,15 +62,13 @@ vis_contour = as_visualizer(
 )
 vis_contour$add_contours(alpha = 0.5)
 vis_contour$add_points(matrix(theta_true, nrow = 1), color = "#f6e05e", size = 3)
-if (interactive()) {
-  vis_contour$plot(
-    show_title = FALSE,
-    show_legend = FALSE,
-    x_lab = "$\\theta_0$",
-    y_lab = "$\\theta_1$",
-    latex = TRUE
-  )
-}
+vis_contour$plot(
+  show_title = FALSE,
+  show_legend = FALSE,
+  x_lab = "$\\theta_0$",
+  y_lab = "$\\theta_1$",
+  latex = TRUE
+)
 vis_contour$save("../figure/ml_linreg_example_2.png", width = 3, height = 2)
 
 # Figure 3: interactive surface of the same objective
@@ -84,12 +80,11 @@ vis_surface = as_visualizer(
 )
 vis_surface$add_points(matrix(c(theta_true, loss_at_true), nrow = 1), color = "#f6e05e", size = 5)
 vis_surface$set_scene(x = 2, y = 0.4, z = 0.9)
-if (interactive()) {
-  vis_surface$plot(
-    show_title = FALSE,
-    show_legend = FALSE,
-    x_lab = "theta_0",
-    y_lab = "theta_1",
-    z_lab = "L(theta)"
-  )
-}
+vis_surface$plot(
+  show_title = FALSE,
+  show_legend = FALSE,
+  x_lab = "theta_0",
+  y_lab = "theta_1",
+  z_lab = "L(theta)"
+)
+vis_surface$save("../figure/ml_linreg_example_3.png", width = 1000, height = 800)

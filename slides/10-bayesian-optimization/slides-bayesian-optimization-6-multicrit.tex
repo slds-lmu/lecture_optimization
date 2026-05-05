@@ -53,7 +53,7 @@ $$
 \begin{framev}{Multicriteria Bayesian Optimization}
 Example Pareto front:
 \vfill
-\imageC[0.8]{figure/multicrit_0.png}
+\imageC[0.8]{figure_man/multicrit_0.png}
 \end{framev}
 
 
@@ -74,7 +74,7 @@ $$
 \begin{framev}{Multicriteria Bayesian Optimization}
 Hypervolume example:
 \vfill
-\imageC[0.7]{figure/multicrit_1.png}
+\imageC[0.7]{figure_man/multicrit_1.png}
 Reference point $\bm{r}$ in red, estimated Pareto front $\hat{\mathcal{F}}$ in black, corresponding $\operatorname{HV}_{\bm{r}}(\hat{\mathcal{P}})$ is given by the grey area
 \end{framev}
 
@@ -106,21 +106,21 @@ with weight vector $\wv$ drawn uniformly from the set of evenly distributed weig
 \begin{framev}{ParEGO}
 ParEGO Example, initial design and true Pareto front in black ...
 \vfill
-\imageC[0.8]{figure/multicrit_2.png}
+\imageC[0.8]{figure_man/multicrit_2.png}
 \end{framev}
 
 
 \begin{framev}{ParEGO}
 ... standardize objectives, obtain scalarized objective via augmented Tchebycheff norm, fit SM and optimize EI ...
 \vfill
-\imageC[1]{figure/multicrit_3.png}
+\imageC[1]{figure_man/multicrit_3.png}
 \end{framev}
 
 
 \begin{framev}{ParEGO}
 ... note that the specific scalarization is different at each iteration!
 \vfill
-\imageC[1]{figure/multicrit_4.png}
+\imageC[1]{figure_man/multicrit_4.png}
 The grey point visualizes the candidate we choose to evaluate in the previous iteration
 \end{framev}
 
@@ -128,7 +128,6 @@ The grey point visualizes the candidate we choose to evaluate in the previous it
 \begin{framev}{SMS-EGO}
 \imageC[0.8]{figure_man/FlowchartMBMO_sms.pdf}
 \end{framev}
-
 
 \foreach \figbase in {hv_plot, hv_contr_plot, sms_plot} {
 \begin{framev}{SMS-EGO}
@@ -147,7 +146,6 @@ Calculate contribution of the confidence bound of candidate to the current front
 }
 \end{framev}
 }
-
 
 \begin{framei}{Outlook}
 \item Many more options exist:

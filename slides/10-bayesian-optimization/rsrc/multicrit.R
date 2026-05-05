@@ -41,7 +41,7 @@ g = ggplot(aes(x = y1, y = y2), data = instance$archive$data) +
   theme_minimal() +
   theme(legend.position = "bottom")
 
-ggsave("../figure/multicrit_0.png", plot = g, width = 5, height = 4)
+ggsave("../figure_man/multicrit_0.png", plot = g, width = 5, height = 4)
 
 pareto_dat = instance$archive$data[type == "Pareto"][, c("y1", "y2"), with = FALSE]
 pareto_dat = setorderv(pareto_dat, cols = "y1")
@@ -70,7 +70,7 @@ g = ggplot(aes(x = y1, y = y2), data = pareto_dat) +
   ylim(c(0, 9)) +
   theme(legend.position = "bottom")
 
-ggsave("../figure/multicrit_1.png", plot = g, width = 5, height = 4)
+ggsave("../figure_man/multicrit_1.png", plot = g, width = 5, height = 4)
 
 instance$archive$clear()
 
@@ -88,7 +88,7 @@ g = ggplot() +
   geom_point(aes(x = y1, y = y2), size = 3L, colour = "black", data = instance$archive$data) +
   theme_minimal()
 
-ggsave("../figure/multicrit_2.png", plot = g, width = 5, height = 4)
+ggsave("../figure_man/multicrit_2.png", plot = g, width = 5, height = 4)
 
 lambdas = mlr3mbo:::calculate_parego_weights(s = 100L, k = 2L)
 
@@ -130,13 +130,13 @@ ei = ggplot(aes(x = x, y = ei), data = grid) +
   ylab("EI") +
   theme_minimal()
 
-ggsave("../figure/multicrit_3.png", plot = g + (scal / ei), width = 10, height = 4)
+ggsave("../figure_man/multicrit_3.png", plot = g + (scal / ei), width = 10, height = 4)
 
 old_ei_argmax = ei_argmax
 
 instance$eval_batch(ei_argmax[, "x", with = FALSE])
 
-for (i in 4:4) {
+for (i in 4:11) {
   data = instance$archive$data
   ydt = data[, instance$archive$cols_y, with = FALSE]
   ydt = Map(function(y) (y - min(y, na.rm = TRUE)) / diff(range(y, na.rm = TRUE)), ydt)  # scale y to [0, 1]
@@ -176,9 +176,10 @@ for (i in 4:4) {
     ylab("EI") +
     theme_minimal()
   
-  ggsave(file.path(sprintf("../figure/multicrit_%i.png", i)), plot = g + (scal / ei), width = 10, height = 4)
+  ggsave(file.path(sprintf("../figure_man/multicrit_%i.png", i)), plot = g + (scal / ei), width = 10, height = 4)
 
   old_ei_argmax = ei_argmax
   
   instance$eval_batch(ei_argmax[, "x", with = FALSE])
 }
+

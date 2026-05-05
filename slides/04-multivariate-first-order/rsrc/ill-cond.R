@@ -23,19 +23,15 @@ vis = as_visualizer(
 	ill_cond_obj,
 	type = "surface"
 )
-if (interactive()) {
-	vis$plot(
-		flatten = FALSE,
-		show_title = FALSE,
-		show_legend = FALSE
-	)
-}
-# ../figure-man/ill-cond_1.png is a manually created screenshot
+vis$plot(
+	flatten = FALSE,
+	show_title = FALSE,
+	show_legend = FALSE
+)
+vis$save("../figure/ill-cond_1.png")
 
-if (interactive()) {
-	vis$plot(
-		flatten = TRUE,
-		show_title = FALSE
-	)
-}
-# ../figure-man/ill-cond_2.png is a manually created screenshot
+vis$plot(
+	flatten = TRUE,
+	show_title = FALSE
+)
+vis$save("../figure/ill-cond_2.png")
