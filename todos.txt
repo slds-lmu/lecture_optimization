@@ -1,0 +1,72 @@
+general:
+
+- for noting todos quickly: put them here; but better: inline comments.
+- do not work on OL anymore
+- persons get "tokens" by chapters / chunks. tokens are listed here
+- for now: TH and DR commit to main branch directly AND CHECK DIFFS.
+  establish audit tool with claude quickly
+  - a) slides build in CI without error b) claude check typos, errors, etc
+- latex-math is a PRIMARY target. dont overengineer but extend notation now.
+  ML is MUCH more in there than optim.
+  ---> we WILL run into problems here, as we need ML / optim and other crap simultanously
+  so all symbols are overloaded. try to setup non-conflicting symbols if possible,
+  but if this becomes annoying, state in a chapter which symbols are used how briefly
+- latex-math is "copied" into lecture_optim. only edit the copy BRIEFLY to test,
+  add change upstream ASAP
+- latexmath renders all symbols so you can read them (very long list) USE THIS,
+  but update cheatsheet too (more for students)
+- use lecture_service "as is" for now, but note problems / convenience issues ALWAYS HERE
+- use R code for pics, use tikz for schemas, use vistool for COMMON plots.
+  note problems ASAP!
+- convert all code now to "good state"
+- BB should define tasks first "in front of" you, then validate and finalize when you are done
+- we need to tell manuel what to do.
+- filenames: make names REASONABLY short now, ALWAYS use numbered layout, also shorten filenames for chunks
+  01-univar: 01-01-goldensect.tex
+- BB merge rules insights from automlMOOC !!!!! NOW
+- general narrative for chapters.
+  a) we start with an abstract description of the problem
+  b) we then introduce general optim algos to solve this
+  c) at the end we turn the perspective around in dedicated chunks and talk about ML problem we can now
+  solve and special things / insights / adaptations / examples
+  d) is is NOT forbidden to "point" to ML examples before if SUPER-helpful, but the more we do this, the less
+  clear structure we have
+- ML example and looking at "how to solve this problem in ML" is currently weak, this should be extended#
+- ignore chap1 and chap2 for now. chap1 not sure if i wanna teach this in this form (????).
+  chap2 is "folded" into other chapters
+- general rule: every start slides of each chunk notes down BRIEFLY which lit ref we follow
+
+
+BB:
+- PRIO align latex-math parent with optim. close PR-47 from optim,
+  look at PR-32 in latex-math parent, update in both repos
+- make repo names shorter
+- PRIO: have a system so we can discuss math with claude
+- gucken dass wir subgrads usw reinbekommen für nonsmooth
+
+manuel
+- go thru all chaps, starting from chap3 on.
+- make the R code a GREAT as possible (but efficiently)
+- use claude
+- respect all rules in lecture_service/.agents/rules-rcode.md
+- first task EVERY session: if things can get automated better by updating rules
+ or vistools DO THIS FIRST!
+
+
+
+tokens:
+ - timo: chap3
+ - david chap4
+
+tasks
+- put all issues from GH and OL comments as inline comments in slides
+   --> use a macro, put in lecture service. must do:
+    highliughted by TODO-tree plugin, must force person to put initials
+- PRIO (!!!!!!!!) ---> TH: migrate all todos from OL. look at OL for 10 min
+ -- if we can resolve the conflict -- then "close" OL with BB
+
+
+
+
+
+
