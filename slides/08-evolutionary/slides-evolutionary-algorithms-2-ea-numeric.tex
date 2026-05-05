@@ -54,44 +54,35 @@ $$
 \end{framev}
 
 
-\begin{framev}[fs=small]{Example of an evolutionary algorithm}
+\begin{framev}[align=top, fs=small]{Example of an evolutionary algorithm}
 (Simple) EA on 1-dim Ackley function on $[-30, 30]$.
 Usually, for optimizing a function $f : \R^d \to \R$, individuals are encoded as real vectors $\xv \in \R^d$.
-\medskip
-\vfill
-\imageC[0.6]{figure/1dim-ackley-func.png}
+\imageFixed{2.5cm}{2.5cm}[0.8]{figure/1dim-ackley-func.png}
 \end{framev}
 
 
-\begin{framev}{Example of an evolutionary algorithm}
+\begin{framev}[align=top]{Example of an evolutionary algorithm}
 Random initial population with size $\mu = 10$
-\medskip
-\vfill
-\imageC[0.6]{figure/1dim-ackley-func-2.png}
+\imageFixed{2.5cm}{2.5cm}[0.8]{figure/1dim-ackley-func-2.png}
 \end{framev}
 
 
-\begin{framev}{Example 1: Ackley function}
+\begin{framev}[align=top]{Example 1: Ackley function}
 We choose $\lambda = 5$ offspring by neutral selection (red individuals).
-\vfill
-\imageC[0.6]{figure/1dim-ackley-func-neutral-selec.png}
+\imageFixed{2.5cm}{2.5cm}[0.8]{figure/1dim-ackley-func-neutral-selec.png}
 \end{framev}
 
 
-\begin{framev}{Example 1: Ackley function}
+\begin{framev}[align=top]{Example 1: Ackley function}
 Use Gaussian mutation with $\sigma=2$, but without recombination.
-\medskip
-\vfill
-\imageC[0.6]{figure/1dim-ackley-func-gaussian-mutation.png}
+\imageFixed{2.5cm}{2.5cm}[0.8]{figure/1dim-ackley-func-gaussian-mutation.png}
 \end{framev}
 
 
-\begin{framev}{Example 1: Ackley function}
+\begin{framev}[align=top]{Example 1: Ackley function}
 Use $(\mu + \lambda)$ selection.
 Selected individuals are marked in green.
-\medskip
-\vfill
-\imageC[0.6]{figure/1dim-ackley-func-selection.png}
+\imageFixed{2.5cm}{2.5cm}[0.8]{figure/1dim-ackley-func-selection.png}
 \end{framev}
 
 
@@ -104,9 +95,7 @@ After $50$ iterations:
 
 \begin{framev}{Example 2: Grid of balls}
 Consider a grid in which $n$ balls with random radius are placed.
-\vfill
-\imageC[0.55]{figure/grid.png}
-\vfill
+\imageC[0.45]{figure/grid.png}
 \textbf{Aim:} Find the circle with the largest possible radius in the grid that does \textbf{not} intersect with the other existing circles.
 \begin{itemize}
 \item What is the fitness function?
