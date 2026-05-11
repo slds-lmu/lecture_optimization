@@ -23,6 +23,7 @@ figure/curvature_2.png
 }
 
 \begin{framei}{Controlling step size: Fixed \& adaptive}
+\comment{BB}{Bernd: eigentich ist alles ganz schön hier, 2 sachen könnte man noch besser machen a) man kann nicht wirklich sehen, welche stepsize hier verwendet wird, links und mitte ist das ja nur eine konstante, aber rechts soll es ja "adaptive" sein, vielleicht kann man das besser zeigen. b) generell könnte vielleicht 4 fälle zeigen. A. zu gross B. zu klein. C. gute konstante D. adaptive}
 \item Iteration $t$: Choose not only descent direction $\mathbf{d}^{[t]}$, but also step size $\alpha^{[t]}$
 \item First approach: \textbf{Fixed} step size $\alpha^{[t]} = \alpha > 0$
 \begin{itemizeS}[footnotesize]
@@ -35,11 +36,12 @@ figure/curvature_2.png
 {\imageC{figure_man/stepsize_large.png}}{\imageC{figure_man/stepsize_adaptive.png}}
 \begin{center}\begin{footnotesize}
 Steps of line searches for $f(\xv) = 10 x_1^2 + x_2^2/2$
-\end{footnotesize}\end{center} 		
+\end{footnotesize}\end{center}
 \end{framei}
-	
+
 
 \begin{framei}{Step size control: Diminishing step size}
+\comment{BB}{Bernd: auch alles tiotal ok so, aber an sich kann man fast überlegen diese beiden beispiele zusammenzulegen.... und dann fände ich eigentlich immer 2d besser als 1d. die zeigen fast das gleiche. passt aber auch so}
 \item How can we adaptively control step size?
 \item A natural way of selecting $\alpha^{[t]}$ is to decrease its value over time
 \item \textbf{Example:} GD on
@@ -50,8 +52,8 @@ $$f(x) = \begin{cases}
 \begin{center}\begin{footnotesize}
 GD with small constant (\textbf{red}), large constant (\textbf{green}), and diminishing (\textbf{blue}) step size
 \end{footnotesize}\end{center}
-\end{framei}	
-	
+\end{framei}
+
 
 \begin{framei}{Step size control: Exact Line Search}
 \item Use \textbf{optimal} step size in each iteration:
@@ -61,14 +63,16 @@ $$ \alpha^{[t]} = \argmin_{\alpha \in \R_{\ge 0}} g(\alpha) = \argmin_{\alpha \i
 $\Rightarrow$ univariate optimization methods
 \item \textbf{Problem:} Expensive, \textcolor{red}{prone to poorly conditioned problems}
 \item \textbf{But:} No need for \textit{optimal} step size. Only need a step size that is ``good enough''.
+\comment{BB}{Bernd: eigentlich könnte man das mininmal mehr ausführen. 1. die schrittweitensuche kostet arbeit 2. es ist bnicht mal klar, ob man bei optimaler schrittweite WENIGER schritte ins optimum macht, gerade bei GD und schlechter conditio sollte sich das GEGENTEIL zeigen lassen: nehmen wir die optimale schritteweite machen wir eher viele schritte (?)}
 \item \textbf{Reason:} Effort may not pay off, but in some cases slows down performance.}
 {\imageC{figure_man/line_search_rosenbrock.png}
 \imageC{figure_man/line_search_rosenbrock_alpha.png}}
+\comment{BB}{Bernd: Man könnte hier, analog zum Bild darüber, auch rote Striche machen}
 \end{framei}
-	
+
 
 \begin{framei}{Armijo rule}
-\item[] 
+\item[]
 \imageC[0.5]{figure/armijo.pdf}
 \onslide<1>{
 \item\textbf{Inexact line search:} Minimize objective ``sufficiently'' without computing optimal step size exactly
@@ -82,7 +86,7 @@ $$f(\xv + \alpha \mathbf{d}) \le \fx + \gamma_1 \alpha \nabla \fx^\top \mathbf{d
 \vspace*{-2cm}
 \item\textbf{Feasibility:} For descent direction $\mathbf{d}$ and $\gamma_1 \in (0, 1)$, there exists $\alpha>0$ fulfilling Armijo rule.In many cases, Armijo rule guarantees local convergence of GD and is therefore frequently used.}
 \end{framei}
-	
+
 
 \begin{framei}[fs=small]{Backtracking line search}
 \item Procedure to meet the Armijo rule: \textbf{Backtracking} line search
@@ -99,7 +103,7 @@ $$f(\xv + \alpha \mathbf{d}) \le \fx + \gamma_1 \alpha \nabla \fx^\top \mathbf{d
 \imageC[0.7][https://mdobook.github.io]{figure_man/backtracking-example.png}
 \end{framei}
 
-	
+
 \begin{framei}{Wolfe conditions}
 \item Backtracking is simple and shows good performance in practice
 \item \textbf{But:} Two undesirable scenarios
@@ -113,6 +117,7 @@ $$f(\xv + \alpha \mathbf{d}) \le \fx + \gamma_1 \alpha \nabla \fx^\top \mathbf{d
 \item $\alpha$ satisfies \textbf{sufficient curvature condition} in $\xv$ for $\mathbf{d}$ if
 $$| \nabla f(\xv + \alpha \mathbf{d})^\top \mathbf{d} | \leq \gamma_2 | \nabla \fx^\top \mathbf{d} |.$$
 \end{itemizeM}
+\comment{UU}{Hier könnte noch eine Grafik dazu wie z.B. in Martins and Ning. Engineering Design Optimization, 2021, Fig. 4.25.}
 \begin{framed}
 Armijo rule + sufficient curvature condition = \textbf{Wolfe conditions}
 \end{framed}

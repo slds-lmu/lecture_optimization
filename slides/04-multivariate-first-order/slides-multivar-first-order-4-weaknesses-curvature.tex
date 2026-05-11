@@ -24,11 +24,12 @@ figure_man/taylor_2D_quadratic.png
 $$\fx \approx f(\xtil) + \nabla f(\xtil)^\top(\xv-\xtil) +
 \frac 12(\xv-\xtil)^\top\nabla^2 f(\xtil)(\xv-\xtil)$$
 \imageC[0.5][https://daniloroccatano.blog]{figure_man/taylor_2D_quadratic.png}
+\comment{BB}{vermutlich sollten wir mal erklären wie sich die richtungs strärkster krümmung zum grad verhält....? in den erklärungen verwecjhseln wir das fast manchmal?}
 \end{framei}
 
 
 \begin{framei}{Reminder: Local quadratic geometry}
-\item Study Hessian $\mathbf{H} = \nabla^2 f(\xv^{[t]})$ in GD to discuss effect of curvature 
+\item Study Hessian $\mathbf{H} = \nabla^2 f(\xv^{[t]})$ in GD to discuss effect of curvature
 \item \textbf{Recall} for quadratic forms:
 \begin{itemizeM}
 \item Eigenvector $\textbf{v}_\text{max}$ ($\textbf{v}_\text{min}$) is direction of largest (smallest) curvature
@@ -55,7 +56,7 @@ Quadratic objective $f$ (blue) with gradient approximation (dashed green). \text
 \item Quadratic Taylor polynomial of $f$ around $\tilde{\xv}$ (with gradient $\mathbf{g} = \nabla f$)
 $$f(\xv) \approx f(\xtil) + (\xv - \xtil)^\top \mathbf{g} + \frac{1}{2} (\xv - \xtil)^\top \mathbf{H} (\xv - \xtil)$$
 \item GD step with step size $\alpha > 0$ yields
-$$f(\xtil-\alpha \mathbf{g}) \approx f(\xtil) - \alpha \mathbf{g}^\top\mathbf{g} + \frac{1}{2} \alpha^2 \mathbf{g}^\top \H\,\mathbf{g}$$ 
+$$f(\xtil-\alpha \mathbf{g}) \approx f(\xtil) - \alpha \mathbf{g}^\top\mathbf{g} + \frac{1}{2} \alpha^2 \mathbf{g}^\top \H\,\mathbf{g}$$
 \item If $\mathbf{g}^\top \bm{H} \mathbf{g} > 0$, we can solve for optimal step size $\alpha^\ast$:
 $$\alpha^\ast = \frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \H\, \mathbf{g}}$$
 \end{itemizeM}
@@ -64,7 +65,7 @@ $$\alpha^\ast = \frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \H\, \mathbf{g
 
 \begin{framei}{Curvature and step size in GD}
 \item If $\mathbf{g}$ points along $\mathbf{v}_{\text{max}}$ (largest curvature), optimal step size is
-$$\alpha^\ast = \frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \H \mathbf{g}} = \frac{\mathbf{g}^\top \mathbf{g}}{\lammax \mathbf{g}^\top \mathbf{g}} = \frac{1}{\lammax}.$$ 
+$$\alpha^\ast = \frac{\mathbf{g}^\top \mathbf{g}}{\mathbf{g}^\top \H \mathbf{g}} = \frac{\mathbf{g}^\top \mathbf{g}}{\lammax \mathbf{g}^\top \mathbf{g}} = \frac{1}{\lammax}.$$
 $\Rightarrow$ \textit{Large} step sizes can be problematic.
 \item If $\mathbf{g}$ points along $\mathbf{v}_{\text{min}}$ (smallest curvature), then analogously
 $$\alpha^* = \frac{1}{\lammin}.$$

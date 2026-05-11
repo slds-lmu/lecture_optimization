@@ -8,6 +8,8 @@
 
 \begin{document}
 
+\comment{BB}{polyak noch rein irgendwo}
+
 \titlemeta{
 First order methods
 }{
@@ -16,7 +18,7 @@ Adam and friends
 figure_man/sattle_point2-50.png
 }{
 \item Adaptive step sizes
-\item AdaGrad 
+\item AdaGrad
 \item RMSProp
 \item Adam
 }
@@ -104,7 +106,7 @@ Particularly, it is employed routinely by DL practitioners
 \State \textbf{require} Global step size $\alpha$ (suggested default: 0.001) \strut
 \State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{\textbf{require} Exponential decay rates for moment estimates, $\rho_1$ and $\rho_2$ in $[0,1)$ (suggested defaults: 0.9 and 0.999 respectively)} \strut
 \State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{\textbf{require} Small constant $\beta$ (suggested default $10^{-8}$) \strut}
-\State \textbf{require} Initial parameters $\thetav$ 
+\State \textbf{require} Initial parameters $\thetav$
 \State Initialize time step $t = 0$
 \State Initialize 1st and 2nd moment variables $\mathbf{s}^{[0]} = 0, \mathbf{r}^{[0]} = 0$
 \While{stopping criterion not met}
@@ -176,11 +178,13 @@ All methods accelerate compared to vanilla SGD \\
 Best is RMSProp, then AdaGrad (Adam is missing here)
 \vfill
 {\scriptsize Credits: Dettmers (2015) and Radford}
+\comment{BB}{nicht so toll weil adam hier gar nicht dabei ist, und andere die wir nicht kennen. außerdem wären mehere screenshorts scvhön damit man die anim direkt auf den folien zeigen kann}
 \end{framev}
 
 
 \begin{framev}{Comparison on quadratic form}
 \image{figure_man/momentum/comparison_adam.png}
+\comment{UU}{Kann der Plot überhaupt stimmen?  Woher weiß Adam gleich am Startpunkt, dass es in Richtung Minimum marschiert?}
 SGD vs SGD with Momentum vs Adam on a quadratic form
 \end{framev}
 

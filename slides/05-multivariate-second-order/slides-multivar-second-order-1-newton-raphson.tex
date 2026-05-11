@@ -22,11 +22,14 @@ figure/NR_2.png
 
 \begin{framei}[sep=L]{From first to second order methods}
 \item So far: \textbf{First order methods} \\
-$\Rightarrow$ \textit{Gradient} information, i.e., first derivatives 
+$\Rightarrow$ \textit{Gradient} information, i.e., first derivatives
 \item Now: \textbf{Second order methods} \\
 $\Rightarrow$ \textit{Hessian} information, i.e., second derivatives
 \end{framei}
 
+\comment{BB}{vielleicht noch eine "demotivierende" slide warum 2nd order schlöecht ist in hohen dim
+oder kommt das in quasi newton?
+wir müssen das wirklich mehr in deatils analysieren das ist wichtig. am besten mit bezug auf grosse daten und speed vergleoich. vielleicht sollte das ein extra chunk sein}
 
 \begin{framei}{Newton-Raphson}
 \item \textbf{Assumption:} $f \in \CC{2}$
@@ -98,6 +101,7 @@ $$
 \item \textbf{Note:} Newton-Raphson only needs one iteration for quadratic forms
 \end{framei}
 
+\comment{BB}{den schritt auf der quadrik visuasilieren?}
 
 \begin{framev}{Newton-Raphson vs. GD on Branin function}
 \splitV[0.6]{
@@ -108,6 +112,8 @@ $$
 \vfill
 Newton-Raphson has much better convergence speed here
 \end{framev}
+
+\comment{BB}{ich glaube hier ist gar nicht GD laufen gelassen  worden sondern normalized GD. außerdem: warum sind die algos nicht in einer legende sichtbar}
 
 
 \begin{framei}[sep=L]{Discussion}
@@ -150,6 +156,14 @@ $$
 \item Quasi-Newton method
 \item Gauss-Newton algorithm (for least squares)
 \end{framei}
+
+\comment{BB}{genauer wie.
+Finding the inverse of the Hessian in high dimensions to compute the Newton direction {\displaystyle h=-(f''(x_{k}))^{-1}f'(x_{k})}{\displaystyle h=-(f''(x_{k}))^{-1}f'(x_{k})} can be an expensive operation. In such cases, instead of directly inverting the Hessian, it is better to calculate the vector {\displaystyle h}h as the solution to the system of linear equations
+
+{\displaystyle [f''(x_{k})]h=-f'(x_{k})}{\displaystyle [f''(x_{k})]h=-f'(x_{k})}
+which may be solved by various factorizations or approximately (but to great accuracy) using iterative methods. Many of these methods are only applicable to certain types of equations, for example the Cholesky factorization and conjugate gradient will only work if {\displaystyle f''(x_{k})}{\displaystyle f''(x_{k})} is a positive definite matrix. While this may seem like a limitation, it is often a useful indicator of something gone wrong; for example if a minimization problem is being approached and {\displaystyle f''(x_{k})}{\displaystyle f''(x_{k})} is not positive definite, then the iterations are converging to a saddle point and not a minimum.}
+
+\comment{UU}{Warum? Eine schlecht konditionierte Hesse-Matrix könnte Probleme machen. Aber die Lösung des LGS an sich ist nicht das Problem, da es stabile Lösungsverfahren (LU mit Pivoting oder QR-Zerlegung mit Householder-Transformationen) gibt}
 
 \endlecture
 \end{document}

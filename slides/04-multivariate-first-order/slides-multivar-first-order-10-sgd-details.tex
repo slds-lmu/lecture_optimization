@@ -16,7 +16,7 @@ SGD Further Details
 figure_man/SGD_cropped.png
 }{
 \item Decreasing step size for SGD
-\item Stopping rules 
+\item Stopping rules
 \item SGD with momentum
 }
 
@@ -37,7 +37,7 @@ figure_man/SGD_cropped.png
 \item If step size $\alpha^{[t]}$ decreases slowly, large erratic steps
 \item If step size decreases too fast, performance is impaired
 \end{itemize}
-\item SGD converges for sufficiently smooth functions if 
+\item SGD converges for sufficiently smooth functions if
 $$
 \frac{\sum_{t = 1}^\infty \left(\alpha^{[t]}\right)^2}{\sum_{t = 1}^\infty \alpha^{[t]}} = 0
 $$
@@ -56,7 +56,7 @@ $$
 
 \begin{framev}{Advanced step size control}
 \begin{blocki}{Why not Armijo-based step size control?}
-\item Backtracking line search or other approaches based on Armijo rule usually not suitable: Armijo condition 
+\item Backtracking line search or other approaches based on Armijo rule usually not suitable: Armijo condition
 $$
 g(\xv + \alpha \mathbf{d}) \le g(\xv) + \gamma_1 \alpha \textcolor{red}{\nabla g(\xv)}^\top \mathbf{d}
 $$
@@ -70,7 +70,7 @@ requires evaluating full gradient
 \begin{framei}{Mini-batches}
 \item Reduce noise by increasing batch size $m$ for better approximation
 $$
-\hat{\mathbf{d}} = \frac{1}{m} \sum_{i \in J} \nabla_{\xv} g_i(\xv) \approx \frac{1}{n} \sumin \nabla_{\xv} g_i(\xv) = \mathbf{d} 
+\hat{\mathbf{d}} = \frac{1}{m} \sum_{i \in J} \nabla_{\xv} g_i(\xv) \approx \frac{1}{n} \sumin \nabla_{\xv} g_i(\xv) = \mathbf{d}
 $$
 \item Usually, the batch size is limited by computational resources (e.g., how much data you can load into the memory)
 \vfill
@@ -83,7 +83,7 @@ $$
 \begin{framei}{Stopping rules for SGD}
 \item For GD: We usually stop when gradient is close to $0$ (i.e., we are close to a stationary point)
 \item For SGD: Individual gradients do not necessarily go to zero, and we cannot access full gradient
-\item Practicable solution for ML: 
+\item Practicable solution for ML:
 \begin{itemize}
 \item Measure the validation set error after $T$ iterations
 \item Stop if validation set error is not improving
@@ -93,13 +93,13 @@ $$
 
 \begin{framev}[fs=small]{SGD and ML}
 \begin{blocki}{General remarks:}
-\item SGD is a variant of GD 
+\item SGD is a variant of GD
 \item SGD particularly suitable for large-scale ML when evaluating gradient is too expensive / restricted by computational resources
-\item SGD and variants are the most commonly used methods in modern ML, for example:  
+\item SGD and variants are the most commonly used methods in modern ML, for example:
 \begin{itemize}
 \item Linear models \\
 Note that even for the linear model and quadratic loss, where a closed form solution is available, SGD might be used if the size $n$ of the dataset is too large and the design matrix does not fit into memory
-\item Neural networks 
+\item Neural networks
 \item Support vector machines
 \item ...
 \end{itemize}
@@ -125,6 +125,10 @@ Note that even for the linear model and quadratic loss, where a closed form solu
 \end{algorithmic}
 \end{algorithm}
 \end{framei}
+
+\comment{BB}{wir wollen die regu eigenschaften von sgd besser erkären
+https://francisbach.com/implicit-bias-sgd/
+https://www.inference.vc/notes-on-the-origin-of-implicit-regularization-in-stochastic-gradient-descent/}
 
 \endlecture
 \end{document}

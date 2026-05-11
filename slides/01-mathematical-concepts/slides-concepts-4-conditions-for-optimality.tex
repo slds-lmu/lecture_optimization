@@ -9,7 +9,7 @@
 \begin{document}
 
 \titlemeta{
-Mathematical Concepts 
+Mathematical Concepts
 }{
 Conditions for optimality
 }{
@@ -32,6 +32,7 @@ $\S \cap B_\eps(\xvs)$, is at least a strictly better and a strictly worse point
 }{
 \imageC[0.9][https://wngaw.github.io/linear-regression/]{figure_man/local_global_min_2D.png}
 }
+\comment{BB}{sagen dass lokal nur bei innerem punkt definiert ist, sagen dass max analog ist; wir schneiden hier mit dem eps ball}
 \end{framei}
 
 \begin{framei}{Existence of optima}
@@ -76,7 +77,7 @@ this implies $f$ is locally (strictly) concave
 
 
 \begin{framei}{Example: Branin function}
-\item Branin function with 3 local minima   
+\item Branin function with 3 local minima
 \splitV{
 \imageC[0.65]{figure/branin3d/branin2D.pdf}
 }{
@@ -103,18 +104,18 @@ Right   & 11.33       & 1.69        \\
 \item Analogously for concave functions
 \end{framei}
 
-  
+
 \begin{framei}{Example}
 \item $f(x,y) = x^4 + y^4 - x^2 - y^2$
 \item $\nabla f(x,y) = (4x^3 - 2x, 4y^3 - 2y)$
 \item $H(x,y) = \mat{
-12x^2 - 2 &  0          \\ 
+12x^2 - 2 &  0          \\
 0         & 12y^2 - 2
-}$ 
+}$
 \item At $(0,0)^T$ we have strict local max
 \item At $(\pm \frac1{\sqrt{2}}, \pm \frac1{\sqrt{2}})^T$ we have 4 strict local min
 \item At $(0, \pm \frac1{\sqrt{2}})^T$, $(\pm \frac1{\sqrt{2}}, 0)^T$ we have 4 saddle points
-% FIXME: we should have a plot here
+\comment[FIX]{BB}{hier fehlt ein plot, oder vielleicht ein zweites bsp mit einer stetigen funktion --> folie umschreiben}
 \end{framei}
 
 \endlecture

@@ -11,7 +11,7 @@
 
 \titlemeta{
 Second order methods
-}{ 
+}{
 Fisher Scoring
 }{
 figure/NR_2.png
@@ -24,7 +24,7 @@ figure/NR_2.png
 \begin{framei}{Recap of Newton's method}
 \item Second-order Taylor expansion of log-likelihood around the current iterate $\thetat$:
 $$\loglt \approx \logl(\thetat) +
-\nabla\logl(\thetat)^\top(\thetav-\thetat) + 
+\nabla\logl(\thetat)^\top(\thetav-\thetat) +
 \frac{1}{2}(\thetav-\thetat)^\top[\nabla^{2}\logl(\thetat)](\thetav-\thetat)$$
 \item We then differentiate w.r.t.~$\thetav$ and set the gradient to zero:
 $$\nabla\logl(\thetat) + [\nabla^{2}\logl(\thetat)](\thetav-\thetat) = \zero$$
@@ -36,6 +36,11 @@ $$\thetatn=\thetat + [-\nabla^{2}\logl(\thetat)]^{-1}\nabla\logl(\thetat)$$
 
 
 \begin{framei}{Fisher scoring}
+\comment{CK}{
+expected gradient evaluated at true parameters is zero and hence squared expectation is variance of score
+https://math.stackexchange.com/questions/3585130/why-is-the-fisher-information-matrix-both-an-expected-outer-product-and-a-hessia
+
+}
 \item Fisher's scoring method replaces the negative \textit{observed Hessian} $-\nabla^{2}\loglt$ by the Fisher information matrix, i.e., the variance of $\nabla \loglt$, which, under weak regularity conditions, equals the negative \textit{expected Hessian}
 $$\E[\nabla\loglt\nabla\loglt^\top]=\E[-\nabla^{2}\loglt],$$
 and is positive semi-definite under exchangeability of expectation and differentiation
@@ -43,6 +48,7 @@ and is positive semi-definite under exchangeability of expectation and different
 \vfill
 \item Therefore the Fisher scoring iterates are given by
 $$\thetatn=\thetat+\E[-\nabla^{2}\logl(\thetat)]^{-1}\nabla\logl(\thetat)$$
+\comment{CK}{expectation with respect to which random variable/distribtion?}
 \end{framei}
 
 
@@ -68,9 +74,9 @@ Use Case & General non-linear\newline optimization & Likelihood-based models,\ne
 \begin{framei}{Logistic regression}
 \item The goal of logistic regression is to predict a binary event
 \item Given $n$ observations $\left(\xi, \yi\right) \in \R^{p+1} \times \{0, 1\}$, $\yi |\, \xi \sim Bernoulli(\pi^{(i)})$
-\item We want to minimize the following risk 
+\item We want to minimize the following risk
 \begin{eqnarray*}
-\riske(\thetav)  & = & 
+\riske(\thetav)  & = &
 -\sumin \yi\log(\pi^{(i)}) + \left(1-\yi\right)\log(1-\pi^{(i)})
 \end{eqnarray*}
 with respect to $\thetav$, where the probabilistic classifier $\pi^{(i)} = \pixit = s\left(\fxit\right)$, the sigmoid function $s(f) = \frac{1}{1 + \exp(-f)}$ and the score $\fxit = \thx$
@@ -84,19 +90,19 @@ with respect to $\thetav$, where the probabilistic classifier $\pi^{(i)} = \pixi
 \item Partial derivative of empirical risk using chain rule:
 {\small
 \begin{align*}
-\frac{\partial}{\partial\thetav}\riske(\thetav) 
-& =  
+\frac{\partial}{\partial\thetav}\riske(\thetav)
+& =
 -\sumin \frac{\partial}{\partial\pi^{(i)}}(\yi\log(\pi^{(i)})+(1-\yi)\log(1-\pi^{(i)}))\frac{\partial\pi^{(i)}}{\partial \thetav} \\
-& =  
+& =
 -\sumin \left(\frac{\yi}{\pi^{(i)}} -  \frac{1-\yi}{1-\pi^{(i)}}\right)\frac{\partial s(\fxit)}{\partial  \fxit}\frac{\partial  \fxit}{\partial\thetav}\\
-& = 
+& =
 \sumin \left(\pi^{(i)} - \yi\right)\left(\xi\right)^\top\\
-& = 
+& =
 \left(\pi(\Xmat\vert\;\thetav) - \yv\right)^\top\Xmat\\
 \end{align*}
 }
 where  $\Xmat = \left(
-{\xi[1]}^{\top}, \dots, 
+{\xi[1]}^{\top}, \dots,
 {\xi[n]}^{\top}\right)^\top \in \R^{n\times (p+1)}, \yv = \left(
 \yi[1], \dots,
 \yi[n]
@@ -112,14 +118,14 @@ where  $\Xmat = \left(
 \item The Hessian of logistic regression:
 {\small
 \begin{align*}
-\nabla^2_{\thetav}\riske  = \frac{\partial^2}{\partial{\thetav^\top}\partial\thetav}\riske  & =  
+\nabla^2_{\thetav}\riske  = \frac{\partial^2}{\partial{\thetav^\top}\partial\thetav}\riske  & =
 \frac{\partial}{\partial{\thetav^\top}} \sumin \left(\pi^{(i)} - \yi\right)\left(\xi\right)^\top\\
-& =  
+& =
 \sumin\xi \left(\pi^{(i)}\left(1-\pi^{(i)}\right)\right)\left(\xi\right)^\top\\
-& =  
+& =
 \Xmat^\top \mathbf{D} \Xmat\\
 \end{align*}
-where $\mathbf{D} \in \R^{n\times n}$ is a diagonal matrix containing the variances of $\yi$ on the diagonals 
+where $\mathbf{D} \in \R^{n\times n}$ is a diagonal matrix containing the variances of $\yi$ on the diagonals
 $$\mathbf{D}=\text{diag}\left(\pi^{(1)}(1-\pi^{(1)}), \dots, \pi^{(n)}(1-\pi^{(n)})\right)$$
 }
 \end{framei}
@@ -132,13 +138,16 @@ $$\nabla^2_{\thetav}\riske =  \Xmat^\top \mathbf{D} \Xmat$$
 \vfill
 \item Newton-Raphson: $$\thetatn=\thetat - [\Xmat^\top \mathbf{D} \Xmat]^{-1}\nabla_{\thetat}\riske $$
 \item Fisher scoring: $$\thetatn=\thetat - \E[\Xmat^\top \mathbf{D} \Xmat]^{-1}\nabla_{\thetat}\riske $$
+\comment{CK}{Y does not appear in hessian anymore (randomness of y cond. on x)}
 \vfill
 \item Note that the Hessian does not depend on the $y^{(i)}$ explicitly but only depends on $\E[y^{(i)}]=\pi^{(i)}$. Thus the expectation of the observed Hessian w.r.t. $y^{(i)}\sim P(y^{(i)}|\xv^{(i)},\thetav)$ coincides with $\nabla^2_{\thetav}\riske(\thetav)$ itself
 \end{framei}
 
 
 \begin{framei}[fs=small]{Generalized linear models}
+\comment{TP}{this slide a_i and a used thats confusing}
 \item $y|\xv$ belongs to an \textbf{exponential family} with density:
+\comment{TP}{actually exponential dispersion family}
 $$ p(y|\delta, \phi) = exp \left\{ \frac{y\delta-b(\delta)}{a(\phi)} + c(y,\phi) \right\}, $$
 where $\delta$ is the natural parameter and $\phi > 0$ is the dispersion parameter
 \item We often take $a_i(\phi) = \frac{\phi}{w_i}$, with $\phi$ a positive constant, and $w_i$ is a weight
@@ -170,7 +179,7 @@ $$\frac{\partial{b(\delta)}}{\partial{\theta}}
 \begin{align*}
 -\nabla^2 \logl_{\theta}(\delta, \phi)
 & = \sumin \frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\
-& + \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(b''(\delta)g''(\mu^{(i)})/g'(\mu^{(i)}))}{[b''(\delta)g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\ 
+& + \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(b''(\delta)g''(\mu^{(i)})/g'(\mu^{(i)}))}{[b''(\delta)g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top \\
 & + \sumin \frac{w^{(i)}(y^{(i)}-\mu^{(i)})(b'''(\delta)/b''(\delta))}{[b''(\delta)g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top
 \end{align*}
 $$\E[-\nabla^2 \logl_{\theta}(\delta, \phi)] = \sumin \frac{w^{(i)}}{b''(\delta)[g'(\mu^{(i)})]^2}\xv^{(i)}{\xv^{(i)}}^\top = \Xmat^\top \mathbf{W} \Xmat$$
@@ -187,6 +196,10 @@ $$\E[-\nabla^2 \logl_{\theta}(\delta, \phi)] = \sumin \frac{w^{(i)}}{b''(\delta)
 \vfill
 \item For canonical link where $\eta = \delta \;(= g(\mu) = \xv^\top\theta$), the second and third term of Hessian cancel each other out and Hessian coincides with Fisher information matrix since
 $$\frac{\partial{\eta}}{\partial{\delta}} = 1 \Rightarrow b''(\delta) = \frac{1}{g'(\mu^{(i)})} \Rightarrow  \frac{b'''(\delta)}{b''(\delta)} = -   \frac{g''(\mu^{(i)})}{[g'(\mu^{(i)})]^2}$$
+\comment{CK}{
+mention glm and that many practical optimizers use IRLS for first iterations and switches over to newton-raphson
+comment by tom wenseleers: https://stats.stackexchange.com/questions/205/why-do-we-make-a-big-fuss-about-using-fisher-scoring-when-we-fit-a-glm
+}
 \item This will now be a convex problem with Fisher scoring equal to Newton's method
 \vfill
 \item There are also hybrid algorithms that start out with IRLS which is easier to initialize, and switch over to Newton-Raphson after some iterations

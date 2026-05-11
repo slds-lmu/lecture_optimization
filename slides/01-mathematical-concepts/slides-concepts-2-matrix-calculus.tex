@@ -10,13 +10,13 @@
 \begin{document}
 
 \titlemeta{
-Mathematical Concepts 
+Mathematical Concepts
 }{
 Matrix Calculus
 }{
 figure_man/1920px-Greek_lc_delta.svg.png
 }{
-\item Rules of matrix calculus 
+\item Rules of matrix calculus
 \item Connection of gradient, Jacobian and Hessian
 }
 
@@ -139,15 +139,15 @@ matrix $\mathbf{Y}$ & \cellcolor{blue!20}$d\mathbf{Y} / d x$ & -- & --
 \spacer
 \textbf{Key Rules:}\\
 \begin{itemize}
-\item \textbf{Sum:} 
+\item \textbf{Sum:}
 $$
 \frac{d}{d \xv}\bigl(f+g\bigr)=\frac{d f}{d \xv}+\frac{d g}{d \xv}
 $$
-\item \textbf{Product:} 
+\item \textbf{Product:}
 $$
 \frac{d}{d \xv}\bigl(fg\bigr)=\frac{d f}{d \xv}\,g+f\,\frac{d g}{d \xv}
 $$
-\item \textbf{Chain:} 
+\item \textbf{Chain:}
 $$
 \frac{d}{d \xv}\Bigl((f\circ g)(\xv)\Bigr)=\dfrac{d}{d \xv}(f(g(\xv)))=\frac{d f}{d g}\,\frac{d g}{d \xv}
 $$
@@ -176,7 +176,7 @@ $$
 
 
 \begin{framev}[fs=small]{Helpful Calculation Rules}
-Let $\boldsymbol{a}$, $\boldsymbol{b}$ denote vectors, $\boldsymbol{X}$, $\boldsymbol{A}$ matrices, and $f(\boldsymbol{X})^{-1}$ the inverse of $f(\boldsymbol{X})$ if it exists. 
+Let $\boldsymbol{a}$, $\boldsymbol{b}$ denote vectors, $\boldsymbol{X}$, $\boldsymbol{A}$ matrices, and $f(\boldsymbol{X})^{-1}$ the inverse of $f(\boldsymbol{X})$ if it exists.
 \begin{itemize}
 \item $ \frac{d \boldsymbol{x}^{T} \boldsymbol{a}}{d \boldsymbol{x}}=\boldsymbol{a}^{T}$, $\frac{d \boldsymbol{a}^{T} \boldsymbol{x}}{d \boldsymbol{x}}=\boldsymbol{a}^{T}$
 \item $\frac{d\boldsymbol{X}\boldsymbol{a}}{d\boldsymbol{a}} = \boldsymbol{X}$, $\frac{d\boldsymbol{a}^T\boldsymbol{X}}{d\boldsymbol{a}} = \boldsymbol{X}^T$
@@ -203,7 +203,7 @@ $$
 $$
 where $
 \pi(\xv \mid {\theta})=s(f(\theta,\xv))
-$ with 
+$ with
 $f(\theta,\xv)=\theta^{T} \xv$ and $s(x)=\frac{1}{1+\exp (-x)}$.
 \item[$\Rightarrow$] We want to find \begin{align*}
 \nabla_\theta -\ell (\theta)=-\nabla_\theta \ell (\theta)&=-\sumin\underbrace{ y^{(i)} \log (s(f(\theta,\xv^{(i)})))+(1-y^{(i)}) \log (1-s(f(\theta,\xv^{(i)})))}_{=:y_i \log (s_i)+(1-y_i) \log (1-s_i)}
@@ -227,17 +227,17 @@ $$
 \end{itemize}
 \end{framev}
 
-
+\comment{BB}{wenn man ehrlich ist: dieses bsp könnte man fast besser in kap 2 ziehen. müssen auch mal gucken wie viel in den üb passieren soll, aber solche beispiele in der VL sind schon gut. es kommt aber hier fast zu früh, vielleicht arbeiten wir hier eher mit abstrakten funktionen. hesse berechnen und convexity zeigen ist auch nett}
 \begin{framev}{Ex: Log. Regr. -- Alternative Notation}
 This example highlights how using Leibniz notation can make things easier.\\
 Alternatively, we could write this example out as follows:
 \begin{itemize}
-\item Given the sum rule, it suffices to find the derivative of 
+\item Given the sum rule, it suffices to find the derivative of
 $$
 -[y \log (s(f(\theta,\xv)))+(1-y) \log (1-s(f(\theta,\xv)))]
 $$
 \item Define $h(y,z):=-[y \log (z)+(1-y) \log (1-z)]$.
-\item Now, what we are looking for is 
+\item Now, what we are looking for is
 $$
 \nabla_\theta h(y,\cdot)\circ s \circ f(\cdot,\xv).
 $$
@@ -263,5 +263,6 @@ $$ the same as before.
 \end{itemize}
 \end{framev}
 
+\comment{BB}{irgendwie müssen wir mal mehr eine notation hier nutzen, es sind zu viele symbole, mindestens entweder nur das "d" oder das "partial"}
 \endlecture
 \end{document}

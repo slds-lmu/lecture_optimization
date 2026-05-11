@@ -9,6 +9,8 @@
 
 \begin{document}
 
+\comment{BB}{jordan ansehen. https://people.eecs.berkeley.edu/~jordan/papers/jordan-icm.pdf}
+
 \titlemeta{
 First order methods
 }{
@@ -87,7 +89,7 @@ Suppose momentum always observes the same gradient $\nabla f(\xv^{[t]})$:
 \xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j  \nabla f(\xv^{[j]}) + \varphi^{t+1}\nuv^{[0]} \\
 &= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \displaystyle\sum_{j = 0}^{t} \varphi^j + \varphi^{t+1}\nuv^{[0]} \\
 &= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1 - \varphi^{t+1}}{1 - \varphi} + \varphi^{t+1} \nuv^{[0]} \\
-&\to \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1}{1 - \varphi} \qquad \text{ for } t \to \infty. 
+&\to \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1}{1 - \varphi} \qquad \text{ for } t \to \infty.
 \end{align*}
 Momentum accelerates along $- \nabla f(\xv^{[t]})$ to terminal velocity yielding step size $\alpha / (1 - \varphi)$.\\
 \spacer
@@ -194,7 +196,7 @@ After $300$ iters of GD:
 \end{align*}
 \imageC[0.8][https://cs231n.github.io/neural-networks-3/]{figure_man/nesterov.jpeg}
 \vfill
-\begin{footnotesize}  
+\begin{footnotesize}
 Nesterov momentum update evaluates gradient at the ``look-ahead'' position.
 \end{footnotesize}
 \end{framei}

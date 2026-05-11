@@ -8,9 +8,13 @@
 
 \begin{document}
 
+\comment{BB}{wir sollten dringend das hier mal durchsehen und uns daran orientieren https://ruder.io/optimizing-gradient-descent/}
+\comment{BB}{wir sollten generell dieses gesamt subcha machen zu normalied GD --> https://jermwatt.github.io/machine_learning_refined/notes/3_First_order_methods/3_9_Normalized.html}
+\comment{BB}{vielleicht sollten wir mal definieren was first order überhaupt heisst. und welche first order verfahren es gibt -- egal ob wir die behandeln}
+
 \titlemeta{
 First order methods
-}{ 
+}{
 Gradient descent
 }{
 figure_man/linesearch.png
@@ -29,9 +33,10 @@ $$f: \R^2 \to \R, \quad f(x_1, x_2) = y.$$
 \item \textbf{Goal}: Reach the valley
 $$\argmin_{\xv} f(\xv)$$
 \item \textbf{Central idea}: Repeat
+\comment{BB}{wir können hier vielleicht etwas visueller über den typen im gebirge gehen. es ist neblig, ich kann nur einen metter sehen und will rtunter kommen. also mache ich lokale schritte runter und scanne dann wieder meine 1m umgebung}
 \splitVCC[0.6]{
 \begin{enumerate}
-\item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d} \in \R^d$ 
+\item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d} \in \R^d$
 \item Move along $\mathbf{d}$ until $f$ \glqq sufficiently\grqq{} reduces (\textbf{step size control}) and update location
 \end{enumerate}}{
 \imageC{figure_man/linesearch.png}
@@ -46,7 +51,7 @@ $$D_\mathbf{d} f(\xv) = \nabla f(\xv) ^T \mathbf{d} < 0 \text{ (neg. directional
 \begin{figure}
 \imageC[0.4]{figure/descent_direction.pdf}
 \begin{footnotesize}
-Angle between $\nabla \fx$ and $\mathbf{d}$ must be $\in (90^{\circ}, 270^{\circ})$. 
+Angle between $\nabla \fx$ and $\mathbf{d}$ must be $\in (90^{\circ}, 270^{\circ})$.
 \end{footnotesize}
 \end{figure}
 \end{framei}
@@ -67,7 +72,7 @@ Angle between $\nabla \fx$ and $\mathbf{d}$ must be $\in (90^{\circ}, 270^{\circ
 \begin{tiny}
 NB: Terminology is sometimes ambiguous: ``line search'' can refer to Step 4 (selecting the step size that decreases $f(\xv)$) and can mean umbrella term for iterative descent algorithms. \par
 \end{tiny}\vfill
-Key questions: 
+Key questions:
 \begin{itemizeM}
 \item How to choose $\mathbf{d}^{[t]}$ (now)
 \item How to choose $\alpha^{[t]}$ (later)
@@ -76,16 +81,16 @@ Key questions:
 
 
 \begin{framei}{Gradient Descent}
-\item Properties of gradient: 
+\item Properties of gradient:
 \begin{itemizeS}
 \item $\nabla \fx$: direction of greatest increase
 \item $- \nabla \fx$: direction of greatest decrease
 \end{itemizeS}
 \vfill
-\item Using $\mathbf{d} = - \nabla \fx$ is called \textbf{gradient descent}. 
+\item Using $\mathbf{d} = - \nabla \fx$ is called \textbf{gradient descent}.
 \splitV{\imageC[0.9]{figure_man/gradient-descent-example_1.png}}{\imageC{figure_man/gradient-descent-example_2.png}}
 \begin{center}\begin{footnotesize}
-GD for $f(x_1, x_2) = - \sin(x_1) \cdot \frac{1}{2\pi} \exp\left( (x_2 - \pi / 2)^2 \right)$ with sensibly chosen step size $\alpha^{[t]}$. 
+GD for $f(x_1, x_2) = - \sin(x_1) \cdot \frac{1}{2\pi} \exp\left( (x_2 - \pi / 2)^2 \right)$ with sensibly chosen step size $\alpha^{[t]}$.
 \end{footnotesize}\end{center}
 \end{framei}
 
@@ -103,20 +108,22 @@ $100$ iters of GD with const $\alpha = 10^{-4}$.
 
 
 \begin{framei}[fs=footnotesize]{Optimize LS linear regression with GD}
-\item Let $\D = \Dset$ and minimize 
+\item Let $\D = \Dset$ and minimize
 $$\risket = \sumin (\thetav^\top \xi - \yi)^2$$
 \textbf{NB: } For illustration, we use GD even though closed-form solution exists. GD-like (more adv.) approaches like this MIGHT make sense for large data, though.
-\item\textbf{Gradient: } $$\nabla_{\thetav}\risket = \frac{\partial \risket}{\partial \thetav} = -2 \sumin (\yi - \thetav^{\top} \xv^{(i)}) \xv^{(i)}$$ 
+\item\textbf{Gradient: } $$\nabla_{\thetav}\risket = \frac{\partial \risket}{\partial \thetav} = -2 \sumin (\yi - \thetav^{\top} \xv^{(i)}) \xv^{(i)}$$
 \imageC[0.8]{figure/gradient_descent_lm.pdf}
 \end{framei}
 
 
 \begin{framei}{ERM for NN with GD}
-\item Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize 
+\item Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize
 $$\risket = \sumin \left(\fxt - \yi\right)^2$$
-where $\fxt$ is a neural network with 2 hidden layers (2 units each). 
+where $\fxt$ is a neural network with 2 hidden layers (2 units each).
 \vspace{-0.7cm}
 \imageC[0.6]{figure/gradient_descent_NN_0.pdf}
+\comment{BB}{hier wäre ein bild vom NN schön gewesen;
+kann man doch irgendwie einen 2D schnit der loss ladnscape noch ziegen. und wie GD da durchläuft?}
 \end{framei}
 
 
@@ -129,7 +136,7 @@ After $10$ iters of GD:
 
 
 \begin{framev}[align=top]{ERM for NN with GD}
-After $100$ iters of GD: 
+After $100$ iters of GD:
 \splitV{
 \imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_100_surface.pdf}}
 {\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history.pdf}}
@@ -141,11 +148,13 @@ After $300$ iters of GD (note the zig-zag-behavior after iter. 200):
 \splitV{
 \imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_300_surface.pdf}}
 {\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history.pdf}}
+\comment{BB}{sollte man bei dem beispiel nicht besser sehen dass wir die quadrik erfolgreich approxen können? kommt nicht sooo gut hin?}
+\comment{BB}{aich hier sollte eher R_emp auf der achse stehen statt "loss". mehrere bilder mal prüfen}
 \end{framev}
 
 
 \begin{framei}[fs=footnotesize]{GD for ERM: Pseudoresiduals}
-\item Gradient for ERM problem: 
+\item Gradient for ERM problem:
 $$
 - \pd{\risket}{\thetav} = - \pd{\sumin \Lxyit}{\thetav}= - \sumin \underbrace{\pd{\Lxyi}{f}}_{\text{pseudo residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetav}
 $$
@@ -153,11 +162,11 @@ $$
 \item $\pd{\fxit}{\thetav}$ tells us how to modify $\thetav$ accordingly and wiggle model output
 \item GD step sums up these modifications across all observations $i$
 \splitVCC{
-\textbf{NB:} Pseudo-residuals 
-$\tilde{r}\left( f \right)$ 
+\textbf{NB:} Pseudo-residuals
+$\tilde{r}\left( f \right)$
 match usual residuals for L2 loss:
 \begin{align*}
-\pd{\Lxy}{f} & = \frac{1}{2} \left. \pd{(y - f)^2}{f} \right|_{f = \fx}\\ 
+\pd{\Lxy}{f} & = \frac{1}{2} \left. \pd{(y - f)^2}{f} \right|_{f = \fx}\\
 & = y - \fx
 \end{align*}
 }

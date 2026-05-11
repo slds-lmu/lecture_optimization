@@ -18,7 +18,7 @@ figure_man/classes_optimization_problems.png
 \item Definition
 \item LP, QP, CP
 \item Ridge and Lasso
-\item Soft-margin SVM 
+\item Soft-margin SVM
 }
 
 
@@ -56,6 +56,7 @@ for $\bm{c}\in \R^d, \bm{A} \in \R^{k \times d}$ and $\bm{b} \in \R^k$.
 }{
 \imageC[0.7][https://de.wikipedia.org/wiki/Simplex-Verfahren]{figure_man/simplex.png}
 }
+\comment{BB}{wäre gut wenn man die zielfunktion hier besser sehen könnte}
 \begin{center}\begin{footnotesize}
 Visualization of constraints of 2D and 3D linear program.
 \end{footnotesize}\end{center}
@@ -155,6 +156,7 @@ $f, g, h$ are smooth.\\\textbf{Convex program}: convex$^{(*)}$ objective + box/l
 \begin{footnotesize}
 ${(*)}$: $\log$ is concave, $- \log $ is convex, and the sum of convex functions is convex
 \end{footnotesize}
+\comment{BB}{mit der notation wieder doof hier? --> f ist objective}
 \end{framev}
 
 
@@ -217,6 +219,8 @@ $$
 Unconstrained, convex problem with non-smooth objective
 \end{footnotesize}
 }
+\comment{BB}{wäre veilleicht noch schön als biuld die objective mit beiden componenten dabeneb zu sehen?}
+\comment{BB}{hier wäre ein deep dive sinnvoll der beweist dass beides äquivalent}
 \end{framev}
 
 
@@ -247,6 +251,7 @@ $$
 Maximize safety margin $\gamma$. No point is allowed to violate safety margin constraint.
 \end{footnotesize}
 }
+\comment{BB}{sehr blöd dass in den bildern bhier beta und nicht theta steht}
 \end{framev}
 
 
@@ -269,7 +274,6 @@ Maximize safety margin $\gamma$. Margin \textcolor{violet}{violations are allowe
 \spacer
 The problem is a \textbf{QP}: Quadratic objective with linear constraints.
 \end{framev}
-
 
 \begin{framev}[fs=footnotesize]{Example 5: Support Vector Machines}
 \textbf{Formulation 3 (dual): } Dualizing the primal formulation

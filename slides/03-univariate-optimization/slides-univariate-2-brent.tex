@@ -4,15 +4,15 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-\newcommand{\xleft}{x_{\text{left}}} 
-\newcommand{\xright}{x_{\text{right}}} 
-\newcommand{\xnew}{x_{\text{new}}} 
-\newcommand{\xbest}{x_{\text{best}}} 
-\newcommand{\fleft}{f_{\text{left}}} 
-\newcommand{\fright}{f_{\text{right}}} 
-\newcommand{\fnew}{f_{\text{new}}} 
-\newcommand{\fbest}{f_{\text{best}}} 
-\newcommand{\xii}{x^{(i)}} 
+\newcommand{\xleft}{x_{\text{left}}}
+\newcommand{\xright}{x_{\text{right}}}
+\newcommand{\xnew}{x_{\text{new}}}
+\newcommand{\xbest}{x_{\text{best}}}
+\newcommand{\fleft}{f_{\text{left}}}
+\newcommand{\fright}{f_{\text{right}}}
+\newcommand{\fnew}{f_{\text{new}}}
+\newcommand{\fbest}{f_{\text{best}}}
+\newcommand{\xii}{x^{(i)}}
 
 \title{Optimization in Machine Learning}
 
@@ -30,39 +30,44 @@ figure_man/quadratic-title.png
 }
 
 \begin{frame}{Quadratic Interpolation}
-Similar to golden ratio procedure but select $\xnew$ differently: $\xnew$ as minimum of fitted parabola through 
-$$(\xleft, \fleft), (\xbest, \fbest), (\xright, \fright)$$ 
+Similar to golden ratio procedure but select $\xnew$ differently: $\xnew$ as minimum of fitted parabola through
+$$(\xleft, \fleft), (\xbest, \fbest), (\xright, \fright)$$
 \foreach \i in {1, 2, 3, 4, 5}{
 \only<\i>{
 Left: Fit parabola (dashed) and propose min. (red) as new point.\\
-Middle: Switch / not switch with $\xbest$. Right: New interval. 
+Middle: Switch / not switch with $\xbest$. Right: New interval.
 \imageFixed{0.5cm}{4.1cm}[1]{figure/quadratic\i.pdf}
 }}
 \end{frame}
 
 
 \begin{framei}[sep=L]{Quadratic interpolation comments}
+\comment{BB}{ist es garantiwert das QI punkt, wenn sie denn valide sind, immer BESSER als x_best sind? weil wir swichtzen immer?}
 \item Quadratic interpolation \textbf{not robust}. The following may happen:
+\comment{BB}{hier wäre es päter mal gut diese fälle einfach mal zu zeigen (interpolation)}
 \begin{itemizeL}
 \item Algorithm suggests same $\xnew$ in each step
 \item $\xnew$ outside of search interval
-\item Parabola degenerates to line and no real minimum exists 
+\item Parabola degenerates to line and no real minimum exists
 \end{itemizeL}
 \item Algorithm must then abort, finding a global minimum is not guaranteed
 \end{framei}
 
 
 \begin{framei}[sep=L]{Brent's method}
-\item Brent's algorithm \furtherreading{BRENT1973} alternates between golden ratio search and quadratic interpolation as follows: 
+\item Brent's algorithm \furtherreading{BRENT1973} alternates between golden ratio search and quadratic interpolation as follows:
+\comment{BB}{es gab noch andere varianten von brent, nicht unbedingt mit golden section, die könnten wir noch erwähnen}
 \begin{itemizeM}
-\item Quadratic interpolation step acceptable if:\\ 
-(i) $\xnew$ falls within $[\xleft, \xright]$\\ 
+\item Quadratic interpolation step acceptable if:\\
+(i) $\xnew$ falls within $[\xleft, \xright]$\\
 (ii) $\xnew$ sufficiently far away from  $\xbest$ \\
-{\footnotesize (Heuristic: Less than half of the movement of step before last)} 
+{\footnotesize (Heuristic: Less than half of the movement of step before last)}
+\comment{JM}{https://mil.ufl.edu/nechyba/www/__eel6825.f2003/course_materials/t11.neural_networks/papers/nric_ch10.1-2.pdf --> Hier könnten noch Details sein}
 \item Otherwise: proposal via golden ratio
 \end{itemizeM}
 \item Benefit: fast convergence (quadratic interpolation), unstable steps stabilized by golden ratio search
 \item Convergence guaranteed if function $f$ has local min
+\comment{BB}{wie schwer ist der beweis? deep dive?}
 \item Used in R-function \texttt{optimize()}
 \end{framei}
 
@@ -71,7 +76,7 @@ Middle: Switch / not switch with $\xbest$. Right: New interval.
 \item Poisson density: $f(k|\lambda) := \P(x = k) = \frac{\lambda^k \cdot \exp(-\lambda)}{k!}$
 \item Negative log-likelihood for $n$ samples:
 \begin{equation*}
-- \ell(\lambda, \mathcal{D}) = - \log \prodin  f(\xii | \lambda) =  - \sumin \log f(\xii | \lambda) 
+- \ell(\lambda, \mathcal{D}) = - \log \prodin  f(\xii | \lambda) =  - \sumin \log f(\xii | \lambda)
 \end{equation*}
 \imageC[0.7]{figure/poisson.pdf}
 GR and Brent converge to global min at $x^\ast \approx 1$ \\

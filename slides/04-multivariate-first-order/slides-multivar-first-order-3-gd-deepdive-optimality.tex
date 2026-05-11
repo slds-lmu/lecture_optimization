@@ -27,11 +27,17 @@ figure_man/gdes_1.png
 \item If $f$ is \textbf{convex}, \textbf{differentiable} and has a \textbf{Lipschitz gradient}, GD converges to global minimum for sufficiently small step sizes.
 \vfill
 \imageC[0.6]{figure_man/gdes_1.png}
+\comment[FIX]{BB}{warum ist das theta unten auf der x-axhse abgeschnitten?
+außerdem blöd dass das R und nicht f steht...}
 \end{framei}
 
 
 \begin{framei}{Setting}
 \item\textbf{Assumptions:}
+\comment{LS}{check the following https://arxiv.org/abs/1405.4980
+exponential convergence https://www.cs.ubc.ca/~schmidtm/Courses/540-W19/L5.pdf
+exponential rate of convergence zeigen?
+mu-strongly convexity?}
 \begin{itemizeM}
 \item $f$ convex and differentiable
 \item Global minimum $\xv^\ast$ exists
@@ -77,7 +83,7 @@ $$f(\yv) \geq \fx + \nabla \fx^\top (\yv - \xv)$$
 
 \begin{framei}{Descent lemma}
 \item\textbf{Recall:} $\nabla f$ Lipschitz $\implies$ $\nabla^2 \fx \preccurlyeq L \cdot \id$ for all $\xv$
-\item This gives convexity of $g(\xv) := \frac{L}{2}\|\xv\|^2 - f(\xv)$ since $$\nabla^2 g(\xv) = L \cdot \id - \nabla^2 \fx \succcurlyeq 0.$$ 
+\item This gives convexity of $g(\xv) := \frac{L}{2}\|\xv\|^2 - f(\xv)$ since $$\nabla^2 g(\xv) = L \cdot \id - \nabla^2 \fx \succcurlyeq 0.$$
 \item First order condition of convexity of $g$ yields
 \begin{alignat*}{3}
 && g(\xv) &\geq g(\xv^{[t]}) + \nabla g(\xv^{[t]})^\top (\xv - \xv^{[t]}) \\
@@ -85,6 +91,7 @@ $$f(\yv) \geq \fx + \nabla \fx^\top (\yv - \xv)$$
 \Leftrightarrow \quad && &\vdotswithin{\geq} \\
 \Leftrightarrow \quad && \fx &\leq f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top (\xv - \xv^{[t]}) + \frac{L}{2} \|\xv - \xv^{[t]}\|^2
 \end{alignat*}
+\comment{UU}{Vielleicht bietet sich hier ein Bild an, da die Funktion f "gesandwicht" wird von der Taylor-Entwicklung 1. und 2. Ordnung.}
 \item\textbf{Now:} One GD step with step size $\alpha \leq 1/L$:
 $$\xv \leftarrow \xv^{[t+1]} = \xv^{[t]} - \alpha \nabla f\left(\xv^{[t]}\right)$$
 \end{framei}
@@ -110,7 +117,7 @@ f(\xv^{[t+1]}) &\leq f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top(\xv^{[t+1]} - \xv^{
 
 
 \begin{framei}{One step error bound}
-\item Again, first order condition of convexity gives 
+\item Again, first order condition of convexity gives
 $$f(\xv^{[t]}) - f(\xvs) \leq  \nabla f(\xv^{[t]})^\top (\xv^{[t]} - \xvs).$$
 \item This and the descent lemma yields
 \begin{align*}

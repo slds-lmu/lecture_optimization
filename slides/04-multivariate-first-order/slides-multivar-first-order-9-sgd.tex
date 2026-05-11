@@ -30,7 +30,7 @@ $$
 \item Stochastic gradient descent (SGD) approximates the gradient
 \begin{eqnarray*}
 \nabla_{\xv} g(\xv) = \frac{1}{n}\sumin \nabla_{\xv} g_i(\xv) &:=& \mathbf{d} \quad \text{ by }\\
-\frac{1}{\textcolor{blue}{|J|}}\sum_{i \in \textcolor{blue}{J}} \nabla_{\xv} g_i(\xv) &:=& \hat{\mathbf{d}}, 
+\frac{1}{\textcolor{blue}{|J|}}\sum_{i \in \textcolor{blue}{J}} \nabla_{\xv} g_i(\xv) &:=& \hat{\mathbf{d}},
 \end{eqnarray*}
 with random subset $J \subset \{1, 2, \ldots, n\}$ of gradients called \textbf{mini-batch}
 \item This is done e.g. when computing the true gradient is \textbf{expensive}
@@ -42,11 +42,11 @@ with random subset $J \subset \{1, 2, \ldots, n\}$ of gradients called \textbf{m
 \footnotesize
 \caption{Basic SGD pseudo code}
 \begin{algorithmic}[1]
-\State Initialize $\xv^{[0]}$, $t = 0$ 
+\State Initialize $\xv^{[0]}$, $t = 0$
 \While{stopping criterion not met}
 \State Randomly shuffle indices and partition into minibatches $J_1, \ldots, J_K$ of size $m$
-\For{$k\in\{1,\ldots,K\}$} 
-\State $t \leftarrow t + 1$ 
+\For{$k\in\{1,\ldots,K\}$}
+\State $t \leftarrow t + 1$
 \State Compute gradient estimate with $J_k$: $\hat{\mathbf{d}}^{[t]} \leftarrow \frac{1}{m} \sum_{i \in J_k} \nabla_{\xv} g_i(\xv^{[t - 1]}) $
 \State Apply update: $\xv^{[t]} \leftarrow \xv^{[t-1]} - \alpha \cdot \hat{\mathbf{d}}^{[t]}$
 \EndFor
@@ -154,6 +154,13 @@ $$
 \item the better the approximation to $\nabla_{\xv} g(\xv)$
 \item the lower the variance
 \item the lower the risk of performing steps in the wrong direction
+\comment{BB}{wir könnten noch etwas über die verteilung von den grad reden, CLT usw. können wir später}
+\comment{BB}{hier könnte man die claims als bsp zeigen
+vielleicht kann man mal batchsize und step size variieren auf einem praktiven bsp}
+\comment{BB}{wäre schön wenn wir die aussagen hier empirisch besser zeigen würden
+Hier könnte man vielleicht fündig werden: https://udlbook.github.io/udlbook/ Kap. 9+20.}
+\comment{BB}{was hier auf der folie steht ist nicht so super klar finde ich.... können wir das etwas verbessern}
+\comment{UU}{Man könnte noch einen Bezug herstellen zwischen der Größe dieser Varianz und der Größe der "confusion area".}
 \end{blocki}
 \vfill
 \begin{blocki}{The smaller the step size $\alpha$}
@@ -173,6 +180,9 @@ SGD for a NN with batch size $\in \{0.5 \%, 10 \%, 50 \%\}$ of the training data
 The higher the batch size, the lower the variance
 \end{small}\end{center}
 \end{framei}
+
+\comment{BB}{es wäre schön einmal SGD gegen GD auf echten daten zu sehen. zb bei einem NN. man muss gucken wie man die x-achse skaliert. man kann einmal fevals vs y zeigen. aber auch "datenpunkt" gegen y.
+wir wollen vielleicht auch darüber reden dass SGD saddle points escaped kann}
 
 \endlecture
 \end{document}
