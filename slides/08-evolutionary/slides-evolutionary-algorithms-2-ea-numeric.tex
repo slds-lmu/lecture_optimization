@@ -16,13 +16,13 @@ ES / Numerical Encodings
 }{
 figure/1dim-ackley-func-selection.png
 }{
-\item Recombination 
-\item Mutation 
+\item Recombination
+\item Mutation
 \item A few simple examples
 }
 
 \begin{framev}{Recombination for numeric}
-Options for recombination of two individuals $\xv, \tilde{\xv} \in \R^d$: 
+Options for recombination of two individuals $\xv, \tilde{\xv} \in \R^d$:
 \begin{itemize}
 \item \textbf{Uniform crossover}: Choose gene $j$ of parent 1 with probability $p$ and of parent 2 with probability $1-p$
 \item \textbf{Intermediate recombination}: Offspring is created from mean of two parents: $\frac{1}{2}(\xv + \tilde{\xv})$
@@ -48,6 +48,7 @@ $$
 \item \textbf{Uniform mutation:} Select random gene $x_j$ and replace it by uniformly distributed value (within feasible range).
 \item \textbf{Gauss mutation:} $\xv \pm \normal(0, \sigma \mathbf{I})$
 \item \textbf{Polynomial mutation:} Use a different distribution instead of normal distribution
+\comment[NOTE]{BB}{ein satz begründung bitte zu polynomial aus deb paper}
 \end{itemize}
 \vfill
 \imageC[0.45][https://www.researchgate.net/publication/262320509_Analysing_mutation_schemes_for_real-parameter_genetic_algorithms]{figure_man/polynomial_mutation.png}
@@ -87,7 +88,7 @@ Selected individuals are marked in green.
 
 
 \begin{framev}{Example 1: Ackley function}
-After $50$ iterations: 
+After $50$ iterations:
 \vfill
 \imageC{figure/1dim-ackley-func-final.png}
 \end{framev}
@@ -107,6 +108,7 @@ Implementation: \url{https://juliambr.shinyapps.io/balls/}
 
 \begin{framev}{Example 2: Grid of balls}
 In our example, the chromosome of an individual is the center of a circle, so the chromosomes are encoded as 2-dimensional real vectors $\xv = (x_1, x_2) \in \R^2$.\\
+\comment[NOTE]{BB}{das ist doch quatsch. erstens ist der radius hier nicht kodiert. den kann man maximal wählen und sich das in der kodierungs sparen.  aber dann ist das bild von vorher falsch. außerdem brauchen wir da auch keine shiny app sondern sollten das lieber auf den slides machen}
 \spacer
 The population $P \subset \R^2$ is given as a set of circle centers.\\
 \spacer
@@ -117,6 +119,8 @@ $$
 where the distance is defined as $0$ if a circle center is within the radius of a circle of the grid.
 This function is to be maximized: we are looking for the largest circle that does not touch any of the gray circles.
 \end{framev}
+
+\comment[NOTE]{BB}{generell sollte hier noch ein 2d beispiel mit recombo.}
 
 \endlecture
 \end{document}

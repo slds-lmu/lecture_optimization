@@ -43,6 +43,8 @@ BB:
 - make repo names shorter
 - PRIO: have a system so we can discuss math with claude
 - gucken dass wir subgrads usw reinbekommen für nonsmooth
+- review/refine comment macro: https://github.com/slds-lmu/lecture_service/pull/29 and add to wintermute template
+
 - die makefiles klappen halt überhaupt nicht robust. man will auch irhendwie mal die slides von einem chap mal zusammen in einer file haben
 - die temp file nerven, mit latexmk in ein buuild dir?
 - es ist halt unklar von wo man claude startet und er muss halt die AGENTS usw finden

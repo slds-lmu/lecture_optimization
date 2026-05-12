@@ -91,6 +91,7 @@ with $\mu_w=\bigl(\frac{||\wv||_1}{||\wv||_2}\bigr)=\frac{(\sum_{i=1}^\mu |w_i|)
 \begin{framei}[sep=L]{CMA-ES: Wrap Up - Limitations}
 \item CMA-ES can be outperformed by other strategies in following cases:
 \item Partly separable problems (i.e. optimization of $n$-dimensional objective function can be divided into a series of $d$ optimizations of every single parameter)
+\comment[NOTE]{CK}{Sollte d sein (eine n-dimensionale Funktion hat n parameter/argumente und ist keine n-wertige Funktion)}
 \item Derivative of the objective function is easily available $\rightarrow$ Gradient Descent / Ascent
 \item Low dimensional problems (small $d$)
 \item Problems that can be solved by using a relatively small number of function evaluations (e.g. $< 10 d$ evaluations)
@@ -106,6 +107,7 @@ functions and however can get stuck in local optima on multi-modal functions, su
 \item \textbf{IPOP-CMA-ES} is a special form of restart-CMA-ES, where the \textit{population size is increased for each restart} (IPOP)
 \item By increasing the population size the search characteristic becomes more global after each restart
 \item For the restart strategy CMA-ES is stopped whenever some stopping criterion is met, and an independent restart is launched with the population size increased by a factor of 2 (values between 1.5 and 5 are reasonable).
+\comment[NOTE]{BB}{stopping criterion: besser sagen wie das gfeht}
 \end{framei}
 
 
@@ -115,12 +117,14 @@ functions and however can get stuck in local optima on multi-modal functions, su
 17 papers were submitted, 11 were accepted, thereunder hybrid methods.\\
 \textbf{Two of the Algorithms:}
 \item L-CMA-ES: A CMA evolution strategy with small population size and small initial step-size to emphasize on local search characteristics. Independent restarts are conducted until the target function value is reached or the maximum number of function evaluations is exceeded. \furtherreading{AUGERHANSEN2005LOCALSEARCH}
+\comment[NOTE]{BB}{diese varianten kennt auch keiner. es ist schon gut den echten benchmark zu nehmen, oder doch einen eigenen? und das eher kurz sagen was da rauskomt?}
 \item G-CMA-ES: A CMA evolution strategy restarted with increasing population size (IPOP). Independent restarts are conducted with increasing population size until the target function value is reached or the maximum number of function evaluations is exceeded. With the initial small population size the algorithm converges fast, with the succeeding larger population sizes the global search performance is emphasized in subsequent restarts. \furtherreading{AUGERHANSEN2005IPOP}
 \end{framei}
 
 
 \begin{framev}[fs=footnotesize]{CMA-ES: Wrap Up - Benchmark EAs}
 \imageC[0.9]{figure_man/cmaes/cmaes_benchmark.png}
+\comment[NOTE]{BB}{blöd dass die algos alle unbekannt sind}
 \begin{itemizeS}
 \item Comparison of performance results from 11 algorithms for search space dimension 10 and 30 on different function subsets
 \item Expected number of function evaluations (FEs) to reach the target function value is normalized by the value of the best algorithm on the respective function $\text{FEs}_{best}$

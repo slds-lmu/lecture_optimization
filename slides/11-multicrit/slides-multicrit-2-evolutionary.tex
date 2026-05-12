@@ -53,6 +53,7 @@ Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over
 }{
 \image[1]{figure/NSGA2_steps.png}
 }
+\comment[NOTE]{CK}{needs new axis labels f1/f2}
 \begin{itemizeM}[small]
 \item Population-based search approximates a whole Pareto set in one run.
 \item The main steps (initialize, select, vary, survive, repeat) mirror standard EAs but must handle multiple objectives.
@@ -103,16 +104,17 @@ NDS partitions an objective space set into fronts $\mathcal{F}_1 \prec \mathcal{
 \spacer
 \splitV[0.4]{
 \begin{itemizeM}[small]
-\item $\mathcal{F}_1$ is non-dominated, 
-each $\xv \in \mathcal{F}_2$ is dominated, but only by points in $\mathcal{F}_1$, 
-each $\xv \in \mathcal{F}_3$ is dominated, but only by points in $\mathcal{F}_1$ and $\mathcal{F}_2$, 
-and so on. 
+\item $\mathcal{F}_1$ is non-dominated,
+each $\xv \in \mathcal{F}_2$ is dominated, but only by points in $\mathcal{F}_1$,
+each $\xv \in \mathcal{F}_3$ is dominated, but only by points in $\mathcal{F}_1$ and $\mathcal{F}_2$,
+and so on.
 \item We can easily compute the partitioning by computing all non-dominated points  $\mathcal{F}_1$,
 removing them, then computing the next layer of non-dominated points $\mathcal{F}_2$, and so on.
 \end{itemizeM}
 }{
 \image[1]{figure/NSGA2_NDS.png}
 }
+\comment[NOTE]{CK}{needs new axis labels f1/f2}
 \end{framev}
 
 
@@ -124,7 +126,7 @@ For \textbf{survival} in $(\mu + \lambda)$ selection:
 \item If front $\mathcal{F}_i$ cannot fully fit (because we would exceed $\mu$), we partially fill with a subset of $\mathcal{F}_i$.
 \end{itemize}
 \imageC[0.45]{figure_man/NSGA2.png}
-\textbf{But}: Which individuals survive from this partially included front?  
+\textbf{But}: Which individuals survive from this partially included front?
 $\to$ \emph{crowding distance} sorting.\\
 \spacer
 \begin{small}
@@ -137,7 +139,8 @@ $\to$ \emph{crowding distance} sorting.\\
 \textbf{Idea}: Prefer individuals that are more ``spread out'' (less crowded).
 \vfill
 \image[1]{figure/NSGA2_CS1.png}
-Left: not good, solutions bunched up.  
+\comment[NOTE]{CK}{need f1/f2 as axis labels}
+Left: not good, solutions bunched up.
 Right: better spread.
 \end{framev}
 

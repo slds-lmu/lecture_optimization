@@ -31,6 +31,7 @@ figure/himmelblau-iter3_probabilities
 \begin{framei}{Simple stochastic local search}
 \item Given is a multivariate objective function $f(\xv)$
 \item Define a local neighborhood area $V(\xv)$ for a given $\xv$
+\comment[NOTE]{BB}{besser über verteilung definieren, nicht über neighbaorhood}
 \item Sample proposal $\xv^{[t+1]}$ uniformly at random from $V(\xv^{[t]})$
 \item Calculate $f(\xv^{[t+1]})$
 \item If $\Delta f = f(\xv^{[t+1]}) - f(\xv^{[t]}) < 0$, $\xv^{[t+1]}$ is accepted as new solution, otherwise a new proposal from neighborhood is sampled
@@ -71,14 +72,16 @@ Simulated annealing: Colors correspond to $\P(\text{accept})$}
 \item Slowly reduce temperature to converge \\
 $\Rightarrow$ Sequence of descending temperatures $T^{[t]}, t \in \N$
 \item Procedure is called simulated annealing
-\item Temperature is often kept constant several iterations in a row to explore the space, then multiplied by coefficient $0<c<1$: 
+\item Temperature is often kept constant several iterations in a row to explore the space, then multiplied by coefficient $0<c<1$:
 $$T^{[t+1]} = c \cdot T^{[t]}$$
-\item Other strategies possible, for example: 
+\item Other strategies possible, for example:
 $$T^{[t]} = T^{[0]} \left( 1 - \frac{t}{t_{\text{max}}} \right)$$
 \item Many different strategies for choosing neighborhood\\
 Strongly depends on objective function
+\comment[NOTE]{BB}{das hier ist etwas komisch so. was wenn die funktion neg ist? wo kommt das eigentlich her?}
 \end{framei}
 
+\comment[NOTE]{BB}{8 damen problem zeigen}
 
 \begin{framei}[fs=normalsize,sep=L]{Analogy to metallurgy}
 \item Simulated annealing draws analogy between a cooling process (e.g. a metal or liquid) and an optimization problem.
@@ -86,6 +89,12 @@ Strongly depends on objective function
 \item Consider atoms of the liquid as a system with many degrees of freedom, analogy to optimization problem of a multivariate function
 \item Minimum energy stage corresponds to optimum of objective function
 \end{framei}
+
+\comment[NOTE]{BB}{pro und cons fehlen hier komplett:
+ist sehr billig in bezig auf die operationen.
+kann man super auf unerschiedliche auch kompliziertere problem anweden, ist sowas wie eine "meta" heuristik.
+andersherum hat es viele control param, wie man genau cool down und sampling macht ist unklar, gibt 1000 varianten.
+kann man auch auf diskrete probleme anwenden}
 
 \endlecture
 \end{document}

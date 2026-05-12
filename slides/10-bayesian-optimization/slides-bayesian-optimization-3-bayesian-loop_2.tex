@@ -47,6 +47,8 @@ $$
 where $\Phi(\cdot)$ is the standard normal cdf (assuming Gaussian posterior)
 \vfill
 \textbf{Note:} $a_\text{PI}(\xv)=0$ for design points $\xv$, since
+\comment[NOTE]{LS}{das geht halt eigentlich nicht durch. also man muesste vermutlich den grenzwert betrachtne aber das problem ist dass wir eigentlich keinen limes der varianz gegen 0 betrachten sondern die varianz ist 0. dann muesste man phi(fmin - f(x)/s(x)) explizit als phi(-inf) definieren.... was irgendwie schwierig ist. die musterloesung der klausur ws24/25 ist hier besser
+also die musterloesung ist fuer ei. fuers pi muss man hier anders argumentieren}
 \begin{itemize}
 \item $\sh(\xv) = 0$,
 \item $\fh(\xv) = f(\xv) \ge \fmin \quad \Leftrightarrow \quad \fmin - \fh(\xv) \le 0$.
