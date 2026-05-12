@@ -49,11 +49,18 @@ BB:
 - die temp file nerven, mit latexmk in ein buuild dir?
 - es ist halt unklar von wo man claude startet und er muss halt die AGENTS usw finden
 halbwegs standard prompts machen
+  math formulas, latex math
+  wir müssen das auch so haben dass man punkt für punkt chaten und confirmen kann
 - bei den startslides immer einen satz rauf machen woran sich das kap / chunk orinteiertt
 -# gucken dass ich nichht die exc jetzt auch anfasse, müssen wir später iterieren
 dir "all" abschaffen, blödsinn
 musste eben die rebase strategy setzten das soll auch global passieren
 gitignore klären, durchsuchen wo welche liegen, nur global haben
+pdfs im slides folder in cursor nicht immer anzeigen
+rules-math sofort zurück spielen
+ in mathrules haben wir einige sachen die vielleicht falsch oder dumm sind, claude wird da immer drauf hinweisen.
+   gucken ob wir das ändern
+in den latex math macros benutzen wir bm und \mathbf inkonsistent. 
 
 
 manuel

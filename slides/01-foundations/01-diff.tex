@@ -2,8 +2,10 @@
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
 \input{../../latex-math/optim-basics}
+
+% Local macro: step / direction vector h. Promote to latex-math when sweep is done.
+\newcommand{\hv}{\bm{h}}
 
 \title{Optimization in Machine Learning}
 
@@ -16,7 +18,6 @@ Differentiation and Derivatives
 }{
 figure_man/tangent.png
 }{
-\item Definition of smoothness
 \item Uni- \& multivariate differentiation
 \item Gradient, partial derivatives
 \item Jacobian matrix
@@ -25,7 +26,7 @@ figure_man/tangent.png
 }
 
 \begin{framev}{Univariate differentiability}
-\textbf{Definition:} A function $f: \mathcal{S} \subseteq \R \to \R$ is said to be \textbf{differentiable} for each inner point $x \in \mathcal{S}$ if the following limit exists:
+\textbf{Definition:} A function $f: \S \subseteq \R \to \R$ is said to be \textbf{differentiable} for each inner point $x \in \S$ if the following limit exists:
 $$
 f'(x) := \lim_{h \to 0} \frac{f(x + h) - f(x)}{h}
 $$
@@ -42,7 +43,7 @@ Intuitively: $f$ can be approximated locally by a lin. fun. with slope $m = f'(x
 
 
 \begin{framei}{Smooth vs. non-smooth}
-\item \textbf{Smoothness} of a function $f: \mathcal{S} \to \R$ is measured by the number of its continuous derivatives
+\item \textbf{Smoothness} of a function $f: \S \to \R$ is measured by the number of its continuous derivatives
 \item $\CC{k}$ is class of $k$-times continuously differentiable functions\\
 ($f\in\CC{k}$ means $f^{(k)}$ exists and is continuous)
 \item In this lecture, we call $f$ ``smooth'', if at least $f \in \CC{1}$
@@ -58,12 +59,12 @@ $f_1$ is smooth, $f_2$ is continuous but not differentiable, and $f_3$ is non-co
 
 \begin{framev}{Multivariate differentiability}
 \comment[NOTE]{HSK}{Shouldn't we formally define partial derivatives here?}
-\textbf{Definition:} For a function $f: \mathcal{S}\subseteq \R^d \to \R$ of $d$ variables $x_1, \ldots, x_d$, \textbf{partial derivatives} are defined as
+\textbf{Definition:} For a function $f: \S\subseteq \R^d \to \R$ of $d$ variables $x_1, \ldots, x_d$, \textbf{partial derivatives} are defined as
 $$
 \begin{aligned}
-\frac{\partial f}{\partial x_1} & =\lim _{h \rightarrow 0} \frac{f\left(x_1+h, x_2, \ldots, x_d\right)-f(\xv)}{h} \\
+\frac{\partial f}{\partial x_1} & =\lim _{h \rightarrow 0} \frac{f(x_1+h, x_2, \ldots, x_d)-f(\xv)}{h} \\
 & \vdots \\
-\frac{\partial f}{\partial x_d} & =\lim _{h \rightarrow 0} \frac{f\left(x_1, \ldots, x_{d-1}, x_d+h\right)-f(\xv)}{h}
+\frac{\partial f}{\partial x_d} & =\lim _{h \rightarrow 0} \frac{f(x_1, \ldots, x_{d-1}, x_d+h)-f(\xv)}{h}
 \end{aligned}
 $$
 \vfill
@@ -88,7 +89,7 @@ note that this is a row vector!
 \end{footnotesize}
 \item This gradient of $f$ can be used to linearly approximate $f$:
 $$
-f(\xv+\mathbf{h})=f(\xv)+\nabla_{\xv}\fx \mathbf{h}+o(\mathbf{h})
+f(\xv+\hv)=f(\xv)+\nabla_{\xv}\fx \hv+o(\hv)
 $$
 \item \textbf{Example:} $\fx = x_1^2/2 + x_1 x_2 + x_2^2$ $\Rightarrow$ $\nabla \fx = (x_1 + x_2, x_1 + 2x_2)$
 \vfill
@@ -101,7 +102,7 @@ $$
 
 
 \begin{framev}{Directional derivative}
-The \textbf{directional derivative} tells how fast $f: \mathcal{S}\subseteq \R^d \to \R$ is changing w.r.t. an arbitrary direction $\vv$:
+The \textbf{directional derivative} tells how fast $f: \S\subseteq \R^d \to \R$ is changing w.r.t. an arbitrary direction $\vv$:
 $$
 D_{\vv} \fx := \lim_{h \to 0} \frac{f(\xv + h \vv) - \fx}{h} = \nabla \fx \vv
 $$
@@ -126,25 +127,25 @@ NB: Some people require that $||\vv|| = 1$. Then, we can identify $D_{\vv} \fx$ 
 
 
 \begin{framei}[fs=small]{Important properties of the gradient}
-\item To prove 1, consider that a \emph{level curve} of a function $f: \mathcal{S}\subseteq \R^d \to \R$ is any parametrized, differentiable curve (see \emph{implicit function theorem}) $x(t)$, $t\in\mathcal{T}\subseteq\R_{\geq 0}$ so that $f(x(t))=c$ for some constant $c$.
-\item \textbf{Proof of 1.}: Consider a point $x_0\in\R^d$ so that $f(x_0)=c$ and $\exists t_0\in\mathcal{T}:\; x(t_0)=x_0$. To prove orthogonality, we want to show $\langle\nabla_{\xv}f(x_0),\frac{d x}{d t}(t_0)\rangle=0$.
+\item To prove 1, consider that a \emph{level curve} of a function $f: \S\subseteq \R^d \to \R$ is any parametrized, differentiable curve (see \emph{implicit function theorem}) $\xv(t)$, $t\in\mathcal{T}\subseteq\R_{\geq 0}$ so that $f(\xv(t))=c$ for some constant $c$.
+\item \textbf{Proof of 1.}: Consider a point $\xv_0\in\R^d$ so that $f(\xv_0)=c$ and $\exists t_0\in\mathcal{T}: \xv(t_0)=\xv_0$. To prove orthogonality, we want to show $\langle\nabla_{\xv}f(\xv_0),\frac{d \xv}{d t}(t_0)\rangle=0$.
 \item Note that
 $$
-\left\langle\nabla_{\xv}f(x_0),\frac{d x}{d t}(t_0)\right\rangle
-=\nabla_{\xv}f(x(t_0))\frac{d x}{d t}(t_0)
-=\frac{d\, (f\circ x)}{d t}(t_0)
+\left\langle\nabla_{\xv}f(\xv_0),\frac{d \xv}{d t}(t_0)\right\rangle
+=\nabla_{\xv}f(\xv(t_0))\frac{d \xv}{d t}(t_0)
+=\frac{d (f\circ \xv)}{d t}(t_0)
 $$
 \begin{footnotesize}
 By the chain rule, see slide-set ``Matrix Calculus''.
 \end{footnotesize}
-\item Since $f\circ x$ is a constant function in $t$, the derivative will always equal zero and so $\frac{d\, (f\circ x)}{d t}(t_0)=0$, proving the statement.
+\item Since $f\circ \xv$ is a constant function in $t$, the derivative will always equal zero and so $\frac{d (f\circ \xv)}{d t}(t_0)=0$, proving the statement.
 \end{framei}
 
 
 \begin{framei}{Important properties of the gradient}
 \item \textbf{Proof of 2.}: Let $\vv$ be a vector with $\|\vv\|=1$ and $\theta$ the angle between $\vv$ and $\nabla \fx$.
 $$
-D_{\vv}\fx = \nabla \fx \vv = \|\nabla \fx\|~\|\vv\|\cos(\theta) = \|\nabla \fx\| \cos(\theta)
+D_{\vv}\fx = \nabla \fx \vv = ||\nabla \fx||~||\vv||\cos(\theta) = ||\nabla \fx|| \cos(\theta)
 $$
 by the cosine formula for dot products and $\|\vv\| = 1$.
 \item $\cos(\theta)$ is maximal if $\theta = 0$, hence if $\vv$ and $\nabla \fx$ point in the same direction.
@@ -164,7 +165,7 @@ Length of arrows is norm of their gradient.
 
 
 \begin{framev}{Jacobian Matrix}
-For vector-valued function~$f:\mathcal{S}\subseteq \R^d\longrightarrow\R^m,\; \xv\mapsto(f_1(\xv),\dots,f_m(\xv))^\top$, $f_j:\mathcal{S}\subseteq \R^d\to\R$, the \textbf{Jacobian} matrix $J_f:\mathcal{S}\subseteq \R^d \to \R^{m\times d}$ generalizes gradient by placing all $\nabla f_j$ in its rows:
+For vector-valued function~$f:\S\subseteq \R^d\longrightarrow\R^m, \xv\mapsto(f_1(\xv),\dots,f_m(\xv))^T$, $f_j:\S\subseteq \R^d\to\R$, the \textbf{Jacobian} matrix $J_f:\S\subseteq \R^d \to \R^{m\times d}$ generalizes gradient by placing all $\nabla f_j$ in its rows:
 $$
 J_f(\xv) \text{ or } \nabla \fx = \begin{pmatrix}
 \nabla f_1(\xv) \\
@@ -187,7 +188,7 @@ We will mainly use the $\nabla f$ notation.
 
 
 \begin{framei}{Jacobian determinant}
-\item Let $f\in\CC{1}$ and~$\xv_0\in\mathcal{S}\subseteq \R^d$.
+\item Let $f\in\CC{1}$ and~$\xv_0\in\S\subseteq \R^d$.
 \item \textbf{Inverse function theorem:} Let~$\yv_0=f(\xv_0)$. If~$\det(J_f(\xv_0))\not=0$, then
 \begin{enumerate}
 \item $f$ is invertible in a neighborhood of~$\xv_0$,
@@ -200,7 +201,7 @@ We will mainly use the $\nabla f$ notation.
 
 
 \begin{framev}{Hessian Matrix}
-For real-valued function $f:\mathcal{S}\subseteq \R^d \to \R$, the \textbf{Hessian} matrix $\nabla^2:\mathcal{S}\subseteq \R^d \to \R^{d \times d}$ contains all its second derivatives (if they exist):
+For real-valued function $f:\S\subseteq \R^d \to \R$, the \textbf{Hessian} matrix $\nabla^2:\S\subseteq \R^d \to \R^{d \times d}$ contains all its second derivatives (if they exist):
 $$
 \nabla^2 \fx = \left(\frac{\partial^2 \fx}{\partial x_i \partial x_j}\right)_{i,j=1,\ldots,d}
 $$
@@ -231,7 +232,7 @@ $$
 1 & 0 \\ 0 & 4
 \end{pmatrix}
 $$
-and thus $\lambda_{1}=4, \lambda_{2}=1$, $\bm{v}_{1}=(0, 1)^T$, and $\bm{v}_{2}=(1, 0)^T$.
+and thus $\lambda_1=4, \lambda_2=1$, $\bm{v}_1=(0, 1)^T$, and $\bm{v}_2=(1, 0)^T$.
 \vfill
 \splitV{
 \imageC[0.76]{figure_man/hessian_3d.png}
@@ -242,19 +243,19 @@ and thus $\lambda_{1}=4, \lambda_{2}=1$, $\bm{v}_{1}=(0, 1)^T$, and $\bm{v}_{2}=
 
 
 \begin{framev}[fs=footnotesize]{Lipschitz continuity}
-Function $h : \mathcal{S}\subseteq \R^d \to \R^m$ is \textbf{Lipschitz continuous} if slopes are bounded:
+Function $h : \S\subseteq \R^d \to \R^m$ is \textbf{Lipschitz continuous} if slopes are bounded:
 $$
-\|h(\xv) - h(\yv)\| \leq L \|\xv - \yv\| \quad \text{for each $\xv,\yv\in\mathcal{S}\subseteq \R^d$ and some~$L>0$}
+||h(\xv) - h(\yv)|| \leq L ||\xv - \yv|| \quad \text{for each $\xv,\yv\in\S\subseteq \R^d$ and some~$L>0$}
 $$
 \begin{itemize}
 \item \textbf{Examples} ($d=m=1$)\textbf{:} $\sin(x)$, $|x|$
 \item \textbf{Not} examples: $1/x$ (but \textit{locally} Lipschitz continuous), $\sqrt{x}$
 \item If $m=d$ and $h$ \textbf{differentiable}:
 $$
-\text{$h$ Lipschitz continuous with constant $L$} \Longleftrightarrow J_h \preccurlyeq L \cdot \mathbf{I}_d
+\text{$h$ Lipschitz continuous with constant $L$} \Longleftrightarrow J_h \preccurlyeq L \cdot \id_d
 $$
 \begin{footnotesize}
-\textbf{Note:} $\Amat \preccurlyeq \mathbf{B} :\Longleftrightarrow \mathbf{B} - \Amat$ is positive semidefinite, i.e., $\mathbf{v}^T(\mathbf{B} - \Amat)\mathbf{v} \geq 0 \;\; \forall \mathbf{v} \neq 0$.
+\textbf{Note:} $\Amat \preccurlyeq \bm{B} :\Longleftrightarrow \bm{B} - \Amat$ is positive semidefinite, i.e., $\vv^T(\bm{B} - \Amat)\vv \geq 0 \;\; \forall \vv \neq 0$.
 \spacer
 \textbf{Proof} of ``$\Rightarrow$'' for $d=m=1$\textbf{:}
 $$
@@ -269,11 +270,11 @@ $$
 \begin{framei}{Lipschitz gradients / $L$-smoothness}
 \item $f$ is called \textbf{$L$-smooth} (or has \textbf{$L$-Lipschitz gradients}) if
 $$
-\|\nabla f(\xv) - \nabla f(\yv)\| \leq L \|\xv - \yv\| \qquad \forall \xv, \yv \in \S
+||\nabla f(\xv) - \nabla f(\yv)|| \leq L ||\xv - \yv|| \qquad \forall \xv, \yv \in \S
 $$
 \item For $f\in\CC{2}$, since $\nabla^2 f$ is the Jacobian of $\nabla f$ and symmetric:
 $$
-\text{$f$ is $L$-smooth} \Longleftrightarrow -L\, \mathbf{I}_d \preccurlyeq \nabla^2 f(\xv) \preccurlyeq L \cdot \mathbf{I}_d \quad \forall \xv
+\text{$f$ is $L$-smooth} \Longleftrightarrow -L \id_d \preccurlyeq \nabla^2 f(\xv) \preccurlyeq L \cdot \id_d \quad \forall \xv
 $$
 \item Equivalently, all eigenvalues of $\nabla^2 f$ have magnitude bounded by~$L$
 \item \textbf{Interpretation:} Curvature in any direction is bounded by $L$
@@ -285,7 +286,7 @@ $\implies$ Fairly \textbf{weak assumption}
 \begin{framei}{Descent lemma}
 \item For $L$-smooth $f$: integrating the Lipschitz bound on $\nabla f$ yields a \textbf{quadratic upper bound}:
 $$
-f(\yv) \leq f(\xv) + \nabla f(\xv)(\yv - \xv) + \tfrac{L}{2}\|\yv - \xv\|^2 \qquad \forall \xv, \yv
+f(\yv) \leq f(\xv) + \nabla f(\xv)(\yv - \xv) + \tfrac{L}{2}||\yv - \xv||^2 \qquad \forall \xv, \yv
 $$
 \item Geometric reading: $f$ is upper-bounded by a quadratic that touches $f$ at $\xv$
 \item Cornerstone for analyzing \textbf{gradient descent} (later: pick step size $1/L$, guaranteed progress per step)
