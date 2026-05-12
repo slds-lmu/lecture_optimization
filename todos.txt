@@ -43,6 +43,8 @@ BB:
 - make repo names shorter
 - PRIO: have a system so we can discuss math with claude
 - gucken dass wir subgrads usw reinbekommen für nonsmooth
+- review/refine comment macro: https://github.com/slds-lmu/lecture_service/pull/29 and add to wintermute template
+
 
 manuel
 - go thru all chaps, starting from chap3 on.
