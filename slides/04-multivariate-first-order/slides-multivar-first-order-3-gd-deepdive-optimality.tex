@@ -34,7 +34,7 @@ außerdem blöd dass das R und nicht f steht...}
 
 \begin{framei}{Setting}
 \item\textbf{Assumptions:}
-\comment{LS}{check the following https://arxiv.org/abs/1405.4980
+\comment[NOTE]{LS}{check the following https://arxiv.org/abs/1405.4980
 exponential convergence https://www.cs.ubc.ca/~schmidtm/Courses/540-W19/L5.pdf
 exponential rate of convergence zeigen?
 mu-strongly convexity?}
@@ -91,7 +91,7 @@ $$f(\yv) \geq \fx + \nabla \fx^\top (\yv - \xv)$$
 \Leftrightarrow \quad && &\vdotswithin{\geq} \\
 \Leftrightarrow \quad && \fx &\leq f(\xv^{[t]}) + \nabla f(\xv^{[t]})^\top (\xv - \xv^{[t]}) + \frac{L}{2} \|\xv - \xv^{[t]}\|^2
 \end{alignat*}
-\comment{UU}{Vielleicht bietet sich hier ein Bild an, da die Funktion f "gesandwicht" wird von der Taylor-Entwicklung 1. und 2. Ordnung.}
+\comment[NOTE]{UU}{Vielleicht bietet sich hier ein Bild an, da die Funktion f "gesandwicht" wird von der Taylor-Entwicklung 1. und 2. Ordnung.}
 \item\textbf{Now:} One GD step with step size $\alpha \leq 1/L$:
 $$\xv \leftarrow \xv^{[t+1]} = \xv^{[t]} - \alpha \nabla f\left(\xv^{[t]}\right)$$
 \end{framei}

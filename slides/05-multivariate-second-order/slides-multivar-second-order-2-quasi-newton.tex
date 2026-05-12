@@ -8,7 +8,7 @@
 
 \title{Optimization in Machine Learning}
 
-\comment{BB}{/https://www.stat.cmu.edu/~ryantibs/convexopt-F13/lectures/11-QuasiNewton.pdf}
+\comment[NOTE]{BB}{/https://www.stat.cmu.edu/~ryantibs/convexopt-F13/lectures/11-QuasiNewton.pdf}
 
 \begin{document}
 
@@ -45,7 +45,7 @@ $$
 \A^{[t]} \bm{d}^{[t]} = - \nabla f(\xv^{[t]})
 $$
 and set $\xv^{[t+1]} = \xv^{[t]} + \alpha^{[t]} \bm{d}^{[t]}$ (Step size through backtracking)
-\comment{BB}{wie genau? wir brauchen echt mehr zu step size control}
+\comment[NOTE]{BB}{wie genau? wir brauchen echt mehr zu step size control}
 \item Calculate an efficient update $\A^{[t+1]}$, based on $\xv^{[t]}$, $\xv^{[t+1]}$, $\nabla f(\xv^{[t]})$, $\nabla f(\xv^{[t+1]})$ and $\A^{[t]}$
 \end{framei}
 
@@ -83,7 +83,7 @@ with appropriate vector $\bm{u}^{[t]} \in \R^n$, $\beta \in \R$
 
 \begin{framei}[fs=small]{Symmetric rank 1 update (SR1)}
 \item \textbf{Choice of $\bm{u}^{[t]}$:} Vectors should be chosen so that the ``modified'' Taylor series corresponds to the gradient:
-\comment{BB}{müssen wir hier nicht mit den indizes etwas aufpassen? also dass x = x^t ist}
+\comment[NOTE]{BB}{müssen wir hier nicht mit den indizes etwas aufpassen? also dass x = x^t ist}
 $$
 \begin{aligned}
 \nabla f(\xv) &\overset{!}{=} \nabla f(\xv^{[t+1]}) + \A^{[t+1]}(\xv - \xv^{[t+1]}) \\
@@ -104,13 +104,13 @@ $$
 $$
 (\A + \beta \bm{u}\bm{u}^T)^{-1} = \A + \beta \frac{\bm{u}\bm{u}^T}{1 + \beta\bm{u}^T\bm{u}}
 $$
-\comment{BB}{formel siehtr falsch aus? A muss inv werden, rest auch komisch?}
+\comment[NOTE]{BB}{formel siehtr falsch aus? A muss inv werden, rest auch komisch?}
 \end{itemizeS}
 \vfill
 \item[] \textbf{Disadvantage}
 \begin{itemizeS}
 \item The constructed matrices are not necessarily pd, and the update directions $\bm{d}^{[t]}$ are therefore not necessarily descent directions
-\comment{BB}{zu pd: vorsicht behaupten wir das vorher?}
+\comment[NOTE]{BB}{zu pd: vorsicht behaupten wir das vorher?}
 \end{itemizeS}
 \end{framei}
 

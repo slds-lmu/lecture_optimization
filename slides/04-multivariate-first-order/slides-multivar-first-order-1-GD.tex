@@ -8,9 +8,9 @@
 
 \begin{document}
 
-\comment{BB}{wir sollten dringend das hier mal durchsehen und uns daran orientieren https://ruder.io/optimizing-gradient-descent/}
-\comment{BB}{wir sollten generell dieses gesamt subcha machen zu normalied GD --> https://jermwatt.github.io/machine_learning_refined/notes/3_First_order_methods/3_9_Normalized.html}
-\comment{BB}{vielleicht sollten wir mal definieren was first order überhaupt heisst. und welche first order verfahren es gibt -- egal ob wir die behandeln}
+\comment[NOTE]{BB}{wir sollten dringend das hier mal durchsehen und uns daran orientieren https://ruder.io/optimizing-gradient-descent/}
+\comment[NOTE]{BB}{wir sollten generell dieses gesamt subcha machen zu normalied GD --> https://jermwatt.github.io/machine_learning_refined/notes/3_First_order_methods/3_9_Normalized.html}
+\comment[NOTE]{BB}{vielleicht sollten wir mal definieren was first order überhaupt heisst. und welche first order verfahren es gibt -- egal ob wir die behandeln}
 
 \titlemeta{
 First order methods
@@ -33,7 +33,7 @@ $$f: \R^2 \to \R, \quad f(x_1, x_2) = y.$$
 \item \textbf{Goal}: Reach the valley
 $$\argmin_{\xv} f(\xv)$$
 \item \textbf{Central idea}: Repeat
-\comment{BB}{wir können hier vielleicht etwas visueller über den typen im gebirge gehen. es ist neblig, ich kann nur einen metter sehen und will rtunter kommen. also mache ich lokale schritte runter und scanne dann wieder meine 1m umgebung}
+\comment[NOTE]{BB}{wir können hier vielleicht etwas visueller über den typen im gebirge gehen. es ist neblig, ich kann nur einen metter sehen und will rtunter kommen. also mache ich lokale schritte runter und scanne dann wieder meine 1m umgebung}
 \splitVCC[0.6]{
 \begin{enumerate}
 \item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d} \in \R^d$
@@ -122,7 +122,7 @@ $$\risket = \sumin \left(\fxt - \yi\right)^2$$
 where $\fxt$ is a neural network with 2 hidden layers (2 units each).
 \vspace{-0.7cm}
 \imageC[0.6]{figure/gradient_descent_NN_0.pdf}
-\comment{BB}{hier wäre ein bild vom NN schön gewesen;
+\comment[NOTE]{BB}{hier wäre ein bild vom NN schön gewesen;
 kann man doch irgendwie einen 2D schnit der loss ladnscape noch ziegen. und wie GD da durchläuft?}
 \end{framei}
 
@@ -148,8 +148,8 @@ After $300$ iters of GD (note the zig-zag-behavior after iter. 200):
 \splitV{
 \imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_300_surface.pdf}}
 {\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history.pdf}}
-\comment{BB}{sollte man bei dem beispiel nicht besser sehen dass wir die quadrik erfolgreich approxen können? kommt nicht sooo gut hin?}
-\comment{BB}{aich hier sollte eher R_emp auf der achse stehen statt "loss". mehrere bilder mal prüfen}
+\comment[NOTE]{BB}{sollte man bei dem beispiel nicht besser sehen dass wir die quadrik erfolgreich approxen können? kommt nicht sooo gut hin?}
+\comment[NOTE]{BB}{aich hier sollte eher R_emp auf der achse stehen statt "loss". mehrere bilder mal prüfen}
 \end{framev}
 
 

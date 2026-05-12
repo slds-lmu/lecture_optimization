@@ -6,7 +6,7 @@
 
 \title{Optimization in Machine Learning}
 
-\comment{BB}{Beim soft-thresholding op: die connections / Äquivalenz zu Subgradienten hast du auf der Tonspur gesagt oder will man das den Leuten eher nicht zumuten?
+\comment[NOTE]{BB}{Beim soft-thresholding op: die connections / Äquivalenz zu Subgradienten hast du auf der Tonspur gesagt oder will man das den Leuten eher nicht zumuten?
 Motivationsslide am Ende: "Warum verwendet in der Statistik -> weil in der Regel additive Modelle und damit kann man exakte Updates herleiten?"}
 
 \begin{document}
@@ -27,7 +27,7 @@ figure_man/Coordinate_descent.png
 \item First: Select starting point $\bm{x}^{[0]} = (x^{[0]}_1, \ldots, x^{[0]}_d)$
 \item Step $t$: Minimize $f$ along $x_i$ for each dimension $i$ for fixed $x^{[t]}_1, \ldots,x^{[t]}_{i-1}$ and $x^{[t-1]}_{i+1}, \ldots,x^{[t-1]}_d$:
 \imageC[0.42][https://en.wikipedia.org/wiki/Coordinate_descent]{figure_man/Coordinate_descent.png}
-\comment{BB}{austauschen mit eigener grafik}
+\comment[NOTE]{BB}{austauschen mit eigener grafik}
 \end{framei}
 
 
@@ -35,9 +35,9 @@ figure_man/Coordinate_descent.png
 \begin{itemize}
 \item Minimum is determined with (exact/inexact) line search
 \item Order of dimensions can be any permutation of $\left\{1,2,\ldots,d\right\}$
-\comment{CK}{verstehe ich nicht}
+\comment[NOTE]{CK}{verstehe ich nicht}
 \item Convergence:
-\comment{UU}{Diskussion von 3 Fällen nach Ryan Tibshirani.
+\comment[NOTE]{UU}{Diskussion von 3 Fällen nach Ryan Tibshirani.
 1. f konvex + diff'bar
 2. f konvex (Gegenbeispiel)
 3. f Summe aus konvexer + diff'barer Funktion und separabler Funktion mit konvexen Summanden.
@@ -45,7 +45,7 @@ https://www.stat.cmu.edu/~ryantibs/convexopt-S15/lectures/22-coord-desc.pdf, Fol
 Nachtrag: L(x) + ||x||_1 als ML-Beispiel hinzufügen.}
 \begin{itemize}
 \item $f$ convex differentiable
-\comment{CK}{haben oben angenommen dass f non-differentiable}
+\comment[NOTE]{CK}{haben oben angenommen dass f non-differentiable}
 \item $f$ sum of convex differentiable and \textit{convex separable} function:
 \begin{equation*}
 f(\xv) = g(\xv) + \sum_{i=1}^d h_i(x_i),
@@ -100,7 +100,7 @@ Then $|\theta_j| = - \theta_j$ and
 $$0 = \frac{\partial{h}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j - \lambda \qquad \Leftrightarrow \qquad \theta^\ast_{j, \text{Lasso}} = \theta^\ast_j + \lambda$$
 \item \textbf{Case 3:} $\theta_j = 0$
 \end{itemize}}
-\comment{BB}{ist die analyse hier wirklich völlig richtig? theta_j ist doch variabel und wir können nicht einfach...
+\comment[NOTE]{BB}{ist die analyse hier wirklich völlig richtig? theta_j ist doch variabel und wir können nicht einfach...
 naja es stimmt schon, hängt davon ab wo unser optimum liegt. vielleicht sollte man das mal zeichnen
 also die analyse stimmt, zeichnen sollten wir das trotzdem, einmal wo das optimum im diffbaren ast l...
 UU:
@@ -116,7 +116,7 @@ $$\theta^\ast_{j, \text{Lasso}} =
 \theta^\ast_j + \lambda & \text{ if } \theta^\ast_j < - \lambda \\
 0 &  \text{ if }  \theta^\ast_j \in [- \lambda, \lambda],
 \end{cases}$$
-\comment{BB}{
+\comment[NOTE]{BB}{
 man kann das in zusammenhang mit dem subgradienten bringen. der sieht ja genauso aus
 hier ist übrigens eine übung von david dazu, die wie ansehen sollten
 https://github.com/slds-lmu/lecture_cim2/blob/master/2020/Aufgaben/lasso.tex
@@ -135,7 +135,7 @@ Why is it being used?
 \item Easy to implement
 \item Scalable: no storage/operations on large objects,
 just current point \\
-\comment{BB}{es wäre schön die effizienz von CD gegen GD oder anderes zu zeigen. das könnte auch in einem extra chucnk mal vergleichen.
+\comment[NOTE]{BB}{es wäre schön die effizienz von CD gegen GD oder anderes zu zeigen. das könnte auch in einem extra chucnk mal vergleichen.
 so large scale betrachtungen}
 $\Rightarrow$ Good implementation can achieve state-of-the-art performance
 \item Applicable for non-differentiable (but convex separable) objectives
@@ -144,13 +144,13 @@ $\Rightarrow$ Good implementation can achieve state-of-the-art performance
 Examples:
 \begin{itemizeL}
 \item Lasso regression, Lasso GLM, graphical Lasso
-\comment{BB}{könnten hier am ende zb einen slide zu liblinear mal einabeun mit etwas info zu dessen runtiume auf einem grossen porblem}
+\comment[NOTE]{BB}{könnten hier am ende zb einen slide zu liblinear mal einabeun mit etwas info zu dessen runtiume auf einem grossen porblem}
 \item Support Vector Machines
 \item Regression with non-convex penalties
 \end{itemizeL}
 \end{framev}
 \comment[NOTE]{BB}{weitere motivation: coord desc bei additiven modellen besprechen. besonders zusammenhang zu CWB}
-\comment{BB}{wir sollten das hier auch besser visaluwerien für das LM und den lasso.
+\comment[NOTE]{BB}{wir sollten das hier auch besser visaluwerien für das LM und den lasso.
 also den optim trace in 2d mit uniavr funs}
 
 \endlecture

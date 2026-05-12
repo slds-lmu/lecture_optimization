@@ -42,7 +42,7 @@ The problem is called
 \item \textbf{univariate} if $d = 1$, and \textbf{multivariate} if $d > 1$
 \item \textbf{convex} if $f$ convex function (on convex $\R^d$)
 \end{itemize}
-\comment{BB}{komisch dass wir das hier mit S bringen wenn unconstrained?}
+\comment[NOTE]{BB}{komisch dass wir das hier mit S bringen wenn unconstrained?}
 \end{framev}
 
 
@@ -65,7 +65,7 @@ The problem is called
 $$ f(\xv ~|~ \mu, \sigma) = \frac{1}{\sqrt{2 \pi \sigma^{2}}}~\exp\left(\frac{-(\xv-\mu)^{2}}{2\sigma^{2}}\right) $$
 \item \textbf{Goal:} Find $\mu \in \R$ which makes observed data most likely
 \imageC[0.5]{figure/ml_normal_example_dnorm.pdf}
-\comment{BB}{unglücklich in der notatioon hier f für die densitity zu  nehmen.... f war unsere objective....}
+\comment[NOTE]{BB}{unglücklich in der notatioon hier f für die densitity zu  nehmen.... f war unsere objective....}
 \end{framei}
 
 
@@ -127,7 +127,7 @@ $$ \min_{\thetav \in \R^d} \sum_{i = 1}^n \textcolor{violet}{\left(\textcolor{cy
 $$ \risket = \sumin L\left(\yi, \fxit\right) = \textrm{min}! $$
 \item Usually, we add a regularizer to counteract overfitting:
 $$ \riskrt =  \sumin L\left(\yi, \fxit\right) + \lambda J(\thetav) = \textrm{min}! $$
-\comment{BB}{wir sollten den loss plotten, so kann man ihn besser erklären}
+\comment[NOTE]{BB}{wir sollten den loss plotten, so kann man ihn besser erklären}
 \end{framei}
 
 
@@ -152,10 +152,10 @@ $$ \riskrt = \sumin \left(\thetav^\top \xi - \yi\right)^2  + \lambda \cdot \|\th
 \imageC[0.9]{figure/linreg.png}
 \end{framei}
 
-\comment{BB}{wurde das wirklich mit den konstanten so implementiert im r code?}
+\comment[NOTE]{BB}{wurde das wirklich mit den konstanten so implementiert im r code?}
 
 \begin{framei}{Example 4: (Regularized) Log. Regression}
-\comment{BB}{vielleicht logreg auch lieber mit +1-1 definieren? und die ähnlichkeit zwiwschen SVM und LR zeigen?}
+\comment[NOTE]{BB}{vielleicht logreg auch lieber mit +1-1 definieren? und die ähnlichkeit zwiwschen SVM und LR zeigen?}
 \item For $y \in \{0, 1\}$ (classification), logistic regression minimizes log / Bernoulli / cross-entropy loss over data
 $$ \risket = \sumin \left(-\yi \cdot \thetav^\top\xi + \log(1 + \exp\left(\thetav^\top\xi\right)\right) $$
 \item Multivariate, unconstrained, smooth, convex, not analytically solvable.
@@ -250,7 +250,7 @@ with $k(\cdot, \cdot)$ pos. def. kernel function, and $\bm{K}_{ij} := k(\xi, \xi
 \begin{small}
 \item[] $^{(*)}$ There is also a dual formulation to the problem (comes later!)
 \end{small}
-\comment{BB}{nicht ganz klar warum das konvesx bleibt? mit dem K_i}
+\comment[NOTE]{BB}{nicht ganz klar warum das konvesx bleibt? mit dem K_i}
 \end{framei}
 
 
@@ -269,7 +269,7 @@ $$ \text{arg} \min_{\thetav} \riskrt, $$
 \begin{center} \begin{small}
 Loss landscapes of ML problems. Left: Deep learning model ResNet-56, right: Logistic regression with cross-entropy loss
 \end{small} \end{center}
-\comment{BB}{1-2 mehr formeln hin, zb für neuron und activation function, damit man besser die struktur von f / NN versteht. auch bild von sigmoid und RELU activ fun hin}
+\comment[NOTE]{BB}{1-2 mehr formeln hin, zb für neuron und activation function, damit man besser die struktur von f / NN versteht. auch bild von sigmoid und RELU activ fun hin}
 \end{framei}
 
 \endlecture

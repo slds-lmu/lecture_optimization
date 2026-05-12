@@ -42,9 +42,9 @@ Middle: Switch / not switch with $\xbest$. Right: New interval.
 
 
 \begin{framei}[sep=L]{Quadratic interpolation comments}
-\comment{BB}{ist es garantiwert das QI punkt, wenn sie denn valide sind, immer BESSER als x_best sind? weil wir swichtzen immer?}
+\comment[NOTE]{BB}{ist es garantiwert das QI punkt, wenn sie denn valide sind, immer BESSER als x_best sind? weil wir swichtzen immer?}
 \item Quadratic interpolation \textbf{not robust}. The following may happen:
-\comment{BB}{hier wäre es päter mal gut diese fälle einfach mal zu zeigen (interpolation)}
+\comment[NOTE]{BB}{hier wäre es päter mal gut diese fälle einfach mal zu zeigen (interpolation)}
 \begin{itemizeL}
 \item Algorithm suggests same $\xnew$ in each step
 \item $\xnew$ outside of search interval
@@ -56,18 +56,18 @@ Middle: Switch / not switch with $\xbest$. Right: New interval.
 
 \begin{framei}[sep=L]{Brent's method}
 \item Brent's algorithm \furtherreading{BRENT1973} alternates between golden ratio search and quadratic interpolation as follows:
-\comment{BB}{es gab noch andere varianten von brent, nicht unbedingt mit golden section, die könnten wir noch erwähnen}
+\comment[NOTE]{BB}{es gab noch andere varianten von brent, nicht unbedingt mit golden section, die könnten wir noch erwähnen}
 \begin{itemizeM}
 \item Quadratic interpolation step acceptable if:\\
 (i) $\xnew$ falls within $[\xleft, \xright]$\\
 (ii) $\xnew$ sufficiently far away from  $\xbest$ \\
 {\footnotesize (Heuristic: Less than half of the movement of step before last)}
-\comment{JM}{https://mil.ufl.edu/nechyba/www/__eel6825.f2003/course_materials/t11.neural_networks/papers/nric_ch10.1-2.pdf --> Hier könnten noch Details sein}
+\comment[NOTE]{JM}{https://mil.ufl.edu/nechyba/www/__eel6825.f2003/course_materials/t11.neural_networks/papers/nric_ch10.1-2.pdf --> Hier könnten noch Details sein}
 \item Otherwise: proposal via golden ratio
 \end{itemizeM}
 \item Benefit: fast convergence (quadratic interpolation), unstable steps stabilized by golden ratio search
 \item Convergence guaranteed if function $f$ has local min
-\comment{BB}{wie schwer ist der beweis? deep dive?}
+\comment[NOTE]{BB}{wie schwer ist der beweis? deep dive?}
 \item Used in R-function \texttt{optimize()}
 \end{framei}
 

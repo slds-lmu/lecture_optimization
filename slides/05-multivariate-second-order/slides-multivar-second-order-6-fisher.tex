@@ -36,7 +36,7 @@ $$\thetatn=\thetat + [-\nabla^{2}\logl(\thetat)]^{-1}\nabla\logl(\thetat)$$
 
 
 \begin{framei}{Fisher scoring}
-\comment{CK}{
+\comment[NOTE]{CK}{
 expected gradient evaluated at true parameters is zero and hence squared expectation is variance of score
 https://math.stackexchange.com/questions/3585130/why-is-the-fisher-information-matrix-both-an-expected-outer-product-and-a-hessia
 
@@ -48,7 +48,7 @@ and is positive semi-definite under exchangeability of expectation and different
 \vfill
 \item Therefore the Fisher scoring iterates are given by
 $$\thetatn=\thetat+\E[-\nabla^{2}\logl(\thetat)]^{-1}\nabla\logl(\thetat)$$
-\comment{CK}{expectation with respect to which random variable/distribtion?}
+\comment[NOTE]{CK}{expectation with respect to which random variable/distribtion?}
 \end{framei}
 
 
@@ -138,16 +138,16 @@ $$\nabla^2_{\thetav}\riske =  \Xmat^\top \mathbf{D} \Xmat$$
 \vfill
 \item Newton-Raphson: $$\thetatn=\thetat - [\Xmat^\top \mathbf{D} \Xmat]^{-1}\nabla_{\thetat}\riske $$
 \item Fisher scoring: $$\thetatn=\thetat - \E[\Xmat^\top \mathbf{D} \Xmat]^{-1}\nabla_{\thetat}\riske $$
-\comment{CK}{Y does not appear in hessian anymore (randomness of y cond. on x)}
+\comment[NOTE]{CK}{Y does not appear in hessian anymore (randomness of y cond. on x)}
 \vfill
 \item Note that the Hessian does not depend on the $y^{(i)}$ explicitly but only depends on $\E[y^{(i)}]=\pi^{(i)}$. Thus the expectation of the observed Hessian w.r.t. $y^{(i)}\sim P(y^{(i)}|\xv^{(i)},\thetav)$ coincides with $\nabla^2_{\thetav}\riske(\thetav)$ itself
 \end{framei}
 
 
 \begin{framei}[fs=small]{Generalized linear models}
-\comment{TP}{this slide a_i and a used thats confusing}
+\comment[NOTE]{TP}{this slide a_i and a used thats confusing}
 \item $y|\xv$ belongs to an \textbf{exponential family} with density:
-\comment{TP}{actually exponential dispersion family}
+\comment[NOTE]{TP}{actually exponential dispersion family}
 $$ p(y|\delta, \phi) = exp \left\{ \frac{y\delta-b(\delta)}{a(\phi)} + c(y,\phi) \right\}, $$
 where $\delta$ is the natural parameter and $\phi > 0$ is the dispersion parameter
 \item We often take $a_i(\phi) = \frac{\phi}{w_i}$, with $\phi$ a positive constant, and $w_i$ is a weight
@@ -196,7 +196,7 @@ $$\E[-\nabla^2 \logl_{\theta}(\delta, \phi)] = \sumin \frac{w^{(i)}}{b''(\delta)
 \vfill
 \item For canonical link where $\eta = \delta \;(= g(\mu) = \xv^\top\theta$), the second and third term of Hessian cancel each other out and Hessian coincides with Fisher information matrix since
 $$\frac{\partial{\eta}}{\partial{\delta}} = 1 \Rightarrow b''(\delta) = \frac{1}{g'(\mu^{(i)})} \Rightarrow  \frac{b'''(\delta)}{b''(\delta)} = -   \frac{g''(\mu^{(i)})}{[g'(\mu^{(i)})]^2}$$
-\comment{CK}{
+\comment[NOTE]{CK}{
 mention glm and that many practical optimizers use IRLS for first iterations and switches over to newton-raphson
 comment by tom wenseleers: https://stats.stackexchange.com/questions/205/why-do-we-make-a-big-fuss-about-using-fisher-scoring-when-we-fit-a-glm
 }
