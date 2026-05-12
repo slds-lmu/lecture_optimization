@@ -47,7 +47,7 @@ set(grid, j = "y_max", value = prediction$mean + prediction$se)
 
 # x = 0
 pi_normal = data.table(y = seq(-2, 2.2, length.out = 1001L))
-pi_normal[, d := dnorm(y, mean = prediction$mean[1L], sd = prediction$se[1L])]
+pi_normal[, d := dnorm(y, mean = prediction[1L, ]$mean, sd = prediction[1L, ]$se)]
 
 g = ggplot(aes(x = y, y = d), data = pi_normal) +
   geom_area(data = pi_normal[y <= instance$archive$best()$y]) +
@@ -56,7 +56,7 @@ g = ggplot(aes(x = y, y = d), data = pi_normal) +
   labs(x = "Y(x)", y = "Density") +
   theme_minimal()
 
-ggsave("../figure/bayesian_loop_pi_0.png", plot = g, width = 5, height = 4)
+ggsave("../figure_man/bayesian_loop_pi_0.png", plot = g, width = 5, height = 4)
 
 acq_function$update()
 set(grid, j = "pi", value = acq_function$eval_dt(grid[, "x"])$acq_pi)
@@ -82,7 +82,7 @@ pi_argmax = grid[which.max(pi), ]
 g = ggplot(aes(x = x, y = y), data = grid) +
   geom_line() +
   geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
+  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
   geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
   xlim(c(0, 1)) +
   ylim(c(-2, 2.2)) +
@@ -95,7 +95,7 @@ pi = ggplot(aes(x = x, y = pi), data = grid) +
   ylab("PI") +
   theme_minimal()
 
-ggsave("../figure/bayesian_loop_pi_1.png", plot = g / pi, width = 5, height = 4)
+ggsave("../figure_man/bayesian_loop_pi_1.png", plot = g / pi, width = 5, height = 4)
 
 old_pi_argmax = pi_argmax
 
@@ -116,7 +116,7 @@ for (i in 2:9) {
   g = ggplot(aes(x = x, y = y), data = grid) +
     geom_line() +
     geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-    geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
+    geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
     geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
     geom_point(aes(x = x, y = y), size = 3L, colour = "grey", data = old_pi_argmax) +
     xlim(c(0, 1)) +
@@ -130,9 +130,10 @@ for (i in 2:9) {
     ylab("PI") +
     theme_minimal()
  
-  ggsave(sprintf("../figure/bayesian_loop_pi_%i.png", i), plot = g / pi, width = 5, height = 4)
+  ggsave(sprintf("../figure_man/bayesian_loop_pi_%i.png", i), plot = g / pi, width = 5, height = 4)
 
   old_pi_argmax = pi_argmax
   
   instance$eval_batch(pi_argmax[, "x", with = FALSE])
 }
+

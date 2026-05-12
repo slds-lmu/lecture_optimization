@@ -34,27 +34,22 @@ visualizer = as_visualizer(
   type = "surface"
 )
 
-if (interactive()) {
-  visualizer$add_optimization_trace(
-    optimizer,
-    add_marker_at = seq_len(nrow(optimizer$archive))
-  )$set_scene(x = 1, y = 1, z = 1.5)$plot(
-    show_title = FALSE,
-    show_legend = FALSE
-  )
-  visualizer$plot(
-    show_title = FALSE,
-    show_legend = FALSE
-  )
-}
-# "../figure-man/gradient-descent-example_1.png" is a manually created screenshot
+visualizer$add_optimization_trace(
+  optimizer,
+  add_marker_at = seq_len(nrow(optimizer$archive))
+)$set_scene(x = 1, y = 1, z = 1.5)$plot(
+  show_title = FALSE,
+  show_legend = FALSE
+)
 
+visualizer$save(
+  filename = "../figure/gradient-descent-example_1.png"
+)
 
-if (interactive()) {
-  visualizer$plot(
-    flatten = TRUE,
-    show_title = FALSE,
-    show_legend = FALSE
-  )
-}
-# "../figure-man/gradient-descent-example_2.png" is a manually created screenshot
+visualizer$plot(flatten = TRUE,
+  show_title = FALSE,
+  show_legend = FALSE
+)
+visualizer$save(
+  filename = "../figure/gradient-descent-example_2.png"
+)

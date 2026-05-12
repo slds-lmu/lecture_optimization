@@ -18,12 +18,6 @@
 #' @export
 #' @template seealso_learner
 #' @template example
-library(R6)
-library(mlr3)
-library(mlr3learners)
-library(mlr3misc)
-library(paradox)
-
 LearnerRegrRangerCustom = R6Class("LearnerRegrRangerCustom",
   inherit = LearnerRegr,
 

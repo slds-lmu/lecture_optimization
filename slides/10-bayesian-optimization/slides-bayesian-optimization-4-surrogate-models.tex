@@ -14,7 +14,7 @@ Bayesian Optimization
 }{
 Important Surrogate Models
 }{
-figure/surrogate_1.png
+figure_man/surrogate_1.png
 }{
 \item Search space / input data peculiarities in black box problems
 \item Gaussian process 
@@ -52,7 +52,7 @@ $$
 \sh^2(\xv) &= k(\xv, \xv) - k(\xv)^\top \bm{K}^{-1} k(\xv)
 \end{aligned}
 $$
-\imageC[0.4]{figure/bayesian_loop_sm_normal.png}
+\imageC[0.4]{figure_man/bayesian_loop_sm_normal.png}
 \begin{footnotesize}
 Note: $\xv$ here denotes the test input.
 $k(\xv) \coloneqq (k(\xv, \xvsi[1]), \ldots, k(\xv, \xvsi[t]))^\top$.
@@ -141,7 +141,7 @@ $$
 % no bootstrap means we do subsampling (i.e., simply use all data once)
 % no random split means we split by variance criterion
 % random split means we choose the split point in a feature uniformly at random between feature bounds
-\imageC[0.95]{figure/surrogate_1.png}
+\imageC[0.95]{figure_man/surrogate_1.png}
 \end{framev}
 
 
@@ -164,7 +164,7 @@ $$
 % BO_RF is the RF top right on slide 9
 % BO_RF_ET is the RF top bottom on slide 9
 Minimize the 2D Ackley Function using BO\_GP (GP with Matérn 3/2, EI), BO\_RF (standard Random Forest, EI), BO\_RF\_ET (Random Forest with extratrees, EI) or a random search:
-\imageC[0.6]{figure/surrogate_2.png}
+\imageC[0.6]{figure_man/surrogate_2.png}
 \begin{footnotesize}
 Strong BO\_GP performance. BO\_RF and BO\_RF\_ET not too bad either. BO\_RF\_ET maybe slightly better final performance than BO\_RF.
 \end{footnotesize}

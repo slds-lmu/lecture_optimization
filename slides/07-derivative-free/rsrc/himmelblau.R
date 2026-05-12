@@ -5,6 +5,7 @@
 # ------------------------------------------------------------------------------
 
 library(msm)
+library(plotly)
 library(ggplot2)
 library(gridExtra)
 
@@ -17,10 +18,15 @@ set.seed(1111)
 f = function(x){
   (x[2]^2 + x[1] - 11)^2 + (x[2] + x[1]^2 - 7)^2
 }
+fvec = function(x1, x2){
+  (x2^2 + x1 - 11)^2 + (x2 + x1^2 - 7)^2
+
+}
 
 #1.2 generate domain and respective values of function f.
 x1 = seq(-5, 5, length.out = 400)
 x2 = x1
+z = outer(x1, x2, fvec) # needed for plotly
 grid <- expand.grid(x1 = x1, x2 = x2) # needed for ggplot
 grid$y = apply(grid, 1, f)
 
@@ -35,12 +41,31 @@ calcAcceptanceProbs = function(f, xcurr, grid, tempcurr){
     return(grid)
 }
 
-#2 Visualize function with contour lines.
+#2 Visualize function in 3d space and with contour lines.
+#2.1 3d plot
+plot3d = plot_ly() %>% 
+        add_surface(x = x1, y = x2, z = z) %>%
+          layout(
+            title = "Himmelblau's function",
+            scene = list(
+            xaxis = list(title = "x1"),
+            yaxis = list(title = "x2"),
+            zaxis = list(title = "z"),
+            color = c("green")
+            )
+          ) %>% 
+        add_annotations(text = "z", xref="paper", yref="paper", x=1.05, xanchor="left",
+            y=1, yanchor="bottom", legendtitle=TRUE, showarrow=FALSE)
+
+htmlwidgets::saveWidget(plot3d, "../figure_man/himmelblau-Fun3D.html", selfcontained = TRUE)
+
+#2.1 2d contour plot
 
 p = ggplot() + stat_contour_filled(data = grid, aes(x = x1, y = x2, z = y)) + xlab(expression(x[1])) + ylab(expression(x[2]))    
 # p = p + geom_point(data = data.frame(x = 0, y = 1), aes(x = x, y = y), colour = "orange")
 p = p + guides(fill = "none") + theme_bw()
-if (interactive()) print(p)
+p
+ggsave("../figure_man/himmelblau-Fun2D.pdf", p, height = 3, width=3)
 
 #3 Simulated Annealing algorithm
 #3.1 set start value x; set current best point 'xbest'; generate sequence of temperatures;
@@ -106,7 +131,7 @@ for (k in 1:length(PAacceptiter)) {
 
   # For title page of slides 
   if (k == 3) {
-    ggsave(paste0("../figure/himmelblau-iter", k, "_probabilities.pdf"), p1, height = 4, width = 5)
+    ggsave(paste0("../figure_man/himmelblau-iter", k, "_probabilities.pdf"), p1, height = 4, width = 5)
   }
 
   df = PAacceptiter[[k]]
@@ -131,13 +156,11 @@ for (k in 1:length(PAacceptiter)) {
 
   # For title page of slides 
   if (k == 3) {
-    ggsave(paste0("../figure/himmelblau-iter", k, "_probabilities.pdf"), p2, height = 4, width = 5)
+    ggsave(paste0("../figure_man/himmelblau-iter", k, "_probabilities.pdf"), p2, height = 4, width = 5)
   }
 
-  if (k != 3) {
-    next
-  }
+  g = grid.arrange(p1, p2, nrow = 1)
 
-  combined_plot = arrangeGrob(p1, p2, nrow = 1)
-  if (interactive()) grid::grid.draw(combined_plot)
+  ggsave(paste0("../figure_man/himmelblau-iter", k, ".pdf"), g, height = 4, width = 10)
 }
+

@@ -5,8 +5,6 @@
 # ------------------------------------------------------------------------------
 
 # Lagrange contour lines
-set.seed(1L)
-
 lagrangeContour = function(col = terrain_hcl, theta = 40, phi = 40, xlab = "x1", ylab = "x2", constraint = F, add.path = F) {
   if ( is.function(col)) col = col(nrow(z) * ncol(z))
     require("colorspace")

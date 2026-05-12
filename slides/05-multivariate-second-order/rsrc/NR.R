@@ -1,7 +1,5 @@
 # comparison of NR and GD, show that NR converges much faster (good starting point)
 
-set.seed(1L)
-
 library(ggplot2)
 library(vistool)
 library(rlang)
@@ -144,7 +142,7 @@ optim_gd = comparators$gd
 trace_data = merge_optim_archives(optim_nr, optim_gd)
 trace_data = prepend_initial_iterations(trace_data)
 trace_plot = plot_value_trace(trace_data)
-if (interactive()) print(trace_plot)
+trace_plot
 
 ggplot2::ggsave(
   "../figure/NR_1.png",
@@ -155,18 +153,15 @@ ggplot2::ggsave(
 )
 
 contour_vis = build_contour_visualizer(optim_nr, optim_gd)
-if (interactive()) {
-  contour_vis$plot(
-    show_title = FALSE,
-    theme = list(alpha = 1)
-  )
-}
+contour_vis$plot(
+  show_title = FALSE,
+  theme = list(alpha = 1)
+)
 contour_vis$save("../figure/NR_2.png")
 
 surface_vis = build_surface_visualizer(optim_nr, optim_gd)
-if (interactive()) {
-  surface_vis$plot(
-    show_title = FALSE,
-    legend_title = "Method"
-  )
-}
+surface_vis$plot(
+  show_title = FALSE,
+  legend_title = "Method"
+)
+

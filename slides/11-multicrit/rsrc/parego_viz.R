@@ -4,10 +4,8 @@
 # FIG: generate a plot of the Pareto fronts
 # ------------------------------------------------------------------------------
 
-set.seed(1L)
-
 library(ggplot2)
-library(patchwork)
+library(ggpubr)
 theme_set(theme_bw())
 
 # ------------------------------------------------------------------------------
@@ -56,8 +54,6 @@ plotSpace = function(w1, w2) {
   g
 }
 
-p = plotSpace(0.9, 0.1) + plotSpace(0.49, 0.51) + plotSpace(0.1, 0.9) +
-  plot_layout(nrow = 1, guides = "collect") &
-  theme(legend.position = "bottom")
+p = ggarrange(plotSpace(0.9,0.1), plotSpace(0.49,0.51), plotSpace(0.1,0.9), common.legend = TRUE, legend = "bottom", nrow = 1)
 if (interactive()) print(p)
-# ../figure_man/parego_viz is a cropped version
+ggsave("../figure_man/parego_viz.png", p, height = 3, width = 8)

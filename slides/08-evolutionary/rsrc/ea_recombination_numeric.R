@@ -4,8 +4,6 @@
 # FIG: plot ea and recombination methods for numerical optimization
 # ------------------------------------------------------------------------------
 
-set.seed(1L)
-
 library(ggplot2)
 
 # ------------------------------------------------------------------------------
@@ -39,5 +37,5 @@ p = p + geom_segment(aes(x=df[2, 1], xend=df[3, 1], y=df[2, 2], yend=df[3, 2]), 
 p = p + geom_label(aes(fill = label), colour = "white", fontface = "bold")
 p = p + theme_bw() + theme(legend.position = "none")
 p = p + xlim(c(0.5, 3.5)) + ylim(c(0.5, 5.5))
-if (interactive()) print(p)
-ggsave("../figure/ea_recombination_numeric.pdf", p, width = 3, height = 3)
+p
+ggsave("../figure_man/ea_recombination_numeric.pdf", p, width = 3, height = 3)

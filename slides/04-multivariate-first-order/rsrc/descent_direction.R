@@ -4,8 +4,6 @@
 # FIG: plot descent direction
 # ------------------------------------------------------------------------------
 
-set.seed(1L)
-
 library(ggplot2)
 library(gridExtra)
 library(BBmisc)
@@ -66,5 +64,6 @@ p = p + annotate("text", x = x[1] + 0.6, y = x[2] - 0.8, colour = "red", label =
 temp <- paste("270")
 p = p + annotate("text", x = x[1] - 0.2, y = x[2] + 0.8, colour = "red", label = temp, parse = TRUE, size = 2)
 
-if (interactive()) print(p)
-ggsave(filename = "../figure/descent_direction.pdf", p, width = 3, height = 3)
+p
+ggsave(filename = "../figure_man/descent_direction.pdf", p, width = 3, height = 3)
+

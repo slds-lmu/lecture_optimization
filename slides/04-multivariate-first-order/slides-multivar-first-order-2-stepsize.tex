@@ -38,7 +38,6 @@ Steps of line searches for $f(\xv) = 10 x_1^2 + x_2^2/2$
 \end{footnotesize}\end{center} 		
 \end{framei}
 	
-
 \begin{framei}{Step size control: Diminishing step size}
 \item How can we adaptively control step size?
 \item A natural way of selecting $\alpha^{[t]}$ is to decrease its value over time
@@ -46,13 +45,12 @@ Steps of line searches for $f(\xv) = 10 x_1^2 + x_2^2/2$
 $$f(x) = \begin{cases}
 \frac{1}{2} x^2 & \text{if $|x| \le \delta$}, \\
 \delta \cdot (|x|- 1 / 2 \cdot \delta) & \text{otherwise}.\end{cases}$$
-\imageC{figure/fixed_vs_adaptive.pdf}
+\imageC{figure_man/fixed_vs_adaptive.pdf}
 \begin{center}\begin{footnotesize}
 GD with small constant (\textbf{red}), large constant (\textbf{green}), and diminishing (\textbf{blue}) step size
 \end{footnotesize}\end{center}
 \end{framei}	
 	
-
 \begin{framei}{Step size control: Exact Line Search}
 \item Use \textbf{optimal} step size in each iteration:
 $$ \alpha^{[t]} = \argmin_{\alpha \in \R_{\ge 0}} g(\alpha) = \argmin_{\alpha \in \R_{\ge 0}} f(\xv^{[t]} + \alpha \mathbf{d}^{[t]})$$
@@ -66,10 +64,9 @@ $\Rightarrow$ univariate optimization methods
 \imageC{figure_man/line_search_rosenbrock_alpha.png}}
 \end{framei}
 	
-
 \begin{framei}{Armijo rule}
 \item[] 
-\imageC[0.5]{figure/armijo.pdf}
+\imageC[0.5]{figure_man/armijo.pdf}
 \onslide<1>{
 \item\textbf{Inexact line search:} Minimize objective ``sufficiently'' without computing optimal step size exactly
 \item Common condition to guarantee ``sufficient'' decrease: \textbf{Armijo rule}}
@@ -83,7 +80,6 @@ $$f(\xv + \alpha \mathbf{d}) \le \fx + \gamma_1 \alpha \nabla \fx^\top \mathbf{d
 \item\textbf{Feasibility:} For descent direction $\mathbf{d}$ and $\gamma_1 \in (0, 1)$, there exists $\alpha>0$ fulfilling Armijo rule.In many cases, Armijo rule guarantees local convergence of GD and is therefore frequently used.}
 \end{framei}
 	
-
 \begin{framei}[fs=small]{Backtracking line search}
 \item Procedure to meet the Armijo rule: \textbf{Backtracking} line search
 \item \textbf{Idea:} Decrease $\alpha$ until Armijo rule is met
@@ -98,7 +94,6 @@ $$f(\xv + \alpha \mathbf{d}) \le \fx + \gamma_1 \alpha \nabla \fx^\top \mathbf{d
 \end{algorithm}
 \imageC[0.7][https://mdobook.github.io]{figure_man/backtracking-example.png}
 \end{framei}
-
 	
 \begin{framei}{Wolfe conditions}
 \item Backtracking is simple and shows good performance in practice

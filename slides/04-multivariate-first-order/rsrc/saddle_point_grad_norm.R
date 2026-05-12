@@ -4,8 +4,6 @@
 # FIG: plot the gradient norm over iterations using gradient descent
 # ------------------------------------------------------------------------------
 
-set.seed(1L)
-
 library(ggplot2)
 source("functions.R")
 
@@ -27,6 +25,7 @@ gnorm = data.frame(grad_norm = unlist(lapply(p, function(pp) {
 gnorm$iter = 1:nrow(gnorm)
 
 p = ggplot(data = gnorm, aes(x = iter, y = grad_norm)) + geom_line() + theme_bw()
-if (interactive()) print(p)
+p
 
-ggsave(filename = "../figure/saddle_point_grad_norm.pdf", p, width = 9, height = 2.5)
+ggsave(filename = "../figure_man/saddle_point_grad_norm.pdf", p, width = 9, height = 2.5)
+

@@ -75,12 +75,13 @@ ackley_vis = as_visualizer(
 	x1_limits = c(-1.5, 1.5),
 	x2_limits = c(-2.0, 1.7)
 )
-if (interactive()) ackley_vis$plot(show_title = FALSE)
-# ../figure-man/ackley_0a.png is a manual screenshot
-if (interactive()) ackley_vis$plot(show_title = FALSE, flatten = TRUE)
-# ../figure-man/ackley_0b.png is a manual screenshot
+ackley_vis$plot(show_title = FALSE)
+ackley_vis$save("../figure/ackley_0a.png")
+ackley_vis$plot(show_title = FALSE, flatten = TRUE)
+ackley_vis$save("../figure/ackley_0b.png")
 
 ackley_vis$add_contours(levels = 40L)
+
 for (i in seq_along(optimizers)) {
 	ackley_vis$add_optimization_trace(
 		optimizers[[i]],
@@ -97,8 +98,8 @@ ackley_contour = ackley_vis$plot(
 	show_title = FALSE,
 	show_legend = TRUE
 )
-if (interactive()) print(ackley_contour)
-ackley_widget = plotly::layout(
+ackley_contour
+ackley = plotly::layout(
   ackley_contour,
   scene = list(
     aspectratio = list(x = 1, y = 1, z = 1.2),
@@ -106,7 +107,7 @@ ackley_widget = plotly::layout(
   ),
   height = 500
 )
-# ../figure-man/ackley_1.png is a manual screenshot
+plotly::save_image(p, "../figure/ackley_1.png", width = 700, height = 500)
 
 optimizer_archives = do.call(merge_optim_archives, optimizers)
 optimizer_archives = as.data.frame(optimizer_archives)

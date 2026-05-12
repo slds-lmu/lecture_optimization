@@ -4,8 +4,6 @@
 # FIG: plot metropolis-algorithm porcess and a Nelder-Mead example.
 # ------------------------------------------------------------------------------
 
-set.seed(1L)
-
 library(RColorBrewer)
 library(ggplot2)
 library(mlr)
@@ -14,7 +12,7 @@ library(mlr)
 
 int = seq(0,4, length.out = 500)
 f = function(x) x^1.1 * sin(x-2) + 1 - 2.5*sin(3*x-1.5)
-png('../figure/metropolis-local-search.png', width = 520, height = 300)
+png('../figure_man/metropolis-local-search.png', width = 520, height = 300)
 plot(int, f(int), type="l", xlab = "", ylab = "f(x)", xaxt="n")
 x = 2.5
 rad = 0.5
@@ -44,7 +42,7 @@ PDelta = function(Delta_f, Temp) {
   ret
 }
 
-png('../figure/metropolis-algorithm.png', width = 520, height = 300)
+png('../figure_man/metropolis-algorithm.png', width = 520, height = 300)
 layout(matrix(1:2, nrow = 1), width = c(5,1.5), height = rep(1,2))
 
 int = seq(0,4, length.out = 500)
@@ -107,7 +105,7 @@ dev.off()
 Delta = seq(-5, 50, length.out= 500)
 
 colvec = brewer.pal(5, "Accent")
-png('../figure/metropolis-algorithm2.png', width = 480, height = 300)
+png('../figure_man/metropolis-algorithm2.png', width = 480, height = 300)
 plot(Delta, PDelta(Delta, 250), type = "l", ylim = c(-0.1,1.3), xlab = expression(Delta[f]), ylab = "P(Acceptance)", col = colvec[1], lwd = 2, yaxt="n")
 axis(2, seq(0,1, by=.2))
 abline(h=c(0,1), lty = 2)
@@ -153,5 +151,11 @@ p <- ggplot(multimod.dat,aes(x = x, y = y, color = col)) + geom_line() +
                      labels = c(expression(x[1]), expression(x[2]))) +
   guides(size = guide_legend(override.aes = list(size = 3))) + theme_bw()
 
-if (interactive()) print(p)
-ggsave("../figure/metropolis-example-nelder.png", p)
+p
+ggsave("../figure_man/metropolis-example-nelder.png", p)
+#################
+
+
+
+
+
