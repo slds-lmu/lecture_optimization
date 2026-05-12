@@ -53,6 +53,8 @@ halbwegs standard prompts machen
 -# gucken dass ich nichht die exc jetzt auch anfasse, müssen wir später iterieren
 dir "all" abschaffen, blödsinn
 musste eben die rebase strategy setzten das soll auch global passieren
+gitignore klären, durchsuchen wo welche liegen, nur global haben
+
 
 manuel
 - go thru all chaps, starting from chap3 on.
