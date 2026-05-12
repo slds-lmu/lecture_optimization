@@ -10,7 +10,7 @@
 \begin{document}
 
 \titlemeta{
-Mathematical Concepts 
+Foundations
 }{
 Taylor Approximation
 }{
@@ -117,6 +117,24 @@ f(\xv) =T_k(\xv, \bm{a})+ R_k(\xv, \bm{a})
 $$\,\\
 \item $R_k(\xv, \bm{a})$ is called \textbf{remainder term} and different specific forms have been established
 \item However, we will usually focus on the property $R_k(\xv, \bm{a}) = \littleo(\|\xv-\bm{a}\|^k) \text{ as } \xv \to \bm{a}$ or upper bounds derived for specific function classes when analyzing optimization algorithms
+\end{framei}
+
+
+\begin{framei}[fs=footnotesize]{Specific remainder forms}
+\item Beyond the $\littleo$ bound, two exact forms are workhorses in convergence proofs:
+\item[] \textbf{Integral form ($f \in \CC{1}$):}
+$$
+f(\xv+\bm{h}) = f(\xv) + \int_0^1 \nabla f(\xv + \gamma \bm{h})\, \bm{h}\; d\gamma
+$$
+\item[] \textbf{Mean-value form ($f \in \CC{1}$):}
+$$
+f(\xv+\bm{h}) = f(\xv) + \nabla f(\xv + \gamma \bm{h})\, \bm{h} \qquad \text{for some } \gamma \in (0,1)
+$$
+\item[] \textbf{Second-order mean-value form ($f \in \CC{2}$):}
+$$
+f(\xv+\bm{h}) = f(\xv) + \nabla f(\xv)\bm{h} + \tfrac{1}{2}\bm{h}^T \nabla^2 f(\xv + \gamma \bm{h}) \bm{h} \qquad \text{for some } \gamma \in (0,1)
+$$
+\item Used later, e.g., to prove the 2nd-order sufficient condition and the descent lemma
 \end{framei}
 
 

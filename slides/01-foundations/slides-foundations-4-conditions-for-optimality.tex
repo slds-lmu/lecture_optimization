@@ -9,13 +9,14 @@
 \begin{document}
 
 \titlemeta{
-Mathematical Concepts
+Foundations
 }{
 Conditions for optimality
 }{
 figure_man/local_global_min_2D.png
 }{
 \item Local and global optima
+\item Strict, isolated, and unique minimizers
 \item First \& second order conditions
 }
 
@@ -34,6 +35,18 @@ $\S \cap B_\eps(\xvs)$, is at least a strictly better and a strictly worse point
 }
 \comment[NOTE]{BB}{sagen dass lokal nur bei innerem punkt definiert ist, sagen dass max analog ist; wir schneiden hier mit dem eps ball}
 \end{framei}
+
+\begin{framei}{Variants of minimizers}
+\item Several refined notions for $\xvs \in \S$:
+\item[\textbf{Strict local min:}] $\fxvs < \fx$ for all $\xv \in \S \cap B_\eps(\xvs)$ with $\xv \neq \xvs$
+\item[\textbf{Isolated local min:}] $\xvs$ is a local min and $B_\eps(\xvs)$ contains no other local min
+\item[\textbf{Unique global min:}] $\xvs$ is the only global minimizer on $\S$
+\spacer
+\item Hierarchy: unique global $\Rightarrow$ isolated local $\Rightarrow$ strict local $\Rightarrow$ local
+\item Reverse implications generally fail
+\item \textbf{Caveat:} strict local does NOT imply isolated -- example $f(x) = x^4 (2 + \sin(1/x))$ at $x=0$
+\end{framei}
+
 
 \begin{framei}{Existence of optima}
 \item $f: \S \to \R$
@@ -98,10 +111,26 @@ Right   & 11.33       & 1.69        \\
 \item $f: \S \to \R$ convex on convex set $\S$
 \item Any local minimum is global
 \item The set of minima is convex
-%FIXME: add  proofs here
 \item If $f$ strictly convex: at most one local minimum\\
 (unique global on $\S$, if it exists)
 \item Analogously for concave functions
+\end{framei}
+
+
+\begin{framei}[fs=footnotesize]{Convexity and optima: proofs}
+\item[\textbf{Local = global.}] Assume $\xvs$ local min but not global, so $\exists \bar{\xv} \in \S$ with $f(\bar{\xv}) < f(\xvs)$. By convexity, $\forall t \in [0,1]$:
+$$
+f(\xvs + t(\bar{\xv} - \xvs)) \leq (1-t) f(\xvs) + t f(\bar{\xv}) < f(\xvs)
+$$
+For $t$ small enough, the point $\xvs + t(\bar{\xv} - \xvs) \in B_\eps(\xvs) \cap \S$ -- contradiction.
+\spacer
+\item[\textbf{Set of minima convex.}] Let $\xvs, \bar{\xv}$ both be global mins, so $f(\xvs) = f(\bar{\xv}) = f^\ast$. By convexity, $\forall t \in [0,1]$:
+$$
+f(\xvs + t(\bar{\xv} - \xvs)) \leq (1-t) f^\ast + t f^\ast = f^\ast
+$$
+Since $f^\ast$ is the global min, equality must hold, so $\xvs + t(\bar{\xv} - \xvs)$ is also a global minimizer.
+\spacer
+\item[\textbf{Strict convex $\Rightarrow$ at most one min.}] Same setup with $\xvs \neq \bar{\xv}$, both global mins. Strict convexity gives \textbf{strict} inequality $f(\xvs + t(\bar{\xv} - \xvs)) < f^\ast$ for $t \in (0,1)$ -- contradiction.
 \end{framei}
 
 

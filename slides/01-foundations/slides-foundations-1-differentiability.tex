@@ -10,7 +10,7 @@
 \begin{document}
 
 \titlemeta{
-Mathematical Concepts
+Foundations
 }{
 Differentiation and Derivatives
 }{
@@ -266,18 +266,30 @@ $$
 \end{framev}
 
 
-\begin{framei}{Lipschitz gradients}
-\item Let $f\in\CC{2}$.
-Since $\nabla^2 f$ is Jacobian of $h = \nabla f$ $(m=d)$:
+\begin{framei}{Lipschitz gradients / $L$-smoothness}
+\item $f$ is called \textbf{$L$-smooth} (or has \textbf{$L$-Lipschitz gradients}) if
 $$
-\text{$\nabla f$ Lipschitz continuous with constant $L$} \Longleftrightarrow \nabla^2 f \preccurlyeq L \cdot \mathbf{I}_d
+\|\nabla f(\xv) - \nabla f(\yv)\| \leq L \|\xv - \yv\| \qquad \forall \xv, \yv \in \S
 $$
-\item Equivalently, eigenvalues of $\nabla^2 f$ are bounded by~$L$
+\item For $f\in\CC{2}$, since $\nabla^2 f$ is the Jacobian of $\nabla f$ and symmetric:
+$$
+\text{$f$ is $L$-smooth} \Longleftrightarrow -L\, \mathbf{I}_d \preccurlyeq \nabla^2 f(\xv) \preccurlyeq L \cdot \mathbf{I}_d \quad \forall \xv
+$$
+\item Equivalently, all eigenvalues of $\nabla^2 f$ have magnitude bounded by~$L$
 \item \textbf{Interpretation:} Curvature in any direction is bounded by $L$
 \item Lipschitz gradients occur frequently in machine learning
 $\implies$ Fairly \textbf{weak assumption}
-\item Important for analysis of \textbf{gradient descent} optimization
-$\implies$ Descent lemma (later)
+\end{framei}
+
+
+\begin{framei}{Descent lemma}
+\item For $L$-smooth $f$: integrating the Lipschitz bound on $\nabla f$ yields a \textbf{quadratic upper bound}:
+$$
+f(\yv) \leq f(\xv) + \nabla f(\xv)(\yv - \xv) + \tfrac{L}{2}\|\yv - \xv\|^2 \qquad \forall \xv, \yv
+$$
+\item Geometric reading: $f$ is upper-bounded by a quadratic that touches $f$ at $\xv$
+\item Cornerstone for analyzing \textbf{gradient descent} (later: pick step size $1/L$, guaranteed progress per step)
+\item Counterpart of the lower bound for strongly convex $f$ (see slide-set ``Convexity'')
 \end{framei}
 
 \comment[NOTE]{BB}{vermutlich brauchen wir auch sektionen zu big-Oh und NP hard, wenigstens ganz kurz. bzw numerical kongernce speed}

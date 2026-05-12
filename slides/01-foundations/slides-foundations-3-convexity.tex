@@ -17,7 +17,7 @@
 % macro for C1, C2
 
 \titlemeta{
-Mathematical Concepts 
+Foundations
 }{
 Convexity
 }{
@@ -25,6 +25,7 @@ figure_man/convex.png
 }{
 \item Convex sets
 \item Convex functions
+\item Strongly convex functions
 }
 
 \begin{framei}{Convex sets}
@@ -121,8 +122,52 @@ H(\xv) = \begin{pmatrix} 2 & -2 \\ -2 & 2 \end{pmatrix}$$
 \end{framei}
 
 
+\begin{framei}{First-order optimality (convex case)}
+\item For convex differentiable $f$: vanishing gradient is sufficient for a global min
+\item \textbf{Theorem.} Let $f$ be continuously differentiable and convex.\\
+If $\nabla f(\xvs) = 0$, then $\xvs$ is a global minimizer.
+\item \textbf{Proof.} Set $\xv = \xvs$ in the first-order characterization:
+$$
+f(\yv) \geq f(\xvs) + \nabla f(\xvs)(\yv - \xvs) = f(\xvs) \qquad \forall \yv \in \S
+$$
+\item Hence for convex $f$: first-order necessary $\Leftrightarrow$ first-order sufficient
+\end{framei}
+
+
+\begin{framei}{Strong convexity}
+\item $f$ is \textbf{strongly convex} with modulus $m > 0$ if $\forall \xv, \yv \in \S$, $t \in [0,1]$:
+$$
+f(\xv + t(\yv-\xv)) \leq f(\xv) + t(f(\yv) - f(\xv)) - \tfrac12 m\, t(1-t)\|\xv-\yv\|^2
+$$
+\item Stronger than convex: extra negative term $-\tfrac12 m\, t(1-t)\|\xv-\yv\|^2$ on the right
+\item For differentiable $f$, equivalently:
+$$
+f(\yv) \geq f(\xv) + \nabla f(\xv)(\yv-\xv) + \tfrac{m}{2}\|\yv-\xv\|^2
+$$
+\item \textbf{Interpretation:} $f$ is lower-bounded by a quadratic touching $f$ at $\xv$\\
+(complements the upper bound from $L$-smoothness; cf. descent lemma)
+\end{framei}
+
+
+\begin{framei}{Strong convexity: Hessian and uniqueness}
+\item For $f \in \CC{2}$: $f$ is $m$-strongly convex $\Longleftrightarrow$ $H(\xv) \succeq m \mathbf{I}_d$ $\forall \xv \in \S$
+\item Equivalently, all eigenvalues of $H(\xv)$ are bounded below by $m > 0$
+\item Combined with $L$-smooth $\Leftrightarrow$ $H(\xv) \preceq L \mathbf{I}_d$:
+$$
+m \mathbf{I}_d \preceq H(\xv) \preceq L \mathbf{I}_d
+$$
+\item Ratio $\kappa = L/m$ is the \textbf{condition number} of $f$ (later: governs convergence rate)
+\spacer
+\item \textbf{Theorem.} For strongly convex $f$, if $\nabla f(\xvs) = 0$, then $\xvs$ is the \textbf{unique} global minimizer.
+\item \textbf{Proof.} From the gradient form with $\xv = \xvs$ and $\nabla f(\xvs) = 0$:
+$$
+f(\yv) \geq f(\xvs) + \tfrac{m}{2}\|\yv - \xvs\|^2 > f(\xvs) \qquad \forall \yv \neq \xvs
+$$
+\end{framei}
+
+
 \begin{framei}{Convex functions in optimization}
-\item Will see later:  
+\item Will see later:
 \item For a convex function, every local optimum is also a global one \\
 $\Rightarrow$ No need for involved global optimizers, local ones are enough
 \item A strictly convex function has at most one optimal point
