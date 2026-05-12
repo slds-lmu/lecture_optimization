@@ -10,7 +10,11 @@
 
 \begin{document}
 
-\titlemeta{}{ 
+\comment[FIX]{TH}{Slide set does not compile!!!}
+\comment[NOTE]{BB}{schlechtes start bild}
+\comment[NOTE]{BB}{alles bisserl kurz hier. mehr in 2d zeigen. man kann am ende wenisgtesn mehr zu der minimums-statistik sagen, die man von der verteilung der Y zieht}
+
+\titlemeta{}{
 Multi-Start Optimization
 }{
 figure_man/levy.png
@@ -35,6 +39,7 @@ is called \textit{attraction area}/\textit{basin of attraction} of $f_i^*$ for a
 
 \begin{framev}{Attraction Areas}
 \imageC[1]{figure/metropolis-example-nelder.png}
+\comment[NOTE]{BB}{hier haben wir 1d plots dazu, die sind hässlich. 2d wäre schöner}
 \end{framev}
 
 
@@ -50,9 +55,10 @@ $$f(\xv) = \sin^2(3\pi x_1) + (x_1 - 1)^2 [1 + \sin^2(3\pi x_2)] + (x_2 -1)^2[1 
 }{\imageC[0.9]{figure_man/levy.png}}
 Distribution of results ($y$ values):
 \begin{verbatim}
-## Min.    1st Qu.    Median    Mean    3rd Qu.    Max.
-## 0.0000  0.1099     0.5356    2.4351  1.9809     18.3663
+  ## Min.    1st Qu.    Median    Mean    3rd Qu.    Max.
+  ## 0.0000  0.1099     0.5356    2.4351  1.9809     18.3663
 \end{verbatim}
+\comment[NOTE]{BB}{besser hist zeigen... und die ergebnisse der eintelnen runs in 2d. vielleaicht auf anderer funktion wo man auch sieht in wehcle basins man gelaufen ist}
 \end{vbframe}
 
 

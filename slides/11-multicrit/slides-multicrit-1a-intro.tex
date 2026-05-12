@@ -88,22 +88,22 @@ Example: (negative) average rating by hotel guests (1--5) vs.\ average price per
 \begin{framev}[fs=footnotesize]{Introductory example}
 We cannot directly establish a total order on the objective space:
 \begin{itemize}
-\item Left: A hotel with rating 4 for 89~Euro 
-$(\textcolor{green}{f^{(1)}} = (89, -4.0))$ 
+\item Left: A hotel with rating 4 for 89~Euro
+$(\textcolor{green}{f^{(1)}} = (89, -4.0))$
 is better than a hotel for 108~Euro with the same rating
 $(\textcolor{red}{f^{(2)}} = (108, -4.0))$.
-\item Right: How to decide if 
-$\textcolor{orange}{f^{(1)}}=(89, -4.0)$ is better or worse than 
+\item Right: How to decide if
+$\textcolor{orange}{f^{(1)}}=(89, -4.0)$ is better or worse than
 $\textcolor{orange}{f^{(2)}}=(95, -4.5)$?
 \item How much is one \emph{rating point} worth?
 \end{itemize}
 \imageC[0.9]{figure/expedia-2-1.pdf}
 \spacer
-Let $f = (\text{price}, -\text{rating})$. The candidate 
+Let $f = (\text{price}, -\text{rating})$. The candidate
 $\textcolor{green}{f^{(1)}}=(89,-4.0)$
-dominates 
-$\textcolor{red}{f^{(2)}}=(108,-4.0)$. 
-That is, $\textcolor{green}{f^{(1)}}$ is at least as good 
+dominates
+$\textcolor{red}{f^{(2)}}=(108,-4.0)$.
+That is, $\textcolor{green}{f^{(1)}}$ is at least as good
 in every dimension, and strictly better in one dimension.
 Hence $\textcolor{green}{f^{(1)}} \prec \textcolor{red}{f^{(2)}}$. But for
 $\textcolor{orange}{f^{(1)}}=(89,-4.0)$ and $\textcolor{orange}{f^{(2)}}=(95,-4.5)$
@@ -115,15 +115,16 @@ we cannot say either is strictly better.
 \begin{itemize}\setlength{\itemsep}{0.1em}
 \item We call these \textbf{incomparable} (or \emph{equivalent} in the Pareto sense):
 $$
-\textcolor{orange}{f^{(1)}} 
-\not\prec 
-\textcolor{orange}{f^{(2)}} 
+\textcolor{orange}{f^{(1)}}
+\not\prec
+\textcolor{orange}{f^{(2)}}
 \quad\text{and}\quad
-\textcolor{orange}{f^{(2)}} 
-\not\prec 
+\textcolor{orange}{f^{(2)}}
+\not\prec
 \textcolor{orange}{f^{(1)}}.
 $$
 \item All such non-dominated points form the \textbf{Pareto front}.
+\comment[NOTE]{LS}{step function as front as the empirical approximation would be better}
 \end{itemize}
 \spacer
 \splitV[0.5]{
@@ -137,18 +138,18 @@ $$
 \begin{framev}{Definition: multi-criteria optimization}
 A \textbf{multi-criteria optimization problem} is defined by
 $$
-\min_{\xv \in \S}  \fx 
+\min_{\xv \in \S}  \fx
 \;\;\Leftrightarrow\;\;
-\min_{\xv \in \S} 
+\min_{\xv \in \S}
 \bigl(f_1(\xv), f_2(\xv), \dots, f_m(\xv)\bigr),
 $$
 with $\S \subset \R^n$ and a multi-criteria objective function
 $f: \S \to \R^m,\; m \ge 2.$
 \begin{itemize}
 \item \textbf{Goal:} minimize multiple target functions simultaneously.
-\item $(f_1(\xv), \dots, f_m(\xv))^\top$ maps each candidate 
+\item $(f_1(\xv), \dots, f_m(\xv))^\top$ maps each candidate
 $\xv$ into the objective space $\R^m$.
-\item Typically no single best solution exists, as the objectives are often 
+\item Typically no single best solution exists, as the objectives are often
 in conflict and cannot be totally ordered in $\R^m$.
 \item W.l.o.g.\ we always minimize.
 \item Also called multi-objective optimization, Pareto optimization, etc.
@@ -158,33 +159,33 @@ in conflict and cannot be totally ordered in $\R^m$.
 
 \begin{framev}{Pareto sets and Pareto optimality}
 \textbf{Definition:}
-Given 
+Given
 $$
-\min_{\xv \in \S} 
-\bigl(f_1(\xv), \dots, f_m(\xv)\bigr), 
+\min_{\xv \in \S}
+\bigl(f_1(\xv), \dots, f_m(\xv)\bigr),
 \quad f_i: \S \to \R.
 $$
 \begin{itemize}
-\item A candidate $\xv^{(1)}$ \textbf{(Pareto-)dominates} $\xv^{(2)}$ 
+\item A candidate $\xv^{(1)}$ \textbf{(Pareto-)dominates} $\xv^{(2)}$
 if $f(\xv^{(1)}) \prec f(\xv^{(2)})$, i.e.:
 \begin{enumerate}
 \item $f_i(\xv^{(1)}) \le f_i(\xv^{(2)})$ for all $i$,
 \item $f_j(\xv^{(1)}) < f_j(\xv^{(2)})$ for at least one $j$.
 \end{enumerate}
-\item A candidate $\xv^{\ast}$ not dominated by any other candidate is 
+\item A candidate $\xv^{\ast}$ not dominated by any other candidate is
 \textbf{Pareto optimal}.
-\item The set of all Pareto optimal candidates is the \textbf{Pareto set} 
+\item The set of all Pareto optimal candidates is the \textbf{Pareto set}
 $\mathcal{P} = \{\xv \in \S \mid \nexists \,\xtil :
   f(\xtil) \prec \fx\}$.
-\item $\mathcal{F} = f(\mathcal{P})$, the \textbf{Pareto front}, 
+\item $\mathcal{F} = f(\mathcal{P})$, the \textbf{Pareto front},
 is the image of that set in objective space.
 \end{itemize}
 \end{framev}
 
 \begin{framev}{Example: One objective function}
-We consider 
+We consider
 $$
-\min_{x} f(x) = (x - 1)^2, 
+\min_{x} f(x) = (x - 1)^2,
 \quad 0 \le x \le 3.
 $$
 The optimum is at $\xs = 1$.
@@ -193,12 +194,12 @@ The optimum is at $\xs = 1$.
 
 
 \begin{framev}{Example: Two target functions}
-We extend the above problem to two objectives 
-$f_1(x) = (x - 1)^2$ 
-and 
+We extend the above problem to two objectives
+$f_1(x) = (x - 1)^2$
+and
 $f_2(x) = 3(x - 2)^2$. Thus
 $$
-\min_{x} f(x) 
+\min_{x} f(x)
 = \bigl(f_1(x),\, f_2(x)\bigr),
 \quad 0 \le x \le 3.
 $$
@@ -218,12 +219,12 @@ The Pareto front is shown in green.
 \begin{framei}{A-priori vs. A-posteriori}
 \item The Pareto set is a set of equally valid solutions.
 \item Often, we only want a \textbf{single} solution in practice.
-\item Without extra info, there is no unique best solution: one must choose 
+\item Without extra info, there is no unique best solution: one must choose
 based on further criteria (cost constraints, business preference, etc.).
 \spacer
 Two overall strategies:
 \item \textbf{A-priori approach}: incorporate user preferences \emph{before} the optimization.
-\item \textbf{A-posteriori approach}: first find (an approximation of) the entire Pareto set, 
+\item \textbf{A-posteriori approach}: first find (an approximation of) the entire Pareto set,
 then let the user choose.
 \end{framei}
 
@@ -276,16 +277,17 @@ But different orderings yield different solutions.\\
 A-posteriori methods aim to
 \begin{itemize}
 \item find \emph{all} optimal candidates (or a good approximation of them),
-\item let the user pick a single solution based on personal preferences or 
+\item let the user pick a single solution based on personal preferences or
 additional info (e.g.\ hotel location).
 \end{itemize}
 Hence, a-posteriori methods are more general.\\
 \spacer
-\textbf{Example}: 
-All Pareto-optimal hotels are shown on the left. 
-User then picks from that subset on the right, based on hidden preferences 
+\textbf{Example}:
+All Pareto-optimal hotels are shown on the left.
+User then picks from that subset on the right, based on hidden preferences
 (location, brand loyalty, etc.):
 \imageC[0.8]{figure/expedia-11-1.pdf}
+\comment[NOTE]{LS}{again step function}
 \end{framev}
 
 \endlecture

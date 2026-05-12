@@ -27,6 +27,7 @@ figure_man/Nelder04.png
 \item Based on $d$-simplex, defined by $d + 1$ points:
 \begin{itemize}
 \item $d = 1$ interval
+\comment[NOTE]{BB}{bilder malen}
 \item $d = 2$ triangle
 \item $d = 3$ tetrahedron
 \item $\cdots$
@@ -90,13 +91,13 @@ We discard $\vb_{d + 1}$ and accept the better of $\vb_r$ and $\vb_e$
 Note: default value for expansion coefficient: $\chi = 2$
 \end{framev}
 
+\comment[NOTE]{BB}{wir sollten für chi und sigma sagen dass die beide zwischen 0 und 1 sind; nicht 0 bis 0.5 nur für einen von beiden}
 
 \begin{framev}{nelder-mead method}
 \begin{itemize}
 \item Case 3: $f(\vb_r) \ge f(\vb_d)$
 $\Rightarrow$ Contraction:
-\comment[NOTE]{BB}{wir sollten für chi und sigma sagen dass die beide zwischen 0 und 1 sind
-nicht 0 bis 0.5 nur für einen von beiden}
+\comment[NOTE]{BB}{contraction auch visualsieren; und shrinkage auch}
 $$\vb_c = \bar{\vb} + \gamma (\vb_{d + 1} - \bar{\vb})$$
 with $0 < \gamma \le 1/2$
 \begin{itemize}
@@ -143,7 +144,8 @@ $$\min_{\xv} f(x_1,x_2) = x_1^{2} + x_2^{2} + x_1\cdot \sin x_2 + x_2 \cdot \sin
 
 
 \begin{framev}{Nelder-Mead vs. GD}
-%% http://www.benfrederickson.com/numerical-optimization/
+\comment[NOTE]{BB}{hier fehlt etwas background info zum bsp: http://www.benfrederickson.com/numerical-optimization/}
+\comment[NOTE]{BB}{das bsp könnten wir easy selbt coden. und man muss die objective am besten auch zeigen, die feht nämnlich auf der webseite}
 \splitVCC{\imageC[0.85]{figure_man/nm_gd_cities_1.PNG}}{\imageC[0.85]{figure_man/nm_gd_cities_2.PNG}}
 \splitVCC{\imageC[0.85]{figure_man/nm_gd_cities_3.PNG}}{\imageC[0.85]{figure_man/nm_gd_cities_4.PNG}}
 {\footnotesize Nelder-Mead in multiple dimensions:
