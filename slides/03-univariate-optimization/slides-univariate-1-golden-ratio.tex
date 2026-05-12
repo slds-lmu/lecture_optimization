@@ -1,14 +1,11 @@
 \documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
 
 \input{../../style/preamble}\input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
 
 \newcommand{\xleft}{x_{\text{left}}}
 \newcommand{\xright}{x_{\text{right}}}
 \newcommand{\xnew}{x_{\text{new}}}
 \newcommand{\xbest}{x_{\text{best}}}
-
-\usepackage{textpos}
 
 \title{Optimization in Machine Learning}
 
@@ -133,9 +130,7 @@ If $f_{new, b}$ is outcome, $\xnew$ becomes best point and search around $\xnew$
 
 \begin{framev}[align=top]{golden section search}
 For uniform reduction the two potential intervals must be equal-sized:
-\begin{equation*}
-b := \xright - \xbest = \xnew - \xleft
-\end{equation*}
+$$b := \xright - \xbest = \xnew - \xleft$$
 \imageFixed{1cm}{2.5cm}[1]{figure/goldensec-3.png}
 \end{framev}
 
@@ -150,7 +145,7 @@ $$c := \xbest - \xleft = \xright - \xnew$$
 \begin{framev}[align=top]{golden section search}
 To summarize, we require:
 \begin{align*}
-a &= \xright-\xleft, \\
+a &= \xright-\xleft \\
 b &= \xright - \xbest = \xnew - \xleft \\
 c &= \xbest - \xleft = \xright - \xnew
 \end{align*}
@@ -160,7 +155,6 @@ c &= \xbest - \xleft = \xright - \xnew
 
 \begin{framei}{golden section search}
 \item We require same percentage improvement in each iteration
-\comment[NOTE]{BB}{das kurz nochmal visualisieren mit dem "reingehen?" also wo die punkte gelegt werden}
 \item For $\varphi$ reduction factor of interval sizes ($a$ to $b$, and $b$ to $c$)
 $$\varphi := \frac{b}{a} = \frac{c}{b}$$
 $$\varphi^2 = \frac{b}{a} \cdot \frac{c}{b} = \frac{c}{a}$$

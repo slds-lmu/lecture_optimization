@@ -106,7 +106,7 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
       yend = axis_y,
       colour = plot_colors$ink,
       linewidth = 0.8,
-      arrow = grid::arrow(length = grid::unit(0.18, "cm"), type = "closed")
+      arrow = arrow(length = unit(0.18, "cm"), type = "closed")
     ) +
     annotate(
       "segment",
@@ -116,7 +116,7 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
       yend = y_limits[2] - 0.06,
       colour = plot_colors$ink,
       linewidth = 0.8,
-      arrow = grid::arrow(length = grid::unit(0.18, "cm"), type = "closed")
+      arrow = arrow(length = unit(0.18, "cm"), type = "closed")
     ) +
     annotate(
       "text",
@@ -172,8 +172,8 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
         fontface = "bold",
         size = 4.6,
         linewidth = 0,
-        label.padding = grid::unit(0.18, "lines"),
-        label.r = grid::unit(0.18, "lines"),
+        label.padding = unit(0.18, "lines"),
+        label.r = unit(0.18, "lines"),
         show.legend = FALSE
       ) +
       scale_fill_identity() +
@@ -191,8 +191,8 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
         yend = compare_y,
         colour = plot_colors$badge,
         linewidth = 1.1,
-        arrow = grid::arrow(
-          length = grid::unit(0.18, "cm"),
+        arrow = arrow(
+          length = unit(0.18, "cm"),
           type = "closed",
           ends = "both"
         )
@@ -210,8 +210,8 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
         colour = "white",
         fontface = "bold",
         size = 6.2,
-        label.padding = grid::unit(0.28, "lines"),
-        label.r = grid::unit(0.18, "lines")
+        label.padding = unit(0.28, "lines"),
+        label.r = unit(0.18, "lines")
       )
   }
 
