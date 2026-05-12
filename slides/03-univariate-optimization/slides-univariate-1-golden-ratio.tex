@@ -25,16 +25,12 @@ figure/goldensec.png
 \item Golden ratio
 }
 
-\comment[NOTE]{BB}{maybe we should at least briefly mentin the term "bracketing" }
-\comment[NOTE]{BB}{vielleicht, ich weiß wir haben das rausgemschmissen, aber wenigsten KURZ aufzählen welche andere verfahren es univariate gibt? mindestens KURZ eine slide zu newton und sekantenverhren? oder nur newton? mini diksussion dazu?}
-
-\begin{framev}{univariate Optimization}
-Let $f: \R \to \R$ (search over interval $(\xleft,\xright)$ in practice)\\
-\spacer
-\textbf{Goal}: Iteratively improve eval points. Assume function $-f$ is unimodal. Will not rely on gradients, so this also works for black-box problems.
+\begin{framei}{univariate optimization}
+\item Setting: optimize univariate $f: \R \to \R$ over interval $(\xleft, \xright)$
+\item Assumption: $-f$ is unimodal and interval $(\xleft, \xright)$ (called a \textbf{bracket}) contains the minimum
+\item Goal: iteratively shrink the bracket (\textbf{bracketing}); gradient-free, works for black-box $f$
 \imageC{figure/golden-ratio-0.png}
-\comment[NOTE]{BB}{wir sollten auch sagen, können wir auch am ende, was passiert wenn die fun nicht unimodal ist. buw hier besser WARUM wir das requiren}
-\end{framev}
+\end{framei}
 
 
 \begin{frame}{simple nesting procedure}
