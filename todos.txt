@@ -43,6 +43,14 @@ BB:
 - make repo names shorter
 - PRIO: have a system so we can discuss math with claude
 - gucken dass wir subgrads usw reinbekommen für nonsmooth
+- die makefiles klappen halt überhaupt nicht robust. man will auch irhendwie mal die slides von einem chap mal zusammen in einer file haben
+- die temp file nerven, mit latexmk in ein buuild dir?
+- es ist halt unklar von wo man claude startet und er muss halt die AGENTS usw finden
+halbwegs standard prompts machen
+- bei den startslides immer einen satz rauf machen woran sich das kap / chunk orinteiertt
+-# gucken dass ich nichht die exc jetzt auch anfasse, müssen wir später iterieren
+dir "all" abschaffen, blödsinn
+musste eben die rebase strategy setzten das soll auch global passieren
 
 manuel
 - go thru all chaps, starting from chap3 on.
