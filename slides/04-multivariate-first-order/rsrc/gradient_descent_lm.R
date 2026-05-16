@@ -1,51 +1,81 @@
-# ------------------------------------------------------------------------------
-# multivariate first order
-
-# FIG: plot gradeint descent for linear model
-# ------------------------------------------------------------------------------
+# Used in: slides-multivar-first-order-1-GD.tex
+#
+# Simulates gradient descent for a simple linear model and visualizes
+# the RSS trajectory together with the fitted lines across iterations.
 
 set.seed(1L)
 
 library(ggplot2)
 library(patchwork)
 
-theme_set(theme_bw())
+x = runif(25L, 0, 2)
+design_matrix = cbind(1, x)
+response = 1 + 2 * x + rnorm(length(x), sd = 1)
 
-# ------------------------------------------------------------------------------
-
-x = runif(25, 0, 2)
-X = as.matrix(cbind(1, x))
-Y = as.matrix(1 + 2 * x + rnorm(length(x), sd = 1))
-
-p = ggplot(data = data.frame(x = x, y = Y), aes(x = x, y = y)) + geom_point() + geom_smooth(method='lm')
-if (interactive()) print(p)
-
-th0 = c(0, 0)
-alpha = 0.1
-
-progress = c(t = 0, theta0 = th0[1], theta1 = th0[2], R = sum((Y - X %*% th0)^2))
-
-th = th0
-for (t in 1:30) {
-
-	grad = 2 * colSums(diag(as.vector(Y - X %*% th)) %*% X) 
-	grad = grad / sqrt(sum(grad^2))
-	th = th + alpha * grad
-	R = sum((Y - X %*% th)^2)
-
-	progress = rbind(progress, c(t = t, theta0 = th[1], theta1 = th[2], R = sum((Y - X %*% th)^2)))
-	print(progress)
+rss = function(theta) {
+  sum((response - design_matrix %*% theta)^2)
 }
 
+rss_gradient = function(theta) {
+  drop(-2 * crossprod(design_matrix, response - design_matrix %*% theta))
+}
 
-p1 = ggplot(data = as.data.frame(progress), aes(x = t, y = R)) + geom_line() + xlim(c(1, nrow(progress)))
-if (interactive()) print(p1)
+run_gradient_descent = function(theta0, step_size, n_steps) {
+  trajectory = vector("list", length = n_steps + 1L)
+  theta = theta0
 
-p2 = p + geom_abline(data = as.data.frame(progress), aes(intercept = theta0, slope = theta1, colour = t), alpha = 0.5)
-if (interactive()) print(p2)
+  trajectory[[1L]] = data.frame(
+    iteration = 0L,
+    theta0 = theta[1],
+    theta1 = theta[2],
+    rss = rss(theta)
+  )
 
-p = p1 + p2 +
+  for (iter in seq_len(n_steps)) {
+    gradient = rss_gradient(theta)
+    theta = theta - step_size * gradient / sqrt(sum(gradient^2))
+
+    trajectory[[iter + 1L]] = data.frame(
+      iteration = iter,
+      theta0 = theta[1],
+      theta1 = theta[2],
+      rss = rss(theta)
+    )
+  }
+
+  do.call(rbind, trajectory)
+}
+
+trajectory = run_gradient_descent(theta0 = c(0, 0), step_size = 0.1, n_steps = 30L)
+
+data_plot = ggplot(data.frame(x = x, y = response), aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_bw(base_size = 12)
+
+rss_plot = ggplot(trajectory, aes(x = iteration, y = rss)) +
+  geom_line() +
+  labs(x = "Iteration", y = "RSS") +
+  theme_bw(base_size = 12)
+
+fit_plot = data_plot +
+  geom_abline(
+    data = trajectory,
+    aes(intercept = theta0, slope = theta1, colour = iteration),
+    alpha = 0.5
+  )
+
+combined_plot = (rss_plot + fit_plot) +
   plot_layout(nrow = 1, guides = "collect") &
   theme(legend.position = "right")
-if (interactive()) print(p)
-ggsave(filename = "../figure/gradient_descent_lm.pdf", p, width = 7, height = 2.5)
+
+if (interactive()) {
+  print(combined_plot)
+}
+
+ggsave(
+  filename = "../figure/gradient_descent_lm.pdf",
+  plot = combined_plot,
+  width = 7,
+  height = 2.5
+)

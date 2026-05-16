@@ -1,103 +1,107 @@
+# Used in: ../slides-problems-1-unconstrained.tex
+#
+# Simulate a linear regression problem, visualize the empirical risk surface,
+# and compare the unregularized, lasso, and ridge objectives.
+
 set.seed(314L)
-library(vistool)
+
+library(data.table)
+library(ggplot2)
 library(patchwork)
+library(vistool)
 
-# Simulate a linear regression task once for all plots.
-n = 1000L
-df = data.frame(
-  x1 = rnorm(n, mean = -5, sd = 5),
-  x2 = rnorm(n, mean = -10, sd = 10)
+# Simulate one linear regression task that is reused across all panels.
+n_obs = 1000L
+sim_data = data.table(
+  x1 = rnorm(n_obs, mean = -5, sd = 5),
+  x2 = rnorm(n_obs, mean = -10, sd = 10)
 )
-df$y = 2 * df$x1 + 3 * df$x2 + rnorm(n, sd = 0.5)
+sim_data[, y := 2 * x1 + 3 * x2 + rnorm(n_obs, sd = 0.5)]
 
-xmat = as.matrix(df[, c("x1", "x2")])
-response = df$y
+x_mat = as.matrix(sim_data[, .(x1, x2)])
+response = sim_data[["y"]]
+theta_limits = list(x1 = c(-1, 3), x2 = c(-1, 3.5))
 
-linreg_objective = function(xmat, y, alpha, lambda, limits) {
-  objective = vistool::objective_linear(
-    x = xmat,
+build_linreg_objective = function(x_mat, y, alpha, lambda, limits) {
+  objective = objective_linear(
+    x = x_mat,
     y = y,
     lambda = lambda,
     alpha = alpha,
     include_intercept = FALSE,
     penalize_intercept = FALSE,
     id = sprintf("linreg_alpha_%s_lambda_%s", alpha, lambda),
-    label = "Regularized Squared Error Risk"
+    label = "Regularized empirical risk"
   )
 
   objective$lower = c(limits$x1[1], limits$x2[1])
   objective$upper = c(limits$x1[2], limits$x2[2])
-
   objective
 }
 
-render_linreg = function(xmat, y, alpha, lambda, limits, title, legend = TRUE) {
-  objective = linreg_objective(xmat, y, alpha, lambda, limits)
-  vis = as_visualizer(objective)
-  vis$add_contours(alpha = 0.5)
+plot_linreg_objective = function(x_mat, y, alpha, lambda, limits, title, legend = TRUE) {
+  objective = build_linreg_objective(x_mat, y, alpha, lambda, limits)
+  visualizer = as_visualizer(objective)
+  visualizer$add_contours(alpha = 0.5)
 
-  theta_hat = stats::optim(
+  theta_hat = optim(
     c(0, 0),
     fn = function(theta) objective$eval(theta),
     gr = function(theta) objective$grad(theta)
   )$par
-  vis$add_points(
-    matrix(theta_hat, ncol = 2),
-    color = "#f6e05e"
-  )
-  offset_x = (limits$x1[2] - limits$x1[1]) * 0.04
-  vis$add_annotation(
+  visualizer$add_points(matrix(theta_hat, ncol = 2), color = "#f6e05e")
+
+  x_offset = (limits$x1[2] - limits$x1[1]) * 0.04
+  visualizer$add_annotation(
     text = "$\\hat{\\theta}$",
     color = "#f6e05e",
-    x = theta_hat[1] + offset_x,
+    x = theta_hat[1] + x_offset,
     y = theta_hat[2],
     latex = TRUE
   )
 
-  vis$plot(
+  visualizer$plot(
     plot_title = title,
-    x_lab = "$\\theta_1$",
-    y_lab = "$\\theta_2$",
-    x_limits = c(-1, 3),
-    y_limits = c(-1, 3.5),
-    legend_title = "$R_{emp}$",
+    x_lab = "θ₁",
+    y_lab = "θ₂",
+    x_limits = limits$x1,
+    y_limits = limits$x2,
+    legend_title = "R_emp",
     show_legend = legend
   )
 }
 
-limits = list(x1 = c(-1, 3), x2 = c(-1, 3.5))
-plot_unreg = render_linreg(
-  xmat = xmat,
+# Render the three objective surfaces used in the slides.
+plot_unregularized = plot_linreg_objective(
+  x_mat = x_mat,
   y = response,
   alpha = 1,
   lambda = 0,
-  limits = limits,
-  title = "Unregularized $R_{emp}$",
+  limits = theta_limits,
+  title = "Unregularized R_emp",
   legend = TRUE
 )
 
-plot_lasso = render_linreg(
-  xmat = xmat,
+plot_lasso = plot_linreg_objective(
+  x_mat = x_mat,
   y = response,
   alpha = 1,
   lambda = 200,
-  limits = limits,
+  limits = theta_limits,
   title = "Lasso",
   legend = FALSE
 )
 
-plot_ridge = render_linreg(
-  xmat = xmat,
+plot_ridge = plot_linreg_objective(
+  x_mat = x_mat,
   y = response,
   alpha = 0,
   lambda = 200,
-  limits = limits,
+  limits = theta_limits,
   title = "Ridge",
   legend = FALSE
 )
 
-# Combine the vistool plots into a single layout.
-combined = plot_unreg + plot_lasso + plot_ridge +
-  plot_layout(ncol = 3)
+combined_plot = plot_unregularized + plot_lasso + plot_ridge + plot_layout(ncol = 3)
 
-ggplot2::ggsave("../figure/linreg.png", combined, width = 8, height = 3)
+ggsave("../figure/linreg.png", combined_plot, width = 8, height = 3)

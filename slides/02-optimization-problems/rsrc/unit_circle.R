@@ -1,57 +1,41 @@
-# ------------------------------------------------------------------------------
-# optimization problems
-
-# FIG: contour plot of x + y with unit circle
-# ------------------------------------------------------------------------------
+# Used in: ../slides-problems-2-constrained.tex
+#
+# Visualize the contour lines of f(x) = x1 + x2 together with the feasible set
+# defined by the unit circle and the optimal boundary point.
 
 set.seed(1L)
 
+library(data.table)
 library(ggplot2)
-library(dplyr)
 
-# DATA -------------------------------------------------------------------------
+objective = function(x1, x2) {
+  x1 + x2
+}
 
-f <- function(x, y) x + y
-g <- function(x, y) x^2 + y^2 - 1
+# Create the contour grid and the unit circle boundary.
+axis_limits = c(-1.5, 1.5)
+x1_grid = seq(axis_limits[1], axis_limits[2], length.out = 100L)
+x2_grid = seq(axis_limits[1], axis_limits[2], length.out = 100L)
 
-xmin <- -1.5
-xmax <- 1.5
+contour_data = CJ(x1 = x1_grid, x2 = x2_grid)
+contour_data[, z := objective(x1, x2)]
 
-xv <- seq(xmin, xmax, length.out = 100)
-yv <- seq(xmin, xmax, length.out = 100)
-grid <- expand.grid(x = xv, y = yv)
-grid$z <- with(grid, f(x, y))
+angles = seq(0, 2 * pi, length.out = 300L)
+circle_data = data.table(x1 = cos(angles), x2 = sin(angles))
+optimal_point = data.table(x1 = -sqrt(2) / 2, x2 = -sqrt(2) / 2)
 
-# unit circle
-t <- seq(0, 2 * pi, length.out = 300)
-circle <- data.frame(x = cos(t), y = sin(t))
-
-point_x <- -sqrt(2) / 2
-point_y <- -sqrt(2) / 2
-
-# PLOT -------------------------------------------------------------------------
-
-plot <- ggplot() +
-  # Contour plot of x + y
-  geom_contour_filled(data = grid, aes(x = x, y = y, z = z)) +
-  
-  # Unit circle
-  geom_path(data = circle, aes(x = x, y = y), color = "black", linewidth = 1) +
-  
-  # Red point at (-sqrt(2)/2, -sqrt(2)/2)
-  geom_point(aes(x = point_x, y = point_y), color = "red", size = 5) +
-  
+# Draw the objective contours, feasible set, and optimizer.
+unit_circle_plot = ggplot() +
+  geom_contour_filled(data = contour_data, aes(x = x1, y = x2, z = z)) +
+  geom_path(data = circle_data, aes(x = x1, y = x2), colour = "black", linewidth = 1) +
+  geom_point(data = optimal_point, aes(x = x1, y = x2), colour = "red", size = 5) +
   labs(
-    x = expression(x[1]), 
-    y = expression(x[2]), 
+    x = expression(x[1]),
+    y = expression(x[2]),
     fill = expression(f(x[1], x[2]))
   ) +
-  xlim(xmin, xmax) + ylim(xmin, xmax) +
-  theme_minimal() +
-  theme(
-    text = element_text(size = 16),
-    legend.position = "right"
-  ) +
-  coord_fixed()  # Ensure aspect ratio is 1:1
+  coord_fixed(xlim = axis_limits, ylim = axis_limits) +
+  theme_minimal(base_size = 16) +
+  theme(legend.position = "right")
 
-ggsave("../figure/unit_circle.png", plot, width = 8, height = 6)
+ggsave("../figure/unit_circle.png", unit_circle_plot, width = 8, height = 6)

@@ -1,20 +1,15 @@
-# ------------------------------------------------------------------------------
-# multivariate first order
+# Used in: slides-multivar-first-order-12-comparison.tex
 #
-# FIG: optimizer comparison figures for synthetic linear and logistic models
-# used in slide set 12. This script intentionally generates only the PDFs that
-# are referenced from the slides.
-# ------------------------------------------------------------------------------
+# Generates the linear and logistic benchmark plots used in the optimizer
+# comparison slides.
 
-set.seed(123)
+set.seed(123L)
 
 library(ggplot2)
 
 source("simu-linmods-functions.R")
 
-# ------------------------------------------------------------------------------
-
-out_dir = "../figure/simu_linmod"
+out_dir = "../figure/simu-linmods"
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 n = 500

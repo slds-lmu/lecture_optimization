@@ -1,55 +1,63 @@
-# ------------------------------------------------------------------------------
-# mathematical concepts
-
-# FIG: plot negative gradients on contour plot of branin function
-# ------------------------------------------------------------------------------
+# Used in: ../01-diff.tex
+#
+# Visualize the modified Branin function on the unit square and mark several
+# negative-gradient directions.
 
 set.seed(1L)
 
+library(data.table)
 library(DiceKriging)
-library(rootSolve)
+library(ggplot2)
+library(grid)
+library(numDeriv)
 
-# DATA -------------------------------------------------------------------------
+dir.create("../figure", recursive = TRUE, showWarnings = FALSE)
 
-# plot: https://rdrr.io/cran/DiceKriging/man/branin.html
-n.grid <- 20
-x.grid <- y.grid <- seq(0,1,length=n.grid)
-design.grid <- expand.grid(x.grid, y.grid)
-response.grid <- apply(design.grid, 1, branin)
-z.grid <- matrix(response.grid, n.grid, n.grid)
+x1_grid = seq(0, 1, length.out = 200L)
+x2_grid = seq(0, 1, length.out = 200L)
+grid_data = CJ(x1 = x1_grid, x2 = x2_grid)
+grid_matrix = as.matrix(grid_data[, .(x1, x2)])
+grid_data[, z := apply(grid_matrix, 1L, branin)]
 
-p1 <- c(0.35, 0.4)
-p2 <- c(0.1, 0.4)
-p3 <- c(0.5, 0.7)
-p4 <- c(0.05, 0.05)
-p5 <- c(0.8, 0.8)
-p6 <- c(0.55, 0.18)
-p7 <- c(0.2, 0.8)
+points_data = data.table(
+  x1 = c(0.35, 0.10, 0.50, 0.05, 0.80, 0.55, 0.20),
+  x2 = c(0.40, 0.40, 0.70, 0.05, 0.80, 0.18, 0.80)
+)
 
-p1g <- -gradient(branin, p1) / 2000
-p2g <- -gradient(branin, p2) / 2000
-p3g <- -gradient(branin, p3) / 2000
-p4g <- -gradient(branin, p4) / 2000
-p5g <- -gradient(branin, p5) / 2000
-p6g <- -gradient(branin, p6) / 2000
-p7g <- -gradient(branin, p7) / 2000
+gradient_values = t(vapply(
+  seq_len(nrow(points_data)),
+  function(i) grad(branin, as.numeric(points_data[i, .(x1, x2)])),
+  numeric(2L)
+))
+negative_gradient = -gradient_values / 2000
 
-# PLOT -------------------------------------------------------------------------
+points_data[, `:=`(
+  xend = x1 + negative_gradient[, 1],
+  yend = x2 + negative_gradient[, 2]
+)]
 
-png(filename = "../figure/branin.png", width = 800, height = 600)
+branin_plot = ggplot(grid_data, aes(x = x1, y = x2, z = z)) +
+  geom_contour(bins = 40, colour = "grey30") +
+  geom_point(
+    data = points_data,
+    aes(x = x1, y = x2),
+    inherit.aes = FALSE,
+    colour = "#D55E00",
+    size = 2.5
+  ) +
+  geom_segment(
+    data = points_data,
+    aes(x = x1, y = x2, xend = xend, yend = yend),
+    inherit.aes = FALSE,
+    arrow = arrow(length = unit(0.12, "inches")),
+    linewidth = 0.7
+  ) +
+  labs(
+    title = "Modified Branin function with negative gradients",
+    x = expression(x[1]),
+    y = expression(x[2])
+  ) +
+  coord_fixed() +
+  theme_bw(base_size = 14)
 
-plot.new()
-contour(x.grid,y.grid,z.grid,40)
-points(rbind(t(p1), t(p2), t(p3), t(p4), t(p5), t(p6), t(p7)), pch=19, col="red")
-arrows(x0=p1[1], y0=p1[2], x1=(p1[1]+p1g[1,1]), y1=(p1[2]+p1g[1,2]), angle=10, length=0.15)
-arrows(x0=p2[1], y0=p2[2], x1=(p2[1]+p2g[1,1]), y1=(p2[2]+p2g[1,2]), angle=10, length=0.15)
-arrows(x0=p3[1], y0=p3[2], x1=(p3[1]+p3g[1,1]), y1=(p3[2]+p3g[1,2]), angle=10, length=0.15)
-arrows(x0=p4[1], y0=p4[2], x1=(p4[1]+p4g[1,1]), y1=(p4[2]+p4g[1,2]), angle=10, length=0.15)
-arrows(x0=p5[1], y0=p5[2], x1=(p5[1]+p5g[1,1]), y1=(p5[2]+p5g[1,2]), angle=10, length=0.15)
-arrows(x0=p6[1], y0=p6[2], x1=(p6[1]+p6g[1,1]), y1=(p6[2]+p6g[1,2]), angle=10, length=0.15)
-arrows(x0=p7[1], y0=p7[2], x1=(p7[1]+p7g[1,1]), y1=(p7[2]+p7g[1,2]), angle=10, length=0.15)
-# /100, da sonst Pfeil bis Punkt p1g reicht, nicht nur in dessen Richtung
-title("Mod. Branin function with gradients")
-
-dev.off()
-
+ggsave("../figure/branin.png", branin_plot, width = 7, height = 5)

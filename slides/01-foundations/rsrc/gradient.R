@@ -1,60 +1,87 @@
-# ------------------------------------------------------------------------------
-# mathematical concepts
-
-# FIG: plot gradients
-# ------------------------------------------------------------------------------
+# Used in: ../01-diff.tex
+#
+# Visualize the gradient and the two partial derivatives of a quadratic
+# function on a contour plot.
 
 set.seed(1L)
 
+library(data.table)
 library(ggplot2)
+library(grid)
 
-# ------------------------------------------------------------------------------
-# Define function f(x, y)
-f <- function(x, y) (0.5 * x^2 + y^2 + x * y)
+dir.create("../figure", recursive = TRUE, showWarnings = FALSE)
 
-# Define gradient ∇f(x, y)
-grad_f <- function(x, y) {
-  grad_x <- 1 * x + y
-  grad_y <- 2 * y + x
-  return(c(grad_x, grad_y))
+objective = function(x1, x2) {
+  0.5 * x1^2 + x1 * x2 + x2^2
 }
 
-# Define grid
-xmin <- -2.5
-xmax <- 2.5
-xv <- seq(xmin, xmax, length.out = 100)
-yv <- seq(xmin, xmax, length.out = 100)
-grid <- expand.grid(x = xv, y = yv)
-grid$z <- with(grid, f(x, y))
+gradient_function = function(x1, x2) {
+  c(x1 + x2, x1 + 2 * x2)
+}
 
-# Define gradient at a specific point (xp, yp)
-xp <- 0.5
-yp <- 0.5
-grad_values <- grad_f(xp, yp)
+x_limits = c(-2.5, 2.5)
+x1_grid = seq(x_limits[1], x_limits[2], length.out = 100L)
+x2_grid = seq(x_limits[1], x_limits[2], length.out = 100L)
+contour_data = CJ(x1 = x1_grid, x2 = x2_grid)
+contour_data[, z := objective(x1, x2)]
 
-# 2D Contour Plot with Gradient Arrows
-p <- ggplot(grid, aes(x = x, y = y, z = z)) +
-  geom_contour_filled(aes(z = z, fill = after_stat(level)), bins = 8) +  # Contour shading
-  
-  # Main gradient vector at (xp, yp)
-  geom_segment(aes(x = xp, y = yp, xend = xp + grad_values[1], yend = yp + grad_values[2]), 
-               arrow = arrow(length = unit(0.15, "inches")), color = "red") +
-  
-  # Partial derivative arrows
-  geom_segment(aes(x = xp, y = yp, xend = xp, yend = yp + grad_values[2]), 
-               arrow = arrow(length = unit(0.1, "inches")), color = "red", alpha = 0.5) +
-  geom_segment(aes(x = xp, y = yp, xend = xp + grad_values[1], yend = yp), 
-               arrow = arrow(length = unit(0.1, "inches")), color = "red", alpha = 0.5) +
-  
-  # Labels for arrows (Fixed using expression())
-  annotate("text", x = 1.0, y = 0.9, label = expression(nabla * f(x[1], x[2])), color = "red", size = 6) +
-  annotate("text", x = 1.15, y = 0.1, label = expression(frac(partialdiff * f(x[1], x[2]), partialdiff * x[1])), color = "red", size = 5) +
-  annotate("text", x = -0.4, y = 1.8, label = expression(frac(partialdiff * f(x[1], x[2]), partialdiff * x[2])), color = "red", size = 5) +
-  
-  # Formatting
-  theme_minimal() +
-  labs(x = "x1", y = "x2") +
-  theme(axis.text = element_blank(), axis.ticks = element_blank()) +
-  coord_fixed()
+x1_point = 0.5
+x2_point = 0.5
+gradient_value = gradient_function(x1_point, x2_point)
 
-ggsave(filename = "../figure/gradient_unit_vectors.png", p)
+arrow_data = data.table(
+  label = c("gradient", "partial_x1", "partial_x2"),
+  x = x1_point,
+  y = x2_point,
+  xend = c(x1_point + gradient_value[1], x1_point + gradient_value[1], x1_point),
+  yend = c(x2_point + gradient_value[2], x2_point, x2_point + gradient_value[2]),
+  alpha = c(1, 0.5, 0.5)
+)
+
+gradient_plot = ggplot(contour_data, aes(x = x1, y = x2, z = z)) +
+  geom_contour_filled(bins = 8) +
+  geom_segment(
+    data = arrow_data,
+    aes(x = x, y = y, xend = xend, yend = yend, alpha = alpha),
+    inherit.aes = FALSE,
+    arrow = arrow(length = unit(0.12, "inches")),
+    colour = "#D55E00",
+    linewidth = 0.8,
+    show.legend = FALSE
+  ) +
+  annotate(
+    "text",
+    x = 1.05,
+    y = 0.95,
+    label = "nabla * f(x[1], x[2])",
+    parse = TRUE,
+    colour = "#D55E00",
+    size = 5.5
+  ) +
+  annotate(
+    "text",
+    x = 1.2,
+    y = 0.1,
+    label = "frac(partialdiff * f(x[1], x[2]), partialdiff * x[1])",
+    parse = TRUE,
+    colour = "#D55E00",
+    size = 4.8
+  ) +
+  annotate(
+    "text",
+    x = -0.35,
+    y = 1.75,
+    label = "frac(partialdiff * f(x[1], x[2]), partialdiff * x[2])",
+    parse = TRUE,
+    colour = "#D55E00",
+    size = 4.8
+  ) +
+  labs(x = expression(x[1]), y = expression(x[2])) +
+  coord_fixed() +
+  theme_minimal(base_size = 16) +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank()
+  )
+
+ggsave("../figure/gradient.png", gradient_plot, width = 6, height = 4.5)
