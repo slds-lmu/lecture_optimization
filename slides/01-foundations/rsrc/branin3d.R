@@ -1,84 +1,91 @@
-# ------------------------------------------------------------------------------
-# mathematical concepts
-
-# FIG: 2D contour and 3D plots of branin function
-# ------------------------------------------------------------------------------
+# Used in: ../04-optcond.tex
+#
+# Create a contour plot and a 3D surface plot of the Branin function together
+# with its three local minima.
 
 set.seed(1L)
 
-library(DiceKriging)
-library(plotly)
-library(numDeriv)
-library(rootSolve)
-library(rgl)
-library(plotly)
-library(reshape2)
+library(data.table)
+library(ggplot2)
 
-# ------------------------------------------------------------------------------
+dir.create("../figure", recursive = TRUE, showWarnings = FALSE)
 
-dir.create("../figure/branin3d", recursive = TRUE, showWarnings = FALSE)
-
-braninm <- function(x, y) { 
-	a = 1
-	b = 5.1 / (4 * pi^2) 
-	c = 5 / pi
-	r = 6
-	s = 10
-	t = 1 / (8 * pi)
-	a * (y - b * x^2 + c * x - r)^2 + s * (1 - t) * cos(x) + s
-}
-
-branin <- function(x) { 
+branin_surface = function(x1, x2) {
   a = 1
-  b = 5.1 / (4 * pi^2) 
+  b = 5.1 / (4 * pi^2)
   c = 5 / pi
   r = 6
   s = 10
   t = 1 / (8 * pi)
-  a * (x[2] - b * x[1]^2 + c * x[1] - r)^2 + s * (1 - t) * cos(x[1]) + s
+
+  a * (x2 - b * x1^2 + c * x1 - r)^2 + s * (1 - t) * cos(x1) + s
 }
 
-# 2D Plot 
+build_surface_colors = function(z_matrix, n_colors) {
+  n_rows = nrow(z_matrix)
+  n_cols = ncol(z_matrix)
+  z_facet = z_matrix[-1, -1] + z_matrix[-1, -n_cols] +
+    z_matrix[-n_rows, -1] + z_matrix[-n_rows, -n_cols]
+  palette = colorRampPalette(c("blue", "green", "yellow", "orange", "red"))(n_colors)
 
-x1 = seq(-5, 10, by = 0.1)
-x2 = seq(0, 15, by = 0.1)
-df = expand.grid(x1, x2)
-df$y = apply(df, 1, branin)
+  palette[cut(z_facet, n_colors)]
+}
 
-xx <- c(-pi, pi, 9.42478)
-yy <- c(12.275, 2.275, 2.475)
+minima_data = data.table(
+  x1 = c(-pi, pi, 3 * pi),
+  x2 = c(12.275, 2.275, 2.475)
+)
+minima_data[, z := branin_surface(x1, x2)]
 
-p = ggplot(data = df, aes(x = Var1, y = Var2, z = y)) + geom_contour_filled()
-p = p + xlab(expression(x[1])) + ylab(expression(x[2])) + theme_bw()
-p = p + geom_point(data = data.frame(x = xx, y = yy), aes(x = x, y = y), color = "#F8766D")
-if (interactive()) print(p)
-ggsave("../figure/branin3d/branin2D.pdf", p, width = 6, height = 4)
+x1_grid_2d = seq(-5, 10, by = 0.1)
+x2_grid_2d = seq(0, 15, by = 0.1)
+contour_data = CJ(x1 = x1_grid_2d, x2 = x2_grid_2d)
+contour_data[, z := branin_surface(x1, x2)]
 
+branin_contour_plot = ggplot(contour_data, aes(x = x1, y = x2, z = z)) +
+  geom_contour_filled(bins = 12) +
+  geom_point(
+    data = minima_data,
+    aes(x = x1, y = x2),
+    inherit.aes = FALSE,
+    colour = "#D55E00",
+    size = 2.5
+  ) +
+  labs(
+    x = expression(x[1]),
+    y = expression(x[2]),
+    fill = "f(x)"
+  ) +
+  theme_bw(base_size = 14)
 
-# Full 3D Plot
+x1_grid_3d = seq(-5, 10, by = 0.5)
+x2_grid_3d = seq(0, 15, by = 0.5)
+z_surface = outer(x1_grid_3d, x2_grid_3d, branin_surface)
+surface_colors = build_surface_colors(z_surface, n_colors = 100L)
 
-x1 = seq(-5, 10, by = 0.5)
-x2 = seq(0, 15, by = 0.5)
-z = outer(x1, x2, braninm)
+ggsave("../figure/branin3d_2d.pdf", branin_contour_plot, width = 6, height = 4)
 
-nrz <- nrow(z)
-ncz <- ncol(z)
-jet.colors <- colorRampPalette( c("blue", "green", "yellow", "orange", "red") )
-nbcol <- 100
-color <- jet.colors(nbcol)
-# Compute the z-value at the facet centres
-zfacet <- z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
-# Recode facet z-values into color indices
-facetcol <- cut(zfacet, nbcol)
-
-# 3D PLOT 
-pdf("../figure/branin3d/branin3D.pdf",5,7.5, colormodel = "cmyk")
+pdf("../figure/branin3d_3d.pdf", width = 5, height = 7.5, colormodel = "cmyk")
 par(xaxs = "i", yaxs = "i")
-p = persp(x1, x2, z, col = color[facetcol], theta = 15, phi = 20)
-xx <- c(-pi, pi, 9.42478)
-yy <- c(12.275, 2.275, 2.475)
-zz <- c(0.39, 0.39, 0.39)
-mypoints <- trans3d(xx,yy,zz,pmat = p)
-points(mypoints,pch = 16,col = 2)
+
+perspective = persp(
+  x1_grid_3d,
+  x2_grid_3d,
+  z_surface,
+  col = surface_colors,
+  theta = 15,
+  phi = 20,
+  xlab = expression(x[1]),
+  ylab = expression(x[2]),
+  zlab = expression(f(x))
+)
+
+projected_minima = trans3d(
+  minima_data[["x1"]],
+  minima_data[["x2"]],
+  minima_data[["z"]],
+  pmat = perspective
+)
+points(projected_minima, pch = 16, col = 2)
 
 dev.off()

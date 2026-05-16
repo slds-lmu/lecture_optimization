@@ -5,7 +5,9 @@
 
 set.seed(1L)
 
+library(data.table)
 library(ggplot2)
+library(grid)
 
 phi = (sqrt(5) - 1) / 2
 
@@ -34,21 +36,20 @@ y_limits = c(-0.50, 1.32)
 axis_y = 0
 label_y = -0.17
 
-curve_data = data.frame(x = seq(x_left, x_right, length.out = 600L))
-curve_data$y = objective(curve_data$x)
+curve_data = data.table(x = seq(x_left, x_right, length.out = 600L))
+curve_data[, y := objective(x)]
 
 key_xs = c(x_left, x_best, x_new, x_right)
 key_colors = c(palette$boundary, palette$best, palette$new, palette$boundary)
 key_labels = c("italic(x)[left]", "italic(x)[best]", "italic(x)[new]", "italic(x)[right]")
 key_ys = objective(key_xs)
 
-points_df = data.frame(
+points_df = data.table(
   x = key_xs,
   y = key_ys,
   fill = key_colors,
   label = key_labels,
-  stem_y = pmax(key_ys - 0.045, axis_y + 0.045),
-  stringsAsFactors = FALSE
+  stem_y = pmax(key_ys - 0.045, axis_y + 0.045)
 )
 
 y_b1 = -0.33
@@ -82,8 +83,24 @@ p = ggplot(curve_data, aes(x = x, y = y)) +
     linewidth = 0.8,
     arrow = arrow(length = unit(0.18, "cm"), type = "closed")
   ) +
-  annotate("text", x = x_limits[2] - 0.05, y = -0.06, label = "x", colour = palette$ink, fontface = "bold", size = 6) +
-  annotate("text", x = -0.08, y = 0.62, label = "y", colour = palette$ink, fontface = "bold", size = 6) +
+  annotate(
+    "text",
+    x = x_limits[2] - 0.05,
+    y = -0.06,
+    label = "x",
+    colour = palette$ink,
+    fontface = "bold",
+    size = 6
+  ) +
+  annotate(
+    "text",
+    x = -0.08,
+    y = 0.62,
+    label = "y",
+    colour = palette$ink,
+    fontface = "bold",
+    size = 6
+  ) +
   geom_line(colour = palette$curve, linewidth = 1.25, lineend = "round") +
   geom_segment(
     data = points_df,
