@@ -1,68 +1,69 @@
-# ------------------------------------------------------------------------------
-# mathematical concepts
-
-# FIG: plot functions
-#   (1) convex |x|
-#   (2) concave log(x)
-#   (3) not convex nor concave exp(-x^2)
-# ------------------------------------------------------------------------------
+# Used in: ../03-convex.tex
+#
+# Compare one convex, one concave, and one neither-convex-nor-concave function
+# together with illustrative secant lines.
 
 set.seed(1L)
 
+library(data.table)
 library(ggplot2)
-library(dplyr)
+library(grid)
 
-# DATA -------------------------------------------------------------------------
+dir.create("../figure", recursive = TRUE, showWarnings = FALSE)
 
-x <- seq(-15, 15, length.out = 1000)
+x_grid = seq(-15, 15, length.out = 1000L)
+x_grid_log = x_grid[x_grid > 0]
 
-# abs
-abs_df <- data.frame(x = x, y = abs(x), func='abs')
-abs_points <- data.frame(x = c(-1, 1.5), y = c(1, 1.5))
-abs_line <- data.frame(x1 = -1, y1 = 1, x2 = 1.5, y2 = 1.5)
+curve_data = rbindlist(list(
+  data.table(x = x_grid, y = abs(x_grid), function_id = "abs"),
+  data.table(x = x_grid_log, y = log(x_grid_log), function_id = "log"),
+  data.table(x = x_grid, y = exp(-(x_grid^2)), function_id = "exp")
+))
 
-# log
-x_log <- x[x > 0]  # log is defined for x > 0
-log_df <- data.frame(x = x_log, y = log(x_log), func='log')
-log_points <- data.frame(x = c(0.5, 2), y = log(c(0.5, 2)))
-log_line <- data.frame(x1 = 0.5, y1 = log(0.5), x2 = 2, y2 = log(2))
+point_data = rbindlist(list(
+  data.table(function_id = "abs", x = c(-1, 1.5), y = abs(c(-1, 1.5))),
+  data.table(function_id = "log", x = c(0.5, 2), y = log(c(0.5, 2))),
+  data.table(function_id = "exp", x = c(-2.2, 0.5), y = exp(-(c(-2.2, 0.5)^2)))
+))
 
-# exp(-x^2)
-exp_df <- data.frame(x = x, y = exp(-x^2), func='exp(-x^2)')
-exp_points <- data.frame(x = c(-2.2, 0.5), y = exp(-c(-2.2, 0.5)^2))
-exp_line <- data.frame(x1 = -2.2, y1 = exp(-(-2.2)^2), x2 = 0.5, y2 = exp(-(0.5)^2))
+segment_data = data.table(
+  function_id = c("abs", "log", "exp"),
+  x = c(-1, 0.5, -2.2),
+  y = c(1, log(0.5), exp(-(-2.2)^2)),
+  xend = c(1.5, 2, 0.5),
+  yend = c(1.5, log(2), exp(-(0.5^2)))
+)
 
-plot_data <- bind_rows(abs_df, log_df, exp_df)
-func_colors <- c("abs" = "blue",
-                 "log" = "green",
-                 "exp(-x^2)" = "red")
-# PLOT -------------------------------------------------------------------------
+function_colors = c(abs = "#0072B2", log = "#009E73", exp = "#D55E00")
 
-plot <- ggplot() +
-  geom_line(data = plot_data, aes(x = x, y = y, color = func), show.legend = TRUE) +
-  scale_color_manual(values = func_colors) +
-  # abs
-  geom_point(data = abs_points, aes(x = x, y = y), color = "blue") +
-  geom_segment(data = abs_line, aes(x = x1, y = y1, xend = x2, yend = y2), color = "blue", linetype = "dashed", show.legend = FALSE) +
-  
-  #log
-  geom_point(data = log_points, aes(x = x, y = y), color = "green") +
-  geom_segment(data = log_line, aes(x = x1, y = y1, xend = x2, yend = y2), color = "green", linetype = "dashed", show.legend = FALSE) +
-  
-  # exp(-x^2)
-  geom_point(data = exp_points, aes(x = x, y = y), color = "red") +
-  geom_segment(data = exp_line, aes(x = x1, y = y1, xend = x2, yend = y2), color = "red", linetype = "dashed", show.legend = FALSE) +
-  
-  labs(x = "x", y = "y") +
-  xlim(-3, 3) + ylim(-1, 2) +
-  theme_minimal() +
+conv_conc_plot = ggplot() +
+  geom_line(
+    data = curve_data,
+    aes(x = x, y = y, colour = function_id),
+    linewidth = 1
+  ) +
+  geom_point(
+    data = point_data,
+    aes(x = x, y = y, colour = function_id),
+    size = 2
+  ) +
+  geom_segment(
+    data = segment_data,
+    aes(x = x, y = y, xend = xend, yend = yend, colour = function_id),
+    linewidth = 0.9,
+    linetype = 2
+  ) +
+  scale_colour_manual(
+    values = function_colors,
+    labels = c(abs = "|x|", log = "log(x)", exp = "exp(-x^2)")
+  ) +
+  labs(x = "x", y = "y", colour = NULL) +
+  coord_cartesian(xlim = c(-3, 3), ylim = c(-1, 2)) +
+  theme_minimal(base_size = 16) +
   theme(
-    legend.text = element_text(size = 18),
-    legend.key.size = unit(1.5, "cm"),
-    legend.position = c(0.1, 0.1),
-    legend.title = element_blank()
+    legend.position = c(0.15, 0.12),
+    legend.key.size = unit(1.1, "cm"),
+    panel.grid.minor = element_blank()
   )
 
-
-if (interactive()) print(plot)
-ggsave("../figure/conv_conc_functions.png", plot, width = 10, height = 8)
+ggsave("../figure/conv_conc_functions.png", conv_conc_plot, width = 10, height = 8)

@@ -1,185 +1,136 @@
-# ------------------------------------------------------------------------------
-# mathematical concepts
-
-# FIG: quadratic function related plots (function, eigen-decomposition)
-# ------------------------------------------------------------------------------
+# Used in: ../05-qfun.tex
+#
+# Create the univariate and multivariate quadratic-function illustrations used
+# throughout the foundations chapter.
 
 set.seed(1L)
 
+library(data.table)
 library(ggplot2)
-library(gridExtra)
-library(BBmisc)
 
-theme_set(theme_bw())
+dir.create("../figure", recursive = TRUE, showWarnings = FALSE)
 
-# ------------------------------------------------------------------------------
+build_surface_colors = function(z_matrix, n_colors) {
+  n_rows = nrow(z_matrix)
+  n_cols = ncol(z_matrix)
+  z_facet = z_matrix[-1, -1] + z_matrix[-1, -n_cols] +
+    z_matrix[-n_rows, -1] + z_matrix[-n_rows, -n_cols]
+  palette = colorRampPalette(c("blue", "green", "yellow"))(n_colors)
 
-null_device_opened = FALSE
-
-if (!interactive()) {
-	grDevices::pdf(NULL)
-	null_device_opened = TRUE
+  palette[cut(z_facet, n_colors)]
 }
 
-# Helper functions
-
-compute_grid_data = function(xrange, yrange, fun) {
-	z = outer(xrange, yrange, function(x, y) f(x, y))
-
-	grid <- expand.grid(x = xrange, y = yrange)
-	grid$f = sapply(seq_len(nrow(grid)), function(i) f(grid[i, 1], grid[i, 2]))
-
-	nbcol = 20
-
-	nrz = nrow(z)
-	ncz = ncol(z)
-	# Color palette (100 colors)
-	col.pal<-colorRampPalette(c("blue", "green", "yellow"))
-	colors<-col.pal(nbcol)
-
-	# Compute the z-value at the facet centres
-	zfacet = z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
-	# Recode facet z-values into color indices
-	facetcol = cut(zfacet, nbcol)
-
-	return(list(grid = grid, z = z, color = colors[facetcol]))
+build_contour_grid = function(x1_grid, x2_grid, objective) {
+  contour_data = CJ(x1 = x1_grid, x2 = x2_grid)
+  contour_data[, z := objective(x1, x2)]
+  contour_data
 }
 
-
-plot_contour_data = function(f, grid) {
-	p = ggplot() + stat_contour(data = grid, aes(x = x, y = y, z = f)) 
-	# p = p + geom_point(data = data.frame(x = 0, y = 1), aes(x = x, y = y), colour = "orange")
-	p = p + geom_point(data = data.frame(x = 0, y = 0), aes(x = x, y = y), colour = "blue", size = 3)
-	p = p + xlab("x1") + ylab("x2")
-	p = p + guides(fill = FALSE) + theme_minimal()
-
-	return(p)
+objective_example_1 = function(x1, x2) {
+  2 * x1^2 - 2 * x1 * x2 + 2 * x2^2
 }
 
-plot_eigenvector = function(p, v, col = "orange") {
+x_grid_1d = seq(-2, 2, length.out = 400L)
 
-	vnorm = norm(v, "2")
-	p1 = p + geom_segment(aes(x = 0, y = 0, xend = 1 / vnorm * v[1], yend = 1 / vnorm * v[2]), arrow = arrow(length = unit(0.1, "inches")), colour = col)
-	print(v[1] == 0)
-	if (v[1] == 0) {
-		p1 = p1 + geom_vline(xintercept = 0, lty = 3, alpha = 0.5, colour = col)		
-	} else {
-		p1 = p1 + geom_abline(slope = v[2] / v[1], lty = 3, alpha = 0.5, colour = col)		
-	}
+quadratic_1d_data = rbindlist(list(
+  data.table(x = x_grid_1d, y = x_grid_1d^2, panel = "q1(x) = x^2"),
+  data.table(x = x_grid_1d, y = -(x_grid_1d^2), panel = "q2(x) = -x^2")
+))
 
-	return(p1)
-}
+quadratic_1d_plot = ggplot(quadratic_1d_data, aes(x = x, y = y)) +
+  geom_line(colour = "#D55E00", linewidth = 1) +
+  facet_wrap(~ panel, nrow = 1) +
+  coord_cartesian(ylim = c(-4, 4)) +
+  labs(x = "x", y = "q(x)") +
+  theme_bw(base_size = 14)
 
-plot_direction_along_eigenvector = function(grid, eigenval, col) {
-	p2 = ggplot(data = data.frame(x = c(min(grid$x), max(grid$x))), aes(x = x)) + stat_function(fun = function(x) eigenval * x^2, colour = col) + xlab("x")
-	p2
-}
+curvature_data = rbindlist(list(
+  data.table(x = x_grid_1d, y = x_grid_1d^2, function_id = "q(x) = x^2", panel = "a > 0"),
+  data.table(x = x_grid_1d, y = 2 * x_grid_1d^2, function_id = "q(x) = 2x^2", panel = "a > 0"),
+  data.table(x = x_grid_1d, y = -(x_grid_1d^2), function_id = "q(x) = -x^2", panel = "a < 0"),
+  data.table(x = x_grid_1d, y = -3 * x_grid_1d^2, function_id = "q(x) = -3x^2", panel = "a < 0")
+))
 
+curvature_plot = ggplot(curvature_data, aes(x = x, y = y, colour = function_id)) +
+  geom_line(linewidth = 1) +
+  facet_wrap(~ panel, nrow = 1) +
+  coord_cartesian(ylim = c(-12, 8)) +
+  labs(x = "x", y = "q(x)", colour = NULL) +
+  theme_bw(base_size = 14)
 
+tangent_points = data.table(x0 = c(-2, -1, 0, 2))
+tangent_points[, `:=`(
+  y0 = x0^2,
+  slope = 2 * x0,
+  intercept = -(x0^2),
+  panel = sprintf("x = %s", x0)
+)]
 
-# Univariate examples 
+x_grid_derivative = seq(-3, 3, length.out = 400L)
+derivative_data = rbindlist(lapply(seq_len(nrow(tangent_points)), function(i) {
+  point = tangent_points[i]
 
-## quadratic_functions_1D
+  data.table(
+    panel = point[["panel"]],
+    x = x_grid_derivative,
+    curve = x_grid_derivative^2,
+    tangent = point[["intercept"]] + point[["slope"]] * x_grid_derivative
+  )
+}))
 
-p1 = ggplot(data.frame(x = c(-2, 2)), aes(x)) + stat_function(fun = function(x) x^2, colour = "orange") + ylim(c(0, 4))
-p2 = ggplot(data.frame(x = c(-2, 2)), aes(x)) + stat_function(fun = function(x) - x^2, colour = "blue") + ylim(c(-4, 0)) 
+derivative_plot = ggplot(derivative_data, aes(x = x)) +
+  geom_line(aes(y = curve), colour = "#D55E00", linewidth = 1) +
+  geom_line(aes(y = tangent), linetype = 2, linewidth = 0.8) +
+  geom_point(
+    data = tangent_points,
+    aes(x = x0, y = y0),
+    inherit.aes = FALSE,
+    size = 2
+  ) +
+  facet_wrap(~ panel, nrow = 1) +
+  coord_cartesian(ylim = c(0, 9)) +
+  labs(x = "x", y = "q(x)") +
+  theme_bw(base_size = 14)
 
-combined_1d = arrangeGrob(p1, p2, nrow = 1)
-ggsave("../figure/quadratic_functions_1D.png", combined_1d, width = 6, height = 3)
+x1_grid_surface = seq(-3, 3, by = 0.05)
+x2_grid_surface = seq(-3, 3, by = 0.05)
+z_surface = outer(x1_grid_surface, x2_grid_surface, objective_example_1)
+surface_colors = build_surface_colors(z_surface, n_colors = 100L)
 
+x1_grid_contour = seq(-3, 3, by = 0.05)
+x2_grid_contour = seq(-3, 3, by = 0.05)
+contour_data = build_contour_grid(x1_grid_contour, x2_grid_contour, objective_example_1)
 
+quadratic_2d_contour_plot = ggplot(contour_data, aes(x = x1, y = x2, z = z)) +
+  geom_contour(colour = "#1F4E79", bins = 12) +
+  geom_point(
+    data = data.table(x1 = 0, x2 = 0),
+    aes(x = x1, y = x2),
+    inherit.aes = FALSE,
+    colour = "#D55E00",
+    size = 3
+  ) +
+  labs(x = expression(x[1]), y = expression(x[2])) +
+  coord_fixed() +
+  theme_minimal(base_size = 16)
 
-## quadratic_functions_1D_curvature
+ggsave("../figure/quadratic_functions_1D.png", quadratic_1d_plot, width = 6, height = 3)
+ggsave("../figure/quadratic_functions_1D_curvature.png", curvature_plot, width = 6, height = 3)
+ggsave("../figure/quadratic_functions_1D_derivative.png", derivative_plot, width = 12, height = 3)
 
-p3 = p1 + stat_function(fun = function(x) 2 * x^2, colour = "darkgreen") 
-p4 = p2 + stat_function(fun = function(x) - 3 * x^2, colour = "violet") 
-
-combined_1d_curvature = arrangeGrob(p3, p4, nrow = 1)
-ggsave("../figure/quadratic_functions_1D_curvature.png", combined_1d_curvature, width = 6, height = 3)
-
-
-## quadratic_functions_1D_derivative.png
-
-df = data.frame(x = c(-2, -1, 0, 2), y = c(4, 1, 0, 4), slope = c(-4, -2, 0, 4))
-df$intercept = df$y - df$slope * df$x
-
-plist = lapply(seq_row(df), function(i) {
-	p1 = ggplot(data.frame(x = c(-3, 3)), aes(x)) + stat_function(fun = function(x) x^2, colour = "orange") 
-	p1 = p1 + geom_point(data = df[i, ], aes(x = x, y = y), size = 2)
-	p1 = p1 + geom_abline(data = df[i, ], aes(intercept = intercept, slope = slope))
-})
-
-combined_1d_derivative = do.call(arrangeGrob, c(plist, nrow = 1))
-ggsave("../figure/quadratic_functions_1D_derivative.png", combined_1d_derivative, width = 12, height = 3)
-
-
-
-
-
-# Multidimensional Example (I)
-
-f = function(x, y) 2 * x^2 - 2 * x * y + 2 * y^2
-
-x = seq(-3, 3, by = 0.01)
-y = seq(-3, 3, by = 0.01)
-
-griddata = compute_grid_data(x, y, f)
-grid = griddata$grid
-colors = griddata$color
-z = griddata$z
-
-png("../figure/quadratic_functions_2D_example_1_1.png")
-persp(x, y, z, col = colors, phi = 30, theta = -20, border = NA, xlab = "x1", ylab = "x2", zlab = "y")
+png("../figure/quadratic_functions_2D_example_1_1.png", width = 800, height = 600)
+persp(
+  x1_grid_surface,
+  x2_grid_surface,
+  z_surface,
+  col = surface_colors,
+  phi = 30,
+  theta = -20,
+  border = NA,
+  xlab = expression(x[1]),
+  ylab = expression(x[2]),
+  zlab = expression(q(x))
+)
 dev.off()
 
-p = plot_contour_data(f, grid)
-ggsave("../figure/quadratic_functions_2D_example_1_2.png", p, width = 3, height = 3)
-
-# Multidimensional Example (II)
-
-f = function(x, y) (-1) * x^2 - 2 * x * y + y^2
-
-x = seq(-3, 3, by = 0.05)
-y = seq(-3, 3, by = 0.05)
-
-griddata = compute_grid_data(x, y, f)
-grid = griddata$grid
-
-v1 = c(1 - sqrt(2), 1); e1 = - sqrt(2)
-v2 = c(1 + sqrt(2), 1); e2 = lambda2 = 2 * sqrt(2)
-
-
-p1 = ggplot(data = grid, aes(x = x, y = y, z = f)) 
-p1 = p1 + geom_raster(aes(fill = f)) + geom_contour(colour = "white") + xlab("x1") + ylab("x2")
-p1 = plot_eigenvector(p1, v1, "orange") + coord_fixed() + guides(fill = FALSE)
-p1 = plot_eigenvector(p1, v2, "magenta")
-
-combined_2d_example = arrangeGrob(p1, nrow = 1)
-ggsave("../figure/quadratic_functions_2D_example_2_4.png", combined_2d_example, width = 4, height = 3)
-
-
-
-f = function(x, y) 5 * x^2 - 2 * x * y + 1 * y^2
-
-x = seq(-3, 3, by = 0.01)
-y = seq(-3, 3, by = 0.01)
-z = outer(x, y, function(x, y) f(x, y))
-
-nbcol = 20
-
-nrz = nrow(z)
-ncz = ncol(z)
-# Color palette (100 colors)
-col.pal<-colorRampPalette(c("blue", "green", "yellow"))
-colors<-col.pal(nbcol)
-
-# Compute the z-value at the facet centres
-zfacet = z[-1, -1] + z[-1, -ncz] + z[-nrz, -1] + z[-nrz, -ncz]
-# Recode facet z-values into color indices
-facetcol = cut(zfacet, nbcol)
-
-
-if (null_device_opened) {
-	grDevices::dev.off()
-}
-
+ggsave("../figure/quadratic_functions_2D_example_1_2.png", quadratic_2d_contour_plot, width = 3, height = 3)

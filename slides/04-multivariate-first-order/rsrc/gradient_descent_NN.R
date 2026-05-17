@@ -1,91 +1,132 @@
-# ------------------------------------------------------------------------------
-# multivariate first order
+# Used in: slides-multivar-first-order-1-GD.tex,
+#   slides-multivar-first-order-6-momentum.tex,
+#   slides-multivar-first-order-9-sgd.tex
+#
+# Generates the synthetic neural-network regression figures used to illustrate
+# optimization behavior and the effect of mini-batch sizes.
 
-# FIG: plot gradient descent of branin
-# ------------------------------------------------------------------------------
+set.seed(1234L)
 
-library(rgl)
+library(data.table)
 library(ggplot2)
 library(mlr3)
-library(viridis)
 library(plot3D)
-library(data.table)
 
 source("NN_helpers.R")
 
-set.seed(1234)
-
-# ------------------------------------------------------------------------------
-
-# ORIGINAL DATASET AND TASK 
-f = function(x1, x2) x1^2 + x2^2 # + 2 * x1 * x2# (x1^2 + x2 -11)^2  + (x1 + x2^2 - 7)^2 
-
-n <- 200
-x1 <- runif(n, -5, 5)
-x2 <- runif(n, -5, 5)
-# Himmelblau's function
-y <- f(x1, x2) + rnorm(n, 0, 1)
-data <- data.frame(x1, x2, y)
-data_table <- as.data.table(data)
-data_task <- as_task_regr(data, target='y')
-
-
-x1_scale = seq(-5, 5, 1)
-x2_scale = seq(-5, 5, 1)
-z = matrix(data=NA, nrow=length(x1_scale), ncol=length(x2_scale))
-
-for(i in 1:length(x1_scale)) {
-  for (j in 1:length(x2_scale)) {
-    z[i,j] = f(x1_scale[i], x2_scale[j])
-  }
+objective_fun = function(x1, x2) {
+  x1^2 + x2^2
 }
 
-# Plot original task 
+n_obs = 200L
+training_data = data.table(
+  x1 = runif(n_obs, -5, 5),
+  x2 = runif(n_obs, -5, 5)
+)
+training_data[, y := objective_fun(x1, x2) + rnorm(.N, 0, 1)]
+
+task = as_task_regr(as.data.frame(training_data), target = "y")
+
+x1_scale = seq(-5, 5, by = 1)
+x2_scale = seq(-5, 5, by = 1)
+surface_values = outer(x1_scale, x2_scale, objective_fun)
+
 pdf("../figure/gradient_descent_NN_0.pdf", 5, 5, colormodel = "cmyk")
 par(mfrow = c(1, 1))
 
-persp3D(x = x1_scale, y = x2_scale, z = z, xlab = "x1", ylab = "x2", zlab = "y",
-    expand = 0.5, d = 2, phi = 10, theta = -60, resfac = 2,
-    image = FALSE, 
-    colkey = list(side = 1, length = 0.5), shade = FALSE, alpha = 0.5)
+persp3D(
+  x = x1_scale,
+  y = x2_scale,
+  z = surface_values,
+  xlab = "x1",
+  ylab = "x2",
+  zlab = "y",
+  expand = 0.5,
+  d = 2,
+  phi = 10,
+  theta = -60,
+  resfac = 2,
+  image = FALSE,
+  colkey = list(side = 1, length = 0.5),
+  shade = FALSE,
+  alpha = 0.5
+)
 
-scatter3D(x1, x2, y, col = "red", size = 30, add=TRUE, type = "h", bty = "b2", pch = 16)
+scatter3D(
+  training_data$x1,
+  training_data$x2,
+  training_data$y,
+  col = "red",
+  size = 30,
+  add = TRUE,
+  type = "h",
+  bty = "b2",
+  pch = 16
+)
 
 dev.off()
 
-## WITH VS WITHOUT MOMENTUM 
-set_nn_seed(1111)
+set_nn_seed(1111L)
+momentum_histories = lapply(c(0, 0.5), function(momentum) {
+  history = train_model(task, epochs = 300L, momentum = momentum)
 
-for (mom in c(0, 0.5)) {
-  print(mom)
-  train_model(data_task, epochs = 10, momentum=mom)
-  train_model(data_task, epochs = 100, momentum=mom)
-  history = train_model(data_task, epochs = 300, momentum=mom)
-  
-  df = data.frame(loss = history_loss(history))
-  df$epoch = 1:nrow(df)
-  p = ggplot(data = df, aes(x = epoch, y = loss)) + geom_line()
-  p = p + ylim(c(0, 130)) 
-  p = p + annotate("text",label=paste0("Momentum: ",mom), x=50, y=10)
-  print(p)
-}
-
-
-## SGD VS WITHOUT SGD 
-set_nn_seed(1111)
-
-epochs = 100
-lr = 0.001
-
-out = lapply(c(1, 1 / 200, 0.1, 0.5), function(bsf) {
-  history = train_model(data_task, epochs = epochs, bs_fraction = bsf, lr = lr)
-  cbind(data.frame(loss = history_loss(history)), bs_fraction = bsf, epoch = 1:epochs)
+  data.table(
+    epoch = seq_along(history_loss(history)),
+    loss = history_loss(history),
+    momentum = factor(momentum)
+  )
 })
 
-df = do.call(rbind, out)
-df$bs_fraction = as.factor(df$bs_fraction)
+momentum_data = rbindlist(momentum_histories)
+momentum_plot = ggplot(momentum_data, aes(x = epoch, y = loss, colour = momentum)) +
+  geom_line() +
+  coord_cartesian(ylim = c(0, 130)) +
+  labs(colour = "Momentum") +
+  theme_bw(base_size = 12)
 
-p = ggplot(data = df, aes(x = epoch, y = loss, colour = bs_fraction)) + geom_line()
-# p = p + ylim(c(0, 130)) 
-p = p + theme_bw() + ggtitle("SGD with different batch sizes")
-if (interactive()) print(p)
+if (interactive()) {
+  print(momentum_plot)
+}
+
+set_nn_seed(1111L)
+epochs = 100L
+learning_rate = 0.001
+batch_fractions = c(1, 1 / 200, 0.1, 0.5)
+
+batch_fraction_histories = lapply(batch_fractions, function(batch_fraction) {
+  history = train_model(
+    task,
+    epochs = epochs,
+    bs_fraction = batch_fraction,
+    learning_rate = learning_rate
+  )
+
+  data.table(
+    epoch = seq_len(epochs),
+    loss = history_loss(history),
+    batch_fraction = factor(batch_fraction)
+  )
+})
+
+batch_fraction_data = rbindlist(batch_fraction_histories)
+
+sgd_plot = ggplot(batch_fraction_data, aes(x = epoch, y = loss, colour = batch_fraction)) +
+  geom_line() +
+  labs(
+    x = "Epoch",
+    y = "MSE",
+    colour = "Batch fraction",
+    title = "SGD with different batch sizes"
+  ) +
+  theme_bw(base_size = 12)
+
+if (interactive()) {
+  print(sgd_plot)
+}
+
+ggsave(
+  filename = "../figure/gradient_descent_NN_SGD_vs_no_SGD.pdf",
+  plot = sgd_plot,
+  width = 7,
+  height = 4
+)

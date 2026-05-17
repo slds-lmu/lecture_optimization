@@ -1,9 +1,13 @@
-# create the simple nesting / golden-ratio animation frames with ggplot2
-# and save them to ../figure/.
+# Used in: slides/03-univariate-optimization/slides-univariate-1-golden-ratio.tex
+#
+# Create the simple nesting animation frames and the summary figure for the
+# univariate optimization slides.
 
 set.seed(1L)
 
+library(data.table)
 library(ggplot2)
+library(grid)
 library(gridExtra)
 
 dir.create("../figure", recursive = TRUE, showWarnings = FALSE)
@@ -12,7 +16,7 @@ objective = function(x) {
   0.22 + 0.85 * (x - 0.48)^2 + 0.18 * (x - 0.48)^4 + 0.05 * (x - 0.48)
 }
 
-plot_colors = list(
+palette = list(
   paper = "#FFFFFF",
   ink = "#2F3A4A",
   curve = "#454E5E",
@@ -32,34 +36,38 @@ label_y = -0.17
 badge_x = 0.78
 badge_y = 1.16
 
-curve_data = data.frame(x = seq(0, 1.5, length.out = 800L))
-curve_data$y = objective(curve_data$x)
+curve_data = data.table(x = seq(0, 1.5, length.out = 800L))
+curve_data[, y := objective(x)]
 
-point_styles = data.frame(
+point_styles = data.table(
   role = c("left", "right", "best", "new", "new_best", "old_best"),
-  label = c("Left", "Right", "Best", "New", "New Best", "Old Best"),
-  fill = c(
-    plot_colors$boundary,
-    plot_colors$boundary,
-    plot_colors$best,
-    plot_colors$new,
-    plot_colors$best,
-    plot_colors$new
+  label = c(
+    "italic(x)[left]",
+    "italic(x)[right]",
+    "italic(x)[best]",
+    "italic(x)[new]",
+    "italic(x)[best]",
+    "italic(x)[new]"
   ),
-  stringsAsFactors = FALSE
+  fill = c(
+    palette$boundary,
+    palette$boundary,
+    palette$best,
+    palette$new,
+    palette$best,
+    palette$new
+  )
 )
 
 make_points = function(x_values) {
-  points = data.frame(
+  points = data.table(
     role = names(x_values),
-    x = as.numeric(x_values),
-    stringsAsFactors = FALSE
+    x = as.numeric(x_values)
   )
   points$label = point_styles$label[match(points$role, point_styles$role)]
   points$fill = point_styles$fill[match(points$role, point_styles$role)]
   points$y = objective(points$x)
-  points = points[order(points$x), , drop = FALSE]
-  rownames(points) = NULL
+  setorder(points, x)
   points
 }
 
@@ -68,8 +76,8 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
     coord_cartesian(xlim = x_limits, ylim = y_limits, clip = "off") +
     theme_void(base_size = 22) +
     theme(
-      plot.background = element_rect(fill = plot_colors$paper, colour = NA),
-      panel.background = element_rect(fill = plot_colors$paper, colour = NA),
+      plot.background = element_rect(fill = palette$paper, colour = NA),
+      panel.background = element_rect(fill = palette$paper, colour = NA),
       plot.margin = margin(20, 24, 36, 24)
     )
 
@@ -81,7 +89,7 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
         xmax = interval[2],
         ymin = axis_y,
         ymax = y_limits[2] - 0.18,
-        fill = plot_colors$interval_fill,
+        fill = palette$interval_fill,
         alpha = 0.40
       ) +
       annotate(
@@ -90,7 +98,7 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
         xend = interval[2],
         y = axis_y + 0.025,
         yend = axis_y + 0.025,
-        colour = plot_colors$interval,
+        colour = palette$interval,
         linewidth = 6,
         alpha = 0.95,
         lineend = "round"
@@ -104,7 +112,7 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
       xend = x_limits[2] - 0.03,
       y = axis_y,
       yend = axis_y,
-      colour = plot_colors$ink,
+      colour = palette$ink,
       linewidth = 0.8,
       arrow = arrow(length = unit(0.18, "cm"), type = "closed")
     ) +
@@ -114,7 +122,7 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
       xend = axis_x,
       y = axis_y,
       yend = y_limits[2] - 0.06,
-      colour = plot_colors$ink,
+      colour = palette$ink,
       linewidth = 0.8,
       arrow = arrow(length = unit(0.18, "cm"), type = "closed")
     ) +
@@ -123,7 +131,7 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
       x = x_limits[2] - 0.05,
       y = axis_y - 0.055,
       label = "x",
-      colour = plot_colors$ink,
+      colour = palette$ink,
       fontface = "bold",
       size = 6
     ) +
@@ -132,12 +140,12 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
       x = axis_x - 0.07,
       y = 0.62,
       label = "y",
-      colour = plot_colors$ink,
+      colour = palette$ink,
       fontface = "bold",
       size = 6
     ) +
     geom_line(
-      colour = plot_colors$curve,
+      colour = palette$curve,
       linewidth = 1.25,
       lineend = "round"
     )
@@ -169,6 +177,7 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
         inherit.aes = FALSE,
         angle = 90,
         colour = "white",
+        parse = TRUE,
         fontface = "bold",
         size = 4.6,
         linewidth = 0,
@@ -189,7 +198,7 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
         xend = max(compare),
         y = compare_y,
         yend = compare_y,
-        colour = plot_colors$badge,
+        colour = palette$badge,
         linewidth = 1.1,
         arrow = arrow(
           length = unit(0.18, "cm"),
@@ -206,7 +215,7 @@ make_frame = function(points = NULL, badge = NULL, interval = NULL, compare = NU
         x = badge_x,
         y = badge_y,
         label = badge,
-        fill = plot_colors$badge,
+        fill = palette$badge,
         colour = "white",
         fontface = "bold",
         size = 6.2,
@@ -306,7 +315,7 @@ for (state in states) {
     width = 9.6,
     height = 5.4,
     dpi = 100,
-    bg = plot_colors$paper
+    bg = palette$paper
   )
 }
 
@@ -336,5 +345,5 @@ ggsave(
   width = 14.08,
   height = 4.68,
   dpi = 100,
-  bg = plot_colors$paper
+  bg = palette$paper
 )

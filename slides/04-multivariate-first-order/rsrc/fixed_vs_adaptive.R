@@ -1,8 +1,7 @@
-# ------------------------------------------------------------------------------
-# multivariate first order
-
-# FIG: plot influence of step size
-# ------------------------------------------------------------------------------
+# Used in: slides-multivar-first-order-2-stepsize.tex
+#
+# Compares fixed and adaptive step sizes for gradient descent on a one-dimensional
+# objective with a flat tail around the optimum.
 
 set.seed(1L)
 
@@ -10,88 +9,64 @@ library(ggplot2)
 library(patchwork)
 library(rootSolve)
 
-theme_set(theme_bw())
-
-# ------------------------------------------------------------------------------
-
-f = function(x, delta = 0.05) {
-	ifelse (abs(x) <= delta, 1 / 2 * x^2, delta * (abs(x) - 1 / 2 * delta))
+objective_fun = function(x, delta = 0.05) {
+  ifelse(abs(x) <= delta, 0.5 * x^2, delta * (abs(x) - 0.5 * delta))
 }
 
+run_gradient_descent = function(x0, step_size_fun, n_steps = 20L, method_label) {
+  path = vector("list", length = n_steps + 1L)
+  path[[1L]] = data.frame(iteration = 0L, x = x0, objective = objective_fun(x0))
 
-p = ggplot(data.frame(x = c(-1, 1)), aes(x)) + stat_function(fun = f)
-if (interactive()) print(p)
+  current_x = x0
+  for (iter in seq_len(n_steps)) {
+    current_gradient = gradient(objective_fun, current_x)
+    current_x = current_x - step_size_fun(iter) * current_gradient
+    path[[iter + 1L]] = data.frame(
+      iteration = iter,
+      x = current_x,
+      objective = objective_fun(current_x)
+    )
+  }
 
-# Perform GD with small step size
-x0 = - 0.8
-alpha = 0.5
-
-progress = c(t = 0, x = x0, y = f(x0))
-
-x = x0
-for (t in 1:20) {
-
-	grad = gradient(f, x)
-	x = x - alpha * grad
-	y = f(x)
-
-	progress = rbind(progress, c(t = t, x = x, y = y))
+  path = do.call(rbind, path)
+  path$method = method_label
+  path
 }
 
-progress = as.data.frame(progress)
-progress$stepsize = "0.5"
+objective_curve = ggplot(data.frame(x = c(-1, 1)), aes(x = x)) +
+  stat_function(fun = objective_fun) +
+  labs(x = "x", y = "f(x)") +
+  theme_bw(base_size = 12)
 
-# Perform GD with big step size
-x0 = 0.8
-alpha = 10
+comparison_data = do.call(
+  rbind,
+  list(
+    run_gradient_descent(x0 = -0.8, step_size_fun = function(iter) 0.5, method_label = "α = 0.5"),
+    run_gradient_descent(x0 = 0.8, step_size_fun = function(iter) 10, method_label = "α = 10"),
+    run_gradient_descent(x0 = 0.8, step_size_fun = function(iter) 10 / iter, method_label = "α[t] = 10 / t")
+  )
+)
 
-progress2 = c(t = 0, x = x0, y = f(x0))
+trajectory_plot = objective_curve +
+  geom_point(data = comparison_data, aes(x = x, y = objective, colour = method)) +
+  geom_line(data = comparison_data, aes(x = x, y = objective, colour = method))
 
-x = x0
-for (t in 1:20) {
+loss_plot = ggplot(comparison_data, aes(x = iteration, y = objective, colour = method)) +
+  geom_line() +
+  labs(x = "Iteration", y = "f(x)") +
+  theme_bw(base_size = 12)
 
-	grad = gradient(f, x)
-	x = x - alpha * grad
-	y = f(x)
-
-	progress2 = rbind(progress2, c(t = t, x = x, y = y))
-}
-
-progress2 = as.data.frame(progress2)
-progress2$stepsize = "10"
-progress = rbind(progress, progress2)
-
-# Perform GD with adaptive size
-x0 = 0.8
-alpha0 = 10
-
-progress2 = c(t = 0, x = x0, y = f(x0))
-
-x = x0
-for (t in 1:20) {
-	
-	alpha = alpha0 / t
-
-	grad = gradient(f, x)
-	x = x - alpha * grad 
-	y = f(x)
-
-	progress2 = rbind(progress2, c(t = t, x = x, y = y))
-}
-
-progress2 = as.data.frame(progress2)
-progress2$stepsize = "10/t"
-progress = rbind(progress, progress2)
-
-p1 = p + geom_point(data = progress, aes(x = x, y = y, color = stepsize))
-p1 = p1 + geom_line(data = progress, aes(x = x, y = y, color = stepsize))
-if (interactive()) print(p1)
-
-p2 = ggplot(data = progress, aes(x = t, y = y, color = stepsize)) + geom_line()
-if (interactive()) print(p2)
-
-p = p1 + p2 +
+combined_plot = (trajectory_plot + loss_plot) +
   plot_layout(nrow = 1, guides = "collect") &
   theme(legend.position = "right")
-if (interactive()) print(p)
-ggsave(filename = "../figure/fixed_vs_adaptive.pdf", p, width = 9, height = 2.5)
+
+if (interactive()) {
+  print(combined_plot)
+}
+
+ggsave(
+  filename = "../figure/fixed_vs_adaptive.pdf",
+  plot = combined_plot,
+  width = 9,
+  height = 2.5
+)

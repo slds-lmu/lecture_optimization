@@ -1,8 +1,12 @@
-# create the schematic golden-section search figures with
-# ggplot2 and save them to ../figure/.
+# Used in: slides/03-univariate-optimization/slides-univariate-1-golden-ratio.tex,
+#          slides/03-univariate-optimization/slides-univariate-3-further.tex
+#
+# Create the schematic golden section figures used to explain the interval
+# relationships a, b, and c in the lecture.
 
 set.seed(1L)
 
+library(data.table)
 library(ggplot2)
 library(grid)
 
@@ -41,13 +45,13 @@ accent_bands = list(
   summary_b = interval_bands$mid + 0.03
 )
 
-guide_data = data.frame(
+guide_data = data.table(
   x = c(coords$x_left, coords$x_best, coords$x_right),
   y = coords$y_base,
   yend = c(0.88, 0.67, 0.83)
 )
 
-x_label_data = data.frame(
+x_label_data = data.table(
   x = c(coords$x_left, coords$x_best, coords$x_new, coords$x_right),
   y = coords$y_xlabels,
   label = c(
@@ -59,7 +63,7 @@ x_label_data = data.frame(
 )
 
 build_points = function(highlight = character()) {
-  points = data.frame(
+  points = data.table(
     id = c("left", "best", "new_a", "new_b", "right"),
     x = c(
       coords$x_left,
@@ -89,8 +93,7 @@ build_points = function(highlight = character()) {
       coords$x_new + 0.05,
       coords$x_right + 0.05
     ),
-    hjust = c(1, 1, 0, 0, 0),
-    stringsAsFactors = FALSE
+    hjust = c(1, 1, 0, 0, 0)
   )
 
   points$fill = palette$paper
@@ -138,11 +141,11 @@ interval_layer = function(intervals) {
   )
 }
 
-make_figure = function(highlight = character(), intervals = NULL, summary = FALSE) {
+make_figure = function(highlight = character(), intervals = NULL, is_summary = FALSE) {
   points = build_points(highlight = highlight)
   filled_points = points[points$fill != palette$paper, , drop = FALSE]
   open_points = points[points$fill == palette$paper, , drop = FALSE]
-  y_limits = if (summary) c(-0.20, 0.92) else c(-0.14, 0.92)
+  y_limits = if (is_summary) c(-0.20, 0.92) else c(-0.14, 0.92)
 
   p = ggplot() +
     coord_cartesian(xlim = c(0.06, 0.89), ylim = y_limits, clip = "off") +
@@ -228,7 +231,7 @@ make_figure = function(highlight = character(), intervals = NULL, summary = FALS
     p = p + interval_layer(intervals)
   }
 
-  if (summary) {
+  if (is_summary) {
     p = p + theme(plot.margin = margin(24, 30, 72, 30))
   }
 
@@ -239,7 +242,7 @@ figures = list(
   "goldensec-0" = make_figure(),
   "goldensec-1" = make_figure(
     highlight = "new_a",
-    intervals = data.frame(
+    intervals = data.table(
       x = coords$x_left,
       xend = coords$x_new,
       y = interval_bands$upper,
@@ -249,7 +252,7 @@ figures = list(
     )
   ),
   "goldensec-3" = make_figure(
-    intervals = data.frame(
+    intervals = data.table(
       x = c(coords$x_left, coords$x_best),
       xend = c(coords$x_new, coords$x_right),
       y = c(interval_bands$upper, interval_bands$mid),
@@ -259,7 +262,7 @@ figures = list(
     )
   ),
   "goldensec-4" = make_figure(
-    intervals = data.frame(
+    intervals = data.table(
       x = c(coords$x_left, coords$x_best, coords$x_left, coords$x_new),
       xend = c(coords$x_new, coords$x_right, coords$x_best, coords$x_right),
       y = c(
@@ -284,7 +287,7 @@ figures = list(
     )
   ),
   "goldensec" = make_figure(
-    intervals = data.frame(
+    intervals = data.table(
       x = c(coords$x_left, coords$x_best, coords$x_left),
       xend = c(coords$x_best, coords$x_right, coords$x_right),
       y = c(interval_bands$upper, accent_bands$summary_b, interval_bands$lower),
@@ -300,7 +303,7 @@ figures = list(
         palette$slate
       )
     ),
-    summary = TRUE
+    is_summary = TRUE
   )
 )
 

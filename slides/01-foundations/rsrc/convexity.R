@@ -1,36 +1,68 @@
-# ------------------------------------------------------------------------------
-# mathematical concepts
-
-# FIG: plot convexity characteristics
-# ------------------------------------------------------------------------------
+# Used in: ../03-convex.tex
+#
+# Create two schematic convexity plots: one for a strictly convex function and
+# one for a convex but not strictly convex function.
 
 set.seed(1L)
 
+library(data.table)
 library(ggplot2)
 
-theme_set(theme_bw())
+dir.create("../figure", recursive = TRUE, showWarnings = FALSE)
 
-# DATA -------------------------------------------------------------------------
+strictly_convex_function = function(x) {
+  x^2 - 4 * x + 4
+}
 
-f1 = function(x) x^2 - 4 * x + 4
-f2 = function(x) ifelse(x > 1, 0, 1 - x)
+convex_piecewise_function = function(x) {
+  ifelse(x > 1, 0, 1 - x)
+}
 
-p = ggplot(data = data.frame(x = 0), mapping = aes(x = x)) + stat_function(fun = f1) + xlim(c(0.5, 4.5))
-p = p + geom_point(aes(x = 1, y = 1), size = 4) + geom_text(aes(x = 1, y = 0.7), label = "x", size = 6)
-p = p + geom_point(aes(x = 4, y = 4), size = 4) + geom_text(aes(x = 4, y = 3.7), label = "y", size = 6)
-p = p + geom_segment(aes(x = 1, y = 1, xend = 4, yend = 4), lty = 2) + geom_text(x = 2.5, y = 3, label = "f(x) + t[f(y) - f(x)]", color = "red", angle = 22, size = 6) + geom_point(aes(x = 2.5, y = 2.5), size = 5, color = "red")
-p = p + geom_point(aes(x = 2.5, y = 0.25), color = "blue", size = 4) + geom_text(x = 3.2, y = 0.25, label = "f(x + t[y - x])", color = "blue", size = 6) + theme_bw()
-if (interactive()) print(p)
+convexity_plot_1 = ggplot(data.table(x = c(0.5, 4.5)), aes(x = x)) +
+  stat_function(fun = strictly_convex_function, linewidth = 1) +
+  geom_point(data = data.table(x = c(1, 4), y = c(1, 4)), aes(x = x, y = y), size = 3) +
+  geom_point(data = data.table(x = 2.5, y = 2.5), aes(x = x, y = y), colour = "red", size = 4) +
+  geom_point(data = data.table(x = 2.5, y = 0.25), aes(x = x, y = y), colour = "blue", size = 4) +
+  geom_segment(
+    data = data.table(x = 1, y = 1, xend = 4, yend = 4),
+    aes(x = x, y = y, xend = xend, yend = yend),
+    linetype = 2
+  ) +
+  annotate("text", x = 1, y = 0.7, label = "x", size = 6) +
+  annotate("text", x = 4, y = 3.7, label = "y", size = 6) +
+  annotate("text", x = 2.5, y = 3, label = "f(x) + t[f(y) - f(x)]", colour = "red", angle = 22, size = 5) +
+  annotate("text", x = 3.2, y = 0.25, label = "f(x + t[y - x])", colour = "blue", size = 5) +
+  coord_cartesian(xlim = c(0.5, 4.5), ylim = c(-0.2, 5)) +
+  theme_bw(base_size = 14) +
+  theme(
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank()
+  )
 
-ggsave("../figure/convexity_1.pdf", p, width = 6, height = 4)
+convexity_plot_2 = ggplot(data.table(x = c(-1, 3)), aes(x = x)) +
+  stat_function(fun = convex_piecewise_function, linewidth = 1) +
+  geom_point(data = data.table(x = c(0, 2), y = c(1, 0)), aes(x = x, y = y), size = 3) +
+  geom_point(data = data.table(x = 1, y = 0.5), aes(x = x, y = y), colour = "red", size = 4) +
+  geom_point(data = data.table(x = 1, y = 0), aes(x = x, y = y), colour = "blue", size = 4) +
+  geom_segment(
+    data = data.table(x = 0, y = 1, xend = 2, yend = 0),
+    aes(x = x, y = y, xend = xend, yend = yend),
+    linetype = 2
+  ) +
+  annotate("text", x = 0, y = 0.8, label = "x", size = 6) +
+  annotate("text", x = 2, y = -0.2, label = "y", size = 6) +
+  annotate("text", x = 1.15, y = 0.7, label = "f(x) + t[f(y) - f(x)]", colour = "red", angle = -38, size = 5) +
+  annotate("text", x = 1, y = -0.2, label = "f(x + t[y - x])", colour = "blue", size = 5) +
+  coord_cartesian(xlim = c(-1, 3), ylim = c(-0.35, 1.2)) +
+  theme_bw(base_size = 14) +
+  theme(
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank()
+  )
 
-
-
-p = ggplot(data = data.frame(x = 0), mapping = aes(x = x)) + stat_function(fun = f2) + xlim(c(-1, 3))
-p = p + geom_point(aes(x = 0, y = 1), size = 4) + geom_text(aes(x = 0, y = 0.8), label = "x", size = 6)
-p = p + geom_point(aes(x = 2, y = 0), size = 4) + geom_text(aes(x = 2, y = - 0.2), label = "y", size = 6)
-p = p + geom_segment(aes(x = 0, y = 1, xend = 2, yend = 0), lty = 2) + geom_text(x = 1, y = 0.7, label = "f(x) + t[f(y) - f(x)]", color = "red", angle = - 38, size = 6) + geom_point(aes(x = 1, y = 0.5), size = 5, color = "red")
-p = p + geom_point(aes(x = 1, y = 0), color = "blue", size = 4) + geom_text(x = 1, y = -0.2, label = "f(x + t[y - x])", color = "blue", size = 6) + theme_bw()
-if (interactive()) print(p)
-
-ggsave("../figure/convexity_2.pdf", p, width = 6, height = 4)
+ggsave("../figure/convexity_1.pdf", convexity_plot_1, width = 6, height = 4)
+ggsave("../figure/convexity_2.pdf", convexity_plot_2, width = 6, height = 4)

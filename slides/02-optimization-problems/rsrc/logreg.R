@@ -1,82 +1,99 @@
+# Used in: ../slides-problems-1-unconstrained.tex
+#
+# Simulate one logistic regression problem and save empirical-risk contour plots
+# for different elastic-net regularization settings.
+
 set.seed(314L)
+
+library(data.table)
+library(ggplot2)
 library(vistool)
 
-# Simulate a simple logistic regression task once for all plots.
-n = 1000L
-df = data.frame(
-  x1 = rnorm(n, mean = -5, sd = 5),
-  x2 = rnorm(n, mean = -10, sd = 10)
+# Simulate one classification task that is reused across all figures.
+n_obs = 1000L
+sim_data = data.table(
+  x1 = rnorm(n_obs, mean = -5, sd = 5),
+  x2 = rnorm(n_obs, mean = -10, sd = 10)
 )
-z = 2 * df$x1 + 3 * df$x2
-prob = 1 / (1 + exp(-z))
-df$y = rbinom(n, size = 1, prob = prob)
+linear_predictor = 2 * sim_data[["x1"]] + 3 * sim_data[["x2"]]
+class_probabilities = 1 / (1 + exp(-linear_predictor))
+sim_data[, y := rbinom(n_obs, size = 1, prob = class_probabilities)]
 
-xmat = as.matrix(df[, c("x1", "x2")])
-response = df$y
+x_mat = as.matrix(sim_data[, .(x1, x2)])
+response = sim_data[["y"]]
 
-logreg_objective = function(xmat, y, alpha, lambda, limits) {
+build_logreg_objective = function(x_mat, y, alpha, lambda, limits) {
   objective = objective_logistic(
-    x = xmat,
+    x = x_mat,
     y = y,
     lambda = lambda,
     alpha = alpha,
     include_intercept = FALSE,
     penalize_intercept = FALSE,
     id = sprintf("logreg_alpha_%s_lambda_%s", alpha, lambda),
-    label = "Regularized Logistic Risk",
+    label = "Regularized empirical risk",
     transform = objective_transform_log()
   )
 
   objective$lower = c(limits$x1[1], limits$x2[1])
   objective$upper = c(limits$x1[2], limits$x2[2])
-
   objective
 }
 
-render_logreg = function(xmat, y, alpha, lambda, limits, filename, title,
-                          legend = TRUE, width = 3.5, height = 3.5) {
-  objective = logreg_objective(xmat, y, alpha, lambda, limits)
-  vis = as_visualizer(objective)
-  vis$add_contours(alpha = 0.5)
+save_logreg_plot = function(
+    x_mat,
+    y,
+    alpha,
+    lambda,
+    limits,
+    file_path,
+    title,
+    legend = TRUE,
+    width = 3.5,
+    height = 3.5) {
+  objective = build_logreg_objective(x_mat, y, alpha, lambda, limits)
+  visualizer = as_visualizer(objective)
+  visualizer$add_contours(alpha = 0.5)
 
-  theta_hat = stats::optim(
+  theta_hat = optim(
     c(0, 0),
     fn = function(theta) objective$eval(theta),
     gr = function(theta) objective$grad(theta)
   )$par
-  vis$add_points(
-    matrix(theta_hat, ncol = 2),
-    color = "#f6e05e"
-  )
-  offset_x = (limits$x1[2] - limits$x1[1]) * 0.04
-  vis$add_annotation(
+  visualizer$add_points(matrix(theta_hat, ncol = 2), color = "#f6e05e")
+
+  x_offset = (limits$x1[2] - limits$x1[1]) * 0.04
+  visualizer$add_annotation(
     text = "$\\hat{\\theta}$",
     color = "#f6e05e",
-    x = theta_hat[1] + offset_x,
+    x = theta_hat[1] + x_offset,
     y = theta_hat[2],
     latex = TRUE
   )
 
-  plot_obj = vis$plot(
+  plot_object = visualizer$plot(
     plot_title = title,
-    x_lab = "$\\theta_1$",
-    y_lab = "$\\theta_2$",
-    legend_title = "log($R_{emp})$",
+    x_lab = "θ₁",
+    y_lab = "θ₂",
+    x_limits = limits$x1,
+    y_limits = limits$x2,
+    legend_title = "log(R_emp)",
     show_legend = legend
   )
 
-  ggplot2::ggsave(filename, plot_obj, width = width, height = height)
+  ggsave(file_path, plot_object, width = width, height = height)
 }
 
+# Save the unregularized objective and the regularized variants.
 wide_limits = list(x1 = c(-1, 3), x2 = c(-1, 4))
-render_logreg(
-  xmat = xmat,
+save_logreg_plot(
+  x_mat = x_mat,
   y = response,
   alpha = 1,
   lambda = 0,
   limits = wide_limits,
-  filename = "../figure/logreg-0.png",
-  title = "Unregularized $R_{emp}$",
+  file_path = "../figure/logreg-0.png",
+  title = "Unregularized R_emp",
   legend = TRUE,
   width = 4,
   height = 3
@@ -85,14 +102,14 @@ render_logreg(
 regularized_limits = list(x1 = c(-0.25, 0.5), x2 = c(-0.25, 0.5))
 for (alpha in c(0, 0.5, 1)) {
   for (lambda in c(0.1, 1)) {
-    render_logreg(
-      xmat = xmat,
+    save_logreg_plot(
+      x_mat = x_mat,
       y = response,
       alpha = alpha,
       lambda = lambda,
       limits = regularized_limits,
-      filename = sprintf("../figure/logreg-%s-%s.png", alpha, lambda),
-      title = sprintf("Reg. risk with \\lambda = %s,  \\alpha = %s", lambda, alpha),
+      file_path = sprintf("../figure/logreg-%s-%s.png", alpha, lambda),
+      title = sprintf("Reg. risk with λ = %s, α = %s", lambda, alpha),
       legend = FALSE
     )
   }

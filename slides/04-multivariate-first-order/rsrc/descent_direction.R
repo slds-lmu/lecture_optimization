@@ -1,70 +1,123 @@
-# ------------------------------------------------------------------------------
-# multivariate first order
-
-# FIG: plot descent direction
-# ------------------------------------------------------------------------------
+# Used in: slides-multivar-first-order-1-GD.tex
+#
+# Visualizes a descent direction, the gradient, and the orthogonal contour direction
+# on a two-dimensional quadratic objective.
 
 set.seed(1L)
 
 library(ggplot2)
-library(gridExtra)
-library(BBmisc)
+library(grid)
 
-theme_set(theme_bw())
-
-# ------------------------------------------------------------------------------
-
-compute_grid_data = function(xrange, yrange, fun) {
-
-	grid <- expand.grid(x = xrange, y = yrange)
-	grid$f = sapply(seq_len(nrow(grid)), function(i) f(grid[i, 1], grid[i, 2]))
-
-	return(grid = grid)
+quadratic_fun = function(x1, x2) {
+  2 * x1^2 + x2^2
 }
 
-
-plot_contour_data = function(f, grid) {
-	p = ggplot() + geom_contour_filled(data = grid, aes(x = x, y = y, z = f)) 
-	# p = p + geom_point(data = data.frame(x = 0, y = 1), aes(x = x, y = y), colour = "orange")
-	p = p + geom_point(data = data.frame(x = 0, y = 0), aes(x = x, y = y), colour = "green", size = 3)
-	p = p + xlab("x1") + ylab("x2")
-	p = p + guides(fill = FALSE) + theme_minimal()
-
-	return(p)
+compute_grid_data = function(x_range, y_range, objective_fun) {
+  grid_data = expand.grid(x1 = x_range, x2 = y_range)
+  grid_data$z = mapply(objective_fun, grid_data$x1, grid_data$x2)
+  grid_data
 }
 
+build_contour_plot = function(grid_data) {
+  ggplot(grid_data, aes(x = x1, y = x2, z = z)) +
+    geom_contour_filled() +
+    geom_point(
+      data = data.frame(x1 = 0, x2 = 0),
+      aes(x = x1, y = x2),
+      colour = "green4",
+      size = 3,
+      inherit.aes = FALSE
+    ) +
+    labs(x = expression(x[1]), y = expression(x[2])) +
+    guides(fill = "none") +
+    theme_minimal(base_size = 12)
+}
 
-# Multivariate example: Diagonal matrix  
+grid_data = compute_grid_data(
+  x_range = seq(-2, 2, by = 0.05),
+  y_range = seq(-2, 2, by = 0.05),
+  objective_fun = quadratic_fun
+)
 
-f = function(x, y) 2 * x^2 + y^2
+point = c(1, 1)
+gradient_direction = c(4 * point[1], 2 * point[2])
+gradient_direction = gradient_direction / sqrt(sum(gradient_direction^2))
 
-grid = compute_grid_data(seq(-2, 2, by = 0.05), seq(-2, 2, by = 0.05), f)
+orthogonal_direction = c(1, -gradient_direction[1] / gradient_direction[2])
+orthogonal_direction = orthogonal_direction / sqrt(sum(orthogonal_direction^2))
 
-## quadratic_functions_2D_diag_1.png
+descent_direction = c(0, -1)
+arrow_style = arrow(length = unit(0.1, "inches"))
 
-x = c(1, 1)
-grad = c(4 * x[1], 2 * x[2])
-grad = - grad / sqrt(sum(grad^2))
+descent_plot = build_contour_plot(grid_data) +
+  geom_segment(
+    aes(
+      x = point[1],
+      y = point[2],
+      xend = point[1] + descent_direction[1],
+      yend = point[2] + descent_direction[2]
+    ),
+    arrow = arrow_style,
+    colour = "orange"
+  ) +
+  annotate(
+    "text",
+    x = point[1] - 0.3,
+    y = point[2] - 0.4,
+    label = "d",
+    parse = TRUE,
+    colour = "orange",
+    size = 3
+  ) +
+  geom_segment(
+    aes(
+      x = point[1],
+      y = point[2],
+      xend = point[1] + gradient_direction[1],
+      yend = point[2] + gradient_direction[2]
+    ),
+    arrow = arrow_style,
+    colour = "red3"
+  ) +
+  annotate(
+    "text",
+    x = point[1] + 0.3,
+    y = point[2] + 0.4,
+    label = "nabla * f(x)",
+    parse = TRUE,
+    colour = "red3",
+    size = 3
+  ) +
+  geom_segment(
+    aes(
+      x = point[1],
+      y = point[2],
+      xend = point[1] - orthogonal_direction[1],
+      yend = point[2] - orthogonal_direction[2]
+    ),
+    colour = "red3",
+    linetype = "dashed"
+  ) +
+  geom_segment(
+    aes(
+      x = point[1],
+      y = point[2],
+      xend = point[1] + orthogonal_direction[1],
+      yend = point[2] + orthogonal_direction[2]
+    ),
+    colour = "red3",
+    linetype = "dashed"
+  ) +
+  annotate("text", x = point[1] + 0.6, y = point[2] - 0.8, label = "90°", colour = "red3", size = 2) +
+  annotate("text", x = point[1] - 0.2, y = point[2] + 0.8, label = "270°", colour = "red3", size = 2)
 
-grad_orth = c(1, - grad[1] / grad[2])
-grad_orth = grad_orth / sqrt(sum(grad_orth^2))
+if (interactive()) {
+  print(descent_plot)
+}
 
-d = c(0, -1)
-
-p = plot_contour_data(f, grid)
-p = p + geom_segment(aes(x = x[1], y = x[2], xend = x[1] + d[1], yend = x[2] + d[2]), arrow = arrow(length = unit(0.1, "inches")), colour = "orange")
-temp <- paste("d")
-p = p + annotate("text", x = x[1] - 0.3, y = x[2] - 0.4, colour = "orange", label = temp, parse = TRUE, size = 3)
-p = p + geom_segment(aes(x = x[1], y = x[2], xend = x[1] - grad[1], yend = x[2] - grad[2]), arrow = arrow(length = unit(0.1, "inches")), colour = "red")
-temp <- paste("nabla * f(x)")
-p = p + annotate("text", x = x[1] + 0.3, y = x[2] + 0.4, colour = "red", label = temp, parse = TRUE, size = 3)
-
-p = p + geom_segment(aes(x = x[1], y = x[2], xend = x[1] - grad_orth[1], yend = x[2] - grad_orth[2]), colour = "red", lty = "dashed")
-p = p + geom_segment(aes(x = x[1], y = x[2], xend = x[1] + grad_orth[1], yend = x[2] + grad_orth[2]), colour = "red", lty = "dashed")
-temp <- paste("90")
-p = p + annotate("text", x = x[1] + 0.6, y = x[2] - 0.8, colour = "red", label = temp, parse = TRUE, size = 2)
-temp <- paste("270")
-p = p + annotate("text", x = x[1] - 0.2, y = x[2] + 0.8, colour = "red", label = temp, parse = TRUE, size = 2)
-
-if (interactive()) print(p)
-ggsave(filename = "../figure/descent_direction.pdf", p, width = 3, height = 3)
+ggsave(
+  filename = "../figure/descent_direction.pdf",
+  plot = descent_plot,
+  width = 3,
+  height = 3
+)

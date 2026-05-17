@@ -1,48 +1,65 @@
-# ------------------------------------------------------------------------------
-# multivariate first order
-
-# FIG: plot bisection method process
-# ------------------------------------------------------------------------------
+# Used in: slides-multivar-first-order-2-stepsize.tex
+#
+# Plots the Armijo sufficient-decrease condition along a one-dimensional line search.
 
 set.seed(1L)
 
-library(knitr)
-library(microbenchmark)
-library(snow)
-library(colorspace)
 library(ggplot2)
-library(zoo)
-library(gridExtra)
 
-source("functions.R")
-# ------------------------------------------------------------------------------
+objective_fun = function(alpha) {
+  -alpha^3 + 6 * alpha^2 - 9 * alpha + 2
+}
 
-f = function(x) - x^3 + 6 * x^2 - 9 * x + 2
-tangent = function(x) - 9 * x + 2
-tangent_red = function(x) 0.05 * (- 9) * x + 2
+tangent_fun = function(alpha) {
+  -9 * alpha + 2
+}
 
-sp = uniroot(function(x) f(x) - tangent_red(x), interval = c(1, 3))$root
-x = seq(0, sp, by = 0.01)
-d = data.frame(x = x, y = f(x))
+armijo_fun = function(alpha, gamma1 = 0.05) {
+  gamma1 * (-9) * alpha + 2
+}
 
-plot = ggplot(data = data.frame(x = 0), aes(x = x))
-plot = plot + geom_point(aes(x = 0, y = 2)) + geom_text(aes(x = 0, y = 2.1, label = "f(x)"), parse = T)
-plot = plot + stat_function(fun = f)
-plot = plot + geom_text(aes(x = 3, y = 2.2, label = "f(x+alpha~d)"), parse = T)
+armijo_limit = uniroot(
+  function(alpha) objective_fun(alpha) - armijo_fun(alpha),
+  interval = c(1, 3)
+)$root
 
-plot = plot + stat_function(fun = tangent, color = "grey")
-plot = plot + geom_text(aes(x = 0.1, y = -1.3, label = "Tangent"), color = "grey")
-plot = plot + geom_text(aes(x = 0.1, y = -1.7, label = "alpha~nabla~f(x)^T~d"), parse = T, color = "grey")
+curve_data = data.frame(
+  alpha = seq(0, armijo_limit, by = 0.01),
+  value = objective_fun(seq(0, armijo_limit, by = 0.01))
+)
 
-plot = plot + stat_function(fun = tangent_red, color = "blue", lty = 2)
-plot = plot + geom_text(aes(x = 1.5, y = 2, label = "tapered tangent"), color = "blue")
-plot = plot + geom_text(aes(x = 1.5, y = 1.7, label = "gamma[1]~alpha~nabla~f(x)^T~d"), parse = T, color = "blue")
+armijo_plot = ggplot(data.frame(alpha = 0), aes(x = alpha)) +
+  geom_point(aes(x = 0, y = 2)) +
+  geom_text(aes(x = 0, y = 2.1, label = "f(x)"), parse = TRUE) +
+  stat_function(fun = objective_fun) +
+  geom_text(aes(x = 3, y = 2.2, label = "f(x + alpha~d)"), parse = TRUE) +
+  stat_function(fun = tangent_fun, colour = "grey40") +
+  geom_text(aes(x = 0.1, y = -1.3, label = "Tangent"), colour = "grey40") +
+  geom_text(
+    aes(x = 0.1, y = -1.7, label = "alpha~nabla~f(x)^T~d"),
+    parse = TRUE,
+    colour = "grey40"
+  ) +
+  stat_function(fun = armijo_fun, colour = "#0b61a4", linetype = "dashed") +
+  geom_text(aes(x = 1.5, y = 2, label = "Armijo bound"), colour = "#0b61a4") +
+  geom_text(
+    aes(x = 1.5, y = 1.7, label = "gamma[1]~alpha~nabla~f(x)^T~d"),
+    parse = TRUE,
+    colour = "#0b61a4"
+  ) +
+  geom_line(data = curve_data, aes(x = alpha, y = value), colour = "#c0392b") +
+  geom_text(aes(x = 1, y = -1, label = "Armijo rule holds"), colour = "#c0392b") +
+  labs(x = expression(alpha), y = "y") +
+  coord_cartesian(xlim = c(0, 4), ylim = c(-2, 3)) +
+  theme_bw(base_size = 12)
 
-plot = plot + geom_line(data = d, aes(x = x, y = y), color = "red")
-plot = plot + geom_text(aes(x = 1, y = -1, label = "Armijo rule holds"), color = "red")
+if (interactive()) {
+  print(armijo_plot)
+}
 
-plot = plot + xlab(expression(alpha)) + ylab("y")
-plot = plot + xlim(c(0, 4)) + ylim(c(-2, 3)) + theme_bw()
-
-if (interactive()) print(plot)
-ggsave("../figure/armijo.pdf", plot, width = 6, height = 4)
+ggsave(
+  filename = "../figure/armijo.pdf",
+  plot = armijo_plot,
+  width = 6,
+  height = 4
+)
