@@ -4,8 +4,6 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
-\usepackage{verbatimbox}
-
 \title{Optimization in Machine Learning}
 
 \begin{document}
@@ -43,7 +41,7 @@ is called \textit{attraction area}/\textit{basin of attraction} of $f_i^*$ for a
 \end{framev}
 
 
-\begin{vbframe}{Multi-starts}
+\begin{frame}[fragile]{Multi-starts}
 Levy function:
 $$f(\xv) = \sin^2(3\pi x_1) + (x_1 - 1)^2 [1 + \sin^2(3\pi x_2)] + (x_2 -1)^2[1 + \sin^2(2\pi x_2)]$$
 \splitVCC{
@@ -59,7 +57,7 @@ Distribution of results ($y$ values):
   ## 0.0000  0.1099     0.5356    2.4351  1.9809     18.3663
 \end{verbatim}
 \comment[NOTE]{BB}{besser hist zeigen... und die ergebnisse der eintelnen runs in 2d. vielleaicht auf anderer funktion wo man auch sieht in wehcle basins man gelaufen ist}
-\end{vbframe}
+\end{frame}
 
 
 \begin{framev}{multi-starts}
@@ -88,37 +86,33 @@ Idea: use multiple starting points $\xv^{[1]}, \ldots, \xv^{[k]}$ for algorithm 
 \end{framev}
 
 
-\begin{vbframe}{multi-starts}
+\begin{frame}[fragile]{multi-starts}
 BFGS with Multistart gives us the true minimum of the Levy function:\\
 \spacer
-\begin{verbbox}
+\begin{verbatim}
 iters = 20 # number of starts
 xbest = c(runif(1, -2, 2), runif(1, -2, 2))
-\end{verbbox}
-\theverbbox
+\end{verbatim}
 \vspace{0.4cm}
-\begin{verbbox}
+\begin{verbatim}
 for (i in 1:iters) {
 x1 = runif(1, -2, 2)
 x2 = runif(1, -2, 2)
 res = optim(par = c(x1, x2), fn = f, method = "BFGS")
 }
-\end{verbbox}
-\theverbbox\\
+\end{verbatim}
 \spacer
-\begin{verbbox}
+\begin{verbatim}
 if (res$value < f(xbest)) {
 xbest = res$par
 }
-\end{verbbox}
-\theverbbox\\
+\end{verbatim}
 \spacer
-\begin{verbbox}
+\begin{verbatim}
 xbest
 ## [1] 1 1
-\end{verbbox}
-\theverbbox
-\end{vbframe}
+\end{verbatim}
+\end{frame}
 
 \endlecture
 \end{document}

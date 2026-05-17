@@ -53,7 +53,7 @@ branin_plot = ggplot(grid_data, aes(x = x1, y = x2, z = z)) +
     linewidth = 0.7
   ) +
   labs(
-    title = "Modified Branin function with negative gradients",
+    title = "Mod. Branin function with neg. gradients",
     x = expression(x[1]),
     y = expression(x[2])
   ) +
