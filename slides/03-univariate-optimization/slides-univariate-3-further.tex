@@ -13,37 +13,62 @@ Univariate optimization
 }{
 Further remarks
 }{
-figure/goldensec.png % TODO: replace with actual figure
+figure/secant.pdf
 }{
 \item Alternative methods
-\item Non-unimodal functions
+\item Strategies for non-unimodal functions
 \item Software implementations
 }
 
 
 % ------------------------------------------------------------------------------
-\begin{framei}[sep=L]{Alternative univariate methods}
-\item \textbf{Newton's method}: TODO
-\item \textbf{Secant method}: TODO
+\begin{framei}{Alternative univariate methods}
+\item GSS, quadratic interpolation, and Brent are derivative-free
+\item Alternatively, if $f'$ is available: find a minimum by solving $f'(x) = 0$ using root-finding methods applied to $f'$:
+\begin{itemizeM}
+\item \textbf{Bisection}: halve interval, keep the half where $f'$ changes sign \\
+(slow, but guaranteed convergence)
+\item \textbf{Secant method}: fit a secant through the interval bounds, use its intersection with $x$-axis as $x_\text{new}$
+% , keep the half where $f'$ changes sign
+(fast, but may diverge)
+\imageC[0.4]{figure/secant.pdf}
+\item \textbf{Newton's method}: $x_{n+1} = x_n - f'(x_n)/f''(x_n)$ \\
+(quadratic convergence, but requires $f''$ and fails if $f'' \approx 0$)
+\end{itemizeM}
 \end{framei}
 
 
 % ------------------------------------------------------------------------------
 \begin{framei}[sep=L]{What if $f$ is not unimodal?}
-\item TODO
+\item Throughout this chapter, we have assumed that $f$ is unimodal on the search interval
+\item Without unimodality, all covered methods may fail to find the global minimum:
+\begin{itemizeM}
+\item \textbf{GSS / Quadratic Interpolation / Brent}: bracket shrinking discards the half with the larger function value, but the global minimum may lie in the discarded half
+\item \textbf{Bisection / secant / Newton on $f'$}: find any stationary point of $f$, which may be a local minimum, local maximum, or inflection point
+\end{itemizeM}
 \end{framei}
 
 
 % ------------------------------------------------------------------------------
-\begin{framei}[sep=L]{Dealing with non-unimodal functions: tricks}
-\item TODO
+\begin{framei}[sep=L]{Dealing with non-unimodal functions}
+\item Practical heuristics:
+\begin{itemizeM}
+\item multiple restarts: run the method from several different initial brackets and return the best result
+\item e.g., split the domain into sub-intervals that are approximately unimodal and apply a local method to each
+\end{itemizeM}
+\item Alternative: use global optimization methods (see next chapters), although finding the global minimum is still not guaranteed
 \end{framei}
 
 
 % ------------------------------------------------------------------------------
 \begin{framei}[sep=L]{Software implementations}
-\item TODO
-\item R-function \texttt{optimize()}: Brent's method
+\item Several standard implementations for univariate optimization implement Brent's method as default:
+
+\begin{itemizeL}
+\item Python: \texttt{scipy.optimize.minimize\_scalar()}
+\item R-function \texttt{optimize()}
+\item MATLAB: \texttt{fminbnd()}
+\end{itemizeL}
 \end{framei}
 
 
