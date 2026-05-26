@@ -94,6 +94,9 @@ code-demos/code_demo_limo.R
 .idea/*
 *.pkl
 
+# Poetry lock file (exact dep pinning not needed for local figure generation)
+poetry.lock
+
 # RStudio / R in general
 *.Rproj
 *.Rhistory

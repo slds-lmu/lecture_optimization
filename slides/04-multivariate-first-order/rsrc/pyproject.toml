@@ -1,0 +1,17 @@
+# Python backend for gradient_descent_NN.R via reticulate.
+# Provides tensorflow/keras for the neural network regression figures.
+# Activated via .Renviron (RETICULATE_PYTHON points to this venv).
+[tool.poetry]
+name = "lecture-nn"
+version = "0.1.0"
+description = "Python backend for neural-network regression figures"
+authors = []
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.13"
+tensorflow = "^2.16"
+keras = "^3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

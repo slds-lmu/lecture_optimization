@@ -153,7 +153,7 @@ $$\nabla_{\thetav} \risket = \sumin \left(\pixit - \yi\right) \xi$$
 \item Consider $y = x_1^2 + x_2^2$ and $\D = \Dset$
 \vspace{-0.75cm}
 \imageC[0.5]{figure/gradient_descent_NN_0.pdf}
-\item Fit a neural network $\fxt$ with two hidden layers (2 units each) by minimizing the empirical risk
+\item Fit a neural network $\fxt$ with two hidden layers (16 ReLU units each) by minimizing the empirical risk
 $$\risket = \sumin \left(\fxt - \yi\right)^2$$
 
 \end{framei}
@@ -161,47 +161,42 @@ $$\risket = \sumin \left(\fxt - \yi\right)^2$$
 
 \begin{framei}[fs=footnotesize]{Excourse: backpropagation}
 \item GD requires $\nabla_{\thetav} \risket$, computed efficiently via \textbf{backpropagation}: repeated application of the chain rule from output to input
-\item \textbf{Example}:
-$L = \tfrac{1}{2}(y - f(x))^2$,
-sigmoid activation $s$ in hidden layers,\\
-let $\zin{1}{1} = \theta_{11}^{(1)} x_1 + \theta_{12}^{(1)} x_2$,
-$\zout{1}{1} = s(\zin{1}{1})$, etc.
+\item \textbf{Example} (simplified NN with 2 hidden layers with 2 units and activation func. $\sigma$):
+let $\ L = \tfrac{1}{2}(y - f(x))^2$ and
+$\ \zin{1}{1} = \theta_{11}^{(1)} x_1 + \theta_{12}^{(1)} x_2$,
+$\ \zout{1}{1} = \sigma(\zin{1}{1})$, etc.
 $$
 \pd{L}{\theta_{11}^{(3)}} = \underbrace{\pd{L}{f}}_{f-y} \cdot \underbrace{\pd{f}{\theta_{11}^{(3)}}}_{{\zout{1}{2}}}, \qquad
-\pd{L}{\theta_{11}^{(2)}} = \underbrace{\pd{L}{f}}_{f-y} \cdot \underbrace{\pd{f}{\zout{1}{2}}}_{\theta_{11}^{(3)}} \cdot \underbrace{\pd{\zout{1}{2}}{\zin{1}{2}}}_{s'(\zin{1}{2})} \cdot \underbrace{\pd{\zin{1}{2}}{\theta_{11}^{(2)}}}_{\zout{1}{1}}, \qquad
+\pd{L}{\theta_{11}^{(2)}} = \underbrace{\pd{L}{f}}_{f-y} \cdot \underbrace{\pd{f}{\zout{1}{2}}}_{\theta_{11}^{(3)}} \cdot \underbrace{\pd{\zout{1}{2}}{\zin{1}{2}}}_{\sigma'(\zin{1}{2})} \cdot \underbrace{\pd{\zin{1}{2}}{\theta_{11}^{(2)}}}_{\zout{1}{1}}, \qquad
 \dots
 $$
 \vspace{-1cm}
 \imageC[0.75]{figure/nn_architecture.pdf}
 {\scriptsize
-Note: for readability, we omitted the bias terms in the network visualization
+Note: Bias terms omitted for readability. The actual NN uses 16 units per hidden layer.
 }
 \end{framei}
 
 
 \begin{framev}[align=top]{ERM for NN with GD}
+\only<1>{
 After $10$ iters of GD:
 \splitV{
-\imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_10_surface.pdf}}
-{\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history.pdf}}
-\end{framev}
-
-
-\begin{framev}[align=top]{ERM for NN with GD}
-After $100$ iters of GD:
+\imageFixed{0cm}{1.5cm}[1]{figure/gradient_descent_NN_10_surface.pdf}}
+{\imageFixed{6cm}{2.5cm}[1]{figure/gradient_descent_NN_10_history.pdf}}
+}
+\only<2>{
+After $100$ iters of GD (note the zig-zag pattern of the risk after iter. 30):
 \splitV{
-\imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_100_surface.pdf}}
-{\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history.pdf}}
-\end{framev}
-
-
-\begin{framev}[align=top]{ERM for NN with GD}
-After $300$ iters of GD (note the zig-zag-behavior after iter. 200):
+\imageFixed{0cm}{1.5cm}[1]{figure/gradient_descent_NN_100_surface.pdf}}
+{\imageFixed{6cm}{2.5cm}[1]{figure/gradient_descent_NN_100_history.pdf}}
+}
+\only<3>{
+After $300$ iters of GD (note the zig-zag pattern of the risk after iter. 30):
 \splitV{
-\imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_300_surface.pdf}}
-{\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history.pdf}}
-\comment[NOTE]{BB}{sollte man bei dem beispiel nicht besser sehen dass wir die quadrik erfolgreich approxen können? kommt nicht sooo gut hin?}
-\comment[NOTE]{BB}{aich hier sollte eher R_emp auf der achse stehen statt "loss". mehrere bilder mal prüfen}
+\imageFixed{0cm}{1.5cm}[1]{figure/gradient_descent_NN_300_surface.pdf}}
+{\imageFixed{6cm}{2.5cm}[1]{figure/gradient_descent_NN_300_history.pdf}}
+}
 \end{framev}
 
 \endlecture
