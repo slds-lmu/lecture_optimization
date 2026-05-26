@@ -4,6 +4,9 @@
 \input{../../latex-math/basic-math}
 \input{../../latex-math/basic-ml}
 
+\newcommand{\zin}[2]{z_{\text{in},{#1}}^{(#2)}}
+\newcommand{\zout}[2]{z_{\text{out},{#1}}^{(#2)}}
+
 \title{Optimization in Machine Learning}
 
 \begin{document}
@@ -21,9 +24,9 @@ figure_man/linesearch.png
 }{
 \item Iterative Descent / Line Search
 \item Descent directions
-\item GD
-\item ERM with GD
+\item Gradient descent
 \item Pseudoresiduals
+\item ERM with GD
 }
 
 \begin{framei}{Iterative Descent}
@@ -147,13 +150,32 @@ $$\nabla_{\thetav} \risket = \sumin \left(\pixit - \yi\right) \xi$$
 
 
 \begin{framei}{ERM for NN with GD}
-\item Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize
+\item Consider $y = x_1^2 + x_2^2$ and $\D = \Dset$
+\vspace{-0.75cm}
+\imageC[0.5]{figure/gradient_descent_NN_0.pdf}
+\item Fit a neural network $\fxt$ with two hidden layers (2 units each) by minimizing the empirical risk
 $$\risket = \sumin \left(\fxt - \yi\right)^2$$
-where $\fxt$ is a neural network with 2 hidden layers (2 units each).
-\vspace{-0.7cm}
-\imageC[0.6]{figure/gradient_descent_NN_0.pdf}
-\comment[NOTE]{BB}{hier wäre ein bild vom NN schön gewesen;
-kann man doch irgendwie einen 2D schnit der loss ladnscape noch ziegen. und wie GD da durchläuft?}
+
+\end{framei}
+
+
+\begin{framei}[fs=footnotesize]{Excourse: backpropagation}
+\item GD requires $\nabla_{\thetav} \risket$, computed efficiently via \textbf{backpropagation}: repeated application of the chain rule from output to input
+\item \textbf{Example}:
+$L = \tfrac{1}{2}(y - f(x))^2$,
+sigmoid activation $s$ in hidden layers,\\
+let $\zin{1}{1} = \theta_{11}^{(1)} x_1 + \theta_{12}^{(1)} x_2$,
+$\zout{1}{1} = s(\zin{1}{1})$, etc.
+$$
+\pd{L}{\theta_{11}^{(3)}} = \underbrace{\pd{L}{f}}_{f-y} \cdot \underbrace{\pd{f}{\theta_{11}^{(3)}}}_{{\zout{1}{2}}}, \qquad
+\pd{L}{\theta_{11}^{(2)}} = \underbrace{\pd{L}{f}}_{f-y} \cdot \underbrace{\pd{f}{\zout{1}{2}}}_{\theta_{11}^{(3)}} \cdot \underbrace{\pd{\zout{1}{2}}{\zin{1}{2}}}_{s'(\zin{1}{2})} \cdot \underbrace{\pd{\zin{1}{2}}{\theta_{11}^{(2)}}}_{\zout{1}{1}}, \qquad
+\dots
+$$
+\vspace{-1cm}
+\imageC[0.75]{figure/nn_architecture.pdf}
+{\scriptsize
+Note: for readability, we omitted the bias terms in the network visualization
+}
 \end{framei}
 
 
