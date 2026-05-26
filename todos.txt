@@ -35,7 +35,7 @@ general:
 - ignore chap1 and chap2 for now. chap1 not sure if i wanna teach this in this form (????).
   chap2 is "folded" into other chapters
 - general rule: every start slides of each chunk notes down BRIEFLY which lit ref we follow
-
+- Reference: Reference via \sourceref and \furtherreading; Set up a references.bib file for each chapter (with annotations field where we quickly mention why reference is important)
 
 BB:
 - PRIO align latex-math parent with optim. close PR-47 from optim,
