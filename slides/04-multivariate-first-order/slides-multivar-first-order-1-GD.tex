@@ -31,16 +31,16 @@ figure_man/linesearch.png
 \vspace*{-0.1cm}
 $$f: \R^2 \to \R, \quad f(x_1, x_2) = y.$$
 \item \textbf{Goal}: Reach the valley
-$$\argmin_{\xv} f(\xv)$$
+$$\quad \argmin_{\xv} f(\xv)$$
+But: due to dense fog, you cannot see the valley, you can only sense the local slope under your feet
 \item \textbf{Central idea}: Repeat
-\comment[NOTE]{BB}{wir können hier vielleicht etwas visueller über den typen im gebirge gehen. es ist neblig, ich kann nur einen metter sehen und will rtunter kommen. also mache ich lokale schritte runter und scanne dann wieder meine 1m umgebung}
 \splitVCC[0.6]{
 \begin{enumerate}
 \item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d} \in \R^d$
 \item Move along $\mathbf{d}$ until $f$ \glqq sufficiently\grqq{} reduces (\textbf{step size control}) and update location
 \end{enumerate}}{
 \imageC{figure_man/linesearch.png}
-\begin{footnotesize} "Walking down the hill, towards the valley." \end{footnotesize}}
+\begin{footnotesize} ``Walking down the hill through local steps, towards the valley''\end{footnotesize}}
 \end{framei}
 
 
@@ -94,12 +94,55 @@ GD for $f(x_1, x_2) = - \sin(x_1) \cdot \frac{1}{2\pi} \exp\left( (x_2 - \pi / 2
 \end{footnotesize}\end{center}
 \end{framei}
 
-\begin{framei}[fs=footnotesize]{Optimize LS linear regression with GD}
+
+\begin{framei}{GD for ERM}
+\item Let $\D = \Dset$ and consider the empirical risk minimization problem
+$$\argmin_{\thetav} \risket = \argmin_{\thetav} \sumin \Lxyit$$
+\item \textbf{Gradient} of the empirical risk:
+$$\nabla_{\thetav} \risket = \sumin \pd{\Lxyit}{\thetav}$$
+\item \textbf{GD update rule}:
+$$\thetav^{[t+1]} = \thetav^{[t]} - \alpha^{[t]} \nabla_{\thetav} \risket\big|_{\thetav^{[t]}}$$
+\end{framei}
+
+
+\begin{framei}[fs=footnotesize]{GD for ERM: Pseudoresiduals}
+\item By the chain rule, the (neg.) gradient of the ERM problem can be expressed as:
+$$
+- \nabla_{\thetav} \risket = - \sumin \underbrace{\pd{\Lxyi}{f}}_{\text{pseudo residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetav}
+$$
+\item \textbf{pseudo residuals} tell us how to distort $\fxi$ to achieve greatest decrease of $\Lxyi$ (best pointwise update)
+\item $\pd{\fxit}{\thetav}$ tells us how to modify $\thetav$ accordingly and wiggle model output
+\item GD step sums up these modifications across all observations $i$
+\splitVCC{
+\textbf{NB:} Pseudo-residuals
+$\tilde{r}\left( f \right)$
+match usual residuals for L2 loss:
+\begin{align*}
+\pd{\Lxy}{f} & = \frac{1}{2} \left. \pd{(y - f)^2}{f} \right|_{f = \fx}\\
+& = y - \fx
+\end{align*}
+}
+{\imageC{figure_man/pseudo_residual_1.png}}
+\end{framei}
+
+
+\begin{framei}{Optimize LS linear regression with GD}
 \item Let $\D = \Dset$ and minimize
 $$\risket = \sumin (\thetav^\top \xi - \yi)^2$$
-\textbf{NB: } For illustration, we use GD even though closed-form solution exists. GD-like (more adv.) approaches like this MIGHT make sense for large data, though.
+{\footnotesize
+\textbf{NB:} For illustration, we use GD even though closed-form solution exists. GD-like (more adv.) approaches like this MIGHT make sense for large data, though.}
 \item\textbf{Gradient: } $$\nabla_{\thetav}\risket = \frac{\partial \risket}{\partial \thetav} = -2 \sumin (\yi - \thetav^{\top} \xv^{(i)}) \xv^{(i)}$$
 \imageC[0.8]{figure/gradient_descent_lm.pdf}
+\end{framei}
+
+
+\begin{framei}{GD for logistic regression}
+\item Let $\D = \Dset$ with $\yi \in \{0, 1\}$ and minimize the cross-entropy risk
+$$\risket = - \sumin \left[\yi \log \pixit + \left(1 - \yi\right) \log\left(1 - \pixit\right)\right]$$
+where $\pixit = s(\thetav^\top \xi)$, \quad $s(z) = \tfrac{1}{1 + \exp(-z)}$
+\item \textbf{Gradient:}
+$$\nabla_{\thetav} \risket = \sumin \left(\pixit - \yi\right) \xi$$
+\imageC[0.8]{figure/gradient_descent_logistic.pdf}
 \end{framei}
 
 
@@ -138,27 +181,6 @@ After $300$ iters of GD (note the zig-zag-behavior after iter. 200):
 \comment[NOTE]{BB}{sollte man bei dem beispiel nicht besser sehen dass wir die quadrik erfolgreich approxen können? kommt nicht sooo gut hin?}
 \comment[NOTE]{BB}{aich hier sollte eher R_emp auf der achse stehen statt "loss". mehrere bilder mal prüfen}
 \end{framev}
-
-
-\begin{framei}[fs=footnotesize]{GD for ERM: Pseudoresiduals}
-\item Gradient for ERM problem:
-$$
-- \pd{\risket}{\thetav} = - \pd{\sumin \Lxyit}{\thetav}= - \sumin \underbrace{\pd{\Lxyi}{f}}_{\text{pseudo residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetav}
-$$
-\item \textbf{pseudo residuals} tell us how to distort $\fxi$ to achieve greatest decrease of $\Lxyi$ (best pointwise update)
-\item $\pd{\fxit}{\thetav}$ tells us how to modify $\thetav$ accordingly and wiggle model output
-\item GD step sums up these modifications across all observations $i$
-\splitVCC{
-\textbf{NB:} Pseudo-residuals
-$\tilde{r}\left( f \right)$
-match usual residuals for L2 loss:
-\begin{align*}
-\pd{\Lxy}{f} & = \frac{1}{2} \left. \pd{(y - f)^2}{f} \right|_{f = \fx}\\
-& = y - \fx
-\end{align*}
-}
-{\imageC{figure_man/pseudo_residual_1.png}}
-\end{framei}
 
 \endlecture
 \end{document}

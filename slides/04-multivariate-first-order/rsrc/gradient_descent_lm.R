@@ -55,7 +55,7 @@ data_plot = ggplot(data.frame(x = x, y = response), aes(x = x, y = y)) +
 
 rss_plot = ggplot(trajectory, aes(x = iteration, y = rss)) +
   geom_line() +
-  labs(x = "Iteration", y = "RSS") +
+  labs(x = "Iteration", y = expression(R[emp])) +
   theme_bw(base_size = 12)
 
 fit_plot = data_plot +
