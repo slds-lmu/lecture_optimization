@@ -1,149 +1,280 @@
-# ------------------------------------------------------------------------------
-# constrained
-
-# FIG: plot linear constraints
-# ------------------------------------------------------------------------------
+# Used in: slides/06-constrained/slides-constrained-2-lp.tex
+# Used in: slides/06-constrained/slides-constrained-2-lp-simplex.tex
+#
+# Builds the linear-programming figures used in the constrained optimization slides.
+# The plots show a feasible polytope, objective level sets, and three LP solution cases.
 
 set.seed(1L)
 
-library(knitr)
-library(linprog)
-library(snow)
-library(colorspace)
+library(data.table)
 library(ggplot2)
-library(dplyr)
-library(gridExtra)
 library(grid)
+library(gridExtra)
 
-# ------------------------------------------------------------------------------
+figure_dir = "../figure"
+dir.create(figure_dir, recursive = TRUE, showWarnings = FALSE)
 
-plotPoly = function(A, b) {
-  
-  p = ggplot(data = data.frame(x = 0), mapping = aes(x = x))
-  p = p + geom_point(x = 0, y = 0, size = 2, color = "green")
-  
-  for (i in 1:dim(A)[1]) {
-    p = p + geom_abline(intercept = b[i] / A[i, 2], slope = - A[i, 1] / A[i, 2], color = "green")
-  }
-  
-  p = p + geom_segment(aes(x = 0, y = -Inf, xend = 0, yend = Inf), color = "green")
-  p = p + geom_segment(aes(x = -Inf, y = 0, xend = Inf, yend = 0), color = "green")
-  
-  combs = combn(1:dim(A)[1], 2)
-  
-  V = matrix(0, 0, 2)
-  
-  for (i in 1:dim(combs)[2]) {
-    
-    ind = combs[, i]
-    
-    if (det(A[ind, ]) != 0) {
-      sol = solve(A[ind, ], b[ind])
-      
-      if (all(A %*% sol <= b)) {
-        V = rbind(V, solve(A[ind, ], b[ind]))
-        p = p + geom_point(x = sol[1], y = sol[2], color = "green", size = 2)
-      }
-    }
-  }
-  
-  V = as.data.frame(V)
-  
-  center = apply(V, 2, mean)
-  Vdiff = V - center
-  
-  ordering = vector(length = 0)
-  
-  for (i in 1:dim(Vdiff)[1]) {
-    ordering = cbind(ordering, atan2(Vdiff[i, 1], Vdiff[i, 2]))
-  }
-  
-  V = V[order(ordering), ]
-  
-  p = p + geom_polygon(data = V, aes(x = V1, y = V2), fill = "green", alpha = 0.1)
-  
-  p = p + coord_equal() + xlab(expression(x[1])) + ylab(expression(x[2]))
-  
-  
-  p = p + xlim(c(0, 1)) + ylim(c(0, 1)) + theme_bw()
-  
-  p
+constraint_color = "#238b45"
+objective_color = "#252525"
+highlight_color = "#de2d26"
+fill_alpha = 0.15
+
+save_plot = function(plot, filename, width, height) {
+  ggsave(
+    filename = file.path(figure_dir, filename),
+    plot = plot,
+    width = width,
+    height = height,
+    dpi = 300,
+    bg = "white"
+  )
 }
 
+feasible_vertices = function(a_matrix, b_vector, tolerance = 1e-9) {
+  index_pairs = combn(seq_len(nrow(a_matrix)), 2L, simplify = FALSE)
 
-A = matrix(c(1, 2, -1, 0, 2, 1, 0, -1), ncol = 2)
-b = c(1, 1, 0, 0)
+  vertices = lapply(index_pairs, function(active_index) {
+    active_matrix = a_matrix[active_index, , drop = FALSE]
 
-ggsave("../figure/cons-linear-pro-example.png", plotPoly(A, b))
-###############
+    if (abs(det(active_matrix)) <= tolerance) {
+      NULL
+    } else {
+      point = as.numeric(solve(active_matrix, b_vector[active_index]))
+      is_feasible = all(drop(a_matrix %*% point) <= b_vector + tolerance)
 
+      if (is_feasible) {
+        data.table(x1 = point[1L], x2 = point[2L])
+      } else {
+        NULL
+      }
+    }
+  })
 
-f =  function(x, z) - z - x
-dd = expand.grid(x = seq(-2, 2, by = 0.01), z = seq(-2, 2, by = 1 / 6))
-dd %>% rowwise %>% mutate(y = f(x = x, z = z)) -> dd2
+  vertices = Filter(Negate(is.null), vertices)
 
-#################
+  if (length(vertices) == 0L) {
+    data.table(x1 = numeric(), x2 = numeric())
+  } else {
+    unique(rbindlist(vertices))
+  }
+}
 
+order_vertices = function(vertices) {
+  if (nrow(vertices) <= 2L) {
+    vertices
+  } else {
+    center_x1 = mean(vertices$x1)
+    center_x2 = mean(vertices$x2)
+    ordered_vertices = copy(vertices)
+    ordered_vertices[, angle := atan2(x2 - center_x2, x1 - center_x1)]
+    setorder(ordered_vertices, angle)
+    ordered_vertices[, angle := NULL]
+    ordered_vertices
+  }
+}
 
-p = plotPoly(A, b)
+constraint_lines = function(a_matrix, b_vector, tolerance = 1e-9) {
+  line_data = data.table(
+    a1 = a_matrix[, 1L],
+    a2 = a_matrix[, 2L],
+    rhs = b_vector
+  )
 
-p = p + geom_path(data = dd2, aes(x, y, col = z, group = z))
+  list(
+    abline = line_data[abs(a2) > tolerance][
+      ,
+      .(intercept = rhs / a2, slope = -a1 / a2)
+    ],
+    vline = line_data[abs(a2) <= tolerance & abs(a1) > tolerance][
+      ,
+      .(x_intercept = rhs / a1)
+    ]
+  )
+}
 
-p = p + scale_colour_gradientn(colours = terrain.colors(5))
-p = p + xlab("x1") + ylab("x2") + labs(colour = "y") + theme_bw()
+base_lp_theme = function(base_size = 14L) {
+  theme_bw(base_size = base_size) +
+    theme(
+      legend.position = "bottom",
+      plot.title = element_text(hjust = 0.5)
+    )
+}
 
-p = p + geom_abline(intercept = 2 / 3, slope = - 1, color = "black")
-p = p + geom_segment(aes(x = 1 / 3, y = 1 / 3, xend = 1 / 3 + 0.1, yend = 1 / 3 + 0.1), arrow = arrow(length = unit(0.03, "npc")))
-p = p + geom_text(aes(x = 1 / 3, y = 1 / 3, label = "-c"), hjust = -1.5, vjust = -0.4, size = 5)
+plot_polytope = function(a_matrix, b_vector, x_limits = c(0, 1), y_limits = c(0, 1), base_size = 14L) {
+  vertices = order_vertices(feasible_vertices(a_matrix, b_vector))
+  lines = constraint_lines(a_matrix, b_vector)
 
-p = p + coord_equal()
-ggsave("../figure/cons-opposite-direction.png", p)
+  plot = ggplot() +
+    geom_abline(
+      data = lines$abline,
+      mapping = aes(intercept = intercept, slope = slope),
+      color = constraint_color,
+      linewidth = 0.6
+    ) +
+    geom_vline(
+      data = lines$vline,
+      mapping = aes(xintercept = x_intercept),
+      color = constraint_color,
+      linewidth = 0.6
+    )
 
-####################
+  if (nrow(vertices) > 0L) {
+    plot = plot +
+      geom_polygon(
+        data = vertices,
+        mapping = aes(x = x1, y = x2),
+        fill = constraint_color,
+        alpha = fill_alpha
+      ) +
+      geom_point(
+        data = vertices,
+        mapping = aes(x = x1, y = x2),
+        color = constraint_color,
+        size = 2
+      )
+  }
 
-# Case 1: feasible region empty
-p1 = ggplot(data = data.frame(x = 0), mapping = aes(x = x))
-p1 = p1 + geom_rect(aes(xmin = -Inf, ymin = -Inf, xmax = 1, ymax = Inf), fill = "green", alpha = 0.1)
-p1 = p1 + geom_vline(xintercept = 1,color = "green")
-p1 = p1 + geom_abline(intercept = 2, slope = - 1, color = "blue")
-p1 = p1 + geom_polygon(data = data.frame(x = c(0, 2, 2), y = c(2, 0, 2)), aes(x = x, y = y), fill = "blue", alpha = 0.1)
-p1 = p1 + geom_abline(intercept = 0, slope = 1 / 2, color = "orange")
-p1 = p1 + geom_polygon(data = data.frame(x = c(0, 2, 2), y = c(0, 0, 1)), aes(x = x, y = y), fill = "orange", alpha = 0.1)
-p1 = p1 + coord_equal() + ggtitle("Case 1")
-p1 = p1 + xlab(expression(paste(x[1]))) + xlab(expression(paste(x[2])))
-p1 = p1 + xlim(c(0, 2)) + ylim(c(0, 2)) + theme_bw()
+  plot +
+    coord_equal(xlim = x_limits, ylim = y_limits, expand = FALSE) +
+    labs(x = expression(x[1]), y = expression(x[2])) +
+    base_lp_theme(base_size)
+}
 
-# Case 2: unrestricted solution
-p2 = ggplot(data = data.frame(x = 0), mapping = aes(x = x))
+plot_objective_direction = function(plot, start, end, label = "-c") {
+  plot +
+    geom_segment(
+      aes(x = start[1L], y = start[2L], xend = end[1L], yend = end[2L]),
+      arrow = arrow(length = unit(0.03, "npc")),
+      linewidth = 0.5
+    ) +
+    geom_text(
+      aes(x = start[1L], y = start[2L], label = label),
+      hjust = -1.3,
+      vjust = -0.4,
+      size = 5
+    )
+}
 
-p2 = p2 + geom_abline(intercept = 1, slope = - 1, color = "green")
-p2 = p2 + geom_abline(intercept = 1, slope = 1, color = "green")
-p2 = p2 + geom_polygon(data = data.frame(x = c(0.5, 1, 1, 0.5, 0), y = c(0.5, 0.5, 1.5, 1.5, 1)), aes(x = x, y = y), fill = "green", alpha = 0.1)
-p2 = p2 + geom_abline(intercept = 1.5, slope = - 1)
-p2 = p2 + geom_segment(aes(x = 0.5, y = 1, xend = 0.75, yend = 1.25), arrow = arrow(length = unit(0.03, "npc")))
-p2 = p2 + geom_text(aes(x = 0.5, y = 1, label = "-c"), hjust = -1.5, vjust = -0.4, size = 5)
-p2 = p2 + xlab(expression(paste(x[1]))) + xlab(expression(paste(x[2])))
-p2 = p2 + coord_equal() + ggtitle("Case 2")
-p2 = p2 + xlim(c(0, 1)) + ylim(c(0.5, 1.5)) + theme_bw()
-p2 = p2 + xlab(expression(x[1])) + ylab(expression(x[2]))
+constraint_matrix = matrix(
+  c(
+    1, 2,
+    2, 1,
+    -1, 0,
+    0, -1
+  ),
+  ncol = 2L,
+  byrow = TRUE
+)
+constraint_rhs = c(1, 1, 0, 0)
 
-# Case 3: feasible region restricted and optimum solution exists
-p3 = ggplot(data = data.frame(x = 0), mapping = aes(x = x)) +
-  geom_abline(intercept = 2, slope = - 2, color = "green")
-p3 = p3 + geom_abline(intercept = 1, slope = -0.5, color = "green")
-p3 = p3 + geom_abline(intercept = 0.5, slope = 1, color = "green")
-p3 = p3 + geom_abline(intercept = 0.5, slope = - 1, color = "green")
-p3 = p3 + geom_abline(intercept = - 5 / 12, slope = 5 / 6, color = "green")
-p3 = p3 + geom_polygon(data = data.frame(x = c(0, 0.5, 29/34, 2/3, 1/3), y = c(0.5, 0, 0.29, 2/3, 5/6)), aes(x = x, y = y), fill = "green", alpha = 0.1)
-p3 = p3 + geom_point(aes(x = 2 / 3, y = 2 /3), size = 2, colour = "red")
-p3 = p3 + geom_abline(intercept = 4/3, slope = - 1)
-p3 = p3 + geom_segment(aes(x = 2 / 3, y = 2 / 3, xend = 5/6, yend = 5/6), arrow = arrow(length = unit(0.03, "npc")))
-p3 = p3 + geom_text(aes(x = 2 / 3, y = 2 / 3, label = "-c"), hjust = -1.5, vjust = -0.4, size = 5)
-p3 = p3 + coord_equal()
-p3 = p3 + ggtitle("Case 3")
-p3 = p3 + xlab(expression(paste(x[1]))) + xlab(expression(paste(x[2])))
-p3 = p3 + xlim(c(0, 1)) + ylim(c(0, 1)) + theme_bw()
+feasible_set_plot = plot_polytope(constraint_matrix, constraint_rhs)
+save_plot(feasible_set_plot, "cons-linear-pro-example.png", width = 5, height = 5)
 
-p = arrangeGrob(p1, p2, p3, ncol = 3)
-if (interactive()) grid::grid.draw(p)
-ggsave("../figure/cons-solutions-lp.png", p)
+objective_levels = CJ(
+  x1 = seq(-2, 2, by = 0.01),
+  objective_value = seq(-2, 2, by = 1 / 6)
+)
+objective_levels[, x2 := -objective_value - x1]
+
+opposite_direction_plot = plot_polytope(constraint_matrix, constraint_rhs) +
+  geom_path(
+    data = objective_levels,
+    mapping = aes(x = x1, y = x2, color = objective_value, group = objective_value),
+    linewidth = 0.35
+  ) +
+  scale_color_gradientn(colours = terrain.colors(5L)) +
+  geom_abline(intercept = 2 / 3, slope = -1, color = objective_color, linewidth = 0.5) +
+  labs(color = expression(c^T * x))
+
+opposite_direction_plot = plot_objective_direction(
+  opposite_direction_plot,
+  start = c(1 / 3, 1 / 3),
+  end = c(1 / 3 + 0.1, 1 / 3 + 0.1)
+)
+
+save_plot(opposite_direction_plot, "cons-opposite-direction.png", width = 5.5, height = 5)
+
+case_plot = function(title, x_limits, y_limits) {
+  ggplot() +
+    coord_equal(xlim = x_limits, ylim = y_limits, expand = FALSE) +
+    labs(title = title, x = expression(x[1]), y = expression(x[2])) +
+    base_lp_theme(base_size = 12L)
+}
+
+case_1_plot = case_plot("Case 1", x_limits = c(0, 2), y_limits = c(0, 2)) +
+  annotate(
+    "rect",
+    xmin = -Inf,
+    xmax = 1,
+    ymin = -Inf,
+    ymax = Inf,
+    fill = constraint_color,
+    alpha = fill_alpha
+  ) +
+  geom_polygon(
+    data = data.table(x1 = c(0, 2, 2), x2 = c(2, 0, 2)),
+    mapping = aes(x = x1, y = x2),
+    fill = "#3182bd",
+    alpha = fill_alpha
+  ) +
+  geom_polygon(
+    data = data.table(x1 = c(0, 2, 2), x2 = c(0, 0, 1)),
+    mapping = aes(x = x1, y = x2),
+    fill = "#fdae6b",
+    alpha = fill_alpha
+  ) +
+  geom_vline(xintercept = 1, color = constraint_color, linewidth = 0.6) +
+  geom_abline(intercept = 2, slope = -1, color = "#3182bd", linewidth = 0.6) +
+  geom_abline(intercept = 0, slope = 1 / 2, color = "#fdae6b", linewidth = 0.6)
+
+case_2_plot = case_plot("Case 2", x_limits = c(0, 1), y_limits = c(0.5, 1.5)) +
+  geom_polygon(
+    data = data.table(
+      x1 = c(0.5, 1, 1, 0.5, 0),
+      x2 = c(0.5, 0.5, 1.5, 1.5, 1)
+    ),
+    mapping = aes(x = x1, y = x2),
+    fill = constraint_color,
+    alpha = fill_alpha
+  ) +
+  geom_abline(intercept = 1, slope = -1, color = constraint_color, linewidth = 0.6) +
+  geom_abline(intercept = 1, slope = 1, color = constraint_color, linewidth = 0.6) +
+  geom_abline(intercept = 1.5, slope = -1, color = objective_color, linewidth = 0.5)
+
+case_2_plot = plot_objective_direction(
+  case_2_plot,
+  start = c(0.5, 1),
+  end = c(0.75, 1.25)
+)
+
+case_3_plot = case_plot("Case 3", x_limits = c(0, 1), y_limits = c(0, 1)) +
+  geom_polygon(
+    data = data.table(
+      x1 = c(0, 0.5, 29 / 34, 2 / 3, 1 / 3),
+      x2 = c(0.5, 0, 0.29, 2 / 3, 5 / 6)
+    ),
+    mapping = aes(x = x1, y = x2),
+    fill = constraint_color,
+    alpha = fill_alpha
+  ) +
+  geom_abline(intercept = 2, slope = -2, color = constraint_color, linewidth = 0.6) +
+  geom_abline(intercept = 1, slope = -0.5, color = constraint_color, linewidth = 0.6) +
+  geom_abline(intercept = 0.5, slope = 1, color = constraint_color, linewidth = 0.6) +
+  geom_abline(intercept = 0.5, slope = -1, color = constraint_color, linewidth = 0.6) +
+  geom_abline(intercept = -5 / 12, slope = 5 / 6, color = constraint_color, linewidth = 0.6) +
+  geom_abline(intercept = 4 / 3, slope = -1, color = objective_color, linewidth = 0.5) +
+  geom_point(aes(x = 2 / 3, y = 2 / 3), size = 2, color = highlight_color)
+
+case_3_plot = plot_objective_direction(
+  case_3_plot,
+  start = c(2 / 3, 2 / 3),
+  end = c(5 / 6, 5 / 6)
+)
+
+solution_cases_plot = arrangeGrob(case_1_plot, case_2_plot, case_3_plot, ncol = 3L)
+
+if (interactive()) {
+  grid.draw(solution_cases_plot)
+}
+
+save_plot(solution_cases_plot, "cons-solutions-lp.png", width = 12, height = 4)
