@@ -1,37 +1,33 @@
-# ------------------------------------------------------------------------------
-# evolutionary algorithms
-
-# FIG: plot example of one-max
-# ------------------------------------------------------------------------------
+# Used in: slides-evolutionary-algorithms-3-ea-bit.tex
+#
+# Runs a simple one-max evolutionary algorithm on bit strings. The figure shows
+# the best individual after each iteration, with green points marking bits that
+# are set to one and the right-hand labels showing the current fitness.
 
 set.seed(1L)
 
-library(ecr)
+library(data.table)
 library(ggplot2)
-library(smoof)
-library(reshape2)
 
-# ------------------------------------------------------------------------------
-
-evaluate_population = function(population, objective) {
-  vapply(population, objective, numeric(1L))
+evaluate_population = function(population) {
+  vapply(population, sum, integer(1L))
 }
 
-generate_binary_population = function(n, dimension) {
-  replicate(n, sample(c(0L, 1L), dimension, replace = TRUE), simplify = FALSE)
+generate_binary_population = function(n_individuals, n_bits) {
+  replicate(n_individuals, sample(c(0L, 1L), n_bits, replace = TRUE), simplify = FALSE)
 }
 
-mutate_bitflip = function(population, p) {
+mutate_bitflip = function(population, p_flip) {
   lapply(population, function(individual) {
-    mutation_mask = stats::runif(length(individual)) < p
+    mutation_mask = runif(length(individual)) < p_flip
     individual[mutation_mask] = 1L - individual[mutation_mask]
     individual
   })
 }
 
-select_mu_plus_lambda = function(population, offspring, fitness, fitness_offspring, mu) {
+select_mu_plus_lambda = function(population, offspring, fitness, offspring_fitness, mu) {
   combined_population = c(population, offspring)
-  combined_fitness = c(fitness, fitness_offspring)
+  combined_fitness = c(fitness, offspring_fitness)
   keep = order(combined_fitness, decreasing = TRUE)[seq_len(mu)]
 
   list(
@@ -40,75 +36,59 @@ select_mu_plus_lambda = function(population, offspring, fitness, fitness_offspri
   )
 }
 
-d = 15
-ps = makeParamSet(makeDiscreteVectorParam("x", len = d, values = c(0, 1)))
-fn = makeSingleObjectiveFunction(
-  name = "Onemax",
-  fn = function(x) sum(x),
-  par.set = ps,
-  minimize = FALSE
-)
+record_best_individual = function(population, fitness, iteration) {
+  best_id = which.max(fitness)
+  data.table(
+    iteration = iteration,
+    bit = seq_along(population[[best_id]]),
+    value = population[[best_id]],
+    fitness = fitness[[best_id]]
+  )
+}
 
-# evolutionary algorithm by hand
-MU = 10L; LAMBDA = 5L; MAX.ITER = 150L
-lower = getLowerBoxConstraints(fn)
-upper = getUpperBoxConstraints(fn)
+n_bits = 15L
+mu = 15L
+lambda = 5L
+max_iter = 150L
+mutation_probability = 0.05
 
-population = generate_binary_population(MU, getNumberOfParameters(fn))
-fitness = evaluate_population(population, fn)
-best = matrix(population[[which.max(fitness)]], ncol=d)
-best
+population = generate_binary_population(mu, n_bits)
+fitness = evaluate_population(population)
+best_history = list(record_best_individual(population, fitness, iteration = 0L))
 
-for (i in seq_len(MAX.ITER)) {
-  # sample lambda individuals at random
-  idx = sample(1:MU, LAMBDA)
-  # generate offspring by mutation and evaluate their fitness
-  offspring = mutate_bitflip(population[idx], p = 0.05)
-  fitness.o = evaluate_population(offspring, fn)
-  # now select the best out of the union of population and offspring
-  sel = select_mu_plus_lambda(population, offspring, fitness, fitness.o, mu = MU)
-  population = sel$population
-  fitness = sel$fitness
-  
-  # add data to data_to_plot
-  best = rbind(best, population[[which.max(fitness)]])
-  
-  
-  if (all(population[[which.max(fitness)]] == 1)) {
-    print(paste("STOPPING CRITERIA REACHED AFTER ",i, " ITERATIONS"))
-    print(paste("BEST SOLUTION: ",max(fitness)," AT ID ",which.max(fitness)))
-    print(population[[which.max(fitness)]])
+for (iteration in seq_len(max_iter)) {
+  parent_ids = sample(seq_len(mu), lambda)
+  offspring = mutate_bitflip(population[parent_ids], p_flip = mutation_probability)
+  offspring_fitness = evaluate_population(offspring)
+
+  selection = select_mu_plus_lambda(population, offspring, fitness, offspring_fitness, mu = mu)
+  population = selection$population
+  fitness = selection$fitness
+
+  best_history[[iteration + 1L]] = record_best_individual(population, fitness, iteration = iteration)
+
+  if (max(fitness) == n_bits) {
     break
-  }
-  if (i == MAX.ITER) {
-    print(paste("MAX.ITER OF ",MAX.ITER," REACHED. BEST SOLUTION: ",max(fitness)))
-    print(population[[which.max(fitness)]])
   }
 }
 
+best_history_dt = rbindlist(best_history)
+fitness_labels_dt = unique(best_history_dt[, .(iteration, fitness)], by = "fitness")
+max_recorded_iter = max(best_history_dt$iteration)
 
-print(max(fitness))
-print(which.max(fitness))
-print(population[[which.max(fitness)]])
+one_max_plot = ggplot(best_history_dt[value == 1L], aes(x = bit, y = iteration)) +
+  geom_point(size = 1.2, color = "#238b45") +
+  geom_text(
+    data = fitness_labels_dt,
+    aes(x = n_bits + 1L, y = iteration, label = fitness),
+    inherit.aes = FALSE,
+    size = 3
+  ) +
+  coord_cartesian(xlim = c(0.5, n_bits + 1.5), ylim = c(0, max_recorded_iter + 2), expand = FALSE) +
+  scale_x_continuous(breaks = seq_len(n_bits)) +
+  theme_bw(base_size = 12) +
+  labs(x = "Bits", y = "Iteration")
 
-best_df = as.data.frame(best)
-best_df$sum = rowSums(best_df)
-best_df$iteration = (1:nrow(best_df)) - 1
+dir.create("../figure", showWarnings = FALSE)
 
-melted = melt(best_df, id.vars="iteration")
-melted$value = as.factor(melted$value)
-update_geom_defaults("text", list(size = 3))
-
-unique_sum <- best_df[match(unique(best_df$sum), best_df$sum),]
-
-p = ggplot() + geom_point(data=melted[melted$value == 1, ], 
-                          aes(x=variable,
-                              y=iteration),
-                          size=1, color="green")
-p = p + ylab("Iteration") + xlab("Bits")
-p = p + expand_limits(x=c(0, 17))
-p = p + geom_text(data=unique_sum, aes(x=16, y=iteration, label=sum), show.legend = FALSE)
-p = p + theme_bw()
-
-if (interactive()) print(p)
-ggsave("../figure/one_max_example.pdf", p, width = 7, height = 4)
+ggsave("../figure/one_max_example.pdf", one_max_plot, width = 7, height = 4)

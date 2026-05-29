@@ -1,63 +1,73 @@
-# ------------------------------------------------------------------------------
-# multicrit
+# Used in: slides/11-multicrit/slides-multicrit-3-bo.tex
+#
+# Visualizes the augmented Chebyshev scalarization used by ParEGO for different
+# weight vectors and overlays the Pareto front of the toy objectives.
 
-# FIG: generate a plot of the Pareto fronts
-# ------------------------------------------------------------------------------
+library(data.table)
+library(ggplot2)
+library(patchwork)
 
 set.seed(1L)
 
-library(ggplot2)
-library(patchwork)
-theme_set(theme_bw())
+output_dir = "../figure"
+resolution = 160L
+rho = 0.05
 
-# ------------------------------------------------------------------------------
+theme_set(theme_bw(base_size = 11))
 
-res = 100
-x_range = c(0,3)
-
-# we need an equidistant grid on y1,y2 for ggplot2, therefore we use inverted functions
-# only works if fun1 and fun2 are not correlated
-fun2 = function(x) 3 * (x - 2)^2
-fun2_inv = function(y) 2 + sqrt(y)/sqrt(3) # only for x positive!
-
-fun1 = function(x) (x - 1)^2
-fun1_inv = function(y) 1 + sqrt(y) # only for x positive!
-
-y1_range = fun1(x_range)
-y2_range = fun2(x_range)
-
-y1_seq = do.call(seq, c(as.list(y1_range), length.out = res))
-y2_seq = do.call(seq, c(as.list(y2_range), length.out = res))
-
-x1_seq = fun1_inv(y1_seq)
-x2_seq = fun2_inv(y2_seq)
-
-tscheb = function(y1, y2, w1, w2, rho = 0.05) {
-  max(y1*w1, y2*w2) + rho*(y1*w1 + y2*w2)
+f1 = function(x) {
+  (x - 1)^2
 }
 
-xgrid = expand.grid(y1=y1_seq, y2=y2_seq)
-
-plotSpace = function(w1, w2) {
-
-  if (FALSE) {
-    w1 = 0.1; w2 = 0.9
-  }
-
-  x = xgrid
-
-  x$f = mapply(tscheb, y1 = x$y1, y2 = x$y2, MoreArgs = list(w1 = w1, w2 = w2))
-
-  g = ggplot(x, aes(x = y1, y = y2, fill = f, z = f))
-  g = g + geom_raster() + geom_contour(bins = 40)
-  g = g + theme(legend.position = "None")
-  g = g + scale_fill_gradientn(colours=c("yellow","red"))
-  g = g + labs(x = "f1", y = "f2", title = paste("w1 =", w1, ", w2 =", w2))
-  g
+f2 = function(x) {
+  3 * (x - 2)^2
 }
 
-p = plotSpace(0.9, 0.1) + plotSpace(0.49, 0.51) + plotSpace(0.1, 0.9) +
-  plot_layout(nrow = 1, guides = "collect") &
-  theme(legend.position = "bottom")
-if (interactive()) print(p)
-# ../figure_man/parego_viz is a cropped version
+augmented_chebyshev = function(y1, y2, w1, w2, rho = 0.05) {
+  pmax(w1 * y1, w2 * y2) + rho * (w1 * y1 + w2 * y2)
+}
+
+plot_scalarization = function(w1, w2, grid, pareto_front) {
+  plot_grid = copy(grid)
+  plot_grid[, scalarized_value := augmented_chebyshev(f1, f2, w1 = w1, w2 = w2, rho = rho)]
+
+  ggplot(plot_grid, aes(x = f1, y = f2, fill = scalarized_value, z = scalarized_value)) +
+    geom_raster() +
+    geom_contour(
+      data = plot_grid,
+      aes(x = f1, y = f2, z = scalarized_value),
+      inherit.aes = FALSE,
+      color = "grey20",
+      bins = 35,
+      linewidth = 0.15
+    ) +
+    geom_path(data = pareto_front, aes(x = f1, y = f2), inherit.aes = FALSE, color = "#00A087", linewidth = 1) +
+    scale_fill_gradientn(colors = c("#FDE725", "#F8961E", "#D62828")) +
+    labs(
+      x = expression(f[1]),
+      y = expression(f[2]),
+      fill = "Scalarized\nvalue",
+      title = bquote(w[1] == .(w1) * "," ~ w[2] == .(w2))
+    ) +
+    theme(legend.position = "none")
+}
+
+objective_grid = CJ(
+  f1 = seq(0, 4, length.out = resolution),
+  f2 = seq(0, 12, length.out = resolution)
+)
+
+front_x = seq(1, 2, length.out = resolution)
+pareto_front = data.table(f1 = f1(front_x), f2 = f2(front_x))
+setorder(pareto_front, f1)
+
+parego_plot = plot_scalarization(0.90, 0.10, objective_grid, pareto_front) +
+  plot_scalarization(0.49, 0.51, objective_grid, pareto_front) +
+  plot_scalarization(0.10, 0.90, objective_grid, pareto_front) +
+  plot_layout(nrow = 1L)
+
+if (interactive()) {
+  print(parego_plot)
+}
+
+ggsave(file.path(output_dir, "parego_viz.png"), parego_plot, width = 9, height = 3, dpi = 300)

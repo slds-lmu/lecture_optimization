@@ -1,70 +1,82 @@
-# ------------------------------------------------------------------------------
-# evolutionary algorithms
+# Used in: slides-evolutionary-algorithms-2-ea-numeric.tex
+#
+# Generates a reproducible grid of non-overlapping circles. Each new circle is
+# placed uniformly in the box and receives the largest feasible radius up to a
+# random cap, which creates a varied but readable toy search landscape.
 
-# FIG: circle grids
-# ------------------------------------------------------------------------------
+set.seed(124L)
 
-library(knitr)
-library(ecr)
+library(data.table)
 library(ggplot2)
-library(smoof)
-library(latex2exp)
 library(ggforce)
-library(reshape2)
-library(mlr)
 
-set.seed(124)
-
-# ------------------------------------------------------------------------------
-
-plot.grid = function(d) {
-  p = ggplot() + geom_circle(data = d, aes(x0 = x, y0 = y, r = r), colour = "grey",fill = "grey", alpha = 0.8)  + theme_bw() + coord_equal() + xlim(c(0, 10)) + ylim(c(0, 10))
-  p = p + geom_rect(aes(xmin = 0, xmax = 10, ymin = 0, ymax = 10), colour = "grey", alpha = 0.05)
-  p = p + theme(axis.line = element_blank(),
-                panel.grid.major = element_blank(),
-                panel.grid.minor = element_blank(),
-                panel.border = element_blank(),
-                panel.background = element_blank(),
-                line = element_blank(),
-                title = element_blank(),
-                text = element_blank()
-  )
-  return(p)
+distance_to_existing_circles = function(circles, x, y) {
+  center_distance = sqrt((circles$x - x)^2 + (circles$y - y)^2)
+  center_distance - circles$radius
 }
 
+place_random_circles = function(n_circles, box_size = 10, max_attempts = 10000L) {
+  circles = data.table(x = numeric(), y = numeric(), radius = numeric())
+  attempts = 0L
 
-setup.grid = function(n) {
-  x = runif(1, min = 0, max = 10)
-  y = runif(1, min = 0, max = 10)
-  r = min(c(x, 10 - x, y, 10 - y, runif(1) + 0.7))
-  default.grid = data.frame(x = x, y = y, r = r)
-  
-  i = 0
-  
-  while (nrow(default.grid) < n) {
-    x = runif(1, min = 0, max = 10)
-    y = runif(1, min = 0, max = 10)
-    r = min(c(x, 10 - x, y, 10 - y, runif(1) + 0.5))
-    
-    dists = t(apply(default.grid[, 1:2], 1, function(z) sqrt(sum((z - c(x, y))^2))))
-    dists = dists - default.grid[, 3]
-    
-    if (any(dists < 0)) {
-      default.grid = default.grid
+  while (nrow(circles) < n_circles && attempts < max_attempts) {
+    attempts = attempts + 1L
+    x = runif(1L, min = 0, max = box_size)
+    y = runif(1L, min = 0, max = box_size)
+    boundary_radius = min(x, box_size - x, y, box_size - y)
+    random_radius_cap = runif(1L, min = 0.5, max = 1.5)
+
+    feasible_radius = if (nrow(circles) == 0L) {
+      min(boundary_radius, random_radius_cap)
     } else {
-      r = min(dists, r)
-      
-      default.grid = rbind(default.grid, c(x, y, r))
+      distance_to_circles = distance_to_existing_circles(circles, x, y)
+
+      if (any(distance_to_circles <= 0)) {
+        next
+      }
+
+      min(boundary_radius, min(distance_to_circles), random_radius_cap)
     }
+
+    circles = rbind(
+      circles,
+      data.table(x = x, y = y, radius = feasible_radius)
+    )
   }
-  
-  return(default.grid)
+
+  if (nrow(circles) < n_circles) {
+    stop("Could not place all circles within the attempt budget.")
+  }
+
+  circles
 }
 
-# define new grid
-grid = setup.grid(20)
+plot_circle_grid = function(circles, box_size = 10) {
+  ggplot() +
+    geom_circle(
+      data = circles,
+      aes(x0 = x, y0 = y, r = radius),
+      fill = "grey75",
+      color = "grey55",
+      alpha = 0.8
+    ) +
+    geom_rect(
+      aes(xmin = 0, xmax = box_size, ymin = 0, ymax = box_size),
+      fill = NA,
+      color = "grey45",
+      linewidth = 0.5
+    ) +
+    coord_equal(xlim = c(0, box_size), ylim = c(0, box_size), expand = FALSE) +
+    theme_void() +
+    theme(
+      panel.background = element_rect(fill = "white", color = NA),
+      plot.background = element_rect(fill = "white", color = NA)
+    )
+}
 
-Pl = plot.grid(grid)
+circle_grid = place_random_circles(20L)
+circle_grid_plot = plot_circle_grid(circle_grid)
 
-ggsave("../figure/grid.png", Pl)
+dir.create("../figure", showWarnings = FALSE)
 
+ggsave("../figure/grid.png", circle_grid_plot, width = 5, height = 5, dpi = 300, bg = "white")

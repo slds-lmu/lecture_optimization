@@ -1,29 +1,35 @@
-# ------------------------------------------------------------------------------
-# evolutionary algorithms
-
-# FIG: plot fitness for ea parent to select
-# ------------------------------------------------------------------------------
+# Used in: slides-evolutionary-algorithms-1-ea-intro.tex
+#
+# Creates a roulette-wheel parent-selection diagram. Ten individuals receive
+# random positive fitness values, which are converted to proportional sampling
+# probabilities and shown as slices of a polar bar chart.
 
 set.seed(1L)
 
+library(data.table)
 library(ggplot2)
-library(dplyr)
 
-# ------------------------------------------------------------------------------
+fitness_dt = data.table(
+  individual = factor(seq_len(10L)),
+  fitness = round(runif(10L, min = 1, max = 10), 1)
+)
+fitness_dt[, selection_probability := fitness / sum(fitness)]
+setorder(fitness_dt, -fitness)
 
-y = round(runif(10, 0, 10), 2)
+parent_selection_plot = ggplot(fitness_dt, aes(x = 1, y = selection_probability, fill = fitness)) +
+  geom_col(width = 1, color = "white", linewidth = 0.4) +
+  geom_text(
+    aes(label = fitness),
+    color = "white",
+    fontface = "bold",
+    position = position_stack(vjust = 0.5),
+    size = 4
+  ) +
+  coord_polar(theta = "y", start = 0) +
+  scale_fill_gradient(low = "#74a9cf", high = "#045a8d") +
+  theme_void(base_size = 12) +
+  theme(legend.position = "none")
 
-df = data.frame(probability = 1/y, fitness = y)
+dir.create("../figure", showWarnings = FALSE)
 
-df <- df %>% 
-  arrange(desc(fitness)) %>%
-  mutate(prop = probability / sum(df$probability) *100) %>%
-  mutate(ypos = cumsum(prop)- 0.5*prop )
-
-p = ggplot(df, aes(x="", y=probability, fill=fitness)) +
-  geom_bar(stat="identity", width=1) +
-  coord_polar("y", start=0) + theme_void() + 
-  geom_text(aes(label = fitness), color = "white",
-            position = position_stack(vjust = 0.5))
-if (interactive()) print(p)
-ggsave("../figure/ea_parent_selection.pdf", p, width = 5, height = 5)
+ggsave("../figure/ea_parent_selection.pdf", parent_selection_plot, width = 5, height = 5)

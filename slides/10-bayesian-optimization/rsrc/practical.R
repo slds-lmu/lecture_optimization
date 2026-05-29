@@ -1,47 +1,36 @@
-# ------------------------------------------------------------------------------
-# bayesian optimization
-
-# FIG: perform Bayesian optimization for a 2D function using the Expected Improvement (EI).
-# ------------------------------------------------------------------------------
+# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-7-practical.tex
+#
+# Creates a two-dimensional Expected Improvement contour plot.
 
 library(bbotk)
 library(data.table)
-library(mlr3mbo)
-library(mlr3learners)
 library(ggplot2)
-library(patchwork)
+library(mlr3learners)
+library(mlr3mbo)
 
-set.seed(123)
-
-# ------------------------------------------------------------------------------
+source("bo-helpers.R")
+set.seed(123L)
 
 objective = ObjectiveRFunDt$new(
- fun = function(xdt) data.table(y = cos(xdt$x1 - xdt$x2)),
- domain = ps(x1 = p_dbl(lower = 0, upper = 10), x2 = p_dbl(lower = 0, upper = 10)),
- codomain = ps(y = p_dbl(tags = "minimize"))
+  fun = function(xdt) data.table(y = cos(xdt$x1 - xdt$x2)),
+  domain = ps(x1 = p_dbl(lower = 0, upper = 10), x2 = p_dbl(lower = 0, upper = 10)),
+  codomain = ps(y = p_dbl(tags = "minimize"))
 )
-instance = OptimInstanceSingleCrit$new(
-  objective = objective,
-  terminator = trm("none")
-)
+instance = make_singlecrit_instance(objective)
 
-design = generate_design_random(instance$search_space, n = 10L)$data
-instance$eval_batch(design)
+initial_design = generate_design_random(instance$search_space, n = 10L)$data
+instance$eval_batch(initial_design)
 
-surrogate = srlrn(lrn("regr.km", covtype = "matern5_2", optim.method = "BFGS"), archive = instance$archive)
+surrogate = make_km_surrogate(instance)
 acq_function = acqf("ei", surrogate = surrogate)
 
 grid = generate_design_grid(instance$search_space, resolution = 101L)$data
 acq_function$surrogate$update()
-acq_function$update()
-set(grid, j = "ei", value = acq_function$eval_dt(grid[, c("x1", "x2"), with = FALSE])$acq_ei)
-ei_argmax = grid[which.max(ei), ]
+add_acquisition_column(acq_function, grid, c("x1", "x2"), "ei")
 
-# intial design + surrogate prediction
-g = ggplot(aes(x = x1, y = x2, z = ei), data = grid) +
+plot = ggplot(grid, aes(x = x1, y = x2, z = ei)) +
   geom_contour_filled(show.legend = FALSE) +
   labs(x = expression(x[1]), y = expression(x[2])) +
-  theme_minimal()
+  bo_theme()
 
-ggsave(file.path("../figure/practical.png"), plot = g, width = 5, height = 4)
-
+save_figure(plot, "practical.png")

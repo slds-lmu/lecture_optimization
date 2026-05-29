@@ -1,146 +1,114 @@
-# ------------------------------------------------------------------------------
-# multicrit
+# Used in: slides/11-multicrit/slides-multicrit-1a-intro.tex
+#
+# Recreates the hotel-choice example from a small Expedia data snapshot. All
+# objectives are shown in minimization form: price and negative rating.
 
-# DATA: explore the relationship between hotel price per night 
-#       and customer ratings using Expedia data.
-# ------------------------------------------------------------------------------
+library(data.table)
+library(ggplot2)
+library(grid)
+library(gridExtra)
 
 set.seed(1L)
 
-library(ggplot2)
-library(gridExtra)
+output_dir = "../figure"
+rating_limits = c(-5.5, -2)
 
-df = readRDS("expedia_example.rds")
+theme_set(theme_bw(base_size = 10))
 
-# ------------------------------------------------------------------------------
+save_plot = function(plot, filename, width, height) {
+  ggsave(file.path(output_dir, filename), plot, width = width, height = height, dpi = 300)
+}
 
-p = ggplot(data = df, aes(x = mean_price, y = - mean_rating)) + geom_point(size = 1.5)
-p = p + theme_bw()
-p = p + ylim(c(- 5.5, -2))
-p = p + xlab("Price per night") + ylab("Rating")
-if (interactive()) print(p)
-ggsave("../figure/expedia-1-1.pdf", p, height=2, width=4)
+base_hotel_plot = function(data = hotels, point_size = 1.5) {
+  ggplot(data, aes(x = mean_price, y = negative_rating)) +
+    geom_point(size = point_size) +
+    coord_cartesian(ylim = rating_limits) +
+    labs(x = "Price per night", y = "Negative rating")
+}
 
-p1 = ggplot(data = df, aes(x = mean_price, y = - mean_rating)) + geom_point(size = 1.5)
-p1 = p1 + geom_point(data = df[16:17, ], aes(x = mean_price, y = - mean_rating), size = 2, colour = c("green", "red"))
-p1 = p1 + theme_bw()
-p1 = p1 + ylim(c(- 5.5, -2))
-p1 = p1 + xlab("Price per night") + ylab("Rating")
+add_pareto_front = function(plot, front, color = "#F58518") {
+  plot +
+    geom_point(data = front, color = color, size = 2) +
+    geom_step(data = front, color = color, linewidth = 0.55, direction = "vh")
+}
 
-p2 = ggplot(data = df, aes(x = mean_price, y = - mean_rating)) + geom_point(size = 2)
-p2 = p2 + geom_point(data = df[c(10, 16), ], aes(x = mean_price, y = - mean_rating), size = 2, colour = "orange")
-p2 = p2 + theme_bw()
-p2 = p2 + ylim(c(-5.5, -2))
-p2 = p2 + xlab("Price per night") + ylab("Rating")
+hotels = as.data.table(readRDS("expedia_example.rds"))
+hotels[, negative_rating := -mean_rating]
+hotels[, weighted_sum := mean_price + 50 * negative_rating]
 
-p <- arrangeGrob(p1, p2, ncol = 2)
-if (interactive()) grid::grid.draw(p)
-ggsave("../figure/expedia-2-1.pdf", p, height=2, width=6.5)
-ggsave("../figure/expedia-4-1.pdf", p2, height=2, width=4)
+pareto_front = copy(hotels)
+setorder(pareto_front, negative_rating, mean_price)
+pareto_front = pareto_front[!duplicated(cummin(mean_price))]
+setorder(pareto_front, mean_price)
 
-df$mean_rating = - df$mean_rating
-P = df[order(df$mean_rating, df$mean_price,decreasing=FALSE),]
-P = P[which(!duplicated(cummin(P$mean_price))),]
+dominance_points = copy(hotels[c(16L, 17L)])
+dominance_points[, relation := factor(c("dominates", "dominated"), levels = c("dominates", "dominated"))]
 
-p2 = ggplot(data = df, aes(x = mean_price, y = mean_rating)) + geom_point(size = 2)
-p2 = p2 + geom_point(data = P, aes(x = mean_price, y = mean_rating), size = 2, colour = "orange")
-p2 = p2 + geom_line(data = P, aes(x = mean_price, y = mean_rating), colour = "orange")
-p2 = p2 + theme_bw()
-p2 = p2 + ylim(c(-5, -2))
-p2 = p2 + xlab("Price per night") + ylab("Rating")
+incomparable_points = copy(hotels[c(10L, 16L)])
+incomparable_points[, relation := "incomparable"]
 
-ggsave("../figure/expedia-5-1.pdf", p2, height=2, width=4)
+best_weighted_hotel = hotels[which.min(weighted_sum)]
+best_rating_hotels = hotels[negative_rating == min(negative_rating)]
+best_lexicographic_hotel = best_rating_hotels[which.min(mean_price)]
 
-fun = function(x) (x - 1)^2
-p = ggplot(data.frame(x = c(0, 3)), aes(x)) + stat_function(fun = fun)
-p = p + geom_point(x = 1, y = 0, color = "green", size = 3)
-p = p + theme_bw() + ylab("c") + xlab(expression(lambda))
-if (interactive()) print(p)
+selected_posterior_hotel = pareto_front[which.min(abs(negative_rating + 4.5))]
 
-fun1 = function(x) (x - 1)^2
-fun2 = function(x) 3 * (x - 2)^2
-p = ggplot(data.frame(x = c(0, 3)), aes(x)) + stat_function(fun = fun1) + stat_function(fun = fun2, color = "blue")
-p = p + theme_bw()
-if (interactive()) print(p)
+expedia_scatter = base_hotel_plot()
 
-x = seq(0, 3, length.out = 1000)
-xpareto = seq(1, 2, length.out = 1000)
+dominance_plot = base_hotel_plot() +
+  geom_point(data = dominance_points, aes(color = relation), size = 2.4, show.legend = FALSE) +
+  scale_color_manual(values = c(dominates = "#009E73", dominated = "#D55E00"))
 
-p2 = ggplot() + geom_point(data = data.frame(f1 = fun1(x), f2 = fun2(x)), aes(x = f1, y = f2), size = 0.05) + geom_point(data = data.frame(f1 = fun1(xpareto), f2 = fun2(xpareto)), aes(x = f1, y = f2), color = "green", size = 0.05) + theme_bw()
-if (interactive()) print(p2)
+incomparability_plot = base_hotel_plot(point_size = 2) +
+  geom_point(data = incomparable_points, color = "#F58518", size = 2.4)
 
-df$apriori = df$mean_price + 50 * df$mean_rating
+dominance_comparison = arrangeGrob(dominance_plot, incomparability_plot, ncol = 2L)
 
-p1 = ggplot()
-p1 = p1 + geom_point(data = df, aes(x = apriori, y = 0), size = 2)
-p1 = p1 + geom_point(data = df[which.min(df$apriori), ], aes(x = apriori, y = 0), colour = "green", size = 2)
-p1 = p1 + theme_bw()
-p1 = p1 + xlab("Weighted sum")
-p1 = p1 + theme(axis.title.y = element_blank(),
-                axis.text.y = element_blank(),
-                axis.ticks.y = element_blank())
+pareto_plot = add_pareto_front(base_hotel_plot(point_size = 2), pareto_front)
 
-p2 = ggplot(data = df, aes(x = mean_price, y = mean_rating)) + geom_point(size = 2)
-p2 = p2 + geom_point(data = df[which.min(df$apriori), ], aes(x = mean_price, y = mean_rating), size = 2, colour = "green")
-p2 = p2 + theme_bw()
-p2 = p2 + ylim(c(-5, -2))
-p2 = p2 + xlab("Price per night") + ylab("Rating")
+weighted_sum_plot = ggplot(hotels, aes(x = weighted_sum, y = 0)) +
+  geom_point(size = 2) +
+  geom_point(data = best_weighted_hotel, color = "#009E73", size = 2.4) +
+  labs(x = "Weighted sum", y = NULL) +
+  theme(
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  )
 
-p <- arrangeGrob(p1, p2, ncol = 2)
-if (interactive()) grid::grid.draw(p)
-ggsave("../figure/expedia-9-1.pdf", p, height=2, width=4)
+weighted_objective_plot = base_hotel_plot(point_size = 2) +
+  geom_point(data = best_weighted_hotel, color = "#009E73", size = 2.4)
 
-p1 = ggplot(data = df, aes(x = mean_price, y = mean_rating)) + geom_point(size = 2)
-p1 = p1 + geom_point(data = df[df$mean_rating == -5, ], aes(x = mean_price, y = mean_rating), size = 2, colour = "orange")
-p1 = p1 + theme_bw()
-p1 = p1 + ylim(c(-5, -2))
-p1 = p1 + ggtitle("1) max. rating")
-p1 = p1 + xlab("Price per night") + ylab("Rating")
+weighted_sum_comparison = arrangeGrob(weighted_sum_plot, weighted_objective_plot, ncol = 2L)
 
-p2 = p1 + geom_point(data = df[(df$mean_rating == - 5.0 & df$mean_price < 150), ], colour = "green", size = 2)
-p2 = p2 + ggtitle("2) min. price")
+lexicographic_rating_plot = base_hotel_plot(point_size = 2) +
+  geom_point(data = best_rating_hotels, color = "#F58518", size = 2.4) +
+  labs(title = "1) min. negative rating")
 
-p <- arrangeGrob(p1, p2, ncol = 2)
-if (interactive()) grid::grid.draw(p)
-ggsave("../figure/expedia-10-1.pdf", p, height=2, width=6.5)
+lexicographic_price_plot = lexicographic_rating_plot +
+  geom_point(data = best_lexicographic_hotel, color = "#009E73", size = 2.8) +
+  labs(title = "2) min. price")
 
-P = df[order(df$mean_rating, df$mean_price,decreasing=FALSE),]
-P = P[which(!duplicated(cummin(P$mean_price))),]
+lexicographic_comparison = arrangeGrob(lexicographic_rating_plot, lexicographic_price_plot, ncol = 2L)
 
-p1 = ggplot(data = df, aes(x = mean_price, y = mean_rating)) + geom_point(size = 2)
-p1 = p1 + geom_point(data = P, aes(x = mean_price, y = mean_rating), size = 2, colour = "orange")
-p1 = p1 + geom_line(data = P, aes(x = mean_price, y = mean_rating), colour = "orange")
-p1 = p1 + theme_bw()
-p1 = p1 + ylim(c(-5, -2))
-p1 = p1 + xlab("Price per night") + ylab("Rating")
+posterior_choice_plot = pareto_plot +
+  geom_point(data = selected_posterior_hotel, color = "#009E73", size = 2.8)
 
+posterior_comparison = arrangeGrob(pareto_plot, posterior_choice_plot, ncol = 2L)
 
-p2 = p1 + geom_point(data = P[P$mean_rating == -4.5, ], aes(x = mean_price, y = mean_rating), colour = "green", size = 2)
+if (interactive()) {
+  print(expedia_scatter)
+  grid.draw(dominance_comparison)
+  print(incomparability_plot)
+  print(pareto_plot)
+  grid.draw(weighted_sum_comparison)
+  grid.draw(lexicographic_comparison)
+  grid.draw(posterior_comparison)
+}
 
-g = arrangeGrob(p1, p2, ncol = 2)
-ggsave("../figure/expedia-11-1.pdf", p, height=2, width=6.5)
-
-x = seq(-1, 4, length.out = 1000)
-lin = 3 * 0.4 - 2 * x
-
-p2 = ggplot() + geom_point(data = data.frame(f1 = fun1(x), f2 = fun2(x)), aes(x = f1, y = f2), size = 0.7)
-p2 = p2 + geom_line(aes(x = x, y = lin)) + ylim(c(-3, 25))
-p2 = p2 + geom_point(aes(x = 0.36, y = 0.48), colour = "green", size = 3)
-p2 = p2 + theme_bw()
-if (interactive()) print(p2)
-
-
-f1 = function(x) 0.01 * sum(x^2) - 2
-f2 = function(x) 0.01 * sum(c(0.1, 0.3) * (x - c(-10, 20))^2)
-
-x1 = x2 = seq(-10, 20, length.out = 100)
-grid = expand.grid(x1 = x1, x2 = x2)
-grid$y1 = apply(grid[, 1:2], 1, f1)
-grid$y2 = apply(grid[, 1:2], 1, f2)
-
-melt = reshape2::melt(grid, id.vars = c("x1", "x2"))
-
-p = ggplot(data = melt) + geom_raster(aes(x = x1, y = x2, fill = value))
-p = p + geom_contour(aes(x = x1, y = x2, z = value, colour = variable), bins = 15)
-p = p + ylim(c(-20, 40)) + xlim(c(-20, 40)) + theme_bw()
-if (interactive()) print(p)
+save_plot(expedia_scatter, "expedia-1-1.pdf", width = 4, height = 2)
+save_plot(dominance_comparison, "expedia-2-1.pdf", width = 6.5, height = 2)
+save_plot(incomparability_plot, "expedia-4-1.pdf", width = 4, height = 2)
+save_plot(pareto_plot, "expedia-5-1.pdf", width = 4, height = 2)
+save_plot(weighted_sum_comparison, "expedia-9-1.pdf", width = 4, height = 2)
+save_plot(lexicographic_comparison, "expedia-10-1.pdf", width = 6.5, height = 2)
+save_plot(posterior_comparison, "expedia-11-1.pdf", width = 6.5, height = 2)
