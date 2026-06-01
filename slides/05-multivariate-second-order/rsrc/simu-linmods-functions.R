@@ -296,13 +296,16 @@ add_method_scale = function() {
   scale_color_manual(values = method_palette, breaks = names(method_palette))
 }
 
+method_legend = function() {
+  guide_legend(nrow = 1L, byrow = TRUE, keywidth = unit(1.2, "cm"))
+}
+
 comparison_theme = function(base_size = 19) {
   theme_minimal(base_size = base_size) +
     theme(
-      legend.position = "bottom",
-      legend.spacing.x = unit(1.5, "cm"),
-      legend.title = element_text(size = base_size + 3),
-      legend.text = element_text(size = base_size + 1)
+      legend.spacing.x = unit(0.6, "cm"),
+      legend.title = element_text(size = base_size),
+      legend.text = element_text(size = base_size - 1)
     )
 }
 
@@ -339,7 +342,7 @@ plot_optimization_results = function(loss_histories, test_loss_histories, l2_dif
     coord_cartesian(ylim = c(0, train_upper)) +
     add_method_scale() +
     labs(x = x_lab, y = "Train loss", color = "Method") +
-    guides(color = guide_legend(nrow = 1L, byrow = TRUE, keywidth = unit(2.5, "cm"))) +
+    guides(color = method_legend()) +
     common_theme
 
   test_loss_plot = ggplot(plot_data, aes(x = x_value, y = test_loss, color = method)) +
@@ -348,7 +351,7 @@ plot_optimization_results = function(loss_histories, test_loss_histories, l2_dif
     coord_cartesian(ylim = c(test_lower, test_upper)) +
     add_method_scale() +
     labs(x = x_lab, y = "Test loss", color = "Method") +
-    guides(color = guide_legend(nrow = 1L, byrow = TRUE, keywidth = unit(2.5, "cm"))) +
+    guides(color = method_legend()) +
     common_theme
 
   optimization_error_plot = ggplot(plot_data, aes(x = x_value, y = l2_diff, color = method)) +
@@ -356,11 +359,12 @@ plot_optimization_results = function(loss_histories, test_loss_histories, l2_dif
     scale_x_continuous(breaks = x_breaks) +
     add_method_scale() +
     labs(x = x_lab, y = "Optimization error (log10)", color = "Method") +
-    guides(color = guide_legend(nrow = 1L, byrow = TRUE, keywidth = unit(1.5, "cm"))) +
+    guides(color = method_legend()) +
     common_theme
 
   train_loss_plot + test_loss_plot + optimization_error_plot +
-    plot_layout(ncol = 3L, guides = "collect")
+    plot_layout(ncol = 3L, guides = "collect") &
+    theme(legend.position = "bottom")
 }
 
 make_coefficient_path_table = function(beta_history) {
@@ -425,7 +429,6 @@ plot_runtime_comparison = function(loss_histories, l2_diff_histories, time_histo
     theme(
       plot.title = element_text(size = 20, hjust = 0.5),
       axis.text = element_text(size = 16),
-      legend.position = "bottom",
       legend.title = element_text(size = 18),
       legend.text = element_text(size = 18)
     )
@@ -433,12 +436,14 @@ plot_runtime_comparison = function(loss_histories, l2_diff_histories, time_histo
   train_loss_plot = ggplot(plot_data, aes(x = time, y = train_loss, color = method)) +
     geom_line(linewidth = 1.2) +
     add_method_scale() +
+    guides(color = method_legend()) +
     labs(x = "Seconds", y = "Training loss", title = "Training loss", color = "Method") +
     plot_theme
 
   optimization_error_plot = ggplot(plot_data, aes(x = time, y = l2_diff, color = method)) +
     geom_line(linewidth = 1.2) +
     add_method_scale() +
+    guides(color = method_legend()) +
     labs(
       x = "Seconds",
       y = "Optimization error (log10)",
@@ -448,5 +453,6 @@ plot_runtime_comparison = function(loss_histories, l2_diff_histories, time_histo
     plot_theme
 
   train_loss_plot + optimization_error_plot +
-    plot_layout(ncol = 2L, guides = "collect")
+    plot_layout(ncol = 2L, guides = "collect") &
+    theme(legend.position = "bottom")
 }
