@@ -30,6 +30,9 @@ augmented_chebyshev = function(y1, y2, w1, w2, rho = 0.05) {
 plot_scalarization = function(w1, w2, grid, pareto_front) {
   plot_grid = copy(grid)
   plot_grid[, scalarized_value := augmented_chebyshev(f1, f2, w1 = w1, w2 = w2, rho = rho)]
+  front_optimum = copy(pareto_front)
+  front_optimum[, scalarized_value := augmented_chebyshev(f1, f2, w1 = w1, w2 = w2, rho = rho)]
+  front_optimum = front_optimum[which.min(scalarized_value)]
 
   ggplot(plot_grid, aes(x = f1, y = f2, fill = scalarized_value, z = scalarized_value)) +
     geom_raster() +
@@ -42,6 +45,16 @@ plot_scalarization = function(w1, w2, grid, pareto_front) {
       linewidth = 0.15
     ) +
     geom_path(data = pareto_front, aes(x = f1, y = f2), inherit.aes = FALSE, color = "#00A087", linewidth = 1) +
+    geom_point(
+      data = front_optimum,
+      aes(x = f1, y = f2),
+      inherit.aes = FALSE,
+      shape = 21,
+      color = "black",
+      fill = "white",
+      stroke = 0.7,
+      size = 2.4
+    ) +
     scale_fill_gradientn(colors = c("#FDE725", "#F8961E", "#D62828")) +
     labs(
       x = expression(f[1]),
