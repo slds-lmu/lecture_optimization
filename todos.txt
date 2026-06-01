@@ -63,16 +63,6 @@ rules-math sofort zurück spielen
 in den latex math macros benutzen wir bm und \mathbf inkonsistent. 
 
 
-manuel
-- go thru all chaps, starting from chap3 on.
-- make the R code a GREAT as possible (but efficiently)
-- use claude
-- respect all rules in lecture_service/.agents/rules-rcode.md
-- first task EVERY session: if things can get automated better by updating rules
- or vistools DO THIS FIRST!
-
-
-
 tokens:
  - timo: chap3
  - david chap4
