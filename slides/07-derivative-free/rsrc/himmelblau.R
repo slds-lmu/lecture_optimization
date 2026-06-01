@@ -1,143 +1,191 @@
-# ------------------------------------------------------------------------------
-# derivative free
+# Used in: ../slides-derivative-free-3-simulated-annealing.tex
+#
+# Simulate a short simulated annealing run on Himmelblau's function and save
+# the acceptance-probability contour used on the title slide.
 
-# FIG: plot Himmelblau's function
-# ------------------------------------------------------------------------------
+set.seed(1111L)
 
-library(msm)
+library(data.table)
 library(ggplot2)
-library(gridExtra)
+library(msm)
 
-set.seed(1111)
-# ------------------------------------------------------------------------------
+output_file = "../figure/himmelblau-iter3_probabilities.pdf"
 
-#1 Initialize optim function and its domain; generate function to calculate acceptance probs.
-#1.1 Choose function to optimize; here 'Himmelblau's function' chosen.
+domain = c(-5, 5)
+proposal_bounds = c(-3.8, 3.8)
+proposal_sd = 1.5
+objective_grid_size = 400L
+proposal_grid_size = 100L
+proposal_contour_radius = 2
+initial_temperature = 200
+cooling_rate = 0.8
+snapshot_iterations = c(2L, 3L, 5L, 10L, 20L, 30L, 50L, 60L)
+snapshot_index = 3L
 
-f = function(x){
-  (x[2]^2 + x[1] - 11)^2 + (x[2] + x[1]^2 - 7)^2
+himmelblau_value = function(x1, x2) {
+  (x1 + x2^2 - 11)^2 + (x1^2 + x2 - 7)^2
 }
 
-#1.2 generate domain and respective values of function f.
-x1 = seq(-5, 5, length.out = 400)
-x2 = x1
-grid <- expand.grid(x1 = x1, x2 = x2) # needed for ggplot
-grid$y = apply(grid, 1, f)
-
-#1.3 Calculates the acceptance probabilities given a current iteration
-#### Function input: f = optim function, xcurr = current point in space, z = overall matrix of z=f(x) values,
-#### tempcurr = current temperature.
-calcAcceptanceProbs = function(f, xcurr, grid, tempcurr){
-    zcurr = f(xcurr)
-    grid$prob = 1
-    idx = which(grid$y >= zcurr)
-    grid[idx, ]$prob =  exp(-(grid[idx, ]$y - zcurr) / tempcurr)
-    return(grid)
+himmelblau = function(x) {
+  himmelblau_value(x[1], x[2])
 }
 
-#2 Visualize function with contour lines.
+acceptance_probability = function(proposal_value, current_value, temperature) {
+  pmin(1, exp(-(proposal_value - current_value) / temperature))
+}
 
-p = ggplot() + stat_contour_filled(data = grid, aes(x = x1, y = x2, z = y)) + xlab(expression(x[1])) + ylab(expression(x[2]))    
-# p = p + geom_point(data = data.frame(x = 0, y = 1), aes(x = x, y = y), colour = "orange")
-p = p + guides(fill = "none") + theme_bw()
-if (interactive()) print(p)
+sample_proposal = function(current_point) {
+  c(
+    rtnorm(1L, mean = current_point[1], sd = proposal_sd, lower = proposal_bounds[1], upper = proposal_bounds[2]),
+    rtnorm(1L, mean = current_point[2], sd = proposal_sd, lower = proposal_bounds[1], upper = proposal_bounds[2])
+  )
+}
 
-#3 Simulated Annealing algorithm
-#3.1 set start value x; set current best point 'xbest'; generate sequence of temperatures;
-#### create 'tracking' matrix for saving parameters of each iteration.
-#### 'tracking' columns: 'xbest_x1' and 'xbest_x2' = x and y coords of current best point,
-#### 'xnew' = x and y coords of sampled point in respective iteration.
+make_objective_grid = function() {
+  axis_values = seq(domain[1], domain[2], length.out = objective_grid_size)
+  grid = CJ(x1 = axis_values, x2 = axis_values)
+  grid[, objective_value := himmelblau_value(x1, x2)]
+}
 
-x = c(0, 0) 
-xbest = x
-c = 0.8
-T = 200
-tempseq = c(rep(T, 50), c^{1:200} * T)
-iters = c(2, 3, 5, 10, 20, 30, 50, 60) # iterations we want to consider 
+make_temperature_schedule = function() {
+  c(
+    rep(initial_temperature, 50L),
+    initial_temperature * cooling_rate^seq_len(200L)
+  )
+}
 
+run_simulated_annealing = function(temperature_schedule) {
+  trace = data.table(
+    iteration = seq_along(temperature_schedule),
+    best_x1 = NA_real_,
+    best_x2 = NA_real_,
+    proposal_x1 = NA_real_,
+    proposal_x2 = NA_real_,
+    current_x1 = NA_real_,
+    current_x2 = NA_real_,
+    best_value = NA_real_,
+    accepted = NA_character_
+  )
 
-# start point
-tracking = data.frame(x[1], x[2], x[1], x[2], 0, 0, f(x), 1, NA)
-colnames(tracking) = c("xbest_x1", "xbest_x2", "xnew_x1", "xnew_x2", "xold_x1", "xold_x2", "z", "iteration", "type")
+  current_point = c(0, 0)
+  best_point = current_point
 
-#3.2 start algorithm simulated annealing.
-for(k in 2:length(tempseq)){    
-  xold = x                                    
-  xnew = c(rtnorm(n = 1, mean = x[1], sd = 1.5, lower = -3.8, upper = 3.8),
-           rtnorm(n = 1, mean = x[2], sd = 1.5, lower = -3.8, upper = 3.8))          
-  type = "reject"
-  if(f(xnew) < f(x)){
-    x = xnew
-    type = "accept"
-  } else{
-      prob = exp(-(f(xnew) - f(x))/tempseq[k])
-      if(sample(c(0,1), size = 1, prob = c(1-prob, prob)) == 1){
-        x = xnew
-        type = "accept"
-      }
+  trace[1L, `:=`(
+    best_x1 = best_point[1],
+    best_x2 = best_point[2],
+    proposal_x1 = current_point[1],
+    proposal_x2 = current_point[2],
+    current_x1 = current_point[1],
+    current_x2 = current_point[2],
+    best_value = himmelblau(best_point)
+  )]
+
+  for (iter in seq(2L, length(temperature_schedule))) {
+    old_point = current_point
+    proposal = sample_proposal(old_point)
+    old_value = himmelblau(old_point)
+    proposal_value = himmelblau(proposal)
+
+    accept_candidate = if (proposal_value < old_value) {
+      TRUE
+    } else {
+      runif(1L) < acceptance_probability(proposal_value, old_value, temperature_schedule[iter])
     }
-  if(f(x) < f(xbest)){
-    xbest = x 
+
+    if (accept_candidate) {
+      current_point = proposal
+    }
+    if (himmelblau(current_point) < himmelblau(best_point)) {
+      best_point = current_point
+    }
+
+    trace[iter, `:=`(
+      best_x1 = best_point[1],
+      best_x2 = best_point[2],
+      proposal_x1 = proposal[1],
+      proposal_x2 = proposal[2],
+      current_x1 = old_point[1],
+      current_x2 = old_point[2],
+      best_value = himmelblau(best_point),
+      accepted = if (accept_candidate) "accept" else "reject"
+    )]
   }
-  tracking[k,] = c(xbest[1], xbest[2], xnew[1], xnew[2], xold[1], xold[2], f(xbest), k, type)
+
+  trace
 }
 
-#4 Generate probabilitites of acceptance
-
-#4.1 Prob matrizes for iteration 1, 2, 3, 50, 100
-PAacceptiter = lapply(iters, function(x) {
-  calcAcceptanceProbs(f = f, xcurr = as.numeric(c(tracking[x,"xold_x1"], tracking[x,"xold_x2"])), grid = grid,
-                                    tempcurr = tempseq[x])
-})
-
-
-#4.2 Arrange data for plot of acceptance probs
-dfp = tracking[, c("xold_x1", "xold_x2", "xnew_x1", "xnew_x2", "iteration", "type")]
-dfp = as.data.frame(dfp)
-
-#4.3 Plot accceptance probs
-for (k in 1:length(PAacceptiter)) {
-
-  p1 = p   
-  p1 = p1 + geom_point(data = dfp[1:iters[k], ], aes(x = as.numeric(xold_x1), y = as.numeric(xold_x2)), colour = "lightgray")
-  p1 = p1 + geom_point(data = dfp[iters[k], ], aes(x = as.numeric(xold_x1), y = as.numeric(xold_x2)), colour = "blue")
-  p1 = p1 + geom_point(data = dfp[iters[k], ], aes(x = as.numeric(xnew_x1), y = as.numeric(xnew_x2)), colour = "orange")
-  p1 = p1 + theme_bw() + theme(legend.position = "none")
-
-  # For title page of slides 
-  if (k == 3) {
-    ggsave(paste0("../figure/himmelblau-iter", k, "_probabilities.pdf"), p1, height = 4, width = 5)
-  }
-
-  df = PAacceptiter[[k]]
-  p2 = ggplot()
-  p2 = p2 + geom_contour(data = df, aes(x = x1, y = x2, z = prob, colour = after_stat(level))) 
-  p2 = p2 + xlab(expression(x[1])) + ylab(expression(x[2]))    
-  p2 = p2 + scale_colour_gradient(low="red", high="green")
-  p2 = p2 + theme_bw()
-  p2 = p2 + geom_point(data = dfp[1:iters[k], ], aes(x = as.numeric(xold_x1), y = as.numeric(xold_x2)), colour = "lightgray")
-  p2 = p2 + geom_point(data = dfp[iters[k], ], aes(x = as.numeric(xold_x1), y = as.numeric(xold_x2)), colour = "blue")
-  p2 = p2 + geom_point(data = dfp[iters[k], ], aes(x = as.numeric(xnew_x1), y = as.numeric(xnew_x2)), colour = "orange")
-  p2 = p2 + labs(colour='P(accept)') 
-
-  # plot contour lines of normal distribution
-  m = as.numeric(c(dfp[iters[k], ]$xold_x1, dfp[iters[k], ]$xold_x2))
-  sigma = matrix(c(1.5, 0, 0, 1.5), nrow=2)
-  bb = 2
-  grid2 = expand.grid(x1 = seq(m[1] - bb, m[1] + bb, length.out = 100), x2 = seq(m[2] - bb, m[2] + bb, length.out = 100))
-  qsamp <- cbind(grid2, prob = mvtnorm::dmvnorm(grid2, mean = m, sigma = sigma))
-
-  p2 = p2 + geom_contour(data = qsamp, aes(x = x1, y = x2, z = prob), alpha = 0.5)
-
-  # For title page of slides 
-  if (k == 3) {
-    ggsave(paste0("../figure/himmelblau-iter", k, "_probabilities.pdf"), p2, height = 4, width = 5)
-  }
-
-  if (k != 3) {
-    next
-  }
-
-  combined_plot = arrangeGrob(p1, p2, nrow = 1)
-  if (interactive()) grid::grid.draw(combined_plot)
+make_acceptance_grid = function(objective_grid, current_point, temperature) {
+  current_value = himmelblau(current_point)
+  acceptance_grid = copy(objective_grid)
+  acceptance_grid[, acceptance_prob := acceptance_probability(objective_value, current_value, temperature)]
 }
+
+make_proposal_density_grid = function(current_point) {
+  x1 = seq(
+    current_point[1] - proposal_contour_radius,
+    current_point[1] + proposal_contour_radius,
+    length.out = proposal_grid_size
+  )
+  x2 = seq(
+    current_point[2] - proposal_contour_radius,
+    current_point[2] + proposal_contour_radius,
+    length.out = proposal_grid_size
+  )
+
+  density_grid = CJ(x1 = x1, x2 = x2)
+  density_grid[, proposal_density := dnorm(x1, mean = current_point[1], sd = proposal_sd) *
+    dnorm(x2, mean = current_point[2], sd = proposal_sd)]
+}
+
+plot_acceptance_snapshot = function(trace, objective_grid, temperature_schedule, iteration_id) {
+  current_row = trace[iteration_id]
+  current_point = c(current_row$current_x1, current_row$current_x2)
+
+  acceptance_grid = make_acceptance_grid(
+    objective_grid = objective_grid,
+    current_point = current_point,
+    temperature = temperature_schedule[iteration_id]
+  )
+  density_grid = make_proposal_density_grid(current_point)
+  history = trace[seq_len(iteration_id)]
+
+  ggplot() +
+    geom_contour(
+      data = acceptance_grid,
+      aes(x = x1, y = x2, z = acceptance_prob, colour = after_stat(level)),
+      bins = 10L,
+      linewidth = 0.45
+    ) +
+    geom_contour(
+      data = density_grid,
+      aes(x = x1, y = x2, z = proposal_density),
+      alpha = 0.5,
+      linewidth = 0.35
+    ) +
+    geom_point(data = history, aes(x = current_x1, y = current_x2), colour = "grey75", size = 1.2) +
+    geom_point(data = current_row, aes(x = current_x1, y = current_x2), colour = "#1f5fbf", size = 2.2) +
+    geom_point(data = current_row, aes(x = proposal_x1, y = proposal_x2), colour = "#f28e2b", size = 2.2) +
+    scale_colour_gradient(low = "#d73027", high = "#1a9850", limits = c(0, 1), name = "P(accept)") +
+    coord_cartesian(xlim = domain, ylim = domain, expand = FALSE) +
+    labs(x = expression(x[1]), y = expression(x[2])) +
+    theme_bw(base_size = 11) +
+    theme(legend.position = "right")
+}
+
+objective_grid = make_objective_grid()
+temperature_schedule = make_temperature_schedule()
+annealing_trace = run_simulated_annealing(temperature_schedule)
+plot_iteration = snapshot_iterations[snapshot_index]
+
+acceptance_plot = plot_acceptance_snapshot(
+  trace = annealing_trace,
+  objective_grid = objective_grid,
+  temperature_schedule = temperature_schedule,
+  iteration_id = plot_iteration
+)
+
+if (interactive()) {
+  print(acceptance_plot)
+}
+
+ggsave(output_file, acceptance_plot, width = 5, height = 4)

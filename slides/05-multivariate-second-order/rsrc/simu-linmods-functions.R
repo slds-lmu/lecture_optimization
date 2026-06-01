@@ -1,844 +1,458 @@
-# ------------------------------------------------------------------------------
-# multivariate second order
+# Used in: slides/05-multivariate-second-order/rsrc/NR_GD.R
+#
+# Helper functions for the logistic-regression simulation comparing
+# Newton-Raphson, relaxed Newton-Raphson, and gradient descent with momentum.
+# The helpers generate data, run optimizers, and create the comparison plots.
 
-# FUNC: 
-#   (1) Functions for generating synthetic data for linear and 
-#     logistic regression models, implementing optimization 
-#     algorithms with various enhancements, 
-#     and plotting the results.
-#   (2) The focus is on comparing different optimization methods 
-#     and observing their effects on model training
-#     under varying conditions, 
-#     such as different condition numbers of the feature matrix.
-# ------------------------------------------------------------------------------
+set.seed(123L)
 
-library(MASS)
-library(ggplot2)
-library(gridExtra)
-library(grid)
-library(patchwork)
-library(reshape2)
+suppressPackageStartupMessages({
+  library(data.table)
+  library(ggplot2)
+  library(grid)
+  library(MASS)
+  library(patchwork)
+})
 
-set.seed(123)
+method_palette = c(
+  "Newton-Raphson" = "#D55E00",
+  "Newton-Raphson+step size" = "#0072B2",
+  "GD+mom" = "#009E73"
+)
 
-# ------------------------------------------------------------------------------
-
-# Function to compute condition number
-compute_condition_number <- function(X) {
-  return(kappa(t(X) %*% X))
-}
-
-
-################################################################################
-# Data generation function
-generate_data <- function(n, p, rho, sigma, model, n_test) {
-  set.seed(123)
-  # Generate covariance matrix
+make_covariance_matrix = function(n_features, rho) {
   if (rho == 0) {
-    Sigma <- diag(p)
+    diag(n_features)
   } else {
-    Sigma <- toeplitz(rho^(0:(p - 1)))
+    toeplitz(rho^(seq_len(n_features) - 1L))
   }
-  
-  # Generate feature matrix X
-  X <- mvrnorm(n, mu = rep(0, p), Sigma = Sigma)
-  X_test <- mvrnorm(n_test, mu = rep(0, p), Sigma = Sigma)
-  
-  # Generate true coefficients beta_true with alternating signs
-  if (p %% 2 == 0) {
-    # For even p
-    neg_values <- -(1:(p/2))  # Creates sequence -1, -2, ..., -p/2
-    pos_values <- seq(p/2, 1)  # Creates sequence p/2, ..., 1
-    beta_ground_truth <- c(neg_values, pos_values)
+}
+
+make_beta_truth = function(n_features) {
+  half = floor(n_features / 2L)
+
+  if (n_features %% 2L == 0L) {
+    c(seq(-half, -1L), seq(1L, half))
   } else {
-    # For odd p
-    neg_values <- -(1:floor(p/2))  # Creates sequence -1, -2, ..., -floor(p/2)
-    pos_values <- seq(floor(p/2), 1)  # Creates sequence floor(p/2), ..., 1
-    beta_ground_truth <- c(neg_values, 0, pos_values)
+    seq(-half, half)
   }
-  
-  # Linear predictor
-  preds <- X %*% beta_ground_truth
-  preds_test <- X_test %*% beta_ground_truth
-  
-  # Generate response variable y
-  if (model == "linear") {
-    noise <- rnorm(n, mean = 0, sd = sigma)
-    y <- preds + noise
-    set.seed(123)
-    noise_test <- rnorm(n_test, mean = 0, sd = sigma)
-    y_test <- preds_test + noise_test
-  } else if (model == "logistic") {
-    probs <- 1 / (1 + exp(-preds))
-    y <- rbinom(n, size = 1, prob = probs)
-    probs_test <- 1 / (1 + exp(-preds_test))
-    y_test <- rbinom(n_test, size = 1, prob = probs_test)
-  } else {
-    stop("Invalid model type. Choose 'linear' or 'logistic'.")
-  }
-  
-  # Calculate beta_true from training data
-  if (model == "linear") {
-    beta_true <- coef(lm(y ~ X - 1))
-  } else if (model == "logistic") {
-    beta_true <- coef(glm(y ~ X - 1, family = binomial()))
-  }
-  
-  # Compute condition number
-  cond_number <- compute_condition_number(X)
-  
-  # Print dataset properties
-  cat("Dataset Properties:\n")
-  cat("Model type:", model, "\n")
-  cat("n (training set size):", n, "\n")
-  cat("p (number of features):", p, "\n")
-  cat("Condition number of X^T X:", cond_number, "\n\n")
-  cat("lm/glm estimates:", beta_true, "\n\n")
-  
-  return(list(
-    X = X, y = y, beta_true = beta_true, beta_ground_truth = beta_ground_truth, preds = preds,
-    X_test = X_test, y_test = y_test, preds_test = preds_test,
-    condition_number = cond_number
-  ))
-}
-################################################################################
-# Linear Regression Direct Solution
-linreg_direct_solution <- function(X, y) {
-  beta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
-  return(beta_hat)
 }
 
-################################################################################
-gradient_descent <- function(X, y, X_test, y_test, beta_true, model = model_type, learning_rate, max_iter, 
-                             beta_init = NULL, stochastic = FALSE,
-                             step_size_control = FALSE, decay_rate = 0,
-                             momentum = NULL) {
-  set.seed(123)
-  n <- nrow(X)
-  p <- ncol(X)
-  
-  beta_init = rep(0,p)
-  beta <- beta_init
-  
-  
-  beta_hat <- solve(t(X) %*% X) %*% t(X) %*% y
-  if (sum(y- X %*% beta_hat)<1e-7){
-    beta_global_min <- beta_true
-  } else {
-    beta_global_min <- beta_hat
-  }
-  
-  global_min_preds <- X %*% beta_global_min
-  min_train_loss_regr <- mean((global_min_preds - y)^2) 
-  
-  velocity <- rep(0, p)
-  
-  beta_history <- matrix(NA_real_, nrow = max_iter, ncol = p)
-  loss_history <- rep(NA_real_, max_iter)
-  l2_diff_history <- rep(NA_real_, max_iter)
-  test_loss_history <- rep(NA_real_, max_iter)
-  time_history <- rep(NA_real_, max_iter)
-  
-  start_time <- Sys.time()
-  
-  for (iter in 1:max_iter) {
-    if (step_size_control) {
-      learning_rate_iter <- learning_rate * (decay_rate^(iter / max_iter))
-    } else {
-      learning_rate_iter <- learning_rate
-    }
-    
-    if (stochastic) {
-      idx <- sample(1:n, 1)
-      X_batch <- X[idx, , drop = FALSE]
-      y_batch <- y[idx]
-    } else {
-      X_batch <- X
-      y_batch <- y
-    }
-    
-    if (model == "linear") {
-      preds <- X_batch %*% beta
-      error <- preds - y_batch
-      gradient <- t(X_batch) %*% error / nrow(X_batch)
-      
-      train_preds <- X %*% beta
-      test_preds <- X_test %*% beta
-      train_loss <- mean((train_preds - y)^2) #- min_train_loss_regr
-      test_loss <- mean((test_preds - y_test)^2)
-      
-    } else if (model == "logistic") {
-      preds_batch <- X_batch %*% beta
-      probs_batch <- pmax(pmin(plogis(preds_batch), 1 - 1e-10), 1e-10)
-      error <- probs_batch - y_batch
-      gradient <- t(X_batch) %*% error / nrow(X_batch)
-      
-      # Calculate loss using all training data
-      train_preds <- X %*% beta
-      test_preds <- X_test %*% beta
-      train_probs <- pmax(pmin(plogis(train_preds), 1 - 1e-10), 1e-10)
-      test_probs <- pmax(pmin(plogis(test_preds), 1 - 1e-10), 1e-10)
-      
-      train_loss <- -mean(y * log(train_probs) + (1 - y) * log(1 - train_probs)) #- min_train_loss_log
-      test_loss <- -mean(y_test * log(test_probs) + (1 - y_test) * log(1 - test_probs))
-    }
-    
-    if (!is.finite(train_loss)) train_loss <- .Machine$double.xmax
-    if (!is.finite(test_loss)) test_loss <- .Machine$double.xmax
-    
-    if (!is.null(momentum)) {
-      velocity <- momentum * velocity - learning_rate_iter * gradient
-      beta <- beta + velocity
-    } else {
-      beta <- beta - learning_rate_iter * gradient
-    }
-    
-    beta_history[iter, ] <- as.numeric(beta)
-    loss_history[iter] <- as.numeric(train_loss)
-    test_loss_history[iter] <- as.numeric(test_loss)
-    l2_diff_history[iter] <- as.numeric(log10(sqrt(sum((beta - beta_true)^2))))
-    time_history[iter] <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
-  }
-  
-  # Final evaluation metrics
-  if (model == "linear") {
-    train_preds <- X %*% beta
-    test_preds <- X_test %*% beta
-    train_rmse <- sqrt(mean((train_preds - y)^2))
-    test_rmse <- sqrt(mean((test_preds - y_test)^2))
-    
-    cat("Optimization Settings:\n")
-    cat("Model type:", model, "\n")
-    cat("Learning rate:", learning_rate, "\n")
-    if (step_size_control) {
-      cat("Exponential Learning Rate Decay: Enabled\n")
-      cat("Decay rate:", decay_rate, "\n")
-    }
-    if (!is.null(momentum)) {
-      cat("Momentum:", momentum, "\n")
-    }
-    cat("Stochastic Gradient Descent:", ifelse(stochastic, "TRUE", "FALSE"), "\n")
-    cat("\nPerformance Metrics:\n")
-    cat("Training RMSE:", train_rmse, "\n")
-    cat("Test RMSE:", test_rmse, "\n")
-    cat("Approximate Parameter Optimization Error:", l2_diff_history[length(l2_diff_history)], "\n\n")
-    
-  } else if (model == "logistic") {
-    # Calculate probabilities
-    train_probs <- plogis(X %*% beta)
-    test_probs <- plogis(X_test %*% beta)
-    
-    # Convert probabilities to class predictions (threshold = 0.5)
-    train_preds_class <- ifelse(train_probs >= 0.5, 1, 0)
-    test_preds_class <- ifelse(test_probs >= 0.5, 1, 0)
-    
-    # Calculate accuracy
-    train_accuracy <- mean(train_preds_class == y)
-    test_accuracy <- mean(test_preds_class == y_test)
-    
-    cat("Optimization Settings:\n")
-    cat("Gradient descent\n")
-    cat("Model type:", model, "\n")
-    cat("Learning rate:", learning_rate, "\n")
-    if (step_size_control) {
-      cat("Exponential Learning Rate Decay: Enabled\n")
-      cat("Decay rate:", decay_rate, "\n")
-    }
-    if (!is.null(momentum)) {
-      cat("Momentum:", momentum, "\n")
-    }
-    cat("Stochastic Gradient Descent:", ifelse(stochastic, "TRUE", "FALSE"), "\n")
-    cat("\nPerformance Metrics:\n")
-    cat("Training Accuracy:", sprintf("%.4f", train_accuracy), "\n")
-    cat("Test Accuracy:", sprintf("%.4f", test_accuracy), "\n")
-    cat("Approximate Parameter Optimization Error:", l2_diff_history[length(l2_diff_history)], "\n")
-    cat("Final Cross-Entropy Loss (Train):", loss_history[length(loss_history)], "\n")
-    cat("Final Cross-Entropy Loss (Test):", test_loss_history[length(test_loss_history)], "\n\n")
-  }
-  
-  return(list(
-    beta = beta,
-    beta_history = beta_history,
-    loss_history = loss_history,
-    test_loss_history = test_loss_history,
-    l2_diff_history = l2_diff_history,
-    time_history = round(time_history, 5)
-  ))
+clip_probability = function(probability, eps = 1e-10) {
+  pmin(pmax(probability, eps), 1 - eps)
 }
 
-################################################################################
-
-# Newton-Raphson with step-size for logistic regression
-
-# Newton-Raphson Optimization for Logistic Regression using Cholesky Decomposition
-#
-# This function implements the Newton-Raphson method for logistic regression with
-# efficient parameter updates using Cholesky decomposition instead of direct matrix
-# inversion. This approach improves both computational efficiency and numerical
-# stability.
-#
-# Parameters:
-# X: Feature matrix for training data
-# y: Binary response vector (0/1) for training data
-# X_test: Feature matrix for test data
-# y_test: Binary response vector (0/1) for test data
-# beta_true: True parameter values for comparison
-# model: Type of model (only "logistic" supported)
-# max_iter: Maximum number of iterations
-# beta_init: Initial parameter values (defaults to zeros)
-# step_size: Step size for parameter updates (defaults to 1)
-
-newton_raphson <- function(X, y, X_test, y_test, beta_true, model = "logistic", max_iter = 100,
-                           beta_init = NULL, step_size = 1) {
-  set.seed(123)
-  n <- nrow(X)
-  p <- ncol(X)
-  
-  if (model != "logistic") {
-    stop("This implementation only supports logistic regression")
-  }
-  
-  # Initialize parameters
-  beta_init = if (is.null(beta_init)) rep(0, p) else beta_init
-  beta <- beta_init
-  
-  # Initialize tracking matrices for full iterations
-  beta_history <- matrix(NA_real_, nrow = max_iter, ncol = p)
-  loss_history <- rep(NA_real_, max_iter)
-  l2_diff_history <- rep(NA_real_, max_iter)
-  test_loss_history <- rep(NA_real_, max_iter)
-  time_history <- rep(NA_real_, max_iter)
-  
-  start_time <- Sys.time()
-  
-  for (iter in 1:max_iter) {
-    # Calculate predictions and probabilities
-    eta <- X %*% beta
-    probs <- plogis(eta)
-    
-    # Calculate variance and weights
-    var <- probs * (1 - probs)
-    W <- diag(as.vector(var))
-    
-    # Calculate gradient and Hessian
-    gradient <- t(X) %*% (probs - y) / n
-    hessian <- t(X) %*% W %*% X / n
-    
-    # Update parameters using Cholesky decomposition
-    beta_new <- beta - step_size * chol2inv(chol(hessian)) %*% gradient
-    
-    # Calculate losses
-    train_preds <- X %*% beta_new
-    test_preds <- X_test %*% beta_new
-    train_probs <- pmax(pmin(plogis(train_preds), 1 - 1e-10), 1e-10)
-    test_probs <- pmax(pmin(plogis(test_preds), 1 - 1e-10), 1e-10)
-    
-    train_loss <- -mean(y * log(train_probs) + (1 - y) * log(1 - train_probs))
-    test_loss <- -mean(y_test * log(test_probs) + (1 - y_test) * log(1 - test_probs))
-    
-    # Handle numerical instabilities
-    if (!is.finite(train_loss)) train_loss <- .Machine$double.xmax
-    if (!is.finite(test_loss)) test_loss <- .Machine$double.xmax
-    
-    # Store iteration history
-    beta_history[iter, ] <- as.numeric(beta_new)
-    loss_history[iter] <- as.numeric(train_loss)
-    test_loss_history[iter] <- as.numeric(test_loss)
-    l2_diff_history[iter] <- as.numeric(log10(sqrt(sum((beta_new - beta_true)^2))))
-    time_history[iter] <- as.numeric(difftime(Sys.time(), start_time, units = "secs"))
-    
-    beta <- beta_new
-  }
-  
-  # Calculate final metrics
-  train_probs <- plogis(X %*% beta)
-  test_probs <- plogis(X_test %*% beta)
-  train_preds_class <- ifelse(train_probs >= 0.5, 1, 0)
-  test_preds_class <- ifelse(test_probs >= 0.5, 1, 0)
-  train_accuracy <- mean(train_preds_class == y)
-  test_accuracy <- mean(test_preds_class == y_test)
-  
-  # Print performance summary
-  cat("Optimization Settings:\n")
-  cat("Newton-Raphson\n")
-  cat("Model type:", model, "\n")
-  cat("Step size:", step_size, "\n")
-  cat("\nPerformance Metrics:\n")
-  cat("Training Accuracy:", sprintf("%.4f", train_accuracy), "\n")
-  cat("Test Accuracy:", sprintf("%.4f", test_accuracy), "\n")
-  cat("Approximate Parameter Optimization Error:", l2_diff_history[length(l2_diff_history)], "\n")
-  cat("Final Cross-Entropy Loss (Train):", loss_history[length(loss_history)], "\n")
-  cat("Final Cross-Entropy Loss (Test):", test_loss_history[length(test_loss_history)], "\n\n")
-  
-  # Return results
-  return(list(
-    beta = beta,
-    beta_history = beta_history,
-    loss_history = loss_history,
-    test_loss_history = test_loss_history,
-    l2_diff_history = l2_diff_history,
-    time_history = round(time_history, 5)
-  ))
+logistic_loss = function(x, y, beta) {
+  probability = clip_probability(plogis(as.vector(x %*% beta)))
+  -mean(y * log(probability) + (1 - y) * log(1 - probability))
 }
 
-
-################################################################################
-
-# Function to run a single optimizer variant
-run_gd_experiment <- function(X, y, X_test, y_test, beta_true, model_type,
-                              learning_rate, max_iter, momentum = NULL,
-                              step_size_control = FALSE, stochastic = FALSE,
-                              decay_rate = 0) {
-  result <- gradient_descent(
-    X = X, 
-    y = y, 
-    X_test = X_test, 
-    y_test = y_test, 
-    beta_true = beta_true,
-    model = model_type,
-    learning_rate = learning_rate,
-    max_iter = max_iter,
-    beta_init = rep(0, ncol(X)),
-    momentum = momentum,
-    stochastic = stochastic,
-    step_size_control = step_size_control,
-    decay_rate = decay_rate
-  )
-  return(result)
+log10_l2_distance = function(beta, beta_target) {
+  distance = sqrt(sum((beta - beta_target)^2))
+  log10(max(distance, .Machine$double.eps))
 }
 
-# Function to run Newton-Raphson optimization experiment
-run_nr_experiment <- function(X, y, X_test, y_test, beta_true, model_type,
-                              max_iter = 100, step_size = 1) {
-  result <- newton_raphson(
-    X = X,
-    y = y,
-    X_test = X_test,
+solve_spd_system = function(matrix, rhs) {
+  chol_factor = chol(matrix)
+  backsolve(chol_factor, forwardsolve(t(chol_factor), rhs))
+}
+
+simulate_logistic_data = function(n_train, n_test, n_features, rho, seed = 123L) {
+  set.seed(seed)
+
+  covariance = make_covariance_matrix(n_features, rho)
+  beta_truth = make_beta_truth(n_features)
+  x_train = mvrnorm(n = n_train, mu = rep(0, n_features), Sigma = covariance)
+  x_test = mvrnorm(n = n_test, mu = rep(0, n_features), Sigma = covariance)
+  train_probability = plogis(as.vector(x_train %*% beta_truth))
+  test_probability = plogis(as.vector(x_test %*% beta_truth))
+  y_train = rbinom(n_train, size = 1L, prob = train_probability)
+  y_test = rbinom(n_test, size = 1L, prob = test_probability)
+  glm_fit = suppressWarnings(glm.fit(x = x_train, y = y_train, family = binomial()))
+
+  list(
+    x_train = x_train,
+    y_train = y_train,
+    x_test = x_test,
     y_test = y_test,
-    beta_true = beta_true,
-    model = model_type,
-    max_iter = max_iter,
-    beta_init = rep(0, ncol(X)),
-    step_size = step_size
+    beta_truth = beta_truth,
+    beta_target = as.numeric(glm_fit$coefficients),
+    condition_number = kappa(crossprod(x_train))
   )
-  return(result)
 }
 
-# Function to run all optimizer variants
-run_all_experiments <- function(n = 500, p = 11, rho = 0, sigma = 1, 
-                                model_type = "linear", n_test = 5000,
-                                learning_rate = 2e-4, max_iter = 10000,
-                                momentum_value = 0.5, decay = 0.05,
-                                seed = 123, stochastic=FALSE) {
-  set.seed(seed)
-  
-  # Generate data once
-  data <- generate_data(n, p, rho, sigma, model_type, n_test)
-  beta_true <- data$beta_true
-  cond_number <- data$condition_number
-  
-  # Define optimizers 
-  optimizers <- if(stochastic) {
-    # Stochastic variants
-    list(
-      list(name = "SGD", momentum = NULL, step_size_control = FALSE, stochastic=TRUE),
-      list(name = "SGD+mom", momentum = momentum_value, step_size_control = FALSE, stochastic=TRUE),
-      list(name = "SGD+decay", momentum = NULL, step_size_control = TRUE, stochastic=TRUE),
-      list(name = "SGD+mom+decay", momentum = momentum_value, step_size_control = TRUE, stochastic=TRUE)
-    )
-  } else {
-    # Standard GD variants
-    list(
-      list(name = "GD", momentum = NULL, step_size_control = FALSE, stochastic=FALSE),
-      list(name = "GD+mom", momentum = momentum_value, step_size_control = FALSE, stochastic=FALSE),
-      list(name = "GD+decay", momentum = NULL, step_size_control = TRUE, stochastic=FALSE),
-      list(name = "GD+mom+decay", momentum = momentum_value, step_size_control = TRUE, stochastic=FALSE)
-    )
-  }
-  
-  
-  # Initialize storage
-  histories <- list(
-    loss = list(), test_loss = list(), l2_diff = list(),
-    beta = list(), time = list(), method_names = c(), beta_true=beta_true, cond_number=cond_number
+make_history = function(max_iter, n_features) {
+  list(
+    beta = matrix(NA_real_, nrow = max_iter, ncol = n_features),
+    loss = rep(NA_real_, max_iter),
+    test_loss = rep(NA_real_, max_iter),
+    l2_diff = rep(NA_real_, max_iter),
+    time = rep(NA_real_, max_iter)
   )
-  
-  # Run all optimizer variants
-  for (opt in optimizers) {
-    result <- run_gd_experiment(
-      X = data$X, y = data$y, 
-      X_test = data$X_test, y_test = data$y_test,
-      beta_true = data$beta_true,
-      model_type = model_type,
-      learning_rate = learning_rate,
-      max_iter = max_iter,
-      momentum = opt$momentum,
-      step_size_control = opt$step_size_control,
-      decay_rate = decay,
-      stochastic=opt$stochastic
-    )
-    
-    # Store results
-    i <- length(histories$method_names) + 1
-    histories$loss[[i]] <- result$loss_history
-    histories$test_loss[[i]] <- result$test_loss_history
-    histories$l2_diff[[i]] <- result$l2_diff_history
-    histories$beta[[i]] <- result$beta_history
-    histories$time[[i]] <- result$time_history
-    histories$method_names[i] <- opt$name
-  }
-  
-  return(histories)
 }
 
-# Example usage:
-#results <- run_all_experiments(
-#  n = 500, p = 11, rho = 0, sigma = 1, 
-#  model_type = "linear", n_test = 5000,
-#  learning_rate = 2e-4, max_iter = 10000,
-#  momentum_value = 0.5, decay = 0.05,
-#  seed = 123, stochastic=FALSE
-#)
-
-# Plot results
-#plot_optimization_results(
-#  loss_histories = results$loss,
-#  test_loss_histories = results$test_loss,
-#  l2_diff_histories = results$l2_diff,
-# Plot coefficient paths for multiple optimization methods side by side
-
-################################################################################
-
-# Helper function to extend histories to match the longer gradient descent iterations
-standardize_histories <- function(result, target_length) {
-  # Extend each history vector/matrix with NA values
-  current_length <- length(result$loss_history)
-  if (current_length < target_length) {
-    # Extend loss histories
-    result$loss_history <- c(result$loss_history, rep(NA, target_length - current_length))
-    result$test_loss_history <- c(result$test_loss_history, rep(NA, target_length - current_length))
-    result$l2_diff_history <- c(result$l2_diff_history, rep(NA, target_length - current_length))
-    result$time_history <- c(result$time_history, rep(NA, target_length - current_length))
-    
-    # Extend beta history matrix
-    beta_padding <- matrix(NA, 
-                           nrow = target_length - current_length, 
-                           ncol = ncol(result$beta_history))
-    result$beta_history <- rbind(result$beta_history, beta_padding)
-  }
-  return(result)
+evaluate_logistic_fit = function(x_train, y_train, x_test, y_test, beta, beta_target) {
+  list(
+    train_loss = logistic_loss(x_train, y_train, beta),
+    test_loss = logistic_loss(x_test, y_test, beta),
+    l2_diff = log10_l2_distance(beta, beta_target)
+  )
 }
 
-# Function to run comparative experiments between Newton-Raphson and Gradient Descent
-run_all_experiments_nr <- function(n = 500, p = 11, rho = 0, 
-                                   model_type = "logistic", n_test = 5000,
-                                   max_iter = 100, max_iter_gd = 10000,
-                                   step_size = 1e-2, learning_rate_gd = 2e-4, 
-                                   seed = 123) {
-  set.seed(seed)
-  
-  # Generate data once
-  data <- generate_data(n, p, rho, sigma=0, model_type, n_test)
-  beta_true <- data$beta_true
-  cond_number <- data$condition_number
-  
-  # Define optimization methods
-  optimizers <- list(
-    list(name = "Newton-Raphson", method = "nr", step_size = 1),
-    list(name = "Newton-Raphson+step size", method = "nr", step_size = step_size),
-    list(name = "GD+mom", method = "gd", step_size = learning_rate_gd)
+as_optimizer_result = function(beta, history) {
+  list(
+    beta = beta,
+    beta_history = history$beta,
+    loss_history = history$loss,
+    test_loss_history = history$test_loss,
+    l2_diff_history = history$l2_diff,
+    time_history = round(history$time, 5L)
   )
-  
-  # Initialize storage
-  histories <- list(
-    loss = list(), 
-    test_loss = list(), 
-    l2_diff = list(),
-    beta = list(), 
-    time = list(), 
-    method_names = c(), 
-    beta_true = beta_true, 
-    cond_number = cond_number
-  )
-  
-  # Run experiments with all methods
-  for (opt in optimizers) {
-    if (opt$method == "nr") {
-      result <- run_nr_experiment(
-        X = data$X, 
-        y = data$y, 
-        X_test = data$X_test, 
-        y_test = data$y_test,
-        beta_true = data$beta_true,
-        model_type = model_type,
-        max_iter = max_iter,
-        step_size = opt$step_size
-      )
-      # Extend NR histories to match GD length
-      result <- standardize_histories(result, max_iter_gd)
+}
+
+store_optimizer_step = function(history, iteration, beta, metrics, start_time) {
+  history$beta[iteration, ] = as.numeric(beta)
+  history$loss[iteration] = metrics$train_loss
+  history$test_loss[iteration] = metrics$test_loss
+  history$l2_diff[iteration] = metrics$l2_diff
+  history$time[iteration] = as.numeric(difftime(Sys.time(), start_time, units = "secs"))
+  history
+}
+
+gradient_descent_logistic = function(x_train, y_train, x_test, y_test, beta_target, learning_rate, max_iter,
+                                     beta_init = NULL, momentum = 0, stochastic = FALSE, decay_rate = 1,
+                                     seed = 123L) {
+  if (stochastic) {
+    set.seed(seed)
+  }
+
+  n_train = nrow(x_train)
+  n_features = ncol(x_train)
+  beta = if (is.null(beta_init)) rep(0, n_features) else beta_init
+  velocity = rep(0, n_features)
+  history = make_history(max_iter, n_features)
+  start_time = Sys.time()
+
+  for (iteration in seq_len(max_iter)) {
+    learning_rate_iter = learning_rate * decay_rate^(iteration / max_iter)
+
+    if (stochastic) {
+      row_id = sample.int(n_train, size = 1L)
+      x_batch = x_train[row_id, , drop = FALSE]
+      y_batch = y_train[row_id]
     } else {
-      result <- run_gd_experiment(
-        X = data$X, 
-        y = data$y, 
-        X_test = data$X_test, 
+      x_batch = x_train
+      y_batch = y_train
+    }
+
+    probability = plogis(as.vector(x_batch %*% beta))
+    gradient = as.vector(crossprod(x_batch, probability - y_batch)) / nrow(x_batch)
+    velocity = momentum * velocity - learning_rate_iter * gradient
+    beta = beta + velocity
+    metrics = evaluate_logistic_fit(x_train, y_train, x_test, y_test, beta, beta_target)
+    history = store_optimizer_step(history, iteration, beta, metrics, start_time)
+  }
+
+  as_optimizer_result(beta, history)
+}
+
+newton_raphson_logistic = function(x_train, y_train, x_test, y_test, beta_target, max_iter,
+                                   beta_init = NULL, step_size = 1) {
+  n_train = nrow(x_train)
+  n_features = ncol(x_train)
+  beta = if (is.null(beta_init)) rep(0, n_features) else beta_init
+  history = make_history(max_iter, n_features)
+  start_time = Sys.time()
+
+  for (iteration in seq_len(max_iter)) {
+    probability = plogis(as.vector(x_train %*% beta))
+    weights = pmax(probability * (1 - probability), .Machine$double.eps)
+    gradient = as.vector(crossprod(x_train, probability - y_train)) / n_train
+    hessian = crossprod(x_train, x_train * weights) / n_train
+    newton_step = as.vector(solve_spd_system(hessian, gradient))
+
+    beta = beta - step_size * newton_step
+    metrics = evaluate_logistic_fit(x_train, y_train, x_test, y_test, beta, beta_target)
+    history = store_optimizer_step(history, iteration, beta, metrics, start_time)
+  }
+
+  as_optimizer_result(beta, history)
+}
+
+pad_optimizer_result = function(result, target_length) {
+  current_length = length(result$loss_history)
+
+  if (current_length < target_length) {
+    padding_length = target_length - current_length
+    result$loss_history = c(result$loss_history, rep(NA_real_, padding_length))
+    result$test_loss_history = c(result$test_loss_history, rep(NA_real_, padding_length))
+    result$l2_diff_history = c(result$l2_diff_history, rep(NA_real_, padding_length))
+    result$time_history = c(result$time_history, rep(NA_real_, padding_length))
+    result$beta_history = rbind(
+      result$beta_history,
+      matrix(NA_real_, nrow = padding_length, ncol = ncol(result$beta_history))
+    )
+  }
+
+  result
+}
+
+run_newton_gd_experiments = function(n_train = 500L, n_features = 11L, rho = 0, n_test = 5000L,
+                                     learning_rate_gd = 1, step_size = 0.7, max_iter = 50L,
+                                     max_iter_gd = max_iter, seed = 123L) {
+  data = simulate_logistic_data(
+    n_train = n_train,
+    n_test = n_test,
+    n_features = n_features,
+    rho = rho,
+    seed = seed
+  )
+
+  optimizers = list(
+    list(name = "Newton-Raphson", method = "newton", step_size = 1),
+    list(name = "Newton-Raphson+step size", method = "newton", step_size = step_size),
+    list(name = "GD+mom", method = "gd", learning_rate = learning_rate_gd, momentum = 0.8)
+  )
+
+  histories = list(
+    loss = list(),
+    test_loss = list(),
+    l2_diff = list(),
+    beta = list(),
+    time = list(),
+    method_names = character(),
+    beta_true = data$beta_target,
+    beta_ground_truth = data$beta_truth,
+    cond_number = data$condition_number
+  )
+
+  for (optimizer in optimizers) {
+    result = if (optimizer$method == "newton") {
+      newton_result = newton_raphson_logistic(
+        x_train = data$x_train,
+        y_train = data$y_train,
+        x_test = data$x_test,
         y_test = data$y_test,
-        beta_true = data$beta_true,
-        model_type = model_type,
-        learning_rate = opt$step_size,
+        beta_target = data$beta_target,
+        max_iter = max_iter,
+        beta_init = rep(0, n_features),
+        step_size = optimizer$step_size
+      )
+      pad_optimizer_result(newton_result, max_iter_gd)
+    } else {
+      gradient_descent_logistic(
+        x_train = data$x_train,
+        y_train = data$y_train,
+        x_test = data$x_test,
+        y_test = data$y_test,
+        beta_target = data$beta_target,
+        learning_rate = optimizer$learning_rate,
         max_iter = max_iter_gd,
-        momentum = 0.8,
+        beta_init = rep(0, n_features),
+        momentum = optimizer$momentum,
         stochastic = FALSE,
-        step_size_control = FALSE,
-        decay_rate = 1
+        decay_rate = 1,
+        seed = seed
       )
     }
-    
-    # Store results
-    i <- length(histories$method_names) + 1
-    histories$loss[[i]] <- result$loss_history
-    histories$test_loss[[i]] <- result$test_loss_history
-    histories$l2_diff[[i]] <- result$l2_diff_history
-    histories$beta[[i]] <- result$beta_history
-    histories$time[[i]] <- result$time_history
-    histories$method_names[i] <- opt$name
+
+    result_id = length(histories$method_names) + 1L
+    histories$loss[[result_id]] = result$loss_history
+    histories$test_loss[[result_id]] = result$test_loss_history
+    histories$l2_diff[[result_id]] = result$l2_diff_history
+    histories$beta[[result_id]] = result$beta_history
+    histories$time[[result_id]] = result$time_history
+    histories$method_names[result_id] = optimizer$name
   }
-  
-  return(histories)
+
+  histories
 }
 
-################################################################################
-
-################################################################################
-# Plotting configs
-lwidth = 1
-fsize = 14
-legendsize = 20
-
-########
-plot_optimization_results <- function(loss_histories, test_loss_histories, l2_diff_histories, 
-                                      time_histories, method_names, xaxis = "iterations",
-                                      methods_to_show = method_names) {
-  
-  # Plotting configs
-  lwidth <- 1
-  fsize <- 14
-  legendsize <- 20 
-  
-  # Create iteration indices
-  iterations <- 1:length(loss_histories[[1]])
-  
-  # Prepare data for plotting
-  plot_data <- data.frame(
-    iteration = rep(iterations, length(method_names)),
-    time = unlist(time_histories),
-    train_loss = unlist(loss_histories),
-    test_loss = unlist(test_loss_histories),
-    l2_diff = unlist(l2_diff_histories),
-    method = rep(method_names, each = length(iterations))
-  )
-  
-  plot_data$train_loss[!is.finite(plot_data$train_loss)] <- -5
-  
-  # Filter methods to show
-  plot_data <- plot_data[plot_data$method %in% methods_to_show, ]
-  
-  # Set x-axis based on user choice
-  if (xaxis == "time") {
-    x_var <- "time"
-    x_lab <- "Time (seconds)"
-    # Round time to nearest second for breaks
-    max_time <- ceiling(max(plot_data$time))
-    x_breaks <- seq(0, max_time, by = 0.5)
-  } else {
-    x_var <- "iteration"
-    x_lab <- "Iterations"
-    # Use sensible iteration breaks
-    max_iter <- max(plot_data$iteration)
-    x_breaks <- seq(0, max_iter, by = floor(max_iter / 5))
-  }
-  
-  # Common theme for plots
-  common_theme <- theme_minimal() +
-    theme(
-      legend.position = "bottom",
-      legend.spacing.x = unit(1.5, 'cm'),
-      text = element_text(size = fsize + 5),
-      axis.text = element_text(size = fsize + 1),
-      legend.title = element_text(size = legendsize + 2),
-      legend.text = element_text(size = legendsize)
+make_history_table = function(loss_histories, test_loss_histories, l2_diff_histories, time_histories,
+                              method_names) {
+  rbindlist(lapply(seq_along(method_names), function(method_id) {
+    data.table(
+      iteration = seq_along(loss_histories[[method_id]]),
+      time = time_histories[[method_id]],
+      train_loss = loss_histories[[method_id]],
+      test_loss = test_loss_histories[[method_id]],
+      l2_diff = l2_diff_histories[[method_id]],
+      method = method_names[[method_id]]
     )
-  
-  # Create the three plots
-  p1 <- ggplot(plot_data, aes_string(x = x_var, y = "train_loss", color = "method")) +
-    geom_line(linewidth = lwidth) +
+  }))
+}
+
+make_x_breaks = function(values) {
+  finite_values = values[is.finite(values)]
+
+  if (length(finite_values) == 0L) {
+    0
+  } else {
+    pretty(c(0, max(finite_values)), n = 5L)
+  }
+}
+
+add_method_scale = function() {
+  scale_color_manual(values = method_palette, breaks = names(method_palette))
+}
+
+method_legend = function() {
+  guide_legend(nrow = 1L, byrow = TRUE, keywidth = unit(1.2, "cm"))
+}
+
+comparison_theme = function(base_size = 19) {
+  theme_minimal(base_size = base_size) +
+    theme(
+      legend.spacing.x = unit(0.6, "cm"),
+      legend.title = element_text(size = base_size),
+      legend.text = element_text(size = base_size - 1)
+    )
+}
+
+plot_optimization_results = function(loss_histories, test_loss_histories, l2_diff_histories, time_histories,
+                                     method_names, xaxis = "iterations", methods_to_show = method_names) {
+  xaxis = match.arg(xaxis, c("iterations", "time"))
+  plot_data = make_history_table(
+    loss_histories = loss_histories,
+    test_loss_histories = test_loss_histories,
+    l2_diff_histories = l2_diff_histories,
+    time_histories = time_histories,
+    method_names = method_names
+  )
+  plot_data = plot_data[method %in% methods_to_show]
+  plot_data[!is.finite(train_loss), train_loss := NA_real_]
+
+  if (xaxis == "time") {
+    plot_data[, x_value := time]
+    x_lab = "Time (seconds)"
+  } else {
+    plot_data[, x_value := iteration]
+    x_lab = "Iterations"
+  }
+
+  x_breaks = make_x_breaks(plot_data$x_value)
+  train_upper = min(15, max(plot_data$train_loss, na.rm = TRUE) + 0.1)
+  test_lower = min(plot_data$test_loss, na.rm = TRUE) - 0.1
+  test_upper = min(2, max(plot_data$test_loss, na.rm = TRUE) + 0.1)
+  common_theme = comparison_theme()
+
+  train_loss_plot = ggplot(plot_data, aes(x = x_value, y = train_loss, color = method)) +
+    geom_line(linewidth = 1) +
     scale_x_continuous(breaks = x_breaks) +
-    coord_cartesian(ylim = c(0, min(15, max(plot_data$train_loss + 0.1)))) +
+    coord_cartesian(ylim = c(0, train_upper)) +
+    add_method_scale() +
     labs(x = x_lab, y = "Train loss", color = "Method") +
-    guides(color = guide_legend(
-      nrow = 1,
-      byrow = TRUE,
-      keywidth = unit(2.5, "cm"),
-      keyheight = unit(0.5, "cm"),
-      default.unit = "cm"
-    )) +
+    guides(color = method_legend()) +
     common_theme
-  
-  p2 <- ggplot(plot_data, aes_string(x = x_var, y = "test_loss", color = "method")) +
-    geom_line(linewidth = lwidth) +
+
+  test_loss_plot = ggplot(plot_data, aes(x = x_value, y = test_loss, color = method)) +
+    geom_line(linewidth = 1) +
     scale_x_continuous(breaks = x_breaks) +
-    coord_cartesian(ylim = c(min(plot_data$test_loss) - 0.1, min(max(plot_data$test_loss) + 0.1, 2))) +
-    labs(x = x_lab, y = "Test Loss", color = "Method") +
-    guides(color = guide_legend(
-      nrow = 1,
-      byrow = TRUE,
-      keywidth = unit(2.5, "cm"),
-      keyheight = unit(0.5, "cm"),
-      default.unit = "cm"
-    )) +
+    coord_cartesian(ylim = c(test_lower, test_upper)) +
+    add_method_scale() +
+    labs(x = x_lab, y = "Test loss", color = "Method") +
+    guides(color = method_legend()) +
     common_theme
-  
-  p3 <- ggplot(plot_data, aes_string(x = x_var, y = "l2_diff", color = "method")) +
-    geom_line(linewidth = lwidth) +
+
+  optimization_error_plot = ggplot(plot_data, aes(x = x_value, y = l2_diff, color = method)) +
+    geom_line(linewidth = 1) +
     scale_x_continuous(breaks = x_breaks) +
+    add_method_scale() +
     labs(x = x_lab, y = "Optimization error (log10)", color = "Method") +
-    guides(color = guide_legend(
-      nrow = 1,
-      byrow = TRUE,
-      keywidth = unit(1.5, "cm"),
-      keyheight = unit(0.5, "cm"),
-      default.unit = "cm"
-    )) +
+    guides(color = method_legend()) +
     common_theme
-  
-  p1 + p2 + p3 +
-    plot_layout(ncol = 3, guides = "collect") &
+
+  train_loss_plot + test_loss_plot + optimization_error_plot +
+    plot_layout(ncol = 3L, guides = "collect") &
     theme(legend.position = "bottom")
 }
 
+make_coefficient_path_table = function(beta_history) {
+  path = rbind(matrix(0, nrow = 1L, ncol = ncol(beta_history)), beta_history)
+  colnames(path) = paste0("θ", seq_len(ncol(path)))
+  path_data = as.data.table(path)
+  path_data[, iteration := seq(0L, nrow(beta_history))]
+  melt(path_data, id.vars = "iteration", variable.name = "parameter", value.name = "value")
+}
 
+plot_coef_paths = function(beta_histories, method_names, beta_true, methods_to_show = method_names) {
+  plots = list()
 
-################################################################################
+  for (method_id in seq_along(method_names)) {
+    method_name = method_names[[method_id]]
 
+    if (!method_name %in% methods_to_show) {
+      next
+    }
 
-# Function to plot coefficient paths for different optimizers
-plot_coef_paths <- function(beta_histories, method_names, beta_true, 
-                            methods_to_show = method_names) {
-  
-  # Create a list to store individual plots
-  plots <- list()
-  
-  # Create coefficient path plot for each method
-  for (i in seq_along(method_names)) {
-    if (!method_names[i] %in% methods_to_show) next
-    
-    # Prepare data for plotting
-    path <- beta_histories[[i]]
-    
-    # Add zero values at iteration 0
-    zero_row <- matrix(0, nrow = 1, ncol = ncol(path))
-    path <- rbind(zero_row, path)
-    
-    colnames(path) <- paste0("θ", seq_len(ncol(path)))
-    path_df <- as.data.frame(path)
-    
-    # Create sequence from 0 to n, where n is (number of original rows)
-    # If original had 10000 rows, this creates sequence 0 to 10000 (10001 values)
-    path_df$Iteration <- seq(0, nrow(beta_histories[[i]]))
-    
-    path_long <- reshape2::melt(path_df, id.vars = "Iteration", 
-                                variable.name = "Parameter",
-                                value.name = "Value")
-    
-    # Create data frame for true coefficients
-    beta_true_df <- data.frame(
-      Iteration = max(path_df$Iteration),
-      Parameter = paste0("θ", seq_len(length(beta_true))),
-      Value = beta_true
+    path_data = make_coefficient_path_table(beta_histories[[method_id]])
+    reference_lines = data.table(
+      parameter = paste0("θ", seq_along(beta_true)),
+      yintercept = beta_true
     )
-    
-    # Create data frame for horizontal reference lines
-    ref_lines_df <- data.frame(
-      yintercept = beta_true,
-      Parameter = paste0("θ", seq_len(length(beta_true)))
-    )
-    
-    # Set y-axis label based on position
-    y_lab <- if(i == 1) "Coefficient value" else ""
-    
-    # Create individual plot
-    p <- ggplot() +
-      # Add reference lines first (behind the coefficient paths)
-      geom_hline(data = ref_lines_df, 
-                 aes(yintercept = yintercept),
-                 linetype = "dashed", color = "black", alpha = 0.6, linewidth=0.6) +
-      # Add coefficient paths
-      geom_line(data = path_long, 
-                aes(x = Iteration, y = Value, color = Parameter),
-                linewidth = 1.1) +
-      labs(title = method_names[i],
-           x = "Iteration", 
-           y = y_lab) +
-      theme_minimal() +
+    y_lab = if (length(plots) == 0L) "Coefficient value" else NULL
+
+    plots[[method_name]] = ggplot() +
+      geom_hline(
+        data = reference_lines,
+        aes(yintercept = yintercept),
+        linetype = "dashed",
+        color = "black",
+        alpha = 0.6,
+        linewidth = 0.6
+      ) +
+      geom_line(data = path_data, aes(x = iteration, y = value, color = parameter), linewidth = 1.1) +
+      labs(title = method_name, x = "Iteration", y = y_lab) +
+      theme_minimal(base_size = 20) +
       theme(
-        text = element_text(size = 20),
         axis.text = element_text(size = 13),
-        plot.title = element_text(size = 20),
         legend.position = "none",
         plot.margin = margin(5, 10, 5, 10)
       )
-    
-    plots[[i]] <- p
   }
-  
-  wrap_plots(Filter(Negate(is.null), plots), ncol = length(methods_to_show))
+
+  wrap_plots(plots, ncol = length(plots))
 }
 
-################################################################################
-
-
-plot_runtime_comparison <- function(loss_histories, test_loss_histories, l2_diff_histories, 
-                                    time_histories, method_names, methods_to_show = method_names) {
-  # Plotting configs
-  fsize <- 17
-  
-  # Prepare data for plotting
-  plot_data <- data.frame(
-    time = unlist(time_histories),
-    train_loss = unlist(loss_histories),
-    l2_diff = unlist(l2_diff_histories),
-    method = rep(method_names, each = length(time_histories[[1]]))
+plot_runtime_comparison = function(loss_histories, l2_diff_histories, time_histories, method_names,
+                                   methods_to_show = method_names) {
+  plot_data = make_history_table(
+    loss_histories = loss_histories,
+    test_loss_histories = loss_histories,
+    l2_diff_histories = l2_diff_histories,
+    time_histories = time_histories,
+    method_names = method_names
   )
-  
-  # Filter methods to show
-  plot_data <- plot_data[plot_data$method %in% methods_to_show, ]
-  
-  # Common theme
-  plot_theme <- theme_minimal() +
+  plot_data = plot_data[method %in% methods_to_show]
+
+  plot_theme = theme_minimal(base_size = 17) +
     theme(
       plot.title = element_text(size = 20, hjust = 0.5),
-      axis.title = element_text(size = 17),
       axis.text = element_text(size = 16),
-      legend.position = "bottom",
       legend.title = element_text(size = 18),
       legend.text = element_text(size = 18)
     )
-  
-  # Create the two plots
-  p1 <- ggplot(plot_data, aes(x = time, y = train_loss, color = method)) +
+
+  train_loss_plot = ggplot(plot_data, aes(x = time, y = train_loss, color = method)) +
     geom_line(linewidth = 1.2) +
-    labs(x = "Seconds", y = "Training loss", title = "Training loss") +
+    add_method_scale() +
+    guides(color = method_legend()) +
+    labs(x = "Seconds", y = "Training loss", title = "Training loss", color = "Method") +
     plot_theme
-  
-  p2 <- ggplot(plot_data, aes(x = time, y = l2_diff, color = method)) +
+
+  optimization_error_plot = ggplot(plot_data, aes(x = time, y = l2_diff, color = method)) +
     geom_line(linewidth = 1.2) +
-    labs(x = "Seconds", y = "Optimization error (log10)", 
-         title = "Parameter optimization error") +
+    add_method_scale() +
+    guides(color = method_legend()) +
+    labs(
+      x = "Seconds",
+      y = "Optimization error (log10)",
+      title = "Parameter optimization error",
+      color = "Method"
+    ) +
     plot_theme
-  
-  p1 + p2 +
-    plot_layout(ncol = 2, guides = "collect") &
-    theme(
-      legend.position = "bottom",
-      legend.key.size = unit(1.2, "cm")
-    )
+
+  train_loss_plot + optimization_error_plot +
+    plot_layout(ncol = 2L, guides = "collect") &
+    theme(legend.position = "bottom")
 }

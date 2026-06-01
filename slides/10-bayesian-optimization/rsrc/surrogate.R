@@ -1,224 +1,125 @@
-# ------------------------------------------------------------------------------
-# bayesian optimization
-
-# FIG: compare different surrogate models for Bayesian optimization 
-#      using Gaussian Process Regression (GP) and Random Forest (RF).
-# ------------------------------------------------------------------------------
+# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-4-surrogate-models.tex
+#
+# Compares random-forest surrogate variants and benchmarks random search against
+# Bayesian optimization with RF, ExtraTrees-style RF, and GP surrogates.
 
 library(bbotk)
 library(data.table)
-library(mlr3mbo)
-library(mlr3learners)
 library(ggplot2)
-library(patchwork)
-library(R6)
-library(checkmate)
+library(mlr3learners)
+library(mlr3mbo)
 library(mlr3misc)
+library(patchwork)
 
+source("bo-helpers.R")
 source("LearnerRegrRangerCustom.R")
+set.seed(123L)
 
-set.seed(123)
+benchmark_replicates = 2L
+rf_num_trees = 80L
+acq_optimizer_evals = 15L
 
-# ------------------------------------------------------------------------------
+make_ranger_learner = function(splitrule, replace, num_random_splits = NULL) {
+  learner = LearnerRegrRangerCustom$new()
+  learner$param_set$values$num.trees = rf_num_trees
+  learner$param_set$values$min.node.size = 1L
+  learner$param_set$values$se.method = "simple"
+  learner$param_set$values$sample.fraction = 1
+  learner$param_set$values$splitrule = splitrule
+  learner$param_set$values$replace = replace
 
-objective = ObjectiveRFunDt$new(
- fun = function(xdt) data.table(y = 2 * xdt$x * sin(14 * xdt$x)),
- domain = ps(x = p_dbl(lower = 0, upper = 1)),
- codomain = ps(y = p_dbl(tags = "minimize"))
-)
-instance = OptimInstanceSingleCrit$new(
-  objective = objective,
-  terminator = trm("none")
-)
+  if (!is.null(num_random_splits)) {
+    learner$param_set$values$num.random.splits = num_random_splits
+  }
 
-xdt_old = data.table(x = c(0.100, 0.300, 0.650, 1.000, 0.348, 0.400, 0.349))
-instance$eval_batch(xdt_old)
+  learner
+}
 
-grid = generate_design_grid(instance$search_space, resolution = 1001L)$data
-set(grid, j = "y", value = objective$eval_dt(grid)$y)
+objective = make_1d_objective()
+instance = make_singlecrit_instance(objective)
+instance$eval_batch(data.table(x = c(0.100, 0.300, 0.650, 1.000, 0.348, 0.400, 0.349)))
 
-gp52 = srlrn(lrn("regr.km", covtype = "matern5_2", optim.method = "BFGS"), archive = instance$archive)
-gp52$update()
+grid = make_grid(instance)
 
-prediction_gp52 = gp52$predict(grid)
-grid_gp52 = copy(grid)
-set(grid_gp52, j = "y_hat", value = prediction_gp52$mean)
-set(grid_gp52, j = "y_min", value = prediction_gp52$mean - prediction_gp52$se)
-set(grid_gp52, j = "y_max", value = prediction_gp52$mean + prediction_gp52$se)
-
-ranger = LearnerRegrRangerCustom$new()
-ranger$param_set$values$num.trees = 1000L
-ranger$param_set$values$min.node.size = 1L
-ranger$param_set$values$se.method = "simple"
-ranger$param_set$values$sample.fraction = 1
-
-ranger1 = ranger$clone(deep = TRUE)
-ranger1$param_set$values$splitrule = "variance"
-ranger1$param_set$values$replace = FALSE
-ranger2 = ranger$clone(deep = TRUE)
-ranger2$param_set$values$splitrule = "variance"
-ranger2$param_set$values$replace = TRUE
-ranger3 = ranger$clone(deep = TRUE)
-ranger3$param_set$values$splitrule = "extratrees"
-ranger3$param_set$values$num.random.splits = 1L
-ranger3$param_set$values$replace = FALSE
-ranger4 = ranger$clone(deep = TRUE)
-ranger4$param_set$values$splitrule = "extratrees"
-ranger4$param_set$values$num.random.splits = 1L
-ranger4$param_set$values$replace = TRUE
-
-rf1 = srlrn(ranger1, archive = instance$archive)
-rf1$update()
-rf2 = srlrn(ranger2, archive = instance$archive)
-rf2$update()
-rf3 = srlrn(ranger3, archive = instance$archive)
-rf3$update()
-rf4 = srlrn(ranger4, archive = instance$archive)
-rf4$update()
-
-prediction_rf1 = rf1$predict(grid)
-prediction_rf2 = rf2$predict(grid)
-prediction_rf3 = rf3$predict(grid)
-prediction_rf4 = rf4$predict(grid)
-
-grid_rf1 = copy(grid)
-grid_rf2 = copy(grid)
-grid_rf3 = copy(grid)
-grid_rf4 = copy(grid)
-
-set(grid_rf1, j = "y_hat", value = prediction_rf1$mean)
-set(grid_rf1, j = "y_min", value = prediction_rf1$mean - prediction_rf1$se)
-set(grid_rf1, j = "y_max", value = prediction_rf1$mean + prediction_rf1$se)
-
-set(grid_rf2, j = "y_hat", value = prediction_rf2$mean)
-set(grid_rf2, j = "y_min", value = prediction_rf2$mean - prediction_rf2$se)
-set(grid_rf2, j = "y_max", value = prediction_rf2$mean + prediction_rf2$se)
-
-set(grid_rf3, j = "y_hat", value = prediction_rf3$mean)
-set(grid_rf3, j = "y_min", value = prediction_rf3$mean - prediction_rf3$se)
-set(grid_rf3, j = "y_max", value = prediction_rf3$mean + prediction_rf3$se)
-
-set(grid_rf4, j = "y_hat", value = prediction_rf4$mean)
-set(grid_rf4, j = "y_min", value = prediction_rf4$mean - prediction_rf4$se)
-set(grid_rf4, j = "y_max", value = prediction_rf4$mean + prediction_rf4$se)
-
-g_rf1 = ggplot(aes(x = x, y = y), data = grid_rf1) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.4)) +
-  labs(title = "No Bootstrap & No Random Splits") +
-  theme_minimal()
-
-g_rf2 = ggplot(aes(x = x, y = y), data = grid_rf2) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.4)) +
-  labs(title = "Bootstrap & No Random Splits") +
-  theme_minimal()
-
-g_rf3 = ggplot(aes(x = x, y = y), data = grid_rf3) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.4)) +
-  labs(title = "No Bootstrap & Random Splits") +
-  theme_minimal()
-
-g_rf4 = ggplot(aes(x = x, y = y), data = grid_rf4) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.4)) +
-  labs(title = "Bootstrap & Random Splits") +
-  theme_minimal()
-
-ggsave(file.path("../figure/surrogate_1.png"), plot = (g_rf1 + g_rf2) / (g_rf3 + g_rf4), width = 10, height = 8)
-
-objective = ObjectiveRFunDt$new(
- fun = function(xdt) data.table(y = -20.0 * exp(-0.2 * sqrt(0.5 * (xdt$x1^2 + xdt$x2^2))) - 
-                                    exp(0.5 * (cos(2 * pi * xdt$x1) + cos(2 * pi * xdt$x2))) + exp(1) + 20),
- domain = ps(x1 = p_dbl(lower = -5, upper = 5), x2 = p_dbl(lower = -5, upper = 5)),
- codomain = ps(y = p_dbl(tags = "minimize"))
-)
-instance = OptimInstanceSingleCrit$new(
-  objective = objective,
-  terminator = trm("evals", n_evals = 50L)
+ranger_variants = list(
+  no_bootstrap_no_random_splits = list(
+    learner = make_ranger_learner("variance", FALSE),
+    title = "No Bootstrap & No Random Splits"
+  ),
+  bootstrap_no_random_splits = list(
+    learner = make_ranger_learner("variance", TRUE),
+    title = "Bootstrap & No Random Splits"
+  ),
+  no_bootstrap_random_splits = list(
+    learner = make_ranger_learner("extratrees", FALSE, 1L),
+    title = "No Bootstrap & Random Splits"
+  ),
+  bootstrap_random_splits = list(
+    learner = make_ranger_learner("extratrees", TRUE, 1L),
+    title = "Bootstrap & Random Splits"
+  )
 )
 
-results = map_dtr(1:10, function(i) {
-  design = generate_design_random(instance$search_space, n= 10L)$data
+plot_ranger_variant = function(variant) {
+  surrogate = srlrn(variant$learner$clone(deep = TRUE), archive = instance$archive)
+  surrogate$update()
+
+  variant_grid = copy(grid)
+  add_prediction_columns(variant_grid, surrogate, "x")
+
+  plot_surrogate_1d(
+    grid = variant_grid,
+    archive = instance$archive$data,
+    y_limits = c(-2, 2.4)
+  ) +
+    labs(title = variant$title)
+}
+
+rf_plots = lapply(ranger_variants, plot_ranger_variant)
+save_figure((rf_plots[[1L]] + rf_plots[[2L]]) / (rf_plots[[3L]] + rf_plots[[4L]]),
+  "surrogate_1.png",
+  width = 10,
+  height = 8
+)
+
+objective = make_ackley_objective()
+instance = make_singlecrit_instance(objective, trm("evals", n_evals = 25L))
+
+run_mbo_trace = function(initial_design, surrogate, method, repl) {
+  instance$archive$clear()
+  instance$eval_batch(initial_design)
+
+  acq_function = acqf("ei")
+  acq_optimizer = acqo(opt("nloptr", algorithm = "NLOPT_GN_DIRECT_L"), trm("evals", n_evals = acq_optimizer_evals))
+  optimizer = opt("mbo", surrogate = surrogate, acq_function = acq_function, acq_optimizer = acq_optimizer)
+  optimizer$optimize(instance)
+
+  collect_trace(instance, method, repl)
+}
+
+run_replicate = function(repl) {
+  initial_design = generate_design_random(instance$search_space, n = 10L)$data
 
   instance$archive$clear()
   opt("random_search", batch_size = 1L)$optimize(instance)
-  rs = copy(instance$archive$data)
-  rs[, best := cummin(y)]
-  rs[, method := "Random"]
-  rs[, iter := seq_len(.N)]
-  rs[, repl := i]
+  random_trace = collect_trace(instance, "Random", repl)
 
-  instance$archive$clear()
-  instance$eval_batch(design)
-  surrogate = rf2
-  acq_function = acqf("ei")
-  acq_optimizer = acqo(opt("nloptr", algorithm = "NLOPT_GN_DIRECT_L"), trm("evals", n_evals = 100L))
-  optimizer = opt("mbo", surrogate = surrogate, acq_function = acq_function, acq_optimizer = acq_optimizer)
-  optimizer$optimize(instance)
-  mbo_rf = copy(instance$archive$data)
-  mbo_rf[, best := cummin(y)]
-  mbo_rf[, method := "BO_RF"]
-  mbo_rf[, iter := seq_len(.N)]
-  mbo_rf[, repl := i]
+  rf_surrogate = srlrn(ranger_variants$bootstrap_no_random_splits$learner$clone(deep = TRUE))
+  rf_et_surrogate = srlrn(ranger_variants$bootstrap_random_splits$learner$clone(deep = TRUE))
+  gp_surrogate = make_km_surrogate(
+    covtype = "matern3_2",
+    optim_method = "BFGS",
+    nugget.stability = 1e-8
+  )
 
-  instance$archive$clear()
-  instance$eval_batch(design)
-  surrogate = rf4
-  acq_function = acqf("ei")
-  acq_optimizer = acqo(opt("nloptr", algorithm = "NLOPT_GN_DIRECT_L"), trm("evals", n_evals = 100L))
-  optimizer = opt("mbo", surrogate = surrogate, acq_function = acq_function, acq_optimizer = acq_optimizer)
-  optimizer$optimize(instance)
-  mbo_rf_et = copy(instance$archive$data)
-  mbo_rf_et[, best := cummin(y)]
-  mbo_rf_et[, method := "BO_RF_ET"]
-  mbo_rf_et[, iter := seq_len(.N)]
-  mbo_rf_et[, repl := i]
+  bo_rf_trace = run_mbo_trace(initial_design, rf_surrogate, "BO_RF", repl)
+  bo_rf_et_trace = run_mbo_trace(initial_design, rf_et_surrogate, "BO_RF_ET", repl)
+  bo_gp_trace = run_mbo_trace(initial_design, gp_surrogate, "BO_GP", repl)
 
-  instance$archive$clear()
-  instance$eval_batch(design)
-  surrogate = srlrn(lrn("regr.km", covtype = "matern3_2", optim.method = "gen", control = list(trace = FALSE), nugget.stability = 10^-8))
-  acq_function = acqf("ei")
-  acq_optimizer = acqo(opt("nloptr", algorithm = "NLOPT_GN_DIRECT_L"), trm("evals", n_evals = 100L))
-  optimizer = opt("mbo", surrogate = surrogate, acq_function = acq_function, acq_optimizer = acq_optimizer)
-  optimizer$optimize(instance)
-  mbo_gp = copy(instance$archive$data)
-  mbo_gp[, best := cummin(y)]
-  mbo_gp[, method := "BO_GP"]
-  mbo_gp[, iter := seq_len(.N)]
-  mbo_gp[, repl := i]
+  rbind(random_trace, bo_rf_trace, bo_rf_et_trace, bo_gp_trace, fill = TRUE)
+}
 
-  rbind(rs, mbo_rf, mbo_rf_et, mbo_gp, fill = TRUE)
-})
+results = map_dtr(seq_len(benchmark_replicates), run_replicate)
+trace_summary = summarize_traces(results)
 
-agg = results[, .(mean_best = mean(best), se_best = sd(best) / sqrt(.N)), by = .(iter, method)]
-
-g = ggplot(aes(x = iter, y = mean_best, colour = method, fill = method), data = agg) +
-  geom_ribbon(
-    aes(ymin = mean_best - se_best, ymax = mean_best + se_best),
-    colour = NA,
-    alpha = 0.25
-  ) +
-  geom_step() +
-  labs(x = "Nr. Function Evaluations", y = "Best Objective Value", colour = "Method", fill = "Method") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-
-ggsave(file.path("../figure/surrogate_2.png"), plot = g, width = 5, height = 4)
+save_figure(plot_trace_summary(trace_summary), "surrogate_2.png")

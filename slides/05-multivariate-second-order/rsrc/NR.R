@@ -1,24 +1,31 @@
-# comparison of NR and GD, show that NR converges much faster (good starting point)
+# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-1-newton-raphson.tex
+# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-2-quasi-newton.tex
+# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-5-comparison.tex
+# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-6-fisher.tex
+#
+# Compares Newton-Raphson and gradient descent on the Rosenbrock objective.
+# The script saves a value trace and a contour plot with optimization paths.
 
 set.seed(1L)
 
-library(ggplot2)
-library(vistool)
-library(rlang)
-library(data.table)
+suppressPackageStartupMessages({
+  library(data.table)
+  library(ggplot2)
+  suppressWarnings(library(vistool))
+})
 
-rosenbrock <- function(x) {
+rosenbrock = function(x) {
   100 * (x[2] - x[1]^2)^2 + (1 - x[1])^2
 }
 
-rosenbrock_grad <- function(x) {
+rosenbrock_grad = function(x) {
   c(
     -400 * x[1] * (x[2] - x[1]^2) + 2 * (x[1] - 1),
     200 * (x[2] - x[1]^2)
   )
 }
 
-rosenbrock_hess <- function(x) {
+rosenbrock_hess = function(x) {
   matrix(
     c(
       1200 * x[1]^2 - 400 * x[2] + 2,
@@ -31,8 +38,8 @@ rosenbrock_hess <- function(x) {
   )
 }
 
-make_rosenbrock_objective <- function() {
-  obj = Objective$new(
+make_rosenbrock_objective = function() {
+  objective = Objective$new(
     id = "rosen",
     label = "Rosenbrock",
     fun = rosenbrock,
@@ -41,13 +48,14 @@ make_rosenbrock_objective <- function() {
     upper = c(2, 3),
     minimize = TRUE
   )
-  obj$.__enclos_env__$private$p_gradient = rosenbrock_grad
-  obj$.__enclos_env__$private$p_hessian = rosenbrock_hess
-  obj
+  objective$.__enclos_env__$private$p_gradient = rosenbrock_grad
+  objective$.__enclos_env__$private$p_hessian = rosenbrock_hess
+  objective
 }
 
 prepend_initial_iterations = function(trace_data) {
-  stopifnot(data.table::is.data.table(trace_data))
+  stopifnot(is.data.table(trace_data))
+
   start_rows = trace_data[, .SD[1], by = "optim_id"]
   start_rows[["iteration"]] = 0L
   start_rows[["fval_out"]] = start_rows[["fval_in"]]
@@ -55,18 +63,19 @@ prepend_initial_iterations = function(trace_data) {
   start_rows[["update"]] = lapply(start_rows[["x_in"]], function(x) rep(0, length(x)))
   start_rows[["step_size"]] = NA_real_
   start_rows[["lr"]] = NA_real_
-  combined = data.table::rbindlist(list(start_rows, trace_data), use.names = TRUE, fill = TRUE)
-  data.table::setorderv(combined, c("optim_id", "iteration"))
+  combined = rbindlist(list(start_rows, trace_data), use.names = TRUE, fill = TRUE)
+  setorderv(combined, c("optim_id", "iteration"))
   combined
 }
 
 plot_value_trace = function(trace_data) {
   trace_df = as.data.frame(trace_data[order(trace_data$optim_id, trace_data$iteration)])
+
   ggplot(trace_df, aes(
-    x = .data$iteration,
-    y = .data$fval_out,
-    color = .data$optim_id,
-    linetype = .data$optim_id
+    x = iteration,
+    y = fval_out,
+    color = optim_id,
+    linetype = optim_id
   )) +
     geom_line(linewidth = 1) +
     geom_point(size = 1.2) +
@@ -87,29 +96,50 @@ plot_value_trace = function(trace_data) {
 }
 
 build_contour_visualizer = function(opt_nr, opt_gd) {
-  vis = VisualizerObj$new(
-    objective = make_rosenbrock_objective(),
+  vis = as_visualizer(
+    make_rosenbrock_objective(),
     x1_limits = c(-2, 2),
     x2_limits = c(-1, 3),
-    n_points = 150L,
-    type = "2d"
+    n_points = 150L
   )
   vis$add_contours(bins = 20)
-  vis$add_optimization_trace(opt_nr, name = "Newton-Raphson", line_type = "dashed", line_color = "#ff6262", line_width = 2.3)
-  vis$add_optimization_trace(opt_gd, name = "Gradient Descent", line_type = "solid", line_color = "#ffcc00", line_width = 2.3)
+  vis$add_optimization_trace(
+    opt_nr,
+    name = "Newton-Raphson",
+    line_type = "dashed",
+    line_color = "#ff6262",
+    line_width = 2.3
+  )
+  vis$add_optimization_trace(
+    opt_gd,
+    name = "Gradient Descent",
+    line_type = "solid",
+    line_color = "#ffcc00",
+    line_width = 2.3
+  )
   vis
 }
 
 build_surface_visualizer = function(opt_nr, opt_gd) {
-  vis = VisualizerSurfaceObj$new(
-    objective = make_rosenbrock_objective(),
+  vis = as_visualizer(
+    make_rosenbrock_objective(),
+    type = "surface",
     x1_limits = c(-2, 2),
     x2_limits = c(-1, 3),
     n_points = 80L
   )
-  vis$init_layer_surface()
-  vis$add_optimization_trace(opt_nr, name = "Newton-Raphson", line_type = "dashed", line_color = "#b22222")
-  vis$add_optimization_trace(opt_gd, name = "Gradient Descent", line_type = "solid", line_color = "#1f77b4")
+  vis$add_optimization_trace(
+    opt_nr,
+    name = "Newton-Raphson",
+    line_type = "dashed",
+    line_color = "#b22222"
+  )
+  vis$add_optimization_trace(
+    opt_gd,
+    name = "Gradient Descent",
+    line_type = "solid",
+    line_color = "#1f77b4"
+  )
   vis
 }
 
@@ -144,10 +174,12 @@ optim_gd = comparators$gd
 trace_data = merge_optim_archives(optim_nr, optim_gd)
 trace_data = prepend_initial_iterations(trace_data)
 trace_plot = plot_value_trace(trace_data)
-if (interactive()) print(trace_plot)
+if (interactive()) {
+  print(trace_plot)
+}
 
-ggplot2::ggsave(
-  "../figure/NR_1.png",
+ggsave(
+  filename = "../figure/NR_1.png",
   plot = trace_plot,
   width = 4,
   height = 3,

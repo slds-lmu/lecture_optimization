@@ -1,51 +1,45 @@
-# ------------------------------------------------------------------------------
-# bayesian optimization
-
-# FIG: compare two sampling strategies for initializing design points
-#      in black-box optimization. 
-# ------------------------------------------------------------------------------
+# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-2-loop.tex
+#
+# Compares purely random initialization with Latin hypercube sampling in a
+# two-dimensional unit square.
 
 library(bbotk)
 library(data.table)
-library(mlr3mbo)
-library(mlr3learners)
 library(ggplot2)
-library(ggExtra)
 library(lhs)
+library(mlr3learners)
+library(mlr3mbo)
+library(patchwork)
 
-set.seed(5)
-
-# ------------------------------------------------------------------------------
+source("bo-helpers.R")
+set.seed(5L)
 
 domain = ps(x1 = p_dbl(lower = 0, upper = 1), x2 = p_dbl(lower = 0, upper = 1))
+grid_breaks = seq(from = 0, to = 1, length.out = 11L)
 
-qs = seq(from = 0, to = 1, length.out = 11)
+plot_initial_design = function(design, title) {
+  scatter = ggplot(design, aes(x = x1, y = x2)) +
+    geom_point(size = 3L) +
+    geom_vline(xintercept = grid_breaks, linetype = 2) +
+    geom_hline(yintercept = grid_breaks, linetype = 2) +
+    labs(title = title, x = expression(x[1]), y = expression(x[2])) +
+    bo_theme()
 
-xdt_random = generate_design_random(domain, n = 10L)$data
-xdt_random[, method := "random"]
-xdt_lhs = generate_design_lhs(domain, n = 10L)$data
-xdt_lhs[, method := "lhs"]
-xdt = rbind(xdt_random, xdt_lhs)
+  x_hist = ggplot(design, aes(x = x1)) +
+    geom_histogram(breaks = grid_breaks, colour = "white", fill = "grey65") +
+    theme_void()
 
-g = ggplot(aes(x = x1, y = x2), data = xdt[method == "random"]) +
-  geom_point(size = 3L) +
-  geom_vline(xintercept = qs, linetype = 2) +
-  geom_hline(yintercept = qs, linetype = 2) +
-  labs(title = "Random Design", x = expression(x[1]), y = expression(x[2])) +
-  theme_minimal()
+  y_hist = ggplot(design, aes(x = x2)) +
+    geom_histogram(breaks = grid_breaks, colour = "white", fill = "grey65") +
+    coord_flip() +
+    theme_void()
 
-g = ggMarginal(g, type = "histogram", bins = 11)
+  (x_hist + plot_spacer()) / (scatter + y_hist) +
+    plot_layout(widths = c(4, 1), heights = c(1, 4))
+}
 
-ggsave("../figure/init_0.png", plot = g, width = 5, height = 4)
+random_design = generate_design_random(domain, n = 10L)$data
+lhs_design = generate_design_lhs(domain, n = 10L)$data
 
-g = ggplot(aes(x = x1, y = x2), data = xdt[method == "lhs"]) +
-  geom_point(size = 3L) +
-  geom_vline(xintercept = qs, linetype = 2) +
-  geom_hline(yintercept = qs, linetype = 2) +
-  labs(title = "LHS", x = expression(x[1]), y = expression(x[2])) +
-  theme_minimal()
-
-g = ggMarginal(g, type = "histogram", bins = 11)
-
-ggsave("../figure/init_1.png", plot = g, width = 5, height = 4)
-
+save_figure(plot_initial_design(random_design, "Random Design"), "init_0.png")
+save_figure(plot_initial_design(lhs_design, "LHS"), "init_1.png")

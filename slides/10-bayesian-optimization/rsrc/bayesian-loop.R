@@ -1,199 +1,117 @@
-# ------------------------------------------------------------------------------
-# bayesian optimization
-
-# FIG: perform Bayesian Optimization (BO) using Expected Improvement (EI). 
-# ------------------------------------------------------------------------------
+# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-3-bayesian-loop_1.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-3-bayesian-loop_2.tex
+#
+# Creates Expected Improvement figures showing exploration, exploitation,
+# surrogate uncertainty, improvement relative to the incumbent, and BO updates.
 
 library(bbotk)
 library(data.table)
-library(mlr3mbo)
-library(mlr3learners)
 library(ggplot2)
+library(mlr3learners)
+library(mlr3mbo)
 library(patchwork)
 
-set.seed(123)
+source("bo-helpers.R")
+set.seed(123L)
 
-# ------------------------------------------------------------------------------
+objective = make_1d_objective()
+instance = make_singlecrit_instance(objective)
+instance$eval_batch(data.table(x = c(0.100, 0.300, 0.650, 1.000, 0.348, 0.400, 0.349)))
 
-objective = ObjectiveRFunDt$new(
- fun = function(xdt) data.table(y = 2 * xdt$x * sin(14 * xdt$x)),
- domain = ps(x = p_dbl(lower = 0, upper = 1)),
- codomain = ps(y = p_dbl(tags = "minimize"))
-)
-instance = OptimInstanceSingleCrit$new(
-  objective = objective,
-  terminator = trm("none")
-)
+grid = make_grid(instance)
 
-xdt_old = data.table(x = c(0.100, 0.300, 0.650, 1.000, 0.348, 0.400, 0.349))
-instance$eval_batch(xdt_old)
+plot = plot_surrogate_1d(
+  grid = grid,
+  archive = instance$archive$data,
+  y_limits = c(-2, 2.2),
+  show_prediction = FALSE,
+  show_uncertainty = FALSE
+) +
+  annotate("rect", xmin = 0.25, xmax = 0.45, ymin = -Inf, ymax = Inf, fill = "lightblue", alpha = 0.2) +
+  annotate("rect", xmin = 0.70, xmax = 0.90, ymin = -Inf, ymax = Inf, fill = "red", alpha = 0.2) +
+  annotate("text", x = 0.35, y = -1.8, label = "well explored", colour = "lightblue4") +
+  annotate("text", x = 0.80, y = -1.8, label = "insufficiently explored", colour = "indianred4")
+save_figure(plot, "bayesian_loop_ee.png")
 
-grid = generate_design_grid(instance$search_space, resolution = 1001L)$data
-set(grid, j = "y", value = objective$eval_dt(grid)$y)
-
-g = ggplot() +
-  geom_line(aes(x = x, y = y), data = grid) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  geom_rect(aes(xmin = c(0.25), xmax = c(0.45), ymin = - Inf, ymax = Inf, fill = c("well explored")), data = data.table(), alpha = 0.2, fill = "lightblue") +
-  geom_rect(aes(xmin = c(0.7), xmax = c(0.9), ymin = - Inf, ymax = Inf, fill = c("insufficiently explored")), data = data.table(), alpha = 0.2, fill = "red") +
-  geom_text(aes(x = c(0.35), y = -1.8, label = c("well explored")), data = data.table(), color = "lightblue4") +
-  geom_text(aes(x = c(0.8), y = -1.8, label = c("insufficiently explored")), data = data.table(), color = "indianred4") +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave("../figure/bayesian_loop_ee.png", plot = g, width = 5, height = 4)
-
-surrogate = srlrn(lrn("regr.km", covtype = "matern5_2", optim.method = "BFGS"), archive = instance$archive)
+surrogate = make_km_surrogate(instance)
 acq_function = acqf("ei", surrogate = surrogate)
 
-grid = generate_design_grid(instance$search_space, resolution = 1001L)$data
-set(grid, j = "y", value = objective$eval_dt(grid)$y)
+update_ei_state = function() {
+  update_surrogate_prediction(acq_function, grid, "x")
+  add_acquisition_column(acq_function, grid, "x", "ei")
+  best_grid_row(grid, "ei", minimize = FALSE)
+}
 
-acq_function$surrogate$update()
-prediction = surrogate$predict(grid)
-set(grid, j = "y_hat", value = prediction$mean)
-set(grid, j = "y_min", value = prediction$mean - prediction$se)
-set(grid, j = "y_max", value = prediction$mean + prediction$se)
+ei_argmax = update_ei_state()
 
-acq_function$update()
-set(grid, j = "ei", value = acq_function$eval_dt(grid[, "x"])$acq_ei)
-ei_argmax = grid[which.max(ei), ]
+plot = plot_surrogate_1d(
+  grid = grid,
+  archive = instance$archive$data,
+  y_limits = c(-2, 2.2)
+)
+save_figure(plot, "bayesian_loop_sm.png")
 
-# intial design + surrogate prediction
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
+plot = plot_surrogate_1d(
+  grid = grid,
+  archive = instance$archive$data,
+  y_limits = c(-2, 2.2),
+  best_point = instance$archive$best()
+)
+save_figure(plot, "bayesian_loop_sm_fmin.png")
 
-ggsave("../figure/bayesian_loop_sm.png", plot = g, width = 5, height = 4)
+draw_normal_example = function(best_point = NULL, show_best_line = FALSE) {
+  density_curve = normal_curve(
+    y_limits = c(-2, 2.2),
+    mean = ei_argmax$y_hat,
+    se = ei_argmax$y_max - ei_argmax$y_hat
+  )
 
-# intial design + surrogate prediction + best
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "#00A64F", data = instance$archive$best()) +  
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
+  plot_surrogate_1d(
+    grid = grid,
+    archive = instance$archive$data,
+    y_limits = c(-2, 2.2),
+    best_point = best_point,
+    show_best_line = show_best_line,
+    candidate = ei_argmax,
+    candidate_color = "darkgrey",
+    density_curve = density_curve
+  ) +
+    geom_segment(
+      aes(x = 0, xend = 0.1, y = ei_argmax$y_hat, yend = ei_argmax$y_hat),
+      colour = "darkgrey"
+    )
+}
 
-ggsave("../figure/bayesian_loop_sm_fmin.png", plot = g, width = 5, height = 4)
+save_figure(draw_normal_example(), "bayesian_loop_sm_normal.png")
+save_figure(
+  draw_normal_example(best_point = instance$archive$best(), show_best_line = TRUE),
+  "bayesian_loop_sm_normal_fmin.png"
+)
 
-# intial design + surrogate prediction + normal
-ei_argmax_normal = data.table(y = seq(-2, 2.2, by = 0.01))
-set(ei_argmax_normal, j = "x", value = dnorm(ei_argmax_normal$y, mean = ei_argmax$y_hat, sd = ei_argmax$y_max - ei_argmax$y_hat))
-set(ei_argmax_normal, j = "x", value = (ei_argmax_normal$x / max(ei_argmax_normal$x)) / 10)
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  geom_path(aes(x = x, y = y), data = ei_argmax_normal, colour = "darkgrey") +
-  geom_point(aes(x = x, y = y_hat), data = ei_argmax, size = 3L, colour = "darkgrey") +
-  geom_segment(aes(y = ei_argmax$y_hat, yend = ei_argmax$y_hat, x = 0, xend = 0.1), colour = "darkgrey") +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave("../figure/bayesian_loop_sm_normal.png", plot = g, width = 5, height = 4)
-
-# intial design + surrogate prediction + best + normal
-ei_argmax_normal = data.table(y = seq(-2, 2.2, by = 0.01))
-set(ei_argmax_normal, j = "x", value = dnorm(ei_argmax_normal$y, mean = ei_argmax$y_hat, sd = ei_argmax$y_max - ei_argmax$y_hat))
-set(ei_argmax_normal, j = "x", value = (ei_argmax_normal$x / max(ei_argmax_normal$x)) / 10)
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "#00A64F", data = instance$archive$best()) +
-  geom_hline(yintercept = instance$archive$best()$y, colour = "#00A64F", linetype = 2) +
-  geom_path(aes(x = x, y = y), data = ei_argmax_normal, colour = "darkgrey") +
-  geom_point(aes(x = x, y = y_hat), data = ei_argmax, size = 3L, colour = "darkgrey") +
-  geom_segment(aes(y = ei_argmax$y_hat, yend = ei_argmax$y_hat, x = 0, xend = 0.1), colour = "darkgrey") +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave("../figure/bayesian_loop_sm_normal_fmin.png", plot = g, width = 5, height = 4)
-
-# initial design + surrogate prediction + arg max of ei + ei
-
-# only use the four initial data points + 0.370
 instance$archive$clear()
-xdt = data.table(x = c(0.100, 0.300, 0.370, 0.650, 1.000))
-instance$eval_batch(xdt)
+instance$eval_batch(data.table(x = c(0.100, 0.300, 0.370, 0.650, 1.000)))
 
-acq_function$surrogate$update()
-prediction = surrogate$predict(grid)
-set(grid, j = "y_hat", value = prediction$mean)
-set(grid, j = "y_min", value = prediction$mean - prediction$se)
-set(grid, j = "y_max", value = prediction$mean + prediction$se)
+save_ei_iteration = function(filename, previous_point = NULL) {
+  surrogate_plot = plot_surrogate_1d(
+    grid = grid,
+    archive = instance$archive$data,
+    y_limits = c(-2, 2.2),
+    previous_point = previous_point
+  )
+  ei_plot = plot_acquisition_1d(grid, "ei", ei_argmax, "EI")
+  save_figure(surrogate_plot / ei_plot, filename)
+}
 
-acq_function$update()
-set(grid, j = "ei", value = acq_function$eval_dt(grid[, "x"])$acq_ei)
-ei_argmax = grid[which.max(ei), ]
+ei_argmax = update_ei_state()
+save_ei_iteration("bayesian_loop_1.png")
 
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
+previous_argmax = ei_argmax
+instance$eval_batch(ei_argmax[, .(x)])
 
-ei = ggplot(aes(x = x, y = ei), data = grid) +
-  geom_line(colour = "darkred") +
-  geom_point(aes(x = x, y = ei), size = 3L, colour = "darkred", data = ei_argmax) +
-  xlim(c(0, 1)) +
-  ylab("EI") +
-  theme_minimal()
+for (iteration in 2L:6L) {
+  ei_argmax = update_ei_state()
+  save_ei_iteration(sprintf("bayesian_loop_%d.png", iteration), previous_argmax)
 
-ggsave("../figure/bayesian_loop_1.png", plot = g / ei, width = 5, height = 4)
-
-old_ei_argmax = ei_argmax
-
-instance$eval_batch(ei_argmax[, "x", with = FALSE])
-
-for (i in 2:6) {
-  acq_function$surrogate$update()
-  prediction = surrogate$predict(grid)
-  set(grid, j = "y_hat", value = prediction$mean)
-  set(grid, j = "y_min", value = prediction$mean - prediction$se)
-  set(grid, j = "y_max", value = prediction$mean + prediction$se)
-  
-  acq_function$update()
-  set(grid, j = "ei", value = acq_function$eval_dt(grid[, "x"])$acq_ei)
-  ei_argmax = grid[which.max(ei), ]
-
-  # initial design + surrogate prediction + arg max of ei + ei
-  g = ggplot(aes(x = x, y = y), data = grid) +
-    geom_line() +
-    geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-    geom_ribbon(aes(min = y_min, max = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-    geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-    geom_point(aes(x = x, y = y), size = 3L, colour = "grey", data = old_ei_argmax) +
-    xlim(c(0, 1)) +
-    ylim(c(-2, 2.2)) +
-    theme_minimal()
-  
-  ei = ggplot(aes(x = x, y = ei), data = grid) +
-    geom_line(colour = "darkred") +
-    geom_point(aes(x = x, y = ei), size = 3L, colour = "darkred", data = ei_argmax) +
-    xlim(c(0, 1)) +
-    ylab("EI") +
-    theme_minimal()
-  
-  ggsave(sprintf("../figure/bayesian_loop_%i.png", i), plot = g / ei, width = 5, height = 4)
-
-  old_ei_argmax = ei_argmax
-  
-  instance$eval_batch(ei_argmax[, "x", with = FALSE])
+  previous_argmax = ei_argmax
+  instance$eval_batch(ei_argmax[, .(x)])
 }

@@ -1,33 +1,35 @@
-# ------------------------------------------------------------------------------
-# evolutionary algorithms
+# Used in: slides-evolutionary-algorithms-2-ea-numeric.tex
+#
+# Builds the staged figures for a simple (mu + lambda) evolutionary strategy on
+# the one-dimensional Ackley objective. The same run is used across the slide
+# sequence, so initialization, parent selection, mutation, survival selection,
+# and the final optimization trace remain consistent.
 
-# FIG: plot 1dim-ackley functions
-# ------------------------------------------------------------------------------
+set.seed(1212L)
 
-library(knitr)
-library(ecr)
+suppressWarnings(library(vistool))
+library(data.table)
 library(ggplot2)
-library(smoof)
-library(latex2exp)
-library(reshape2)
-library(mlr)
+library(grid)
 library(gridExtra)
 
-# Small compatibility implementation for the old (mu + lambda) Ackley example.
-evaluate_population = function(population, objective) {
-  vapply(population, objective, numeric(1L))
+ackley_1d = function(x) {
+  z = x[1L]
+  -20 * exp(-0.2 * abs(z)) - exp(cos(2 * pi * z)) + 20 + exp(1)
+}
+
+evaluate_population = function(population) {
+  vapply(population, function(individual) ackley_1d(individual), numeric(1L))
 }
 
 mutate_gaussian = function(population, sdev, lower, upper) {
-  lapply(population, function(individual) {
-    mutated = individual + stats::rnorm(length(individual), sd = sdev)
-    pmin(upper, pmax(lower, mutated))
-  })
+  mutated = population + rnorm(length(population), sd = sdev)
+  pmin(upper, pmax(lower, mutated))
 }
 
-select_mu_plus_lambda = function(population, offspring, fitness, fitness_offspring, mu) {
+select_mu_plus_lambda = function(population, offspring, fitness, offspring_fitness, mu) {
   combined_population = c(population, offspring)
-  combined_fitness = c(fitness, fitness_offspring)
+  combined_fitness = c(fitness, offspring_fitness)
   keep = order(combined_fitness)[seq_len(mu)]
 
   list(
@@ -36,101 +38,187 @@ select_mu_plus_lambda = function(population, offspring, fitness, fitness_offspri
   )
 }
 
+make_ackley_plot = function(objective) {
+  plot_file = tempfile(fileext = ".pdf")
+  pdf(plot_file)
+  on.exit({
+    dev.off()
+    unlink(plot_file)
+  }, add = TRUE)
 
-fn = makeAckleyFunction(1L)
+  ackley_plot = as_visualizer(objective, n_points = 1000L)$plot(
+    show_title = FALSE,
+    x_lab = "x",
+    y_lab = "f(x)"
+  )
 
-pl = autoplot(fn, show.optimum = F, length.out = 1000L)
-pl = pl + theme_bw()
-
-ggsave("../figure/1dim-ackley-func.png", pl, width = 5, height = 4)
-
-
-# initialize evolutionary algorithm
-MU = 10L; LAMBDA = 5L; MAX.ITER = 50L
-lower = - 30
-upper = 30
-set.seed(1212)
-population = replicate(
-  MU,
-  runif(getNumberOfParameters(fn), min = lower, max = upper),
-  simplify = FALSE
-)
-fitness = evaluate_population(population, fn)
-pl = autoplot(fn, show.optimum = F, length.out = 1000L)
-df = data.frame(x = unlist(population), y = as.numeric(fitness))
-pl = pl + geom_point(data = df, mapping = aes(x = x, y = y), size = 3) + theme_bw()
-if (interactive()) print(pl)
-
-ggsave("../figure/1dim-ackley-func-2.png", pl, width = 5, height = 4)
-
-
-
-# neutral Selection von lambda Eltern
-set.seed(1234)
-idx = sample(1:MU, LAMBDA)
-pl = pl + geom_point(data = df[idx, ], mapping = aes(x = x, y = y), colour = "red", size = 3)
-pl = pl + ggtitle("Neutral Selection")
-
-ggsave("../figure/1dim-ackley-func-neutral-selec.png", pl, width = 5, height = 4)
-
-
-
-
-offspring = mutate_gaussian(population[idx], sdev = 2, lower = lower, upper = upper)
-fitness.o = evaluate_population(offspring, fn)
-df.o = data.frame(x = unlist(offspring), y = as.numeric(fitness.o))
-
-pl = pl + geom_point(data = df.o, aes(x = x, y = y), color = "red", size = 3)
-pl = pl + geom_point(data = df[idx,], aes(x = x, y = y), color = "red", size = 3)
-pl2 = pl + geom_segment(data = data.frame(x = df[idx, ]$x, y = df[idx, ]$y, xend = df.o$x, yend = df.o$y), aes(x = x, y = y, xend = xend, yend = yend), colour = "red", linetype = 1, arrow = arrow(length = unit(0.01, "npc"))
-)
-pl2 = pl2 + ggtitle("Gaussian Mutation")
-
-
-ggsave("../figure/1dim-ackley-func-gaussian-mutation.png", pl2, width = 5, height = 4)
-
-
-
-sel = select_mu_plus_lambda(population, offspring, fitness, fitness.o, mu = MU)
-population = sel$population
-fitness = sel$fitness
-df = data.frame(x = unlist(population), y = as.numeric(fitness))
-
-pl = pl + geom_point(data = df, aes(x = x, y = y), color = "green", fill = "green", size = 3)
-pl = pl + geom_hline(yintercept = max(df$y), lty = 2)
-pl = pl + ggtitle(expression(paste("(",mu, "+" ,lambda,")-selection")))
-
-ggsave("../figure/1dim-ackley-func-selection.png", pl, width = 5, height = 4)
-
-
-best_individual = c()
-pops = data.frame()
-
-# After 200 iterations 
-for (i in seq_len(MAX.ITER)) {
-    # sample lambda individuals at random
-    idx = sample(1:MU, LAMBDA)
-    # generate offspring by mutation and evaluate their fitness
-    offspring = mutate_gaussian(population[idx], sdev = 2, lower = lower, upper = upper)
-    fitness.o = evaluate_population(offspring, fn)
-    # now select the best out of the union of population and offspring
-    sel = select_mu_plus_lambda(population, offspring, fitness, fitness.o, mu = MU)
-    population = sel$population
-
-    fitness = sel$fitness
-    pops = rbind(pops, cbind(x = unlist(population), y = as.vector(fitness), iteration = i))
-    best_individual = c(best_individual, min(fitness))
+  ackley_plot +
+    theme_bw(base_size = 12)
 }
 
-# Over time
-df = data.frame(x = 1:MAX.ITER, y = best_individual)
-p1 = ggplot(data = df, aes(x = x, y = y)) + geom_line() + theme_bw()
-p1 = p1 + xlab("Iteration") + ylab("Fitness (best individual)")
+plot_population = function(base_plot, population_dt, color, size = 3) {
+  base_plot +
+    geom_point(
+      data = population_dt,
+      mapping = aes(x = x, y = fitness),
+      color = color,
+      size = size,
+      inherit.aes = FALSE
+    )
+}
 
-pl = autoplot(fn, show.optimum = F, length.out = 1000L)
-p2 = pl + theme_bw()
-p2 = p2 + geom_point(data = pops, aes(x = x, y = y, colour = iteration ))
+arrange_plots = function(...) {
+  plot_file = tempfile(fileext = ".pdf")
+  pdf(plot_file)
+  on.exit({
+    dev.off()
+    unlink(plot_file)
+  }, add = TRUE)
 
-p = arrangeGrob(p1, p2, nrow = 1)
-if (interactive()) grid::grid.draw(p)
-ggsave("../figure/1dim-ackley-func-final.png", p, height = 4, width = 8)
+  arrangeGrob(...)
+}
+
+lower = -30
+upper = 30
+mu = 10L
+lambda = 5L
+max_iter = 50L
+mutation_sd = 2
+
+objective = Objective$new(
+  id = "ackley_1d",
+  fun = ackley_1d,
+  label = "Ackley",
+  xdim = 1L,
+  lower = lower,
+  upper = upper,
+  minimize = TRUE
+)
+
+population = runif(mu, min = lower, max = upper)
+fitness = evaluate_population(population)
+population_dt = data.table(x = population, fitness = fitness)
+
+base_plot = make_ackley_plot(objective)
+initial_population_plot = plot_population(base_plot, population_dt, color = "black")
+
+parent_ids = sample(seq_len(mu), lambda)
+parents_dt = population_dt[parent_ids]
+neutral_selection_plot = initial_population_plot +
+  geom_point(
+    data = parents_dt,
+    mapping = aes(x = x, y = fitness),
+    color = "#d7301f",
+    size = 3,
+    inherit.aes = FALSE
+  ) +
+  ggtitle("Neutral selection")
+
+offspring = mutate_gaussian(population[parent_ids], sdev = mutation_sd, lower = lower, upper = upper)
+offspring_fitness = evaluate_population(offspring)
+offspring_dt = data.table(
+  x = offspring,
+  fitness = offspring_fitness,
+  parent_x = parents_dt$x,
+  parent_fitness = parents_dt$fitness
+)
+
+gaussian_mutation_plot = neutral_selection_plot +
+  geom_segment(
+    data = offspring_dt,
+    mapping = aes(x = parent_x, y = parent_fitness, xend = x, yend = fitness),
+    color = "#d7301f",
+    arrow = arrow(length = unit(0.01, "npc")),
+    inherit.aes = FALSE
+  ) +
+  geom_point(
+    data = offspring_dt,
+    mapping = aes(x = x, y = fitness),
+    color = "#d7301f",
+    size = 3,
+    inherit.aes = FALSE
+  ) +
+  ggtitle("Gaussian mutation")
+
+selection = select_mu_plus_lambda(population, offspring, fitness, offspring_fitness, mu = mu)
+population = selection$population
+fitness = selection$fitness
+selected_dt = data.table(x = population, fitness = fitness)
+
+survival_selection_plot = gaussian_mutation_plot +
+  geom_point(
+    data = selected_dt,
+    mapping = aes(x = x, y = fitness),
+    color = "#1a9850",
+    size = 3,
+    inherit.aes = FALSE
+  ) +
+  geom_hline(yintercept = max(selected_dt$fitness), linetype = "dashed") +
+  ggtitle(expression(group("(", mu + lambda, ")") * "-selection"))
+
+population_history = vector("list", max_iter)
+best_history = numeric(max_iter)
+
+for (iteration in seq_len(max_iter)) {
+  parent_ids = sample(seq_len(mu), lambda)
+  offspring = mutate_gaussian(population[parent_ids], sdev = mutation_sd, lower = lower, upper = upper)
+  offspring_fitness = evaluate_population(offspring)
+
+  selection = select_mu_plus_lambda(population, offspring, fitness, offspring_fitness, mu = mu)
+  population = selection$population
+  fitness = selection$fitness
+
+  population_history[[iteration]] = data.table(
+    x = population,
+    fitness = fitness,
+    iteration = iteration
+  )
+  best_history[iteration] = min(fitness)
+}
+
+best_history_dt = data.table(iteration = seq_len(max_iter), fitness = best_history)
+population_history_dt = rbindlist(population_history)
+
+fitness_trace_plot = ggplot(best_history_dt, aes(x = iteration, y = fitness)) +
+  geom_line(linewidth = 0.8, color = "#225ea8") +
+  theme_bw(base_size = 12) +
+  labs(x = "Iteration", y = "Fitness (best individual)")
+
+final_population_plot = make_ackley_plot(objective) +
+  geom_point(
+    data = population_history_dt,
+    mapping = aes(x = x, y = fitness, color = iteration),
+    size = 1.7,
+    alpha = 0.7,
+    inherit.aes = FALSE
+  ) +
+  scale_color_viridis_c(name = "Iteration")
+
+final_plot = arrange_plots(fitness_trace_plot, final_population_plot, nrow = 1L)
+
+dir.create("../figure", showWarnings = FALSE)
+
+ggsave("../figure/1dim-ackley-func.png", base_plot, width = 5, height = 4, dpi = 300)
+ggsave("../figure/1dim-ackley-func-2.png", initial_population_plot, width = 5, height = 4, dpi = 300)
+ggsave(
+  "../figure/1dim-ackley-func-neutral-selec.png",
+  neutral_selection_plot,
+  width = 5,
+  height = 4,
+  dpi = 300
+)
+ggsave(
+  "../figure/1dim-ackley-func-gaussian-mutation.png",
+  gaussian_mutation_plot,
+  width = 5,
+  height = 4,
+  dpi = 300
+)
+ggsave(
+  "../figure/1dim-ackley-func-selection.png",
+  survival_selection_plot,
+  width = 5,
+  height = 4,
+  dpi = 300
+)
+ggsave("../figure/1dim-ackley-func-final.png", final_plot, height = 4, width = 8, dpi = 300)

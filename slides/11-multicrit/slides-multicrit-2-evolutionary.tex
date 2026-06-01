@@ -53,7 +53,6 @@ Evolutionary multi-objective algorithms (EMOAs) evolve a diverse population over
 }{
 \image[1]{figure/NSGA2_steps.png}
 }
-\comment[NOTE]{CK}{needs new axis labels f1/f2}
 \begin{itemizeM}[small]
 \item Population-based search approximates a whole Pareto set in one run.
 \item The main steps (initialize, select, vary, survive, repeat) mirror standard EAs but must handle multiple objectives.
@@ -114,7 +113,6 @@ removing them, then computing the next layer of non-dominated points $\mathcal{F
 }{
 \image[1]{figure/NSGA2_NDS.png}
 }
-\comment[NOTE]{CK}{needs new axis labels f1/f2}
 \end{framev}
 
 
@@ -139,7 +137,6 @@ $\to$ \emph{crowding distance} sorting.\\
 \textbf{Idea}: Prefer individuals that are more ``spread out'' (less crowded).
 \vfill
 \image[1]{figure/NSGA2_CS1.png}
-\comment[NOTE]{CK}{need f1/f2 as axis labels}
 Left: not good, solutions bunched up.
 Right: better spread.
 \end{framev}

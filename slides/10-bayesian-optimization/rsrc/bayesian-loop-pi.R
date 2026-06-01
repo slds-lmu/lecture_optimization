@@ -1,138 +1,69 @@
-# ------------------------------------------------------------------------------
-# bayesian optimization
-
-# FIG: perform Bayesian Optimization (BO) using the Probability of Improvement (PI) 
-#    iteratively select new points, and update the surrogate model 
-#    (Gaussian Process - Kriging).
-# ------------------------------------------------------------------------------
+# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-3-bayesian-loop_2.tex
+#
+# Creates Probability of Improvement figures for the predictive distribution at
+# one point and for successive BO iterations.
 
 library(bbotk)
 library(data.table)
-library(mlr3mbo)
-library(mlr3learners)
 library(ggplot2)
+library(mlr3learners)
+library(mlr3mbo)
 library(patchwork)
 
-set.seed(123)
+source("bo-helpers.R")
+set.seed(123L)
 
-# ------------------------------------------------------------------------------
+objective = make_1d_objective()
+instance = make_singlecrit_instance(objective)
+instance$eval_batch(data.table(x = c(0.100, 0.300, 0.650, 1.000, 0.348, 0.400, 0.349)))
 
-objective = ObjectiveRFunDt$new(
- fun = function(xdt) data.table(y = 2 * xdt$x * sin(14 * xdt$x)),
- domain = ps(x = p_dbl(lower = 0, upper = 1)),
- codomain = ps(y = p_dbl(tags = "minimize"))
-)
-instance = OptimInstanceSingleCrit$new(
-  objective = objective,
-  terminator = trm("none")
-)
-
-xdt_old = data.table(x = c(0.100, 0.300, 0.650, 1.000, 0.348, 0.400, 0.349))
-instance$eval_batch(xdt_old)
-
-grid = generate_design_grid(instance$search_space, resolution = 1001L)$data
-set(grid, j = "y", value = objective$eval_dt(grid)$y)
-
-surrogate = srlrn(lrn("regr.km", covtype = "matern5_2", optim.method = "BFGS", nugget = 1e-6), archive = instance$archive)
+grid = make_grid(instance)
+surrogate = make_km_surrogate(instance, nugget = 1e-6)
 acq_function = acqf("pi", surrogate = surrogate)
 
-grid = generate_design_grid(instance$search_space, resolution = 1001L)$data
-set(grid, j = "y", value = objective$eval_dt(grid)$y)
+update_pi_state = function() {
+  update_surrogate_prediction(acq_function, grid, "x")
+  add_acquisition_column(acq_function, grid, "x", "pi")
+  best_grid_row(grid, "pi", minimize = FALSE)
+}
 
-acq_function$surrogate$update()
-prediction = surrogate$predict(grid)
-set(grid, j = "y_hat", value = prediction$mean)
-set(grid, j = "y_min", value = prediction$mean - prediction$se)
-set(grid, j = "y_max", value = prediction$mean + prediction$se)
+pi_argmax = update_pi_state()
 
-# x = 0
-pi_normal = data.table(y = seq(-2, 2.2, length.out = 1001L))
-pi_normal[, d := dnorm(y, mean = prediction$mean[1L], sd = prediction$se[1L])]
+density = data.table(y = seq(-2, 2.2, length.out = 1001L))
+density[, value := dnorm(y, mean = grid$y_hat[1L], sd = grid$y_max[1L] - grid$y_hat[1L])]
 
-g = ggplot(aes(x = y, y = d), data = pi_normal) +
-  geom_area(data = pi_normal[y <= instance$archive$best()$y]) +
+plot = ggplot(density, aes(x = y, y = value)) +
+  geom_area(data = density[y <= instance$archive$best()$y]) +
   geom_line(colour = "darkgrey") +
   geom_vline(xintercept = instance$archive$best()$y, colour = "#00A64F", linetype = 2) +
   labs(x = "Y(x)", y = "Density") +
-  theme_minimal()
+  bo_theme()
+save_figure(plot, "bayesian_loop_pi_0.png")
 
-ggsave("../figure/bayesian_loop_pi_0.png", plot = g, width = 5, height = 4)
-
-acq_function$update()
-set(grid, j = "pi", value = acq_function$eval_dt(grid[, "x"])$acq_pi)
-pi_argmax = grid[which.max(pi), ]
-
-# initial design + surrogate prediction + arg max of pi + pi
-
-# only use the four initial data points + 0.37
 instance$archive$clear()
-xdt = data.table(x = c(0.100, 0.300, 0.370, 0.650, 1.000))
-instance$eval_batch(xdt)
+instance$eval_batch(data.table(x = c(0.100, 0.300, 0.370, 0.650, 1.000)))
 
-acq_function$surrogate$update()
-prediction = surrogate$predict(grid)
-set(grid, j = "y_hat", value = prediction$mean)
-set(grid, j = "y_min", value = prediction$mean - prediction$se)
-set(grid, j = "y_max", value = prediction$mean + prediction$se)
+save_pi_iteration = function(filename, previous_point = NULL) {
+  surrogate_plot = plot_surrogate_1d(
+    grid = grid,
+    archive = instance$archive$data,
+    y_limits = c(-2, 2.2),
+    previous_point = previous_point
+  )
+  pi_plot = plot_acquisition_1d(grid, "pi", pi_argmax, "PI")
+  save_figure(surrogate_plot / pi_plot, filename)
+}
 
-acq_function$update()
-set(grid, j = "pi", value = acq_function$eval_dt(grid[, "x"])$acq_pi)
-pi_argmax = grid[which.max(pi), ]
+pi_argmax = update_pi_state()
+save_pi_iteration("bayesian_loop_pi_1.png")
 
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
+previous_argmax = pi_argmax
+instance$eval_batch(pi_argmax[, .(x)])
 
-pi = ggplot(aes(x = x, y = pi), data = grid) +
-  geom_line(colour = "darkred") +
-  geom_point(aes(x = x, y = pi), size = 3L, colour = "darkred", data = pi_argmax) +
-  xlim(c(0, 1)) +
-  ylab("PI") +
-  theme_minimal()
+for (iteration in 2L:9L) {
+  pi_argmax = update_pi_state()
+  save_pi_iteration(sprintf("bayesian_loop_pi_%d.png", iteration), previous_argmax)
 
-ggsave("../figure/bayesian_loop_pi_1.png", plot = g / pi, width = 5, height = 4)
-
-old_pi_argmax = pi_argmax
-
-instance$eval_batch(pi_argmax[, "x", with = FALSE])
-
-for (i in 2:9) {
-  acq_function$surrogate$update()
-  prediction = surrogate$predict(grid)
-  set(grid, j = "y_hat", value = prediction$mean)
-  set(grid, j = "y_min", value = prediction$mean - prediction$se)
-  set(grid, j = "y_max", value = prediction$mean + prediction$se)
-  
-  acq_function$update()
-  set(grid, j = "pi", value = acq_function$eval_dt(grid[, "x"])$acq_pi)
-  pi_argmax = grid[which.max(pi), ]
-
-  # initial design + surrogate prediction + arg max of pi + pi
-  g = ggplot(aes(x = x, y = y), data = grid) +
-    geom_line() +
-    geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-    geom_ribbon(aes(ymin = y_min, ymax = y_max), fill = "steelblue", colour = NA, alpha = 0.1) +
-    geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-    geom_point(aes(x = x, y = y), size = 3L, colour = "grey", data = old_pi_argmax) +
-    xlim(c(0, 1)) +
-    ylim(c(-2, 2.2)) +
-    theme_minimal()
-  
-  pi = ggplot(aes(x = x, y = pi), data = grid) +
-    geom_line(colour = "darkred") +
-    geom_point(aes(x = x, y = pi), size = 3L, colour = "darkred", data = pi_argmax) +
-    xlim(c(0, 1)) +
-    ylab("PI") +
-    theme_minimal()
- 
-  ggsave(sprintf("../figure/bayesian_loop_pi_%i.png", i), plot = g / pi, width = 5, height = 4)
-
-  old_pi_argmax = pi_argmax
-  
-  instance$eval_batch(pi_argmax[, "x", with = FALSE])
+  previous_argmax = pi_argmax
+  instance$eval_batch(pi_argmax[, .(x)])
 }

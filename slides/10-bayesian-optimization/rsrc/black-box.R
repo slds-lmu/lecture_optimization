@@ -1,105 +1,66 @@
-# ------------------------------------------------------------------------------
-# bayesian optimization
+# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-1-black-box.tex
+#
+# Creates design-space examples and a small Ackley benchmark comparing random
+# search, CMA-ES, and Bayesian optimization.
 
-# FIG: perform black-box optimization for the Ackley function using 
-#   Random Search, CMA-ES and Bayesian Optimization.
-# ------------------------------------------------------------------------------
-
+library(adagio)
 library(bbotk)
 library(data.table)
-library(mlr3mbo)
-library(mlr3learners)
-library(mlr3misc)
 library(ggplot2)
-library(patchwork)
-library(adagio)
+library(mlr3learners)
+library(mlr3mbo)
+library(mlr3misc)
 
-set.seed(123)
+source("bo-helpers.R")
+set.seed(123L)
 
-# ------------------------------------------------------------------------------
+benchmark_replicates = 3L
+benchmark_evals = 30L
+acq_optimizer_evals = 20L
 
 domain = ps(x1 = p_dbl(lower = 0, upper = 1), x2 = p_dbl(lower = 0, upper = 1))
 
-xdt_random = generate_design_random(domain, n = 100L)$data
-xdt_random[, method := "random"]
-xdt_gs = generate_design_grid(domain, resolution = 10L)$data
-xdt_gs[, method := "gs"]
-xdt = rbind(xdt_random, xdt_gs)
+random_design = generate_design_random(domain, n = 100L)$data
+random_design[, method := "random"]
 
-g = ggplot(aes(x = x1, y = x2), data = xdt[method == "random"]) +
-  geom_point(size = 3L) +
-  geom_rug() +
-  labs(title = "Random Design", x = expression(x[1]), y = expression(x[2])) +
-  theme_minimal()
+grid_design = generate_design_grid(domain, resolution = 10L)$data
+grid_design[, method := "grid"]
 
-ggsave("../figure/black_box_0.png", plot = g, width = 5, height = 4)
+save_figure(plot_design_2d(random_design, "Random Design"), "black_box_0.png")
+save_figure(plot_design_2d(grid_design, "Grid Design"), "black_box_1.png")
 
-g = ggplot(aes(x = x1, y = x2), data = xdt[method == "gs"]) +
-  geom_point(size = 3L) +
-  geom_rug() +
-  labs(title = "Grid Design", x = expression(x[1]), y = expression(x[2])) +
-  theme_minimal()
+objective = make_ackley_objective()
+instance = make_singlecrit_instance(objective, trm("evals", n_evals = benchmark_evals))
 
-ggsave("../figure/black_box_1.png", plot = g, width = 5, height = 4)
-
-objective = ObjectiveRFunDt$new(
- fun = function(xdt) data.table(y = -20.0 * exp(-0.2 * sqrt(0.5 * (xdt$x1^2 + xdt$x2^2))) - 
-                                    exp(0.5 * (cos(2 * pi * xdt$x1) + cos(2 * pi * xdt$x2))) + exp(1) + 20),
- domain = ps(x1 = p_dbl(lower = -5, upper = 5), x2 = p_dbl(lower = -5, upper = 5)),
- codomain = ps(y = p_dbl(tags = "minimize"))
-)
-instance = OptimInstanceSingleCrit$new(
-  objective = objective,
-  terminator = trm("evals", n_evals = 50L)
-)
-
-results = map_dtr(1:10, function(i) {
-  design = generate_design_random(instance$search_space, n= 10L)$data
+run_replicate = function(repl) {
+  initial_design = generate_design_random(instance$search_space, n = 10L)$data
 
   instance$archive$clear()
   opt("random_search", batch_size = 1L)$optimize(instance)
-  rs = copy(instance$archive$data)
-  rs[, best := cummin(y)]
-  rs[, method := "Random"]
-  rs[, iter := seq_len(.N)]
-  rs[, repl := i]
-
+  random_trace = collect_trace(instance, "Random", repl)
 
   instance$archive$clear()
   opt("cmaes")$optimize(instance)
-  cmaes = copy(instance$archive$data)
-  cmaes[, best := cummin(y)]
-  cmaes[, method := "CMAES"]
-  cmaes[, iter := seq_len(.N)]
-  cmaes[, repl := i]
+  cmaes_trace = collect_trace(instance, "CMA-ES", repl)
 
   instance$archive$clear()
-  instance$eval_batch(design)
-  surrogate = srlrn(lrn("regr.km", covtype = "matern3_2", optim.method = "gen", control = list(trace = FALSE), nugget.stability = 10^-8))
+  instance$eval_batch(initial_design)
+
+  surrogate = make_km_surrogate(
+    covtype = "matern3_2",
+    optim_method = "BFGS",
+    nugget.stability = 1e-8
+  )
   acq_function = acqf("ei")
-  acq_optimizer = acqo(opt("nloptr", algorithm = "NLOPT_GN_DIRECT_L"), trm("evals", n_evals = 100L))
+  acq_optimizer = acqo(opt("nloptr", algorithm = "NLOPT_GN_DIRECT_L"), trm("evals", n_evals = acq_optimizer_evals))
   optimizer = opt("mbo", surrogate = surrogate, acq_function = acq_function, acq_optimizer = acq_optimizer)
   optimizer$optimize(instance)
-  mbo = copy(instance$archive$data)
-  mbo[, best := cummin(y)]
-  mbo[, method := "BO"]
-  mbo[, iter := seq_len(.N)]
-  mbo[, repl := i]
+  bo_trace = collect_trace(instance, "BO", repl)
 
-  rbind(rs, cmaes, mbo, fill = TRUE)
-})
+  rbind(random_trace, cmaes_trace, bo_trace, fill = TRUE)
+}
 
-agg = results[, .(mean_best = mean(best), se_best = sd(best) / sqrt(.N)), by = .(iter, method)]
+results = map_dtr(seq_len(benchmark_replicates), run_replicate)
+trace_summary = summarize_traces(results)
 
-g = ggplot(aes(x = iter, y = mean_best, colour = method, fill = method), data = agg) +
-  geom_ribbon(
-    aes(ymin = mean_best - se_best, ymax = mean_best + se_best),
-    colour = NA,
-    alpha = 0.25
-  ) +
-  geom_step() +
-  labs(x = "Nr. Function Evaluations", y = "Best Objective Value", colour = "Method", fill = "Method") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-
-ggsave("../figure/black_box_2.png", plot = g, width = 5, height = 4)
+save_figure(plot_trace_summary(trace_summary), "black_box_2.png")

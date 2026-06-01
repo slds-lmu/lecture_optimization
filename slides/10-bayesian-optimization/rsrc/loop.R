@@ -1,184 +1,83 @@
-# ------------------------------------------------------------------------------
-# bayesian optimization
-
-# FIG: performs Bayesian optimization using a Gaussian Process Regression
-#      to approximate the function.
-# ------------------------------------------------------------------------------
+# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-2-loop.tex
+#
+# Builds the step-by-step loop figures for model-based optimization with the
+# surrogate posterior mean as acquisition function.
 
 library(bbotk)
 library(data.table)
-library(mlr3mbo)
-library(mlr3learners)
 library(ggplot2)
+library(mlr3learners)
+library(mlr3mbo)
 
-set.seed(123)
+source("bo-helpers.R")
+set.seed(123L)
 
-# ------------------------------------------------------------------------------
+objective = make_1d_objective()
+instance = make_singlecrit_instance(objective)
+instance$eval_batch(data.table(x = c(0.1, 0.3, 0.65, 1)))
 
-objective = ObjectiveRFunDt$new(
- fun = function(xdt) data.table(y = 2 * xdt$x * sin(14 * xdt$x)),
- domain = ps(x = p_dbl(lower = 0, upper = 1)),
- codomain = ps(y = p_dbl(tags = "minimize"))
-)
-instance = OptimInstanceSingleCrit$new(
-  objective = objective,
-  terminator = trm("none")
-)
-
-xdt = data.table(x = c(0.1, 0.3, 0.65, 1))
-instance$eval_batch(xdt)
-
-surrogate = srlrn(lrn("regr.km", covtype = "matern5_2", optim.method = "BFGS"), archive = instance$archive)
+surrogate = make_km_surrogate(instance)
 acq_function = acqf("mean", surrogate = surrogate)
+grid = make_grid(instance)
 
-grid = generate_design_grid(instance$search_space, resolution = 1001L)$data
-set(grid, j = "y", value = objective$eval_dt(grid)$y)
+refit_mean_surrogate = function() {
+  update_surrogate_prediction(acq_function, grid, "x")
+  add_acquisition_column(acq_function, grid, "x", "mean")
+  best_grid_row(grid, "mean")
+}
 
-acq_function$surrogate$update()
-prediction = surrogate$predict(grid)
-set(grid, j = "y_hat", value = prediction$mean)
+save_loop_plot = function(filename, show_truth = FALSE, show_prediction = TRUE, candidate = NULL) {
+  plot = plot_surrogate_1d(
+    grid = grid,
+    archive = instance$archive$data,
+    y_limits = c(-2, 2.2),
+    show_truth = show_truth,
+    show_prediction = show_prediction,
+    show_uncertainty = FALSE,
+    candidate = candidate
+  )
+  save_figure(plot, filename)
+}
 
-acq_function$update()
-set(grid, j = "mean", value = acq_function$eval_dt(grid[, "x"])$acq_mean)
-mean_argmin = grid[which.min(mean), ]
+mean_argmin = refit_mean_surrogate()
 
-# function 
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line() +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
+plot = plot_surrogate_1d(
+  grid = grid,
+  archive = NULL,
+  y_limits = c(-2, 2.2),
+  show_truth = TRUE,
+  show_prediction = FALSE,
+  show_uncertainty = FALSE
+)
+save_figure(plot, "loop_0.png")
 
-ggsave(file.path("../figure/loop_0.png"), plot = g, width = 5, height = 4)
+plot = plot_surrogate_1d(
+  grid = grid,
+  archive = instance$archive$data,
+  y_limits = c(-2, 2.2),
+  show_truth = FALSE,
+  show_prediction = FALSE,
+  show_uncertainty = FALSE
+)
+save_figure(plot, "loop_1.png")
 
-# initial design
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
+save_loop_plot("loop_2.png")
+save_loop_plot("loop_3.png", candidate = mean_argmin)
 
-ggsave(file.path("../figure/loop_1.png"), plot = g, width = 5, height = 4)
+instance$eval_batch(mean_argmin[, .(x)])
+save_loop_plot("loop_4.png")
 
-# intial design + surrogate prediction
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
+mean_argmin = refit_mean_surrogate()
+save_loop_plot("loop_5.png")
+save_loop_plot("loop_6.png", candidate = mean_argmin)
 
-ggsave(file.path("../figure/loop_2.png"), plot = g, width = 5, height = 4)
+instance$eval_batch(mean_argmin[, .(x)])
+save_loop_plot("loop_7.png")
 
-# initial design + surrogate prediction + arg min of surrogate prediction
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  geom_point(aes(x = x, y = y_hat), size = 3L, colour = "darkred", data = mean_argmin) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
+mean_argmin = refit_mean_surrogate()
+save_loop_plot("loop_8.png")
+save_loop_plot("loop_9.png", candidate = mean_argmin)
 
-ggsave(file.path("../figure/loop_3.png"), plot = g, width = 5, height = 4)
-
-instance$eval_batch(mean_argmin[, "x", with = FALSE])
-
-# initial design + surrogate prediction + arg min of surrogate prediction
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave(file.path("../figure/loop_4.png"), plot = g, width = 5, height = 4)
-
-# eval arg min of surrogate prediction, refit surrogate and obtain new arg min of surrogate prediction
-acq_function$surrogate$update()
-prediction = surrogate$predict(grid)
-set(grid, j = "y_hat", value = prediction$mean)
-
-acq_function$update()
-set(grid, j = "mean", value = acq_function$eval_dt(grid[, "x"])$acq_mean)
-mean_argmin = grid[which.min(mean), ]
-
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave(file.path("../figure/loop_5.png"), plot = g, width = 5, height = 4)
-
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  geom_point(aes(x = x, y = y_hat), size = 3L, colour = "darkred", data = mean_argmin) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave(file.path("../figure/loop_6.png"), plot = g, width = 5, height = 4)
-
-instance$eval_batch(mean_argmin[, "x", with = FALSE])
-
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave(file.path("../figure/loop_7.png"), plot = g, width = 5, height = 4)
-
-# eval arg min of surrogate prediction, refit surrogate and obtain new arg min of surrogate prediction
-acq_function$surrogate$update()
-prediction = surrogate$predict(grid)
-set(grid, j = "y_hat", value = prediction$mean)
-
-acq_function$update()
-set(grid, j = "mean", value = acq_function$eval_dt(grid[, "x"])$acq_mean)
-mean_argmin = grid[which.min(mean), ]
-
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave(file.path("../figure/loop_8.png"), plot = g, width = 5, height = 4)
-
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  geom_point(aes(x = x, y = y_hat), size = 3L, colour = "darkred", data = mean_argmin) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave(file.path("../figure/loop_9.png"), plot = g, width = 5, height = 4)
-
-instance$eval_batch(mean_argmin[, "x", with = FALSE])
-
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave(file.path("../figure/loop_10.png"), plot = g, width = 5, height = 4)
-
-# same plot as before but also showing that we actually missed the global optimum
-g = ggplot(aes(x = x, y = y), data = grid) +
-  geom_line() +
-  geom_line(aes(x = x, y = y_hat), colour = "steelblue", linetype = 2) +
-  geom_point(aes(x = x, y = y), size = 3L, colour = "black", data = instance$archive$data) +
-  xlim(c(0, 1)) +
-  ylim(c(-2, 2.2)) +
-  theme_minimal()
-
-ggsave(file.path("../figure/loop_11.png"), plot = g, width = 5, height = 4)
-
+instance$eval_batch(mean_argmin[, .(x)])
+save_loop_plot("loop_10.png")
+save_loop_plot("loop_11.png", show_truth = TRUE)
