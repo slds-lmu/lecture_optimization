@@ -215,6 +215,25 @@ simplex_path = simplex_trace(constraint_matrix, constraint_rhs, cost_vector, sta
 for (iteration in seq_len(min(4L, nrow(simplex_path)))) {
   visible_path = simplex_path[seq_len(iteration)]
   visible_steps = visible_path[!is.na(x1_old)]
+  label_positions = copy(visible_path)
+  label_positions[, `:=`(
+    label_x = x1,
+    label_y = x2,
+    hjust = -0.2,
+    vjust = -1
+  )]
+  label_positions[objective_label == "-0.50", `:=`(
+    label_x = x1,
+    label_y = x2 + 0.1,
+    hjust = 0.5,
+    vjust = 0.5
+  )]
+  label_positions[objective_label == "-1.17", `:=`(
+    label_x = x1 + 0.06,
+    label_y = x2 + 0,
+    hjust = 0.5,
+    vjust = 0.5
+  )]
 
   plot = plot_polytope(constraint_matrix, constraint_rhs) +
     labs(title = sprintf("Iteration %s", iteration)) +
@@ -231,10 +250,8 @@ for (iteration in seq_len(min(4L, nrow(simplex_path)))) {
       size = 2
     ) +
     geom_text(
-      data = visible_path,
-      mapping = aes(x = x1, y = x2, label = objective_label),
-      hjust = -0.2,
-      vjust = -1,
+      data = label_positions,
+      mapping = aes(x = label_x, y = label_y, label = objective_label, hjust = hjust, vjust = vjust),
       size = 4
     ) +
     geom_segment(
