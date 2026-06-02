@@ -17,25 +17,28 @@ figure_man/SGD_cropped.png
 }{
 \item Understand stochastic gradient descent
 \item Understand stochasticity and variance of SGD
-\item Know convergence properties of SGD
-\item Understand effect of batch size
+\item Understand effect of batch size and step size
+\item Understand stopping rules
 }
 
 \begin{framei}{Stochastic gradient descent}
-\item NB: We use $g$ instead of $f$ as objective, because $f$ is used as model in ML
 \item $g: \R^d \to \R$ objective, $g$ is \textbf{average over functions}:
 $$
 g(\xv) = \frac{1}{n}\sumin g_i(\xv), \qquad g \text{ and } g_i \text{ smooth}
 $$
+\begin{footnotesize}
+    NB: We use $g$ instead of $f$ as objective, because $f$ is used as model in ML
+\end{footnotesize}
 \item Stochastic gradient descent (SGD) approximates the gradient
 \begin{eqnarray*}
 \nabla_{\xv} g(\xv) = \frac{1}{n}\sumin \nabla_{\xv} g_i(\xv) &:=& \mathbf{d} \quad \text{ by }\\
 \frac{1}{\textcolor{blue}{|J|}}\sum_{i \in \textcolor{blue}{J}} \nabla_{\xv} g_i(\xv) &:=& \hat{\mathbf{d}},
 \end{eqnarray*}
-with random subset $J \subset \{1, 2, \ldots, n\}$ of gradients called \textbf{mini-batch}
+with random subset $J \subset \{1, 2, \ldots, n\}$ %of gradients 
+called \textbf{mini-batch}
 \item This is done e.g. when computing the true gradient is \textbf{expensive}
+\item SGD is a \textbf{stochastic optimization} method as it uses stochastic gradient estimates
 \end{framei}
-
 
 \begin{framev}{SGD algorithm}
 \begin{algorithm}[H]
@@ -59,11 +62,9 @@ with random subset $J \subset \{1, 2, \ldots, n\}$ of gradients called \textbf{m
 \begin{itemize}
 \item In the simplest case, batch-size $m := |J_k|$ is set to $m = 1$
 \item If $n$ is a billion, computation of update is a billion times faster
-\item \textbf{But} (later): Convergence rates suffer from stochasticity!
 \end{itemize}
 \end{itemize}
 \end{framev}
-
 
 \begin{framei}{SGD in ML}
 \item In ML, we perform ERM:
@@ -74,8 +75,6 @@ $$
 \item a loss function $\Lxy$, e.g., L2 loss $\Lxy = (y - \fx)^2$
 \item and a model class $f$, e.g., the linear model $\fxit = \thetav^\top \xv$
 \end{framei}
-
-
 
 \begin{framei}{SGD in ML}
 \item For large data sets, computing the exact gradient
@@ -90,7 +89,6 @@ for $J \subset \{1, 2, \ldots, n\}$ random subset
 \item \textbf{NB:} Often, maximum size of $J$ technically limited by memory size
 \end{framei}
 
-
 \begin{framei}{Stochasticity of SGD}
 \item[]
 \imageC[0.8][https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/understanding-machine-learning-theory-algorithms.pdf]{figure_man/SGD.png}
@@ -101,11 +99,10 @@ Black line shows average value across multiple runs
 \end{center} \end{small}
 \end{framei}
 
-
 \begin{framei}{Stochasticity of SGD}
 \item Assume batch size $m = 1$ (statements also apply for larger batches)
 \item \textbf{(Possibly) suboptimal direction:} Approximate gradient $\hat{\mathbf{d}} = \nabla_{\xv} g_i(\xv)$ might point in suboptimal (possibly not even a descent!) direction
-\item \textbf{Unbiased estimate:} If $J$ drawn i.i.d., approximate gradient $\hat{\mathbf{d}}$ is an unbiased estimate of gradient $\mathbf{d} = \nabla_{\xv} g(\xv) = \sumin \nabla_{\xv} g_i(\xv)$:
+\item \textbf{Unbiased estimate:} If $J$ drawn i.i.d., approximate gradient $\hat{\mathbf{d}}$ is an unbiased estimate of gradient $\mathbf{d} = \nabla_{\xv} g(\xv) = \frac{1}{n}\sumin \nabla_{\xv} g_i(\xv)$:
 \begin{align*}
 \E_{i}\left[\nabla_{\xv} g_i(\xv)\right] &= \sumin \nabla_{\xv} g_i(\xv) \cdot \P(i = i) \\
 &= \sumin \nabla_{\xv} g_i(\xv) \cdot \frac{1}{n} = \nabla_{\xv} g(\xv).
@@ -113,47 +110,55 @@ Black line shows average value across multiple runs
 \item \textbf{Conclusion:} SGD might perform single suboptimal moves, but moves in \enquote{right direction} \textbf{on average}
 \end{framei}
 
-
 \begin{frame}{Erratic behavior of SGD}
 \textbf{Example:} $g(\xv) = \sum_{i = 1}^5 g_i(\xv)$, $g_i$ quadratic, batch size $m = 1$\\
+\only<1>{\small (Note that each SGD step for $m = 1$ corresponds to an exact GD step on one of the $g_i$.)}
 \only<5>{\small In iteration $5$, SGD performs a suboptimal move away from the minimum:}
-\only<1>{\imageFixed{0.5cm}{2cm}[0.95]{figure_man/sgd_example_iter_1.png}}
+\only<1>{\imageFixed{0.5cm}{2.4cm}[0.95]{figure_man/sgd_example_iter_1.png}}
 \only<2>{\imageFixed{0.5cm}{2cm}[0.95]{figure_man/sgd_example_iter_2.png}}
 \only<3>{\imageFixed{0.5cm}{2cm}[0.95]{figure_man/sgd_example_iter_3.png}}
 \only<4>{\imageFixed{0.5cm}{2cm}[0.95]{figure_man/sgd_example_iter_4.png}}
 \only<5>{\imageFixed{0.5cm}{2cm}[0.95]{figure_man/sgd_example_iter_5.png}}
 \end{frame}
 
-
 \begin{framei}{Erratic behavior of SGD}
 \item[]
 \imageC[0.7]{figure_man/sgd_example_confusion_areas.png}
 \begin{center}\begin{small}
 \textbf{Blue area}: Each $-\nabla g_i(\xv)$ points towards minimum\\
-\textbf{Red area} (\enquote{confusion area}): $-\nabla g_i(\xv)$ might point away from minimum and perform a suboptimal move
+\textbf{Red area} (\enquote{confusion area}): $-\nabla g_i(\xv)$ might point away from minimum of $g(\xv)$ and perform a suboptimal move
 \end{small} \end{center}
 \end{framei}
 
-
 \begin{framei}{Erratic behavior of SGD}
-\item At location $\xv$, \enquote{confusion} is captured by variance of gradients
+\item At location $\xv$, \enquote{confusion} is captured by \textbf{variance of gradients}
 $$
 \frac{1}{n}\sumin \|\nabla_{\xv} g_i(\xv) - \nabla_{\xv} g(\xv)\|^2
 $$
-\item If term is $0$, next step goes in gradient direction (for each $i$)
-\item If term is small, next step \emph{likely} goes in gradient direction
-\item If term is large, next step likely goes in direction different than gradient
+\begin{itemize}
+    \item If term is $0$, next step goes in gradient direction (for each $i$)
+    \item If term is small, next step \emph{likely} goes in gradient direction
+    \item If term is large, next step likely goes in direction different than gradient
+\end{itemize}
+\item Consequently, SGD has worse convergence properties than GD
+\item \textbf{But:} Can be controlled by tuning \textbf{batch size} and \textbf{step size}.
 \end{framei}
 
-
-\begin{framei}{Convergence of SGD}
-\item As a consequence, SGD has worse convergence properties than GD
-\item \textbf{But:} Can be controlled via \textbf{increasing batches} or \textbf{reducing step size}
+\begin{framei}{Effect of batch size}
+\item The larger the batch size $m$
+\begin{itemize}
+    \item the better the approximation to $\nabla_{\xv} g(\xv)$
+    \item the lower the variance
+    \item the lower the risk of performing steps in the wrong direction
+\end{itemize}
+\item As maximum batch size is usually limited by computational resources (memory), choosing a suitable step size is crucial
 \vfill
-\begin{blocki}{The larger the batch size $m$}
-\item the better the approximation to $\nabla_{\xv} g(\xv)$
-\item the lower the variance
-\item the lower the risk of performing steps in the wrong direction
+\imageC[0.9]{figure_man/sgd_example_batch_size.png}
+\begin{center}\begin{small}
+Example continued: Batch size $m = 1$ vs. $m = 5$
+\end{small} \end{center}
+\end{framei}
+
 \comment[NOTE]{BB}{wir könnten noch etwas über die verteilung von den grad reden, CLT usw. können wir später}
 \comment[NOTE]{BB}{hier könnte man die claims als bsp zeigen
 vielleicht kann man mal batchsize und step size variieren auf einem praktiven bsp}
@@ -161,28 +166,69 @@ vielleicht kann man mal batchsize und step size variieren auf einem praktiven bs
 Hier könnte man vielleicht fündig werden: https://udlbook.github.io/udlbook/ Kap. 9+20.}
 \comment[NOTE]{BB}{was hier auf der folie steht ist nicht so super klar finde ich.... können wir das etwas verbessern}
 \comment[NOTE]{UU}{Man könnte noch einen Bezug herstellen zwischen der Größe dieser Varianz und der Größe der "confusion area".}
-\end{blocki}
-\vfill
-\begin{blocki}{The smaller the step size $\alpha$}
-\item the smaller a step in a potentially wrong direction
-\item the lower the effect of high variance
-\end{blocki}
-\vfill
-As maximum batch size is usually limited by computational resources (memory), choosing the step size is crucial
-\end{framei}
-
-
-\begin{framei}{Effect of batch size}
-\item[]
-\imageC[0.9]{figure/gradient_descent_NN_SGD_vs_no_SGD.pdf}
-\begin{center}\begin{small}
-SGD for a NN with batch size $\in \{0.5 \%, 10 \%, 50 \%\}$ of the training data\\
-The higher the batch size, the lower the variance
-\end{small}\end{center}
-\end{framei}
-
 \comment[NOTE]{BB}{es wäre schön einmal SGD gegen GD auf echten daten zu sehen. zb bei einem NN. man muss gucken wie man die x-achse skaliert. man kann einmal fevals vs y zeigen. aber auch "datenpunkt" gegen y.
 wir wollen vielleicht auch darüber reden dass SGD saddle points escaped kann}
+
+\begin{framei}{Effect of step size}
+\item The smaller the step size $\alpha$
+\begin{itemize}
+    \item the smaller a step in a potentially wrong direction (reduced magnitude of erratic steps)
+    \item the lower the effect of high variance
+    \item BUT the more steps needed (potentially impaired performance)
+\end{itemize}
+\item SGD converges for sufficiently smooth functions if
+$$
+\frac{\sum_{t = 1}^\infty \left(\alpha^{[t]}\right)^2}{\sum_{t = 1}^\infty \alpha^{[t]}} = 0
+$$
+(``how much noise affects you'' by ``how far you can get'')
+\end{framei}
+
+\begin{framei}{SGD with decreasing step size}
+\item Popular solution: Decreasing step size fulfilling $\alpha^{[t]} \in \order(1/t)$
+\vfill
+\imageC[1]{figure_man/sgd_example_decreasing_step_size.png}
+\begin{center}\begin{small}
+Example continued: Step size $\alpha^{[t]} = 0.2/t$ \\
+Decreasing step size leads to more stable convergence
+\end{small} \end{center}
+\vfill
+\item (Common alternative: $\alpha^{[t]} \in \order(1/\sqrt{t})$ to avoid step size getting small too fast)
+\end{framei}
+
+\begin{framev}{Advanced step size control}
+\begin{blocki}{Why not Armijo-based step size control?}
+\item Backtracking line search or other approaches based on Armijo rule usually not suitable: Armijo condition
+$$
+g(\xv + \alpha \mathbf{d}) \le g(\xv) + \gamma_1 \alpha \textcolor{red}{\nabla g(\xv)}^\top \mathbf{d}
+$$
+requires evaluating full gradient
+\item But SGD is used to \emph{avoid} expensive gradient computations
+\item Research aims at finding inexact line search methods that provide better convergence behavior, e.g., Vaswani et al., \emph{Painless Stochastic Gradient: Interpolation, Line-Search, and Convergence Rates}. NeurIPS, 2019
+\end{blocki}
+\end{framev}
+
+\begin{framei}{Stopping rules for SGD}
+\item For GD: We usually stop when gradient is close to $0$ (i.e., we are close to a stationary point)
+\item For SGD: Individual gradients do not necessarily go to zero, and we cannot access full gradient
+\item Practicable solution for ML:
+\begin{itemize}
+\item Measure the validation set error after $T$ iterations
+\item Stop if validation set error is not improving
+\end{itemize}
+\end{framei}
+
+\begin{framev}[fs=small]{SGD and ML}
+\begin{blocki}{General remarks:}
+\item SGD is a variant of GD
+\item SGD particularly suitable for large-scale ML when evaluating gradient is too expensive / restricted by computational resources
+\item Thus, SGD and variants are the most commonly used methods in modern ML with e.g. neural networks
+\item Note that even for the linear model and quadratic loss, where a closed form solution is available, SGD is often used if the size $n$ of the dataset is too large and the design matrix does not fit into memory
+\end{blocki}
+\end{framev}
+
+\comment[NOTE]{BB}{wir wollen die regu eigenschaften von sgd besser erkären
+https://francisbach.com/implicit-bias-sgd/
+https://www.inference.vc/notes-on-the-origin-of-implicit-regularization-in-stochastic-gradient-descent/}
 
 \endlecture
 \end{document}
