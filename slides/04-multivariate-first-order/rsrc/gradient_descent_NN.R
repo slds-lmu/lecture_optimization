@@ -1,6 +1,6 @@
 # Used in: slides-multivar-first-order-1-GD.tex,
 #   slides-multivar-first-order-6-momentum.tex,
-#   slides-multivar-first-order-9-sgd.tex
+#   slides-multivar-first-order-9-sgd.tex (snippet currently not used)
 #
 # Generates synthetic neural-network regression figures used to illustrate
 # optimization behavior and the effect of mini-batch sizes / momentum.
@@ -13,6 +13,14 @@ library(mlr3)
 library(plot3D)
 
 source("NN_helpers.R")
+
+# --- Flags: set TRUE for each deck whose figures should be regenerated ------
+# slides-multivar-first-order-1-GD.tex
+run_gd = TRUE
+# slides-multivar-first-order-6-momentum.tex
+run_momentum = TRUE
+# slides-multivar-first-order-9-sgd.tex
+run_sgd = TRUE
 
 objective_fun = function(x1, x2) x1^2 + x2^2
 
@@ -64,14 +72,6 @@ save_history_pdf = function(loss, filename, x_max = NULL, y_max = NULL) {
     theme_bw(base_size = 12)
   ggsave(filename, plot = p, width = 4, height = 3)
 }
-
-# --- Flags: set TRUE for each deck whose figures should be regenerated ------
-# slides-multivar-first-order-1-GD.tex
-run_gd = TRUE
-# slides-multivar-first-order-6-momentum.tex
-run_momentum = TRUE
-# slides-multivar-first-order-9-sgd.tex
-run_sgd = TRUE
 
 # --- Initial figure: true surface + data (used by gd and momentum decks) ----
 if (run_gd || run_momentum) {
@@ -125,8 +125,7 @@ for (momentum_val in c(0, 0.5)) {
   # Run all snapshots and collect results
   snapshot_results = lapply(epoch_snapshots, function(ep) {
     set_nn_seed(1111L)
-    train_model(task, epochs = ep, x1_scale = x1_scale, x2_scale = x2_scale,
-                momentum = momentum_val)
+    train_model(task, epochs = ep, x1_scale = x1_scale, x2_scale = x2_scale, momentum = momentum_val)
   })
 
   # Shared axis limits: x up to max epochs, y from 0 to highest initial loss
@@ -134,17 +133,19 @@ for (momentum_val in c(0, 0.5)) {
   y_max = max(history_loss(snapshot_results[[length(epoch_snapshots)]]$history))
 
   for (i in seq_along(epoch_snapshots)) {
-    ep     = epoch_snapshots[i]
+    ep = epoch_snapshots[i]
     result = snapshot_results[[i]]
-    loss   = history_loss(result$history)
-    save_surface_pdf(result$surface_matrix,
-                     sprintf("../figure/gradient_descent_NN_%d_surface%s.pdf", ep, suffix))
-    save_history_pdf(loss,
-                     sprintf("../figure/gradient_descent_NN_%d_history%s.pdf", ep, suffix),
-                     x_max = x_max, y_max = y_max)
-    if (ep == 300L && momentum_val == 0 && run_momentum)
-      save_history_pdf(loss, "../figure/gradient_descent_NN_300_history_0.pdf",
-                       x_max = x_max, y_max = y_max)
+    loss = history_loss(result$history)
+    save_surface_pdf(result$surface_matrix, sprintf("../figure/gradient_descent_NN_%d_surface%s.pdf", ep, suffix))
+    save_history_pdf(
+      loss,
+      sprintf("../figure/gradient_descent_NN_%d_history%s.pdf", ep, suffix),
+      x_max = x_max,
+      y_max = y_max
+    )
+    if (ep == 300L && momentum_val == 0 && run_momentum) {
+      save_history_pdf(loss, "../figure/gradient_descent_NN_300_history_0.pdf", x_max = x_max, y_max = y_max)
+    }
   }
 }
 
