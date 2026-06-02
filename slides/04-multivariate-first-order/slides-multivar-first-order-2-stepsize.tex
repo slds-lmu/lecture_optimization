@@ -20,34 +20,51 @@ figure/curvature_2.png
 \item Exact line search
 \item Armijo rule \& Backtracking
 \item Bracketing \& Pinpointing
+\vspace{0.5cm}
+\item[] \hspace{-0.7cm}Slides based on \furtherreading{WRIGHT2022} (Ch. 3.5)
 }
 
-\begin{framei}{Controlling step size: Fixed \& adaptive}
-\comment[NOTE]{BB}{Bernd: eigentich ist alles ganz schön hier, 2 sachen könnte man noch besser machen a) man kann nicht wirklich sehen, welche stepsize hier verwendet wird, links und mitte ist das ja nur eine konstante, aber rechts soll es ja "adaptive" sein, vielleicht kann man das besser zeigen. b) generell könnte vielleicht 4 fälle zeigen. A. zu gross B. zu klein. C. gute konstante D. adaptive}
+\begin{framei}{Overview}
 \item Iteration $t$: Choose not only descent direction $\mathbf{d}^{[t]}$, but also step size $\alpha^{[t]}$
-\item First approach: \textbf{Fixed} step size $\alpha^{[t]} = \alpha > 0$
-\begin{itemizeS}[footnotesize]
-\item If $\alpha$ too small, procedure may converge very slowly (left)
-\item If $\alpha$ too large, procedure may not converge $\rightarrow$ \enquote{jumps} around optimum (middle)
-\end{itemizeS}
-\item \textbf{Adaptive} step size $\alpha^{[t]}$ can provide better convergence (right)
-\splitVThree
-{\imageC{figure_man/stepsize_small.png}}
-{\imageC{figure_man/stepsize_large.png}}{\imageC{figure_man/stepsize_adaptive.png}}
-\begin{center}\begin{footnotesize}
-Steps of line searches for $f(\xv) = 10 x_1^2 + x_2^2/2$
-\end{footnotesize}\end{center}
+\item Three main approaches:
+\begin{enumerate}
+\item \textbf{Fixed} step size: constant $\alpha$
+\item \textbf{Adaptive} step size: $\alpha^{[t]}$ is adjusted over time
+\item \textbf{Line search}: choose $\alpha^{[t]}$ by (approximately) minimizing $f$ along $\mathbf{d}^{[t]}$
+\begin{itemize}
+\item \textit{Exact}: find optimal $\alpha^{[t]}$
+\item \textit{Inexact}: find ``good enough'' $\alpha^{[t]}$
+\end{itemize}
+\end{enumerate}
 \end{framei}
 
 
-\begin{framei}{Step size control: Diminishing step size}
-\comment[NOTE]{BB}{Bernd: auch alles tiotal ok so, aber an sich kann man fast überlegen diese beiden beispiele zusammenzulegen.... und dann fände ich eigentlich immer 2d besser als 1d. die zeigen fast das gleiche. passt aber auch so}
+\begin{framei}[fs=small]{Fixed step size}
+\item Fixed step size: $\alpha^{[t]} = \alpha > 0$ constant across all iterations
+\item \textbf{Difficulty:} How to choose $\alpha$ properly?
+\begin{itemizeS}
+\item If $\alpha$ too small, procedure may converge very slowly (left)
+\item If $\alpha$ too large, procedure may not converge $\rightarrow$ \enquote{jumps} around optimum (right)
+\end{itemizeS}
+\splitV{\imageC[0.8]{figure/stepsize_small.png}
+}{
+\imageC[0.8]{figure/stepsize_large.png}
+}
+\begin{center}\begin{footnotesize}
+Steps of GD for $f(\xv) = 10 x_1^2 + x_2^2/2$
+\end{footnotesize}\end{center}
+\item Approaches: (i) trial and error, or (ii) choosing $\alpha$ based on global properties of $f$ (e.g., Lipschitz constant $L$ of $\nabla f$, next slide deck)
+\end{framei}
+
+
+\begin{framei}{Adaptive step size}
 \item How can we adaptively control step size?
-\item A natural way of selecting $\alpha^{[t]}$ is to decrease its value over time
+\item A natural way is to decrease $\alpha^{[t]}$ over time, e.g., $\alpha^{[t]} = \frac{10}{t}$
+\item Many different adaption policies exist \furtherreading{ZHANG2023}
 \item \textbf{Example:} GD on
-$$f(x) = \begin{cases}
+$f(x) = \begin{cases}
 \frac{1}{2} x^2 & \text{if $|x| \le \delta$}, \\
-\delta \cdot (|x|- 1 / 2 \cdot \delta) & \text{otherwise}.\end{cases}$$
+\delta \cdot (|x|- 1 / 2 \cdot \delta) & \text{otherwise}.\end{cases}$
 \imageC{figure/fixed_vs_adaptive.pdf}
 \begin{center}\begin{footnotesize}
 GD with small constant (\textbf{red}), large constant (\textbf{green}), and diminishing (\textbf{blue}) step size
@@ -55,7 +72,7 @@ GD with small constant (\textbf{red}), large constant (\textbf{green}), and dimi
 \end{framei}
 
 
-\begin{framei}{Step size control: Exact Line Search}
+\begin{framei}{Exact Line Search}
 \item Use \textbf{optimal} step size in each iteration:
 $$ \alpha^{[t]} = \argmin_{\alpha \in \R_{\ge 0}} g(\alpha) = \argmin_{\alpha \in \R_{\ge 0}} f(\xv^{[t]} + \alpha \mathbf{d}^{[t]})$$
 \splitVCC[0.6]
@@ -63,7 +80,6 @@ $$ \alpha^{[t]} = \argmin_{\alpha \in \R_{\ge 0}} g(\alpha) = \argmin_{\alpha \i
 $\Rightarrow$ univariate optimization methods
 \item \textbf{Problem:} Expensive, \textcolor{red}{prone to poorly conditioned problems}
 \item \textbf{But:} No need for \textit{optimal} step size. Only need a step size that is ``good enough''.
-\comment[NOTE]{BB}{Bernd: eigentlich könnte man das mininmal mehr ausführen. 1. die schrittweitensuche kostet arbeit 2. es ist bnicht mal klar, ob man bei optimaler schrittweite WENIGER schritte ins optimum macht, gerade bei GD und schlechter conditio sollte sich das GEGENTEIL zeigen lassen: nehmen wir die optimale schritteweite machen wir eher viele schritte (?)}
 \item \textbf{Reason:} Effort may not pay off, but in some cases slows down performance.}
 {\imageC{figure_man/line_search_rosenbrock.png}
 \imageC{figure_man/line_search_rosenbrock_alpha.png}}

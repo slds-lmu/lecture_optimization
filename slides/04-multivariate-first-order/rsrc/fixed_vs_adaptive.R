@@ -8,6 +8,7 @@ set.seed(1L)
 library(ggplot2)
 library(patchwork)
 library(rootSolve)
+library(latex2exp)
 
 objective_fun = function(x, delta = 0.05) {
   ifelse(abs(x) <= delta, 0.5 * x^2, delta * (abs(x) - 0.5 * delta))
@@ -47,18 +48,26 @@ comparison_data = do.call(
   )
 )
 
+colour_scale = scale_colour_manual(
+  name = "Step size",
+  values = c("α = 0.5" = "red", "α = 10" = "green3", "α[t] = 10 / t" = "blue"),
+  labels = c("α = 0.5" = TeX("$\\alpha = 0.5$"), "α = 10" = TeX("$\\alpha = 10$"), "α[t] = 10 / t" = TeX("$\\alpha^{[t]} = 10/t$"))
+)
+
 trajectory_plot = objective_curve +
   geom_point(data = comparison_data, aes(x = x, y = objective, colour = method)) +
-  geom_line(data = comparison_data, aes(x = x, y = objective, colour = method))
+  geom_line(data = comparison_data, aes(x = x, y = objective, colour = method)) +
+  colour_scale +
+  theme(legend.position = "none")
 
 loss_plot = ggplot(comparison_data, aes(x = iteration, y = objective, colour = method)) +
   geom_line() +
   labs(x = "Iteration", y = "f(x)") +
-  theme_bw(base_size = 12)
+  theme_bw(base_size = 12) +
+  colour_scale
 
 combined_plot = (trajectory_plot + loss_plot) +
-  plot_layout(nrow = 1, guides = "collect") &
-  theme(legend.position = "right")
+  plot_layout(nrow = 1)
 
 if (interactive()) {
   print(combined_plot)
