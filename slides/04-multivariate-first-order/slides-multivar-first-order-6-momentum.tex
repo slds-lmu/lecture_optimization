@@ -152,37 +152,40 @@ where $\fxt$ is a neural network with 2 hidden layers (2 units each).\\
 
 
 \begin{framev}[align=top]{ERM for NN with GD: 10 Iterations}
-After $10$ iters of GD:
+After $10$ iters of GD with momentum $\varphi = 0.5$:
 \splitV[0.5]{
-\imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_10_surface_0.5.pdf}
+\imageFixed{0cm}{1.5cm}[1]{figure/gradient_descent_NN_10_surface_0.5.pdf}
 }{
-\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}}
+\imageFixed{6cm}{2.5cm}[1]{figure/gradient_descent_NN_10_history_0.5.pdf}}
 \end{framev}
 
 
 \begin{framev}[align=top]{ERM for NN with GD: 100 Iterations}
-After $100$ iters of GD:
+After $100$ iters of GD with momentum $\varphi = 0.5$:
 \splitV[0.5]{
-\imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_100_surface_0.5.pdf}
+\imageFixed{0cm}{1.5cm}[1]{figure/gradient_descent_NN_100_surface_0.5.pdf}
 }{
-\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}}
+\imageFixed{6cm}{2.5cm}[1]{figure/gradient_descent_NN_100_history_0.5.pdf}}
 \end{framev}
 
 
 \begin{framev}[align=top]{ERM for NN with GD: 300 Iterations}
-After $300$ iters of GD:
+After $300$ iters of GD with momentum $\varphi = 0.5$:
 \splitV[0.5]{
-\imageFixed{0cm}{1.5cm}[1]{figure_man/gradient_descent_NN_300_surface_0.5.pdf}
+\imageFixed{0cm}{1.5cm}[1]{figure/gradient_descent_NN_300_surface_0.5.pdf}
 }{
-\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}}
+\imageFixed{6cm}{2.5cm}[1]{figure/gradient_descent_NN_300_history_0.5.pdf}}
 \end{framev}
 
 
-\begin{framev}[align=top]{Gradient Descent with and without Momentum}
+\begin{framev}[align=center]{Gradient Descent with and without Momentum}
 \splitVCC[0.5]{
-\imageFixed{0cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history_0.pdf}
+Without momentum ($\varphi = 0$):
+\imageC[1]{figure/gradient_descent_NN_300_history_0.pdf}
 }{
-\imageFixed{6cm}{2.5cm}[1]{figure_man/gradient_descent_NN_300_history_0.5.pdf}}
+With momentum ($\varphi = 0.5$):
+\imageC[1]{figure/gradient_descent_NN_300_history_0.5.pdf}}
+Momentum eliminates the oscillations of vanilla GD (potentially caused by overshooting in high-curvature directions with a too-large learning rate), resulting in faster, smoother convergence
 \end{framev}
 
 
