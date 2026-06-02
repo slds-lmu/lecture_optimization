@@ -20,6 +20,8 @@ figure/goldensec.png
 }{
 \item Simple nesting procedure
 \item Golden section search
+\vspace{0.5cm}
+\item[] \hspace{-0.7cm}Slides based on \furtherreading{PRESS92}
 }
 
 \begin{framei}[align=top]{univariate optimization}
@@ -188,7 +190,7 @@ $$\varphi^2 = \frac{b}{a} \cdot \frac{c}{b} = \frac{c}{a}$$
 \item Simple criterion: stop when bracket width falls below $\tau$:
 $$|\xright - \xleft| < \tau$$
 \item Issue: $\tau$ is absolute --- too loose near a minimum close to $0$, too tight for a minimum far from $0$
-\item Scale-invariant alternative \furtherreading{TEUCH92}:
+\item Scale-invariant alternative \furtherreading{PRESS92}:
 $$|\xright - \xleft| \leq \tau (|\xbest| + |\xnew|)$$
 where $|\xbest| + |\xnew|$ serves as a proxy for the scale of the minimum, stopping when the bracket is small relative to the minimum's location
 \end{framei}
@@ -196,7 +198,7 @@ where $|\xbest| + |\xnew|$ serves as a proxy for the scale of the minimum, stopp
 
 \begin{framei}[sep=L]{golden section search --- convergence}
 \item Safe method: always converges (given $-f$ is unimodal on $(\xleft, \xright)$)
-\item (Slow) linear convergence: bracket shrinks by factor $\varphi \approx 0.618$ per iteration
+\item (Slow) linear convergence: bracket shrinks by factor $\varphi \approx 0.618$ per iteration (by construction, see derivation above)
 \end{framei}
 
 \endlecture
