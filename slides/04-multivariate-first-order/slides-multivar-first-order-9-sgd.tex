@@ -95,7 +95,8 @@ for $J \subset \{1, 2, \ldots, n\}$ random subset
 \begin{small} \begin{center}
 Minimize $g(x_1, x_2) = 1.25(x_1 + 6)^2 + (x_2 - 8)^2$
 \textbf{Left:} GD, \textbf{Right:} SGD\\
-Black line shows average value across multiple runs
+Black line shows average value across multiple runs \\
+SGD trajectory much more noisy than of GD (due to stochastic gradient estimates)
 \end{center} \end{small}
 \end{framei}
 
@@ -173,9 +174,9 @@ wir wollen vielleicht auch darüber reden dass SGD saddle points escaped kann}
 \item The smaller the step size $\alpha$
 \begin{itemize}
     \item the smaller a step in a potentially wrong direction (reduced magnitude of erratic steps)
-    \item the lower the effect of high variance
-    \item BUT the more steps needed (potentially impaired performance)
-\end{itemize}
+    \item the lower the effect of gradient variance
+    \item \textbf{But:} Risk of impaired performance by not moving far enough
+\end{itemize} 
 \item SGD converges for sufficiently smooth functions if
 $$
 \frac{\sum_{t = 1}^\infty \left(\alpha^{[t]}\right)^2}{\sum_{t = 1}^\infty \alpha^{[t]}} = 0
@@ -184,7 +185,11 @@ $$
 \end{framei}
 
 \begin{framei}{SGD with decreasing step size}
-\item Popular solution: Decreasing step size fulfilling $\alpha^{[t]} \in \order(1/t)$
+\item Popular solution: Decreasing step size %fulfilling $\alpha^{[t]} \in \order(1/t)$
+\begin{itemize}
+    \item Initially, step size shall be large enough to make progress
+    \item In later iterations, step size shall be small enough to reduce effect of gradient variance
+\end{itemize}
 \vfill
 \imageC[1]{figure_man/sgd_example_decreasing_step_size.png}
 \begin{center}\begin{small}
@@ -192,7 +197,7 @@ Example continued: Step size $\alpha^{[t]} = 0.2/t$ \\
 Decreasing step size leads to more stable convergence
 \end{small} \end{center}
 \vfill
-\item (Common alternative: $\alpha^{[t]} \in \order(1/\sqrt{t})$ to avoid step size getting small too fast)
+% \item (Common alternative: $\alpha^{[t]} \in \order(1/\sqrt{t})$ to avoid step size getting small too fast)
 \end{framei}
 
 \begin{framev}{Advanced step size control}
