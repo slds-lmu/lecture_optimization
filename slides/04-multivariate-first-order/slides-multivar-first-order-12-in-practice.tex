@@ -1,0 +1,62 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+First order methods
+}{
+In practice
+}{
+figure_man/linesearch.png
+}{
+\item Optimizers are pre-implemented in major frameworks
+\item Minimal training loop in PyTorch
+\item Hyperparameters and sensible defaults
+}
+
+\begin{framei}{Optimizers are already implemented}
+\item All methods we saw (GD, SGD, $\dots$, Adam) are pre-implemented in major ML frameworks
+\item You rarely implement them yourself -- just configure and call
+\item This reflects how generic and effective they are
+\spacer
+\item[Python] PyTorch (\texttt{torch.optim}), JAX (\texttt{optax}), TensorFlow / Keras (\texttt{keras.optimizers})
+\item[R] available via \texttt{\{torch\}} and \texttt{\{keras\}}; base \texttt{optim()} instead provides quasi-Newton methods (see Chapter 5)
+\end{framei}
+
+
+\begin{frame}[fragile]{Minimal example: Adam in PyTorch}
+
+\begin{verbatim}
+# model: a torch.nn.Module; loss_fn: e.g. MSELoss
+
+opt = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+for x, y in dataloader:          # mini-batches
+    opt.zero_grad()              # reset gradients
+    loss = loss_fn(model(x), y)  # forward pass
+    loss.backward()              # backprop -> .grad
+    opt.step()                   # Adam update
+\end{verbatim}
+
+\begin{itemize}
+\item The same four calls drive every optimizer: swap \texttt{Adam} for \texttt{SGD}, \texttt{AdaGrad}, \ldots
+\end{itemize}
+\end{frame}
+
+
+\begin{framei}{Hyperparameters: defaults usually work}
+\item These methods introduce hyperparameters: step size $\alpha$, stability constant $\beta$, decay rates $\rho_1, \rho_2$, $\dots$
+\item \textbf{But:} Defaults are usually strong -- e.g. Adam with $\alpha = 0.001$, $\rho_1 = 0.9$, $\rho_2 = 0.999$, $\beta = 10^{-8}$ works across many tasks
+\item $\Rightarrow$ Can be applied effectively without extensive tuning (although tuning can pay off)
+\spacer
+\item Main knob worth tuning: the \textbf{step size} (and its schedule)
+\end{framei}
+
+\endlecture
+\end{document}
