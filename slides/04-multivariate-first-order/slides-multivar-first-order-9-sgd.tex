@@ -126,8 +126,8 @@ SGD trajectory much more noisy than of GD (due to stochastic gradient estimates)
 \item[]
 \imageC[0.7]{figure_man/sgd_example_confusion_areas.png}
 \begin{center}\begin{small}
-\textbf{Blue area}: Each $-\nabla g_i(\xv)$ points towards minimum\\
-\textbf{Red area} (\enquote{confusion area}): $-\nabla g_i(\xv)$ might point away from minimum of $g(\xv)$ and perform a suboptimal move
+\textbf{Blue area}: Each $-\nabla g_i(\xv)$ points towards minimum of $g(\xv)$ \\
+\textbf{Red area} (\enquote{confusion area}): $-\nabla g_i(\xv)$ might point away from minimum and perform a suboptimal move
 \end{small} \end{center}
 \end{framei}
 
@@ -149,10 +149,10 @@ $$
 \item The larger the batch size $m$
 \begin{itemize}
     \item the better the approximation to $\nabla_{\xv} g(\xv)$
-    \item the lower the variance
     \item the lower the risk of performing steps in the wrong direction
+    \item the lower the variance
+    \item \textbf{But:} Maximum batch size is usually limited by computational resources (memory)
 \end{itemize}
-\item As maximum batch size is usually limited by computational resources (memory), choosing a suitable step size is crucial
 \vfill
 \imageC[0.9]{figure_man/sgd_example_batch_size.png}
 \begin{center}\begin{small}
@@ -173,7 +173,7 @@ wir wollen vielleicht auch darüber reden dass SGD saddle points escaped kann}
 \begin{framei}{Effect of step size}
 \item The smaller the step size $\alpha$
 \begin{itemize}
-    \item the smaller a step in a potentially wrong direction (reduced magnitude of erratic steps)
+    \item the smaller erratic steps in potentially wrong directions
     \item the lower the effect of gradient variance
     \item \textbf{But:} Risk of impaired performance by not moving far enough
 \end{itemize} 
@@ -184,7 +184,7 @@ $$
 (``how much noise affects you'' by ``how far you can get'')
 \end{framei}
 
-\begin{framei}{SGD with decreasing step size}
+\begin{framei}{Step size control for SGD}
 \item Popular solution: Decreasing step size %fulfilling $\alpha^{[t]} \in \order(1/t)$
 \begin{itemize}
     \item Initially, step size shall be large enough to make progress
@@ -200,7 +200,7 @@ Decreasing step size leads to more stable convergence
 % \item (Common alternative: $\alpha^{[t]} \in \order(1/\sqrt{t})$ to avoid step size getting small too fast)
 \end{framei}
 
-\begin{framev}{Advanced step size control}
+\begin{framev}{Step size control for SGD}
 \begin{blocki}{Why not Armijo-based step size control?}
 \item Backtracking line search or other approaches based on Armijo rule usually not suitable: Armijo condition
 $$
@@ -226,7 +226,7 @@ requires evaluating full gradient
 \begin{framev}[fs=small]{SGD and ML}
 \begin{blocki}{General remarks:}
 \item SGD is a variant of GD
-\item SGD particularly suitable for large-scale ML when evaluating gradient is too expensive / restricted by computational resources
+\item SGD particularly suitable for large-scale ML when evaluating gradient is too expensive
 \item Thus, SGD and variants are the most commonly used methods in modern ML with e.g. neural networks
 \item Note that even for the linear model and quadratic loss, where a closed form solution is available, SGD is often used if the size $n$ of the dataset is too large and the design matrix does not fit into memory
 \end{blocki}
