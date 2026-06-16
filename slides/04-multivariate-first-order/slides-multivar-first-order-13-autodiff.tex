@@ -22,7 +22,7 @@ figure/nn_architecture.pdf
 \item DNNs as computational graphs
 \item Gradients via the chain rule and vector-Jacobian products (VJPs)
 \item Backpropagation algorithm
-\item Automatic differentiation in practice
+\item Implementation via automatic differentiation
 }
 
 
@@ -76,24 +76,18 @@ $$
 
 \begin{framei}{Gradient via the chain rule}
 \item Gradient w.r.t. the parameters $\thetav_i$ factorizes via the \textbf{chain rule}:
-$$
-\nabla_{\thetav_i} L = \pd{L}{\zv_m} \pd{\zv_m}{\zv_{m-1}} \cdots \pd{\zv_{i+1}}{\zv_i} \; \pd{\zv_i}{\thetav_i}
-$$
-% \spacer
+\begin{align*}
+\nabla_{\thetav_i} L &= \pd{L}{\zv_m} \pd{\zv_m}{\zv_{m-1}} \cdots \pd{\zv_{i+1}}{\zv_i} \; \pd{\zv_i}{\thetav_i} \\
+&= \underbrace{\pd{L}{\zv_i}}_{=: \, \adj{i}} \; \pd{\zv_i}{\thetav_i}
+\end{align*}
 \item[$\Rightarrow$] A complicated gradient becomes a \textbf{product of simple, local derivatives}
-%
-\item Split the product into the part up to node $i$ and the last factor:
-$$
-\nabla_{\thetav_i} L = \underbrace{\pd{L}{\zv_i}}_{=: \, \adj{i}} \; \pd{\zv_i}{\thetav_i}
-$$
-\item[$\Rightarrow$]
-Each layer's gradient $\nabla_{\thetav_i} L$ requires the node adjoint $\adj{i} \in \R^{1 \times p_i}$
+\item[$\Rightarrow$] Each layer's gradient $\nabla_{\thetav_i} L$ requires its associated \textbf{`node adjoint'} $\adj{i} \in \R^{1 \times p_i}$
 %
 \end{framei}
 
-\begin{framev}{Sequence of vector-Jacobian products}
+\begin{framev}{Adjoints as sequences of VJPs}
 \begin{itemize}
-\item Node adjoints $\adj{i}$ can be recursively computed in reverse order for $i = m, (m-1), \ldots, 1$:
+\item All node adjoints $\adj{i}$ can be recursively computed in reverse order for $i = m, (m-1), \ldots, 1$:
 $$
 \adj{i} = \pd{L}{\zv_{i+1}} \pd{\zv_{i+1}}{\zv_i} = \adj{i+1} \, \pd{\zv_{i+1}}{\zv_i}
 $$
@@ -103,91 +97,96 @@ $$
 \end{itemize}
 {\footnotesize(The seed is $\pd{L}{L} = 1$, treated as the initial vector before $\adj{m} = \pd{L}{\zv_m}$.)}
 \item[$\Rightarrow$] This constitutes a sequence of \textbf{vector-Jacobian products (VJPs)}
-\item Each $\adj{i}$ must only be computed \textbf{once} and can be \textbf{reused} for the gradient of every parameter $\thetav_j$ feeding into node $i$
+\item[$\Rightarrow$] Each $\adj{i}$ must only be computed \textbf{once} and can be \textbf{reused} for lower layers
 \end{itemize}
 \end{framev}
 
 
 \begin{framei}{Backpropagation algorithm}
-\item This motivates the \textbf{backpropagation} algorithm with \textbf{two phases}
+\item This motivates the \textbf{backpropagation} algorithm to compute the full gradient $\nabla_{\thetav} L$ in \textbf{two phases}:
+%
 \item \textbf{Forward pass}
 \begin{itemize}
   \item Set $\zv_0 = \xv$ and walk forward through the graph up to $L$ %via $\zv_i = h_i(\zv_{i-1}; \thetav_i)$,
-  \item While doing so, \textbf{cache} every node value $\zv_i$, because the VJPs in the subsequent phase are evaluated at these values
+  \item While doing so, \textbf{cache} every node value $\zv_i$, because the derivatives in the subsequent phase are evaluated at these values
 \end{itemize}
 \item \textbf{Backward pass}
 \begin{itemize}
-\item Compute the vectors $\adj{i}$ as a sequence of VJPs in reverse order (see previous slide)
+\item Compute the adjoints $\adj{i}$ as a sequence of VJPs by moving backward through the graph (see previous slide)
 \item Obtain each parameter gradient $\nabla_{\thetav_i} L = \adj{i} \, \pd{\zv_i}{\thetav_i}$ (again as a VJP)
 \end{itemize}
 % \spacer
-\item[$\Rightarrow$] One forward and one backward pass give the full gradient
 \end{framei}
 
 
-\begin{framei}{Automatic differentiation (autodiff)}
-\item Backprop still needs manual graph building and Jacobian derivation
-\item \textbf{Autodiff} automates exactly this and powers modern frameworks:
-\item[] PyTorch (\texttt{autograd}), JAX, TensorFlow
-\spacer
-\item It \textbf{traces} the code into a computational graph -- now dividing the DNN into even \textbf{more primitive operations} ($+$, $\cdot$, $\sigma$, $\exp$, \ldots) than whole layers
-\item The \textbf{same chain rule / sequence of VJPs} is applied, just on this more \textbf{granular} graph
-\item Each primitive carries a pre-registered \textbf{VJP rule}, applied in the backward pass
-\end{framei}
-
-
-\begin{framei}{VJP rules avoid the Jacobian}
-\item For a primitive $\bm{u} = g(\zv)$, autodiff stores a rule returning the VJP
-$$
-\text{vjp}_g(\bm{v}, \zv, \bm{u}) = \bm{v} \, \bm{J}_{\zv}(g), \qquad \text{without ever forming } \bm{J}_{\zv}(g)
-$$
-\item \textbf{Example} (elementwise $\exp$): $\bm{u} = \exp(\zv)$, so $\bm{J} = \diag(\exp(\zv)) = \diag(\bm{u})$
-$$
-\bm{v} \, \bm{J} = \bm{v} \, \diag(\bm{u}) = \bm{v} \odot \bm{u}
-$$
-\item[] {\footnotesize i.e. \texttt{def\_vjp(exp, lambda v, u: v * u)} -- an elementwise product}
-\spacer
-\item The rule maps a vector to a vector; the matrix $\bm{J}$ is never materialized
-\end{framei}
-
-
-\begin{framei}{Why this is efficient}
-\item \textbf{Naive:} build $\bm{J}_i \in \R^{p_i \times p_{i-1}}$, then multiply
+\begin{framei}{Automatic differentiation}
+\item The backpropagation algorithm requires manually building a computational graph and deriving the corresponding derivatives
+\item (Reverse-mode) automatic differentiation (\textbf{autodiff}) efficiently automates this process
+\item Traces code to automatically build a computational graph
 \begin{itemize}
-\item Costs $\mathcal{O}(p_i \, p_{i-1})$ time and memory just to store the Jacobian
+  \item Decomposes DNNs into \textbf{primitive operations} (e.g. $+$, $\cdot$, $\sigma$, $\exp$, \ldots; more granular than entire layers)
 \end{itemize}
-\item \textbf{VJP rule:} matrix-free, e.g. the $\exp$ rule is $\mathcal{O}(p_i)$ time and memory
-\item Results stay vectors and adjoints are \textbf{recycled} across the backward pass
-\spacer
-\item \textbf{Memory:} the forward pass must cache all node values $\zv_i$ (activations)
-\item[$\Rightarrow$] Gradient of a scalar loss costs about \textbf{one forward and one backward pass}
+\item Automatically computes derivatives
+\begin{itemize}
+  \item Applies the chain rule on the (more granular) graph and efficiently computes VJPs in the backward pass via rules (see next slides) 
+\end{itemize}
+\item[$\Rightarrow$] Autodiff is a key component powering modern ML frameworks (e.g. \texttt{autograd} in PyTorch)
 \end{framei}
 
+\begin{framei}{VJP rules}
+\item Consider a primitive operation $g: \R^{d_{\mathrm{in}}} \to \R^{d_{\mathrm{out}}}$ and the VJP $\bm{v} \, \pd{g(\zv)}{\zv} \in \R^{1 \times d_{\mathrm{in}}}$
+\begin{itemize}
+  \item $\bm{v} \in \R^{1 \times d_{\mathrm{out}}}$ as an arbitrary (row) vector
+  \item $\pd{g(\zv)}{\zv}= \bm{J}_{g}(\zv) \in \R^{d_{\mathrm{out}} \times d_{\mathrm{in}}}$ as the Jacobian of the operation evaluated at $\zv$
+\end{itemize}
+\item Autodiff stores efficient computation rules for these VJPs, i.e. $\text{vjp}_g(\bm{v}, \zv, g(\zv))= \bm{v} \, \pd{g(\zv)}{\zv}$
+\begin{itemize}
+  \item Reformulation that depends only on $\bm{v}$ and the operation input $\zv$ and (cached) output $g(\zv)$
+  \item[$\Rightarrow$] The (potentially large) Jacobian $\bm{J}_{g}(\zv)$ need not be materialized and is only implicitly multiplied
+\end{itemize}
+\end{framei}
 
-\begin{framev}{Worked example}
+\begin{framei}{VJP rules: example}
+\item \textbf{Example}: Consider the \textbf{elementwise sigmoid} $\sigma: \R^{d} \to \R^{d}$
 \begin{itemize}
-\item Small graph with squared output, $\thetav = (\bm{W}, \bm{U})$:
+  \item i.e. $\bm{a} := \sigma(\zv)$ with $a_i = \sigma(z_i)$, each output depending only on its own input
 \end{itemize}
-\vfill
-\begin{center}
-\begin{tikzpicture}[>=stealth', node distance=1.6cm, every node/.style={font=\footnotesize}]
-  \tikzstyle{nd}=[circle, draw, very thick, minimum size=0.85cm, fill=black!4]
-  \node[nd] (x) {$\xv$};
-  \node[nd, right=of x] (z1) {$\zv_1$};
-  \node[nd, right=of z1] (z2) {$\zv_2$};
-  \node[nd, right=of z2, fill=blue!10] (L) {$L$};
-  \draw[->,thick] (x)--(z1) node[midway,above,font=\scriptsize]{$\bm{W}\xv$};
-  \draw[->,thick] (z1)--(z2) node[midway,above,font=\scriptsize]{$\bm{U}\zv_1$};
-  \draw[->,thick] (z2)--(L) node[midway,above,font=\scriptsize]{$\tfrac12 \|\zv_2\|^2$};
-\end{tikzpicture}
-\end{center}
-\vfill
+\item The Jacobian $\bm{J}_{\sigma}(\zv) = \pd{\sigma(\zv)}{\zv} \in \R^{d \times d}$ is \textbf{diagonal}
 \begin{itemize}
-\item \textbf{Forward:} $\zv_1 = \bm{W}\xv$, \; $\zv_2 = \bm{U}\zv_1$, \; $L = \tfrac12 \|\zv_2\|^2$
-\item \textbf{Backward (VJPs):} $\adj{2} = \zv_2^\top$, \; $\adj{1} = \adj{2}\bm{U}$, \; $\nabla_{\bm{W}} L = \adj{1} \, \pd{\zv_1}{\bm{W}}$
-% \item \textbf{Outlook:} the same idea computes Jacobians and feeds second order methods (Chapter 5); in code this is just \texttt{loss.backward()}
+\item $[\bm{J}_{\sigma}(\zv)]_{ii} = \sigma'(z_i) = a_i(1 - a_i)$ and $[\bm{J}_{\sigma}(\zv)]_{ij} = 0$ for $i \neq j$
 \end{itemize}
-\end{framev}
+%
+\item Thus the VJP rule collapses to an elementwise product:
+\begin{itemize}
+\item $\text{vjp}_\sigma(\bm{v}, \zv, \bm{a}) = \bm{v} \, \pd{\sigma(\zv)}{\zv} = \bm{v} \odot \bm{a} \odot (1 - \bm{a})$
+\end{itemize}
+\item[$\Rightarrow$] $\mathcal{O}(d^2)$ cost for building, storing and multiplying the explicit Jacobian drops to $\mathcal{O}(d)$
+\end{framei}
+
+% \begin{framev}{Worked example}
+% \begin{itemize}
+% \item Small graph with squared output, $\thetav = (\bm{W}, \bm{U})$:
+% \end{itemize}
+% \vfill
+% \begin{center}
+% \begin{tikzpicture}[>=stealth', node distance=1.6cm, every node/.style={font=\footnotesize}]
+%   \tikzstyle{nd}=[circle, draw, very thick, minimum size=0.85cm, fill=black!4]
+%   \node[nd] (x) {$\xv$};
+%   \node[nd, right=of x] (z1) {$\zv_1$};
+%   \node[nd, right=of z1] (z2) {$\zv_2$};
+%   \node[nd, right=of z2, fill=blue!10] (L) {$L$};
+%   \draw[->,thick] (x)--(z1) node[midway,above,font=\scriptsize]{$\bm{W}\xv$};
+%   \draw[->,thick] (z1)--(z2) node[midway,above,font=\scriptsize]{$\bm{U}\zv_1$};
+%   \draw[->,thick] (z2)--(L) node[midway,above,font=\scriptsize]{$\tfrac12 \|\zv_2\|^2$};
+% \end{tikzpicture}
+% \end{center}
+% \vfill
+% \begin{itemize}
+% \item \textbf{Forward:} $\zv_1 = \bm{W}\xv$, \; $\zv_2 = \bm{U}\zv_1$, \; $L = \tfrac12 \|\zv_2\|^2$
+% \item \textbf{Backward (VJPs):} $\adj{2} = \zv_2^\top$, \; $\adj{1} = \adj{2}\bm{U}$, \; $\nabla_{\bm{W}} L = \adj{1} \, \pd{\zv_1}{\bm{W}}$
+% % \item \textbf{Outlook:} the same idea computes Jacobians and feeds second order methods (Chapter 5); in code this is just \texttt{loss.backward()}
+% \end{itemize}
+% \end{framev}
 
 \endlecture
 \end{document}
