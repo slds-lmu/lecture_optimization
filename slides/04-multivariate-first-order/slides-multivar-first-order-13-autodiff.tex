@@ -1,0 +1,199 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+
+% local helpers for this chunk
+\newcommand{\zv}{\bm{z}}                 % node value (vector)
+\newcommand{\adj}[1]{\bar{\bm{z}}_{#1}}  % adjoint of node i
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+First order methods
+}{
+Backpropagation and autodiff
+}{
+figure/nn_architecture.pdf
+}{
+\item DNNs as computational graphs
+\item Gradients via the chain rule and vector-Jacobian products (VJPs)
+\item Backpropagation: forward and backward pass
+\item Automatic differentiation in practice
+}
+
+
+\begin{framei}{Computing gradients for DNNs}
+\item We now train \textbf{deep neural networks (DNNs)}: models with a very large parameter vector $\thetav \in \R^{p}$ ($p$ potentially in the millions)
+\item All methods discussed in this chapter rely on the gradient of the \textbf{(scalar) empirical risk} w.r.t.\ $\thetav$ (SGD: on mini-batch estimates of it)
+$$
+\nabla_{\thetav} \risket \in \R^{1 \times p}
+$$
+% \item The objective is \textbf{scalar}, so this is a single row gradient -- but $p$ is huge
+\spacer
+\item \textbf{Question:} How to compute it \textbf{efficiently}?
+\end{framei}
+
+
+\begin{framev}{DNNs are computational graphs}
+\begin{itemize}
+\item A DNN is a \textbf{directed acyclic graph} (DAG) of simple operations
+\item An \textbf{ordered sequence of nodes} $\zv_i$ with \textbf{directed edges}
+\item Nodes $\zv_i$ hold intermediate values, edges are operations
+\item Layer $i$ maps $\zv_{i-1}$ to $\zv_i = h_i(\zv_{i-1}; \thetav_i)$, e.g. $\zv_i = \sigma(\bm{W}_i \zv_{i-1} + \bm{b}_i)$ with $\thetav_i = (\bm{W}_i, \bm{b}_i)$
+\end{itemize}
+\vfill
+\begin{center}
+\begin{tikzpicture}[>=stealth', node distance=1.35cm, every node/.style={font=\footnotesize}]
+  \tikzstyle{nd}=[circle, draw, very thick, minimum size=0.85cm, fill=black!4]
+  \node[nd] (x) {$\xv$};
+  \node[nd, right=of x] (z1) {$\zv_1$};
+  \node[nd, right=of z1] (z2) {$\zv_2$};
+  \node[right=0.8cm of z2] (dots) {$\cdots$};
+  \node[nd, right=0.9cm of dots] (zm) {$\zv_m$};
+  \node[nd, right=of zm, fill=blue!10] (L) {$L$};
+  \draw[->,thick] (x)--(z1); \draw[->,thick](z1)--(z2); \draw[->,thick](z2)--(dots);
+  \draw[->,thick](dots)--(zm); \draw[->,thick](zm)--(L);
+  \node[font=\scriptsize, below=0.45cm of z1] (t1){$\thetav_1$}; \draw[->,gray](t1)--(z1);
+  \node[font=\scriptsize, below=0.45cm of z2] (t2){$\thetav_2$}; \draw[->,gray](t2)--(z2);
+  \node[font=\scriptsize, below=0.45cm of zm] (tm){$\thetav_m$}; \draw[->,gray](tm)--(zm);
+  \node[font=\scriptsize, above=0.15cm of zm]{$= f(\xv \mid \thetav)$};
+  \node[font=\scriptsize, above=0.15cm of L]{$L(y, \cdot)$};
+\end{tikzpicture}
+\end{center}
+\end{framev}
+
+
+\begin{framei}{Gradient via the chain rule}
+\item Gradient w.r.t. the parameters $\thetav_i$ of layer $i$ \textbf{factorizes} via the \textbf{chain rule}:
+$$
+\nabla_{\thetav_i} L = \pd{L}{\zv_m} \pd{\zv_m}{\zv_{m-1}} \cdots \pd{\zv_{i+1}}{\zv_i} \; \pd{\zv_i}{\thetav_i}
+$$
+\spacer
+\item[$\Rightarrow$] A complicated gradient becomes a \textbf{product of simple, local derivatives}
+\end{framei}
+
+
+\begin{framev}{Each gradient is a vector-Jacobian product}
+\begin{itemize}
+\item Split the product into the part up to node $i$ and the last factor:
+\end{itemize}
+$$
+\nabla_{\thetav_i} L = \underbrace{\pd{L}{\zv_i}}_{=: \, \adj{i}} \; \pd{\zv_i}{\thetav_i}
+$$
+\begin{itemize}
+\item $\adj{i} := \pd{L}{\zv_i} \in \R^{1 \times p_i}$ is a (row) \textbf{vector}, \; $\pd{\zv_i}{\thetav_i}$ is a \textbf{Jacobian}
+\item A (row) vector times a Jacobian is a \textbf{vector-Jacobian product (VJP)}
+\end{itemize}
+\vfill
+\begin{center}
+\begin{tikzpicture}[>=stealth', every node/.style={font=\footnotesize}]
+  \node[draw, very thick, minimum width=2.2cm, minimum height=0.5cm] (a) {$\nabla_{\thetav_i} L$};
+  \node[right=0.25cm of a] (eq) {$=$};
+  \node[draw, very thick, minimum width=1.3cm, minimum height=0.5cm, right=0.25cm of eq] (v) {$\adj{i}$};
+  \node[draw, very thick, minimum width=2.2cm, minimum height=1.3cm, right=0.1cm of v, anchor=west] (J) {$\pd{\zv_i}{\thetav_i}$};
+  \node[below=0.05cm of a, font=\scriptsize, gray] {$1 \times \dim \thetav_i$};
+  \node[below=0.05cm of v, font=\scriptsize, gray] {$1 \times p_i$};
+  \node[below=0.05cm of J, font=\scriptsize, gray] {$p_i \times \dim \thetav_i$};
+\end{tikzpicture}
+\end{center}
+\end{framev}
+
+
+\begin{framei}{The vectors $\adj{i}$ are themselves a sequence of VJPs}
+\item Each layer's gradient $\nabla_{\thetav_i} L$ uses its own vector $\adj{i} = \pd{L}{\zv_i}$
+\item But the $\adj{i}$ are linked by the chain rule -- again a \textbf{sequence of VJPs}:
+$$
+\adj{i} = \pd{L}{\zv_{i+1}} \pd{\zv_{i+1}}{\zv_i} = \adj{i+1} \, \bm{J}_{i+1}, \qquad \bm{J}_{i+1} := \pd{\zv_{i+1}}{\zv_i}
+$$
+\item[$\Rightarrow$] Each $\adj{i}$ is computed \textbf{once} and \textbf{reused} by every parameter $\thetav_j$ feeding into node $i$
+\spacer
+\item Start from the output and recurse backward; the \textbf{seed} is $\pd{L}{L} = 1$, treated as the initial vector before $\adj{m} = \pd{L}{\zv_m}$
+\end{framei}
+
+
+\begin{framei}{Backpropagation: forward and backward pass}
+\item In practice, this is the \textbf{backpropagation} algorithm with \textbf{two phases}
+\item \textbf{Forward pass:} set $\zv_0 = \xv$ and walk forward, $\zv_i = h_i(\zv_{i-1}; \thetav_i)$, up to $L$
+\begin{itemize}
+\item \textbf{Cache} every node value $\zv_i$: the Jacobians/VJPs in phase~2 are evaluated at these values
+\end{itemize}
+\item \textbf{Backward pass:} in \textbf{reverse order}
+\begin{itemize}
+\item compute the vectors $\adj{i} = \adj{i+1} \, \bm{J}_{i+1}$ (repeated VJPs)
+\item read off each parameter gradient $\nabla_{\thetav_i} L = \adj{i} \, \pd{\zv_i}{\thetav_i}$ (a VJP)
+\end{itemize}
+\spacer
+\item[$\Rightarrow$] \textbf{One forward and one backward pass} give the full gradient
+\end{framei}
+
+
+\begin{framei}{Automatic differentiation (autodiff)}
+\item Backprop still needs manual graph building and Jacobian derivation
+\item \textbf{Autodiff} automates exactly this and powers modern frameworks:
+\item[] PyTorch (\texttt{autograd}), JAX, TensorFlow
+\spacer
+\item It \textbf{traces} the code into a computational graph -- now dividing the DNN into even \textbf{more primitive operations} ($+$, $\cdot$, $\sigma$, $\exp$, \ldots) than whole layers
+\item The \textbf{same chain rule / sequence of VJPs} is applied, just on this more \textbf{granular} graph
+\item Each primitive carries a pre-registered \textbf{VJP rule}, applied in the backward pass
+\end{framei}
+
+
+\begin{framei}{VJP rules avoid the Jacobian}
+\item For a primitive $\bm{u} = g(\zv)$, autodiff stores a rule returning the VJP
+$$
+\text{vjp}_g(\bm{v}, \zv, \bm{u}) = \bm{v} \, \bm{J}_{\zv}(g), \qquad \text{without ever forming } \bm{J}_{\zv}(g)
+$$
+\item \textbf{Example} (elementwise $\exp$): $\bm{u} = \exp(\zv)$, so $\bm{J} = \diag(\exp(\zv)) = \diag(\bm{u})$
+$$
+\bm{v} \, \bm{J} = \bm{v} \, \diag(\bm{u}) = \bm{v} \odot \bm{u}
+$$
+\item[] {\footnotesize i.e. \texttt{def\_vjp(exp, lambda v, u: v * u)} -- an elementwise product}
+\spacer
+\item The rule maps a vector to a vector; the matrix $\bm{J}$ is never materialized
+\end{framei}
+
+
+\begin{framei}{Why this is efficient}
+\item \textbf{Naive:} build $\bm{J}_i \in \R^{p_i \times p_{i-1}}$, then multiply
+\begin{itemize}
+\item Costs $\mathcal{O}(p_i \, p_{i-1})$ time and memory just to store the Jacobian
+\end{itemize}
+\item \textbf{VJP rule:} matrix-free, e.g. the $\exp$ rule is $\mathcal{O}(p_i)$ time and memory
+\item Results stay vectors and adjoints are \textbf{recycled} across the backward pass
+\spacer
+\item \textbf{Memory:} the forward pass must cache all node values $\zv_i$ (activations)
+\item[$\Rightarrow$] Gradient of a scalar loss costs about \textbf{one forward and one backward pass}
+\end{framei}
+
+
+\begin{framev}{Worked example}
+\begin{itemize}
+\item Small graph with squared output, $\thetav = (\bm{W}, \bm{U})$:
+\end{itemize}
+\vfill
+\begin{center}
+\begin{tikzpicture}[>=stealth', node distance=1.6cm, every node/.style={font=\footnotesize}]
+  \tikzstyle{nd}=[circle, draw, very thick, minimum size=0.85cm, fill=black!4]
+  \node[nd] (x) {$\xv$};
+  \node[nd, right=of x] (z1) {$\zv_1$};
+  \node[nd, right=of z1] (z2) {$\zv_2$};
+  \node[nd, right=of z2, fill=blue!10] (L) {$L$};
+  \draw[->,thick] (x)--(z1) node[midway,above,font=\scriptsize]{$\bm{W}\xv$};
+  \draw[->,thick] (z1)--(z2) node[midway,above,font=\scriptsize]{$\bm{U}\zv_1$};
+  \draw[->,thick] (z2)--(L) node[midway,above,font=\scriptsize]{$\tfrac12 \|\zv_2\|^2$};
+\end{tikzpicture}
+\end{center}
+\vfill
+\begin{itemize}
+\item \textbf{Forward:} $\zv_1 = \bm{W}\xv$, \; $\zv_2 = \bm{U}\zv_1$, \; $L = \tfrac12 \|\zv_2\|^2$
+\item \textbf{Backward (VJPs):} $\adj{2} = \zv_2^\top$, \; $\adj{1} = \adj{2}\bm{U}$, \; $\nabla_{\bm{W}} L = \adj{1} \, \pd{\zv_1}{\bm{W}}$
+% \item \textbf{Outlook:} the same idea computes Jacobians and feeds second order methods (Chapter 5); in code this is just \texttt{loss.backward()}
+\end{itemize}
+\end{framev}
+
+\endlecture
+\end{document}
