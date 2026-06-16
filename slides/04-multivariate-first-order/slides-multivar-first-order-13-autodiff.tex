@@ -21,29 +21,36 @@ figure/nn_architecture.pdf
 }{
 \item DNNs as computational graphs
 \item Gradients via the chain rule and vector-Jacobian products (VJPs)
-\item Backpropagation: forward and backward pass
+\item Backpropagation algorithm
 \item Automatic differentiation in practice
 }
 
 
 \begin{framei}{Computing gradients for DNNs}
 \item We now train \textbf{deep neural networks (DNNs)}: models with a very large parameter vector $\thetav \in \R^{p}$ ($p$ potentially in the millions)
-\item All methods discussed in this chapter rely on the gradient of the \textbf{(scalar) empirical risk} w.r.t.\ $\thetav$ (SGD: on mini-batch estimates of it)
+\item All methods discussed in this chapter rely on the gradient of the (scalar) empirical risk w.r.t.\ $\thetav$: 
 $$
 \nabla_{\thetav} \risket \in \R^{1 \times p}
 $$
+\\ {\footnotesize(SGD relies on mini-batch estimates of the gradient)}
 % \item The objective is \textbf{scalar}, so this is a single row gradient -- but $p$ is huge
+\item For brevity, we write $L := \risket$ in the following
 \spacer
 \item \textbf{Question:} How to compute it \textbf{efficiently}?
 \end{framei}
 
 
-\begin{framev}{DNNs are computational graphs}
+\begin{framev}{DNNs as computational graphs}
 \begin{itemize}
-\item A DNN is a \textbf{directed acyclic graph} (DAG) of simple operations
-\item An \textbf{ordered sequence of nodes} $\zv_i$ with \textbf{directed edges}
-\item Nodes $\zv_i$ hold intermediate values, edges are operations
-\item Layer $i$ maps $\zv_{i-1}$ to $\zv_i = h_i(\zv_{i-1}; \thetav_i)$, e.g. $\zv_i = \sigma(\bm{W}_i \zv_{i-1} + \bm{b}_i)$ with $\thetav_i = (\bm{W}_i, \bm{b}_i)$
+\item A DNN can be represented as a \textbf{directed acyclic graph} (DAG)
+\begin{itemize}
+  \item An \textbf{ordered sequence of nodes} with \textbf{directed edges}
+  \item Nodes hold intermediate values $\zv_i$ according to operations $h_i(\cdot)$ of edges feeding into them
+\end{itemize}
+\item Layer $i$ maps $\zv_{i-1}$ to $\zv_i = h_i(\zv_{i-1}; \thetav_i)$
+\begin{itemize}
+  \item e.g. $\zv_i = \sigma(\bm{W}_i \zv_{i-1} + \bm{b}_i)$ with $\thetav_i = (\bm{W}_i, \bm{b}_i)$
+\end{itemize}
 \end{itemize}
 \vfill
 \begin{center}
@@ -68,66 +75,53 @@ $$
 
 
 \begin{framei}{Gradient via the chain rule}
-\item Gradient w.r.t. the parameters $\thetav_i$ of layer $i$ \textbf{factorizes} via the \textbf{chain rule}:
+\item Gradient w.r.t. the parameters $\thetav_i$ factorizes via the \textbf{chain rule}:
 $$
 \nabla_{\thetav_i} L = \pd{L}{\zv_m} \pd{\zv_m}{\zv_{m-1}} \cdots \pd{\zv_{i+1}}{\zv_i} \; \pd{\zv_i}{\thetav_i}
 $$
-\spacer
+% \spacer
 \item[$\Rightarrow$] A complicated gradient becomes a \textbf{product of simple, local derivatives}
-\end{framei}
-
-
-\begin{framev}{Each gradient is a vector-Jacobian product}
-\begin{itemize}
+%
 \item Split the product into the part up to node $i$ and the last factor:
-\end{itemize}
 $$
 \nabla_{\thetav_i} L = \underbrace{\pd{L}{\zv_i}}_{=: \, \adj{i}} \; \pd{\zv_i}{\thetav_i}
 $$
+\item[$\Rightarrow$]
+Each layer's gradient $\nabla_{\thetav_i} L$ requires the node adjoint $\adj{i} \in \R^{1 \times p_i}$
+%
+\end{framei}
+
+\begin{framev}{Sequence of vector-Jacobian products}
 \begin{itemize}
-\item $\adj{i} := \pd{L}{\zv_i} \in \R^{1 \times p_i}$ is a (row) \textbf{vector}, \; $\pd{\zv_i}{\thetav_i}$ is a \textbf{Jacobian}
-\item A (row) vector times a Jacobian is a \textbf{vector-Jacobian product (VJP)}
+\item Node adjoints $\adj{i}$ can be recursively computed in reverse order for $i = m, (m-1), \ldots, 1$:
+$$
+\adj{i} = \pd{L}{\zv_{i+1}} \pd{\zv_{i+1}}{\zv_i} = \adj{i+1} \, \pd{\zv_{i+1}}{\zv_i}
+$$
+\begin{itemize}
+  \item $\adj{i+1} \in \R^{1 \times p_{i+1}}$ is a (row) \textbf{vector}
+  \item $\pd{\zv_{i+1}}{\zv_i} \in \R^{p_{i+1} \times p_i}$ is a \textbf{Jacobian}
 \end{itemize}
-\vfill
-\begin{center}
-\begin{tikzpicture}[>=stealth', every node/.style={font=\footnotesize}]
-  \node[draw, very thick, minimum width=2.2cm, minimum height=0.5cm] (a) {$\nabla_{\thetav_i} L$};
-  \node[right=0.25cm of a] (eq) {$=$};
-  \node[draw, very thick, minimum width=1.3cm, minimum height=0.5cm, right=0.25cm of eq] (v) {$\adj{i}$};
-  \node[draw, very thick, minimum width=2.2cm, minimum height=1.3cm, right=0.1cm of v, anchor=west] (J) {$\pd{\zv_i}{\thetav_i}$};
-  \node[below=0.05cm of a, font=\scriptsize, gray] {$1 \times \dim \thetav_i$};
-  \node[below=0.05cm of v, font=\scriptsize, gray] {$1 \times p_i$};
-  \node[below=0.05cm of J, font=\scriptsize, gray] {$p_i \times \dim \thetav_i$};
-\end{tikzpicture}
-\end{center}
+{\footnotesize(The seed is $\pd{L}{L} = 1$, treated as the initial vector before $\adj{m} = \pd{L}{\zv_m}$.)}
+\item[$\Rightarrow$] This constitutes a sequence of \textbf{vector-Jacobian products (VJPs)}
+\item Each $\adj{i}$ must only be computed \textbf{once} and can be \textbf{reused} for the gradient of every parameter $\thetav_j$ feeding into node $i$
+\end{itemize}
 \end{framev}
 
 
-\begin{framei}{The vectors $\adj{i}$ are themselves a sequence of VJPs}
-\item Each layer's gradient $\nabla_{\thetav_i} L$ uses its own vector $\adj{i} = \pd{L}{\zv_i}$
-\item But the $\adj{i}$ are linked by the chain rule -- again a \textbf{sequence of VJPs}:
-$$
-\adj{i} = \pd{L}{\zv_{i+1}} \pd{\zv_{i+1}}{\zv_i} = \adj{i+1} \, \bm{J}_{i+1}, \qquad \bm{J}_{i+1} := \pd{\zv_{i+1}}{\zv_i}
-$$
-\item[$\Rightarrow$] Each $\adj{i}$ is computed \textbf{once} and \textbf{reused} by every parameter $\thetav_j$ feeding into node $i$
-\spacer
-\item Start from the output and recurse backward; the \textbf{seed} is $\pd{L}{L} = 1$, treated as the initial vector before $\adj{m} = \pd{L}{\zv_m}$
-\end{framei}
-
-
-\begin{framei}{Backpropagation: forward and backward pass}
-\item In practice, this is the \textbf{backpropagation} algorithm with \textbf{two phases}
-\item \textbf{Forward pass:} set $\zv_0 = \xv$ and walk forward, $\zv_i = h_i(\zv_{i-1}; \thetav_i)$, up to $L$
+\begin{framei}{Backpropagation algorithm}
+\item This motivates the \textbf{backpropagation} algorithm with \textbf{two phases}
+\item \textbf{Forward pass}
 \begin{itemize}
-\item \textbf{Cache} every node value $\zv_i$: the Jacobians/VJPs in phase~2 are evaluated at these values
+  \item Set $\zv_0 = \xv$ and walk forward through the graph up to $L$ %via $\zv_i = h_i(\zv_{i-1}; \thetav_i)$,
+  \item While doing so, \textbf{cache} every node value $\zv_i$, because the VJPs in the subsequent phase are evaluated at these values
 \end{itemize}
-\item \textbf{Backward pass:} in \textbf{reverse order}
+\item \textbf{Backward pass}
 \begin{itemize}
-\item compute the vectors $\adj{i} = \adj{i+1} \, \bm{J}_{i+1}$ (repeated VJPs)
-\item read off each parameter gradient $\nabla_{\thetav_i} L = \adj{i} \, \pd{\zv_i}{\thetav_i}$ (a VJP)
+\item Compute the vectors $\adj{i}$ as a sequence of VJPs in reverse order (see previous slide)
+\item Obtain each parameter gradient $\nabla_{\thetav_i} L = \adj{i} \, \pd{\zv_i}{\thetav_i}$ (again as a VJP)
 \end{itemize}
-\spacer
-\item[$\Rightarrow$] \textbf{One forward and one backward pass} give the full gradient
+% \spacer
+\item[$\Rightarrow$] One forward and one backward pass give the full gradient
 \end{framei}
 
 
