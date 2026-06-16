@@ -27,8 +27,8 @@ figure_man/momentum_illustration_medium.png
 
 \begin{framei}{Recap: Weaknesses of Gradient Descent}
 \item \textbf{Zig-zagging behavior:} For ill-conditioned problems, GD moves with a zig-zag course to the optimum, since the gradient points approximately orthogonal in the shortest direction to the minimum.
-\item \textbf{Slow crawling:} may vanish rapidly close to stationary points (e.g. saddle points) and hence also slows down progress.
-\item \textbf{Trapped in stationary points:} In some functions GD converges to stationary points (e.g. saddle points) since gradient on all sides is fairly flat and the step size is too small to pass this flat part.
+\item \textbf{Slow crawling:} Gradient may vanish rapidly close to stationary points (e.g. saddle points) and hence also slows down progress.
+\item \textbf{Trapped in stationary points:} In some functions, GD converges to stationary points (e.g. saddle points) since gradient on all sides is fairly flat and the step size is too small to pass this flat part.
 \spacer
 \item[] \textbf{Aim:} More efficient algorithms which quickly reach the minimum.
 \end{framei}
@@ -65,28 +65,28 @@ figure_man/momentum_illustration_medium.png
 
 
 \begin{framev}[fs=footnotesize]{Momentum: Analysis}
-\begin{equation*}
+$$
 \begin{aligned}
-\nuv^{[1]} &= \textcolor{blue}{\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]})} \\[0.1cm]
-\xv^{[1]} &= \xv^{[0]} + \textcolor{blue}{\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]})} \\[0.1cm]
+\nuv^{[1]} &= \textcolor{blue}{\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]})} \\
+\xv^{[1]} &= \xv^{[0]} + \textcolor{blue}{\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]})} \\
 \nuv^{[2]} &= \textcolor{red}{\varphi \nuv^{[1]} - \alpha \nabla f(\xv^{[1]})} \\
-&= \textcolor{red}{\varphi} \textcolor{blue}{(\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\[0.1cm]
-\xv^{[2]} &= \xv^{[1]} +\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\[0.1cm]
+&= \textcolor{red}{\varphi} \textcolor{blue}{(\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\
+\xv^{[2]} &= \xv^{[1]} +\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})} \\
 \nuv^{[3]} &= \textcolor{green}{\varphi \nuv^{[2]} - \alpha \nabla f(\xv^{[2]})} \\
-&= \textcolor{green}{\varphi} (\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})}) - \textcolor{green}{\alpha \nabla f(\xv^{[2]})} \\[0.1cm]
+&= \textcolor{green}{\varphi} (\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})}) - \textcolor{green}{\alpha \nabla f(\xv^{[2]})} \\
 \xv^{[3]} &= \xv^{[2]} + \textcolor{green}{\varphi} (\textcolor{red}{\varphi} \textcolor{blue}{(\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]}))} - \textcolor{red}{\alpha \nabla f(\xv^{[1]})}) - \textcolor{green}{\alpha \nabla f(\xv^{[2]})}  \\
 &= \xv^{[2]} + \varphi^3\nuv^{[0]} - \varphi^2\alpha\nabla f(\xv^{[0]}) - \varphi \alpha \nabla f(\xv^{[1]}) - \alpha \nabla f(\xv^{[2]}) \\
 &= \xv^{[2]} - \alpha(\varphi^2 \nabla f(\xv^{[0]}) + \varphi^1 \nabla f(\xv^{[1]}) + \varphi^0 \nabla f(\xv^{[2]})) + \varphi^3 \nuv^{[0]} \\
 \xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j \nabla f(\xv^{[t-j]}) + \varphi^{t+1}\nuv^{[0]}
 \end{aligned}
-\end{equation*}
+$$
 \end{framev}
 
 
-\begin{framev}[fs=footnotesize]{Momentum: Intuition}
+\begin{framev}[fs=small]{Momentum: Intuition}
 Suppose momentum always observes the same gradient $\nabla f(\xv^{[t]})$:
 \begin{align*}
-\xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j  \nabla f(\xv^{[j]}) + \varphi^{t+1}\nuv^{[0]} \\
+\xv^{[t+1]} &= \xv^{[t]} - \alpha \displaystyle\sum_{j = 0}^{t} \varphi^j  \nabla f(\xv^{[t-j]}) + \varphi^{t+1}\nuv^{[0]} \\
 &= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \displaystyle\sum_{j = 0}^{t} \varphi^j + \varphi^{t+1}\nuv^{[0]} \\
 &= \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1 - \varphi^{t+1}}{1 - \varphi} + \varphi^{t+1} \nuv^{[0]} \\
 &\to \xv^{[t]} - \alpha  \nabla f(\xv^{[t]}) \frac{1}{1 - \varphi} \qquad \text{ for } t \to \infty.
@@ -97,7 +97,7 @@ Momentum accelerates along $- \nabla f(\xv^{[t]})$ to terminal velocity yielding
 \end{framev}
 
 
-\begin{framev}[fs=footnotesize]{Momentum: Intuition (Example)}
+\begin{framev}[fs=small]{Momentum: Intuition (Example)}
 Vector $\nuv^{[3]}$ (for $\nuv^{[0]} = 0$):
 \begin{align*}
 \nuv^{[3]} &= \varphi (\varphi (\varphi \nuv^{[0]} - \alpha \nabla f(\xv^{[0]})) - \alpha \nabla f(\xv^{[1]})) - \alpha \nabla f(\xv^{[2]}) \\
@@ -106,16 +106,16 @@ Vector $\nuv^{[3]}$ (for $\nuv^{[0]} = 0$):
 \imageC[0.7]{figure_man/momentum_vectors.png}
 \spacer
 Successive gradients pointing in same/different directions increase/decrease velocity.\\
-Further geometric intuitions and detailed explanations: \url{https://distill.pub/2017/momentum/}
+Further geometric intuitions and detailed explanations: \furtherreading{DISTILL2017MOMENTUM}
 \end{framev}
 
 
-\begin{framev}{GD with Momentum: Zig-Zag Behaviour}
-Consider a two-dimensional quadratic form $\fx = x_1^2/2 + 10 x_2$.\\
+\begin{framev}{GD with Momentum: Zig-Zag Behavior}
+Consider a two-dimensional quadratic form $\fx = x_1^2/2 + 10 x_2^2$.\\
 \vfill
 Let $\xv^{[0]} = (10, 1)^\top$ and $\alpha = 0.1$.
-\imageC[0.8]{figure_man/momentum/compare_gd_momentum.png}
-\footnotesize GD shows stronger zig-zag behaviour than GD with momentum.
+\imageC[0.8]{figure/momentum_comparison.pdf}
+Momentum reduces zig-zagging and accelerates convergence in the direction of the minimum compared to vanilla GD.
 \end{framev}
 
 
@@ -125,7 +125,7 @@ Let $\xv^{[0]} = (10, 1)^\top$ and $\alpha = 0.1$.
 \item If momentum is too high, minimum is possibly missed
 \item We might go back and forth around or between local minima
 \end{itemize}
-\imageC[0.8]{figure_man/momentum/comparison_momentum_overshoot.png}
+\imageC[0.8]{figure/momentum_comparison_overshoot.pdf}
 \end{framev}
 
 
@@ -134,19 +134,19 @@ Consider the two-dimensional quadratic form $\fx = x_{1}^{2} - x_{2}^{2}$ with a
 \vfill
 Let $\xv^{[0]} = (-1/2, 10^{-3})^\top$ and $\alpha = 0.1$.
 \imageC[0.7]{figure_man/momentum/sgd_momentum_saddlepoint.png}
-\begin{footnotesize}
-GD was slowing down at the saddle point (vanishing gradient).\\
-GD with momentum ``breaks out'' of the saddle point and moves on.
-\end{footnotesize}
+\begin{itemizeS}[footnotesize]
+\item[] GD was slowing down at the saddle point (vanishing gradient); GD with momentum ``breaks out'' of the saddle point and moves on.
+\end{itemizeS}
 \end{framev}
 
 
 \begin{framev}{ERM for NN with GD}
 Let $\D = \Dset$, with $y = x_1^2 + x_2^2$ and minimize
 $$
-\risket = \sumin \left(\fxt - \yi\right)^2
+\risket = \sumin (\fxt - \yi)^2
 $$
-where $\fxt$ is a neural network with 2 hidden layers (2 units each).\\
+where $\fxt$ is a neural network with two hidden layers (16 ReLU units each).
+\vspace{-1cm}
 \imageC[0.59]{figure/gradient_descent_NN_0.pdf}
 \end{framev}
 
@@ -185,7 +185,9 @@ Without momentum ($\varphi = 0$):
 }{
 With momentum ($\varphi = 0.5$):
 \imageC[1]{figure/gradient_descent_NN_300_history_0.5.pdf}}
-Momentum eliminates the oscillations of vanilla GD (potentially caused by overshooting in high-curvature directions with a too-large learning rate), resulting in faster, smoother convergence
+\begin{itemizeS}[footnotesize]
+\item[] Momentum eliminates the oscillations of vanilla GD (potentially caused by overshooting in high-curvature directions with a too-large learning rate), resulting in faster, smoother convergence
+\end{itemizeS}
 \end{framev}
 
 
@@ -199,18 +201,20 @@ Momentum eliminates the oscillations of vanilla GD (potentially caused by oversh
 \end{align*}
 \imageC[0.8][https://cs231n.github.io/neural-networks-3/]{figure_man/nesterov.jpeg}
 \vfill
-\begin{footnotesize}
-Nesterov momentum update evaluates gradient at the ``look-ahead'' position.
-\end{footnotesize}
+\begin{itemizeS}[footnotesize]
+\item[] Nesterov momentum update evaluates gradient at the ``look-ahead'' position.
+\end{itemizeS}
 \end{framei}
 
 
-\begin{framev}[fs=footnotesize]{Momentum vs. Nesterov}
+\begin{framev}{Momentum vs. Nesterov}
 \imageC[0.9][https://medium.com/data-science/learning-parameters-part-2-a190bef2d12]{figure_man/nesterov_momentum.png}
 \vfill
-GD with momentum (\textbf{left}) vs. GD with Nesterov momentum (\textbf{right}).\\
+\begin{itemizeS}[footnotesize]
+\item[] GD with momentum (\textbf{left}) vs. GD with Nesterov momentum (\textbf{right}).\\
 Near minima, momentum makes a large step due to gradient history.\\
 Nesterov mom. ``looks ahead'' and reduces effect of gradient history.
+\end{itemizeS}
 \end{framev}
 
 \endlecture
