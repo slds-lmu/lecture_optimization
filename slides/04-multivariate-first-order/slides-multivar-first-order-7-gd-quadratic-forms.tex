@@ -18,10 +18,12 @@ First order methods
 }{
 GD on quadratic forms
 }{
-figure_man/gd.png
+figure/gd_quadratic_forms_xspace.pdf
 }{
 \item Eigendecomposition of\\quadratic forms
 \item GD steps in eigenspace
+\vspace{0.5cm}
+\item[] \hspace{-0.7cm}Slides based on \furtherreading{DISTILL2017MOMENTUM}
 }
 
 \begin{framei}[align=top]{Quadratic forms \& GD}
@@ -33,7 +35,7 @@ figure_man/gd.png
 $$
 \xv^{[t+1]} = \xv^{[t]} - \alpha (2 \Amat \xv^{[t]} - \bv)
 $$
-\imageFixed{4.5cm}{5cm}[0.65][http://doi.org/10.23915/distill.00006]{figure_man/gd.png}
+\imageFixed{4.5cm}{5cm}[0.65]{figure/gd_quadratic_forms_xspace.pdf}
 \end{framei}
 
 
@@ -43,7 +45,7 @@ $$
 \item Eigendecomposition: $\Amat = \V \bm{\Lambda} \V^T$
 \item $\V$ contains eigenvectors $\vv_i$ and $\bm{\Lambda} = \diag(\lambda_1, \dots, \lambda_n)$ stores eigenvalues
 \item Change of basis: $\wv^{[t]} = \V^T (\xv^{[t]} - \xvs)$
-\imageFixed{4.5cm}{5cm}[0.65]{figure_man/gd_eigenspace.png}
+\imageFixed{4.5cm}{5cm}[0.65]{figure/gd_quadratic_forms_wspace.pdf}
 \end{framei}
 
 
@@ -56,6 +58,7 @@ $$
 $$
 \wv^{[t+1]} = \wv^{[t]} - 2 \alpha \bm{\Lambda} \wv^{[t]}
 $$
+(proof on next slide)
 \end{framei}
 
 
@@ -76,7 +79,7 @@ Therefore, for each coordinate $i$:
 \begin{align*}
 w_i^{[t+1]} &= w_i^{[t]} - 2 \alpha \lambda_i w_i^{[t]} \\
 &= (1 - 2 \alpha \lambda_i) w_i^{[t]} \\
-&= (1 - 2 \alpha \lambda_i)^{t+1} w_i^{[0]}.
+&= (1 - 2 \alpha \lambda_i)^{t+1} w_i^{[0]}
 \end{align*}
 \end{framev}
 
@@ -88,20 +91,20 @@ $$
 $$
 \item This gives the difference in $\xv$-space in closed form
 \item The difference vector is written in the eigenbasis, initial error components $w_i^{[0]}$ decay with rate $1 - 2 \alpha \lambda_i$
-\item Smaller absolute values yield faster decay; values close to $1$ slow convergence
+\item The smaller $|1 - 2\alpha\lambda_i|$ is, the faster component $i$ decays; values close to $1$ mean almost no progress per step
 \item Eigenvectors with larger eigenvalues typically converge fastest, especially early on
 \end{framei}
 
 
 \begin{framei}{GD regret}
-\item We can also analyze the regret in $y$-space:
+\item We can also analyze the regret (in objective value space):
 $$
 q(\xv^{[t]}) - q(\xvs) = \frac{1}{2} \sum_{i = 1}^{d} (1 - 2 \alpha \lambda_i)^{2t} \lambda_i (w_i^{[0]})^2
 $$
-\item This is straightforward to derive; formulas only become slightly lengthy
-\item Rates become more similar once the slow modes dominate
+(straightforward to derive, formulas only become slightly lengthy)
+\item Rates become more similar once the slow modes (eigenvector components with small $\lambda_i$) dominate
 \vfill
-\imageC[0.45]{figure_man/gd_conv.png}
+\imageC[0.45]{figure/gd_conv.pdf}
 \end{framei}
 
 
