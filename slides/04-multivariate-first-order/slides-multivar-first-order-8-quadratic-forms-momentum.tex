@@ -14,7 +14,7 @@ First order methods
 }{
 Momentum on quadratic forms
 }{
-figure_man/momentum_conv_osc.png
+figure/momentum_conv_osc.pdf
 }{
 \item Momentum update in Eigenspace
 \item Effect of $\varphi$
@@ -93,7 +93,7 @@ u_i^{0} \\
 w_i^{0}
 \end{pmatrix}
 $$
-Taking a $2 \times 2$ matrix to the $t^{th}$ power can be expressed via its eigenvalues, 
+Taking a $2 \times 2$ matrix to the $t^{th}$ power can be expressed via its eigenvalues,
 $\sigma_1$ and $\sigma_2$, where $R_j = \frac{R - \sigma_j I}{\sigma_1 - \sigma_2}$:
 $$
 R^t = \begin{cases}
@@ -116,18 +116,19 @@ A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}\quad \text{and}\quad
 $$
 For us this is:
 $$
-\sigma_{1,2} = \frac{1 + \phi - \alpha \lambda_i \pm \sqrt{ (1 + \phi - \alpha \lambda_i)^2 - 4 \phi }}{2}
+\sigma_{1,2} = \frac{1 + \varphi - \alpha \lambda_i \pm \sqrt{ (1 + \varphi - \alpha \lambda_i)^2 - 4 \varphi }}{2}
 $$
 \begin{itemize}
 \item We need both $|\sigma_1|, |\sigma_2| \leq 1$ for convergence
-\item For the complex case this reduces to $2 \sqrt{\phi}$, which is surprisingly independent of $\alpha$ and $\lambda_i$
+\item For the complex case this reduces to $2 \sqrt{\varphi}$, which is surprisingly independent of $\alpha$ and $\lambda_i$
+\comment[NOTE]{TH}{double-check: $\det(R) = \varphi$ and $|\sigma|^2 = \det(R)$ in the complex case suggests the rate should be $\sqrt{\varphi}$, not $2\sqrt{\varphi}$. The Distill blogpost has the same expression -- verify there.}
 \item For the real case we cannot simplify
 \end{itemize}
 \end{framev}
 
 
 \begin{framev}[fs=footnotesize]{Momentum convergence regions}
-\imageC[0.8]{figure_man/momentum_convergence.png}
+\imageC[0.8]{figure/momentum_conv.pdf}
 \vfill
 Convergence rate is the slowest of $\max \{|\sigma_1|, |\sigma_2| \}$.
 Each region shows different convergence behavior.
@@ -136,8 +137,8 @@ Each region shows different convergence behavior.
 
 \begin{framev}[fs=footnotesize]{Momentum with complex eigenvalues}
 \splitV[0.48]
-{\imageC[1]{figure_man/momentum_conv_ripples.png}}
-{\imageC[1]{figure_man/momentum_ripples.png}}
+{\imageC[1]{figure/momentum_conv_ripples.pdf}}
+{\imageC[1]{figure/momentum_traj_ripples.pdf}}
 \vfill
 The eigenvalues of $R$ are complex and we see low frequency ripples.
 \end{framev}
@@ -145,8 +146,8 @@ The eigenvalues of $R$ are complex and we see low frequency ripples.
 
 \begin{framev}[fs=footnotesize]{Momentum with positive eigenvalues}
 \splitV[0.48]
-{\imageC[1]{figure_man/momentum_conv_mono.png}}
-{\imageC[1]{figure_man/momentum_mono.png}}
+{\imageC[1]{figure/momentum_conv_mono.pdf}}
+{\imageC[1]{figure/momentum_traj_mono.pdf}}
 \vfill
 Here, both eigenvalues of $R$ are positive with their norm $<1$.\\
 This behavior resembles gradient descent.
@@ -155,8 +156,8 @@ This behavior resembles gradient descent.
 
 \begin{framev}[fs=footnotesize]{One-step convergence}
 \splitV[0.48]
-{\imageC[1]{figure_man/momentum_conv_1step.png}}
-{\imageC[1]{figure_man/momentum_1step.png}}
+{\imageC[1]{figure/momentum_conv_1step.pdf}}
+{\imageC[1]{figure/momentum_traj_1step.pdf}}
 \vfill
 The step size is $\alpha = 1/\lambda_i$ and $\varphi = 0$ - we converge in one step.
 \end{framev}
@@ -164,8 +165,8 @@ The step size is $\alpha = 1/\lambda_i$ and $\varphi = 0$ - we converge in one s
 
 \begin{framev}[fs=footnotesize]{Oscillating iterates}
 \splitV[0.48]
-{\imageC[1]{figure_man/momentum_conv_osc.png}}
-{\imageC[1]{figure_man/momentum_osc.png}}
+{\imageC[1]{figure/momentum_conv_osc.pdf}}
+{\imageC[1]{figure/momentum_traj_osc.pdf}}
 \vfill
 When $\alpha > 1/\lambda_i$, the iterates flip sign every iteration.
 \end{framev}
@@ -173,8 +174,8 @@ When $\alpha > 1/\lambda_i$, the iterates flip sign every iteration.
 
 \begin{framev}[fs=footnotesize]{Diverging iterates}
 \splitV[0.48]
-{\imageC[1]{figure_man/momentum_conv_div.png}}
-{\imageC[1]{figure_man/momentum_div.png}}
+{\imageC[1]{figure/momentum_conv_div.pdf}}
+{\imageC[1]{figure/momentum_traj_div.pdf}}
 \vfill
 If $\max \{|\sigma_1|, |\sigma_2| \} > 1$, the iterates diverge.
 \end{framev}
@@ -183,13 +184,13 @@ If $\max \{|\sigma_1|, |\sigma_2| \} > 1$, the iterates diverge.
 \begin{framei}{Convergence conditions}
 \item If we combine all conditions for convergence, we can see:
 $$
-0 < \alpha \lambda_i < 2 + 2 \phi\qquad \text{for}\qquad 0 \leq \phi < 1
+0 < \alpha \lambda_i < 2 + 2 \varphi\qquad \text{for}\qquad 0 \leq \varphi < 1
 $$
-\item Comparing this with the results from before ($\phi = 0$), we see that we gain a stepsize factor of 2 before we diverge!
-\item Can obtain global convergence rate by optimizing over $\alpha$ and $\phi$
+\item Comparing this with the results from before ($\varphi = 0$), we see that we gain a stepsize factor of 2 before we diverge!
+\item Can obtain global convergence rate by optimizing over $\alpha$ and $\varphi$
 \item More involved, see blogpost for details
 \item We get $\alpha = \left(\frac{2}{\sqrt{\lambda_1} + \sqrt{\lambda_n}}\right)^2$
-and $\phi = \left(\frac{\sqrt{\lambda_n} - \sqrt{\lambda_1}}{\sqrt{\lambda_n} + \sqrt{\lambda_1}} \right)^2$
+and $\varphi = \left(\frac{\sqrt{\lambda_n} - \sqrt{\lambda_1}}{\sqrt{\lambda_n} + \sqrt{\lambda_1}} \right)^2$
 \item Results in convergence rate of $\frac{\sqrt{\kappa} - 1}{\sqrt{\kappa} + 1}$
 \end{framei}
 
@@ -197,8 +198,8 @@ and $\phi = \left(\frac{\sqrt{\lambda_n} - \sqrt{\lambda_1}}{\sqrt{\lambda_n} + 
 \begin{framei}{Practical parameter choices}
 \item Compared to GD with $\frac{\kappa - 1}{\kappa + 1}$ this is much better as the condition is rooted
 \item Of course, this would in principle require knowledge of the EVs $\lambda_i$
-\item But we can derive simple rule-of-thumb: for poorly conditioned problems, the stepsize is approximately twice that of GD and $\phi$ close to 1
-\item So we want to set $\phi$ to a high value and then still pick the highest $\alpha$ which still converges
+\item But we can derive simple rule-of-thumb: for poorly conditioned problems, the stepsize is approximately twice that of GD and $\varphi$ close to 1
+\item So we want to set $\varphi$ to a high value and then still pick the highest $\alpha$ which still converges
 \end{framei}
 
 \endlecture
