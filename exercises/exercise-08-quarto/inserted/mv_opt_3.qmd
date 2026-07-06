@@ -1,0 +1,127 @@
+---
+title: "Exercise 8: Multivariate Optimization 3 (SGD)"
+subtitle: "[Optimization in Machine Learning](https://slds-lmu.github.io/website_optimization/)"
+notebook-view: false
+---
+
+::: {.content-hidden when-format="pdf"}
+::: {.hidden}
+{{< include ../_quarto/latex-math.qmd >}}
+:::
+:::
+
+::: {.callout-note collapse="true"}
+## Reproducibility
+
+Produced with Python 3.10 and R 4.4.1. To reproduce, install the pinned package versions below.
+
+::: {.panel-tabset}
+### Python
+```bash
+pip install numpy==2.0.2 matplotlib==3.10.8
+```
+### R
+```r
+install.packages("remotes")
+remotes::install_version("ggplot2", "3.5.1")
+remotes::install_version("gridExtra", "2.3")
+```
+:::
+:::
+
+Consider ordinary linear least squares (without intercept):
+
+$$\min_{\bm{\theta}} \E_{\xv, y}\!\left[(\bm{\theta}^\top \xv - y)^2\right]$$
+
+with $\xv \sim \mathcal{N}(\mathbf{0}, \bm{\Sigma}_\xv)$ and $y \mid \xv \sim \mathcal{N}({\bm{\theta}^*}^\top \xv, \sigma^2)$. Throughout the coding parts we use the univariate setting $\bm{\Sigma}_\xv = 1/4$, $\sigma = 1/10$, $\bm{\theta}^* = 1/2$. Each coding cell draws fresh samples from this generative model (fresh mini-batches in (c); streaming single samples in (e)).
+
+::: callout-note
+**R vs. Python parity.** R's `set.seed(123)` and Python's `np.random.seed(123)` use *different* RNGs. The data above (and consequently the SGD trajectories below) differ between languages. Both implementations are correct; only the underlying data differs. Compare *algorithmic behavior* (cloud shape, convergence pattern) rather than expecting numerically identical $\bm{\theta}$ values.
+:::
+
+## (a) Unbiasedness of the SGD gradient
+
+Show that
+
+$$\E_{\xv, y}\!\left[\nabla_{\bm{\theta}}\!\left[(\bm{\theta}^\top \xv - y)^2\right]\right] = \nabla_{\bm{\theta}} \E_{\xv, y}\!\left[(\bm{\theta}^\top \xv - y)^2\right].$$
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+We compute both expressions and compare the results.
+
+$$\begin{aligned}
+\E_{\xv, y}\!\left[\nabla_{\thetab}\!\left[(\thetab^\top \xv - y)^2\right]\right]
+  &= \E_{\xv, y}\!\left[2 \xv \xv^\top \thetab - 2 \xv y\right] \\
+  &= \E_\xv \E_{y \mid \xv}\!\left[2 \xv \xv^\top \thetab - 2 \xv y\right] \\
+  &= \E_\xv\!\left[2 \xv \xv^\top \thetab - 2 \xv \xv^\top \thetab^*\right] \\
+  &= 2 \bm{\Sigma}_\xv (\thetab - \thetab^*).
+\end{aligned}$$
+
+$$\begin{aligned}
+\nabla_{\thetab} \E_{\xv, y}\!\left[(\thetab^\top \xv - y)^2\right]
+  &= \nabla_{\thetab} \E_{\xv, y}\!\left[\thetab^\top \xv \xv^\top \thetab - 2 \thetab^\top \xv y + y^2\right] \\
+  &= \nabla_{\thetab} \E_\xv\!\left[\thetab^\top \xv \xv^\top \thetab\right]
+     - \nabla_{\thetab} \E_{\xv, y}\!\left[2 \thetab^\top \xv y\right]
+     + \nabla_{\thetab} \E_y\!\left[y^2\right] \\
+  &= 2 \bm{\Sigma}_\xv \thetab - 2 \nabla_{\thetab} \E_\xv \E_{y \mid \xv}\!\left[\thetab^\top \xv y\right] \\
+  &= 2 \bm{\Sigma}_\xv \thetab - 2 \nabla_{\thetab} \E_\xv \E_{y \mid \xv}\!\left[\thetab^\top \xv \xv^\top \thetab^*\right] \\
+  &= 2 \bm{\Sigma}_\xv \thetab - 2 \nabla_{\thetab}\!\left(\thetab^\top \bm{\Sigma}_\xv \thetab^*\right) \\
+  &= 2 \bm{\Sigma}_\xv \thetab - 2 \bm{\Sigma}_\xv \thetab^* \\
+  &= 2 \bm{\Sigma}_\xv (\thetab - \thetab^*).
+\end{aligned}$$
+:::
+
+## (b) Implication for SGD
+
+Interpret (a) in terms of stochastic gradient descent.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+We can estimate $\E_{\xv, y}[\nabla_{\thetab}[(\thetab^\top \xv - y)^2]]$ without bias via SGD, since we have access to realizations of the gradients $\nabla_{\thetab}[(\thetab^\top \xv - y)^2]$. From (a), it follows that this estimate is also an unbiased estimate of the gradient of our objective function $\nabla_{\thetab}\E_{\xv, y}[(\thetab^\top \xv - y)^2]$. Hence, SGD can be successfully applied in this situation.
+:::
+
+## (c) Gradient variance simulation
+
+In the univariate setting $\bm{\Sigma}_\xv = 1/4$, $\sigma = 1/10$, $\bm{\theta}^* = 1/2$, with data of size $10{,}000$:
+
+Plot the **confusion** (variance of the SGD gradient around the true full-batch gradient) for $\theta \in \{0, 0.05, 0.10, \ldots, 1.00\}$. For each $\theta$ draw $200$ independent batches and plot the per-batch confusion. Repeat for batch sizes $m = 100$ and $m = 1{,}000$.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_3_R.ipynb#solution_c_code echo=true >}}
+### Python
+{{< embed sol_mv_opt_3_py.ipynb#solution_c_code echo=true >}}
+:::
+
+For each $\theta$ and batch size $m$ we draw a fresh batch and measure the *confusion*: the mean squared deviation of the per-sample gradients $2(x_i^2 \theta - y_i x_i)$ from the population gradient $g(\theta) = 2\sigma_x^2(\theta - \theta^*)$. This estimates the sample-to-sample variance of the gradient at $\theta$, which the larger batch $m = 1000$ pins down more tightly than $m = 100$.
+:::
+
+## (d) Reading the simulation
+
+What do you observe in (c)?
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+Qualitatively, we observe for both settings that the mean and the variance of the confusion rise symmetrically around $\thetab^*$. As expected, the mean and the variance of the confusion are smaller for the larger batch size $m = 1000$ than for $m = 100$.
+:::
+
+## (e) SGD vs population GD
+
+On the same setup, run SGD with **batch size 1**, step size $\alpha = 0.3$, starting at $\bm{\theta} = 0$, for 20 iterations. Repeat the SGD run 200 times and overlay all trajectories. Compare with **population GD** (same step size, same start) using the analytical gradient $g(\theta) = 2\sigma_x^2(\theta - \theta^*)$.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_3_R.ipynb#solution_e_code echo=true >}}
+### Python
+{{< embed sol_mv_opt_3_py.ipynb#solution_e_code echo=true >}}
+:::
+:::

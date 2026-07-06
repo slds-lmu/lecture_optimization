@@ -1,0 +1,152 @@
+---
+title: "Exercise 10: Linear Programming (Sparse Quantile Regression)"
+subtitle: "[Optimization in Machine Learning](https://slds-lmu.github.io/website_optimization/)"
+notebook-view: false
+---
+
+::: {.content-hidden when-format="pdf"}
+::: {.hidden}
+{{< include ../_quarto/latex-math.qmd >}}
+:::
+:::
+
+::: {.callout-note collapse="true"}
+## Reproducibility
+
+Produced with Python 3.10 and R 4.4.1. To reproduce, install the pinned package versions below.
+
+::: {.panel-tabset}
+### Python
+```bash
+pip install numpy==2.0.2 matplotlib==3.10.8 scipy==1.15.3
+```
+### R
+```r
+install.packages("remotes")
+remotes::install_version("ggplot2", "3.5.1")
+remotes::install_version("linprog", "0.9.6")
+```
+:::
+:::
+
+## Setup
+
+We have $n = 50$ univariate observations with skewed (gamma) errors:
+
+$$x_i \sim \text{Uniform}(0, 1), \quad y_i = 2 x_i + \text{Gamma}(\text{shape} = 1).$$
+
+The skewed noise motivates *quantile* regression instead of OLS — we want to fit the conditional quantile of $y \mid x$, not the conditional mean.
+
+**Multivariate sparse quantile regression** is
+
+$$\min_{\beta \in \R^p}\ \frac{1}{n}\sum_{i=1}^n \rho_\tau\!\left(y^{(i)} - \beta_0 - \bm{\beta}^\top \xv^{(i)}\right) \quad \text{s.t.} \quad \|\bm{\beta}\|_1 \leq t$$
+
+with $\tau \in (0, 1)$ and the **pinball loss**
+
+$$\rho_\tau(s) = \begin{cases} \tau \cdot s & s > 0 \\ -(1 - \tau) \cdot s & s \leq 0 \end{cases}$$
+
+(asymmetric residual weighting; for $\tau = 0.5$ this is just $\tfrac{1}{2}|s|$). We treat the univariate ($p = 1$) case below.
+
+::: {.panel-tabset}
+### R
+{{< embed sol_lp_1_R.ipynb#setup_data echo=true >}}
+### Python
+{{< embed sol_lp_1_py.ipynb#setup_data echo=true >}}
+:::
+
+::: callout-note
+**R vs. Python parity.** R's `set.seed(123)` and Python's `np.random.seed(123)` use *different* RNGs, and `runif` / `rgamma` differ from `np.random.uniform` / `np.random.gamma` even given the same logical seed. The simulated data therefore differs between languages, so the LP solutions $\hat\beta$ will differ as well. Both implementations are correct; only the data differs. *Within* a language, the LP is deterministic — the same standard-form input gives identical $\hat\beta$ from `linprog` / `linprog`.
+:::
+
+## (a) Standard form of the LP
+
+Find the standard LP form of the one-dimensional sparse quantile regression problem.
+
+*Hint:* an unconstrained variable $x$ can be decomposed into two non-negative variables $x = x^+ - x^-$, with $|x| = x^+ + x^-$. (At the optimum at most one of $x^+, x^-$ is nonzero.)
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+Univariate sparse quantile regression:
+
+$$\min_{(\beta_0, \beta_1) \in \R^2}\frac{1}{n}\sum^n_{i = 1}\rho_\tau(y^{(i)} - \beta_0 -\beta_1 x^{(i)}) \text{ s.t. } \vert \beta_1\vert \leq t$$
+
+1. Decompose unconstrained parameters into positive and negative part: $\beta_i = \beta^+_i - \beta^-_i \quad i = 0,1$
+2. Transform absolute value: $\vert \beta_1\vert \leq t \iff \beta^+_1 + \beta^-_1 \leq t$
+3. We can write $\rho_\tau(\underbrace{y^{(i)} - \beta_0 -\beta_1 x^{(i)}}_{=:r^{(i)}}) = \tau \cdot r^{(i)} \mathbb{1}_{\{r^{(i)} > 0\}} - (1-\tau) \cdot r^{(i)} \mathbb{1}_{\{r^{(i)} \leq 0\}} = \tau  \cdot {r^{(i)}}^+ + (1-\tau)\cdot {r^{(i)}}^-$
+4. Transform equality of the residuals into two inequalities:
+${r^{(i)}}^+ - {r^{(i)}}^- = y^{(i)} - \beta_0 -\beta_1 x^{(i)} \iff {r^{(i)}}^+ - {r^{(i)}}^- \leq y^{(i)} - \beta_0 -\beta_1 x^{(i)}$ and
+$-{r^{(i)}}^+ + {r^{(i)}}^- \leq -y^{(i)} + \beta_0 +\beta_1 x^{(i)}$
+
+With this we get the standard form:
+
+$$\max_{\mathbf{z} \in \R^{4+2n}} \mathbf{c}^\top\mathbf{z}\quad $$
+
+s.t.
+
+$$\mathbf{A}\mathbf{z} \leq \mathbf{b}, \quad \mathbf{z} \geq \mathbf{0}$$
+
+with
+
+$$\mathbf{z} = \begin{pmatrix}\beta_0^+\\ \beta_0^-\\ \beta_1^+\\ \beta_1^- \\ {r^{(1)}}^+ \\ \vdots \\ {r^{(n)}}^+ \\ {r^{(1)}}^- \\ \vdots \\ {r^{(n)}}^-  \end{pmatrix}, \quad \mathbf{c} = \begin{pmatrix}0\\ 0\\ 0\\ 0 \\ -\tau \\ \vdots \\ -\tau \\ -(1-\tau) \\ \vdots \\ -(1-\tau)  \end{pmatrix}, \quad \mathbf{A} = \begin{pmatrix}0 & 0 & 1 & 1 & 0 & \cdots  & 0 \\ \bm{1}_n & -\bm{1}_n & \mathbf{x} & -\mathbf{x} & \mathbf{I}_n && -\mathbf{I}_n \\ -\bm{1}_n & \bm{1}_n & -\mathbf{x} & \mathbf{x} & -\mathbf{I}_n && \mathbf{I}_n \end{pmatrix}, \quad \mathbf{b} = \begin{pmatrix}t\\ \mathbf{y}\\ -\mathbf{y} \end{pmatrix}$$
+:::
+
+## (b) Visualise the empirical risk and feasible region
+
+Plot $\mathcal{R}_\text{emp}(\beta_0, \beta_1)$ for $(\beta_0, \beta_1) \in [-3, 3]^2$ with $\tau = 0.4$. Mark the feasible region $|\beta_1| \leq t = 1.7$.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_lp_1_R.ipynb#solution_b_code echo=true >}}
+### Python
+{{< embed sol_lp_1_py.ipynb#solution_b_code echo=true >}}
+:::
+
+Two horizontal red lines at $\beta_1 = \pm t$ delimit the feasible region. The contour shows the level sets of $\mathcal{R}_\text{emp}$. The optimum lives on or inside the strip.
+:::
+
+## (c) Solve the LP
+
+Use R's `linprog::solveLP` (or Python's `scipy.optimize.linprog`) to solve the sparse 40 % quantile regression with $t = 1.7$.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_lp_1_R.ipynb#solution_c_code echo=true >}}
+### Python
+{{< embed sol_lp_1_py.ipynb#solution_c_code echo=true >}}
+:::
+
+We construct $\mathbf{c}, \mathbf{A}, \mathbf{b}$ following (a), feed to the solver, and recover $\hat\beta_j = z_j^+ - z_j^-$. The fitted line $y = \hat\beta_0 + \hat\beta_1 x$ goes through the data; with $\tau = 0.4$ it lies *below* the $\tau = 0.5$ median fit (and well below the OLS fit, which the gamma-skewed errors would push high).
+
+Whether the sparsity budget $|\beta_1| \leq t$ binds depends on the data. If the unconstrained quantile slope would exceed $t$, the optimum is clamped to the boundary $\beta_1 = \pm t$ (constraint *active*), so the plotted optimum lands exactly on the red line; otherwise the optimum lies strictly inside the feasible strip (constraint *slack*), below the line. Because R and Python draw different samples, the two panels here illustrate the two regimes — the printout states which one holds in each case.
+
+::: {.panel-tabset}
+### R
+{{< embed sol_lp_1_R.ipynb#fitted_line_plot echo=true >}}
+### Python
+{{< embed sol_lp_1_py.ipynb#fitted_line_plot echo=true >}}
+:::
+:::
+
+## (d) Dual formulation
+
+State the dual of the LP from (a).
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+From the lecture, we know that the dual problem must be
+
+$$\max_{\bm{\alpha} \in \R^{2n + 1}} -\bm{\alpha}^\top\mathbf{b}$$
+
+s.t.
+
+$$-\bm{\alpha}^\top \mathbf{A} \leq -\mathbf{c}^\top$$
+$$\bm{\alpha} \geq \mathbf{0}$$
+:::

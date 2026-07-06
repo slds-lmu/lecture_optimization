@@ -1,0 +1,196 @@
+---
+title: "Exercise 6: Multivariate Optimization 1"
+subtitle: "[Optimization in Machine Learning](https://slds-lmu.github.io/website_optimization/)"
+notebook-view: false
+---
+
+::: {.content-hidden when-format="pdf"}
+::: {.hidden}
+{{< include ../_quarto/latex-math.qmd >}}
+:::
+:::
+
+::: {.callout-note collapse="true"}
+## Reproducibility
+
+Produced with Python 3.10 and R 4.4.1. To reproduce, install the pinned package versions below.
+
+::: {.panel-tabset}
+### Python
+```bash
+pip install numpy==2.0.2 matplotlib==3.10.8
+```
+### R
+```r
+install.packages("remotes")
+remotes::install_version("ggplot2", "3.5.1")
+remotes::install_version("gridExtra", "2.3")
+```
+:::
+:::
+
+## Setup
+
+You are given the following data situation:
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_1_R.ipynb#setup_data echo=true >}}
+### Python
+{{< embed sol_mv_opt_1_py.ipynb#setup_data echo=true >}}
+:::
+
+::: callout-note
+**R vs. Python parity.** R's `set.seed(314)` and Python's `np.random.seed(314)` use *different* RNGs. The data above (and consequently the GD trajectories below) differ between languages. Both implementations are correct; only the underlying data differs. Compare *algorithmic behavior* (divergence, convergence, backtracking adaptation) rather than expecting numerically identical $\bm{\theta}$ values.
+:::
+
+In the following we want to estimate a logistic regression *without intercept* via gradient descent.
+
+*Note: We use vanilla GD for educational purposes; in practice more sophisticated algorithms are typically preferred.*
+
+## (a) Complete separation makes the empirical risk unbounded below
+
+The data above is **completely separable**: the two classes can be perfectly classified with a linear classifier. Show that in this situation, if $\tilde{\bm{\theta}}$ perfectly classifies the data then
+
+$$\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) > \mathcal{R}_\text{emp}(\alpha \tilde{\bm{\theta}}) \quad \text{for all } \alpha > 1.$$
+
+*Implication:* the per-observation log-loss can be driven arbitrarily low by scaling $\bm{\theta}$, so the empirical risk has no finite minimum.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+We start with
+
+$$\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) = \sum_{i=1}^n \log\!\left(1 + \exp(\tilde{\bm{\theta}}^\top \xv^{(i)})\right) - y^{(i)}\tilde{\bm{\theta}}^\top \xv^{(i)} = \sum_{i=1}^n \begin{cases} \log\!\left(1 + \exp(\tilde{\bm{\theta}}^\top \xv^{(i)})\right) & \text{if } y^{(i)} = 0, \\ \log\!\left(1 + \exp(\tilde{\bm{\theta}}^\top \xv^{(i)})\right) - \tilde{\bm{\theta}}^\top \xv^{(i)} & \text{if } y^{(i)} = 1. \end{cases}$$
+
+Since $\tilde{\bm{\theta}}$ perfectly classifies the data, we know that
+
+$$\begin{cases} \tilde{\bm{\theta}}^\top \xv^{(i)} < 0 & \text{if } y^{(i)} = 0, \\ \tilde{\bm{\theta}}^\top \xv^{(i)} \geq 0 & \text{if } y^{(i)} = 1. \end{cases}$$
+
+Hence, we can focus on the functions $g(z) = \log(1 + \exp(-z))$ and $h(z) = \log(1 + \exp(z)) - z$ for $z > 0$ and study their monotonicity. (The $y = 1$ term is $h(z)$ with $z \geq 0$ directly; the $y = 0$ term $\log(1 + \exp(z))$ with $z < 0$ is $g(-z)$ with $-z > 0$. As functions $g$ and $h$ coincide — $\log(1+\exp(z)) - z = \log(1+\exp(-z))$ — so the two names just track which label case we are in.) We compute
+
+$$g'(z) = -\underbrace{\frac{\exp(-z)}{1 + \exp(-z)}}_{> 0} < 0, \qquad h'(z) = \underbrace{\frac{\exp(z)}{1 + \exp(z)}}_{< 1} - 1 < 0.$$
+
+Therefore, both $g$ and $h$ are strictly monotonically decreasing. It follows that $\mathcal{R}_\text{emp}(\tilde{\bm{\theta}}) > \mathcal{R}_\text{emp}(\alpha \tilde{\bm{\theta}})$ for $\alpha > 1$.
+:::
+
+## (b) Visualize the empirical risk
+
+Visualize $\mathcal{R}_\text{emp}$ on $[-1, 4] \times [-1, 4]$.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_1_R.ipynb#solution_b_code echo=true >}}
+### Python
+{{< embed sol_mv_opt_1_py.ipynb#solution_b_code echo=true >}}
+:::
+
+The level sets of $\mathcal{R}_\text{emp}$ open toward the upper-right: the risk decreases without bound as $\bm{\theta}$ moves along that direction, consistent with (a).
+:::
+
+## (c) Gradient of the empirical risk
+
+Find $\nabla_{\bm{\theta}} \mathcal{R}_\text{emp}$ for arbitrary $\bm{\theta}$.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+Differentiating term-by-term:
+
+$$\nabla_{\bm{\theta}} \mathcal{R}_\text{emp} = \sum_{i=1}^n \left(\sigma(\bm{\theta}^\top \xv^{(i)}) - y^{(i)}\right) \xv^{(i)}, \qquad \sigma(z) = \frac{1}{1 + e^{-z}}.$$
+
+Equivalently in vector form: $\Xmat^\top (\sigma(\Xmat \bm{\theta}) - \yv)$ where $\sigma$ is applied element-wise. This is the standard logistic-regression gradient.
+
+**Note on regularization.** When the L2-regularized objective is $\lambda\|\bm{\theta}\|^2 + \mathcal{R}_\text{emp}(\bm{\theta})$, the regularizer contributes an extra $2\lambda\bm{\theta}$ to the gradient — important for parts (e), (g).
+:::
+
+## (d) Vanilla gradient descent
+
+Solve the logistic regression via gradient descent. Use step size $\alpha = 0.01$, starting point $\bm{\theta}^{[0]} = (0, 0)^\top$, and train for $500$ steps. Repeat with $\alpha = 0.02$. Explain what you observe.
+
+*Hint:* recall (a).
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_1_R.ipynb#solution_d_code echo=true >}}
+### Python
+{{< embed sol_mv_opt_1_py.ipynb#solution_d_code echo=true >}}
+:::
+
+**Observation.** Both step sizes drive the iterates outward indefinitely while the loss falls monotonically toward zero. The $\|\bm{\theta}\|$ curves show a *steep early climb* followed by progressively slower growth. The iterates never plateau; they just creep outward more slowly as $t$ grows.
+
+The two step sizes differ mainly in the **terminal norm**: at iteration 500, $\|\bm{\theta}\|$ at $\alpha = 0.02$ is roughly twice that at $\alpha = 0.01$ — the per-iteration motion scales with $\alpha$, accumulated over a fixed number of steps.
+
+Theoretically GD does not converge here because $\mathcal{R}_\text{emp}$ has no minimum (a). Empirically: the $\|\bm{\theta}\|$ curve never plateaus, even when its rate of growth becomes very slow.
+:::
+
+## (e) Add L2 regularization
+
+Repeat (d), but minimize $\lambda\|\bm{\theta}\|^2 + \mathcal{R}_\text{emp}(\bm{\theta})$ with $\lambda = 1$. What changes?
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_1_R.ipynb#solution_e_code echo=true >}}
+### Python
+{{< embed sol_mv_opt_1_py.ipynb#solution_e_code echo=true >}}
+:::
+
+**What changes.** The regularizer $\lambda\|\bm{\theta}\|^2$ gives the objective a finite minimum. Instead of the iterates growing without bound as in (d), the $\|\bm{\theta}\|$ curves now rise and then settle to a plateau — the signature of convergence — and both step sizes converge to the same minimum.
+:::
+
+## (f) Visualize the regularized empirical risk
+
+Visualize the regularized empirical risk $\lambda\|\bm{\theta}\|^2 + \mathcal{R}_\text{emp}(\bm{\theta})$ on $[-1, 4] \times [-1, 4]$ with $\lambda = 1$.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_1_R.ipynb#solution_f_code echo=true >}}
+### Python
+{{< embed sol_mv_opt_1_py.ipynb#solution_f_code echo=true >}}
+:::
+
+Compare to (b): the regularized landscape has closed level sets around a finite minimum — a **bowl**, not a slide. This is what makes GD converge in (e). The minimum's location is biased toward the origin compared to the unregularized maximum-likelihood direction, by an amount depending on $\lambda$.
+:::
+
+## (g) Gradient descent with backtracking line search
+
+Repeat (e) but with **backtracking line search**: at each step, propose $\bm{\theta}_{\text{prop}} = \bm{\theta} - \alpha \nabla f(\bm{\theta})$ and accept it if it satisfies the Armijo condition
+
+$$f(\bm{\theta}_{\text{prop}}) \leq f(\bm{\theta}) - \gamma\, \alpha\, \|\nabla f(\bm{\theta})\|^2,$$
+
+otherwise shrink $\alpha \leftarrow \tau \alpha$ and try again. Use $\gamma = 0.9$, $\tau = 0.5$.
+
+*Note:* the trace below visualizes from iteration $t = 1$ (after one backtracking step), not from the starting point $\bm{\theta}^{[0]} = (0, 0)^\top$.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_1_R.ipynb#solution_g_code echo=true >}}
+### Python
+{{< embed sol_mv_opt_1_py.ipynb#solution_g_code echo=true >}}
+:::
+
+**Observation.** Backtracking adapts $\alpha$ per iteration: the step is automatically shortened when a proposed update would not produce a sufficient decrease. The loss curve is monotone non-increasing by construction (Armijo condition), and both initial $\alpha$ values converge to the same minimum found in (e).
+
+**Where this leaves us.** This exercise traces a ladder of fixes:
+
+- Vanilla GD on separable data → diverges (a, d).
+- L2 regularization → finite minimum (e).
+- Backtracking → adaptive step that does not depend on the user picking the right $\alpha$ up front (g).
+
+The next stage is **direction**: even with a well-chosen step, the local-gradient direction is suboptimal on poorly-conditioned problems — when the level sets are elongated, the negative gradient points mostly across the valley rather than along it, so the iterates zig-zag and progress slowly. Exercise 7 introduces *momentum* to break that limitation.
+:::
