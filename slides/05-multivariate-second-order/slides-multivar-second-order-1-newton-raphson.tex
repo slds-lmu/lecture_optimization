@@ -43,17 +43,17 @@ $$
 \nabla^2 f(\xv^{[t]})(\xv - \xv^{[t]}) = - \nabla f(\xv^{[t]})
 $$
 $$
-\xv^{[t+1]} = \xv^{[t]} - \left(\nabla^2 f(\xv^{[t]})\right)^{-1}\nabla f(\xv^{[t]})
+\xv^{[t+1]} = \xv^{[t]} - (\nabla^2 f(\xv^{[t]}))^{-1}\nabla f(\xv^{[t]})
 $$
 \item \textbf{Update scheme:}
 $$
 \xv^{[t+1]} = \xv^{[t]} + \mathbf{d}^{[t]}
 $$
-with $\mathbf{d}^{[t]} = - \left(\nabla^2 f(\xv^{[t]})\right)^{-1}\nabla f(\xv^{[t]})$
+with $\mathbf{d}^{[t]} = - (\nabla^2 f(\xv^{[t]}))^{-1}\nabla f(\xv^{[t]})$
 \end{framei}
 
 
-\begin{framei}{Newton-Raphson}
+\begin{framei}{Newton-Raphson: Practice}
 \item \textbf{Note:} In practice, we get $\mathbf{d}^{[t]}$ by solving the linear system
 $$
 \nabla^2 f(\xv^{[t]})\mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
@@ -70,7 +70,7 @@ to satisfy Wolfe conditions (or just Armijo rule)
 
 \begin{framei}{Analytical example with quadratic form}
 \item Consider $f(x_1, x_2) = x_1^2 + \frac{x_2^2}{2}$
-\item Update direction: $\mathbf{d}^{[t]} = -\left( \nabla^2 f(x_1^{[t]}, x_2^{[t]}) \right)^{-1} \nabla f(x_1^{[t]}, x_2^{[t]})$
+\item Update direction: $\mathbf{d}^{[t]} = -(\nabla^2 f(x_1^{[t]}, x_2^{[t]}))^{-1} \nabla f(x_1^{[t]}, x_2^{[t]})$
 \item Gradient and Hessian:
 $$
 \nabla f(x_1, x_2) = \begin{pmatrix}2x_1 \\ x_2\end{pmatrix}, \quad
@@ -101,10 +101,8 @@ $$
 \item \textbf{Note:} Newton-Raphson only needs one iteration for quadratic forms
 \end{framei}
 
-\comment[NOTE]{BB}{den schritt auf der quadrik visuasilieren?}
-
-\begin{framev}{Newton-Raphson vs. GD on Branin function}
-\splitV[0.6]{
+\begin{framev}{Newton-Raphson vs. GD on Rosenbrock function}
+\splitV[0.55]{
 \imageC[1]{figure/NR_2.png}
 }{
 \imageC[1]{figure/NR_1.png}
@@ -112,8 +110,6 @@ $$
 \vfill
 Newton-Raphson has much better convergence speed here
 \end{framev}
-
-\comment[NOTE]{BB}{ich glaube hier ist gar nicht GD laufen gelassen  worden sondern normalized GD. außerdem: warum sind die algos nicht in einer legende sichtbar}
 
 
 \begin{framei}[sep=L]{Discussion}
@@ -134,32 +130,33 @@ Newton-Raphson may diverge
 \end{framei}
 
 
-\begin{framei}[fs=small]{Limitations}
-\item \textbf{Problem 1:} In general, $\mathbf{d}^{[t]}$ is not a descent direction
+\begin{framei}[fs=small]{Limitations: Non-descent directions}
+\item \textbf{Problem 1:} In general, $\mathbf{d}^{[t]}$ is not a descent direction (e.g., second step in the previous example):
 \imageC[0.6]{figure/NR_2.png}
 \item \textbf{But}: If Hessian is positive definite, $\mathbf{d}^{[t]}$ is descent direction:
 $$
-\nabla f(\xv^{[t]})^\top \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})^\top \left(\nabla^2 f(\xv^{[t]})\right)^{-1} \nabla f(\xv^{[t]}) < 0
+\nabla f(\xv^{[t]})^\top \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})^\top (\nabla^2 f(\xv^{[t]}))^{-1} \nabla f(\xv^{[t]}) < 0
 $$
 \item Near minimum, Hessian is positive definite
 \item For initial steps, Hessian is often not positive definite and Newton-Raphson may give non-descending update directions
 \end{framei}
 
 
-\begin{framei}{Limitations}
+\begin{framei}{Limitations: Computational Cost}
 \item \textbf{Problem 2:} Hessian can be \textbf{computationally expensive} to calculate, since descent direction $\mathbf{d}^{[t]}$ is the solution of the linear system
 $$
 \nabla^2 f(\xv^{[t]}) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
 $$
 \vfill
 \item \textbf{Aim:} Find quasi-second order methods not relying on exact Hessians
+\begin{itemizeS}
 \item Quasi-Newton method
 \item Gauss-Newton algorithm (for least squares)
+\end{itemizeS}
 \end{framei}
 
 \comment[NOTE]{BB}{genauer wie.
 Finding the inverse of the Hessian in high dimensions to compute the Newton direction {\displaystyle h=-(f''(x_{k}))^{-1}f'(x_{k})}{\displaystyle h=-(f''(x_{k}))^{-1}f'(x_{k})} can be an expensive operation. In such cases, instead of directly inverting the Hessian, it is better to calculate the vector {\displaystyle h}h as the solution to the system of linear equations
-
 {\displaystyle [f''(x_{k})]h=-f'(x_{k})}{\displaystyle [f''(x_{k})]h=-f'(x_{k})}
 which may be solved by various factorizations or approximately (but to great accuracy) using iterative methods. Many of these methods are only applicable to certain types of equations, for example the Cholesky factorization and conjugate gradient will only work if {\displaystyle f''(x_{k})}{\displaystyle f''(x_{k})} is a positive definite matrix. While this may seem like a limitation, it is often a useful indicator of something gone wrong; for example if a minimization problem is being approached and {\displaystyle f''(x_{k})}{\displaystyle f''(x_{k})} is not positive definite, then the iterations are converging to a saddle point and not a minimum.}
 

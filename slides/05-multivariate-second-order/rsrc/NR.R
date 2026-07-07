@@ -6,7 +6,7 @@
 # Compares Newton-Raphson and gradient descent on the Rosenbrock objective.
 # The script saves a value trace and a contour plot with optimization paths.
 
-set.seed(1L)
+set.seed(123L)
 
 suppressPackageStartupMessages({
   library(data.table)
@@ -120,28 +120,6 @@ build_contour_visualizer = function(opt_nr, opt_gd) {
   vis
 }
 
-build_surface_visualizer = function(opt_nr, opt_gd) {
-  vis = as_visualizer(
-    make_rosenbrock_objective(),
-    type = "surface",
-    x1_limits = c(-2, 2),
-    x2_limits = c(-1, 3),
-    n_points = 80L
-  )
-  vis$add_optimization_trace(
-    opt_nr,
-    name = "Newton-Raphson",
-    line_type = "dashed",
-    line_color = "#b22222"
-  )
-  vis$add_optimization_trace(
-    opt_gd,
-    name = "Gradient Descent",
-    line_type = "solid",
-    line_color = "#1f77b4"
-  )
-  vis
-}
 
 run_comparison = function(steps = 25L, start = c(0.25, 2.5)) {
   obj_nr = make_rosenbrock_objective()
@@ -194,11 +172,3 @@ if (interactive()) {
   )
 }
 contour_vis$save("../figure/NR_2.png")
-
-surface_vis = build_surface_visualizer(optim_nr, optim_gd)
-if (interactive()) {
-  surface_vis$plot(
-    show_title = FALSE,
-    legend_title = "Method"
-  )
-}
