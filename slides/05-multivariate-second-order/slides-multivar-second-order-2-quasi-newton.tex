@@ -8,9 +8,9 @@
 
 \title{Optimization in Machine Learning}
 
-\comment[NOTE]{BB}{/https://www.stat.cmu.edu/~ryantibs/convexopt-F13/lectures/11-QuasiNewton.pdf}
-
 \begin{document}
+
+\comment[NOTE]{BB}{/https://www.stat.cmu.edu/~ryantibs/convexopt-F13/lectures/11-QuasiNewton.pdf}
 
 \titlemeta{
 Second order methods
@@ -25,7 +25,7 @@ figure/NR_2.png
 }
 
 \begin{framei}[fs=small]{Quasi-Newton: Idea}
-\item Start point of \textbf{QN method} is (as with NR) a Taylor approximation of the gradient, except that H is replaced by a \textbf{pd} matrix $\A^{[t]}$:
+\item Start point of \textbf{Quasi-Newton (QN) method} is (as with Newton-Raphson (NR)) a Taylor approximation of the gradient, except that the Hessian is replaced by a \textbf{positive definite (pd)} matrix $\A^{[t]}$:
 \begin{alignat*}{4}
 \nabla f(\xv) &\approx  \nabla f(\xv^{[t]}) + \nabla^2 f(\xv^{[t]}) (\xv - \xv^{[t]}) ~ &=& ~\zero  &\qquad& \text{ NR} \\
 \nabla f(\xv) &\approx \nabla f(\xv^{[t]}) + \A^{[t]} (\xv - \xv^{[t]}) ~ &=& ~ \zero &\qquad& \text{ QN}
@@ -39,7 +39,7 @@ figure/NR_2.png
 
 
 \begin{framei}{Quasi-Newton: Idea}
-\item Select a starting point $\xv^{[0]}$ and initialize pd matrix $\A^{[0]}$ (can also be a diagonal matrix - a very rough approximation of Hessian)
+\item Select a starting point $\xv^{[0]}$ and initialize pd matrix $\A^{[0]}$ (can also be a diagonal matrix, a very rough approximation of the Hessian)
 \item Calculate update direction by solving
 $$
 \A^{[t]} \bm{d}^{[t]} = - \nabla f(\xv^{[t]})
@@ -60,7 +60,7 @@ $$
 \item \textbf{Requirements} for the matrix sequence $\A^{[t]}$:
 \begin{itemizeS}
 \item Symmetric pd, so that $\bm{d}^{[t]}$ are descent directions
-\item Low computational effort when solving LES
+\item Low computational effort when solving the linear system
 $$
 \A^{[t]} \bm{d}^{[t]} = - \nabla f(\xv^{[t]})
 $$
@@ -75,7 +75,7 @@ $$
 \begin{framei}{Symmetric rank 1 update (SR1)}
 \item Simplest approach: symmetric rank 1 updates (\textbf{SR1}) of form
 $$
-\A^{[t+1]} \leftarrow \A^{[t]} + \bm{B}^{[t]} = \A^{[t]} + \beta \bm{u}^{[t]}(\bm{u}^{[t]})^T
+\A^{[t+1]} = \A^{[t]} + \bm{B}^{[t]} = \A^{[t]} + \beta \bm{u}^{[t]}(\bm{u}^{[t]})^T
 $$
 with appropriate vector $\bm{u}^{[t]} \in \R^n$, $\beta \in \R$
 \end{framei}
@@ -87,8 +87,8 @@ with appropriate vector $\bm{u}^{[t]} \in \R^n$, $\beta \in \R$
 $$
 \begin{aligned}
 \nabla f(\xv) &\overset{!}{=} \nabla f(\xv^{[t+1]}) + \A^{[t+1]}(\xv - \xv^{[t+1]}) \\
-\nabla f(\xv) &= \nabla f(\xv^{[t+1]}) +  \left(\A^{[t]} + \beta \bm{u}^{[t]}(\bm{u}^{[t]})^T\right)\underbrace{(\xv - \xv^{[t+1]})}_{:= \bm{s}^{[t+1]}} \\
-\underbrace{\nabla f(\xv) - \nabla f(\xv^{[t+1]})}_{\bm{y}^{[t+1]}} &= \left(\A^{[t]} + \beta \bm{u}^{[t]} (\bm{u}^{[t]})^T\right) \bm{s}^{[t+1]} \\
+\nabla f(\xv) &= \nabla f(\xv^{[t+1]}) +  (\A^{[t]} + \beta \bm{u}^{[t]}(\bm{u}^{[t]})^T)\underbrace{(\xv - \xv^{[t+1]})}_{:= \bm{s}^{[t+1]}} \\
+\underbrace{\nabla f(\xv) - \nabla f(\xv^{[t+1]})}_{\bm{y}^{[t+1]}} &= (\A^{[t]} + \beta \bm{u}^{[t]} (\bm{u}^{[t]})^T) \bm{s}^{[t+1]} \\
 \bm{y}^{[t+1]} - \A^{[t]} \bm{s}^{[t+1]} &= \left(\beta (\bm{u}^{[t]})^T \bm{s}^{[t+1]}\right) \bm{u}^{[t]}
 \end{aligned}
 $$
