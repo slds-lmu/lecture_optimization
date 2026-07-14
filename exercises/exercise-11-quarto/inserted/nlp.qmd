@@ -1,0 +1,186 @@
+---
+title: "Exercise 11: Nonlinear Programming (Lagrange + KKT + SVM)"
+subtitle: "[Optimization in Machine Learning](https://slds-lmu.github.io/website_optimization/)"
+notebook-view: false
+---
+
+::: {.content-hidden when-format="pdf"}
+::: {.hidden}
+{{< include ../_quarto/latex-math.qmd >}}
+:::
+:::
+
+::: {.callout-note collapse="true"}
+## Reproducibility
+
+Produced with Python 3.10 and R 4.4.1. To reproduce, install the pinned package versions below.
+
+::: {.panel-tabset}
+### Python
+```bash
+pip install numpy==2.0.2 matplotlib==3.10.8 cvxpy==1.7.5
+```
+### R
+```r
+install.packages("remotes")
+remotes::install_version("CVXR", "1.8.2")
+remotes::install_version("ggplot2", "3.5.1")
+remotes::install_version("mlr3", "1.6.0")
+```
+:::
+:::
+
+## Problem 1: Lagrange multipliers
+
+Solve the constrained optimization problem
+
+$$\min_{(x, y) \in \R^2}\ x + 2y \quad \text{s.t.} \quad x^2 + 4 y^2 = 4$$
+
+by Lagrange multipliers.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+We know that at a minimum $(x^\ast,y^\ast)$ the contour lines of the objective function $f$ and the equality constraint $g$ touch and thus it needs to hold that
+
+$$\nabla f(x^\ast,y^\ast) = \lambda \nabla g(x^\ast,y^\ast)$$
+
+for some Lagrange multiplier $\lambda \in \R$.
+
+Hence, we get the two equalities
+
+$$\begin{aligned} 1 &= \lambda 2 x^\ast \\ 2 &= \lambda 8 y^\ast \end{aligned}$$
+
+yielding $x^\ast = 2 y^\ast$.
+
+The third equality is the equality constraint. It gives
+
+$$\begin{aligned} {x^\ast}^2 + 4{y^\ast}^2 &= 4 \\ \Leftrightarrow \quad 4 {y^\ast}^2 + 4{y^\ast}^2 &= 4 \\ \Leftrightarrow \quad 8 {y^\ast}^2 &= 4 \\ \Leftrightarrow \quad {y^\ast}^2 &= \frac{1}{2}. \end{aligned}$$
+
+Therefore, we have two candidate solutions
+
+$$(x^\ast_1,y^\ast_1) = (\sqrt{2},1/\sqrt{2}) \quad \text{or} \quad (x^\ast_2,y^\ast_2) = (-\sqrt{2},-1/\sqrt{2}).$$
+
+Since $f(x^\ast_1, y^\ast_1) > f(x^\ast_2,y^\ast_2)$, we get the solution
+
+$$(x^\ast,y^\ast) = (-\sqrt{2},-1/\sqrt{2}).$$
+:::
+
+## Problem 2: Nonlinear SVM
+
+We have $200$ binary observations from a *moons* distribution (two interleaved half-circles) — not linearly separable. The standard SVM trick: lift to a higher-dimensional feature space via $\phi: \R^d \to \R^l$ and learn a linear separator there. The primal soft-margin SVM in feature space is
+
+$$\min_{\bm{\theta}, \theta_0, \bm{\zeta}}\ \tfrac{1}{2}\|\bm{\theta}\|^2 + C\sum_{i=1}^n \zeta^{(i)} \quad \text{s.t.} \quad y^{(i)}\!\left(\langle \bm{\theta}, \phi(\xv^{(i)})\rangle + \theta_0\right) \geq 1 - \zeta^{(i)},\ \zeta^{(i)} \geq 0\ \forall i.$$
+
+::: {.panel-tabset}
+### R
+{{< embed sol_nlp_R.ipynb#setup_data echo=true >}}
+### Python
+{{< embed sol_nlp_py.ipynb#setup_data echo=true >}}
+:::
+
+### (a) Lagrangian
+
+Write down the Lagrangian of the nonlinear SVM.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+$$\mathcal{L} = 0.5\Vert \bm{\theta} \Vert^2 + C\sum^n_{i=1}\zeta^{(i)} - \sum^n_{i=1}\alpha^{(i)}(\mathbf{y}^{(i)}({\phi(\mathbf{x}^{(i)})}^\top\bm{\theta} + \theta_0) - 1 + \zeta^{(i)})- \sum^n_{i=1}\mu^{(i)}\zeta^{(i)}$$
+:::
+
+### (b) Solve the primal SVM
+
+Solve the primal nonlinear SVM with $C = 1$ and a third-order polynomial transformation (without intercept)
+
+$$\phi(\xv) = (x_1, x_2, x_1^2, x_2^2, x_1 x_2, x_1^2 x_2, x_1 x_2^2, x_1^3, x_2^3)^\top \in \R^9$$
+
+using `CVXR` (R) or `cvxpy` (Python).
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_nlp_R.ipynb#solution_2b_code echo=true >}}
+### Python
+{{< embed sol_nlp_py.ipynb#solution_2b_code echo=true >}}
+:::
+:::
+
+### (c) KKT conditions
+
+State the KKT conditions of the general nonlinear SVM.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+Stationarity
+
+$$\nabla_{\bm{\theta}}\mathcal{L} = \bm{\theta} - \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) = 0$$
+$$\nabla_{\theta_0}\mathcal{L} = - \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)} = 0$$
+$$\nabla_{\bm{\zeta}}\mathcal{L} = C\cdot\mathbf{1}_n - \alpha - \mu = 0$$
+
+Primal feasability
+
+$$-(\mathbf{y}^{(i)}({\phi(\mathbf{x}^{(i)})}^\top\bm{\theta} + \theta_0) - 1 + \zeta^{(i)}) \leq 0$$
+$$- \zeta^{(i)} \leq 0$$
+
+Dual feasability
+
+$$\mu \geq 0$$
+$$\alpha \geq 0$$
+
+Complementary slackness
+
+$$-\mu^{(i)}\zeta^{(i)} = 0 \quad i = 1,\dots,n$$
+$$-\alpha^{(i)}(\mathbf{y}^{(i)}({\phi(\mathbf{x}^{(i)})}^\top\bm{\theta} + \theta_0) - 1 + \zeta^{(i)}) = 0 \quad i = 1,\dots, n$$
+:::
+
+### (d) Dual form
+
+Derive the dual form of the nonlinear SVM. State an advantage of the dual over the primal.
+
+*Hint:* use the KKT conditions to eliminate the primal variables from the Lagrangian.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+From the KKT conditions it follows that $$\bm{\theta} = \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}),$$
+$$\sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)} = 0,$$
+$$C  - \underbrace{\mu^{(i)}}_{\geq 0} = \alpha^{(i)}  \Rightarrow C \geq \alpha^{(i)} \quad i=1,\dots,n. $$
+Plugging these into the Lagrangian gives
+
+$$0.5\Vert  \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) \Vert^2 + \sum^n_{i=1}\mu^{(i)}\zeta^{(i)} + \sum^n_{i=1}\alpha^{(i)}\zeta^{(i)} - \Vert  \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) \Vert^2  + \sum^n_{i=1}\alpha^{(i)} - \sum^n_{i=1}\alpha^{(i)}\zeta^{(i)})- \sum^n_{i=1}\mu^{(i)}\zeta^{(i)}$$
+$$= -0.5\Vert  \sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)}\phi(\mathbf{x}^{(i)}) \Vert^2  + \sum^n_{i=1}\alpha^{(i)} =  -0.5  \sum^n_{i=1}\sum^n_{j=1}\alpha^{(i)}\alpha^{(j)}\mathbf{y}^{(i)}\mathbf{y}^{(j)} \langle\phi(\mathbf{x}^{(i)}),\phi(\mathbf{x}^{(j)})\rangle   + \sum^n_{i=1}\alpha^{(i)}$$
+
+Hence, the dual form of the nonlinear SVM is
+
+$$\max_{\alpha}  -0.5  \sum^n_{i=1}\sum^n_{j=1}\alpha^{(i)}\alpha^{(j)}\mathbf{y}^{(i)}\mathbf{y}^{(j)} \langle\phi(\mathbf{x}^{(i)}),\phi(\mathbf{x}^{(j)})\rangle   + \sum^n_{i=1}\alpha^{(i)}$$
+
+s.t.
+
+$$\sum^n_{i=1}\alpha^{(i)}\mathbf{y}^{(i)} = 0,$$
+$$0 \leq \alpha \leq C.$$
+
+Here, we can use the kernel trick to evaluate $\langle\phi(\mathbf{x}^{(i)}),\phi(\mathbf{x}^{(j)})\rangle$ without explicitly computing the projections of each observation. (We only need to compute  $\langle\mathbf{x}^{(i)},\mathbf{x}^{(j)}\rangle$)
+:::
+
+### (e) Solve the dual SVM
+
+Solve the dual form from (b) via `CVXR`/`cvxpy`.
+
+*Hint 1:* For a polynomial transformation $\phi$ of order $l$ (without intercept) there exists an invertible diagonal $\mathbf{D} \in \R^{l \times l}$ such that $\langle \mathbf{D}\phi(\xv), \mathbf{D}\phi(\zv)\rangle = (\xv^\top \zv + 1)^l - 1$.
+
+*Hint 2:* Add $10^{-7} \mathbf{I}$ to the kernel matrix to ensure invertibility / positive-definiteness.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_nlp_R.ipynb#solution_2e_code echo=true >}}
+### Python
+{{< embed sol_nlp_py.ipynb#solution_2e_code echo=true >}}
+:::
+:::

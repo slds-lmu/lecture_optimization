@@ -1,0 +1,95 @@
+---
+title: "Exercise 9: Multivariate Optimization 4 (Newton-Raphson + Gauss-Newton)"
+subtitle: "[Optimization in Machine Learning](https://slds-lmu.github.io/website_optimization/)"
+notebook-view: false
+---
+
+::: {.content-hidden when-format="pdf"}
+::: {.hidden}
+{{< include ../_quarto/latex-math.qmd >}}
+:::
+:::
+
+::: {.callout-note collapse="true"}
+## Reproducibility
+
+Produced with Python 3.10 and R 4.4.1. To reproduce, install the pinned package versions below.
+
+::: {.panel-tabset}
+### Python
+```bash
+pip install numpy==2.0.2 matplotlib==3.10.8
+```
+### R
+```r
+install.packages("remotes")
+remotes::install_version("ggplot2", "3.5.1")
+remotes::install_version("gridExtra", "2.3")
+```
+:::
+:::
+
+INSERT_setup_intro
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_4_R.ipynb#setup_data echo=true >}}
+### Python
+{{< embed sol_mv_opt_4_py.ipynb#setup_data echo=true >}}
+:::
+
+INSERT_seeds_note
+
+INSERT_problem_a
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+INSERT_solution_a_text
+:::
+
+INSERT_problem_b
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+INSERT_solution_b_text
+:::
+
+INSERT_problem_c
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+INSERT_solution_c_text
+:::
+
+INSERT_problem_d
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_4_R.ipynb#solution_d_code echo=true >}}
+### Python
+{{< embed sol_mv_opt_4_py.ipynb#solution_d_code echo=true >}}
+:::
+
+INSERT_solution_d_text
+:::
+
+INSERT_problem_e
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+INSERT_solution_e_intro_text
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_4_R.ipynb#solution_e_code echo=true >}}
+### Python
+{{< embed sol_mv_opt_4_py.ipynb#solution_e_code echo=true >}}
+:::
+:::
