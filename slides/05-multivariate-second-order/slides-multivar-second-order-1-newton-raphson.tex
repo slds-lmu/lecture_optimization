@@ -20,12 +20,29 @@ figure/NR_2.png
 \item Limitations
 }
 
-\begin{framei}[sep=L]{From first to second order methods}
-\item So far: \textbf{First order methods} \\
-$\Rightarrow$ \textit{Gradient} information, i.e., first derivatives
-\item Now: \textbf{Second order methods} \\
-$\Rightarrow$ \textit{Hessian} information, i.e., second derivatives
+\begin{framei}{Motivation: Beyond gradient information}
+\item \textbf{Recall:} GD only uses the gradient $\Rightarrow$ \textit{ignores curvature}
+\item Hessian $\H = \nabla^2 f$ (curvature) encodes how fast the gradient itself changes along each direction
+\begin{itemizeM}
+\item High curvature: gradient is unreliable further away $\Rightarrow$ take a \textit{small} step
+\item Low curvature: gradient stays valid further away $\Rightarrow$ take a \textit{large} step
+\end{itemizeM}
+\item GD only picks one global $\alpha$ for all directions $\Rightarrow$ for ill-conditioned $\H$, this causes zig-zagging / slow convergence:
+\imageC[0.55]{../04-multivariate-first-order/figure/curvature_2.png}
 \end{framei}
+
+
+\begin{framei}[sep=L]{Motivation: Beyond gradient information}
+\item \textbf{Idea:} Use full curvature information instead of a single scalar $\alpha$
+\begin{itemizeM}
+\item rescale the gradient \textit{individually per direction} via $\H^{-1}$
+\item biases updates towards low-curvature directions, where a large step is unlikely to overshoot or worsen $f$
+\end{itemizeM}
+\imageC[0.35][https://link.springer.com/book/10.1007/978-3-030-40344-7]{figure_man/aggarwal_fig5-7_inverse_hessian.jpg}
+\begin{center}{\footnotesize Effect of multiplying the steepest-descent direction with the inverse
+Hessian}\end{center}
+\end{framei}
+
 
 \comment[NOTE]{BB}{vielleicht noch eine "demotivierende" slide warum 2nd order schlöecht ist in hohen dim
 oder kommt das in quasi newton?
@@ -130,9 +147,8 @@ Newton-Raphson may diverge
 \end{framei}
 
 
-\begin{framei}[fs=small]{Limitations: Non-descent directions}
-\item \textbf{Problem 1:} In general, $\mathbf{d}^{[t]}$ is not a descent direction (e.g., second step in the previous example):
-\imageC[0.6]{figure/NR_2.png}
+\begin{framei}[sep=L]{Limitations: Non-descent directions}
+\item \textbf{Problem 1:} In general, $\mathbf{d}^{[t]}$ is not a descent direction
 \item \textbf{But}: If Hessian is positive definite, $\mathbf{d}^{[t]}$ is descent direction:
 $$
 \nabla f(\xv^{[t]})^\top \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})^\top (\nabla^2 f(\xv^{[t]}))^{-1} \nabla f(\xv^{[t]}) < 0
@@ -142,12 +158,27 @@ $$
 \end{framei}
 
 
-\begin{framei}{Limitations: Computational Cost}
-\item \textbf{Problem 2:} Hessian can be \textbf{computationally expensive} to calculate, since descent direction $\mathbf{d}^{[t]}$ is the solution of the linear system
+\begin{framei}[fs=small]{Example: Non-descent directions}
+\item Consider $f(x) = \frac{x^4}{4} - x^2 + 2x$ with $f'(x) = x^3 - 2x + 2$, $f''(x) = 3x^2 - 2$
+\item Starting at $x^{[0]} = 0$: $f''(0) = -2 < 0$ ($\H$ not pd) $\Rightarrow$ Newton-Raphson performs \textbf{ascent} step:
+$$
+x^{[1]} = x^{[0]} - \frac{f'(x^{[0]})}{f''(x^{[0]})} = 0 - \frac{2}{-2} = 1, \qquad f(x^{[1]}) = 1.25 > 0 = f(x^{[0]})
+$$
+\item From $x^{[1]} = 1$: $f''(1) = 1 > 0$, but the step leads right back to $x^{[2]} = 0$ \\
+$\Rightarrow$ Newton-Raphson cycles forever between $0$ and $1$
+\item \textbf{GD} from the same $x^{[0]} = 0$ only uses the neg. gradient $-f'(x^{[0]})=-2$ (descent direction) and converges for appropriate step size $\alpha$
+\imageC[0.65]{figure/NR_divergence.png}
+\end{framei}
+
+
+\begin{framei}[sep=L]{Limitations: Computational Cost}
+\item \textbf{Problem 2:} Hessian can be \textbf{computationally expensive} to calculate, as descent direction $\mathbf{d}^{[t]}$ is solution of the linear system
 $$
 \nabla^2 f(\xv^{[t]}) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
 $$
-\vfill
+\item For $\xv \in \R^d$, the Hessian has $d^2$ entries: $\mathcal{O}(d^2)$ memory, and $\mathcal{O}(d^3)$ per iteration to solve the linear system (compared to $\mathcal{O}(d)$ memory and no linear solve for GD)
+\item For large $d$ (e.g., deep neural networks with $d \sim 10^9$ parameters),
+      this is prohibitive: storing a dense $d \times d$ Hessian alone is infeasible
 \item \textbf{Aim:} Find quasi-second order methods not relying on exact Hessians
 \begin{itemizeS}
 \item Quasi-Newton method
