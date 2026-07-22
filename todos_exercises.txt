@@ -1,0 +1,2 @@
+Potential new exercises:
+- Aggarwal ch. 5.5.2: Newton-Raphson for SVM
