@@ -37,9 +37,9 @@ Open points:
     and saddles dominate high-dim non-convex landscapes ⇒ fatal for DNNs independent of cost.
 
 From Aggarwal:
-- maybe steal some motivation from 5.4.0
-- use quadratic bowl intuition (under eq. 5.10)
-- check if Fig. 5.7 is in there
+X maybe steal some motivation from 5.4.0
+X use quadratic bowl intuition (under eq. 5.10)
+X check if Fig. 5.7 is in there
 - Bernd wants an animation where we can see the quadratic approximation, step, and next step etc. (preferably 2D (two input dimensions))
 --> something like 5.8 but in two dimensions
 --> one good and one bad example

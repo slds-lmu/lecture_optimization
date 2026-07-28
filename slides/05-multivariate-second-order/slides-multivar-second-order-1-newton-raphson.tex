@@ -14,7 +14,7 @@ Second order methods
 }{
 Newton-Raphson
 }{
-figure/NR_2.png
+figure/NR_quad_approx_good.png
 }{
 \item Newton-Raphson
 \item Limitations
@@ -79,12 +79,18 @@ $$
 \nabla^2 f(\xv^{[t]})\mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
 $$
 with direct (matrix decompositions) or iterative methods
-\vfill
-\item \textbf{Relaxed/Damped Newton-Raphson:} Use step size $\alpha > 0$ with
-$$
-\xv^{[t+1]} = \xv^{[t]} + \alpha \mathbf{d}^{[t]}
-$$
-to satisfy Wolfe conditions (or just Armijo rule)
+\end{framei}
+
+
+\begin{framei}{Newton-Raphson: Intuition}
+\item Newton update approximates the function locally with a quadratic bowl and moves to the bottom
+of the bowl in a single step
+\item The ``learning rate'' is incorporated implicitly
+\item In general, the bottom of the quadratic bowl is not the bottom of the true function $\Rightarrow$
+multiple Newton updates are usually necessary
+\imageC[0.55]{figure/NR_quad_approx_good.png}
+\item[] {\small \textbf{Note}: univariate functions are rather ``boring'' as there are only two possible directions $\Rightarrow$ we'll move on to more interesting examples soon}
+\item \textbf{Caveat}: if the quadratic approximation is poor (e.g., far from the current point), the Newton step may worsen $f$ (see in a few slides)
 \end{framei}
 
 
@@ -118,8 +124,25 @@ x_1^{[0]} \\ x_2^{[0]}
 -x_2^{[0]}
 \end{pmatrix} = \zero
 $$
-\item \textbf{Note:} Newton-Raphson only needs one iteration for quadratic forms
 \end{framei}
+
+
+\begin{framev}{Analytical example with quadratic form}
+\splitV[0.55]{
+\begin{itemizeM}
+\item Newton-Raphson only needs one iteration for quadratic forms
+\item See how the inverse Hessian rescales the gradient:
+\begin{itemizeM}
+\item $x_1$: higher curvature $\Rightarrow$ scaled by $1/2$ by $\H^{-1}$
+\item $x_2$: lower curvature $\Rightarrow$ scaled by $1$ by $\H^{-1}$
+\end{itemizeM}
+\item \textbf{Note}: For diagonal $H$, each dimension is scaled individually and we can easily interpret the scaling factors. For non-diagonal $H$, the update direction becomes a linear combination of all dimensions.
+\end{itemizeM}
+}{
+\imageC[1]{figure/NR_quadratic_form.png}
+}
+\end{framev}
+
 
 \begin{framev}{Newton-Raphson vs. GD on Rosenbrock function}
 \splitV[0.55]{
@@ -130,6 +153,15 @@ $$
 \vfill
 Newton-Raphson has much better convergence speed here
 \end{framev}
+
+
+\begin{framei}{Newton-Raphson: Step size}
+\item \textbf{Relaxed/Damped Newton-Raphson:} Use step size $\alpha > 0$ with
+$$
+\xv^{[t+1]} = \xv^{[t]} + \alpha \mathbf{d}^{[t]}
+$$
+to satisfy Wolfe conditions (or just Armijo rule)
+\end{framei}
 
 
 \begin{framei}[sep=L]{Discussion}
