@@ -30,7 +30,7 @@ grid <- expand.grid(
 )
 grid$z <- f(grid$x1, grid$x2)
 
-# trace colors of the chapter (see NR.R)
+# trace colors of the chapter
 col_newton <- "#ff6262"
 col_sd <- "#ffcc00"
 arrow_style <- arrow(length = unit(0.09, "inches"))
