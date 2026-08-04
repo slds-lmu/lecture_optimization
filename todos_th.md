@@ -47,6 +47,10 @@ X more on line search --> search in other literature
   - important point: gradient descent can escape saddle points, but Newton cannot (because it is attracted to ANY critical point); note: we also need to discuss this better in the GD chapter (that it CAN escape)
 - we want a more detailed analysis of convergence (maybe with proof) for Newton
 - we could do trust regions but it is not enough stuff in Aggarwal (not understandable, not enough)
+- illustrate the limitations/challenges with ML examples, not just toy functions
+  - e.g. Aggarwal 5.6.3 motivates line search with the L2-SVM: J = sum_i max{1 - y_i w x_i, 0}^2 is non-quadratic,
+    so a finite Newton step makes points drop in/out of the loss -> near the optimum the update is defined by
+    a few noisy misclassified points (contrast: least squares, J = 14w^2 + 3, Taylor exact -> converges in one step)
 
 
 - potentially: one short slide on newton-raphson for least squares regression --> how hessian looks like, point-wise hessian (see lemma), result

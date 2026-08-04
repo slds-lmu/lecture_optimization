@@ -49,12 +49,82 @@ $\Rightarrow$ Newton-Raphson cycles forever between $0$ and $1$
 \end{framei}
 
 
-\begin{framev}[align=top]{Limitations: Singular and Indefinite Hessian}
-\end{framev}
+\begin{framei}[sep=L]{Limitations: Singular and Indefinite Hessian}
+\item \textbf{Problem 2:} Newton-Raphson is designed for \textit{convex quadratic} $f$ with pd Hessian, but
+$\nabla^2 f(\xv^{[t]})$ may be
+\begin{itemizeM}
+\item \textbf{singular}: $\nabla^2 f(\xv^{[t]}) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})$ has no unique solution
+$\Rightarrow$ step undefined
+\item {\color{red}\textbf{near-singular}: step length blows up as $\lammin \to 0$, and errors already present in
+$\H$ and $\nabla f$ are amplified by $\kappa(\H) = |\lammax| / |\lammin|$}
+\item \textbf{indefinite}: quadratic model has no minimizer $\Rightarrow$ non-descent direction (Problem 1)
+\end{itemizeM}
+\item \textbf{When does this happen in ML?} Rank-deficient design, collinear features, $d > n$,
+or degenerate optima
+\end{framei}
 
 
-\begin{framev}[align=top]{Limitations: Saddle Points}
-\end{framev}
+\begin{framei}[sep=L]{Example: Singular Hessian in the $L_2$-SVM}
+\item Unregularized $L_2$-SVM (squared hinge loss):
+$$
+\risket = \sumin \max\{1 - \yi \thetav^\top \xi, ~0\}^2
+$$
+\item Only \textbf{margin violators} $\mathcal{M} = \{i: \yi \thetav^\top \xi < 1\}$ contribute:
+$$
+\H = 2 \sum_{i \in \mathcal{M}} \xi (\xi)^\top
+$$
+\item Each $\xi (\xi)^\top$ has \textbf{rank 1} $\Rightarrow$ $\text{rank}(\H) \leq |\mathcal{M}|$,
+so we need at least $d$ margin violators for $\H$ to be invertible
+\item \textbf{But}: the better our fit, the fewer violators
+$\Rightarrow$ $\H$ becomes singular exactly where we want to converge
+\end{framei}
+
+
+\begin{framei}[sep=L]{Remedy: Regularized Newton step}
+\item Replace $\H$ by $\H + \lambda \id$ with $\lambda > 0$: all eigenvalues are shifted by $\lambda$
+$$
+\left(\H + \lambda \id \right) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
+$$
+\item Choosing $\lambda$ slightly larger than $|\lammin|$ makes $\H + \lambda \id$ pd
+$\Rightarrow$ invertible and descent direction
+\item Alternative: use pseudoinverse $\H^{+}$ instead of $\H^{-1}$
+\item \textbf{Caveat}: regularization does not cure ill-conditioning -- for nearly singular $\H$ the step
+stays sensitive to errors in $\H$ and $\nabla f$
+\end{framei}
+
+
+\begin{framei}[fs=small]{Limitations: Saddle Points}
+\item \color{red} \textbf{Problem 3:} Newton-Raphson solves $\nabla f(\xv) = \zero$ $\Rightarrow$ attracted to \textbf{any}
+critical point (minima, maxima, saddles)
+\item Example: $g(x_1, x_2) = x_1^2 - x_2^2$ with $\H = \left(\begin{smallmatrix} 2 & 0 \\ 0 & -2 \end{smallmatrix}\right)$
+indefinite everywhere
+\item $g$ is quadratic $\Rightarrow$ a single Newton step lands \textit{exactly} on the saddle $(0,0)$,
+from any starting point, while GD is repelled along the negative curvature direction $x_2$ and escapes
+\imageC[0.72]{figure/NR_saddle_2d.png}
+\end{framei}
+
+
+\begin{framei}[fs=small]{Saddle Points: Model flips shape}
+\item \color{red} Near an inflection point, the quadratic model flips shape, e.g., for $f(x) = x^3$:
+\begin{itemizeS}
+\item at $x = 1$: $F(x) = 3x^2 - 3x + 1$ is convex $\Rightarrow$ step towards a min
+\item at $x = -1$: $G(x) = -3x^2 - 3x - 1$ is concave $\Rightarrow$ step towards a max
+\end{itemizeS}
+\item At $x = 0$: $f'= f''= 0$ $\Rightarrow$ update $0/0$ undefined (\textbf{degenerate critical point},
+which may still be a true min, e.g., for $h(x) = x^4$)
+\imageC[0.66]{figure/NR_saddle_1d.png}
+\end{framei}
+
+
+\begin{framei}[sep=L]{Saddle Points: Why this matters}
+\item \color{red} In high-dimensional non-convex problems (e.g., DNNs), saddle points vastly outnumber true optima
+\item \textbf{GD can escape} saddle points -- it is simply not attracted by them --
+\textbf{Newton-Raphson cannot}, it is attracted \textit{indiscriminately} to all critical points
+\item $\Rightarrow$ second order is not uniformly better: it pays off for complex curvature, but not for
+landscapes riddled with saddles
+\item Practitioners often prefer first order methods with adaptive schemes (e.g., Adam), which pick up
+some curvature information implicitly and at much lower cost
+\end{framei}
 
 
 \begin{framei}[sep=L]{Limitations: Computational Cost}
