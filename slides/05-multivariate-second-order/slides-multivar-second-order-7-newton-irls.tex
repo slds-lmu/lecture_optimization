@@ -1,0 +1,219 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Second order methods
+}{
+Newton and IRLS
+}{
+figure/NR_2.png
+}{
+\item Setup: Linear predictor + separable loss
+\item Structure of gradient and Hessian
+\item Newton as weighted least squares
+\vspace{0.5cm}
+\item[] \hspace{-0.7cm}Slides based on\\
+\hspace{-0.7cm}\furtherreading{AGGARWAL2020} (Ch. 5.5)
+}
+
+\begin{framei}[sep=L]{Setup: Linear predictor and separable loss}
+\item We now look at regularized ERM problems with a \textbf{linear predictor} and a loss that is \textbf{separable over the observations}:
+\begin{itemizeM}
+\item \textbf{(A1) Linearity:} scalar score $\fxit = \thetav^\top \xi = (\Xmat \thetav)_i$
+\item \textbf{(A2) Separability:} obs. $i$ only enters additively via its own loss term $\Lxyit$
+\end{itemizeM}
+\item This yields objectives of the form
+$$
+\risket = \sumin \Lxyit + \frac{\lambda}{2}\|\thetav\|_2^2
+$$
+\end{framei}
+
+
+\begin{framei}[fs=small]{Three examples fitting this pattern}
+\item[] The following three (regularized) models are of exactly this form -- they only differ in the point-wise loss $\Lxyit$:
+\vfill
+\item \textbf{Least squares regression} ($\yi \in \R$): quadratic loss
+$$
+\risket = \sumin \frac{1}{2} \left(\fxit - \yi\right)^2 + \frac{\lambda}{2}\|\thetav\|_2^2
+$$
+\item \textbf{Logistic regression} ($\yi \in \{0, 1\}$): Bernoulli loss with $\pi^{(i)} = s(\fxit)$
+$$
+\risket = -\sumin \left[\yi \log(\pi^{(i)}) + (1 - \yi) \log(1 - \pi^{(i)})\right] + \frac{\lambda}{2}\|\thetav\|_2^2
+$$
+\item \textbf{L2-SVM} ($\yi \in \{-1, +1\}$): squared hinge loss
+$$
+\risket = \sumin \max\left(0,\, 1 - \yi \fxit\right)^2 + \frac{\lambda}{2}\|\thetav\|_2^2
+$$
+\end{framei}
+
+
+\begin{framei}{Newton's method for this problem class}
+\item \textbf{Recall} the Newton-Raphson update applied to $\risket$:
+$$
+\thetatn = \thetat - (\nabla^2 \riske(\thetat))^{-1} \nabla \riske(\thetat)
+$$
+\item \textbf{Goal:} We will now show that for problems of this kind, each step of Newton's method can be seen as solving a \textbf{weighted least squares} problem -- with weights and \enquote{working responses} that change over the iterations and can be interpreted:
+\begin{framed}
+\centering
+\textbf{Iteratively Reweighted Least Squares (IRLS)}
+\end{framed}
+\vfill
+\item \textbf{Plan:}
+\begin{itemizeS}
+\item \textbf{Step 1:} derive the structure of the gradient $\nabla \risket$
+\item \textbf{Step 2:} derive the structure of the Hessian $\nabla^2 \risket$
+\item \textbf{Step 3:} rewrite the Newton step as a weighted LS problem
+\end{itemizeS}
+\end{framei}
+
+
+\begin{framei}[fs=small]{Step 1: Structure of the gradient}
+\item Quantity of interest: $\nabla \risket \in \R^{1 \times d}$, with
+$$
+\nabla \risket = \sumin \nabla_{\thetav}\, \Lxyit + \lambda \thetav^\top
+$$
+\item Chain rule on each loss term:
+$$
+\nabla_{\thetav}\, \Lxyit
+= \underbrace{\frac{\partial \Lxyit}{\partial \fxit}}_{=:\, r_i \in \R \text{ (residual)}}
+\;\; \underbrace{\nabla_{\thetav}\, \fxit}_{=\, \left(\xi\right)^\top \text{ by (A1)}}
+\; \in \R^{1 \times d}
+$$
+\item Summing over the observations, with $\mathbf{r} := \left(r_1, \dots, r_n\right)^\top \in \R^n$:
+$$
+\boxed{\;\nabla \risket = \mathbf{r}^\top \Xmat + \lambda \thetav^\top\;} \; \in \R^{1 \times d}
+$$
+\end{framei}
+
+
+\begin{framei}[fs=small]{Step 2: Structure of the Hessian}
+\item Differentiate the gradient from step 1, using that the only $\thetav$-dependence in $\mathbf{r}^\top \Xmat$ sits inside $\mathbf{r}$:
+$$
+\nabla^2 \risket
+= \frac{\partial}{\partial \thetav^\top} \Big(\underbrace{\mathbf{r}^\top \Xmat}_{=\, \sumin r_i \left(\xi\right)^\top} + \; \lambda \thetav^\top\Big)
+= \sumin \frac{\partial r_i}{\partial \thetav^\top} \left(\xi\right)^\top + \lambda \id
+$$
+\item Differentiating one residual entry:
+$$
+\frac{\partial r_i}{\partial \thetav^\top}
+= \underbrace{\frac{\partial^2 \Lxyit}{\partial {\fxit}^2}}_{=:\, d_i \in \R}
+\;\; \underbrace{\frac{\partial \fxit}{\partial \thetav^\top}}_{=\, \xi \text{ by (A1)}}
+= d_i\, \xi \; \in \R^{d}
+$$
+\end{framei}
+
+
+\begin{framei}[fs=small]{Step 2: Structure of the Hessian}
+\item Plugging in yields the Hessian in sum form:
+$$
+\nabla^2 \risket = \sumin d_i\, \xi \left(\xi\right)^\top + \lambda \id \; \in \R^{d \times d}
+$$
+\item In matrix notation, stacking the $d_i$ into $\mathbf{D} := \text{diag}\left(d_1, \dots, d_n\right) \in \R^{n \times n}$:
+$$
+\boxed{\;\nabla^2 \risket = \Xmat^\top \mathbf{D} \Xmat + \lambda \id\;}
+$$
+\vfill
+\item \textbf{Note:} the loss only impacts the Hessian through the diagonal entries $d_i$ of $\mathbf{D}$, while the structure $\Xmat^\top \mathbf{D} \Xmat$ itself is fixed by the setup (A1) + (A2); $\mathbf{D}$ is diagonal here because the loss is separable over the observations (A2)
+\end{framei}
+
+
+\begin{framei}[fs=small]{Step 3: Newton step as weighted least squares}
+\item Plug gradient and Hessian into the Newton-Raphson update, where $\mathbf{r}$ and $\mathbf{D}$ are evaluated at the current iterate $\thetat$:
+$$
+\begin{aligned}
+\thetatn &= \thetat - \left(\Xmat^\top \mathbf{D} \Xmat + \lambda \id\right)^{-1} \left(\Xmat^\top \mathbf{r} + \lambda \thetat\right) \\
+&= \left(\Xmat^\top \mathbf{D} \Xmat + \lambda \id\right)^{-1} \left(\left(\Xmat^\top \mathbf{D} \Xmat + \lambda \id\right) \thetat - \Xmat^\top \mathbf{r} - \lambda \thetat\right) \\
+&= \left(\Xmat^\top \mathbf{D} \Xmat + \lambda \id\right)^{-1} \left(\Xmat^\top \mathbf{D} \Xmat \thetat - \Xmat^\top \mathbf{r}\right) \\
+&= \left(\Xmat^\top \mathbf{D} \Xmat + \lambda \id\right)^{-1} \Xmat^\top \mathbf{D} \underbrace{\left(\Xmat \thetat - \mathbf{D}^{-1} \mathbf{r}\right)}_{=:\, \tilde{\mathbf{f}} \in \R^n}
+\end{aligned}
+$$
+\item \textbf{Working responses} $\tilde{\mathbf{f}}$ (assuming $d_i > 0$), entry-wise
+$$
+\tilde{f}^{(i)} = f\big(\xi ~|~ \thetat\big) - r_i / d_i
+$$
+\end{framei}
+
+
+\begin{framei}[fs=small]{Step 3: Newton step as weighted least squares}
+\item This Newton iterate solves a \textbf{regularized weighted least squares} problem with (pseudo-)targets $\tilde{f}^{(i)}$ and weights $d_i$:
+$$
+\thetatn = \argmin_{\thetav} \; \frac{1}{2} \sumin d_i \left(\tilde{f}^{(i)} - \thetav^\top \xi\right)^2 + \frac{\lambda}{2}\|\thetav\|_2^2
+$$
+\vfill
+\item Since $\mathbf{r}$ and $\mathbf{D}$ depend on the current iterate $\thetat$, the weights $d_i$ and working responses $\tilde{f}^{(i)}$ change in every iteration
+\item The iterative Newton method thus repeatedly solves \textit{reweighted} LS problems -- hence the name \textbf{Iteratively Reweighted Least Squares (IRLS)}
+\end{framei}
+
+
+\begin{framei}[fs=small]{Example: Least squares regression}
+\item Quadratic loss $L\left(\yi, \fxit\right) = \frac{1}{2}\left(\fxit - \yi\right)^2$, so
+$$
+r_i = \fxit - \yi, \qquad
+d_i = 1
+$$
+\item Weights and working responses \textbf{collapse} to $\mathbf{D} = \id$ and $\tilde{\mathbf{f}} = \yv$, since
+$$
+\tilde{f}^{(i)} = f\big(\xi ~|~ \thetat\big) - \frac{f\big(\xi ~|~ \thetat\big) - \yi}{1} = \yi
+$$
+\item Plugging into the Newton step:
+$$
+\thetatn
+= \left(\Xmat^\top \mathbf{D} \Xmat + \lambda \id\right)^{-1} \Xmat^\top \mathbf{D}\, \tilde{\mathbf{f}}
+= \left(\Xmat^\top \Xmat + \lambda \id\right)^{-1} \Xmat^\top \yv
+$$
+recovering the well-known (regularized) LS estimator
+\item Since neither $\mathbf{D}$ nor $\tilde{\mathbf{f}}$ depends on $\thetat$, the problem is solved in \textbf{one} Newton step (from any starting point)
+\end{framei}
+
+
+\begin{framei}[fs=small]{Example: Logistic regression}
+\item Using $s'(f) = s(f)(1 - s(f))$, for the Bernoulli loss it follows:
+$$
+r_i = -\left(\frac{\yi}{\pi^{(i)}} - \frac{1 - \yi}{1 - \pi^{(i)}}\right) s'\left(\fxit\right)
+= \pi^{(i)} - \yi \, ,
+$$
+$$
+d_i = \frac{\partial r_i}{\partial \fxit} = s'\left(\fxit\right) = \pi^{(i)} \left(1 - \pi^{(i)}\right) ,
+$$
+$$
+\tilde{f}^{(i)} = f\big(\xi ~|~ \thetat\big) - \frac{\pi^{(i)} - \yi}{\pi^{(i)}(1 - \pi^{(i)})}
+$$
+(for a detailed derivation see \furtherreading{AGGARWAL2020})
+\vfill
+\item \textbf{Interpretation:} Weights $d_i = \pi^{(i)}(1 - \pi^{(i)}) \in (0, \frac{1}{4}]$ are small for confidently classified obs. -- they barely influence the update
+\end{framei}
+
+
+\begin{framei}[fs=small]{Example: L2-SVM}
+\item Define the active set of \textbf{margin violators} at $\thetat$: $A := \{i : \yi f\big(\xi ~|~ \thetat\big) < 1\}$, which changes with the iterate $\thetat$
+\item Residuals and weights:
+$$
+r_i = \begin{cases} -2 \yi \left(1 - \yi \fxit\right) & i \in A \\ 0 & \text{otherwise} \end{cases}, \qquad
+d_i = \begin{cases} 2 & i \in A \\ 0 & \text{otherwise} \end{cases}
+$$
+(for a detailed derivation see \furtherreading{AGGARWAL2020})
+\item For $i \notin A$: $d_i = 0$, so the obs. simply gets weight zero in the WLS
+\end{framei}
+
+
+\begin{framei}[fs=small]{Example: L2-SVM}
+\item For $i \in A$, the working response collapses to the label (using $(\yi)^2 = 1$):
+$$
+\tilde{f}^{(i)} = f\big(\xi ~|~ \thetat\big) + \yi \left(1 - \yi f\big(\xi ~|~ \thetat\big)\right) = \yi
+$$
+\item Consequently, the Newton step is a ridge regression on the current margin violators with their true labels as targets ($\Xmat_A$, $\yv_A$: rows/entries with $i \in A$):
+$$
+\thetatn = \left(2 \Xmat_A^\top \Xmat_A + \lambda \id\right)^{-1} 2 \Xmat_A^\top \yv_A
+$$
+\end{framei}
+
+\endlecture
+\end{document}
