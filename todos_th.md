@@ -1,10 +1,5 @@
 # 1 -- Newton Raphson
 
-Motivation? We somehow motivate it in chapter 4 (slides-multivar-first-order-4-weaknesses-curvature.tex):
-  - Lines 73/81: "Ideally, perform large step along v_min but small step along v_max" — this is precisely what Newton's method does (it rescales steps by H⁻¹), but GD cannot.
-  - Line 87: "GD is not aware of curvatures and can only walk along g" — the explicit statement of GD's blind spot, which 2nd order methods fix.
---> this is far away and students may not have this in mind anymore
-
 BB comments (slides-multivar-second-order-1-newton-raphson.tex, lines 30–32 and 158ff.) raise the same issue from two angles:
 - Lines 30–32: add a "demotivating" slide (or even a dedicated chunk) on why 2nd order methods are bad in high dimensions, with reference to large data and a speed comparison
 - Lines 158ff.: at minimum, Problem 2 on the limitations slide should be more precise about the mechanism — not just "computationally expensive" but:
@@ -21,8 +16,6 @@ X  Computational cost:
 X  - big O statement (-> solve linear system)
 X  - effort per iteration vs. convergence speed
 
-/  state (or better show) convergence speed
-
 X  divergence example (where we are far away from the optimum)
 
 X  look into wright & recht -> does not have NR
@@ -37,18 +30,19 @@ Open points:
     and saddles dominate high-dim non-convex landscapes ⇒ fatal for DNNs independent of cost.
 
 From Aggarwal:
-- maybe steal some motivation from 5.4.0
-- use quadratic bowl intuition (under eq. 5.10)
-- check if Fig. 5.7 is in there
-- Bernd wants an animation where we can see the quadratic approximation, step, and next step etc. (preferably 2D (two input dimensions))
---> something like 5.8 but in two dimensions
---> one good and one bad example
-- more on line search --> search in other literature
- --> minimum: show bad case animation with line search
+X maybe steal some motivation from 5.4.0
+X use quadratic bowl intuition (under eq. 5.10)
+X check if Fig. 5.7 is in there
+X Bernd wants an animation where we can see the quadratic approximation, step, and next step etc. (preferably 2D (two input dimensions))
+  --> something like 5.8 but in two dimensions
+  --> one good and one bad example
+X more on line search --> search in other literature
+  --> minimum: show bad case animation with line search
 - check whether we have the ascent/descent direction analysis/formula on the slides
 - analyze divergence when start point is too far away from optimum
+- convergence analysis (maybe with proof) for Newton
 - 5.6.1 Singular and Indefinite Hessian --> we want to discuss this (also in context of descent direction and also that regularization helps, ill-conditioning should be mentioned)
-- 5.6.2 sadle points:
+- 5.6.2 saddle points:
   - show what happens in 2D with a visualization (different bowls in each direction)
   - important point: gradient descent can escape saddle points, but Newton cannot (because it is attracted to ANY critical point); note: we also need to discuss this better in the GD chapter (that it CAN escape)
 - we want a more detailed analysis of convergence (maybe with proof) for Newton

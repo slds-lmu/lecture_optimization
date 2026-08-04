@@ -1,0 +1,83 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Second order methods
+}{
+Limitations of Newton-Raphson
+}{
+figure/NR_divergence.png
+}{
+\item Non-descent directions
+\item Singular and indefinite Hessian
+\item Saddle points
+\item Computational cost
+\vspace{0.5cm}
+\item[] \hspace{-0.7cm}Slides based on\\
+\hspace{-0.7cm}\furtherreading{AGGARWAL2020} (Ch. 5.4-5.7)
+}
+
+\begin{framei}[sep=L]{Limitations: Non-descent directions}
+\item \textbf{Problem 1:} In general, $\mathbf{d}^{[t]}$ is not a descent direction
+\item \textbf{But}: If Hessian is positive definite, $\mathbf{d}^{[t]}$ is descent direction:
+$$
+\nabla f(\xv^{[t]})^\top \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})^\top (\nabla^2 f(\xv^{[t]}))^{-1} \nabla f(\xv^{[t]}) < 0
+$$
+\item Near minimum, Hessian is positive definite
+\item For initial steps, Hessian is often not positive definite and Newton-Raphson may give non-descending update directions
+\end{framei}
+
+
+\begin{framei}[fs=small]{Example: Non-descent directions}
+\item Consider $f(x) = \frac{x^4}{4} - x^2 + 2x$ with $f'(x) = x^3 - 2x + 2$, $f''(x) = 3x^2 - 2$
+\item Starting at $x^{[0]} = 0$: $f''(0) = -2 < 0$ ($\H$ not pd) $\Rightarrow$ Newton-Raphson performs \textbf{ascent} step:
+$$
+x^{[1]} = x^{[0]} - \frac{f'(x^{[0]})}{f''(x^{[0]})} = 0 - \frac{2}{-2} = 1, \qquad f(x^{[1]}) = 1.25 > 0 = f(x^{[0]})
+$$
+\item From $x^{[1]} = 1$: $f''(1) = 1 > 0$, but the step leads right back to $x^{[2]} = 0$ \\
+$\Rightarrow$ Newton-Raphson cycles forever between $0$ and $1$
+\item \textbf{GD} from the same $x^{[0]} = 0$ only uses the neg. gradient $-f'(x^{[0]})=-2$ (descent direction) and converges for appropriate step size $\alpha$
+\imageC[0.65]{figure/NR_divergence.png}
+\end{framei}
+
+
+\begin{framev}[align=top]{Limitations: Singular and Indefinite Hessian}
+\end{framev}
+
+
+\begin{framev}[align=top]{Limitations: Saddle Points}
+\end{framev}
+
+
+\begin{framei}[sep=L]{Limitations: Computational Cost}
+\item \textbf{Problem 4:} Hessian can be \textbf{computationally expensive} to calculate, as descent direction $\mathbf{d}^{[t]}$ is solution of the linear system
+$$
+\nabla^2 f(\xv^{[t]}) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
+$$
+\item For $\xv \in \R^d$, the Hessian has $d^2$ entries: $\mathcal{O}(d^2)$ memory, and $\mathcal{O}(d^3)$ per iteration to solve the linear system (compared to $\mathcal{O}(d)$ memory and no linear solve for GD)
+\item For large $d$ (e.g., deep neural networks with $d \sim 10^9$ parameters),
+      this is prohibitive: storing a dense $d \times d$ Hessian alone is infeasible
+\item \textbf{Aim:} Find quasi-second order methods not relying on exact Hessians
+\begin{itemizeS}
+\item Quasi-Newton method
+\item Gauss-Newton algorithm (for least squares)
+\end{itemizeS}
+\end{framei}
+
+\comment[NOTE]{BB}{genauer wie.
+Finding the inverse of the Hessian in high dimensions to compute the Newton direction {\displaystyle h=-(f''(x_{k}))^{-1}f'(x_{k})}{\displaystyle h=-(f''(x_{k}))^{-1}f'(x_{k})} can be an expensive operation. In such cases, instead of directly inverting the Hessian, it is better to calculate the vector {\displaystyle h}h as the solution to the system of linear equations
+{\displaystyle [f''(x_{k})]h=-f'(x_{k})}{\displaystyle [f''(x_{k})]h=-f'(x_{k})}
+which may be solved by various factorizations or approximately (but to great accuracy) using iterative methods. Many of these methods are only applicable to certain types of equations, for example the Cholesky factorization and conjugate gradient will only work if {\displaystyle f''(x_{k})}{\displaystyle f''(x_{k})} is a positive definite matrix. While this may seem like a limitation, it is often a useful indicator of something gone wrong; for example if a minimization problem is being approached and {\displaystyle f''(x_{k})}{\displaystyle f''(x_{k})} is not positive definite, then the iterations are converging to a saddle point and not a minimum.}
+
+\comment[NOTE]{UU}{Warum? Eine schlecht konditionierte Hesse-Matrix könnte Probleme machen. Aber die Lösung des LGS an sich ist nicht das Problem, da es stabile Lösungsverfahren (LU mit Pivoting oder QR-Zerlegung mit Householder-Transformationen) gibt}
+
+\endlecture
+\end{document}

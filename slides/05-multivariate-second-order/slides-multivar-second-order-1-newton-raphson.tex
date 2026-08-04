@@ -14,10 +14,11 @@ Second order methods
 }{
 Newton-Raphson
 }{
-figure/NR_2.png
+figure/NR_quad_approx_good.png
 }{
 \item Newton-Raphson
-\item Limitations
+\item Damped Newton-Raphson
+\item Convergence of Newton-Raphson
 \vspace{0.5cm}
 \item[] \hspace{-0.7cm}Slides based on\\
 \hspace{-0.7cm}\furtherreading{AGGARWAL2020} (Ch. 5.4-5.7)
@@ -79,12 +80,18 @@ $$
 \nabla^2 f(\xv^{[t]})\mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
 $$
 with direct (matrix decompositions) or iterative methods
-\vfill
-\item \textbf{Relaxed/Damped Newton-Raphson:} Use step size $\alpha > 0$ with
-$$
-\xv^{[t+1]} = \xv^{[t]} + \alpha \mathbf{d}^{[t]}
-$$
-to satisfy Wolfe conditions (or just Armijo rule)
+\end{framei}
+
+
+\begin{framei}{Newton-Raphson: Intuition}
+\item Newton update approximates the function locally with a quadratic bowl and moves to the bottom
+of the bowl in a single step
+\item The ``learning rate'' is incorporated implicitly
+\item In general, the bottom of the quadratic bowl is not the bottom of the true function $\Rightarrow$
+multiple Newton updates are usually necessary
+\imageC[0.55]{figure/NR_quad_approx_good.png}
+\item[] {\small \textbf{Note}: univariate functions are rather ``boring'' as there are only two possible directions $\Rightarrow$ we'll move on to more interesting examples soon}
+\item \textbf{Caveat}: if the quadratic approximation is poor (e.g., far from the current point), the Newton step may worsen $f$ (see later examples)
 \end{framei}
 
 
@@ -118,18 +125,113 @@ x_1^{[0]} \\ x_2^{[0]}
 -x_2^{[0]}
 \end{pmatrix} = \zero
 $$
-\item \textbf{Note:} Newton-Raphson only needs one iteration for quadratic forms
 \end{framei}
 
-\begin{framev}{Newton-Raphson vs. GD on Rosenbrock function}
+
+\begin{framev}{Analytical example with quadratic form}
 \splitV[0.55]{
-\imageC[1]{figure/NR_2.png}
+\begin{itemizeM}
+\item Newton-Raphson only needs one iteration for quadratic forms
+\item See how the inverse Hessian rescales the gradient:
+\begin{itemizeM}
+\item $x_1$: higher curvature $\Rightarrow$ scaled by $1/2$ by $\H^{-1}$
+\item $x_2$: lower curvature $\Rightarrow$ scaled by $1$ by $\H^{-1}$
+\end{itemizeM}
+\item \textbf{Note}: For diagonal $H$, each dimension is scaled individually and we can easily interpret the scaling factors. For non-diagonal $H$, the update direction becomes a linear combination of all dimensions.
+\end{itemizeM}
 }{
-\imageC[1]{figure/NR_1.png}
+\imageC[1]{figure/NR_quadratic_form.png}
+}
+\end{framev}
+
+
+\begin{framev}{Non-quadratic examples: Convergence}
+\textbf{Example 1}: Newton-Raphson on
+$f(\xv) = \exp(x_1 + 3 x_2 - 0.1) + \exp(x_1 - 3 x_2 - 0.1) + \exp(-x_1 - 0.1)$
+
+\vspace{0.5cm}
+\only<1>{
+After $1$ Newton step:
+\splitV[0.55]{
+\imageC[1]{figure/NR_boyd_1_contour.png}
+}{
+\imageC[1]{figure/NR_boyd_1_error.png}
+}
+}
+\only<2>{
+After $2$ Newton steps:
+\splitV[0.55]{
+\imageC[1]{figure/NR_boyd_2_contour.png}
+}{
+\imageC[1]{figure/NR_boyd_2_error.png}
+}
+}
+\only<3>{
+After $5$ Newton steps $\Rightarrow$ Newton-Raphson converges in just 5 steps:
+\splitV[0.55]{
+\imageC[1]{figure/NR_boyd_5_contour.png}
+}{
+\imageC[1]{figure/NR_boyd_5_error.png}
+}
+}
+\end{framev}
+
+
+\begin{framev}{Non-quadratic examples: Overshooting}
+\textbf{Example 2}: Newton-Raphson on
+$f(\xv) = (1 + x_1^2)^{1/2} + \frac{x_2^2}{2}$\\
+\textit{Note:} along $x_1$, curvature decays away from the optimum:
+$\frac{\partial^2}{\partial x_1^2} (1 + x_1^2)^{1/2} = (1 + x_1^2)^{-3/2} \to 0$
+
+\vspace{0.3cm}
+\only<1>{
+After $1$ Newton step:
+\splitV[0.55]{
+\imageC[1]{figure/NR_overshoot_1_contour.png}
+}{
+\imageC[1]{figure/NR_overshoot_1_error.png}
+}
+$\Rightarrow$ quadratic in $x_2$, direction solved exactly in one step
+}
+\only<2>{
+After $2$ Newton steps:
+\splitV[0.55]{
+\imageC[1]{figure/NR_overshoot_2_contour.png}
+}{
+\imageC[1]{figure/NR_overshoot_2_error.png}
+}
+$\Rightarrow$ along $x_1$, the quadratic approx. is too flat, its minimum lies well beyond $\xv^\ast$ $\Rightarrow$ NR overshoots
+}
+\only<3>{
+After $3$ Newton steps:
+\splitV[0.55]{
+\imageC[1]{figure/NR_overshoot_3_contour.png}
+}{
+\imageC[1]{figure/NR_overshoot_3_error.png}
+}
+$\Rightarrow$ NR diverges \\
+\vspace{0.3cm}
+\textit{Note}: $\H \succ 0$ everywhere $\Rightarrow$ direction is fine, only step size is wrong
+}
+\end{framev}
+
+
+\begin{framei}{Newton-Raphson: Step size}
+\item \textbf{Relaxed/Damped Newton-Raphson:} Use step size $\alpha > 0$ with
+$$
+\xv^{[t+1]} = \xv^{[t]} + \alpha \mathbf{d}^{[t]}
+$$
+to satisfy Wolfe conditions (or just Armijo rule)
+\item \textbf{Example 2 (cont'd)}: Same function and starting point, now with Armijo backtracking
+($\alpha \leftarrow 1$, halved until $f$ decreases sufficiently):
+\splitV[0.55]{
+\imageC[1]{figure/NR_overshoot_damped_contour.png}
+}{
+\imageC[1]{figure/NR_overshoot_damped_error.png}
 }
 \vfill
-Newton-Raphson has much better convergence speed here
-\end{framev}
+Only iteration $2$ is damped ($\alpha = 0.5$) $\Rightarrow$ enough for NR to converge
+\end{framei}
 
 
 \begin{framei}[sep=L]{Discussion}
@@ -148,53 +250,6 @@ Newton-Raphson converges \textit{locally} quadratically \\
 Newton-Raphson may diverge
 \end{framed}
 \end{framei}
-
-
-\begin{framei}[sep=L]{Limitations: Non-descent directions}
-\item \textbf{Problem 1:} In general, $\mathbf{d}^{[t]}$ is not a descent direction
-\item \textbf{But}: If Hessian is positive definite, $\mathbf{d}^{[t]}$ is descent direction:
-$$
-\nabla f(\xv^{[t]})^\top \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})^\top (\nabla^2 f(\xv^{[t]}))^{-1} \nabla f(\xv^{[t]}) < 0
-$$
-\item Near minimum, Hessian is positive definite
-\item For initial steps, Hessian is often not positive definite and Newton-Raphson may give non-descending update directions
-\end{framei}
-
-
-\begin{framei}[fs=small]{Example: Non-descent directions}
-\item Consider $f(x) = \frac{x^4}{4} - x^2 + 2x$ with $f'(x) = x^3 - 2x + 2$, $f''(x) = 3x^2 - 2$
-\item Starting at $x^{[0]} = 0$: $f''(0) = -2 < 0$ ($\H$ not pd) $\Rightarrow$ Newton-Raphson performs \textbf{ascent} step:
-$$
-x^{[1]} = x^{[0]} - \frac{f'(x^{[0]})}{f''(x^{[0]})} = 0 - \frac{2}{-2} = 1, \qquad f(x^{[1]}) = 1.25 > 0 = f(x^{[0]})
-$$
-\item From $x^{[1]} = 1$: $f''(1) = 1 > 0$, but the step leads right back to $x^{[2]} = 0$ \\
-$\Rightarrow$ Newton-Raphson cycles forever between $0$ and $1$
-\item \textbf{GD} from the same $x^{[0]} = 0$ only uses the neg. gradient $-f'(x^{[0]})=-2$ (descent direction) and converges for appropriate step size $\alpha$
-\imageC[0.65]{figure/NR_divergence.png}
-\end{framei}
-
-
-\begin{framei}[sep=L]{Limitations: Computational Cost}
-\item \textbf{Problem 2:} Hessian can be \textbf{computationally expensive} to calculate, as descent direction $\mathbf{d}^{[t]}$ is solution of the linear system
-$$
-\nabla^2 f(\xv^{[t]}) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
-$$
-\item For $\xv \in \R^d$, the Hessian has $d^2$ entries: $\mathcal{O}(d^2)$ memory, and $\mathcal{O}(d^3)$ per iteration to solve the linear system (compared to $\mathcal{O}(d)$ memory and no linear solve for GD)
-\item For large $d$ (e.g., deep neural networks with $d \sim 10^9$ parameters),
-      this is prohibitive: storing a dense $d \times d$ Hessian alone is infeasible
-\item \textbf{Aim:} Find quasi-second order methods not relying on exact Hessians
-\begin{itemizeS}
-\item Quasi-Newton method
-\item Gauss-Newton algorithm (for least squares)
-\end{itemizeS}
-\end{framei}
-
-\comment[NOTE]{BB}{genauer wie.
-Finding the inverse of the Hessian in high dimensions to compute the Newton direction {\displaystyle h=-(f''(x_{k}))^{-1}f'(x_{k})}{\displaystyle h=-(f''(x_{k}))^{-1}f'(x_{k})} can be an expensive operation. In such cases, instead of directly inverting the Hessian, it is better to calculate the vector {\displaystyle h}h as the solution to the system of linear equations
-{\displaystyle [f''(x_{k})]h=-f'(x_{k})}{\displaystyle [f''(x_{k})]h=-f'(x_{k})}
-which may be solved by various factorizations or approximately (but to great accuracy) using iterative methods. Many of these methods are only applicable to certain types of equations, for example the Cholesky factorization and conjugate gradient will only work if {\displaystyle f''(x_{k})}{\displaystyle f''(x_{k})} is a positive definite matrix. While this may seem like a limitation, it is often a useful indicator of something gone wrong; for example if a minimization problem is being approached and {\displaystyle f''(x_{k})}{\displaystyle f''(x_{k})} is not positive definite, then the iterations are converging to a saddle point and not a minimum.}
-
-\comment[NOTE]{UU}{Warum? Eine schlecht konditionierte Hesse-Matrix könnte Probleme machen. Aber die Lösung des LGS an sich ist nicht das Problem, da es stabile Lösungsverfahren (LU mit Pivoting oder QR-Zerlegung mit Householder-Transformationen) gibt}
 
 \endlecture
 \end{document}
