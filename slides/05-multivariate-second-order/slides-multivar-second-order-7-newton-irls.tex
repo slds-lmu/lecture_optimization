@@ -14,7 +14,7 @@ Second order methods
 }{
 Newton and IRLS
 }{
-figure/NR_2.png
+figure/NR_boyd_5_contour.png
 }{
 \item Setup: Linear predictor + separable loss
 \item Structure of gradient and Hessian
@@ -25,7 +25,7 @@ figure/NR_2.png
 }
 
 \begin{framei}[sep=L]{Setup: Linear predictor and separable loss}
-\item We now look at regularized ERM problems with a \textbf{linear predictor} and a loss that is \textbf{separable over the observations}:
+\item We now look at L2-regularized ERM problems with a \textbf{linear predictor} and a loss that is \textbf{separable over the observations}:
 \begin{itemizeM}
 \item \textbf{(A1) Linearity:} scalar score $\fxit = \thetav^\top \xi = (\Xmat \thetav)_i$
 \item \textbf{(A2) Separability:} obs. $i$ only enters additively via its own loss term $\Lxyit$
@@ -135,7 +135,7 @@ $$
 &= \left(\Xmat^\top \mathbf{D} \Xmat + \lambda \id\right)^{-1} \Xmat^\top \mathbf{D} \underbrace{\left(\Xmat \thetat - \mathbf{D}^{-1} \mathbf{r}\right)}_{=:\, \tilde{\mathbf{f}} \in \R^n}
 \end{aligned}
 $$
-\item \textbf{Working responses} $\tilde{\mathbf{f}}$ (assuming $d_i > 0$), entry-wise
+\item Here, $\tilde{\mathbf{f}}$ is called the \textbf{working response} (assuming $d_i > 0$), which will take the role of a pseudo-target; entry-wise
 $$
 \tilde{f}^{(i)} = f\big(\xi ~|~ \thetat\big) - r_i / d_i
 $$
@@ -143,7 +143,7 @@ $$
 
 
 \begin{framei}[fs=small]{Step 3: Newton step as weighted least squares}
-\item This Newton iterate solves a \textbf{regularized weighted least squares} problem with (pseudo-)targets $\tilde{f}^{(i)}$ and weights $d_i$:
+\item This Newton iterate solves a \textbf{regularized weighted least squares} problem with working responses $\tilde{f}^{(i)}$ as targets and weights $d_i$:
 $$
 \thetatn = \argmin_{\thetav} \; \frac{1}{2} \sumin d_i \left(\tilde{f}^{(i)} - \thetav^\top \xi\right)^2 + \frac{\lambda}{2}\|\thetav\|_2^2
 $$
@@ -170,7 +170,7 @@ $$
 = \left(\Xmat^\top \Xmat + \lambda \id\right)^{-1} \Xmat^\top \yv
 $$
 recovering the well-known (regularized) LS estimator
-\item Since neither $\mathbf{D}$ nor $\tilde{\mathbf{f}}$ depends on $\thetat$, the problem is solved in \textbf{one} Newton step (from any starting point)
+\item Since, in this specific case, neither $\mathbf{D}$ nor $\tilde{\mathbf{f}}$ depends on $\thetat$, the problem is solved in \textbf{one} Newton step (from any starting point)
 \end{framei}
 
 
