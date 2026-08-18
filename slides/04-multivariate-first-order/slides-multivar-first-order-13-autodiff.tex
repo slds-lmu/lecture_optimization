@@ -23,6 +23,9 @@ figure/nn_architecture.pdf
 \item Gradients via the chain rule and vector-Jacobian products (VJPs)
 \item Backpropagation algorithm
 \item Implementation via automatic differentiation
+\vspace{0.5cm}
+\item[] \hspace{-0.7cm}Slides based on\\
+\hspace{-0.7cm}\furtherreading{JAX2024AUTODIFF} \furtherreading{DAGREOU2024HVP}
 }
 
 
@@ -35,16 +38,19 @@ figure/nn_architecture.pdf
 % vielleich ist es doch besser über beliebige algebraische ausdrücke hier zu reden....
 
 \begin{framei}{Computing gradients for DNNs}
-\item We now train \textbf{deep neural networks (DNNs)}: models with a very large parameter vector $\thetav \in \R^{p}$ ($p$ potentially in the millions)
-\item All methods discussed in this chapter rely on the gradient of the (scalar) empirical risk w.r.t.\ $\thetav$: 
+\item We now train \textbf{deep neural networks (DNNs)}: models with a very large parameter vector $\thetav \in \R^{d}$ ($d$ potentially in the millions)
+\item All methods discussed in this chapter rely on the gradient of the (scalar) empirical risk w.r.t.\ $\thetav$:
 $$
-\nabla_{\thetav} \risket \in \R^{1 \times p}
+\nabla_{\thetav} \risket \in \R^{1 \times d}
 $$
 \\ {\footnotesize(SGD relies on mini-batch estimates of the gradient)}
 % \item The objective is \textbf{scalar}, so this is a single row gradient -- but $p$ is huge
 
 %TODO-BB: "L" velleicht nicht optimal hier?
 \item For brevity, we write $L := \risket$ in the following
+% \item The objective is \textbf{scalar}, so this is a single row gradient -- but $p$ is huge
+\item For brevity, we write $L := \risket$ in the following
+% \item The objective is \textbf{scalar}, so this is a single row gradient -- but $d$ is huge
 \spacer
 \item \textbf{Question:} How to compute it \textbf{efficiently}?
 \end{framei}
@@ -67,22 +73,41 @@ $$
 \begin{itemize}
   \item e.g. $\zv_i = \sigma(\bm{W}_i \zv_{i-1} + \bm{b}_i)$ with $\thetav_i = (\bm{W}_i, \bm{b}_i)$
 \end{itemize}
+\item A DNN can be represented as a \textbf{directed acyclic graph} (DAG)
+\begin{itemize}
+  \item An \textbf{ordered sequence of nodes} with \textbf{directed edges}
+  \item Nodes hold intermediate values $\zv_i$ according to operations $h_i(\cdot)$ of edges feeding into them
+\end{itemize}
+\item Layer $i$ maps $\zv_{i-1}$ to $\zv_i = h_i(\zv_{i-1}; \thetav_i)$
+\begin{itemize}
+  \item e.g. $\zv_i = \sigma(\bm{W}_i \zv_{i-1} + \bm{b}_i)$ with $\thetav_i = (\bm{W}_i, \bm{b}_i)$
+\end{itemize}
+\item A DNN can be represented as a \textbf{directed acyclic graph} (DAG): an ordered sequence of \textbf{nodes} with \textbf{directed edges}
+\item Each \textbf{node} $\zv_i \in \R^{p_i}$, $i = 0, \ldots, m$, collects the intermediate values of all $p_i$ neurons of the $i$-th layer \\ {\footnotesize(The input acts as the first node: $\zv_0 = \xv$)}
+\item The \textbf{directed edge} into node $i$ is the $i$-th layer: a \textbf{function} mapping the previous node to the next,
+$$
+h_i(\cdot \,; \thetav_i): \R^{p_{i-1}} \to \R^{p_i}, \qquad \zv_i = h_i(\zv_{i-1}; \thetav_i)
+$$
+{\footnotesize($\thetav_i \in \R^{d_i}$ is the parameter vector of layer $i$; stacking all layers yields $\thetav = (\thetav_1, \ldots, \thetav_m)$ with $d = \sum_{i=1}^{m} d_i$)}
 \end{itemize}
 \vfill
 \begin{center}
-\begin{tikzpicture}[>=stealth', node distance=1.35cm, every node/.style={font=\footnotesize}]
-  \tikzstyle{nd}=[circle, draw, very thick, minimum size=0.85cm, fill=black!4]
+\begin{tikzpicture}[>=stealth', node distance=1.2cm, every node/.style={font=\footnotesize}]
+  \tikzstyle{nd}=[circle, draw, very thick, minimum size=0.75cm, fill=black!4]
   \node[nd] (x) {$\xv$};
   \node[nd, right=of x] (z1) {$\zv_1$};
   \node[nd, right=of z1] (z2) {$\zv_2$};
   \node[right=0.8cm of z2] (dots) {$\cdots$};
   \node[nd, right=0.9cm of dots] (zm) {$\zv_m$};
-  \node[nd, right=of zm, fill=blue!10] (L) {$L$};
-  \draw[->,thick] (x)--(z1); \draw[->,thick](z1)--(z2); \draw[->,thick](z2)--(dots);
-  \draw[->,thick](dots)--(zm); \draw[->,thick](zm)--(L);
-  \node[font=\scriptsize, below=0.45cm of z1] (t1){$\thetav_1$}; \draw[->,gray](t1)--(z1);
-  \node[font=\scriptsize, below=0.45cm of z2] (t2){$\thetav_2$}; \draw[->,gray](t2)--(z2);
-  \node[font=\scriptsize, below=0.45cm of zm] (tm){$\thetav_m$}; \draw[->,gray](tm)--(zm);
+  \node[nd, right=of zm, fill=blue!10] (L) {$\risket$};
+  \draw[->,thick] (x)--(z1) node[midway,above,font=\scriptsize]{$h_1$};
+  \draw[->,thick](z1)--(z2) node[midway,above,font=\scriptsize]{$h_2$};
+  \draw[->,thick](z2)--(dots);
+  \draw[->,thick](dots)--(zm) node[midway,above,font=\scriptsize]{$h_m$};
+  \draw[->,thick](zm)--(L);
+  \node[font=\scriptsize, below=0.25cm of z1] (t1){$\thetav_1$}; \draw[->,gray](t1)--(z1);
+  \node[font=\scriptsize, below=0.25cm of z2] (t2){$\thetav_2$}; \draw[->,gray](t2)--(z2);
+  \node[font=\scriptsize, below=0.25cm of zm] (tm){$\thetav_m$}; \draw[->,gray](tm)--(zm);
   \node[font=\scriptsize, above=0.15cm of zm]{$= f(\xv \mid \thetav)$};
   \node[font=\scriptsize, above=0.15cm of L]{$L(y, \cdot)$};
 \end{tikzpicture}
@@ -91,14 +116,16 @@ $$
 
 
 \begin{framei}{Gradient via the chain rule}
-\item Gradient w.r.t. the parameters $\thetav_i$ factorizes via the \textbf{chain rule}:
+\item The risk gradient w.r.t. the parameter vector $\thetav_i$ of layer $i$ factorizes via the \textbf{chain rule}:
 \begin{align*}
-\nabla_{\thetav_i} L &= \pd{L}{\zv_m} \pd{\zv_m}{\zv_{m-1}} \cdots \pd{\zv_{i+1}}{\zv_i} \; \pd{\zv_i}{\thetav_i} \\
-&= \underbrace{\pd{L}{\zv_i}}_{=: \, \adj{i}} \; \pd{\zv_i}{\thetav_i}
+\nabla_{\thetav_i} \risket &= \pd{\risket}{\zv_m} \pd{\zv_m}{\zv_{m-1}} \cdots \pd{\zv_{i+1}}{\zv_i} \; \pd{\zv_i}{\thetav_i} \\
+&= \underbrace{\pd{\risket}{\zv_i}}_{=: \, \adj{i} \, \in \, \R^{1 \times p_i}} \; \underbrace{\pd{\zv_i}{\thetav_i}}_{\in \, \R^{p_i \times d_i}} \; \in \R^{1 \times d_i}
 \end{align*}
 \item[$\Rightarrow$] A complicated gradient becomes a \textbf{product of simple, local derivatives}
 \item[$\Rightarrow$] Each layer's gradient $\nabla_{\thetav_i} L$ requires its associated \textbf{`node adjoint'} $\adj{i} \in \R^{1 \times p_i}$
 % TODO-BB: sollte z-bar hier wirklich eine matrix zeilenvek sein...? nochmal checken
+\item[$\Rightarrow$] Each layer's gradient $\nabla_{\thetav_i} L$ requires its associated \textbf{`node adjoint'} $\adj{i} \in \R^{1 \times p_i}$
+\item[$\Rightarrow$] Each layer's risk gradient $\nabla_{\thetav_i} \risket$ requires its associated \textbf{`node adjoint'} $\adj{i}$
 \end{framei}
 
 \begin{framev}{Adjoints as sequences of VJPs}
@@ -113,14 +140,14 @@ $$
 % ich glaub man muss hier auch aufpassen ob man über "ableitungen als funktion" redet
 % bzw "ausgewertete ableitungen an einem punkt"....!
 \item All node adjoints $\adj{i}$ can be recursively computed in reverse order for $i = m, (m-1), \ldots, 1$:
+\item Starting from $\adj{m} = \pd{\risket}{\zv_m}$, all remaining node adjoints $\adj{i}$ can be recursively computed in reverse order for $i = m-1, m-2, \ldots, 1$:
 $$
-\adj{i} = \pd{L}{\zv_{i+1}} \pd{\zv_{i+1}}{\zv_i} = \adj{i+1} \, \pd{\zv_{i+1}}{\zv_i}
+\adj{i} = \pd{\risket}{\zv_{i+1}} \pd{\zv_{i+1}}{\zv_i} = \adj{i+1} \, \pd{\zv_{i+1}}{\zv_i}
 $$
 \begin{itemize}
   \item $\adj{i+1} \in \R^{1 \times p_{i+1}}$ is a (row) \textbf{vector}
   \item $\pd{\zv_{i+1}}{\zv_i} \in \R^{p_{i+1} \times p_i}$ is a \textbf{Jacobian}
 \end{itemize}
-{\footnotesize(The seed is $\pd{L}{L} = 1$, treated as the initial vector before $\adj{m} = \pd{L}{\zv_m}$.)}
 \item[$\Rightarrow$] This constitutes a sequence of \textbf{vector-Jacobian products (VJPs)}
 \item[$\Rightarrow$] Each $\adj{i}$ must only be computed \textbf{once} and can be \textbf{reused} for lower layers
 \end{itemize}
@@ -128,28 +155,28 @@ $$
 
 
 \begin{framei}{Backpropagation algorithm}
-\item This motivates the \textbf{backpropagation} algorithm to compute the full gradient $\nabla_{\thetav} L$ in \textbf{two phases}:
+\item This motivates the \textbf{backpropagation} algorithm to compute the full gradient $\nabla_{\thetav} \risket$ in \textbf{two phases}:
 %
 \item \textbf{Forward pass}
 \begin{itemize}
-  \item Set $\zv_0 = \xv$ and walk forward through the graph up to $L$ %via $\zv_i = h_i(\zv_{i-1}; \thetav_i)$,
+  \item Set $\zv_0 = \xv$ and walk forward through the graph up to $\risket$ %via $\zv_i = h_i(\zv_{i-1}; \thetav_i)$,
   \item While doing so, \textbf{cache} every node value $\zv_i$, because the derivatives in the subsequent phase are evaluated at these values
 \end{itemize}
 \item \textbf{Backward pass}
 \begin{itemize}
-\item Compute the adjoints $\adj{i}$ as a sequence of VJPs by moving backward through the graph (see previous slide)
-\item Obtain each parameter gradient $\nabla_{\thetav_i} L = \adj{i} \, \pd{\zv_i}{\thetav_i}$ (again as a VJP)
+\item Compute the adjoints $\adj{i}$ as a sequence of VJPs by moving backward through the graph
+\item Obtain the risk gradient w.r.t. each layer's parameter vector $\thetav_i$ as $\nabla_{\thetav_i} \risket = \adj{i} \, \pd{\zv_i}{\thetav_i}$ (again a VJP)
 \end{itemize}
 % \spacer
 \end{framei}
 
 
 \begin{framei}{Automatic differentiation}
-\item The backpropagation algorithm requires building a computational graph and computing the corresponding derivatives
-\item (Reverse-mode) automatic differentiation (\textbf{autodiff}) efficiently automates this process
+\item (Reverse-mode) automatic differentiation (\textbf{autodiff}) efficiently automates the backpropagation algorithm
 \item Traces code to automatically build a computational graph
 \begin{itemize}
-  \item Decomposes DNNs into \textbf{primitive operations} (e.g. $+$, $\cdot$, $\sigma$, $\exp$, \ldots; more granular than entire layers)
+  \item Decomposes DNNs into \textbf{primitive operations} (e.g. $+$, $\cdot$, $\sigma$, $\exp$, \ldots; more granular than entire layers) \\
+  {\footnotesize(Layer $h_i: \R^{p_{i-1}} \to \R^{p_i}$ becomes $h_i = h_{i,k} \circ \cdots \circ h_{i,1}$ with $h_{i,1}: \R^{p_{i-1}} \to \R^{p_{i,1}}$, \ldots, $h_{i,k}: \R^{p_{i,k-1}} \to \R^{p_i}$)}
 \end{itemize}
 \item Automatically computes derivatives
 \begin{itemize}
@@ -159,59 +186,87 @@ $$
 \end{framei}
 
 \begin{framei}{VJP rules}
-\item Consider a primitive operation $g: \R^{d_{\mathrm{in}}} \to \R^{d_{\mathrm{out}}}$ and the VJP $\bm{v} \, \pd{g(\zv)}{\zv} \in \R^{1 \times d_{\mathrm{in}}}$
+\item Consider a primitive operation $g: \R^{q_{\mathrm{in}}} \to \R^{q_{\mathrm{out}}}$ and the VJP $\bm{v} \, \pd{g(\zv)}{\zv} \in \R^{1 \times q_{\mathrm{in}}}$
 \begin{itemize}
-  \item $\bm{v} \in \R^{1 \times d_{\mathrm{out}}}$ as an arbitrary (row) vector
-  \item $\pd{g(\zv)}{\zv}= \bm{J}_{g}(\zv) \in \R^{d_{\mathrm{out}} \times d_{\mathrm{in}}}$ as the Jacobian of the operation evaluated at $\zv$
+  \item $\bm{v} \in \R^{1 \times q_{\mathrm{out}}}$ as an arbitrary (row) vector
+  \item $\pd{g(\zv)}{\zv}= \bm{J}_{g}(\zv) \in \R^{q_{\mathrm{out}} \times q_{\mathrm{in}}}$ as the Jacobian of the operation evaluated at $\zv$
 \end{itemize}
+{\footnotesize(E.g. $\bm{v} = \adj{i}$ may be the adjoint of node $\zv_i$ and $g = h_{i,k}$ the last primitive operation of layer $i$)}
 \item Autodiff stores efficient computation rules for these VJPs, i.e. $\text{vjp}_g(\bm{v}, \zv, g(\zv))= \bm{v} \, \pd{g(\zv)}{\zv}$
 \begin{itemize}
-  \item Reformulation that depends only on $\bm{v}$ and the operation input $\zv$ and (cached) output $g(\zv)$
+  \item Reformulation that depends only on $\bm{v}$, the operation input $\zv$ and (cached) output $g(\zv)$
   \item[$\Rightarrow$] The (potentially large) Jacobian $\bm{J}_{g}(\zv)$ need not be materialized and is only implicitly multiplied
 \end{itemize}
 \end{framei}
 
 \begin{framei}{VJP rules: example}
-\item \textbf{Example}: Consider the \textbf{elementwise sigmoid} $\sigma: \R^{d} \to \R^{d}$
+\item \textbf{Example}: Consider the \textbf{elementwise sigmoid} $g = \sigma: \R^{q} \to \R^{q}$
 \begin{itemize}
-  \item i.e. $\bm{a} := \sigma(\zv)$ with $a_i = \sigma(z_i)$, each output depending only on its own input
+  \item i.e. $\bm{a} := \sigma(\zv)$ with $a_j = \sigma(z_j)$, each output depending only on its own input
 \end{itemize}
-\item The Jacobian $\bm{J}_{\sigma}(\zv) = \pd{\sigma(\zv)}{\zv} \in \R^{d \times d}$ is \textbf{diagonal}
+\item The Jacobian $\bm{J}_{\sigma}(\zv) = \pd{\sigma(\zv)}{\zv} \in \R^{q \times q}$ is \textbf{diagonal}
 \begin{itemize}
-\item $[\bm{J}_{\sigma}(\zv)]_{ii} = \sigma'(z_i) = a_i(1 - a_i)$ and $[\bm{J}_{\sigma}(\zv)]_{ij} = 0$ for $i \neq j$
+\item $[\bm{J}_{\sigma}(\zv)]_{jj} = \sigma'(z_j) = a_j(1 - a_j)$ and $[\bm{J}_{\sigma}(\zv)]_{jk} = 0$ for $j \neq k$
 \end{itemize}
 %
 \item Thus the VJP rule collapses to an elementwise product:
 \begin{itemize}
-\item $\text{vjp}_\sigma(\bm{v}, \zv, \bm{a}) = \bm{v} \, \pd{\sigma(\zv)}{\zv} = \bm{v} \odot \bm{a} \odot (1 - \bm{a})$
+\item $\text{vjp}_\sigma(\bm{v}, \zv, \bm{a}) = \bm{v} \, \pd{\sigma(\zv)}{\zv} = \bm{v} \odot \bm{a}^\top \odot (1 - \bm{a})^\top$
 \end{itemize}
-\item[$\Rightarrow$] $\mathcal{O}(d^2)$ cost for building, storing and multiplying the explicit Jacobian drops to $\mathcal{O}(d)$
+\item[$\Rightarrow$] $\mathcal{O}(q^2)$ cost for building, storing and multiplying the explicit Jacobian drops to $\mathcal{O}(q)$
 \end{framei}
 
-% \begin{framev}{Worked example}
-% \begin{itemize}
-% \item Small graph with squared output, $\thetav = (\bm{W}, \bm{U})$:
-% \end{itemize}
-% \vfill
-% \begin{center}
-% \begin{tikzpicture}[>=stealth', node distance=1.6cm, every node/.style={font=\footnotesize}]
-%   \tikzstyle{nd}=[circle, draw, very thick, minimum size=0.85cm, fill=black!4]
-%   \node[nd] (x) {$\xv$};
-%   \node[nd, right=of x] (z1) {$\zv_1$};
-%   \node[nd, right=of z1] (z2) {$\zv_2$};
-%   \node[nd, right=of z2, fill=blue!10] (L) {$L$};
-%   \draw[->,thick] (x)--(z1) node[midway,above,font=\scriptsize]{$\bm{W}\xv$};
-%   \draw[->,thick] (z1)--(z2) node[midway,above,font=\scriptsize]{$\bm{U}\zv_1$};
-%   \draw[->,thick] (z2)--(L) node[midway,above,font=\scriptsize]{$\tfrac12 \|\zv_2\|^2$};
-% \end{tikzpicture}
-% \end{center}
-% \vfill
-% \begin{itemize}
-% \item \textbf{Forward:} $\zv_1 = \bm{W}\xv$, \; $\zv_2 = \bm{U}\zv_1$, \; $L = \tfrac12 \|\zv_2\|^2$
-% \item \textbf{Backward (VJPs):} $\adj{2} = \zv_2^\top$, \; $\adj{1} = \adj{2}\bm{U}$, \; $\nabla_{\bm{W}} L = \adj{1} \, \pd{\zv_1}{\bm{W}}$
-% % \item \textbf{Outlook:} the same idea computes Jacobians and feeds second order methods (Chapter 5); in code this is just \texttt{loss.backward()}
-% \end{itemize}
-% \end{framev}
+\begin{framev}{Worked example: forward pass}
+\begin{itemize}
+\item Consider a two-layer DNN with $\thetav = (\thetav_1, \thetav_2)$, $\thetav_i = (\bm{W}_i, \bm{b}_i)$, $\bm{W}_i \in \R^{p_i \times p_{i-1}}$, $\bm{b}_i \in \R^{p_i}$, scalar output ($p_2 = 1$) and squared loss $\risket = \tfrac12 (\zv_2 - y)^2$ for one observation $(\xv, y)$
+\item Each layer consists of two primitive operations, $h_i = h_{i,2} \circ h_{i,1}$:
+\begin{itemize}
+  \item Affine map $h_{i,1}(\zv_{i-1}) = \bm{W}_i \zv_{i-1} + \bm{b}_i$ with intermediate value $\zv_{i,1} \in \R^{p_i}$
+  \item Elementwise sigmoid $h_{i,2} = \sigma$
+\end{itemize}
+\end{itemize}
+\vfill
+\begin{center}
+\begin{tikzpicture}[>=stealth', node distance=1.05cm, every node/.style={font=\footnotesize}]
+  \tikzstyle{nd}=[circle, draw, very thick, minimum size=0.75cm, fill=black!4]
+  \tikzstyle{im}=[circle, draw, thick, dashed, minimum size=0.75cm, fill=black!2]
+  \node[nd] (x) {$\xv$};
+  \node[im, right=of x] (z11) {$\zv_{1,1}$};
+  \node[nd, right=of z11] (z1) {$\zv_1$};
+  \node[im, right=of z1] (z21) {$\zv_{2,1}$};
+  \node[nd, right=of z21] (z2) {$\zv_2$};
+  \node[nd, right=of z2, fill=blue!10] (L) {$\risket$};
+  \draw[->,thick] (x)--(z11) node[midway,above,font=\scriptsize]{$h_{1,1}$};
+  \draw[->,thick] (z11)--(z1) node[midway,above,font=\scriptsize]{$h_{1,2}$};
+  \draw[->,thick] (z1)--(z21) node[midway,above,font=\scriptsize]{$h_{2,1}$};
+  \draw[->,thick] (z21)--(z2) node[midway,above,font=\scriptsize]{$h_{2,2}$};
+  \draw[->,thick] (z2)--(L);
+  \node[font=\scriptsize, below=0.25cm of z11] (t1){$\thetav_1$}; \draw[->,gray](t1)--(z11);
+  \node[font=\scriptsize, below=0.25cm of z21] (t2){$\thetav_2$}; \draw[->,gray](t2)--(z21);
+\end{tikzpicture}
+\end{center}
+\vfill
+\end{framev}
+
+
+\begin{framev}{Worked example: backward pass}
+\begin{itemize}
+\item \textbf{Adjoints} via VJPs in reverse order:
+\vspace{-0.6em}
+\begin{align*}
+\adj{2} &= \pd{\risket}{\zv_2} = \zv_2 - y && \in \R \\
+\adj{2,1} &= \adj{2} \, \pd{\zv_2}{\zv_{2,1}} = \adj{2} \, \zv_2 (1 - \zv_2) && \in \R \\
+\adj{1} &= \adj{2,1} \, \pd{\zv_{2,1}}{\zv_1} = \adj{2,1} \, \bm{W}_2 && \in \R^{1 \times p_1} \\
+\adj{1,1} &= \adj{1} \, \pd{\zv_1}{\zv_{1,1}} = \adj{1} \odot \zv_1^\top \odot (1 - \zv_1)^\top && \in \R^{1 \times p_1}
+\end{align*}
+\item \textbf{Risk gradients} w.r.t. $\thetav_i = (\bm{W}_i, \bm{b}_i)$, again via VJPs (with $\zv_0 = \xv$):
+\vspace{-0.6em}
+\begin{align*}
+\nabla_{\bm{b}_i} \risket &= \adj{i,1} \, \pd{\zv_{i,1}}{\bm{b}_i} = \adj{i,1} && \in \R^{1 \times p_i} \\
+\nabla_{\bm{W}_i} \risket &= \adj{i,1} \, \pd{\zv_{i,1}}{\bm{W}_i} = \adj{i,1}^\top \, \zv_{i-1}^\top && \in \R^{p_i \times p_{i-1}} \; \text{\footnotesize(shape of $\bm{W}_i$)}
+\end{align*}
+\end{itemize}
+\end{framev}
 
 
 % TODO-BB: in JEDEM FALL! brauchen wir hier ein längeres bsp, gezeichnet, mit mehr als einem layer...
