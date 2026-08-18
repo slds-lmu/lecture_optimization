@@ -14,22 +14,67 @@ Second order methods
 }{
 Limitations of Newton-Raphson
 }{
-figure/NR_divergence.png
+figure/NR_saddle_2d.png
 }{
-\item Non-descent directions
 \item Singular and indefinite Hessian
+\item Non-descent directions
 \item Saddle points
 \item Computational cost
 \vspace{0.5cm}
 \item[] \hspace{-0.7cm}Slides based on\\
-\hspace{-0.7cm}\furtherreading{AGGARWAL2020} (Ch. 5.4-5.7)
+\hspace{-0.7cm}\furtherreading{AGGARWAL2020} (Ch. 5.6)
 }
 
-\begin{framei}[sep=L]{Limitations: Non-descent directions}
-\item \textbf{Problem 1:} In general, $\mathbf{d}^{[t]}$ is not a descent direction
+\begin{framei}[sep=L]{Limitation 1: Singular and indefinite Hessian}
+\item \textbf{Problem}: Newton-Raphson is designed for \textit{convex quadratic} $f$ with pd Hessian, but
+$\H = \nabla^2 f(\xv^{[t]})$ may be
+\begin{itemizeM}
+\item \textbf{singular}: $\nabla^2 f(\xv^{[t]}) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})$ has no unique solution
+$\Rightarrow$ step undefined
+\item \textbf{near-singular}: step length blows up as $\lammin \to 0$, and errors already present in
+$\H$ and $\nabla f$ (minibatch noise, finite-difference approximations, floating-point roundoff)
+are amplified by $\kappa(\H) = |\lammax| / |\lammin|$
+\item \textbf{indefinite}: $\mathbf{d}^{[t]}$ is not a descent direction (Limitation 2), saddle points (Limitation 3)
+\end{itemizeM}
+\item \textbf{When does (near-)singularity happen in ML?} Rank-deficient design, collinear features, $d > n$,
+or degenerate optima
+\end{framei}
+
+
+\begin{framei}[sep=L]{Example: Singular Hessian in the $L_2$-SVM}
+\item Unregularized $L_2$-SVM (squared hinge loss) with $\thetav \in \R^d$:
+$$
+\risket = \sumin \max\{1 - \yi \thetav^T \xi, ~0\}^2
+$$
+\item Only margin violators $\mathcal{M} = \{i: \yi \thetav^T \xi < 1\}$ contribute to $\H \in \R^{d \times d}$:
+$$
+\H = 2 \sum_{i \in \mathcal{M}} \xi (\xi)^T
+$$
+\item Each $\xi (\xi)^T$ has \textbf{rank 1} $\Rightarrow$ $\operatorname{rank}(\H) \leq |\mathcal{M}|$,
+so we need at least $d$ margin violators for $\H$ to be invertible
+\item \textbf{But}: the better our fit, the fewer violators
+$\Rightarrow$ $\H$ becomes singular exactly where we want to converge
+\end{framei}
+
+
+\begin{framei}[sep=L]{Remedy: Regularized Newton step}
+\item Replace $\H$ by $\H + \lambda \id$ with $\lambda > 0$: all eigenvalues are shifted by $\lambda$
+$$
+(\H + \lambda \id) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
+$$
+\item Choosing $\lambda$ slightly larger than $|\lammin|$ makes $\H + \lambda \id$ pd
+$\Rightarrow$ invertible and descent direction
+\item Alternative: use pseudoinverse $\H^+$ instead of $\H^{-1}$
+\item \textbf{Caveat}: regularization does not cure ill-conditioning -- for nearly singular $\H$ the step
+stays sensitive to errors in $\H$ and $\nabla f$
+\end{framei}
+
+
+\begin{framei}[sep=L]{Limitation 2: Non-descent directions}
+\item \textbf{Problem}: In general, $\mathbf{d}^{[t]}$ is not a descent direction
 \item \textbf{But}: If Hessian is positive definite, $\mathbf{d}^{[t]}$ is descent direction:
 $$
-\nabla f(\xv^{[t]})^\top \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})^\top (\nabla^2 f(\xv^{[t]}))^{-1} \nabla f(\xv^{[t]}) < 0
+\nabla f(\xv^{[t]})^T \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})^T (\nabla^2 f(\xv^{[t]}))^{-1} \nabla f(\xv^{[t]}) < 0
 $$
 \item Near minimum, Hessian is positive definite
 \item For initial steps, Hessian is often not positive definite and Newton-Raphson may give non-descending update directions
@@ -49,105 +94,54 @@ $\Rightarrow$ Newton-Raphson cycles forever between $0$ and $1$
 \end{framei}
 
 
-\begin{framei}[sep=L]{Limitations: Singular and Indefinite Hessian}
-\item \textbf{Problem 2:} Newton-Raphson is designed for \textit{convex quadratic} $f$ with pd Hessian, but
-$\nabla^2 f(\xv^{[t]})$ may be
-\begin{itemizeM}
-\item \textbf{singular}: $\nabla^2 f(\xv^{[t]}) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})$ has no unique solution
-$\Rightarrow$ step undefined
-\item {\color{red}\textbf{near-singular}: step length blows up as $\lammin \to 0$, and errors already present in
-$\H$ and $\nabla f$ are amplified by $\kappa(\H) = |\lammax| / |\lammin|$}
-\item \textbf{indefinite}: quadratic model has no minimizer $\Rightarrow$ non-descent direction (Problem 1)
-\end{itemizeM}
-\item \textbf{When does this happen in ML?} Rank-deficient design, collinear features, $d > n$,
-or degenerate optima
-\end{framei}
-
-
-\begin{framei}[sep=L]{Example: Singular Hessian in the $L_2$-SVM}
-\item Unregularized $L_2$-SVM (squared hinge loss):
-$$
-\risket = \sumin \max\{1 - \yi \thetav^\top \xi, ~0\}^2
-$$
-\item Only \textbf{margin violators} $\mathcal{M} = \{i: \yi \thetav^\top \xi < 1\}$ contribute:
-$$
-\H = 2 \sum_{i \in \mathcal{M}} \xi (\xi)^\top
-$$
-\item Each $\xi (\xi)^\top$ has \textbf{rank 1} $\Rightarrow$ $\text{rank}(\H) \leq |\mathcal{M}|$,
-so we need at least $d$ margin violators for $\H$ to be invertible
-\item \textbf{But}: the better our fit, the fewer violators
-$\Rightarrow$ $\H$ becomes singular exactly where we want to converge
-\end{framei}
-
-
-\begin{framei}[sep=L]{Remedy: Regularized Newton step}
-\item Replace $\H$ by $\H + \lambda \id$ with $\lambda > 0$: all eigenvalues are shifted by $\lambda$
-$$
-\left(\H + \lambda \id \right) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
-$$
-\item Choosing $\lambda$ slightly larger than $|\lammin|$ makes $\H + \lambda \id$ pd
-$\Rightarrow$ invertible and descent direction
-\item Alternative: use pseudoinverse $\H^{+}$ instead of $\H^{-1}$
-\item \textbf{Caveat}: regularization does not cure ill-conditioning -- for nearly singular $\H$ the step
-stays sensitive to errors in $\H$ and $\nabla f$
-\end{framei}
-
-
-\begin{framei}[fs=small]{Limitations: Saddle Points}
-\item \color{red} \textbf{Problem 3:} Newton-Raphson solves $\nabla f(\xv) = \zero$ $\Rightarrow$ attracted to \textbf{any}
+\begin{framei}{Limitation 3: Saddle points}
+\item \textbf{Problem}: Newton-Raphson solves $\nabla f(\xv) = \zero$ $\Rightarrow$ attracted to \textbf{any}
 critical point (minima, maxima, saddles)
-\item Example: $g(x_1, x_2) = x_1^2 - x_2^2$ with $\H = \left(\begin{smallmatrix} 2 & 0 \\ 0 & -2 \end{smallmatrix}\right)$
-indefinite everywhere
-\item $g$ is quadratic $\Rightarrow$ a single Newton step lands \textit{exactly} on the saddle $(0,0)$,
-from any starting point, while GD is repelled along the negative curvature direction $x_2$ and escapes
+\item \textbf{Example}: $f(x_1, x_2) = x_1^2 - x_2^2$ with $\H = \left(\begin{smallmatrix} 2 & 0 \\ 0 & -2 \end{smallmatrix}\right)$
+indefinite
+\begin{itemizeS}
+\item Since $f$ is quadratic, a single Newton step lands \textit{exactly} on the saddle $(0,0)$, from any starting point
+\item GD is repelled along the negative curvature direction $x_2$ and escapes (as long as $x_2^{[0]} \neq 0$)
+\end{itemizeS}
 \imageC[0.72]{figure/NR_saddle_2d.png}
 \end{framei}
 
-
-\begin{framei}[fs=small]{Saddle Points: Model flips shape}
-\item \color{red} Near an inflection point, the quadratic model flips shape, e.g., for $f(x) = x^3$:
-\begin{itemizeS}
-\item at $x = 1$: $F(x) = 3x^2 - 3x + 1$ is convex $\Rightarrow$ step towards a min
-\item at $x = -1$: $G(x) = -3x^2 - 3x - 1$ is concave $\Rightarrow$ step towards a max
-\end{itemizeS}
-\item At $x = 0$: $f'= f''= 0$ $\Rightarrow$ update $0/0$ undefined (\textbf{degenerate critical point},
-which may still be a true min, e.g., for $h(x) = x^4$)
+\comment[TODO]{TH}{I am a little bit unhappy with this slide / the saddle point limitation in general (took it from Aggarwal but I think it is not very good). Missing a clear message particularly for the flip slide. Discuss and revise.}
+\begin{framei}{Saddle points: Approximation flips}
+\item Near an inflection point, the quadratic approximation flips, e.g., for $f(x) = x^3$:
 \imageC[0.66]{figure/NR_saddle_1d.png}
+\item At $x = 0$: $f'= f''= 0$ $\Rightarrow$ update $0/0$ undefined (\textbf{degenerate critical point})
 \end{framei}
 
 
-\begin{framei}[sep=L]{Saddle Points: Why this matters}
-\item \color{red} In high-dimensional non-convex problems (e.g., DNNs), saddle points vastly outnumber true optima
-\item \textbf{GD can escape} saddle points -- it is simply not attracted by them --
-\textbf{Newton-Raphson cannot}, it is attracted \textit{indiscriminately} to all critical points
-\item $\Rightarrow$ second order is not uniformly better: it pays off for complex curvature, but not for
+\begin{framei}{Saddle points: Why this matters}
+\item In high-dimensional non-convex problems (e.g., DNNs), saddle points vastly outnumber true optima
+\item \textbf{GD can escape} saddle points: it is not attracted by them but may still get stuck in flat regions
+\item \textbf{Newton-Raphson cannot escape} saddle points: it is attracted \textit{indiscriminately} to all critical points
+\item Second order is not uniformly better: it pays off for complex curvature, but not for
 landscapes riddled with saddles
 \item Practitioners often prefer first order methods with adaptive schemes (e.g., Adam), which pick up
-some curvature information implicitly and at much lower cost
+some curvature information implicitly and at much lower cost (more on this in the next chapter)
 \end{framei}
 
 
-\begin{framei}[sep=L]{Limitations: Computational Cost}
-\item \textbf{Problem 4:} Hessian can be \textbf{computationally expensive} to calculate, as descent direction $\mathbf{d}^{[t]}$ is solution of the linear system
+\begin{framei}{Limitation 4: Computational cost}
+\item \textbf{Problem}: The Newton-Raphson update can be \textbf{computationally expensive}, as $\mathbf{d}^{[t]}$ is solution of the linear system
 $$
 \nabla^2 f(\xv^{[t]}) \mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
 $$
 \item For $\xv \in \R^d$, the Hessian has $d^2$ entries: $\mathcal{O}(d^2)$ memory, and $\mathcal{O}(d^3)$ per iteration to solve the linear system (compared to $\mathcal{O}(d)$ memory and no linear solve for GD)
 \item For large $d$ (e.g., deep neural networks with $d \sim 10^9$ parameters),
       this is prohibitive: storing a dense $d \times d$ Hessian alone is infeasible
-\item \textbf{Aim:} Find quasi-second order methods not relying on exact Hessians
+\item \textbf{In ML}: for ERM with $n$ observations, already forming $\H$ costs another $\mathcal{O}(n d^2)$ (compared to $\mathcal{O}(nd)$ for $\nabla \risket$)
+\item Newton-Raphson needs far fewer iterations than GD, but for large $d$ the cost
+\textit{per} iteration dominates
+\item \textbf{Aim:} Find quasi-second order methods not relying on exact $\H$
 \begin{itemizeS}
 \item Quasi-Newton method
 \item Gauss-Newton algorithm (for least squares)
 \end{itemizeS}
 \end{framei}
-
-\comment[NOTE]{BB}{genauer wie.
-Finding the inverse of the Hessian in high dimensions to compute the Newton direction {\displaystyle h=-(f''(x_{k}))^{-1}f'(x_{k})}{\displaystyle h=-(f''(x_{k}))^{-1}f'(x_{k})} can be an expensive operation. In such cases, instead of directly inverting the Hessian, it is better to calculate the vector {\displaystyle h}h as the solution to the system of linear equations
-{\displaystyle [f''(x_{k})]h=-f'(x_{k})}{\displaystyle [f''(x_{k})]h=-f'(x_{k})}
-which may be solved by various factorizations or approximately (but to great accuracy) using iterative methods. Many of these methods are only applicable to certain types of equations, for example the Cholesky factorization and conjugate gradient will only work if {\displaystyle f''(x_{k})}{\displaystyle f''(x_{k})} is a positive definite matrix. While this may seem like a limitation, it is often a useful indicator of something gone wrong; for example if a minimization problem is being approached and {\displaystyle f''(x_{k})}{\displaystyle f''(x_{k})} is not positive definite, then the iterations are converging to a saddle point and not a minimum.}
-
-\comment[NOTE]{UU}{Warum? Eine schlecht konditionierte Hesse-Matrix könnte Probleme machen. Aber die Lösung des LGS an sich ist nicht das Problem, da es stabile Lösungsverfahren (LU mit Pivoting oder QR-Zerlegung mit Householder-Transformationen) gibt}
 
 \endlecture
 \end{document}
