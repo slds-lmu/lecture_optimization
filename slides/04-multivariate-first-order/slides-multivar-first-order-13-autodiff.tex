@@ -26,6 +26,14 @@ figure/nn_architecture.pdf
 }
 
 
+%TODO-BB: auf jeden fall referenzen notieren
+
+%TODO-BB: vielleicht minimal anderen kontext zum einstieg
+%TODO-BB: wir können hier gern über DL reden die ganze zeit, wir sollten aber EINMAL
+% klar sagen dass man den autodiff krams halt für mehr als "predictive DL models" nutzen kann....
+
+% vielleich ist es doch besser über beliebige algebraische ausdrücke hier zu reden....
+
 \begin{framei}{Computing gradients for DNNs}
 \item We now train \textbf{deep neural networks (DNNs)}: models with a very large parameter vector $\thetav \in \R^{p}$ ($p$ potentially in the millions)
 \item All methods discussed in this chapter rely on the gradient of the (scalar) empirical risk w.r.t.\ $\thetav$: 
@@ -34,11 +42,18 @@ $$
 $$
 \\ {\footnotesize(SGD relies on mini-batch estimates of the gradient)}
 % \item The objective is \textbf{scalar}, so this is a single row gradient -- but $p$ is huge
+
+%TODO-BB: "L" velleicht nicht optimal hier?
 \item For brevity, we write $L := \risket$ in the following
 \spacer
 \item \textbf{Question:} How to compute it \textbf{efficiently}?
 \end{framei}
 
+
+%TODO-BB: wir wollen hier wohl theta = (theta_1, .... theta_k) schreiben.
+% jedes theta_i ist dann der vektor der params des i-ten layers. sollten wir sagen.
+% theta_(i) wäre vielleicht auch klarer.....
+% ausserdem noch sagen dass p_i halt die länge von theta_i ist....
 
 \begin{framev}{DNNs as computational graphs}
 \begin{itemize}
@@ -47,6 +62,7 @@ $$
   \item An \textbf{ordered sequence of nodes} with \textbf{directed edges}
   \item Nodes hold intermediate values $\zv_i$ according to operations $h_i(\cdot)$ of edges feeding into them
 \end{itemize}
+%TODO-BB: die "nodes" sollen hier die layers sein? dann klar sagen, denn sonst denkt man "neurons"
 \item Layer $i$ maps $\zv_{i-1}$ to $\zv_i = h_i(\zv_{i-1}; \thetav_i)$
 \begin{itemize}
   \item e.g. $\zv_i = \sigma(\bm{W}_i \zv_{i-1} + \bm{b}_i)$ with $\thetav_i = (\bm{W}_i, \bm{b}_i)$
@@ -82,11 +98,20 @@ $$
 \end{align*}
 \item[$\Rightarrow$] A complicated gradient becomes a \textbf{product of simple, local derivatives}
 \item[$\Rightarrow$] Each layer's gradient $\nabla_{\thetav_i} L$ requires its associated \textbf{`node adjoint'} $\adj{i} \in \R^{1 \times p_i}$
-%
+% TODO-BB: sollte z-bar hier wirklich eine matrix zeilenvek sein...? nochmal checken
 \end{framei}
 
 \begin{framev}{Adjoints as sequences of VJPs}
 \begin{itemize}
+% wir sollten diese sachen sagen: (vermutlich ganz am anfang)  
+% - wir können jeden algebraischen ausdruck so darstellen
+% - wir können immer die layer in jedem DAG identifizieren
+% - wir betrachten jetzt jedes layer als eine funktion g_M: R^M --> R^K
+% K und M sind die anzahlen der nodes pro layer, sollten wir auch notation für haben
+% auf dieser folie leiten wir nämlich dann diese funktion ab....
+% also "Jacobian" ist dann "Jacobian von g_M"
+% ich glaub man muss hier auch aufpassen ob man über "ableitungen als funktion" redet
+% bzw "ausgewertete ableitungen an einem punkt"....!
 \item All node adjoints $\adj{i}$ can be recursively computed in reverse order for $i = m, (m-1), \ldots, 1$:
 $$
 \adj{i} = \pd{L}{\zv_{i+1}} \pd{\zv_{i+1}}{\zv_i} = \adj{i+1} \, \pd{\zv_{i+1}}{\zv_i}
@@ -187,6 +212,9 @@ $$
 % % \item \textbf{Outlook:} the same idea computes Jacobians and feeds second order methods (Chapter 5); in code this is just \texttt{loss.backward()}
 % \end{itemize}
 % \end{framev}
+
+
+% TODO-BB: in JEDEM FALL! brauchen wir hier ein längeres bsp, gezeichnet, mit mehr als einem layer...
 
 \endlecture
 \end{document}
