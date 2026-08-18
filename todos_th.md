@@ -1,6 +1,6 @@
 # 04-3 -- GD Deep Dive
 
-- compare our GD convergence analysis with the one in Boyd (page 468) [they do backtracking line search and exact line search, what do we for step size]
+X compare our GD convergence analysis with the one in Boyd (page 466) [they do backtracking line search and exact line search, what do we for step size]  --> answer see MM
 
 # 05-1 -- Newton-Raphson
 
