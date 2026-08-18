@@ -1,33 +1,19 @@
-# 1 -- Newton Raphson
+# 04-3 -- GD Deep Dive
 
-BB comments (slides-multivar-second-order-1-newton-raphson.tex, lines 30–32 and 158ff.) raise the same issue from two angles:
-- Lines 30–32: add a "demotivating" slide (or even a dedicated chunk) on why 2nd order methods are bad in high dimensions, with reference to large data and a speed comparison
-- Lines 158ff.: at minimum, Problem 2 on the limitations slide should be more precise about the mechanism — not just "computationally expensive" but:
-  - Storing H requires O(n²) memory, already intractable for large n
-  - Computing the Newton direction means solving the linear system H·d = −∇f (not inverting H directly), which costs O(n³) even with stable solvers (Cholesky, CG) --> e.g., for NNs, where n = #params, this is already intractable for large networks
-  - Cholesky/CG only work when H is positive definite, linking back to Problem 1
+- compare our GD convergence analysis with the one in Boyd (page 468) [they do backtracking line search and exact line search, what do we for step size]
+
+# 05-1 -- Newton-Raphson
 
 X 2 Motivation slides (instead of current first one)
 X  - convergence speed of GD not so nice
 X  - can use curvature information
-/  - maybe one-dimensional Newton method (?)
+/  - maybe one-dimensional Newton method (?)  [implicitly included with an example in 1D]
 
 X  Computational cost:
 X  - big O statement (-> solve linear system)
 X  - effort per iteration vs. convergence speed
 
 X  divergence example (where we are far away from the optimum)
-
-X  look into wright & recht -> does not have NR
-
-Open points:
-- connection to advanced first order methods, pre-conditioning perspective / comparison to them (also chapter order?)
-- other problems of NR:
-  - Hessian may not be invertible: singular/near-singular ∇²f ⇒ Newton step undefined or explodes.
-    Happens for rank-deficient data (d > n, collinear features) and near degenerate optima. Not covered anywhere yet.
-  - Indefinite Hessian, saddle-attraction half missing: non-descent-direction consequence is covered (Limitations slide +
-    worked example), but not that Newton solves ∇f = 0 and is therefore attracted to ANY critical point incl. saddles —
-    and saddles dominate high-dim non-convex landscapes ⇒ fatal for DNNs independent of cost.
 
 From Aggarwal:
 X maybe steal some motivation from 5.4.0
@@ -38,40 +24,38 @@ X Bernd wants an animation where we can see the quadratic approximation, step, a
   --> one good and one bad example
 X more on line search --> search in other literature
   --> minimum: show bad case animation with line search
-- check whether we have the ascent/descent direction analysis/formula on the slides
-- analyze divergence when start point is too far away from optimum
-- convergence analysis (maybe with proof) for Newton
-- 5.6.1 Singular and Indefinite Hessian --> we want to discuss this (also in context of descent direction and also that regularization helps, ill-conditioning should be mentioned)
-- 5.6.2 saddle points:
+X check whether we have the ascent/descent direction analysis/formula on the slides
+X 5.6.1 Singular and Indefinite Hessian --> we want to discuss this (also in context of descent direction and also that regularization helps, ill-conditioning should be mentioned)
+X 5.6.2 saddle points:
   - show what happens in 2D with a visualization (different bowls in each direction)
   - important point: gradient descent can escape saddle points, but Newton cannot (because it is attracted to ANY critical point); note: we also need to discuss this better in the GD chapter (that it CAN escape)
-- we want a more detailed analysis of convergence (maybe with proof) for Newton
-- we could do trust regions but it is not enough stuff in Aggarwal (not understandable, not enough)
-- illustrate the limitations/challenges with ML examples, not just toy functions
-  - e.g. Aggarwal 5.6.3 motivates line search with the L2-SVM: J = sum_i max{1 - y_i w x_i, 0}^2 is non-quadratic,
-    so a finite Newton step makes points drop in/out of the loss -> near the optimum the update is defined by
-    a few noisy misclassified points (contrast: least squares, J = 14w^2 + 3, Taylor exact -> converges in one step)
 
+- analyze divergence when start point is too far away from optimum
+- include as a slide: affine invariance of the Newton step --> boyd 478
+- include as a deep dive slide set: convergence analysis of Newton-Raphson (Boyd & Vandenberghe §9.5.3)
+  - first: read through the proof and see if we can understand it and explain it
 
-- potentially: one short slide on newton-raphson for least squares regression --> how hessian looks like, point-wise hessian (see lemma), result
-
-- maybe we want to discuss regularization (definiteness, singularity, etc.) in general (that we do not have to repeat this always)
-
-
-- in ch. 5.5.2 we can see that a abstract "reweighted least squares" view of Newton-Raphson is possible --> can we derive like a general scheme from that (abstract)? [maybe connect to the logistic regression example and fisher scoring]
+X in ch. 5.5.2 we can see that a abstract "reweighted least squares" view of Newton-Raphson is possible --> can we derive like a general scheme from that (abstract)? [maybe connect to the logistic regression example and fisher scoring]
   - see BB notes from Fable
   - discuss self-concordance for Newton
   - see BB's chat: newton_xtdx_pattern_lecture.md
   - see 5.5.4 in Aggarwal
   - not too much on logistic regression, we do this later
 
+- potentially: one short slide on newton-raphson for least squares regression --> how hessian looks like, point-wise hessian (see lemma), result
+- maybe we want to discuss regularization (definiteness, singularity, etc.) in general (that we do not have to repeat this always)
 - check if we have an analysis of logistic regression (we should already have that in gradient descent (compute gradient, and hessian for convexity check)) --> if yes: derive diagonal matrix and put this in form derived in reweighted least squares chapter (+ use already derived gradient and hessian for logistic regression)
 
+- implementations in R and Python of the optimization methods (like optim in R)
+- torch and jax? with autodiff implementation and stuff --> short optimization example with torch
 
 Re-order Chapters:
 1. Classical First-order (gradient, stepsize, convergence)
 2. second-order (better convergence, but expensive, esp. in ML regime where we have many parameters)
 3. advanced first-order (momentum, Nesterov, Adam, etc. -> can be seen as approximating 2nd order information, but cheaper)
+
+- connection of second order methods to advanced first order methods, pre-conditioning perspective / comparison to them (also chapter order?)
+
 
 ---------
 
@@ -106,11 +90,4 @@ maybe DFP (Davidon-Fletcher-Powell) as well?
 generally: say for which problems these methods are useful
 - 2nd order steps in gradient boosting
 - GP optimization
-
----------
-
-# General
-
-Step-size control in second order methods:
-The Hessian already encodes curvature, providing a natural per-direction scaling.
-Step size control (damping) is mainly needed for globalization — handling the early iterates where H may not be positive definite — not for the core convergence behavior.
+-------------------
