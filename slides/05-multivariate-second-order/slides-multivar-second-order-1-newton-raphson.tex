@@ -217,13 +217,13 @@ $\Rightarrow$ NR diverges \\
 
 
 \begin{framei}{Newton-Raphson: Step size}
-\item \textbf{Relaxed/Damped Newton-Raphson:} Use step size $\alpha > 0$ with
+\item \textbf{Relaxed/Damped Newton-Raphson:} Use step size $\alpha^{[t]} > 0$ with
 $$
-\xv^{[t+1]} = \xv^{[t]} + \alpha \mathbf{d}^{[t]}
+\xv^{[t+1]} = \xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}
 $$
 to satisfy Wolfe conditions (or just Armijo rule)
 \item \textbf{Example 2 (cont'd)}: Same function and starting point, now with Armijo backtracking
-($\alpha \leftarrow 1$, halved until $f$ decreases sufficiently):
+($\alpha^{[t]} \leftarrow 1$, halved until $f$ decreases sufficiently):
 \splitV[0.55]{
 \imageC[1]{figure/NR_overshoot_damped_contour.png}
 }{
@@ -235,19 +235,21 @@ Only iteration $2$ is damped ($\alpha = 0.5$) $\Rightarrow$ enough for NR to con
 
 
 \begin{framei}[sep=L]{Discussion}
-\item[] \textbf{Advantage:}
-\item For $f$ sufficiently smooth:
+\item \textbf{Advantage:}
+\item[] For $f$ sufficiently smooth:
 \begin{framed}
 \centering
 Newton-Raphson converges \textit{locally} quadratically \\
-(i.e., for starting points close enough to stationary point)
+(i.e., for starting points close enough to stationary point) \\
+$\Rightarrow$ \emph{see ``Deep Dive: Convergence of Newton-Raphson'' slides}
 \end{framed}
 \vfill
-\item[] \textbf{Disadvantage:}
-\item For \enquote{bad} starting points:
+\item \textbf{Disadvantage:}
+\item[] For \enquote{bad} starting points:
 \begin{framed}
 \centering
-Newton-Raphson may diverge
+Newton-Raphson may diverge \\
+$\Rightarrow$ \emph{see ``Limitations of Newton-Raphson'' slides}
 \end{framed}
 \end{framei}
 

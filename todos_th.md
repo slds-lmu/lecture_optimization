@@ -31,7 +31,7 @@ X 5.6.2 saddle points:
   - important point: gradient descent can escape saddle points, but Newton cannot (because it is attracted to ANY critical point); note: we also need to discuss this better in the GD chapter (that it CAN escape)
 
 - analyze divergence when start point is too far away from optimum
-- include as a slide: affine invariance of the Newton step --> boyd 478
+- include as a slide: affine invariance of the Newton step --> boyd 486 [--> draft at the bottom of this file, see where it fits best in the slideset]
 - include as a deep dive slide set: convergence analysis of Newton-Raphson (Boyd & Vandenberghe §9.5.3)
   - first: read through the proof and see if we can understand it and explain it
 
@@ -91,3 +91,51 @@ generally: say for which problems these methods are useful
 - 2nd order steps in gradient boosting
 - GP optimization
 -------------------
+
+# Draft: Affine invariance of the Newton step (parked, not yet in the slideset)
+
+Source: Boyd & Vandenberghe (2004), §9.5.1, p. 486 (pdf p. 500).
+Note: Aggarwal does not cover this -> would need BOYD2004 added to the title-slide references.
+
+Suggested placement (if we add it later): in `slides-multivar-second-order-1-newton-raphson.tex`
+directly after the quadratic-form example frame (`framev`, ends ~line 145), before
+"Non-quadratic examples: Convergence".
+Rationale: closes the loop from the motivation slides (GD zig-zags under ill-conditioning) and
+generalizes the diagonal-Hessian rescaling intuition; also a natural callback to
+`04-multivariate-first-order/slides-multivar-first-order-7-gd-quadratic-forms.tex` (convergence
+driven by the condition number kappa).
+
+Caveat to state if used: pure NR (alpha = 1) is affine invariant; damped NR stays invariant if the
+step size comes from Armijo/Wolfe backtracking (those tests use f values and grad f^T d, both
+invariant), but a hand-tuned fixed alpha != 1 breaks it. Could go as a one-liner on the damping
+slide.
+
+```latex
+\begin{framei}{Newton-Raphson: Affine invariance}
+\item The rescaling is not tied to a lucky choice of coordinates
+\item Let $\mathbf{T} \in \R^{n \times n}$ be nonsingular and $\bar{f}(\yv) = f(\mathbf{T}\yv)$, i.e., we
+re-parameterize with $\xv = \mathbf{T}\yv$
+\item Chain rule gives
+$$
+\nabla \bar{f}(\yv) = \mathbf{T}^T \nabla f(\xv), \qquad
+\nabla^2 \bar{f}(\yv) = \mathbf{T}^T \nabla^2 f(\xv) \mathbf{T}
+$$
+\item Newton direction in the new coordinates:
+\begin{align*}
+\bar{\mathbf{d}} &= -\left(\mathbf{T}^T \nabla^2 f(\xv) \mathbf{T}\right)^{-1} \mathbf{T}^T \nabla f(\xv) \\
+&= -\mathbf{T}^{-1} (\nabla^2 f(\xv))^{-1} \underbrace{\mathbf{T}^{-T} \mathbf{T}^T}_{= \id} \nabla f(\xv)
+= \mathbf{T}^{-1} \mathbf{d}
+\end{align*}
+\item[$\Rightarrow$] $\mathbf{T}(\yv + \bar{\mathbf{d}}) = \xv + \mathbf{d}$: the iterates are the same points, just expressed in different coordinates
+\end{framei}
+```
+
+Optional contrast block (own frame or appended to the one above):
+
+```latex
+\item \textbf{Contrast GD:} the gradient direction maps to $-\mathbf{T}^T \nabla f(\xv)$, which
+equals $-\mathbf{T}^{-1}\nabla f(\xv)$ only if $\mathbf{T}$ is orthogonal
+\item[$\Rightarrow$] GD is invariant only under rotations; a general $\mathbf{T}$ changes the condition number
+$\kappa$ and thus its rate (\textbf{recall:} ch. 4, GD on quadratic forms)
+\item[$\Rightarrow$] NR needs no feature scaling / preconditioning
+```
