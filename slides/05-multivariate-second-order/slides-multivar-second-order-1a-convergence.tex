@@ -1,0 +1,79 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+% Lipschitz constant of the Hessian (Boyd's L; plain L is already the smoothness
+% constant in this lecture, see 01-foundations/03-convex.tex)
+\newcommand{\LH}{L_{\H}}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Second order methods
+}{
+Deep Dive: Convergence of Newton-Raphson
+}{
+figure/NR_phases.png
+}{
+\item Assumptions
+\item Damped phase
+\item Quadratically convergent phase
+}
+
+\begin{framei}{Setting}
+\item \textbf{Recall:}
+\begin{itemizeM}
+\item with full steps ($\alpha^{[t]} = 1$), NR may overshoot/diverge far from
+$\xvs$ $\Rightarrow$ damping is necessary
+\item many objective functions are only locally quadratic
+\end{itemizeM}
+\item In this deep dive, we show that damped NR has two phases:
+\begin{itemizeM}
+\item \textbf{Damped phase:} quadratic model unreliable, $\alpha^{[t]} < 1$ possible; $f$ decreases by a
+\textit{constant} $\delta$ per step
+\item \textbf{Pure Newton phase:} quadratic model accurate, $\alpha^{[t]} = 1$ always accepted; \textit{quadratic} convergence
+\end{itemizeM}
+\splitV[0.62]{
+\imageC[0.85]{figure/NR_phases.png}
+}{
+{\footnotesize \textbf{Example 2} (cont'd):
+$$f(\xv) = (1 + x_1^2)^{1/2} + \frac{x_2^2}{2}$$
+from $\xv^{[0]} = (3, 2)^\top$,\\
+with $\gamma_1 = 0.1$, $\tau = 0.7$}
+}
+\end{framei}
+
+
+\begin{framei}[fs=small]{Setting}
+\item \textbf{Assumptions}:
+\begin{itemizeM}
+\item $f \in \CC{2}$, $m$-strongly convex ($\H(\xv) \succeq m \id$) and $L$-smooth ($\H(\xv) \preceq L \id$)
+\item $\H$ is \textbf{Lipschitz} with constant $\LH$ ($\rightarrow$ bound on the \textit{3rd} derivative):
+$$\|\H(\xv) - \H(\xtil)\|_2 \le \LH \|\xv - \xtil\| \qquad \text{for all } \xv, \xtil$$
+Interpretation: $\LH$ measures well the quadratic model approximates $f$ ($\LH = 0$ for quadratic $f$)
+\end{itemizeM}
+\item Damped NR with backtracking: $\alpha_{\text{init}} = 1$, $\gamma_1 \in (0, 1/2)$, $\tau \in (0, 1)$
+\begin{framed}
+\textbf{Theorem \textnormal{(Convergence of damped NR)}.}
+With the scaled gradient norm $\theta^{[t]} = \frac{\LH}{2m^2}\|\nabla f(\xv^{[t]})\|$, there exist
+$\eta \in (0, m^2/\LH]$ and $\delta > 0$ such that
+\begin{align*}
+\|\nabla f(\xv^{[t]})\| \ge \eta \; &\Rightarrow \; f(\xv^{[t+1]}) - f(\xv^{[t]}) \le - \delta
+&& \textit{(damped)} \\
+\|\nabla f(\xv^{[t]})\| < \eta \; &\Rightarrow \; \alpha^{[t]} = 1 \, \text{ and } \,
+\theta^{[t+1]} \le \big( \theta^{[t]} \big)^2 && \textit{(pure)}
+\end{align*}
+\end{framed}
+\end{framei}
+
+\begin{framei}{Proof strategy}
+\item tbd
+\end{framei}
+
+\endlecture
+\end{document}
