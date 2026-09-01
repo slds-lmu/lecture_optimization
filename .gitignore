@@ -25,6 +25,9 @@ latex-math/.github
 slides/*/*slides*.pdf
 slides/*/slides*.pdf
 slides/*/t*.pdf
+# short deck names in this repo (01-diff.pdf, 02-taylor.pdf, ...);
+# figures live in slides/*/figure[_man]/ and stay tracked
+slides/*/*.pdf
 
 # chapter-wise literature files (template need not be duplicated in git, original lives in ./style/)
 slides/*/chapter-literature-*.tex
