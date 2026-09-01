@@ -1,0 +1,257 @@
+\documentclass[11pt,compress,t,notes=noshow, xcolor=table]{beamer}
+
+\input{../../style/preamble}
+\input{../../latex-math/basic-math}
+\input{../../latex-math/basic-ml}
+\input{../../latex-math/optim-basics}
+
+\title{Optimization in Machine Learning}
+
+\begin{document}
+
+\titlemeta{
+Second order methods
+}{
+Newton-Raphson
+}{
+figure/NR_quad_approx_good.png
+}{
+\item Newton-Raphson
+\item Damped Newton-Raphson
+\item Convergence of Newton-Raphson
+\vspace{0.5cm}
+\item[] \hspace{-0.7cm}Slides based on\\
+\hspace{-0.7cm}\furtherreading{AGGARWAL2020} (Ch. 5.4-5.7)
+}
+
+\begin{framei}{Motivation: Beyond gradient information}
+\item \textbf{Recall:} GD only uses the gradient $\Rightarrow$ \textit{ignores curvature}
+\item Hessian $\H = \nabla^2 f$ (curvature) encodes how fast the gradient itself changes along each direction
+\begin{itemizeM}
+\item High curvature: gradient is unreliable further away $\Rightarrow$ take a \textit{small} step
+\item Low curvature: gradient stays valid further away $\Rightarrow$ take a \textit{large} step
+\end{itemizeM}
+\item GD only picks one global $\alpha$ for all directions $\Rightarrow$ for ill-conditioned $\H$, this causes zig-zagging / slow convergence:
+\imageC[0.55]{../04-classicfirst/figure/curvature_2.png}
+\end{framei}
+
+
+\begin{framei}[sep=L]{Motivation: Beyond gradient information}
+\item \textbf{Idea:} Use full curvature information instead of a single scalar $\alpha$
+\begin{itemizeM}
+\item rescale the gradient \textit{individually per direction} via $\H^{-1}$
+\item biases updates towards low-curvature directions, where a large step is unlikely to overshoot or worsen $f$
+\end{itemizeM}
+\imageC[0.35][https://link.springer.com/book/10.1007/978-3-030-40344-7]{figure_man/aggarwal_fig5-7_inverse_hessian.jpg}
+\begin{center}{\footnotesize Effect of multiplying the steepest-descent direction with the inverse
+Hessian}\end{center}
+\end{framei}
+
+
+\comment[NOTE]{BB}{vielleicht noch eine "demotivierende" slide warum 2nd order schlöecht ist in hohen dim
+oder kommt das in quasi newton?
+wir müssen das wirklich mehr in deatils analysieren das ist wichtig. am besten mit bezug auf grosse daten und speed vergleoich. vielleicht sollte das ein extra chunk sein}
+
+\begin{framei}{Newton-Raphson}
+\item \textbf{Assumption:} $f \in \CC{2}$
+\item \textbf{Aim:} Find stationary point $\xv^\ast$, i.e., $\nabla f(\xv^\ast) = \zero$
+\item \textbf{Idea:} Find root of first order Taylor approx of $\nabla f(\xv)$:
+$$
+\nabla f(\xv) \approx \nabla f(\xv^{[t]}) +
+\nabla^2 f(\xv^{[t]})(\xv - \xv^{[t]}) = \zero
+$$
+$$
+\nabla^2 f(\xv^{[t]})(\xv - \xv^{[t]}) = - \nabla f(\xv^{[t]})
+$$
+$$
+\xv^{[t+1]} = \xv^{[t]} - (\nabla^2 f(\xv^{[t]}))^{-1}\nabla f(\xv^{[t]})
+$$
+\item \textbf{Update scheme:}
+$$
+\xv^{[t+1]} = \xv^{[t]} + \mathbf{d}^{[t]}
+$$
+with $\mathbf{d}^{[t]} = - (\nabla^2 f(\xv^{[t]}))^{-1}\nabla f(\xv^{[t]})$
+\end{framei}
+
+
+\begin{framei}{Newton-Raphson: Practice}
+\item \textbf{Note:} In practice, we get $\mathbf{d}^{[t]}$ by solving the linear system
+$$
+\nabla^2 f(\xv^{[t]})\mathbf{d}^{[t]} = - \nabla f(\xv^{[t]})
+$$
+with direct (matrix decompositions) or iterative methods
+\end{framei}
+
+
+\begin{framei}{Newton-Raphson: Intuition}
+\item Newton update approximates the function locally with a quadratic bowl and moves to the bottom
+of the bowl in a single step
+\item The ``learning rate'' is incorporated implicitly
+\item In general, the bottom of the quadratic bowl is not the bottom of the true function $\Rightarrow$
+multiple Newton updates are usually necessary
+\imageC[0.55]{figure/NR_quad_approx_good.png}
+\item[] {\small \textbf{Note}: univariate functions are rather ``boring'' as there are only two possible directions $\Rightarrow$ we'll move on to more interesting examples soon}
+\item \textbf{Caveat}: if the quadratic approximation is poor (e.g., far from the current point), the Newton step may worsen $f$ (see later examples)
+\end{framei}
+
+
+\begin{framei}{Analytical example with quadratic form}
+\item Consider $f(x_1, x_2) = x_1^2 + \frac{x_2^2}{2}$
+\item Update direction: $\mathbf{d}^{[t]} = -(\nabla^2 f(x_1^{[t]}, x_2^{[t]}))^{-1} \nabla f(x_1^{[t]}, x_2^{[t]})$
+\item Gradient and Hessian:
+$$
+\nabla f(x_1, x_2) = \begin{pmatrix}2x_1 \\ x_2\end{pmatrix}, \quad
+\nabla^2 f(x_1, x_2) = \begin{pmatrix}2 & 0 \\ 0 & 1\end{pmatrix}
+$$
+\item First step:
+$$
+\begin{pmatrix}
+x_1^{[1]} \\ x_2^{[1]}
+\end{pmatrix} = \begin{pmatrix}
+x_1^{[0]} \\ x_2^{[0]}
+\end{pmatrix} + \mathbf{d}^{[0]} = \begin{pmatrix}
+x_1^{[0]} \\ x_2^{[0]}
+\end{pmatrix} - \begin{pmatrix}
+1/2 &  0 \\ 0 & 1
+\end{pmatrix} \begin{pmatrix}
+2x_1^{[0]} \\ x_2^{[0]}
+\end{pmatrix}
+$$
+$$
+= \begin{pmatrix}
+x_1^{[0]} \\ x_2^{[0]}
+\end{pmatrix} + \begin{pmatrix}
+-x_1^{[0]} \\
+-x_2^{[0]}
+\end{pmatrix} = \zero
+$$
+\end{framei}
+
+
+\begin{framev}{Analytical example with quadratic form}
+\splitV[0.55]{
+\begin{itemizeM}
+\item Newton-Raphson only needs one iteration for quadratic forms
+\item See how the inverse Hessian rescales the gradient:
+\begin{itemizeM}
+\item $x_1$: higher curvature $\Rightarrow$ scaled by $1/2$ by $\H^{-1}$
+\item $x_2$: lower curvature $\Rightarrow$ scaled by $1$ by $\H^{-1}$
+\end{itemizeM}
+\item \textbf{Note}: For diagonal $H$, each dimension is scaled individually and we can easily interpret the scaling factors. For non-diagonal $H$, the update direction becomes a linear combination of all dimensions.
+\end{itemizeM}
+}{
+\imageC[1]{figure/NR_quadratic_form.png}
+}
+\end{framev}
+
+
+\begin{framev}{Non-quadratic examples: Convergence}
+\textbf{Example 1}: Newton-Raphson on
+$f(\xv) = \exp(x_1 + 3 x_2 - 0.1) + \exp(x_1 - 3 x_2 - 0.1) + \exp(-x_1 - 0.1)$
+
+\vspace{0.5cm}
+\only<1>{
+After $1$ Newton step:
+\splitV[0.55]{
+\imageC[1]{figure/NR_boyd_1_contour.png}
+}{
+\imageC[1]{figure/NR_boyd_1_error.png}
+}
+}
+\only<2>{
+After $2$ Newton steps:
+\splitV[0.55]{
+\imageC[1]{figure/NR_boyd_2_contour.png}
+}{
+\imageC[1]{figure/NR_boyd_2_error.png}
+}
+}
+\only<3>{
+After $5$ Newton steps $\Rightarrow$ Newton-Raphson converges in just 5 steps:
+\splitV[0.55]{
+\imageC[1]{figure/NR_boyd_5_contour.png}
+}{
+\imageC[1]{figure/NR_boyd_5_error.png}
+}
+}
+\end{framev}
+
+
+\begin{framev}{Non-quadratic examples: Overshooting}
+\textbf{Example 2}: Newton-Raphson on
+$f(\xv) = (1 + x_1^2)^{1/2} + \frac{x_2^2}{2}$\\
+\textit{Note:} along $x_1$, curvature decays away from the optimum:
+$\frac{\partial^2}{\partial x_1^2} (1 + x_1^2)^{1/2} = (1 + x_1^2)^{-3/2} \to 0$
+
+\vspace{0.3cm}
+\only<1>{
+After $1$ Newton step:
+\splitV[0.55]{
+\imageC[1]{figure/NR_overshoot_1_contour.png}
+}{
+\imageC[1]{figure/NR_overshoot_1_error.png}
+}
+$\Rightarrow$ quadratic in $x_2$, direction solved exactly in one step
+}
+\only<2>{
+After $2$ Newton steps:
+\splitV[0.55]{
+\imageC[1]{figure/NR_overshoot_2_contour.png}
+}{
+\imageC[1]{figure/NR_overshoot_2_error.png}
+}
+$\Rightarrow$ along $x_1$, the quadratic approx. is too flat, its minimum lies well beyond $\xv^\ast$ $\Rightarrow$ NR overshoots
+}
+\only<3>{
+After $3$ Newton steps:
+\splitV[0.55]{
+\imageC[1]{figure/NR_overshoot_3_contour.png}
+}{
+\imageC[1]{figure/NR_overshoot_3_error.png}
+}
+$\Rightarrow$ NR diverges \\
+\vspace{0.3cm}
+\textit{Note}: $\H \succ 0$ everywhere $\Rightarrow$ direction is fine, only step size is wrong
+}
+\end{framev}
+
+
+\begin{framei}{Newton-Raphson: Step size}
+\item \textbf{Relaxed/Damped Newton-Raphson:} Use step size $\alpha^{[t]} > 0$ with
+$$
+\xv^{[t+1]} = \xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}
+$$
+to satisfy Wolfe conditions (or just Armijo rule)
+\item \textbf{Example 2 (cont'd)}: Same function and starting point, now with Armijo backtracking
+($\alpha^{[t]} \leftarrow 1$, halved until $f$ decreases sufficiently):
+\splitV[0.55]{
+\imageC[1]{figure/NR_overshoot_damped_contour.png}
+}{
+\imageC[1]{figure/NR_overshoot_damped_error.png}
+}
+\vfill
+Only iteration $2$ is damped ($\alpha = 0.5$) $\Rightarrow$ enough for NR to converge
+\end{framei}
+
+
+\begin{framei}[sep=L]{Discussion}
+\item \textbf{Advantage:}
+\item[] For $f$ sufficiently smooth:
+\begin{framed}
+\centering
+Newton-Raphson converges \textit{locally} quadratically \\
+(i.e., for starting points close enough to stationary point) \\
+$\Rightarrow$ \emph{see ``Deep Dive: Convergence of Newton-Raphson'' slides}
+\end{framed}
+\vfill
+\item \textbf{Disadvantage:}
+\item[] For \enquote{bad} starting points:
+\begin{framed}
+\centering
+Newton-Raphson may diverge \\
+$\Rightarrow$ \emph{see ``Limitations of Newton-Raphson'' slides}
+\end{framed}
+\end{framei}
+
+\endlecture
+\end{document}
