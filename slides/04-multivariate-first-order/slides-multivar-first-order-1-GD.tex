@@ -25,22 +25,20 @@ figure_man/linesearch.png
 \item Iterative Descent / Line Search
 \item Descent directions
 \item Gradient descent
-\item Pseudoresiduals
+\item Pseudo-residuals
 \item ERM with GD
 }
 
 \begin{framei}{Iterative Descent}
-\item Let $f$ be the height of a mountain depending on the geographic coordinates $(x_1, x_2)$
-\vspace*{-0.1cm}
-$$f: \R^2 \to \R, \quad f(x_1, x_2) = y.$$
-\item \textbf{Goal}: Reach the valley
-$$\quad \argmin_{\xv} f(\xv)$$
-But: due to dense fog, you cannot see the valley, you can only sense the local slope under your feet
+\item \textbf{Goal}: For $f: \R^d \to \R$ continuously differentiable, solve
+$$\argmin_{\xv \in \R^d} f(\xv)$$
+\item Usually no closed-form solution; construct iterates $\xv^{[0]}, \xv^{[1]}, \dots$ using only \textbf{local} information $f(\xv)$, $\nabla f(\xv)$
+\item Metaphor: $f$ = height of a mountain at coordinates $(x_1, x_2)$; in dense fog, we cannot see the valley, only sense the local slope
 \item \textbf{Central idea}: Repeat
 \splitVCC[0.6]{
 \begin{enumerate}
-\item At current location $\xv \in \R^d$ search for \textbf{descent direction} $\mathbf{d} \in \R^d$
-\item Move along $\mathbf{d}$ until $f$ \glqq sufficiently\grqq{} reduces (\textbf{step size control}) and update location
+\item At current $\xv \in \R^d$, find a \textbf{descent direction} $\mathbf{d} \in \R^d$
+\item Update $\xv \leftarrow \xv + \alpha \mathbf{d}$, with step size $\alpha$ s.t. $f$ sufficiently decreases (\textbf{step size control})
 \end{enumerate}}{
 \imageC{figure_man/linesearch.png}
 \begin{footnotesize} ``Walking down the hill through local steps, towards the valley''\end{footnotesize}}
@@ -48,13 +46,12 @@ But: due to dense fog, you cannot see the valley, you can only sense the local s
 
 
 \begin{framei}{Iterative Descent}
-\item Let $f: \R^d \to \R$ continuously differentiable.
 \item \textbf{Definition:} $\mathbf{d}\in \R^d$ is a \textbf{descent direction} in $\xv$ if
 $$D_\mathbf{d} f(\xv) = \nabla f(\xv) ^T \mathbf{d} < 0 \text{ (neg. directional derivative)}$$
 \begin{figure}
 \imageC[0.4]{figure/descent_direction.pdf}
 \begin{footnotesize}
-Angle between $\nabla \fx$ and $\mathbf{d}$ must be $\in (90^{\circ}, 270^{\circ})$.
+Angle between $\nabla \fx$ and $\mathbf{d}$ must be $> 90^{\circ}$.
 \end{footnotesize}
 \end{figure}
 \end{framei}
@@ -67,39 +64,40 @@ Angle between $\nabla \fx$ and $\mathbf{d}$ must be $\in (90^{\circ}, 270^{\circ
 \State Starting point $\xv^{[0]} \in \R^d$
 \While {Stopping criterion not met}
 \State Calculate a descent direction $\mathbf{d}^{[t]}$ for current $\xv^{[t]}$
-\State Find $\alpha^{[t]}$ s.t. $f(\xv^{[t + 1]}) < f(\xv^{[t]})$ for $\xv^{[t + 1]} = \xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}$.
+\State Find $\alpha^{[t]}$ s.t. $f(\xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}) < f(\xv^{[t]})$
 \State Update $\xv^{[t + 1]} = \xv^{[t]} + \alpha^{[t]} \mathbf{d}^{[t]}$
 \EndWhile
 \end{algorithmic}
 \end{algorithm}
-\begin{tiny}
-NB: Terminology is sometimes ambiguous: ``line search'' can refer to Step 4 (selecting the step size that decreases $f(\xv)$) or serve as an umbrella term for iterative descent algorithms. \par
-\end{tiny}\vfill
 Key questions:
 \begin{itemizeM}
 \item How to choose $\mathbf{d}^{[t]}$ (now)
 \item How to choose $\alpha^{[t]}$ (later)
 \end{itemizeM}
+\vfill
+\begin{footnotesize}
+NB: Above procedure also called \textbf{line search}, but term is ambiguous: can serve as umbrella term for the whole scheme or refer only to Step 4.
+\end{footnotesize}
 \end{framev}
 
 
 \begin{framei}{Gradient Descent}
-\item Properties of gradient:
-\begin{itemizeS}
-\item $\nabla \fx$: direction of greatest increase
-\item $- \nabla \fx$: direction of greatest decrease
-\end{itemizeS}
-\vfill
-\item Using $\mathbf{d} = - \nabla \fx$ is called \textbf{gradient descent}.
-\splitV{\imageC[0.9]{figure_man/gradient-descent-example_1.png}}{\imageC{figure_man/gradient-descent-example_2.png}}
+\item Locally, $\nabla \fx$ is the direction of steepest ascent, $-\nabla \fx$ of steepest descent
+\item \textbf{Gradient descent (GD)}: iterative descent with $\mathbf{d} = -\nabla \fx$:
+$$\xv^{[t+1]} = \xv^{[t]} - \alpha^{[t]} \nabla f(\xv^{[t]})$$
+\item \textbf{Gradient ascent (GA)}: maximize $f$ analogously via:
+$$\xv^{[t+1]} = \xv^{[t]} + \alpha^{[t]} \nabla f(\xv^{[t]})$$
+\splitV{\imageC[0.8]{figure_man/gradient-descent-example_1.png}}{\imageC[0.9]{figure_man/gradient-descent-example_2.png}}
 \begin{center}\begin{footnotesize}
-GD for $f(x_1, x_2) = - \sin(x_1) \cdot \frac{1}{2\pi} \exp\left( (x_2 - \pi / 2)^2 \right)$ with sensibly chosen step size $\alpha^{[t]}$.
+GD for $f(x_1, x_2) = - \sin(x_1) \cdot \varphi(x_2)$, with $\varphi$ the density of $\normal(\pi/2, 0.8^2)$.
 \end{footnotesize}\end{center}
 \end{framei}
 
 
-\begin{framei}{GD for ERM}
-\item Let $\D = \Dset$ and consider the empirical risk minimization problem
+\comment[NOTE]{BB}{bit unclear whether we should keep the GD-ERM stuff here or do it later....?
+for now maybe fine} 
+\begin{framei}{GD for empirical risk minimization}
+\item Let $\D = \Dset$ and consider ERM:
 $$\argmin_{\thetav} \risket = \argmin_{\thetav} \sumin \Lxyit$$
 \item \textbf{Gradient} of the empirical risk:
 $$\nabla_{\thetav} \risket = \sumin \pd{\Lxyit}{\thetav}$$
@@ -108,12 +106,12 @@ $$\thetav^{[t+1]} = \thetav^{[t]} - \alpha^{[t]} \nabla_{\thetav} \risket\big|_{
 \end{framei}
 
 
-\begin{framei}[fs=footnotesize]{GD for ERM: Pseudoresiduals}
+\begin{framei}[fs=footnotesize]{GD for ERM: Pseudo-Residuals}
 \item By the chain rule, the (neg.) gradient of the ERM problem can be expressed as:
 $$
-- \nabla_{\thetav} \risket = - \sumin \underbrace{\pd{\Lxyi}{f}}_{\text{pseudo residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetav}
+- \nabla_{\thetav} \risket = \sumin \underbrace{\left( - \pd{\Lxyi}{f} \right)}_{\text{pseudo-residual } \tilde r^{(i)}(f)} \pd{\fxit}{\thetav}
 $$
-\item \textbf{pseudo residuals} tell us how to distort $\fxi$ to achieve greatest decrease of $\Lxyi$ (best pointwise update)
+\item \textbf{Pseudo-residuals} tell us how to distort $\fxi$ to achieve greatest decrease of $\Lxyi$ (best pointwise update)
 \item $\pd{\fxit}{\thetav}$ tells us how to modify $\thetav$ accordingly and wiggle model output
 \item GD step sums up these modifications across all observations $i$
 \splitVCC{
@@ -121,7 +119,7 @@ $$
 $\tilde{r}\left( f \right)$
 match usual residuals for L2 loss:
 \begin{align*}
-\pd{\Lxy}{f} & = \frac{1}{2} \left. \pd{(y - f)^2}{f} \right|_{f = \fx}\\
+\tilde{r}(f) = - \pd{\Lxy}{f} & = - \frac{1}{2} \left. \pd{(y - f)^2}{f} \right|_{f = \fx}\\
 & = y - \fx
 \end{align*}
 }
@@ -134,17 +132,17 @@ match usual residuals for L2 loss:
 $$\risket = \sumin (\thetav^\top \xi - \yi)^2$$
 {\footnotesize
 \textbf{NB:} For illustration, we use GD even though closed-form solution exists. GD-like (more adv.) approaches like this MIGHT make sense for large data, though.}
-\item\textbf{Gradient: } $$\nabla_{\thetav}\risket = \frac{\partial \risket}{\partial \thetav} = -2 \sumin (\yi - \thetav^{\top} \xv^{(i)}) \xv^{(i)}$$
+\item\textbf{Gradient: } $$\nabla_{\thetav}\risket = \frac{\partial \risket}{\partial \thetav} = -2 \sumin (\yi - \thetav^{\top} \xi) \xi$$
 \imageC[0.8]{figure/gradient_descent_lm.pdf}
 \end{framei}
 
 
 \begin{framei}{GD for logistic regression}
 \item Let $\D = \Dset$ with $\yi \in \{0, 1\}$ and minimize the cross-entropy risk
-$$\risket = - \sumin \left[\yi \log \pixit + \left(1 - \yi\right) \log\left(1 - \pixit\right)\right]$$
-where $\pixit = s(\thetav^\top \xi)$, \quad $s(z) = \tfrac{1}{1 + \exp(-z)}$
+$$\risket = - \sumin \left[\yi \log \pi^{(i)} + (1 - \yi) \log(1 - \pi^{(i)})\right]$$
+where $\pi^{(i)} := \pixit = s(\thetav^\top \xi)$, \quad $s(z) = \tfrac{1}{1 + \exp(-z)}$
 \item \textbf{Gradient:}
-$$\nabla_{\thetav} \risket = \sumin \left(\pixit - \yi\right) \xi$$
+$$\nabla_{\thetav} \risket = \sumin (\pi^{(i)} - \yi) \xi$$
 \imageC[0.8]{figure/gradient_descent_logistic.pdf}
 \end{framei}
 
@@ -159,9 +157,11 @@ $$\risket = \sumin \left(\fxt - \yi\right)^2$$
 \end{framei}
 
 
-\begin{framei}[fs=footnotesize]{Excourse: backpropagation}
-\item GD requires $\nabla_{\thetav} \risket$, computed efficiently via \textbf{backpropagation}: repeated application of the chain rule from output to input
-\item \textbf{Example} (simplified NN with 2 hidden layers with 2 units and activation func. $\sigma$):
+\begin{framei}[fs=footnotesize]{Backpropagation}
+\item GD requires $\nabla_{\thetav} \risket$; for NNs computed via \textbf{backpropagation} (BP)
+\item Weight $\theta$ affects $L$ through \textbf{all} paths $\theta \to z_{\text{in}} \to z_{\text{out}} \to \dots \to f \to L$ in the network; chain rule: $\pd{L}{\theta}$ = sum over these paths of products of \textbf{local} derivatives
+\item BP: \textbf{forward pass} computes all unit values; \textbf{backward pass} accumulates the path sums from output to input, reusing shared factors
+\item \textbf{Example} (2 hidden layers with 2 units each, activation $\sigma$):
 let $\ L = \tfrac{1}{2}(y - f(x))^2$ and
 $\ \zin{1}{1} = \theta_{11}^{(1)} x_1 + \theta_{12}^{(1)} x_2$,
 $\ \zout{1}{1} = \sigma(\zin{1}{1})$, etc.
@@ -171,10 +171,40 @@ $$
 \dots
 $$
 \vspace{-1cm}
-\imageC[0.75]{figure/nn_architecture.pdf}
+\imageC[0.45]{figure/nn_architecture.pdf}
 {\scriptsize
-Note: Bias terms omitted for readability. The actual NN uses 16 units per hidden layer.
+Note: Shown weights have a unique path to $f$ (single products); layer-1 weights reach $f$ via both layer-2 units $\Rightarrow$ sum of two products. Biases omitted; actual NN: 16 units/layer.
 }
+\end{framei}
+
+
+\begin{framei}[fs=footnotesize]{Excursus: BP error signals}
+\item Vector notation for hidden layers $l = 1, \dots, m$, with weight matrices $\bm{\Theta}^{(l)} = (\theta_{jk}^{(l)})_{j,k}$ and $\sigma$ applied elementwise:
+$$\bm{z}_{\text{in}}^{(l)} = \bm{\Theta}^{(l)} \bm{z}_{\text{out}}^{(l-1)}, \; \text{ i.e., } \zin{j}{l} = \sum_k \theta_{jk}^{(l)} \zout{k}{l-1}, \qquad
+\bm{z}_{\text{out}}^{(l)} = \sigma(\bm{z}_{\text{in}}^{(l)})$$
+\item Input, linear output, and L2 loss:
+$$\bm{z}_{\text{out}}^{(0)} = \xv, \qquad f = \bm{\theta}^{(m+1) \top} \bm{z}_{\text{out}}^{(m)}, \qquad L = \tfrac{1}{2} (y - f)^2$$
+\item \textbf{Error signal} of layer $l$ = sensitivity of $L$ w.r.t. unit inputs:
+$$\delta_j^{(l)} := \pd{L}{\zin{j}{l}}, \qquad \text{at the output: } \delta^{(m+1)} = \pd{L}{f} = f - y$$
+\item $\theta_{jk}^{(l)}$ enters $L$ only via $\zin{j}{l}$, and $\pd{\zin{j}{l}}{\theta_{jk}^{(l)}} = \zout{k}{l-1}$ (see def.\ above), so \textbf{all} gradients follow directly from the error signals:
+$$\pd{L}{\theta_{jk}^{(l)}} = \pd{L}{\zin{j}{l}} \cdot \pd{\zin{j}{l}}{\theta_{jk}^{(l)}} = \delta_j^{(l)} \zout{k}{l-1}, \qquad \text{in matrix form } \pd{L}{\bm{\Theta}^{(l)}} = \bm{\delta}^{(l)} \big( \bm{z}_{\text{out}}^{(l-1)} \big)^\top$$
+\item Missing piece: computing $\bm{\delta}^{(l)}$ for all layers $\to$ next slide
+\end{framei}
+
+
+\begin{framei}[fs=footnotesize]{Excursus: BP error signal recursion}
+\item $\zin{j}{l}$ enters $L$ only via the \textbf{next} layer's inputs, which depend on it as
+$$\zin{k}{l+1} = \sum_{j'} \theta_{kj'}^{(l+1)} \zout{j'}{l} = \sum_{j'} \theta_{kj'}^{(l+1)} \sigma(\zin{j'}{l})
+\quad \Rightarrow \quad \pd{\zin{k}{l+1}}{\zin{j}{l}} = \theta_{kj}^{(l+1)} \sigma'(\zin{j}{l})$$
+\item Chain rule, summing over all units $k$ of layer $l+1$ (= sum over paths), yields the \textbf{backward recursion} for $l = m, \dots, 1$:
+\begin{align*}
+\delta_j^{(l)} &= \sum_k \pd{L}{\zin{k}{l+1}} \cdot \pd{\zin{k}{l+1}}{\zin{j}{l}} = \sigma'(\zin{j}{l}) \sum_k \theta_{kj}^{(l+1)} \delta_k^{(l+1)}\\
+\text{i.e., } \quad \bm{\delta}^{(l)} &= \big( \bm{\Theta}^{(l+1) \top} \bm{\delta}^{(l+1)} \big) \odot \sigma'(\bm{z}_{\text{in}}^{(l)}) \qquad (\odot = \text{elementwise product})
+\end{align*}
+started at $\delta^{(m+1)} = f - y$, reading $\bm{\Theta}^{(m+1)} = \bm{\theta}^{(m+1) \top}$ for the output layer
+\item Together: \textbf{forward pass} computes all $\bm{z}_{\text{in}}^{(l)}, \bm{z}_{\text{out}}^{(l)}$; \textbf{backward pass} computes all $\bm{\delta}^{(l)}$, then all gradients $\bm{\delta}^{(l)} \big( \bm{z}_{\text{out}}^{(l-1)} \big)^\top$
+\item Cost: one forward + one backward pass $\Rightarrow$ full gradient costs a small constant multiple ($\approx 2$--$4\times$) of \textbf{one} evaluation of $f$; this factor does not grow with the number of weights $d$ (compare finite differences: $d + 1$ evaluations)
+\item To see the factor: forward, backward, and readout ($\bm{\Theta}^{(l)} \bm{z}_{\text{out}}^{(l-1)}$, $\bm{\Theta}^{(l+1) \top} \bm{\delta}^{(l+1)}$, $\bm{\delta}^{(l)} \big( \bm{z}_{\text{out}}^{(l-1)} \big)^\top$) each touch every weight once $\Rightarrow$ $\approx 3d$ vs.\ $d$ multiply-adds for $f$
 \end{framei}
 
 
