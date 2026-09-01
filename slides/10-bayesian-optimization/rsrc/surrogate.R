@@ -1,4 +1,4 @@
-# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-4-surrogate-models.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/05-surrogate.tex
 #
 # Compares random-forest surrogate variants and benchmarks random search against
 # Bayesian optimization with RF, ExtraTrees-style RF, and GP surrogates.

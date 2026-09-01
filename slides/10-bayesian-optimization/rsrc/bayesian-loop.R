@@ -1,5 +1,5 @@
-# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-3-bayesian-loop_1.tex
-# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-3-bayesian-loop_2.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/03-acqfun1.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/04-acqfun2.tex
 #
 # Creates Expected Improvement figures showing exploration, exploitation,
 # surrogate uncertainty, improvement relative to the incumbent, and BO updates.

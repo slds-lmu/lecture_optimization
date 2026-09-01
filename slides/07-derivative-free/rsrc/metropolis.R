@@ -1,4 +1,4 @@
-# Used in: ../slides-derivative-free-3-simulated-annealing.tex, ../slides-derivative-free-4-multistart-optimization.tex
+# Used in: ../03-annealing.tex, ../04-multistart.tex
 #
 # Create the one-dimensional figures for local search, Metropolis acceptance,
 # temperature-dependent acceptance probabilities, and a Nelder-Mead basin example.

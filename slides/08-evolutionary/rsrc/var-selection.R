@@ -1,4 +1,4 @@
-# Used in: slides-evolutionary-algorithms-3-ea-bit.tex
+# Used in: 03-bit.tex
 #
 # Runs a toy evolutionary feature-selection example for linear regression. The
 # binary chromosome indicates which variables enter the model, and BIC is used

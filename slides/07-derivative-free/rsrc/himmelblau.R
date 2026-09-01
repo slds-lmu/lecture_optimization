@@ -1,4 +1,4 @@
-# Used in: ../slides-derivative-free-3-simulated-annealing.tex
+# Used in: ../03-annealing.tex
 #
 # Simulate a short simulated annealing run on Himmelblau's function and save
 # the acceptance-probability contour used on the title slide.

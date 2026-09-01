@@ -1,4 +1,4 @@
-# Used in: slides-evolutionary-algorithms-2-ea-numeric.tex
+# Used in: 02-numeric.tex
 #
 # Generates a reproducible grid of non-overlapping circles. Each new circle is
 # placed uniformly in the box and receives the largest feasible radius up to a

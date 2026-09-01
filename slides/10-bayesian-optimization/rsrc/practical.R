@@ -1,4 +1,4 @@
-# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-7-practical.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/08-practical.tex
 #
 # Creates a two-dimensional Expected Improvement contour plot.
 

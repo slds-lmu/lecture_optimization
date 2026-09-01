@@ -1,4 +1,4 @@
-# Used in: slides-evolutionary-algorithms-2-ea-numeric.tex
+# Used in: 02-numeric.tex
 #
 # Builds the staged figures for a simple (mu + lambda) evolutionary strategy on
 # the one-dimensional Ackley objective. The same run is used across the slide

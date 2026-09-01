@@ -1,4 +1,4 @@
-# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-2-loop.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/02-loop.tex
 #
 # Builds the step-by-step loop figures for model-based optimization with the
 # surrogate posterior mean as acquisition function.

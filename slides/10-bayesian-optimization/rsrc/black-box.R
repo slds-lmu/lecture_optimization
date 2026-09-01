@@ -1,4 +1,4 @@
-# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-1-black-box.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/01-blackbox.tex
 #
 # Creates design-space examples and a small Ackley benchmark comparing random
 # search, CMA-ES, and Bayesian optimization.

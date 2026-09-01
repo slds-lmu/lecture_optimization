@@ -1,4 +1,4 @@
-# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-3-bayesian-loop_1.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/03-acqfun1.tex
 #
 # Creates Lower Confidence Bound figures for increasing uncertainty weights.
 

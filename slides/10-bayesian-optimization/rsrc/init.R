@@ -1,4 +1,4 @@
-# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-2-loop.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/02-loop.tex
 #
 # Compares purely random initialization with Latin hypercube sampling in a
 # two-dimensional unit square.

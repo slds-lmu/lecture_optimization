@@ -1,4 +1,4 @@
-# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-6-multicrit.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/07-multicrit.tex
 #
 # Creates multi-objective BO figures: dominated vs. Pareto points, dominated
 # hypervolume, the Pareto front, and ParEGO scalarization with EI.

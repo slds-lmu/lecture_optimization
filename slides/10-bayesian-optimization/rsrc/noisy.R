@@ -1,4 +1,4 @@
-# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-5-noisy.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/06-noisy.tex
 #
 # Creates figures for Bayesian optimization with noisy observations, including
 # noisy GP prediction, augmented EI, and reinterpolation.

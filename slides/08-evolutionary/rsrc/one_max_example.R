@@ -1,4 +1,4 @@
-# Used in: slides-evolutionary-algorithms-3-ea-bit.tex
+# Used in: 03-bit.tex
 #
 # Runs a simple one-max evolutionary algorithm on bit strings. The figure shows
 # the best individual after each iteration, with green points marking bits that

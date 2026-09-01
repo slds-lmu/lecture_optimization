@@ -1,4 +1,4 @@
-# Used in: slides-evolutionary-algorithms-2-ea-numeric.tex
+# Used in: 02-numeric.tex
 #
 # Compares three numeric recombination examples for two parent vectors:
 # uniform crossover, intermediate recombination, and simulated binary crossover

@@ -1,4 +1,4 @@
-# Used in: slides-evolutionary-algorithms-1-ea-intro.tex
+# Used in: 01-intro.tex
 #
 # Creates a roulette-wheel parent-selection diagram. Ten individuals receive
 # random positive fitness values, which are converted to proportional sampling

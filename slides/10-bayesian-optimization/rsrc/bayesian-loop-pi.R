@@ -1,4 +1,4 @@
-# Used in: lecture_optimization/slides/10-bayesian-optimization/slides-bayesian-optimization-3-bayesian-loop_2.tex
+# Used in: lecture_optimization/slides/10-bayesian-optimization/04-acqfun2.tex
 #
 # Creates Probability of Improvement figures for the predictive distribution at
 # one point and for successive BO iterations.
