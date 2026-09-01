@@ -1,4 +1,4 @@
-# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-1-newton-raphson.tex
+# Used in: slides/05-multivariate-second-order/01-nr.tex
 #
 # Benign counterpart to Figure 5.8 in Aggarwal (2020), where a far too flat
 # quadratic model makes the Newton step overshoot and worsen the objective.

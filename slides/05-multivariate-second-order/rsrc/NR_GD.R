@@ -1,4 +1,4 @@
-# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-5-comparison.tex
+# Used in: slides/05-multivariate-second-order/07-compare.tex
 #
 # Runs the logistic-regression comparison between Newton-Raphson, relaxed
 # Newton-Raphson, and gradient descent with momentum. One configuration object

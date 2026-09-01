@@ -1,4 +1,4 @@
-# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-1a-convergence.tex
+# Used in: slides/05-multivariate-second-order/02-nrconv.tex
 #
 # The two phases of damped Newton-Raphson (Boyd & Vandenberghe 2004, 9.5.3):
 # a damped phase in which backtracking returns alpha < 1 and the error decreases

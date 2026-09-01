@@ -68,7 +68,7 @@ Generally rethink if this is a good didactic way to introduce quasi-Newton metho
 
 Add implementations that use BFGS to show how relevant it is?
 
-Sherman-Morrison formula on the SR1 slide (slides-multivar-second-order-2-quasi-newton.tex, line 104) appears wrong:
+Sherman-Morrison formula on the SR1 slide (04-quasinewton.tex, line 104) appears wrong:
 - Slide shows: $(\A + \beta \bm{u}\bm{u}^T)^{-1} = \A + \beta \frac{\bm{u}\bm{u}^T}{1 + \beta\bm{u}^T\bm{u}}$
 - Correct formula: $(\A + \beta \bm{u}\bm{u}^T)^{-1} = \A^{-1} - \beta \frac{\A^{-1}\bm{u}\bm{u}^T\A^{-1}}{1 + \beta\bm{u}^T\A^{-1}\bm{u}}$
 - RHS has $\A$ where it should have $\A^{-1}$ — needs verification before fixing
@@ -108,7 +108,7 @@ generally: say for which problems these methods are useful
 Source: Boyd & Vandenberghe (2004), §9.5.1, p. 486 (pdf p. 500).
 Note: Aggarwal does not cover this -> would need BOYD2004 added to the title-slide references.
 
-Suggested placement (if we add it later): in `slides-multivar-second-order-1-newton-raphson.tex`
+Suggested placement (if we add it later): in `01-nr.tex`
 directly after the quadratic-form example frame (`framev`, ends ~line 145), before
 "Non-quadratic examples: Convergence".
 Rationale: closes the loop from the motivation slides (GD zig-zags under ill-conditioning) and

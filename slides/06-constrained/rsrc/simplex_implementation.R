@@ -1,4 +1,4 @@
-# Used in: slides/06-constrained/slides-constrained-3-lp-solvers.tex
+# Used in: slides/06-constrained/04-lpsolvers.tex
 #
 # Runs a small two-dimensional simplex example and saves one plot per iteration.
 # Each plot shows the feasible polytope, visited vertices, and objective level lines.

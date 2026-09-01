@@ -1,4 +1,4 @@
-# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-3-gauss-newton.tex
+# Used in: slides/05-multivariate-second-order/05-gaussnewton.tex
 #
 # Fits an exponential curve by nonlinear least squares and shows the observed
 # values, fitted values, and residual segments used to motivate least-squares

@@ -1,4 +1,4 @@
-# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-1-newton-raphson.tex
+# Used in: slides/05-multivariate-second-order/01-nr.tex
 #
 # Analytical example of the deck, visualized:
 #

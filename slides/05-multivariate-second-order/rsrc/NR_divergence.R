@@ -1,4 +1,4 @@
-# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-1b-limitations.tex
+# Used in: slides/05-multivariate-second-order/03-nrlimit.tex
 #
 # Classic example of undamped Newton-Raphson failing to converge: minimizing
 # f(x) = x^4/4 - x^2 + 2x, starting at x0 = 0, where f''(0) < 0 (negative

@@ -1,4 +1,4 @@
-# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-1-newton-raphson.tex
+# Used in: slides/05-multivariate-second-order/01-nr.tex
 #
 # Newton-Raphson on the nonquadratic test problem of Boyd & Vandenberghe (2004),
 # eq. (9.20), used there in 9.5.3:

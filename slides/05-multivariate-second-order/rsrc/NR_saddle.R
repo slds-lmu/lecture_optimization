@@ -1,4 +1,4 @@
-# Used in: slides/05-multivariate-second-order/slides-multivar-second-order-1b-limitations.tex
+# Used in: slides/05-multivariate-second-order/03-nrlimit.tex
 #
 # Saddle-point problem of Newton-Raphson (Aggarwal Ch. 5.6.2).
 #
