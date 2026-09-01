@@ -1,4 +1,4 @@
-# Used in: slides/11-multicrit/slides-multicrit-3-bo.tex
+# Used in: slides/11-multicrit/04-bo.tex
 #
 # Visualizes the augmented Chebyshev scalarization used by ParEGO for different
 # weight vectors and overlays the Pareto front of the toy objectives.

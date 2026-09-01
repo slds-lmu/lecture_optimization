@@ -1,4 +1,4 @@
-# Used in: slides/11-multicrit/slides-multicrit-2-evolutionary.tex
+# Used in: slides/11-multicrit/03-evolutionary.tex
 #
 # Illustrates the exclusive hypervolume contribution of each point in a small
 # two-objective Pareto set with respect to a fixed reference point.

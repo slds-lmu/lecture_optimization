@@ -1,4 +1,4 @@
-# Used in: slides/11-multicrit/slides-multicrit-4-practical.tex
+# Used in: slides/11-multicrit/05-practical.tex
 #
 # Loads a compact Adult data snapshot and creates exploratory plots for the
 # fairness example: income shares by race/education and age distributions by sex.

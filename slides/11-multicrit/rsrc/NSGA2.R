@@ -1,4 +1,4 @@
-# Used in: slides/11-multicrit/slides-multicrit-2-evolutionary.tex
+# Used in: slides/11-multicrit/03-evolutionary.tex
 #
 # Creates the NSGA-II teaching figures: population snapshots, non-dominated
 # fronts, and crowding-distance illustrations in two-objective space.

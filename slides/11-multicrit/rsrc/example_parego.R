@@ -1,4 +1,4 @@
-# Used in: slides/11-multicrit/slides-multicrit-4-practical.tex
+# Used in: slides/11-multicrit/05-practical.tex
 #
 # Recreates the ROC optimization figures for an SVM on the spam data set. The
 # expensive ParEGO/random-search benchmark is cached in example_parego_res.rds;

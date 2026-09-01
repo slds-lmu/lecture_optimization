@@ -1,4 +1,4 @@
-# Used in: slides/11-multicrit/slides-multicrit-1a-intro.tex
+# Used in: slides/11-multicrit/01-intro1.tex
 #
 # Builds the one-dimensional toy objective figures that introduce a Pareto front
 # by plotting objectives over x and then in objective space.

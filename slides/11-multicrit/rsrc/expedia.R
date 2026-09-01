@@ -1,4 +1,4 @@
-# Used in: slides/11-multicrit/slides-multicrit-1a-intro.tex
+# Used in: slides/11-multicrit/01-intro1.tex
 #
 # Recreates the hotel-choice example from a small Expedia data snapshot. All
 # objectives are shown in minimization form: price and negative rating.
