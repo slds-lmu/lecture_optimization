@@ -1,4 +1,4 @@
-# Used in: 07-gdquad.tex
+# Used in: 02-gdquad.tex
 #
 # Generates stacked bar chart of GD regret decomposed by eigenvector mode,
 # using the closed-form expression from the slide:

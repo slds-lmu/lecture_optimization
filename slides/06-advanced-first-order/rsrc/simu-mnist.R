@@ -1,4 +1,4 @@
-# Used in: 11-compare.tex
+# Used in: 06-compare.tex
 #
 # Trains a small MNIST network under several SGD variants and saves the
 # optimizer-comparison plots used in the benchmark slides.

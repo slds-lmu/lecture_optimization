@@ -1,4 +1,4 @@
-# Used in: 07-gdquad.tex
+# Used in: 02-gdquad.tex
 #
 # Generates contour plots of q(x) = x^T A x - b^T x with A = [[2,1],[1,2]],
 # b = (6, 6), minimum at x* = (1, 1), in original x-space (tilted ellipses)

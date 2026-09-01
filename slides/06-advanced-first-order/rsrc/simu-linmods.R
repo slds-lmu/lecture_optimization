@@ -1,4 +1,4 @@
-# Used in: 11-compare.tex
+# Used in: 06-compare.tex
 #
 # Generates the linear and logistic benchmark plots used in the optimizer
 # comparison slides.

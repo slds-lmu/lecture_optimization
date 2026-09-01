@@ -1,4 +1,4 @@
-# Used in: 08-momquad.tex
+# Used in: 03-momquad.tex
 #
 # Generates convergence region heatmaps showing max{|σ₁|, |σ₂|} over (α, φ)
 # for the momentum recursion matrix with λ = 1.

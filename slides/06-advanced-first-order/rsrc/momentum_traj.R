@@ -1,4 +1,4 @@
-# Used in: 08-momquad.tex
+# Used in: 03-momquad.tex
 #
 # Generates lollipop plots of the eigenspace error component w_i over iterations
 # for GD with momentum, illustrating five convergence behaviors.
