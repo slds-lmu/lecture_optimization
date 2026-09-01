@@ -92,6 +92,17 @@ generally: say for which problems these methods are useful
 - GP optimization
 -------------------
 
+# Renaming of the Slidesets
+
+1. kapitel neu aufteilen
+2. kapitelnamen und decknamen kurz (aber sprechend)
+  z.b 03-univ-optim
+  oder 10-adam
+--> Claude soll git move machen damit die git history erhalten bleibt
+3. Claude macht 1-2.
+4. Claude prüfen lassen
+
+
 # Draft: Affine invariance of the Newton step (parked, not yet in the slideset)
 
 Source: Boyd & Vandenberghe (2004), §9.5.1, p. 486 (pdf p. 500).

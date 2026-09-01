@@ -23,6 +23,10 @@ figure/NR_phases.png
 \item Assumptions
 \item Damped phase
 \item Quadratically convergent phase
+\item Complexity bound
+\vspace{0.5cm}
+\item[] \hspace{-0.7cm}Slides based on\\
+\hspace{-0.7cm}\furtherreading{BOYD2004} (Ch. 9.5.3)
 }
 
 \begin{framei}{Setting}
@@ -50,12 +54,12 @@ with $\gamma_1 = 0.1$, $\tau = 0.7$}
 
 
 \begin{framei}[fs=small]{Setting}
-\item \textbf{Assumptions}:
+\item \textbf{Assumptions} on the sublevel set $\S = \{\xv : f(\xv) \le f(\xv^{[0]})\}$:
 \begin{itemizeM}
 \item $f \in \CC{2}$, $m$-strongly convex ($\H(\xv) \succeq m \id$) and $L$-smooth ($\H(\xv) \preceq L \id$)
 \item $\H$ is \textbf{Lipschitz} with constant $\LH$ ($\rightarrow$ bound on the \textit{3rd} derivative):
-$$\|\H(\xv) - \H(\xtil)\|_2 \le \LH \|\xv - \xtil\| \qquad \text{for all } \xv, \xtil$$
-Interpretation: $\LH$ measures well the quadratic model approximates $f$ ($\LH = 0$ for quadratic $f$)
+$$\|\H(\xv) - \H(\xtil)\|_2 \le \LH \|\xv - \xtil\| \qquad \text{for all } \xv, \xtil \in \S$$
+Intuition: $\LH$ measures how well the quadratic model approximates $f$ ($\LH = 0$ for quadratic $f$)
 \end{itemizeM}
 \item Damped NR with backtracking: $\alpha_{\text{init}} = 1$, $\gamma_1 \in (0, 1/2)$, $\tau \in (0, 1)$
 \begin{framed}
@@ -71,9 +75,95 @@ $\eta \in (0, m^2/\LH]$ and $\delta > 0$ such that
 \end{framed}
 \end{framei}
 
-\begin{framei}{Proof strategy}
-\item tbd
+% \begin{framei}{Outline}
+% \item We start by analyzing the implications of the theorem (main convergence result)
+% \item We then actually prove the theorem
+% \begin{itemizeM}
+% \item \textbf{Damped phase:} We show that each step reduces $f$ by at least a constant $\delta$ and show how $\delta$ looks like
+% \item \textbf{Pure phase:} We show that $\alpha^{[t]} = 1$ is always accepted and that the scaled gradient norm $\theta^{[t]}$ decreases quadratically
+% \end{itemizeM}
+% \end{framei}
+
+\begin{framei}[fs=small]{What the theorem implies: pure phase}
+\item [] Before we actually prove the theorem, we analyze its implications for the convergence of damped NR.
+\item \textbf{Message 1:} once NR enters the pure phase, it stays there
+\begin{itemizeM}
+  \item suppose we are in the pure phase at step $t$, i.e. $\|\nabla f(\xv^{[t]})\| < \eta$
+  \item since $\eta \le m^2/\LH$ by def., the scaled gradient norm is below $\tfrac{1}{2}$:
+  $$\theta^{[t]} = \frac{\LH}{2m^2}\|\nabla f(\xv^{[t]})\|
+  < \frac{\LH}{2m^2} \cdot \frac{m^2}{\LH} = \frac{1}{2}$$
+  \item with this and the theorem:
+  $$\theta^{[t+1]} \le \big( \theta^{[t]} \big)^2 = \theta^{[t]} \cdot \theta^{[t]}
+  < \tfrac{1}{2} \theta^{[t]}$$
+  $$\Rightarrow \|\nabla f(\xv^{[t+1]})\| < \tfrac{1}{2} \|\nabla f(\xv^{[t]})\| < \eta$$
+  \item i.e., the condition is also satisfied at step $t+1$ and by recursion at all future steps $l \geq t$, implying (by the theorem):
+  $$\alpha^{[l]} = 1 \quad \text{ and } \quad \theta^{[l+1]} \le \big( \theta^{[l]} \big)^2$$
+\end{itemizeM}
 \end{framei}
+
+\begin{framei}[fs=small]{What the theorem implies: pure phase}
+\item \textbf{Message 2:} convergence is extremely rapid in the pure phase
+\begin{itemizeM}
+\item $\theta^{[t+1]} \le \big( \theta^{[t]} \big)^2$ is exactly \textbf{quadratic convergence}
+\item Applying it recursively, for $l \geq t$:
+$$\theta^{[l]} \le \big( \theta^{[t]} \big)^{2^{l-t}} \leq \left(\frac{1}{2}\right)^{2^{l-t}}$$
+\item Strong convexity gives $f(\xv) - f(\xvs) \le \frac{1}{2m}\|\nabla f(\xv)\|^2$ and thus:
+$$f(\xv^{[l]}) - f(\xvs) \le \eps_0 \big( \theta^{[l]} \big)^2
+\le \eps_0 \left(\frac{1}{2}\right)^{2^{l-t+1}}, \qquad \eps_0 = \frac{2m^3}{\LH^2}$$
+\item Inverting this for the step count yields:\footnote{\footnotesize Exactly
+$\log_2 \log_2 (\eps_0/\eps) - 1$ steps; the $-1$ is dropped for readability.}
+\begin{framed}
+$$f(\xv^{[l]}) - f(\xvs) \le \eps \quad \text{after at most} \quad \log_2 \log_2 (\eps_0/\eps)
+\; \text{ pure steps}$$
+\end{framed}
+\item[$\Rightarrow$] \textbf{Note}: at most 6 pure steps give an accuracy of
+$\eps \approx 5 \cdot 10^{-20} \, \eps_0$
+\end{itemizeM}
+\end{framei}
+
+\begin{framei}[fs=small]{What the theorem implies: damped phase \& final result}
+\item \textbf{Message 3:} the number of steps in the damped phase is bounded
+\begin{itemizeM}
+\item Every damped step reduces $f$ by at least $\delta$, so after $T$ damped steps
+$f(\xv^{[T]}) \le f(\xv^{[0]}) - T \delta$
+\item Since $f$ cannot decrease below $f(\xvs)$:
+\begin{framed}
+$$\#\{\text{damped steps}\} \le \frac{f(\xv^{[0]}) - f(\xvs)}{\delta}$$
+\end{framed}
+\item[$\Rightarrow$] finite, but expensive phase; grows with the initial gap
+\end{itemizeM}
+\item \textbf{Final result} (both phases together): to reach $f(\xv^{[t]}) - f(\xvs) \le \eps$:
+\begin{framed}
+$$\#\text{iterations} \;\; \le \;\;
+\underbrace{\frac{f(\xv^{[0]}) - f(\xvs)}{\delta}}_{\text{damped}} \; + \;
+\underbrace{\log_2 \log_2 (\eps_0/\eps)}_{\text{pure}, \; \approx \, 6}$$
+\end{framed}
+\end{framei}
+
+
+\begin{framev}[fs=small]{Proof strategy}
+\textbf{Note:} we have now seen the implications of the theorem, but have not yet proven it, i.p. the existence of $\eta$ and $\delta$. Our proof strategy is as follows:
+\begin{enumerate}
+\item \textbf{Tool:} the \textbf{Newton decrement} $\lambda(\xv)$ as progress measure
+\item \textbf{Damped phase:} $L$-smoothness bounds the step size from below
+\begin{framed}
+$$\alpha^{[t]} \ge \tau \frac{m}{L}
+\quad \Longrightarrow \quad
+\delta = \gamma_1 \tau \eta^2 \frac{m}{L^2}$$
+\end{framed}
+\item \textbf{Pure phase:} Lipschitz $\H$ keeps the quadratic model accurate enough that
+\begin{framed}
+$$\alpha^{[t]} = 1 \text{ is accepted}
+\quad \text{and} \quad
+\theta^{[t+1]} \le \big( \theta^{[t]} \big)^2$$
+\end{framed}
+\end{enumerate}
+\end{framev}
+
+
+\begin{framev}[align=top]{Discussion}
+  tbd: connect to statements from first deck (locally, quadratic convergence, etc.) and discuss what would happen for non-damped NR, maybe also the role of the assumptions
+\end{framev}
 
 \endlecture
 \end{document}
