@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-6-momentum.tex
+# Used in: 06-momentum.tex
 #
 # Generates GD-with-momentum trajectory plots on the ill-conditioned quadratic
 # f(x1, x2) = x1^2/2 + 10*x2^2, starting from x0 = (10, 1) with lr = 0.1.

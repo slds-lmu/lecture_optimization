@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-2-stepsize.tex
+# Used in: 02-stepsize.tex
 #
 # Plots the Armijo sufficient-decrease condition along a one-dimensional line search.
 

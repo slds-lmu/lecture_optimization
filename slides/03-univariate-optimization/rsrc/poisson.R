@@ -1,4 +1,4 @@
-# Used in: slides/03-univariate-optimization/slides-univariate-2-brent.tex
+# Used in: slides/03-univariate-optimization/02-brent.tex
 #
 # Compare the optimization traces of golden section search and Brent's method
 # for the Poisson negative log-likelihood.

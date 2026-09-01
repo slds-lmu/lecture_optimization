@@ -1,4 +1,4 @@
-# Used in: slides/03-univariate-optimization/slides-univariate-2-brent.tex
+# Used in: slides/03-univariate-optimization/02-brent.tex
 #
 # Show the quadratic interpolation proposal, acceptance decision, and updated
 # bracket for Brent's method.

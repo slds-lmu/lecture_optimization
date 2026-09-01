@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-4-weaknesses-curvature.tex
+# Used in: 04-curvature.tex
 #
 # Produces figure/curvature_1.png for the gradient decomposition and
 # figure/curvature_2.png for the large-vs-small-step-size trajectories.

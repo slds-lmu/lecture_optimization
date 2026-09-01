@@ -1,5 +1,5 @@
-# Used in: slides/03-univariate-optimization/slides-univariate-1-golden-ratio.tex,
-#          slides/03-univariate-optimization/slides-univariate-3-further.tex
+# Used in: slides/03-univariate-optimization/01-golden.tex,
+#          slides/03-univariate-optimization/03-further.tex
 #
 # Create the schematic golden section figures used to explain the interval
 # relationships a, b, and c in the lecture.

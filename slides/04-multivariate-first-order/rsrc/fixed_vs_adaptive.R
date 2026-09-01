@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-2-stepsize.tex
+# Used in: 02-stepsize.tex
 #
 # Compares fixed and adaptive step sizes for gradient descent on a one-dimensional
 # objective with a flat tail around the optimum.

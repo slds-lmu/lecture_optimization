@@ -113,7 +113,7 @@ directly after the quadratic-form example frame (`framev`, ends ~line 145), befo
 "Non-quadratic examples: Convergence".
 Rationale: closes the loop from the motivation slides (GD zig-zags under ill-conditioning) and
 generalizes the diagonal-Hessian rescaling intuition; also a natural callback to
-`04-multivariate-first-order/slides-multivar-first-order-7-gd-quadratic-forms.tex` (convergence
+`04-multivariate-first-order/07-gdquad.tex` (convergence
 driven by the condition number kappa).
 
 Caveat to state if used: pure NR (alpha = 1) is affine invariant; damped NR stays invariant if the

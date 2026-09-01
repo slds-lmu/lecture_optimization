@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-5-weaknesses-saddle.tex
+# Used in: 05-saddle.tex
 #
 # Plots the gradient norm along a gradient-descent path near a saddle point.
 

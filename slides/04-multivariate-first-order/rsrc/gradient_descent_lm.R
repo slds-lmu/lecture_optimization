@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-1-GD.tex
+# Used in: 01-gd.tex
 #
 # Simulates gradient descent for a simple linear model and visualizes
 # the RSS trajectory together with the fitted lines across iterations.

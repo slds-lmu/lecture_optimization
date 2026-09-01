@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-8-quadratic-forms-momentum.tex
+# Used in: 08-momquad.tex
 #
 # Generates lollipop plots of the eigenspace error component w_i over iterations
 # for GD with momentum, illustrating five convergence behaviors.

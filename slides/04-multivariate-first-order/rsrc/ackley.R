@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-5-weaknesses-saddle.tex
+# Used in: 05-saddle.tex
 #
 # Creates the Ackley optimization traces for figure/ackley_2.png.
 # The 3D slide screenshots are still taken manually from the interactive widget.

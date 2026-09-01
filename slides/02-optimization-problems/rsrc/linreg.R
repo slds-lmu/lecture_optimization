@@ -1,4 +1,4 @@
-# Used in: ../slides-problems-1-unconstrained.tex
+# Used in: ../01-unconstrained.tex
 #
 # Simulate a linear regression problem, visualize the empirical risk surface,
 # and compare the unregularized, lasso, and ridge objectives.

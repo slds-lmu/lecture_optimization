@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-4-weaknesses-curvature.tex
+# Used in: 04-curvature.tex
 #
 # Sets up the ill-conditioned quadratic used for the manual surface and contour
 # screenshots in figure_man/ill-cond_1.png and figure_man/ill-cond_2.png.

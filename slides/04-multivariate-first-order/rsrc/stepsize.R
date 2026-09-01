@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-2-stepsize.tex
+# Used in: 02-stepsize.tex
 #
 # Generates GD trajectory plots illustrating the effect of step size on convergence
 # for f(x1, x2) = 10*x1^2 + x2^2/2.

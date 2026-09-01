@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-5-weaknesses-saddle.tex
+# Used in: 05-saddle.tex
 #
 # Sets up the saddle-point surface used for the manual screenshot in
 # figure_man/saddlepoint.png.

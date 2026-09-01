@@ -1,4 +1,4 @@
-# Used in: slides/03-univariate-optimization/slides-univariate-1-golden-ratio.tex
+# Used in: slides/03-univariate-optimization/01-golden.tex
 #
 # Placement of x_best and x_new according to the golden section rule,
 # overlaid on the objective function from the simple nesting procedure.

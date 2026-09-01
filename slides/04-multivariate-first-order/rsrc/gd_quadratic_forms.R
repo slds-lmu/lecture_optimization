@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-7-gd-quadratic-forms.tex
+# Used in: 07-gdquad.tex
 #
 # Generates contour plots of q(x) = x^T A x - b^T x with A = [[2,1],[1,2]],
 # b = (6, 6), minimum at x* = (1, 1), in original x-space (tilted ellipses)

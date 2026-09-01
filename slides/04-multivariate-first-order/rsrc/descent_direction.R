@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-1-GD.tex
+# Used in: 01-gd.tex
 #
 # Visualizes a descent direction, the gradient, and the orthogonal contour direction
 # on a two-dimensional quadratic objective.

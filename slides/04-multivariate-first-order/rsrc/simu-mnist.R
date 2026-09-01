@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-12-comparison.tex
+# Used in: 11-compare.tex
 #
 # Trains a small MNIST network under several SGD variants and saves the
 # optimizer-comparison plots used in the benchmark slides.

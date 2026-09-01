@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-12-comparison.tex
+# Used in: 11-compare.tex
 #
 # Generates the linear and logistic benchmark plots used in the optimizer
 # comparison slides.

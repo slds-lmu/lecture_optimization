@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-1-GD.tex
+# Used in: 01-gd.tex
 #
 # Draws the 2-input, 2-hidden-layer (2 units each), 1-output network diagram.
 # Hidden neurons are split into left half (z_in, pre-activation, lightyellow)

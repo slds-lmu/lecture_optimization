@@ -1,4 +1,4 @@
-# Used in: slides/03-univariate-optimization/slides-univariate-1-golden-ratio.tex
+# Used in: slides/03-univariate-optimization/01-golden.tex
 #
 # Create the simple nesting animation frames and the summary figure for the
 # univariate optimization slides.

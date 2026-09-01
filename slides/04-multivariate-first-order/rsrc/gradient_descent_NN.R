@@ -1,6 +1,6 @@
-# Used in: slides-multivar-first-order-1-GD.tex,
-#   slides-multivar-first-order-6-momentum.tex,
-#   slides-multivar-first-order-9-sgd.tex (snippet currently not used)
+# Used in: 01-gd.tex,
+#   06-momentum.tex,
+#   09-sgd.tex (snippet currently not used)
 #
 # Generates synthetic neural-network regression figures used to illustrate
 # optimization behavior and the effect of mini-batch sizes / momentum.
@@ -15,11 +15,11 @@ library(plot3D)
 source("NN_helpers.R")
 
 # --- Flags: set TRUE for each deck whose figures should be regenerated ------
-# slides-multivar-first-order-1-GD.tex
+# 01-gd.tex
 run_gd = TRUE
-# slides-multivar-first-order-6-momentum.tex
+# 06-momentum.tex
 run_momentum = TRUE
-# slides-multivar-first-order-9-sgd.tex
+# 09-sgd.tex
 run_sgd = TRUE
 
 objective_fun = function(x1, x2) x1^2 + x2^2
@@ -149,7 +149,7 @@ for (momentum_val in c(0, 0.5)) {
   }
 }
 
-# --- SGD batch fraction comparison (slides-multivar-first-order-9-sgd.tex) --
+# --- SGD batch fraction comparison (09-sgd.tex) --
 if (run_sgd) {
   set_nn_seed(1111L)
   epochs = 100L

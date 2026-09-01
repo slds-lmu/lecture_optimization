@@ -1,4 +1,4 @@
-# Used in: ../slides-problems-1-unconstrained.tex
+# Used in: ../01-unconstrained.tex
 #
 # Simulate a small linear regression example and save figures for the data view
 # and the corresponding empirical-risk contour plot.

@@ -1,4 +1,4 @@
-# Used in: ../slides-problems-1-unconstrained.tex
+# Used in: ../01-unconstrained.tex
 #
 # Simulate a normal sample, show the density with the observed data, and
 # visualize the negative log-likelihood as a function of μ.

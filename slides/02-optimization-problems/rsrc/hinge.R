@@ -1,4 +1,4 @@
-# Used in: ../slides-problems-1-unconstrained.tex, ../slides-problems-2-constrained.tex
+# Used in: ../01-unconstrained.tex, ../02-constrained.tex
 #
 # Visualize the hinge loss with vistool and save the figure for the
 # optimization slides.

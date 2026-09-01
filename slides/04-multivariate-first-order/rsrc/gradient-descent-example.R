@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-1-GD.tex
+# Used in: 01-gd.tex
 #
 # Sets up the two-dimensional gradient-descent example used for the manual screenshots
 # in figure_man/gradient-descent-example_1.png and figure_man/gradient-descent-example_2.png.

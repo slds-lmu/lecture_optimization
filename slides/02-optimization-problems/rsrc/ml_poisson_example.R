@@ -1,4 +1,4 @@
-# Used in: ../slides-problems-1-unconstrained.tex
+# Used in: ../01-unconstrained.tex
 #
 # Load the Poisson sample, drop the largest outlier, and visualize the log-
 # likelihood and negative log-likelihood as functions of λ.

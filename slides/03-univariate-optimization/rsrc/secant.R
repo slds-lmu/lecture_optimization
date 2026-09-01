@@ -1,4 +1,4 @@
-# Used in: slides/03-univariate-optimization/slides-univariate-3-further.tex
+# Used in: slides/03-univariate-optimization/03-further.tex
 #
 # Two iterations of the secant method applied to f' in a single plot.
 

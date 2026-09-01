@@ -1,4 +1,4 @@
-# Used in: ../slides-problems-2-constrained.tex
+# Used in: ../02-constrained.tex
 #
 # Visualize the contour lines of f(x) = x1 + x2 together with the feasible set
 # defined by the unit circle and the optimal boundary point.

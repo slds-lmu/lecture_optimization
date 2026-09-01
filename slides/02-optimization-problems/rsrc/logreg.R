@@ -1,4 +1,4 @@
-# Used in: ../slides-problems-1-unconstrained.tex
+# Used in: ../01-unconstrained.tex
 #
 # Simulate one logistic regression problem and save empirical-risk contour plots
 # for different elastic-net regularization settings.

@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-7-gd-quadratic-forms.tex
+# Used in: 07-gdquad.tex
 #
 # Generates stacked bar chart of GD regret decomposed by eigenvector mode,
 # using the closed-form expression from the slide:

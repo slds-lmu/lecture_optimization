@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-8-quadratic-forms-momentum.tex
+# Used in: 08-momquad.tex
 #
 # Generates convergence region heatmaps showing max{|σ₁|, |σ₂|} over (α, φ)
 # for the momentum recursion matrix with λ = 1.

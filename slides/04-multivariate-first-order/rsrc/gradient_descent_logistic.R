@@ -1,4 +1,4 @@
-# Used in: slides-multivar-first-order-1-GD.tex
+# Used in: 01-gd.tex
 #
 # Simulates gradient descent for logistic regression and visualizes
 # the cross-entropy trajectory together with evolving decision boundaries.
