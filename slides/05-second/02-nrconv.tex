@@ -156,14 +156,172 @@ $$\alpha^{[t]} \ge \tau \frac{m}{L}
 $$\alpha^{[t]} = 1 \text{ is accepted}
 \quad \text{and} \quad
 \theta^{[t+1]} \le \big( \theta^{[t]} \big)^2$$
+$$\text{for} \quad \eta = \min\{1, \, 3(1 - 2\gamma_1)\} \, \frac{m^2}{\LH}$$
 \end{framed}
 \end{enumerate}
 \end{framev}
 
 
-\begin{framev}[align=top]{Discussion}
-  tbd: connect to statements from first deck (locally, quadratic convergence, etc.) and discuss what would happen for non-damped NR, maybe also the role of the assumptions
-\end{framev}
+\begin{framei}[fs=small]{Tool: the Newton decrement}
+\item Backtracking needs $\nabla f(\xv)^\top \mathbf{d}$ along $\mathbf{d} = - \H(\xv)^{-1} \nabla f(\xv)$;
+its negative defines the \textbf{Newton decrement} $\lambda(\xv)$:
+\begin{framed}
+$$\lambda(\xv)^2 = \underbrace{\nabla f(\xv)^\top \H(\xv)^{-1} \nabla f(\xv)}_{\text{definition}}
+= \underbrace{\mathbf{d}^\top \H(\xv) \mathbf{d}}_{\text{squared } \H\text{-norm of } \mathbf{d}}
+= \underbrace{- \nabla f(\xv)^\top \mathbf{d}}_{-\, \text{dir. derivative}}$$
+\end{framed}
+\item[$\Rightarrow$] the Armijo rule for the Newton step reads
+$f(\xv + \alpha \mathbf{d}) \le f(\xv) - \gamma_1 \alpha \lambda(\xv)^2$
+\item[$\Rightarrow$] $\lambda$ measures the gradient in the geometry of $\H$, not the Euclidean one
+\item From $m \id \preceq \H(\xv) \preceq L \id$, i.e. $\tfrac{1}{L}\id \preceq \H(\xv)^{-1} \preceq \tfrac{1}{m}\id$:
+\begin{framed}
+$$\frac{1}{L}\|\nabla f(\xv)\|^2 \le \lambda(\xv)^2 \le \frac{1}{m}\|\nabla f(\xv)\|^2,
+\qquad \|\mathbf{d}\| \le \frac{\lambda(\xv)}{\sqrt{m}}$$
+\end{framed}
+\end{framei}
+
+
+\begin{framei}[fs=small]{Damped phase: the step size cannot get small}
+\item Assume $\|\nabla f(\xv^{[t]})\| \ge \eta$ and abbreviate $\mathbf{d} = \mathbf{d}^{[t]}$,
+$\lambda = \lambda(\xv^{[t]})$
+\item \textbf{Recall} the descent lemma ($L$-smoothness) along $\mathbf{d}$, for any $\alpha \ge 0$:
+$$f(\xv^{[t]} + \alpha \mathbf{d}) \le f(\xv^{[t]}) + \alpha \nabla f(\xv^{[t]})^\top \mathbf{d}
++ \frac{L}{2}\alpha^2 \|\mathbf{d}\|^2
+\le f(\xv^{[t]}) - \alpha \lambda^2 + \frac{L}{2m}\alpha^2 \lambda^2$$
+using $\nabla f(\xv^{[t]})^\top \mathbf{d} = - \lambda^2$ and $\|\mathbf{d}\|^2 \le \lambda^2/m$
+\item $\hat\alpha = m/L$ minimizes the right side, and because $\gamma_1 < \tfrac{1}{2}$:
+$$f(\xv^{[t]} + \hat\alpha \mathbf{d}) \le f(\xv^{[t]}) - \frac{m}{2L}\lambda^2
+\le f(\xv^{[t]}) - \gamma_1 \hat\alpha \lambda^2$$
+\item[$\Rightarrow$] $\hat\alpha$ passes the Armijo rule, and so does every smaller step; backtracking
+therefore accepts before shrinking past $\tau \hat\alpha$:
+\begin{framed}
+$$\alpha^{[t]} \ge \tau \frac{m}{L}$$
+\end{framed}
+\end{framei}
+
+
+\begin{framei}[fs=small]{Damped phase: guaranteed decrease}
+\item The accepted step satisfies the Armijo rule, hence
+\begin{align*}
+f(\xv^{[t+1]}) - f(\xv^{[t]}) &\le - \gamma_1 \alpha^{[t]} \lambda^2 \\
+&\le - \gamma_1 \tau \frac{m}{L} \lambda^2 \\
+&\le - \gamma_1 \tau \frac{m}{L^2} \|\nabla f(\xv^{[t]})\|^2 \\
+&\le - \gamma_1 \tau \frac{m}{L^2} \eta^2
+\end{align*}
+\item \textbf{Arguments:} Armijo rule (line~1). Step size bound (line~1 $\to$ 2).
+$\lambda^2 \ge \|\nabla f\|^2/L$ (line~2 $\to$ 3). Phase condition (line~3 $\to$ 4).
+\begin{framed}
+$$\delta = \gamma_1 \tau \eta^2 \frac{m}{L^2}$$
+\end{framed}
+\item[$\Rightarrow$] the decrease does not shrink as $t$ grows, making Message 3 possible
+\end{framei}
+
+
+\begin{framei}[fs=small]{Pure phase: a cubic bound along the Newton step}
+\item Now assume $\|\nabla f(\xv^{[t]})\| < \eta$ and restrict $f$ to the Newton ray:
+$\tilde{f}(\alpha) = f(\xv^{[t]} + \alpha \mathbf{d})$, so $\tilde{f}'(0) = -\lambda^2$ and
+$\tilde{f}''(\alpha) = \mathbf{d}^\top \H(\xv^{[t]} + \alpha \mathbf{d}) \mathbf{d}$
+\item By the Lipschitz condition between $\xv^{[t]} + \alpha \mathbf{d}$ and $\xv^{[t]}$, then
+sandwiched with $\mathbf{d}$ (Cauchy-Schwarz):
+\begin{align*}
+\big\| \H(\xv^{[t]} + \alpha \mathbf{d}) - \H(\xv^{[t]}) \big\|_2 &\le \alpha \LH \|\mathbf{d}\| \\
+\big| \mathbf{d}^\top \big( \H(\xv^{[t]} + \alpha \mathbf{d}) - \H(\xv^{[t]}) \big) \mathbf{d} \big|
+&\le \alpha \LH \|\mathbf{d}\|^3
+\end{align*}
+\item This is $|\tilde{f}''(\alpha) - \tilde{f}''(0)|$; with $\tilde{f}''(0) = \lambda^2$, $\|\mathbf{d}\| \le \lambda/\sqrt{m}$:
+$$\tilde{f}''(\alpha) \le \lambda^2 + \alpha \frac{\LH}{m^{3/2}} \lambda^3$$
+\item Integrating twice (with $\tilde{f}'(0) = -\lambda^2$) and setting $\alpha = 1$:
+$$f(\xv^{[t]} + \mathbf{d}) \le f(\xv^{[t]}) - \frac{1}{2}\lambda^2 + \frac{\LH}{6 m^{3/2}} \lambda^3$$
+\end{framei}
+
+
+\begin{framei}[fs=small]{Pure phase: the full step is accepted}
+\item Strong convexity turns the phase condition into a bound on $\lambda$: if
+$\eta \le 3(1 - 2\gamma_1)\frac{m^2}{\LH}$, then
+$$\lambda \le \frac{\|\nabla f(\xv^{[t]})\|}{\sqrt{m}} < \frac{\eta}{\sqrt{m}}
+\le 3(1 - 2\gamma_1)\frac{m^{3/2}}{\LH}
+\quad \Longrightarrow \quad
+\frac{\LH \lambda}{6 m^{3/2}} \le \frac{1 - 2\gamma_1}{2}$$
+\item Factoring the cubic bound, the bracket is therefore at least $\gamma_1$:
+\begin{align*}
+f(\xv^{[t]} + \mathbf{d}) &\le f(\xv^{[t]}) - \lambda^2 \underbrace{\left( \frac{1}{2}
+- \frac{\LH \lambda}{6 m^{3/2}} \right)}_{\ge \, \gamma_1}
+\le f(\xv^{[t]}) - \gamma_1 \lambda^2 \\
+&= f(\xv^{[t]}) + \gamma_1 \cdot 1 \cdot \nabla f(\xv^{[t]})^\top \mathbf{d}
+\end{align*}
+\item[$\Rightarrow$] this is exactly the Armijo rule at $\alpha = 1$: \textbf{backtracking accepts the full step
+straight away}
+\item[$\Rightarrow$] here $\gamma_1 < \tfrac{1}{2}$ is essential: otherwise $3(1 - 2\gamma_1) \le 0$ and no
+such $\eta$ exists
+\end{framei}
+
+
+\begin{framei}[fs=small]{Pure phase: quadratic convergence}
+\item The Newton step solves $\nabla f(\xv^{[t]}) + \H(\xv^{[t]}) \mathbf{d} = \zero$, so we can subtract
+it:
+\begin{align*}
+\|\nabla f(\xv^{[t+1]})\| &= \|\nabla f(\xv^{[t]} + \mathbf{d}) - \nabla f(\xv^{[t]}) - \H(\xv^{[t]})\mathbf{d}\| \\
+&= \left\| \int_0^1 \left( \H(\xv^{[t]} + \alpha \mathbf{d}) - \H(\xv^{[t]}) \right) \mathbf{d} \; d\alpha \right\|
+\; \le \; \frac{\LH}{2}\|\mathbf{d}\|^2 \\
+&= \frac{\LH}{2}\|\H(\xv^{[t]})^{-1} \nabla f(\xv^{[t]})\|^2
+\; \le \; \frac{\LH}{2m^2}\|\nabla f(\xv^{[t]})\|^2
+\end{align*}
+\item \textbf{Arguments:} fundamental theorem of calculus (line~1 $\to$ 2). Lipschitz $\H$ and
+$\int_0^1 \alpha \, d\alpha = \tfrac{1}{2}$ (line~2). $\|\H^{-1}\| \le 1/m$ (line~3).
+\item Multiplying by $\frac{\LH}{2m^2}$ gives the theorem's form; taking the smaller of the two ceilings
+on $\eta$ (previous slide and theorem/Message 1):
+\begin{framed}
+$$\theta^{[t+1]} \le \big( \theta^{[t]} \big)^2, \qquad
+\eta = \min\{1, \, 3(1 - 2\gamma_1)\} \, \frac{m^2}{\LH}$$
+\end{framed}
+\end{framei}
+
+
+\begin{framei}[fs=small]{Putting everything together}
+\item Substituting $\eta$ into $\delta = \gamma_1 \tau \eta^2 \frac{m}{L^2}$:
+$$\delta = \gamma_1 \tau \min\{1, \, 9(1 - 2\gamma_1)^2\} \, \frac{m^5}{L^2 \LH^2}$$
+\item Inserting this into the final result and using $\log_2 \log_2 (\eps_0/\eps) \approx 6$:
+\begin{framed}
+$$\#\text{iterations} \; \le \; 6 \; + \;
+\frac{L^2 \LH^2 / m^5}{\gamma_1 \tau \min\{1, \, 9(1 - 2\gamma_1)^2\}}
+\left( f(\xv^{[0]}) - f(\xvs) \right)$$
+\end{framed}
+\item the accuracy $\eps$ has collapsed into the constant $6$
+\item the cost is driven by how far the
+starting point is from the optimum
+\item all the cost sits in the damped phase, with
+$\frac{L^2 \LH^2}{m^5} = \kappa^2 \big( \frac{\LH}{m^{3/2}} \big)^2$: ill-conditioning ($\kappa = L/m$) and non-quadraticity
+\item $\gamma_1, \tau$ enter only mildly $\Rightarrow$ backtracking parameters barely matter
+\end{framei}
+
+
+\begin{framei}[fs=small]{Discussion}
+\item Slideset 1 claimed NR converges \textit{locally} quadratically, and may diverge for bad starting
+points -- we can now make both precise
+\item \textbf{``Locally''} is the pure phase, and the neighborhood is quantified:
+$$\|\nabla f(\xv^{[t]})\| < \eta = \min\{1, \, 3(1 - 2\gamma_1)\} \, \frac{m^2}{\LH}$$
+\item \textbf{Damping upgrades local to global:} the damped phase provably reaches this neighborhood
+after finitely many steps
+\item[$\Rightarrow$] damped NR converges from \textit{any} $\xv^{[0]}$ whose sublevel set satisfies the
+assumptions -- a stronger statement than slideset 1 made
+\item \textbf{Undamped NR} ($\alpha^{[t]} = 1$ always): the pure-phase proof never used backtracking, only
+that a \textit{full} step was taken $\Rightarrow$ quadratic convergence still holds \textit{inside} the region
+\item[] but the damped-phase argument collapses: nothing forces $f$ to decrease (cf. Example 2)
+\end{framei}
+
+
+\begin{framei}[fs=small]{Discussion: the role of the assumptions}
+\item $m$ \textbf{(strong convexity)}: translates between $\|\nabla f\|$, $\lambda$, $\|\mathbf{d}\|$ and
+turns a small gradient into a small optimality gap
+\item $L$ \textbf{(smoothness)}: descent lemma $\Rightarrow$ backtracking cannot return arbitrarily tiny steps
+\item $\LH$ \textbf{(Lipschitz $\H$)}: controls the entire pure phase; for quadratic $f$ we have $\LH = 0$,
+so $\eta \to \infty$ and $\theta^{[t]} = 0$ $\Rightarrow$ NR converges in a single step
+\item All assumptions are only needed on $\S$, which suffices because $f$ decreases every step
+\item \textbf{Caveat:} $m, L, \LH$ are unknown in practice, and none of them is affine invariant --
+although NR itself is
+\item[$\Rightarrow$] motivates \textit{self-concordance} \furtherreading{BOYD2004} (Ch. 9.6): a convergence
+analysis free of unknown constants
+\end{framei}
 
 \endlecture
 \end{document}
