@@ -85,7 +85,8 @@ LATEXMK = latexmk -halt-on-error -pdf
 endif
 
 # Slide .tex files, relative paths
-SLIDE_TEX_FILES = $(shell find . -maxdepth 1 -iname "slides*.tex")
+# matches both the legacy slides-xyz naming and the short NN-name form (01-diff.tex)
+SLIDE_TEX_FILES = $(shell find . -maxdepth 1 \( -iname "slides*.tex" -o -iname "[0-9][0-9]-*.tex" \))
 # Substitute file extension tex -> pdf for output pdf filenames
 SLIDE_PDF_FILES = $(SLIDE_TEX_FILES:%.tex=%.pdf)
 # Substitute file extension tex -> pax for annotation files
