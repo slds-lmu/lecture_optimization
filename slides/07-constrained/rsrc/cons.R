@@ -1,5 +1,5 @@
-# Used in: slides/06-constrained/02-lp.tex
-# Used in: slides/06-constrained/03-simplex.tex
+# Used in: slides/07-constrained/02-lp.tex
+# Used in: slides/07-constrained/03-simplex.tex
 #
 # Builds the linear-programming figures used in the constrained optimization slides.
 # The plots show a feasible polytope, objective level sets, and three LP solution cases.

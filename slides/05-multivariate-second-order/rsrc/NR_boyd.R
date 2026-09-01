@@ -10,7 +10,7 @@
 # steps: the error is squared at every step (quadratic convergence).
 #
 # Written as flip-book frames after 1, 2 and 5 steps (as in
-# 04-multivariate-first-order/rsrc/gradient_descent_NN.R), with axis limits
+# 06-advanced-first-order/rsrc/gradient_descent_NN.R), with axis limits
 # shared across frames so the panels can be overlaid with \only<..>:
 #
 #   ../figure/NR_boyd_<k>_contour.png

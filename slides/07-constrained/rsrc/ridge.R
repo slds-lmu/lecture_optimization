@@ -1,4 +1,4 @@
-# Used in: slides/06-constrained/08-regularity.tex
+# Used in: slides/07-constrained/08-regularity.tex
 #
 # Builds three contour plots for the ridge regression regularity-condition slides:
 # the unregularized squared-error objective, the ridge-penalized objective, and
