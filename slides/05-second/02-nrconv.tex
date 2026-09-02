@@ -2,7 +2,6 @@
 
 \input{../../style/preamble}
 \input{../../latex-math/basic-math}
-\input{../../latex-math/basic-ml}
 \input{../../latex-math/optim-basics}
 
 % Lipschitz constant of the Hessian (Boyd's L; plain L is already the smoothness
@@ -22,7 +21,7 @@ figure/NR_phases.png
 }{
 \item Assumptions
 \item Damped phase
-\item Quadratically convergent phase
+\item Pure Newton phase
 \item Complexity bound
 \vspace{0.5cm}
 \item[] \hspace{-0.7cm}Slides based on\\
@@ -70,7 +69,7 @@ $\eta \in (0, m^2/\LH]$ and $\delta > 0$ such that
 \|\nabla f(\xv^{[t]})\| \ge \eta \; &\Rightarrow \; f(\xv^{[t+1]}) - f(\xv^{[t]}) \le - \delta
 && \textit{(damped)} \\
 \|\nabla f(\xv^{[t]})\| < \eta \; &\Rightarrow \; \alpha^{[t]} = 1 \, \text{ and } \,
-\theta^{[t+1]} \le \big( \theta^{[t]} \big)^2 && \textit{(pure)}
+\theta^{[t+1]} \le (\theta^{[t]})^2 && \textit{(pure)}
 \end{align*}
 \end{framed}
 \end{framei}
@@ -85,7 +84,7 @@ $\eta \in (0, m^2/\LH]$ and $\delta > 0$ such that
 % \end{framei}
 
 \begin{framei}[fs=small]{What the theorem implies: pure phase}
-\item [] Before we actually prove the theorem, we analyze its implications for the convergence of damped NR.
+\item[] Before we actually prove the theorem, we analyze its implications for the convergence of damped NR.
 \item \textbf{Message 1:} once NR enters the pure phase, it stays there
 \begin{itemizeM}
   \item suppose we are in the pure phase at step $t$, i.e. $\|\nabla f(\xv^{[t]})\| < \eta$
@@ -93,23 +92,23 @@ $\eta \in (0, m^2/\LH]$ and $\delta > 0$ such that
   $$\theta^{[t]} = \frac{\LH}{2m^2}\|\nabla f(\xv^{[t]})\|
   < \frac{\LH}{2m^2} \cdot \frac{m^2}{\LH} = \frac{1}{2}$$
   \item with this and the theorem:
-  $$\theta^{[t+1]} \le \big( \theta^{[t]} \big)^2 = \theta^{[t]} \cdot \theta^{[t]}
+  $$\theta^{[t+1]} \le (\theta^{[t]})^2 = \theta^{[t]} \cdot \theta^{[t]}
   < \tfrac{1}{2} \theta^{[t]}$$
   $$\Rightarrow \|\nabla f(\xv^{[t+1]})\| < \tfrac{1}{2} \|\nabla f(\xv^{[t]})\| < \eta$$
   \item i.e., the condition is also satisfied at step $t+1$ and by recursion at all future steps $l \geq t$, implying (by the theorem):
-  $$\alpha^{[l]} = 1 \quad \text{ and } \quad \theta^{[l+1]} \le \big( \theta^{[l]} \big)^2$$
+  $$\alpha^{[l]} = 1 \quad \text{ and } \quad \theta^{[l+1]} \le (\theta^{[l]})^2$$
 \end{itemizeM}
 \end{framei}
 
 \begin{framei}[fs=small]{What the theorem implies: pure phase}
 \item \textbf{Message 2:} convergence is extremely rapid in the pure phase
 \begin{itemizeM}
-\item $\theta^{[t+1]} \le \big( \theta^{[t]} \big)^2$ is exactly \textbf{quadratic convergence}
+\item $\theta^{[t+1]} \le (\theta^{[t]})^2$ is exactly \textbf{quadratic convergence}
 \item Applying it recursively, for $l \geq t$:
-$$\theta^{[l]} \le \big( \theta^{[t]} \big)^{2^{l-t}} \leq \left(\frac{1}{2}\right)^{2^{l-t}}$$
+$$\theta^{[l]} \le (\theta^{[t]})^{2^{l-t}} \leq (\tfrac{1}{2})^{2^{l-t}}$$
 \item Strong convexity gives $f(\xv) - f(\xvs) \le \frac{1}{2m}\|\nabla f(\xv)\|^2$ and thus:
-$$f(\xv^{[l]}) - f(\xvs) \le \eps_0 \big( \theta^{[l]} \big)^2
-\le \eps_0 \left(\frac{1}{2}\right)^{2^{l-t+1}}, \qquad \eps_0 = \frac{2m^3}{\LH^2}$$
+$$f(\xv^{[l]}) - f(\xvs) \le \eps_0 (\theta^{[l]})^2
+\le \eps_0 (\tfrac{1}{2})^{2^{l-t+1}} \qquad \eps_0 = \frac{2m^3}{\LH^2}$$
 \item Inverting this for the step count yields:\footnote{\footnotesize Exactly
 $\log_2 \log_2 (\eps_0/\eps) - 1$ steps; the $-1$ is dropped for readability.}
 \begin{framed}
@@ -155,7 +154,7 @@ $$\alpha^{[t]} \ge \tau \frac{m}{L}
 \begin{framed}
 $$\alpha^{[t]} = 1 \text{ is accepted}
 \quad \text{and} \quad
-\theta^{[t+1]} \le \big( \theta^{[t]} \big)^2$$
+\theta^{[t+1]} \le (\theta^{[t]})^2$$
 $$\text{for} \quad \eta = \min\{1, \, 3(1 - 2\gamma_1)\} \, \frac{m^2}{\LH}$$
 \end{framed}
 \end{enumerate}
@@ -164,7 +163,7 @@ $$\text{for} \quad \eta = \min\{1, \, 3(1 - 2\gamma_1)\} \, \frac{m^2}{\LH}$$
 
 \begin{framei}[fs=small]{Tool: the Newton decrement}
 \item Backtracking needs $\nabla f(\xv)^\top \mathbf{d}$ along $\mathbf{d} = - \H(\xv)^{-1} \nabla f(\xv)$;
-its negative defines the \textbf{Newton decrement} $\lambda(\xv)$:
+its negative is the squared \textbf{Newton decrement} $\lambda(\xv)$:
 \begin{framed}
 $$\lambda(\xv)^2 = \underbrace{\nabla f(\xv)^\top \H(\xv)^{-1} \nabla f(\xv)}_{\text{definition}}
 = \underbrace{\mathbf{d}^\top \H(\xv) \mathbf{d}}_{\text{squared } \H\text{-norm of } \mathbf{d}}
@@ -175,7 +174,7 @@ $f(\xv + \alpha \mathbf{d}) \le f(\xv) - \gamma_1 \alpha \lambda(\xv)^2$
 \item[$\Rightarrow$] $\lambda$ measures the gradient in the geometry of $\H$, not the Euclidean one
 \item From $m \id \preceq \H(\xv) \preceq L \id$, i.e. $\tfrac{1}{L}\id \preceq \H(\xv)^{-1} \preceq \tfrac{1}{m}\id$:
 \begin{framed}
-$$\frac{1}{L}\|\nabla f(\xv)\|^2 \le \lambda(\xv)^2 \le \frac{1}{m}\|\nabla f(\xv)\|^2,
+$$\frac{1}{L}\|\nabla f(\xv)\|^2 \le \lambda(\xv)^2 \le \frac{1}{m}\|\nabla f(\xv)\|^2
 \qquad \|\mathbf{d}\| \le \frac{\lambda(\xv)}{\sqrt{m}}$$
 \end{framed}
 \end{framei}
@@ -224,8 +223,8 @@ $\tilde{f}''(\alpha) = \mathbf{d}^\top \H(\xv^{[t]} + \alpha \mathbf{d}) \mathbf
 \item By the Lipschitz condition between $\xv^{[t]} + \alpha \mathbf{d}$ and $\xv^{[t]}$, then
 sandwiched with $\mathbf{d}$ (Cauchy-Schwarz):
 \begin{align*}
-\big\| \H(\xv^{[t]} + \alpha \mathbf{d}) - \H(\xv^{[t]}) \big\|_2 &\le \alpha \LH \|\mathbf{d}\| \\
-\big| \mathbf{d}^\top \big( \H(\xv^{[t]} + \alpha \mathbf{d}) - \H(\xv^{[t]}) \big) \mathbf{d} \big|
+\| \H(\xv^{[t]} + \alpha \mathbf{d}) - \H(\xv^{[t]}) \|_2 &\le \alpha \LH \|\mathbf{d}\| \\
+| \mathbf{d}^\top ( \H(\xv^{[t]} + \alpha \mathbf{d}) - \H(\xv^{[t]}) ) \mathbf{d} |
 &\le \alpha \LH \|\mathbf{d}\|^3
 \end{align*}
 \item This is $|\tilde{f}''(\alpha) - \tilde{f}''(0)|$; with $\tilde{f}''(0) = \lambda^2$, $\|\mathbf{d}\| \le \lambda/\sqrt{m}$:
@@ -261,7 +260,7 @@ such $\eta$ exists
 it:
 \begin{align*}
 \|\nabla f(\xv^{[t+1]})\| &= \|\nabla f(\xv^{[t]} + \mathbf{d}) - \nabla f(\xv^{[t]}) - \H(\xv^{[t]})\mathbf{d}\| \\
-&= \left\| \int_0^1 \left( \H(\xv^{[t]} + \alpha \mathbf{d}) - \H(\xv^{[t]}) \right) \mathbf{d} \; d\alpha \right\|
+&= \left\| \int_0^1 ( \H(\xv^{[t]} + \alpha \mathbf{d}) - \H(\xv^{[t]}) ) \mathbf{d} \; d\alpha \right\|
 \; \le \; \frac{\LH}{2}\|\mathbf{d}\|^2 \\
 &= \frac{\LH}{2}\|\H(\xv^{[t]})^{-1} \nabla f(\xv^{[t]})\|^2
 \; \le \; \frac{\LH}{2m^2}\|\nabla f(\xv^{[t]})\|^2
@@ -271,7 +270,7 @@ $\int_0^1 \alpha \, d\alpha = \tfrac{1}{2}$ (line~2). $\|\H^{-1}\| \le 1/m$ (lin
 \item Multiplying by $\frac{\LH}{2m^2}$ gives the theorem's form; taking the smaller of the two ceilings
 on $\eta$ (previous slide and theorem/Message 1):
 \begin{framed}
-$$\theta^{[t+1]} \le \big( \theta^{[t]} \big)^2, \qquad
+$$\theta^{[t+1]} \le (\theta^{[t]})^2 \qquad
 \eta = \min\{1, \, 3(1 - 2\gamma_1)\} \, \frac{m^2}{\LH}$$
 \end{framed}
 \end{framei}
@@ -284,44 +283,43 @@ $$\delta = \gamma_1 \tau \min\{1, \, 9(1 - 2\gamma_1)^2\} \, \frac{m^5}{L^2 \LH^
 \begin{framed}
 $$\#\text{iterations} \; \le \; 6 \; + \;
 \frac{L^2 \LH^2 / m^5}{\gamma_1 \tau \min\{1, \, 9(1 - 2\gamma_1)^2\}}
-\left( f(\xv^{[0]}) - f(\xvs) \right)$$
+(f(\xv^{[0]}) - f(\xvs))$$
 \end{framed}
 \item the accuracy $\eps$ has collapsed into the constant $6$
 \item the cost is driven by how far the
 starting point is from the optimum
 \item all the cost sits in the damped phase, with
-$\frac{L^2 \LH^2}{m^5} = \kappa^2 \big( \frac{\LH}{m^{3/2}} \big)^2$: ill-conditioning ($\kappa = L/m$) and non-quadraticity
-\item $\gamma_1, \tau$ enter only mildly $\Rightarrow$ backtracking parameters barely matter
+$\frac{L^2 \LH^2}{m^5} = \kappa^2 (\LH/m^{3/2})^2$: ill-conditioning ($\kappa = L/m$) and how far $f$ is
+from quadratic
+\item \textbf{But:} $m, L, \LH$ are unknown for any real problem $\Rightarrow$ a purely theoretical result,
+never evaluated in practice
 \end{framei}
 
 
 \begin{framei}[fs=small]{Discussion}
-\item Slideset 1 claimed NR converges \textit{locally} quadratically, and may diverge for bad starting
-points -- we can now make both precise
-\item \textbf{``Locally''} is the pure phase, and the neighborhood is quantified:
+\item Slideset 1 claimed NR converges \textit{locally} quadratically
+\item \textbf{``Locally''} is the pure phase, and we quantified the neighborhood:
 $$\|\nabla f(\xv^{[t]})\| < \eta = \min\{1, \, 3(1 - 2\gamma_1)\} \, \frac{m^2}{\LH}$$
-\item \textbf{Damping upgrades local to global:} the damped phase provably reaches this neighborhood
-after finitely many steps
-\item[$\Rightarrow$] damped NR converges from \textit{any} $\xv^{[0]}$ whose sublevel set satisfies the
-assumptions -- a stronger statement than slideset 1 made
-\item \textbf{Undamped NR} ($\alpha^{[t]} = 1$ always): the pure-phase proof never used backtracking, only
-that a \textit{full} step was taken $\Rightarrow$ quadratic convergence still holds \textit{inside} the region
-\item[] but the damped-phase argument collapses: nothing forces $f$ to decrease (cf. Example 2)
+\item \textbf{``Quadratically''}: we showed that $\theta^{[t+1]} \le (\theta^{[t]})^2$, i.e., the scaled gradient norm decreases quadratically
+\item \textbf{Damped NR}: converges from any $\xv^{[0]}$ whose sublevel set satisfies the assumptions, but potentially slowly until the pure phase is reached
+\item \textbf{Undamped NR} ($\alpha^{[t]} = 1$ always): the quadratic rate never used backtracking, only
+that a full step was taken $\Rightarrow$ quadratic convergence
+still holds for undamped NR inside the local neighborhood; but: the damped-phase argument collapses, nothing forces $f$ to decrease outside the neighborhood
 \end{framei}
 
 
-\begin{framei}[fs=small]{Discussion: the role of the assumptions}
-\item $m$ \textbf{(strong convexity)}: translates between $\|\nabla f\|$, $\lambda$, $\|\mathbf{d}\|$ and
-turns a small gradient into a small optimality gap
-\item $L$ \textbf{(smoothness)}: descent lemma $\Rightarrow$ backtracking cannot return arbitrarily tiny steps
-\item $\LH$ \textbf{(Lipschitz $\H$)}: controls the entire pure phase; for quadratic $f$ we have $\LH = 0$,
-so $\eta \to \infty$ and $\theta^{[t]} = 0$ $\Rightarrow$ NR converges in a single step
-\item All assumptions are only needed on $\S$, which suffices because $f$ decreases every step
-\item \textbf{Caveat:} $m, L, \LH$ are unknown in practice, and none of them is affine invariant --
-although NR itself is
-\item[$\Rightarrow$] motivates \textit{self-concordance} \furtherreading{BOYD2004} (Ch. 9.6): a convergence
-analysis free of unknown constants
-\end{framei}
+% \begin{framei}[fs=small]{Discussion: what if the assumptions fail?}
+% \item \textbf{Not strongly convex} ($m \to 0$): a small gradient no longer certifies near-optimality
+% ($\tfrac{1}{2m}\|\nabla f\|^2 \to \infty$), and $\H$ may be singular, leaving the step undefined
+% (slideset 3)
+% \item[] both $\eta \propto m^2$ and $\delta \propto m^5$ vanish $\Rightarrow$ the bound becomes vacuous
+% \item \textbf{Not $L$-smooth} ($L \to \infty$): no descent lemma, hence no $\hat\alpha = m/L$ that provably
+% passes Armijo $\Rightarrow$ backtracking may return arbitrarily small steps and $\delta \to 0$
+% \item \textbf{$\H$ not Lipschitz} ($\LH \to \infty$): no cubic bound, so the full step need never be
+% accepted $\Rightarrow$ $\eta \to 0$, the pure phase never starts and NR degrades to a plain descent method
+% \item \textbf{Why only on $\S$?} Globally the assumptions would exclude even Example 2:
+% $\frac{\partial^2}{\partial x_1^2}(1 + x_1^2)^{1/2} = (1 + x_1^2)^{-3/2} \to 0$, i.e. $m = 0$
+% \end{framei}
 
 \endlecture
 \end{document}

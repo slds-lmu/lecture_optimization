@@ -26,6 +26,7 @@
 suppressPackageStartupMessages({
   library(data.table)
   library(ggplot2)
+  library(scales)
   suppressWarnings(library(vistool))
 })
 
@@ -122,7 +123,7 @@ p = ggplot(shown, aes(x = iteration, y = error)) +
   scale_x_continuous(breaks = shown$iteration) +
   scale_y_log10(
     breaks = 10^seq(-12, 2, by = 2),
-    labels = scales::label_math(10^.x)(seq(-12, 2, by = 2))
+    labels = label_math(10^.x)(seq(-12, 2, by = 2))
   ) +
   # the annotations already name the phases, so the legend would only repeat them
   annotate("text", x = (first_pure - 0.5) / 2, y = 1e-8, parse = TRUE,
