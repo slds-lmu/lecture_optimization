@@ -1,0 +1,98 @@
+---
+title: "Exercise 11: Nonlinear Programming (Lagrange + KKT + SVM)"
+subtitle: "[Optimization in Machine Learning](https://slds-lmu.github.io/website_optimization/)"
+notebook-view: false
+---
+
+::: {.content-hidden when-format="pdf"}
+::: {.hidden}
+{{< include ../_quarto/latex-math.qmd >}}
+:::
+:::
+
+::: {.callout-note collapse="true"}
+## Reproducibility
+
+Produced with Python 3.10 and R 4.4.1. To reproduce, install the pinned package versions below.
+
+::: {.panel-tabset}
+### Python
+```bash
+pip install numpy==2.0.2 matplotlib==3.10.8 cvxpy==1.7.5
+```
+### R
+```r
+install.packages("remotes")
+remotes::install_version("CVXR", "1.8.2")
+remotes::install_version("ggplot2", "3.5.1")
+remotes::install_version("mlr3", "1.6.0")
+```
+:::
+:::
+
+INSERT_problem_1
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+INSERT_solution_1_text
+:::
+
+INSERT_problem_2_intro
+
+::: {.panel-tabset}
+### R
+{{< embed sol_nlp_R.ipynb#setup_data echo=true >}}
+### Python
+{{< embed sol_nlp_py.ipynb#setup_data echo=true >}}
+:::
+
+INSERT_problem_2a
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+INSERT_solution_2a_text
+:::
+
+INSERT_problem_2b
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_nlp_R.ipynb#solution_2b_code echo=true >}}
+### Python
+{{< embed sol_nlp_py.ipynb#solution_2b_code echo=true >}}
+:::
+:::
+
+INSERT_problem_2c
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+INSERT_solution_2c_text
+:::
+
+INSERT_problem_2d
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+INSERT_solution_2d_text
+:::
+
+INSERT_problem_2e
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_nlp_R.ipynb#solution_2e_code echo=true >}}
+### Python
+{{< embed sol_nlp_py.ipynb#solution_2e_code echo=true >}}
+:::
+:::

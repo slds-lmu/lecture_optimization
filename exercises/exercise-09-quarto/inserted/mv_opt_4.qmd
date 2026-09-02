@@ -1,0 +1,164 @@
+---
+title: "Exercise 9: Multivariate Optimization 4 (Newton-Raphson + Gauss-Newton)"
+subtitle: "[Optimization in Machine Learning](https://slds-lmu.github.io/website_optimization/)"
+notebook-view: false
+---
+
+::: {.content-hidden when-format="pdf"}
+::: {.hidden}
+{{< include ../_quarto/latex-math.qmd >}}
+:::
+:::
+
+::: {.callout-note collapse="true"}
+## Reproducibility
+
+Produced with Python 3.10 and R 4.4.1. To reproduce, install the pinned package versions below.
+
+::: {.panel-tabset}
+### Python
+```bash
+pip install numpy==2.0.2 matplotlib==3.10.8
+```
+### R
+```r
+install.packages("remotes")
+remotes::install_version("ggplot2", "3.5.1")
+remotes::install_version("gridExtra", "2.3")
+```
+:::
+:::
+
+## Setup
+
+We model the data with $\pi: \R^2 \to [0, 1]$ defined as
+
+$$\pi(x_1, x_2) = \frac{1}{1 + \exp((1, x_1, x_2)^\top \bm{\theta})}$$
+
+and minimize the **Brier loss**
+
+$$\mathcal{R}_\text{emp} = \sum_{i=1}^n \|y^{(i)} - \pi(\xv^{(i)})\|_2^2.$$
+
+Note the **flipped sigmoid** convention: $\pi(x) \to 0$ as $\tilde{\xv}^\top \bm{\theta} \to +\infty$ (the opposite of the standard logistic). This is a quirk of this exercise's parameterization — keep it in mind when reading gradient signs below.
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_4_R.ipynb#setup_data echo=true >}}
+### Python
+{{< embed sol_mv_opt_4_py.ipynb#setup_data echo=true >}}
+:::
+
+::: callout-note
+**R vs. Python parity.** R's `set.seed(123)` and Python's `np.random.seed(123)` use *different* RNGs and call them in different orders, so the simulated data differ between languages. NR and GN are deterministic given the data, so the *trajectories* (as printed below) will not match between languages — but the *qualitative behavior* (NR converging quadratically, GN converging more slowly) should match.
+:::
+
+## (a) Gradient of the Brier loss
+
+Show that
+
+$$\nabla_{\bm{\theta}} \mathcal{R}_\text{emp} = \sum_{i=1}^n 2 \cdot \frac{y^{(i)} \exp(f^{(i)}) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2} \cdot \tilde{\xv}^{(i)}$$
+
+where $\tilde{\xv}^{(i)} = (1, x_1^{(i)}, x_2^{(i)})^\top$ and $f^{(i)} = \tilde{\xv}^{(i)\top} \bm{\theta}$.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+Define $s:\R\rightarrow\R, f \mapsto \frac{1}{1 + \exp(f)}.$
+
+$$\begin{aligned}
+\nabla_{\bm{\theta}}\mathcal{R}_{\text{emp}} &= \nabla_{\bm{\theta}}\sum^n_{i=1}\Vert y^{(i)} - f(\mathbf{x}^{(i)}) \Vert^2_2 = \sum^n_{i=1}\frac{d}{df}\Vert y^{(i)} - s(f^{(i)}) \Vert^2_2 \cdot \nabla_{\bm{\theta}} f^{(i)} \\
+&= \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)}) + 1) - 1}{\exp(f^{(i)}) + 1} \cdot \frac{\exp(f^{(i)})}{(\exp(f^{(i)}) + 1)^2} \tilde{\mathbf{x}}^{(i)} \\
+&= \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)}) + 1) - 1}{\exp(f^{(i)}) + 1} \cdot \frac{\frac{\exp(f^{(i)})}{\exp(f^{(i)}) + 1}}{\exp(f^{(i)}) + 1} \tilde{\mathbf{x}}^{(i)} \\
+&= \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)})) - \frac{\exp(f^{(i)})}{\exp(f^{(i)}) + 1}}{(\exp(f^{(i)}) + 1)^2} \tilde{\mathbf{x}}^{(i)} \\
+&= \sum^n_{i=1}2\frac{y^{(i)}(\exp(f^{(i)})) - (\exp(-f^{(i)}) + 1)^{-1}}{(\exp(f^{(i)}) + 1)^2} \tilde{\mathbf{x}}^{(i)}
+\end{aligned}$$
+:::
+
+## (b) Hessian of the Brier loss
+
+Show that
+
+$$\nabla^2_{\bm{\theta}} \mathcal{R}_\text{emp} = \sum_{i=1}^n 2 \cdot \frac{\exp(f^{(i)})\big(y^{(i)}(1 - \exp(2f^{(i)})) - 1 + 2\exp(f^{(i)})\big)}{(\exp(f^{(i)}) + 1)^4} \cdot \tilde{\xv}^{(i)} \tilde{\xv}^{(i)\top}.$$
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+Introduce the shorthand $E := \exp(f^{(i)})$ (so $\exp(-f^{(i)}) = E^{-1}$) and drop the per-sample index $i$ inside the sum ($y := y^{(i)}$, $\tilde{\mathbf{x}} := \tilde{\mathbf{x}}^{(i)}$). Differentiating the gradient from (a):
+
+$$\begin{aligned}
+\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}}
+&= \sum^n_{i=1}\frac{d}{df}\,2\frac{yE - (E^{-1} + 1)^{-1}}{(E + 1)^2}\,\tilde{\mathbf{x}}\,\nabla_{\bm{\theta}} f^\top \\
+&= \sum^n_{i=1}2\frac{\big(yE - (E^{-1} + 1)^{-2}E^{-1}\big)(E + 1)^2 - \big(yE - (E^{-1} + 1)^{-1}\big)\,2(E + 1)E}{(E + 1)^4}\,\tilde{\mathbf{x}}\,\tilde{\mathbf{x}}^\top \\
+&= \sum^n_{i=1}2\frac{yE(E + 1)^2 - E - \big(2yE(E + 1) - 2E\big)E}{(E + 1)^4}\,\tilde{\mathbf{x}}\,\tilde{\mathbf{x}}^\top \\
+&= \sum^n_{i=1}2\frac{E\big(y(E + 1)^2 - 1 - 2yE(E + 1) + 2E\big)}{(E + 1)^4}\,\tilde{\mathbf{x}}\,\tilde{\mathbf{x}}^\top \\
+&= \sum^n_{i=1}2\frac{E\big(y(E^2 + 2E + 1 - 2E^2 - 2E) - 1 + 2E\big)}{(E + 1)^4}\,\tilde{\mathbf{x}}\,\tilde{\mathbf{x}}^\top \\
+&= \sum^n_{i=1}2\frac{E\big(y(1 - E^2) - 1 + 2E\big)}{(E + 1)^4}\,\tilde{\mathbf{x}}\,\tilde{\mathbf{x}}^\top
+\end{aligned}$$
+:::
+
+## (c) Non-convexity
+
+Show that $\mathcal{R}_\text{emp}$ is not convex in general.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+Assume, e.g., there is only one observation with $y^{(1)} = 0$ then
+
+$$\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} = \frac{2\exp(f^{(1)})(2\exp(f^{(1)}) - 1)}{(\exp(f^{(1)}) + 1)^4}\underbrace{\tilde{\mathbf{x}}^{(1)}{\tilde{\mathbf{x}}}^{(1)\top}}_{\text{p.s.d.}}.$$
+
+If a p.s.d. matrix is multiplied with a negative number it becomes a n.s.d. matrix, i.e., $\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}}$ is n.s.d. if $2\exp(f^{(1)}) < 1 \iff f^{(i)} < \ln(0.5).$ This condition trivially holds, e.g., if $\bm{\theta} = (\ln(0.5) - 1, 0, 0)^\top.$
+:::
+
+## (d) Newton-Raphson
+
+Implement Newton-Raphson to minimize $\mathcal{R}_\text{emp}$. Run for $30$ iterations starting at $\bm{\theta}^{[0]} = \mathbf{0}$. Plot $\mathcal{R}_\text{emp}$ and the parameter trajectory.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_4_R.ipynb#solution_d_code echo=true >}}
+### Python
+{{< embed sol_mv_opt_4_py.ipynb#solution_d_code echo=true >}}
+:::
+
+For Newton-Raphson, we need to solve in each update step
+
+$$\nabla^2_{\bm{\theta}}\mathcal{R}_{\text{emp}} \mathbf{d} = -\nabla_{\bm{\theta}}\mathcal{R}_{\text{emp}}$$
+
+for the descend direction $\mathbf{d}.$
+:::
+
+## (e) Gauss-Newton
+
+Explain why Gauss-Newton is applicable here, and implement it (30 iterations, $\bm{\theta}^{[0]} = \mathbf{0}$). Compare its convergence to Newton-Raphson from (d).
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+In this case, we can apply Gauss-Newton since $\mathcal{R}_{\text{emp}}$ is the squared sum of the residuals
+
+$$\mathbf{r} = (y^{(1)} - \pi(\mathbf{x}^{(1)}), \dots, y^{(n)} - \pi(\mathbf{x}^{(n)}))^\top.$$
+
+Here, for the update step we need to compute
+
+$$\nabla_{\bm{\theta}}\mathbf{r} = \begin{pmatrix} \frac{\exp(f^{(1)})}{(1 + \exp(f^{(1)}))^2} {\tilde{\mathbf{x}}}^{(1)\top} \\
+\vdots \\
+\frac{\exp(f^{(n)})}{(1 + \exp(f^{(n)}))^2}{\tilde{\mathbf{x}}}^{(n)\top}
+\end{pmatrix}$$
+
+For Gauss-Newton, we solve in each update step
+
+$$(\nabla_{\bm{\theta}}\mathbf{r}^\top \nabla_{\bm{\theta}}\mathbf{r}) \cdot \mathbf{d} = -\nabla_{\bm{\theta}}\mathbf{r}^\top \cdot \mathbf{r}$$
+
+for the descend direction $\mathbf{d}.$
+
+::: {.panel-tabset}
+### R
+{{< embed sol_mv_opt_4_R.ipynb#solution_e_code echo=true >}}
+### Python
+{{< embed sol_mv_opt_4_py.ipynb#solution_e_code echo=true >}}
+:::
+:::
