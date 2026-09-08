@@ -17,121 +17,124 @@ Coordinate descent
 figure_man/Coordinate_descent.png
 }{
 \item Axes as descent direction
-\item CD on linear model and Lasso
-\item Soft thresholding
+\item Convergence criteria of CD
+\item CD on linear model and Lasso: soft thresholding
 }
 
 \begin{framei}{coordinate descent}
-\item Assumption: objective function not differentiable
 \item Idea: instead of gradient, use coordinate directions for descent
-\item First: Select starting point $\bm{x}^{[0]} = (x^{[0]}_1, \ldots, x^{[0]}_d)$
-\item Step $t$: Minimize $f$ along $x_i$ for each dimension $i$ for fixed $x^{[t]}_1, \ldots,x^{[t]}_{i-1}$ and $x^{[t-1]}_{i+1}, \ldots,x^{[t-1]}_d$:
-\imageC[0.42][https://en.wikipedia.org/wiki/Coordinate_descent]{figure_man/Coordinate_descent.png}
+\item No gradient needed: objective function may be non-differentiable
 \comment[NOTE]{BB}{austauschen mit eigener grafik}
+\vfill
+\item[] \textbf{Approach:}
+\item Select starting point $\xv^{[0]} = (x^{[0]}_1, \ldots, x^{[0]}_d)$
+\item Step $t$: Minimize $f$ along $x_i$ for each dimension $i$ for fixed $x^{[t]}_1, \ldots,x^{[t]}_{i-1}$ and $x^{[t-1]}_{i+1}, \ldots,x^{[t-1]}_d$
+\item Minimum is determined with (exact/inexact) line search
+\item Order of dimensions: cyclic $1, 2, \ldots, d$, or any other permutation
+\comment[NOTE]{CK}{verstehe ich nicht}
 \end{framei}
 
 
-\begin{framev}{coordinate descent}
-\begin{itemize}
-\item Minimum is determined with (exact/inexact) line search
-\item Order of dimensions can be any permutation of $\left\{1,2,\ldots,d\right\}$
-\comment[NOTE]{CK}{verstehe ich nicht}
-\item Convergence:
+\begin{framei}{convergence criteria}
+\item CD stops at a point that is minimal along each coordinate axis;
+is this a global minimizer?
+\sourceref{https://www.stat.cmu.edu/~ryantibs/convexopt-S15/lectures/22-coord-desc.pdf}
 \comment[NOTE]{UU}{Diskussion von 3 Fällen nach Ryan Tibshirani.
 1. f konvex + diff'bar
 2. f konvex (Gegenbeispiel)
 3. f Summe aus konvexer + diff'barer Funktion und separabler Funktion mit konvexen Summanden.
 https://www.stat.cmu.edu/~ryantibs/convexopt-S15/lectures/22-coord-desc.pdf, Folien 5--7
 Nachtrag: L(x) + ||x||_1 als ML-Beispiel hinzufügen.}
-\begin{itemize}
-\item $f$ convex differentiable
+\item[] \textbf{Case 1:} $f$ convex and differentiable $\Rightarrow$ \textbf{yes}
 \comment[NOTE]{CK}{haben oben angenommen dass f non-differentiable}
-\item $f$ sum of convex differentiable and \textit{convex separable} function:
-\begin{equation*}
-f(\xv) = g(\xv) + \sum_{i=1}^d h_i(x_i),
-\end{equation*}
-\item where $g$ convex differentiable and $h_i$ convex
-\end{itemize}
-\end{itemize}
-\end{framev}
+\item[] \textbf{Case 2:} $f$ convex, not differentiable $\Rightarrow$ \textbf{no} in general (next slide)
+\item[] \textbf{Case 3:} $f$ = convex differentiable + \textbf{convex separable} $\Rightarrow$ \textbf{yes}
+$$f(\xv) = g(\xv) + \sum_{i=1}^d h_i(x_i)$$
+with $g$ convex differentiable and $h_i$ convex, possibly nonsmooth, univariate functions
+\end{framei}
 
 
-\begin{framev}{coordinate descent}
-No convergence in general for convex functions, counterexample:
-\imageC[0.6][https://en.wikipedia.org/wiki/Coordinate_descent]{figure_man/Nonsmooth_coordinate_descent.png}
-\end{framev}
+\begin{framei}{example: non-differentiable function}
+\item No general convergence for convex, non-differentiable functions (case 2)
+\item Counterexample $f(x, y) = |x + y| + 3|y - x|$, minimum at $(0, 0)$
+\item At the red point, a step along either axis increases $f$,
+although both steps together would bring us closer to the optimum
+\item CD gets stuck at a point that is not the minimum
+\imageC[0.35][https://en.wikipedia.org/wiki/Coordinate_descent]{figure_man/Nonsmooth_coordinate_descent.png}
+\end{framei}
 
 
-\begin{framev}{Example: linear regression}
-Minimize LM with L2 loss via CD
-$$\min g(\thetav) = \min_{\thetav} \frac{1}{2}\sumin \left(y^{(i)} - \thetav^\top \xi\right)^2 = \min_{\thetav} \frac{1}{2}\|\yv - \Xmat \thetav\|^2 $$
+\begin{framei}{example: linear regression}
+\item Minimize LM with L2 loss via CD (case 1):
+$$\min g(\thetav) = \min_{\thetav} \frac{1}{2}\sumin (\yi - \thetav^T \xi)^2 = \min_{\thetav} \frac{1}{2}||\yv - \Xmat \thetav||^2 $$
 where $\yv \in \R^n$, $\Xmat \in \R^{n \times d}$ with columns $\xv_1, \ldots, \xv_d \in \R^n$\\
-\spacer
-Assume orthogonal design for intuition, i.e., $\Xmat^\top \Xmat = I_d$:
+{\footnotesize Note: smooth toy example where the minimizer along each axis is computed in closed form}
+\item Assume orthogonal design for intuition, i.e., $\Xmat^T \Xmat = \id$:
 \begin{align*}
-g(\thetav) &= \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav - \yv^\top \Xmat \thetav  \\
-&\overset{(*)}{=} \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav - \yv^\top \sum_{k = 1}^d \xv_k \theta_k
+g(\thetav) &= \frac{1}{2}\yv^T \yv + \frac{1}{2}\thetav^T \thetav - \yv^T \Xmat \thetav  \\
+&\overset{(*)}{=} \frac{1}{2}\yv^T \yv + \frac{1}{2}\thetav^T \thetav - \yv^T \sum_{k = 1}^d \xv_k \theta_k
 \end{align*}
 $^{(*)}$ $\Xmat \thetav = \xv_1 \theta_1 + \xv_2 \theta_2 + \cdots + \xv_d \theta_d = \sum_{k = 1}^d \xv_k \theta_k$
-\end{framev}
+\end{framei}
 
 
 \begin{framei}{example: linear regression}
 \item Exact CD update in direction $j$:
-$$\frac{\partial{g}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j$$
-\item By solving $\frac{\partial{g}(\thetav)}{\partial \theta_j} = 0$ we get $$\theta_j^\ast = \yv^\top \xv_j$$
+$$\frac{\partial{g}(\thetav)}{\partial \theta_j} = \theta_j - \yv^T \xv_j$$
+\item By solving $\frac{\partial{g}(\thetav)}{\partial \theta_j} = 0$ we get $$\theta_j^\ast = \yv^T \xv_j$$
 \item Repeat this update for all $\theta_j$
 \end{framei}
 
 
-\begin{framev}{Soft thresholding}
-Minimize LM with L2 loss and L1 regularization via CD
-$$\min_{\thetav} h(\thetav) = \min_{\thetav} \frac{1}{2}\|\yv - \Xmat \thetav\|^2 + \lambda \|\thetav\|_1$$
-Note that $h(\thetav) = \frac{1}{2}\yv^\top \yv + \frac{1}{2}\thetav^\top \thetav  - \sum_{k = 1}^d (\yv^\top \xv_k \theta_k + \lambda|\theta_k|)$\\
-Again assume $\Xmat^\top \Xmat = I_d$. Since $|\cdot|$ not differentiable, distinguish cases:
-\spacer
-{\footnotesize
-\begin{itemize}
+\begin{framei}{example: soft thresholding}
+\item Minimize LM with L2 loss + L1 regularization via CD (case 3):
+$$\min_{\thetav} h(\thetav) = \min_{\thetav} \frac{1}{2}||\yv - \Xmat \thetav||^2 + \lambda ||\thetav||_1$$
+\item Again we assume orthogonal design, i.e., $\Xmat^T \Xmat = \id$, and can write
+$$h(\thetav) = \frac{1}{2}\yv^T \yv + \frac{1}{2}\thetav^T \thetav - \sum_{k = 1}^d \yv^T \xv_k \theta_k + \lambda \sum_{k = 1}^d |\theta_k|$$
+\item Since $|\cdot|$ not differentiable at $0$, distinguish three cases (see next slide)
+\end{framei}
+
+
+\begin{framei}[fs=small,sep=L]{example: soft thresholding}
 \item \textbf{Case 1:} $\theta_j > 0$.
 Then $|\theta_j| = \theta_j$ and
-$$0 = \frac{\partial{h}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j + \lambda \qquad \Leftrightarrow \qquad \theta^\ast_{j, \text{Lasso}} = \theta^\ast_j - \lambda$$
+$$0 = \frac{\partial{h}(\thetav)}{\partial \theta_j} = \theta_j - \yv^T \xv_j + \lambda \quad \Leftrightarrow \quad \theta^\ast_{j, \text{Lasso}} = \theta^\ast_j - \lambda$$
+Consistent with $\theta_j > 0$ only if $\theta^\ast_j > \lambda$
 \item \textbf{Case 2:} $\theta_j < 0$.
 Then $|\theta_j| = - \theta_j$ and
-$$0 = \frac{\partial{h}(\thetav)}{\partial \theta_j} = \theta_j - \yv^\top \xv_j - \lambda \qquad \Leftrightarrow \qquad \theta^\ast_{j, \text{Lasso}} = \theta^\ast_j + \lambda$$
-\item \textbf{Case 3:} $\theta_j = 0$
-\end{itemize}}
+$$0 = \frac{\partial{h}(\thetav)}{\partial \theta_j} = \theta_j - \yv^T \xv_j - \lambda \quad \Leftrightarrow \quad \theta^\ast_{j, \text{Lasso}} = \theta^\ast_j + \lambda$$
+Consistent with $\theta_j < 0$ only if $\theta^\ast_j < -\lambda$
+\item \textbf{Case 3:} $\theta_j = 0$, remaining case where $|\theta^\ast_j| \le \lambda$
 \comment[NOTE]{BB}{ist die analyse hier wirklich völlig richtig? theta_j ist doch variabel und wir können nicht einfach...
 naja es stimmt schon, hängt davon ab wo unser optimum liegt. vielleicht sollte man das mal zeichnen
 also die analyse stimmt, zeichnen sollten wir das trotzdem, einmal wo das optimum im diffbaren ast l...
 UU:
 Ich befürchte, dass ein Bild auch nicht viel hilft. Man braucht Subgradienten zur Herleitung des Soft-Thresholding-Operators. Und Subgradienten werden nicht behandelt.}
-\end{framev}
+\end{framei}
 
 
-\begin{framev}{soft thresholding}
+\begin{framev}{example: soft thresholding}
 We can write the solution as:
 $$\theta^\ast_{j, \text{Lasso}} =
 \begin{cases}
 \theta^\ast_j - \lambda & \text{ if } \theta^\ast_j > \lambda \\
 \theta^\ast_j + \lambda & \text{ if } \theta^\ast_j < - \lambda \\
-0 &  \text{ if }  \theta^\ast_j \in [- \lambda, \lambda],
+0 &  \text{ if }  \theta^\ast_j \in [- \lambda, \lambda]
 \end{cases}$$
 \comment[NOTE]{BB}{
 man kann das in zusammenhang mit dem subgradienten bringen. der sieht ja genauso aus
 hier ist übrigens eine übung von david dazu, die wie ansehen sollten
 https://github.com/slds-lmu/lecture_cim2/blob/master/2020/Aufgaben/lasso.tex
-}
-This operation is called soft thresholding\\
+}%
+This operation is called soft thresholding: Coefs for which solution to unregularized problem is not larger than threshold ($|\theta^\ast_j| \le \lambda$) are shrunk to zero\\
 \spacer
-Coefs for which solution to unregularized problem is smaller than threshold ($|\thetav^\ast_j| < \lambda$) are shrunk to zero
-\spacer
-NB: Derivation of soft thresholding operator not trivial (subgradients)
+{\footnotesize NB: Rigorous derivation of soft thresholding operator not trivial (subgradients)}
 \end{framev}
 
 
 \begin{framev}{CD for statistics and ML}
 Why is it being used?
-\begin{itemizeL}
+\begin{itemize}
 \item Easy to implement
 \item Scalable: no storage/operations on large objects,
 just current point \\
@@ -139,15 +142,20 @@ just current point \\
 so large scale betrachtungen}
 $\Rightarrow$ Good implementation can achieve state-of-the-art performance
 \item Applicable for non-differentiable (but convex separable) objectives
-\end{itemizeL}
+\end{itemize}
 \spacer
 Examples:
-\begin{itemizeL}
+\begin{itemize}
 \item Lasso regression, Lasso GLM, graphical Lasso
 \comment[NOTE]{BB}{könnten hier am ende zb einen slide zu liblinear mal einabeun mit etwas info zu dessen runtiume auf einem grossen porblem}
 \item Support Vector Machines
 \item Regression with non-convex penalties
-\end{itemizeL}
+\end{itemize}
+\spacer
+Limitations:
+\begin{itemize}
+\item Slow (zig-zagging) if coordinates strongly correlated (title figure)
+\end{itemize}
 \end{framev}
 \comment[NOTE]{BB}{weitere motivation: coord desc bei additiven modellen besprechen. besonders zusammenhang zu CWB}
 \comment[NOTE]{BB}{wir sollten das hier auch besser visaluwerien für das LM und den lasso.
