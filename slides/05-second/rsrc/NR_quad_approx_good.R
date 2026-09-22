@@ -10,37 +10,40 @@
 # -- but it still yields a large decrease (2.2 -> 0.13, better than the
 # predicted 0.40), so no line search is needed.
 
+library(data.table)
 library(ggplot2)
 
-f <- function(x) x^2 / 2 + x^4 / 80
-f_grad <- function(x) x + x^3 / 20
-f_hess <- function(x) 1 + 3 * x^2 / 20
+set.seed(1L)
 
-x0 <- 2
-x_star <- 0
+f = function(x) x^2 / 2 + x^4 / 80
+f_grad = function(x) x + x^3 / 20
+f_hess = function(x) 1 + 3 * x^2 / 20
+
+x0 = 2
+x_star = 0
 
 # second-order Taylor model around x0 and the resulting Newton step
-quad <- function(x) f(x0) + f_grad(x0) * (x - x0) + 0.5 * f_hess(x0) * (x - x0)^2
-x1 <- x0 - f_grad(x0) / f_hess(x0)
+quad = function(x) f(x0) + f_grad(x0) * (x - x0) + 0.5 * f_hess(x0) * (x - x0)^2
+x1 = x0 - f_grad(x0) / f_hess(x0)
 
-x_lim <- c(-1.1, 2.3)
-y_lim <- c(-0.95, 3.4)
+x_lim = c(-1.1, 2.3)
+y_lim = c(-0.95, 3.4)
 
-grid <- data.frame(x = seq(x_lim[1], x_lim[2], length.out = 601))
-curves <- rbind(
-  data.frame(x = grid$x, y = f(grid$x), fun = "true"),
-  data.frame(x = grid$x, y = quad(grid$x), fun = "quad")
+x_grid = seq(x_lim[1], x_lim[2], length.out = 601L)
+curves = rbind(
+  data.table(x = x_grid, y = f(x_grid), fun = "true"),
+  data.table(x = x_grid, y = quad(x_grid), fun = "quad")
 )
 
-pts <- data.frame(
+pts = data.table(
   x = c(x0, x1, x1),
   y = c(f(x0), f(x1), quad(x1))
 )
 
-label_size <- 3.3
-arrow_style <- arrow(length = unit(0.02, "npc"))
+label_size = 3.3
+arrow_style = arrow(length = unit(0.02, "npc"))
 
-p <- ggplot(curves, aes(x = x, y = y, linetype = fun, color = fun)) +
+p = ggplot(curves, aes(x = x, y = y, linetype = fun, color = fun)) +
   geom_line(linewidth = 0.9) +
   scale_linetype_manual(values = c(true = "solid", quad = "dashed")) +
   scale_color_manual(values = c(true = "black", quad = "firebrick")) +

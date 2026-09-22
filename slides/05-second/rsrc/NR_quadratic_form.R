@@ -9,34 +9,37 @@
 # steepest-descent direction (drawn with the same length) misses it: the
 # inverse Hessian rescales the gradient per coordinate.
 
+library(data.table)
 library(ggplot2)
 
-f <- function(x1, x2) x1^2 + x2^2 / 2
-f_grad <- function(x) c(2 * x[1], x[2])
-f_hess <- matrix(c(2, 0, 0, 1), nrow = 2)
+set.seed(1L)
 
-x0 <- c(2, 2)
-newton_step <- -solve(f_hess, f_grad(x0))
-x1_new <- x0 + newton_step
+f = function(x1, x2) x1^2 + x2^2 / 2
+f_grad = function(x) c(2 * x[1], x[2])
+f_hess = matrix(c(2, 0, 0, 1), nrow = 2L)
+
+x0 = c(2, 2)
+newton_step = -solve(f_hess, f_grad(x0))
+x1_new = x0 + newton_step
 
 # negative gradient at its true length: both steps move by -2 in x2 (scaled by
 # 1 by H^-1), while the Newton step moves half as far in x1 (scaled by 1/2),
 # so both arrows end on the line x2 = 0
-sd_end <- x0 - f_grad(x0)
+sd_end = x0 - f_grad(x0)
 
-grid <- expand.grid(
-  x1 = seq(-3, 3, length.out = 241),
-  x2 = seq(-3.2, 3.2, length.out = 241)
+grid = CJ(
+  x1 = seq(-3, 3, length.out = 241L),
+  x2 = seq(-3.2, 3.2, length.out = 241L)
 )
-grid$z <- f(grid$x1, grid$x2)
+grid[, z := f(x1, x2)]
 
 # trace colors of the chapter
-col_newton <- "#ff6262"
-col_sd <- "#ffcc00"
-arrow_style <- arrow(length = unit(0.09, "inches"))
-label_size <- 4.2
+col_newton = "#ff6262"
+col_sd = "#ffcc00"
+arrow_style = arrow(length = unit(0.09, "inches"))
+label_size = 4.2
 
-p <- ggplot(grid, aes(x = x1, y = x2, z = z)) +
+p = ggplot(grid, aes(x = x1, y = x2, z = z)) +
   geom_raster(aes(fill = z), interpolate = TRUE) +
   geom_contour(color = "grey20", alpha = 0.4, linewidth = 0.3, bins = 14) +
   scale_fill_viridis_c() +

@@ -26,6 +26,8 @@ suppressPackageStartupMessages({
   suppressWarnings(library(vistool))
 })
 
+set.seed(1L)
+
 overshoot = function(x) sqrt(1 + x[1]^2) + x[2]^2 / 2
 
 overshoot_grad = function(x) c(x[1] / sqrt(1 + x[1]^2), x[2])

@@ -22,6 +22,8 @@ suppressPackageStartupMessages({
   suppressWarnings(library(vistool))
 })
 
+set.seed(1L)
+
 boyd = function(x) {
   exp(x[1] + 3 * x[2] - 0.1) + exp(x[1] - 3 * x[2] - 0.1) + exp(-x[1] - 0.1)
 }

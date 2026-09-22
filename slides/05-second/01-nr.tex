@@ -138,7 +138,7 @@ $$
 \item $x_1$: higher curvature $\Rightarrow$ scaled by $1/2$ by $\H^{-1}$
 \item $x_2$: lower curvature $\Rightarrow$ scaled by $1$ by $\H^{-1}$
 \end{itemizeM}
-\item \textbf{Note}: For diagonal $H$, each dimension is scaled individually and we can easily interpret the scaling factors. For non-diagonal $H$, the update direction becomes a linear combination of all dimensions.
+\item \textbf{Note}: For diagonal $\H$, each dimension is scaled individually and we can easily interpret the scaling factors; for non-diagonal $\H$, the update direction becomes a linear combination of all dimensions
 \end{itemizeM}
 }{
 \imageC[1]{figure/NR_quadratic_form.png}
@@ -192,7 +192,7 @@ After $1$ Newton step:
 }{
 \imageC[1]{figure/NR_overshoot_1_error.png}
 }
-$\Rightarrow$ quadratic in $x_2$, direction solved exactly in one step
+$\Rightarrow$ $f$ is quadratic in $x_2$, so this coordinate is solved exactly in one step
 }
 \only<2>{
 After $2$ Newton steps:
@@ -236,8 +236,7 @@ Only iteration $2$ is damped ($\alpha = 0.5$) $\Rightarrow$ enough for NR to con
 
 
 \begin{framei}{Newton-Raphson: Affine invariance}
-\item The Newton step is independent of linear (or
-affine) changes of coordinates:
+\item The Newton step is independent of linear (or affine) changes of coordinates
 \item Let $\mathbf{T} \in \R^{d \times d}$ be nonsingular and $\tilde{f}(\tilde{\xv}) = f(\mathbf{T}\tilde{\xv})$, i.e., we
 re-parameterize with $\xv = \mathbf{T}\tilde{\xv}$
 \item Chain rule gives
@@ -263,7 +262,7 @@ $$
 \begin{framed}
 \centering
 Newton-Raphson converges \textit{locally} quadratically \\
-(i.e., for starting points close enough to stationary point) \\
+(i.e., for starting points close enough to a stationary point) \\
 $\Rightarrow$ \emph{see ``Deep Dive: Convergence of Newton-Raphson'' slides}
 \end{framed}
 \vfill
