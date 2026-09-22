@@ -5,6 +5,8 @@
 \input{../../latex-math/basic-ml}
 
 \newcommand{\vb}{\mathbf{v}}
+% centered footnotesize caption below a figure
+\newcommand{\figcaption}[1]{\par{\centering\footnotesize #1\par}}
 
 \title{Optimization in Machine Learning}
 
@@ -13,7 +15,7 @@
 \titlemeta{}{
 Nelder-Mead method
 }{
-figure_man/Nelder04.png
+figure/nelder_mead_steps_3.png
 }{
 \item General idea
 \item Reflection, expansion, contraction
@@ -45,7 +47,8 @@ Initialization: choose $d + 1$ random, affinely independent points $\vb_i$\\ ($\
 $$f(\vb_1) \leq f(\vb_2) \leq \ldots \leq f(\vb_d) \leq f(\vb_{d + 1})$$
 with $\vb_1$ best point, $\vb_{d + 1}$ worst point
 \end{enumerate}
-\imageC[0.5]{figure_man/Nelder01.png}
+\imageC[0.34]{figure/nelder_mead_steps_1.png}
+\figcaption{Example: Nelder-Mead in $d = 2$ dimensions with $d + 1 = 3$ initialized points}
 \end{framev}
 
 
@@ -54,7 +57,8 @@ with $\vb_1$ best point, $\vb_{d + 1}$ worst point
 \item[2.] Compute centroid without worst point
 $$\bar{\vb} = \frac{1}{d} \sum_{i = 1}^d \vb_i.$$
 \end{enumerate}
-\splitV{\imageC[0.98]{figure_man/Nelder02.png}}{\imageC[0.98]{figure_man/Nelder03.png}}
+\imageC[0.42]{figure/nelder_mead_steps_2.png}
+\figcaption{Simplex with computed centroid $\bar{\vb}$}
 \end{framev}
 
 
@@ -63,32 +67,34 @@ $$\bar{\vb} = \frac{1}{d} \sum_{i = 1}^d \vb_i.$$
 \item[3.] Reflection: compute reflection point
 $$\vb_r = \bar{\vb} + \rho (\bar{\vb} - \vb_{d + 1}),$$
 with $\rho > 0$.
-Compute $f(\vb_r)$.
-\end{enumerate}
-\imageC[0.43]{figure_man/Nelder04.png}
-\spacer
+Compute $f(\vb_r)$. \\
 Note: Default value for reflection coefficient: $\rho = 1$
+\end{enumerate}
+\imageC[0.42]{figure/nelder_mead_steps_3.png}
+\figcaption{Reflection point $\vb_r$ with $\rho = 1$ (1st iteration)}
 \end{framev}
 
 
 \begin{framev}{nelder-mead method}
 Distinguish three cases:\\
-\begin{itemizeL}
+\splitVCC[0.57]{
+\begin{itemizeS}
 \item Case 1: $f(\vb_1) \leq f(\vb_r) < f(\vb_d)$
-\spacer
 $\Rightarrow$ Accept $\vb_r$ and discard $\vb_{d + 1}$
-\end{itemizeL}
-\spacer
+\end{itemizeS}
+}{\imageC[0.62]{figure/nelder_mead_steps_4.png}
+\figcaption{Hypothetical visualization of case 1: acceptance of $\vb_r$}}
+\vspace{0.33cm}
 \splitVCC[0.57]{
 \begin{itemizeS}
 \item Case 2: $f(\vb_r) < f(\vb_1)$
 $\Rightarrow$ Expansion:
 $$\vb_e = \bar{\vb} + \chi (\vb_{r} - \bar{\vb}), \quad \chi > 1$$
 We discard $\vb_{d + 1}$ and accept the better of $\vb_r$ and $\vb_e$
+(default value for expansion coefficient: $\chi = 2$)
 \end{itemizeS}
-}{\imageC[1]{figure_man/Nelder06.png}}\\
-\spacer
-Note: default value for expansion coefficient: $\chi = 2$
+}{\imageC[0.6]{figure/nelder_mead_steps_5.png}
+\figcaption{Visualization of case 2: expansion with $\chi = 2$, but $\vb_r$ is kept since $f(\vb_e) > f(\vb_r)$ (cf. figure above)}}
 \end{framev}
 
 \comment[NOTE]{BB}{wir sollten für chi und sigma sagen dass die beide zwischen 0 und 1 sind; nicht 0 bis 0.5 nur für einen von beiden}
@@ -97,16 +103,37 @@ Note: default value for expansion coefficient: $\chi = 2$
 \begin{itemize}
 \item Case 3: $f(\vb_r) \ge f(\vb_d)$
 $\Rightarrow$ Contraction:
-\comment[NOTE]{BB}{contraction auch visualsieren; und shrinkage auch}
 $$\vb_c = \bar{\vb} + \gamma (\vb_{d + 1} - \bar{\vb})$$
-with $0 < \gamma \le 1/2$
+with $0 < \gamma \le 1/2$.\\
+Note: default value for contraction coefficient: $\gamma = 1/2$
 \begin{itemize}
-\item If $f(\vb_c) < f(\vb_{d + 1})$, accept $\vb_c$
-\item Otherwise, shrink entire simplex (Shrinking):
+\item If $f(\vb_c) < f(\vb_{d + 1})$: accept $\vb_c$ and discard $\vb_{d + 1}$
+\end{itemize}
+\end{itemize}
+\splitVThree{
+\imageC[0.95]{figure/nelder_mead_steps_6.png}
+\figcaption{Reflection (2nd iteration)}
+}{
+\imageC[0.95]{figure/nelder_mead_steps_7.png}
+\figcaption{Case 3: contraction with $\gamma = 1/2$}
+}{
+\imageC[0.95]{figure/nelder_mead_steps_8.png}
+\figcaption{Case 3: acceptance of $\vb_c$}
+}
+\end{framev}
+
+
+\begin{framev}{nelder-mead method}
+\begin{itemize}
+\item Case 3 (continued):
+\begin{itemize}
+\item If $f(\vb_c) \ge f(\vb_{d + 1})$: shrink entire simplex towards $\vb_1$ (Shrinking)
 $$\vb_{i} = \vb_1 + \sigma (\vb_{i} - \vb_{1}) \quad \forall i$$
+Note: default value for shrinking coefficient: $\sigma = 1/2$
 \end{itemize}
-Note: default values for contraction and shrinking coefficients $\gamma = \sigma = 1/2$
 \end{itemize}
+\imageC[0.38]{figure/nelder_mead_steps_9.png}
+\figcaption{Hypothetical visualization of case 3: shrinkage with $\sigma = 1/2$ (if $f(\vb_c) \ge f(\vb_3)$)}
 \begin{enumerate}
 \item[4.] Repeat all steps until stopping criterion met
 \end{enumerate}

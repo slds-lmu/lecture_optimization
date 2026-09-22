@@ -92,61 +92,26 @@ generally: say for which problems these methods are useful
 - GP optimization
 -------------------
 
-# Renaming of the Slidesets
+Derivative-free methods
 
-1. kapitel neu aufteilen
-2. kapitelnamen und decknamen kurz (aber sprechend)
-  z.b 03-univ-optim
-  oder 10-adam
---> Claude soll git move machen damit die git history erhalten bleibt
-3. Claude macht 1-2.
-4. Claude prüfen lassen
+Nelder-Mead:
+- what is the point of the cities example?
 
-
-# Draft: Affine invariance of the Newton step (parked, not yet in the slideset)
-
-Source: Boyd & Vandenberghe (2004), §9.5.1, p. 486 (pdf p. 500).
-Note: Aggarwal does not cover this -> would need BOYD2004 added to the title-slide references.
-
-Suggested placement (if we add it later): in `01-nr.tex`
-directly after the quadratic-form example frame (`framev`, ends ~line 145), before
-"Non-quadratic examples: Convergence".
-Rationale: closes the loop from the motivation slides (GD zig-zags under ill-conditioning) and
-generalizes the diagonal-Hessian rescaling intuition; also a natural callback to
-`06-advfirst/02-gdquad.tex` (convergence
-driven by the condition number kappa).
-
-Caveat to state if used: pure NR (alpha = 1) is affine invariant; damped NR stays invariant if the
-step size comes from Armijo/Wolfe backtracking (those tests use f values and grad f^T d, both
-invariant), but a hand-tuned fixed alpha != 1 breaks it. Could go as a one-liner on the damping
-slide.
-
-```latex
-\begin{framei}{Newton-Raphson: Affine invariance}
-\item The rescaling is not tied to a lucky choice of coordinates
-\item Let $\mathbf{T} \in \R^{n \times n}$ be nonsingular and $\bar{f}(\yv) = f(\mathbf{T}\yv)$, i.e., we
-re-parameterize with $\xv = \mathbf{T}\yv$
-\item Chain rule gives
-$$
-\nabla \bar{f}(\yv) = \mathbf{T}^T \nabla f(\xv), \qquad
-\nabla^2 \bar{f}(\yv) = \mathbf{T}^T \nabla^2 f(\xv) \mathbf{T}
-$$
-\item Newton direction in the new coordinates:
-\begin{align*}
-\bar{\mathbf{d}} &= -\left(\mathbf{T}^T \nabla^2 f(\xv) \mathbf{T}\right)^{-1} \mathbf{T}^T \nabla f(\xv) \\
-&= -\mathbf{T}^{-1} (\nabla^2 f(\xv))^{-1} \underbrace{\mathbf{T}^{-T} \mathbf{T}^T}_{= \id} \nabla f(\xv)
-= \mathbf{T}^{-1} \mathbf{d}
-\end{align*}
-\item[$\Rightarrow$] $\mathbf{T}(\yv + \bar{\mathbf{d}}) = \xv + \mathbf{d}$: the iterates are the same points, just expressed in different coordinates
-\end{framei}
-```
-
-Optional contrast block (own frame or appended to the one above):
-
-```latex
-\item \textbf{Contrast GD:} the gradient direction maps to $-\mathbf{T}^T \nabla f(\xv)$, which
-equals $-\mathbf{T}^{-1}\nabla f(\xv)$ only if $\mathbf{T}$ is orthogonal
-\item[$\Rightarrow$] GD is invariant only under rotations; a general $\mathbf{T}$ changes the condition number
-$\kappa$ and thus its rate (\textbf{recall:} ch. 4, GD on quadratic forms)
-\item[$\Rightarrow$] NR needs no feature scaling / preconditioning
-```
+Factual issues from the review (2026-09-22), to discuss:
+- Case 3 drops the outside contraction: standard NM (Lagarias et al. 1998) distinguishes
+  f(v_d) <= f(v_r) < f(v_{d+1}) -> contract towards v_r with v_c = vbar + gamma (v_r - vbar), from
+  f(v_r) >= f(v_{d+1}) -> contract towards v_{d+1} (as on the slide). Our version always contracts
+  towards v_{d+1} and thus discards a v_r that is better than v_{d+1} in the first sub-case.
+  Header "A version of the Nelder-Mead method" gives cover; at least add a one-line note.
+- "Generalization of bisection in d-dimensional space" (first slide) is wrong: bisection is 1D root
+  finding, NM does not reduce to it for d = 1. Suggest "direct search method based on a simplex".
+- Summary slide "Not each step improves, only mean of corner values is reduced" is imprecise:
+  every non-shrink step replaces the worst vertex by a strictly better point, so f(v_1) never
+  increases; shrink steps can worsen all vertices except v_1 and can increase the mean.
+  Correct statement: "f(v_1) never increases, but other vertices can get worse in shrink steps".
+- Parameter ranges: slide says 0 < gamma <= 1/2, standard is 0 < gamma < 1. Not wrong, but
+  unusual; BB's comment asks for consistent ranges anyway. Standard: rho > 0, chi > max(1, rho),
+  0 < gamma < 1, 0 < sigma < 1.
+- Cities slides: claims "fails to converge" (10 cities) and "performs poorly" (5 cities) are taken
+  from the Frederickson demo and cannot be verified from the slides (objective and run settings not
+  shown); see also BB's comment there.
