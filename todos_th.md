@@ -31,8 +31,8 @@ X 5.6.2 saddle points:
   - important point: gradient descent can escape saddle points, but Newton cannot (because it is attracted to ANY critical point); note: we also need to discuss this better in the GD chapter (that it CAN escape)
 
 - analyze divergence when start point is too far away from optimum
-- include as a slide: affine invariance of the Newton step --> boyd 486 [--> draft at the bottom of this file, see where it fits best in the slideset]
-- include as a deep dive slide set: convergence analysis of Newton-Raphson (Boyd & Vandenberghe §9.5.3)
+X include as a slide: affine invariance of the Newton step --> boyd 486 [--> added to 01-nr.tex before "Discussion" (2026-09-22); draft at the bottom of this file]
+X include as a deep dive slide set: convergence analysis of Newton-Raphson (Boyd & Vandenberghe §9.5.3)
   - first: read through the proof and see if we can understand it and explain it
 
 X in ch. 5.5.2 we can see that a abstract "reweighted least squares" view of Newton-Raphson is possible --> can we derive like a general scheme from that (abstract)? [maybe connect to the logistic regression example and fisher scoring]

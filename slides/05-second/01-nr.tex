@@ -16,12 +16,13 @@ Newton-Raphson
 }{
 figure/NR_quad_approx_good.png
 }{
-\item Newton-Raphson
+\item Newton-Raphson: Motivation and derivation
 \item Damped Newton-Raphson
-\item Convergence of Newton-Raphson
+\item Affine invariance of the Newton step
 \vspace{0.5cm}
 \item[] \hspace{-0.7cm}Slides based on\\
-\hspace{-0.7cm}\furtherreading{AGGARWAL2020} (Ch. 5.4-5.7)
+\hspace{-0.7cm}\furtherreading{AGGARWAL2020} (Ch. 5.4-5.7)\\
+\hspace{-0.7cm}\furtherreading{BOYD2004} (Ch. 9.5)
 }
 
 \begin{framei}{Motivation: Beyond gradient information}
@@ -231,6 +232,28 @@ to satisfy Wolfe conditions (or just Armijo rule)
 }
 \vfill
 Only iteration $2$ is damped ($\alpha = 0.5$) $\Rightarrow$ enough for NR to converge
+\end{framei}
+
+
+\begin{framei}{Newton-Raphson: Affine invariance}
+\item The Newton step is independent of linear (or
+affine) changes of coordinates:
+\item Let $\mathbf{T} \in \R^{d \times d}$ be nonsingular and $\tilde{f}(\tilde{\xv}) = f(\mathbf{T}\tilde{\xv})$, i.e., we
+re-parameterize with $\xv = \mathbf{T}\tilde{\xv}$
+\item Chain rule gives
+$$
+\nabla \tilde{f}(\tilde{\xv}) = \mathbf{T}^T \nabla f(\xv), \qquad
+\nabla^2 \tilde{f}(\tilde{\xv}) = \mathbf{T}^T \nabla^2 f(\xv) \mathbf{T}
+$$
+\item Newton direction in the new coordinates:
+\begin{align*}
+\tilde{\mathbf{d}} &= -(\mathbf{T}^T \nabla^2 f(\xv) \mathbf{T})^{-1} \mathbf{T}^T \nabla f(\xv) \\
+&= -\mathbf{T}^{-1} (\nabla^2 f(\xv))^{-1} \underbrace{\mathbf{T}^{-T} \mathbf{T}^T}_{= \id} \nabla f(\xv)
+= \mathbf{T}^{-1} \mathbf{d}
+\end{align*}
+\item[$\Rightarrow$] $\mathbf{T}(\tilde{\xv} + \tilde{\mathbf{d}}) = \xv + \mathbf{d}$: the iterates are the same points, just expressed in different coordinates
+\item[$\Rightarrow$] NR needs no feature scaling / preconditioning
+(\textbf{contrast GD:} invariant only under orthogonal $\mathbf{T}$, a general $\mathbf{T}$ changes $\kappa$ and thus its rate) \furtherreading{BOYD2004}
 \end{framei}
 
 
