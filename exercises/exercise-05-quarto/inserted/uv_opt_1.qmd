@@ -1,0 +1,176 @@
+---
+title: "Exercise 5: Univariate Optimization"
+subtitle: "[Optimization in Machine Learning](https://slds-lmu.github.io/website_optimization/)"
+notebook-view: false
+---
+
+::: {.content-hidden when-format="pdf"}
+::: {.hidden}
+{{< include ../_quarto/latex-math.qmd >}}
+:::
+:::
+
+::: {.callout-note collapse="true"}
+## Reproducibility
+
+Produced with Python 3.10 and R 4.4.1. To reproduce, install the pinned package versions below.
+
+::: {.panel-tabset}
+### Python
+```bash
+pip install numpy==2.0.2 matplotlib==3.10.8
+```
+### R
+```r
+install.packages("remotes")
+remotes::install_version("ggplot2", "3.5.1")
+```
+:::
+:::
+
+## Setup
+
+You are given the following data situation:
+
+::: {.panel-tabset}
+### R
+{{< embed sol_uv_opt_1_R.ipynb#setup_data echo=true >}}
+### Python
+{{< embed sol_uv_opt_1_py.ipynb#setup_data echo=true >}}
+:::
+
+::: callout-note
+**R vs. Python parity.** R's `set.seed(123)` and Python's `np.random.seed(123)` use *different* RNGs. The data above (and consequently the optima below) differ between languages. Both implementations are correct; only the underlying data differs. When comparing R and Python, look at *algorithmic behavior* (convergence, bracket shrinking, zig-zag pattern) rather than expecting numerically identical $\bm{\theta}$ values.
+:::
+
+In the following we want to estimate a linear SVM without intercept and with $\lambda = 1$. We assume we know that $\bm{\theta}_2 = 2$.
+
+## (a) Convexity of a 1D slice
+
+Show that if $f:\R^2 \to \R$ is convex then $g_c: \R \to \R, \ x \mapsto f(x, c)$ for any $c\in\R$ is convex.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+Since $f$ is convex, for arbitrary $\mathbf{x}, \mathbf{y} \in \R^2$ and $t \in [0,1]$:
+
+$$f(\mathbf{x} + t(\mathbf{y} - \mathbf{x})) \leq f(\mathbf{x}) + t(f(\mathbf{y}) - f(\mathbf{x})).$$
+
+Apply this to $\mathbf{x}_c = (x, c)^\top$ and $\mathbf{y}_c = (y, c)^\top$ with $x, y \in \R$ and fixed $c \in \R$. The right-hand sides equal $g_c(x)$ and $g_c(y)$, and the left-hand side equals $g_c(x + t(y-x))$, giving
+
+$$g_c(x + t(y-x)) \leq g_c(x) + t(g_c(y) - g_c(x)).$$
+
+Hence $g_c$ is convex.
+
+**Geometric intuition.** Fixing one coordinate restricts $f$ to the affine line $\{(x, c) : x \in \R\}$. Convexity is preserved under any affine restriction.
+
+**Why we care.** Every 1D solver in this exercise (golden-section, Brent's, alternating univariate minimization) only works on convex 1D functions. This proof is what licenses applying them to one parameter at a time of a *multivariate* convex SVM objective.
+:::
+
+## (b) Why the non-geometric primal SVM
+
+Explain why the non-geometric primal linear SVM formulation should be used rather than the geometric one if we want to find $\bm{\theta}_1$ via the golden-ratio algorithm.
+
+*Note: We use this algorithm for educational purposes; in practice more advanced algorithms are typically used.*
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+Recall the two equivalent SVM primal formulations (related by $C = \frac{1}{2\lambda}$):
+
+**Geometric primal:**
+
+$$\min_{\bm{\theta}, \theta_0, \bm{\zeta}} \quad \tfrac{1}{2}\|\bm{\theta}\|^2 + C \sum_{i=1}^n \zeta_i \quad \text{s.t.} \quad y^{(i)}(\bm{\theta}^\top\xv^{(i)} + \theta_0) \geq 1 - \zeta_i,\ \zeta_i \geq 0.$$
+
+**Non-geometric primal:**
+
+$$\min_{\bm{\theta}} \quad \lambda\|\bm{\theta}\|^2 + \sum_{i=1}^n \max\!\left(0,\ 1 - y^{(i)}\bm{\theta}^\top\xv^{(i)}\right).$$
+
+Golden-section and Brent's method are *unconstrained* 1D solvers — they have no mechanism for the geometric primal's $2n$ inequality constraints, and restricting to one parameter (per (a)) does not remove them. The non-geometric primal is unconstrained and convex in $\bm{\theta}$; by (a) its restriction to $\bm{\theta}_1$ (with $\bm{\theta}_2$ fixed) stays convex, so a 1D solver applies directly.
+:::
+
+## (c) Golden-section search
+
+Find $\bm{\theta}_1$ via the golden-section algorithm. Implement the algorithm yourself. Use absolute error $0.01$ as termination criterion and $[-3, 3]$ as the starting interval.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_uv_opt_1_R.ipynb#solution_c_code echo=true >}}
+### Python
+{{< embed sol_uv_opt_1_py.ipynb#solution_c_code echo=true >}}
+:::
+:::
+
+## (d) Parabola interpolation through three points
+
+Given three points $(x_1, y_1), (x_2, y_2), (x_3, y_3)$ show that the parameters $a, b, c \in \R$ of the interpolating parabola $p(x) = ax^2 + bx + c$ can be found via
+
+$$
+\begin{pmatrix}a \\ b \\ c \end{pmatrix} = \begin{pmatrix} x_1^2 & x_1 & 1 \\ x_2^2 & x_2 & 1 \\ x_3^2 & x_3 & 1 \end{pmatrix}^{-1} \begin{pmatrix}y_1 \\ y_2 \\ y_3 \end{pmatrix}.
+$$
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+Three equations:
+
+$$ax_i^2 + b x_i + c = y_i \quad \text{for } i = 1, 2, 3.$$
+
+Stacking them in matrix form gives $\bm{\Lambda} (a, b, c)^\top = (y_1, y_2, y_3)^\top$ with $\bm{\Lambda}$ as in the problem statement. $\bm{\Lambda}$ is the **Vandermonde matrix** of $(x_1, x_2, x_3)$; its determinant is $(x_2 - x_1)(x_3 - x_1)(x_3 - x_2)$, which is nonzero iff the three $x_i$ are pairwise distinct.
+
+**Failure mode worth knowing.** In Brent's method (next part), if two of the bracket points coalesce, $\bm{\Lambda}$ becomes singular and parabolic interpolation breaks. Production Brent implementations guard against this by falling back to a golden-section step whenever the parabolic candidate is invalid.
+:::
+
+## (e) Brent's method
+
+Find $\bm{\theta}_1$ via Brent's method. Implement a simplified version (only check whether the proposed point is in the current interval) of the algorithm. Use absolute error $0.01$ as termination criterion and $[-3, 3]$ as the starting interval. For the first step, use a golden-ratio step.
+
+::: {.content-visible when-profile="solution"}
+**Brent's idea.** When the function looks parabolic near the minimum, fit a parabola through three candidate points $(lx, rx, cx)$ and jump to its vertex (one quadratic-interpolation step from (d)). When the parabola gives a bad point (vertex outside the current bracket, or matrix near-singular), fall back to a golden-section step. Result: near-quadratic convergence on smooth functions, golden's safety on rough ones.
+
+::: {.panel-tabset}
+### R
+{{< embed sol_uv_opt_1_R.ipynb#solution_e_code echo=true >}}
+### Python
+{{< embed sol_uv_opt_1_py.ipynb#solution_e_code echo=true >}}
+:::
+
+**Cost trade-off.** Golden-section does no linear algebra per step but takes more steps. Brent solves a $3\times 3$ system per parabolic step (~10 flops) and converges in fewer iterations. On smooth objectives the speedup is large; on the SVM hinge loss above (kink at every margin violation) the speedup is modest because parabolic fits are often poor. The iteration counts printed above make this trade-off concrete.
+:::
+
+## (f) Alternating univariate minimization
+
+Now assume we do not know $\bm{\theta}_2$. Initial guess is $\bm{\theta}_2 = 0$. Alternately minimize w.r.t. either $\bm{\theta}_1$ or $\bm{\theta}_2$ via the golden-section method (starting interval reset to $[-3, 3]$ each time) while holding the other parameter fixed. Switch to the other parameter when absolute error is smaller than $0.01$. Repeat this procedure $10$ times.
+
+::: {.content-visible when-profile="solution"}
+We record the running $(\theta_1, \theta_2)$ in a list named `trace` so we can plot the optimization path in (g).
+
+::: {.panel-tabset}
+### R
+{{< embed sol_uv_opt_1_R.ipynb#solution_f_code echo=true >}}
+### Python
+{{< embed sol_uv_opt_1_py.ipynb#solution_f_code echo=true >}}
+:::
+:::
+
+## (g) Optimization trace
+
+How does the optimization trace of (f) look in parameter space?
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+::: {.panel-tabset}
+### R
+{{< embed sol_uv_opt_1_R.ipynb#solution_g_code echo=true >}}
+### Python
+{{< embed sol_uv_opt_1_py.ipynb#solution_g_code echo=true >}}
+:::
+
+The trace is an axis-aligned zig-zag. Each segment is parallel to one coordinate axis because the alternating procedure updates one parameter at a time, with the other held fixed. It **converges well before the 10 iterations finish**: once the updates stop reducing the loss, the remaining iterates land on the same point and stack on top of each other, so the path shows only a handful of visible segments rather than ten.
+
+**Why this matters.** This problem is well-conditioned, so coordinate-wise descent converges quickly; the slowness shows on *poorly-conditioned* problems (elongated, rotated objective contours), where each axis-aligned step makes only tiny progress along the long axis of the level sets. That is why optimizing one coordinate at a time is rarely competitive in higher dimensions, and it motivates the *gradient-based* methods of the next chapter, which move along the steepest-descent direction instead of along the coordinate axes.
+:::

@@ -1,0 +1,14 @@
+theme:
+  light: flatly
+  dark: darkly
+format:
+  html:
+    toc: true
+    code-fold: false
+    embed-resources: true
+    mathjax: true
+  pdf:
+    toc: false
+    keep-tex: false
+jupyter: python3
+notebook-links: false

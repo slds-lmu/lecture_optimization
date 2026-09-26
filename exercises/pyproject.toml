@@ -1,0 +1,14 @@
+[project]
+name = "lecture-optimization-quarto"
+version = "0.1.0"
+description = "Python kernel deps for Quarto-rendered exercises in lecture_optimization_lmu"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "cvxpy",
+    "scikit-optimize",
+    "ipykernel",
+    "jupyter",
+]

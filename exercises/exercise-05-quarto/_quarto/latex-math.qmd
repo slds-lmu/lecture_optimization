@@ -1,0 +1,106 @@
+$$
+\renewcommand{\bm}{\boldsymbol}
+
+% --- math spaces and number sets ---
+\providecommand{\N}{\mathbb{N}}
+\providecommand{\Z}{\mathbb{Z}}
+\providecommand{\Q}{\mathbb{Q}}
+\providecommand{\R}{\mathbb{R}}
+\providecommand{\C}{\mathbb{C}}
+
+% --- functions / operators ---
+\newcommand{\argmin}{\operatorname{arg\,min}}
+\newcommand{\argmax}{\operatorname{arg\,max}}
+\newcommand{\sign}{\operatorname{sign}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\trace}{\operatorname{tr}}
+\newcommand{\spn}{\operatorname{span}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\order}{\mathcal{O}}
+\newcommand{\pd}[2]{\frac{\partial{#1}}{\partial #2}}
+
+% --- sums ---
+\newcommand{\sumin}{\sum_{i=1}^n}
+\newcommand{\sumim}{\sum_{i=1}^m}
+\newcommand{\sumjn}{\sum_{j=1}^n}
+\newcommand{\sumjp}{\sum_{j=1}^p}
+\newcommand{\sumid}{\sum_{i=1}^d}
+\newcommand{\meanin}{\frac{1}{n}\sum_{i=1}^n}
+
+% --- linear algebra ---
+\newcommand{\one}{\boldsymbol{1}}
+\newcommand{\zero}{\mathbf{0}}
+\newcommand{\id}{\boldsymbol{I}}
+\newcommand{\scp}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\mat}[1]{\begin{pmatrix} #1 \end{pmatrix}}
+
+% --- probability and stats ---
+\renewcommand{\P}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\var}{\mathsf{Var}}
+\newcommand{\cov}{\mathsf{Cov}}
+\newcommand{\normal}{\mathcal{N}}
+\newcommand{\iid}{\overset{i.i.d}{\sim}}
+
+% --- ML notation ---
+\newcommand{\Xspace}{\mathcal{X}}
+\newcommand{\Yspace}{\mathcal{Y}}
+\newcommand{\xv}{\mathbf{x}}
+\newcommand{\yv}{\mathbf{y}}
+\newcommand{\wv}{\mathbf{w}}
+\newcommand{\xtil}{\tilde{\mathbf{x}}}
+\newcommand{\xy}{(\xv, y)}
+\newcommand{\Xmat}{\mathbf{X}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\Dn}{\D_n}
+\newcommand{\xyi}[1][i]{\left(\xv^{(#1)}, y^{(#1)}\right)}
+\renewcommand{\xi}[1][i]{\xv^{(#1)}}
+\newcommand{\yi}[1][i]{y^{(#1)}}
+
+% --- prediction functions ---
+\newcommand{\fx}{f(\xv)}
+\newcommand{\fh}{\hat{f}}
+\newcommand{\fxh}{\fh(\xv)}
+\newcommand{\fxi}{f\left(\xv^{(i)}\right)}
+\newcommand{\fxih}{\hat{f}\left(\xv^{(i)}\right)}
+
+% --- theta / parameters ---
+\newcommand{\thetav}{\bm{\theta}}
+\newcommand{\thetab}{\bm{\theta}}
+\newcommand{\thetah}{\hat{\theta}}
+\newcommand{\thetavh}{\bm{\hat\theta}}
+\newcommand{\thetat}[1][t]{\thetav^{[#1]}}
+\newcommand{\thetatn}[1][t]{\thetav^{[#1+1]}}
+
+% --- yhat ---
+\newcommand{\yh}{\hat{y}}
+\newcommand{\yih}{\hat{y}^{(i)}}
+
+% --- optimization-specific (from optim-basics.tex) ---
+\newcommand{\CC}[1]{\mathcal{C}^{#1}}
+\newcommand{\CCinf}{\mathcal{C}^{\infty}}
+\renewcommand{\S}{\mathcal{S}}
+\newcommand{\xvs}{\bm{x}^\ast}
+\newcommand{\xs}{x^\ast}
+\newcommand{\fxvs}{f(\xvs)}
+\renewcommand{\H}{\mathbf{H}}
+\providecommand{\eps}{\epsilon}
+\newcommand{\A}{\mathbf{A}}
+\newcommand{\bv}{\mathbf{b}}
+\newcommand{\zv}{\mathbf{z}}
+\newcommand{\V}{\mathbf{V}}
+\newcommand{\vvmax}{\bm{v}_\text{max}}
+\newcommand{\vvmin}{\bm{v}_\text{min}}
+\newcommand{\lammax}{\lambda_\text{max}}
+\newcommand{\lammin}{\lambda_\text{min}}
+
+% --- BO / surrogate model (from ml-mbo.tex) ---
+\newcommand{\xvsi}[1][i]{\xv^{[#1]}}
+\newcommand{\ysi}[1][i]{y^{[#1]}}
+\newcommand{\Dt}[1][t]{\D^{[#1]}}
+\newcommand{\sh}{\hat{s}}
+\newcommand{\fmin}{f_{\min}}
+
+% --- empirical risk shortcut (used in ex06+) ---
+\newcommand{\Remp}{\mathcal{R}_{\text{emp}}}
+$$

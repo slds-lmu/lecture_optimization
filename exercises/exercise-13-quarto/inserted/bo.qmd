@@ -1,0 +1,148 @@
+---
+title: "Exercise 13: Bayesian Optimization"
+subtitle: "[Optimization in Machine Learning](https://slds-lmu.github.io/website_optimization/)"
+notebook-view: false
+---
+
+::: {.content-hidden when-format="pdf"}
+::: {.hidden}
+{{< include ../_quarto/latex-math.qmd >}}
+:::
+:::
+
+::: {.callout-note collapse="true"}
+## Reproducibility
+
+Produced with Python 3.10 and R 4.4.1. To reproduce, install the pinned package versions below.
+
+::: {.panel-tabset}
+### Python
+```bash
+pip install numpy==2.0.2 matplotlib==3.10.8 scipy==1.15.3 scikit-learn==1.7.2
+```
+### R
+```r
+install.packages("remotes")
+remotes::install_version("ggplot2", "3.5.1")
+remotes::install_version("DiceKriging", "1.6.1")
+remotes::install_version("patchwork", "1.3.0")
+```
+:::
+:::
+
+## Problem 1: Closed-form Expected Improvement
+
+Derive the closed form expression of the **Expected Improvement** acquisition function:
+
+$$a_{\text{EI}}(\xv) = \left(\fmin - \fh(\xv)\right)\, \Phi\!\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right) + \sh(\xv)\, \phi\!\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right).$$
+
+Assume $Y(\xv) \sim \mathcal{N}(\fh(\xv), \sh^2(\xv))$.
+
+*Hints:*
+
+- Start from $a_{\text{EI}}(\xv) = \E_y[\max\{\fmin - y, 0\}] = \int \max\{\fmin - y, 0\}\, p(y)\, dy$.
+- Decompose the integral by whether $y < \fmin$ or $y \geq \fmin$.
+- Substitute $u = (y - \fh(\xv))/\sh(\xv)$.
+- Use $\int_{-\infty}^z u\,\phi(u)\,du = -\phi(z)$.
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+We start with
+
+$$
+a_{\text{EI}}(\xv) = \E_{y}(\max\{\fmin - y, 0\}) = \int_{-\infty}^{\infty} \max\{\fmin - y, 0\} p(y) dy.
+$$
+
+Observe that
+
+$$\max\{\fmin - y, 0\} =
+  \begin{cases}
+    \fmin - y, & \text{if } y < \fmin,\\
+    0,         & \text{otherwise}.
+  \end{cases}
+$$
+
+All contributions for $y \ge \fmin$ are zero. Therefore, we can additively decompose the integral and it simplifies to
+
+$$
+a_{\text{EI}}(\xv) = \int_{-\infty}^{\fmin} \left(\fmin - y\right) p(y) dy.
+$$
+
+$$
+\begin{aligned}
+\alpha_{\text{EI}}(\xv) &= \int_{-\infty}^{\fmin}\left(\fmin -y\right) p(y) dy \\
+    &= \int_{-\infty}^{\fmin}\left(\fmin - y\right) \frac{1}{\sqrt{2 \pi \sh(\xv)^2}} \exp \left(-\frac{\left(y-\fh(\xv)\right)^2}{2 \sh(\xv)^2}\right) d y\\
+    &= \int_{-\infty}^{z}\left(\fmin-\fh(\xv)-u \sh(\xv)\right) \frac{1}{\sqrt{2 \pi \sh(\xv)^2}} \exp \left(-\frac{u^2}{2}\right)\sh(\xv) d u~\left(\text {Def. } u:=\frac{y-\fh(\xv)}{\sh(\xv)}, \frac{d u}{d y}=\frac{1}{\sh(\xv)}, z := \frac{\fmin-\fh(\xv)}{\sh(\xv)}\right) \\
+    &= \int_{-\infty}^{z}\left(\fmin-\fh(\xv)-u \sh(\xv)\right) \phi(u) d u \\
+    &= \int_{-\infty}^{z}\left(\fmin-\fh(\xv)\right) \phi(u) d u - \int_{-\infty}^{z}\left(u \sh(\xv)\right) \phi(u) d u
+\end{aligned}
+$$
+
+Note that
+
+$$
+\Phi(z)=\int_{-\infty}^{z} \phi(u) d u
+$$
+
+by definition.
+
+Therefore, regarding the first integral:
+
+$$
+\int_{-\infty}^{z}\left(\fmin-\fh(\xv)\right) \phi(u) d u = \left(\fmin - \fh(\xv)\right) \Phi(z) = z \sh(\xv) \Phi(z).
+$$
+
+Regarding the second integral we use the identity
+
+$$
+\int_{-\infty}^z u \phi(u) d u = - \phi(z).
+$$
+
+Putting both together we obtain:
+
+$$
+\begin{aligned}
+\alpha_{\text{EI}}(\xv) &= z \sh(\xv) \Phi(z)-\sh(\xv)(-\phi(z)) \\
+    &= z \sh(\xv) \Phi(z)+\sh(\xv) \phi(z)\\
+    &= \left(\fmin - \fh(\xv)\right) \Phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right) + \sh(\xv) \phi\left(\frac{\fmin - \fh(\xv)}{\sh(\xv)}\right).
+\end{aligned}
+$$
+:::
+
+## Problem 2: Implement Bayesian Optimization
+
+Implement BO with a Gaussian-process surrogate and Expected Improvement acquisition. Goal: minimize
+
+$$f: [0, 1] \to \R, \quad x \mapsto 2x\sin(14x).$$
+
+Start with 4 points sampled uniformly at random and terminate after 10 total evaluations.
+
+1. Write the BO loop in pseudocode.
+2. Implement it. Optimize the EI via a univariate method (Brent's / `optimize`).
+
+::: {.content-visible when-profile="solution"}
+**Solution.**
+
+Let $\mathcal{D}$ be the initial design consisting of $(x^{[1]}, y^{[1]}), \ldots, (x^{[4]}, y^{[4]})$. Set $t$ to $4$.
+
+While $t < 10$:
+
+1. Fit surrogate model on $\mathcal{D}$.
+2. Optimize the Expected Improvement $a_{\text{EI}}(x)$ to obtain a new point $x^{[t+1]} := \operatorname{arg\,max}_{x \in [0, 1]} a_{\text{EI}}(x)$.
+3. Evaluate $x^{[t+1]}$ and update design data $\mathcal{D} = \mathcal{D} \cup \{(x^{[t+1]}, f(x^{[t+1]}))\}$.
+4. Set $t$ to $t + 1$.
+
+Return $x$ that minimizes $f(x)$ in $\mathcal{D}$: $\operatorname{arg\,min}_{(x, y) \in \mathcal{D}} y$.
+
+::: {.callout-note}
+**R vs. Python.** Both use a Gaussian-kernel GP surrogate with the same closed-form EI, but they draw the 4 initial points from different RNGs (R's `runif` vs numpy's), so the specific evaluations - and hence the exact GP posterior and its uncertainty bands - differ between the panels. The method and where BO converges are the same.
+:::
+
+::: {.panel-tabset}
+### R
+{{< embed sol_bo_R.ipynb#bo_loop echo=true >}}
+### Python
+{{< embed sol_bo_py.ipynb#bo_loop echo=true >}}
+:::
+:::
