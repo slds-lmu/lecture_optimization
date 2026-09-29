@@ -24,16 +24,16 @@ figure/nelder_mead_steps_3.png
 }
 
 \begin{framei}{Nelder-Mead method}
-\item Derivative-free method $\Rightarrow$ heuristic
-\item Generalization of bisection in $d$-dimensional space
+\item Derivative-free method $\Rightarrow$ heuristic \furtherreading{NELDER1965}
 \item Based on $d$-simplex, defined by $d + 1$ points:
 \begin{itemize}
 \item $d = 1$ interval
-\comment[NOTE]{BB}{bilder malen}
 \item $d = 2$ triangle
 \item $d = 3$ tetrahedron
 \item $\cdots$
 \end{itemize}
+\item Idea: replace worst vertex by a better point on the line through it and the centroid of the remaining vertices; if none is found, shrink simplex towards best vertex
+\item Unrelated to the simplex method of linear programming
 \end{framei}
 
 
@@ -84,12 +84,13 @@ $\Rightarrow$ Accept $\vb_r$ and discard $\vb_{d + 1}$
 \end{itemizeS}
 }{\imageC[0.62]{figure/nelder_mead_steps_4.png}
 \figcaption{Hypothetical visualization of case 1: acceptance of $\vb_r$}}
-\vspace{0.33cm}
+\vspace{0.2cm}
 \splitVCC[0.57]{
 \begin{itemizeS}
 \item Case 2: $f(\vb_r) < f(\vb_1)$
 $\Rightarrow$ Expansion:
-$$\vb_e = \bar{\vb} + \chi (\vb_{r} - \bar{\vb}), \quad \chi > 1$$
+$$\vb_e = \bar{\vb} + \chi (\vb_{r} - \bar{\vb})$$
+with $\chi > \max(1, \rho)$.
 We discard $\vb_{d + 1}$ and accept the better of $\vb_r$ and $\vb_e$
 (default value for expansion coefficient: $\chi = 2$)
 \end{itemizeS}
@@ -97,14 +98,13 @@ We discard $\vb_{d + 1}$ and accept the better of $\vb_r$ and $\vb_e$
 \figcaption{Visualization of case 2: expansion with $\chi = 2$, but $\vb_r$ is kept since $f(\vb_e) > f(\vb_r)$ (cf. figure above)}}
 \end{framev}
 
-\comment[NOTE]{BB}{wir sollten für chi und sigma sagen dass die beide zwischen 0 und 1 sind; nicht 0 bis 0.5 nur für einen von beiden}
 
 \begin{framev}{nelder-mead method}
 \begin{itemize}
 \item Case 3: $f(\vb_r) \ge f(\vb_d)$
 $\Rightarrow$ Contraction:
 $$\vb_c = \bar{\vb} + \gamma (\vb_{d + 1} - \bar{\vb})$$
-with $0 < \gamma \le 1/2$.\\
+with $0 < \gamma < 1$.\\
 Note: default value for contraction coefficient: $\gamma = 1/2$
 \begin{itemize}
 \item If $f(\vb_c) < f(\vb_{d + 1})$: accept $\vb_c$ and discard $\vb_{d + 1}$
@@ -129,6 +129,7 @@ Note: default value for contraction coefficient: $\gamma = 1/2$
 \begin{itemize}
 \item If $f(\vb_c) \ge f(\vb_{d + 1})$: shrink entire simplex towards $\vb_1$ (Shrinking)
 $$\vb_{i} = \vb_1 + \sigma (\vb_{i} - \vb_{1}) \quad \forall i$$
+with $0 < \sigma < 1$.\\
 Note: default value for shrinking coefficient: $\sigma = 1/2$
 \end{itemize}
 \end{itemize}
@@ -149,14 +150,13 @@ Advantages:
 Drawbacks:
 \begin{itemize}
 \item Relatively slow (not applicable in high dimensions)
-\item Not each step improves, only mean of corner values is reduced
+\item Best point need not improve in each step, only the mean of vertex values $\frac{1}{d + 1} \sum_{i = 1}^{d + 1} f(\vb_i)$ is guaranteed to decrease (except in shrink steps) \furtherreading{NOCEDAL2006}
 \item No guarantee for convergence to local optimum / stationary point
 \end{itemize}
 Visualization:
 \begin{center}
 \url{http://www.benfrederickson.com/numerical-optimization/}
 \end{center}
-\spacer
 Note: Nelder-Mead is default method of \texttt{R} function \texttt{optim()}\\
 If gradient is available and cheap, L-BFGS is preferred
 \end{framev}
