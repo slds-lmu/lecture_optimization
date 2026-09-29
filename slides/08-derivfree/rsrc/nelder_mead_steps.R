@@ -1,6 +1,6 @@
 # Used in: slides/08-derivfree/02-neldermead.tex
 #
-# Schematic frames of one and a half Nelder-Mead iterations on the quadratic
+# Schematic frames of two Nelder-Mead iterations (the second in two variants) on the quadratic
 # bowl f(x) = x1^2 + x2^2 (optimum at the origin, grey circles are level sets).
 # Replaces the hand-made figure_man/Nelder0*.png series and adds the two steps
 # it was missing, contraction and shrinking. All frames share the same axis
@@ -13,25 +13,28 @@
 #   4  new simplex: v_r replaces the worst vertex and becomes v_1 (on the
 #      slides this illustrates case 1, although the run is in case 2)
 #   5  expansion point v_e (worse than v_r here, so v_r is kept)
-# Iteration 2 (reflection overshoots, case 3):
-#   6  reflection point v_r is worse than v_d
-#   7  contraction point v_c between centroid and worst vertex
-#   8  new simplex: v_c replaces the worst vertex and becomes v_1
-#   9  shrinking of the whole simplex towards v_1. On this bowl v_c is accepted,
+# Iteration 2 (reflection overshoots, case 3b):
+#   6  reflection point v_r is worse than the worst vertex v_(d+1)
+#   7  inside contraction point v_ic between centroid and worst vertex
+#   8  new simplex: v_ic replaces the worst vertex and becomes v_1
+#   9  shrinking of the whole simplex towards v_1. On this bowl v_ic is accepted,
 #      so no shrink happens; the frame shows the fallback hypothetically, the
 #      slide caption says so
+# Iteration 2 again, with a shorter reflection (rho = 0.4, case 3a):
+#   10 reflection point v_r lies between v_d and v_(d+1) in function value
+#   11 outside contraction point v_oc between centroid and v_r
+#   12 new simplex: v_oc replaces the worst vertex
 #
 #   ../figure/nelder_mead_steps_<k>.png
 
 library(data.table)
 library(ggplot2)
 
-set.seed(1L)
-
 f = function(v) v[1L]^2 + v[2L]^2
 
 # Nelder-Mead coefficients (defaults used on the slides)
 rho = 1 # reflection
+rho_short = 0.4 # shorter reflection for the case 3a example
 chi = 2 # expansion
 gam = 0.5 # contraction
 sig = 0.5 # shrinking
@@ -175,15 +178,15 @@ v = v_new
 vb = centroid(v)
 vr = vb + rho * (vb - v[3L, ])
 vc = vb + gam * (v[3L, ] - vb)
-stopifnot(f(vr) >= f(v[2L, ]), f(vc) < f(v[3L, ])) # case 3, and v_c is accepted
+stopifnot(f(vr) >= f(v[3L, ]), f(vc) < f(v[3L, ])) # case 3b, and v_ic is accepted
 
 pts_v = pts_new
 # the reflection line leaves the centroid steeply upwards, so label to the right
 pt_vb = pt(vb, "bar(v)", dx = 0.38, dy = 0.3)
 pt_vr = pt(vr, "v[r]")
-# v_c sits on the segment from the centroid to v_3, squeezed between the edges;
+# v_ic sits on the segment from the centroid to v_3, squeezed between the edges;
 # the only pocket wide enough for the label is above-left of the point
-pt_vc = pt(vc, "v[c]", dx = -0.53, dy = 0.4)
+pt_vc = pt(vc, "v[ic]", dx = -0.6, dy = 0.4)
 
 # 6: reflection point lies far outside, worse than v_2
 draw_frame(
@@ -192,20 +195,20 @@ draw_frame(
   filename = out(6L)
 )
 
-# 7: contraction towards the worst vertex instead
+# 7: inside contraction towards the worst vertex instead
 draw_frame(
   rbind(pts_v, pt_vb, pt_vr, pt_vc), simplex = v,
   segments = rbind(seg(v[3L, ], vr, "dashed"), seg(vb, v[3L, ], "solid")),
   filename = out(7L)
 )
 
-# 8: v_c accepted, worst vertex dropped, simplex re-ordered (v_c is now best)
+# 8: v_ic accepted, worst vertex dropped, simplex re-ordered (v_ic is now best)
 v_new = order_simplex(rbind(v[1L, ], v[2L, ], vc))
 pts_new = vertex_points(v_new, dy = c(below, above, above))
 pts_new[1L, dx := 0.22] # nudged right, between the two dotted edges of the old simplex
 draw_frame(pts_new, simplex = v_new, ghost = v, filename = out(8L))
 
-# 9: shrinking, the fallback if v_c were not better than v_3 (hypothetical here,
+# 9: shrinking, the fallback if v_ic were not better than v_3 (hypothetical here,
 # see header): every vertex moves halfway towards v_1, the old simplex stays as
 # dotted outline
 v_shrunk = t(apply(v, 1L, function(vi) v[1L, ] + sig * (vi - v[1L, ])))
@@ -216,3 +219,34 @@ draw_frame(
   segments = rbind(seg(v[2L, ], v_shrunk[2L, ]), seg(v[3L, ], v_shrunk[3L, ])),
   filename = out(9L)
 )
+
+# --- iteration 2 with shorter reflection: outside contraction (case 3a) -------
+
+vr = vb + rho_short * (vb - v[3L, ])
+voc = vb + gam * (vr - vb)
+stopifnot(f(vr) >= f(v[2L, ]), f(vr) < f(v[3L, ]), f(voc) <= f(vr)) # case 3a, v_oc accepted
+
+pt_vr = pt(vr, "v[r]")
+# v_oc sits on the reflection line just above the centroid; left of it is the
+# v_1 label, so it goes to the right and the centroid label moves below-left
+pt_voc = pt(voc, "v[oc]", dx = 0.55, dy = 0.05)
+pt_vb = pt(vb, "bar(v)", dx = -0.4, dy = -0.4)
+
+# 10: shorter reflection, v_r is worse than v_2 but better than v_3
+draw_frame(
+  rbind(pts_v, pt_vb, pt_vr), simplex = v,
+  segments = seg(v[3L, ], vr, "solid"),
+  filename = out(10L)
+)
+
+# 11: outside contraction, halfway between centroid and v_r
+draw_frame(
+  rbind(pts_v, pt_vb, pt_vr, pt_voc), simplex = v,
+  segments = rbind(seg(v[3L, ], vb, "dashed"), seg(vb, vr, "solid")),
+  filename = out(11L)
+)
+
+# 12: v_oc accepted, worst vertex dropped, simplex re-ordered
+v_new = order_simplex(rbind(v[1L, ], v[2L, ], voc))
+pts_new = vertex_points(v_new, dy = c(above, above, above))
+draw_frame(pts_new, simplex = v_new, ghost = v, filename = out(12L))

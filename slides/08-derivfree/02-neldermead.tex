@@ -18,7 +18,7 @@ Nelder-Mead method
 figure/nelder_mead_steps_3.png
 }{
 \item General idea
-\item Reflection, expansion, contraction
+\item Reflection, expansion, contraction, shrinking
 \item Advantages \& disadvantages
 \item Examples
 }
@@ -102,23 +102,24 @@ We discard $\vb_{d + 1}$ and accept the better of $\vb_r$ and $\vb_e$
 \begin{framev}{nelder-mead method}
 \begin{itemize}
 \item Case 3: $f(\vb_r) \ge f(\vb_d)$
-$\Rightarrow$ Contraction:
-$$\vb_c = \bar{\vb} + \gamma (\vb_{d + 1} - \bar{\vb})$$
-with $0 < \gamma < 1$.\\
+$\Rightarrow$ Contraction with $0 < \gamma < 1$\\
 Note: default value for contraction coefficient: $\gamma = 1/2$
 \begin{itemize}
-\item If $f(\vb_c) < f(\vb_{d + 1})$: accept $\vb_c$ and discard $\vb_{d + 1}$
+\item Case 3a: $f(\vb_d) \leq f(\vb_r) < f(\vb_{d + 1})$ $\Rightarrow$ Outside contraction:
+$$\vb_{oc} = \bar{\vb} + \gamma (\vb_r - \bar{\vb})$$
+If $f(\vb_{oc}) \leq f(\vb_r)$: accept $\vb_{oc}$ and discard $\vb_{d + 1}$
 \end{itemize}
 \end{itemize}
+\spacer
 \splitVThree{
-\imageC[0.95]{figure/nelder_mead_steps_6.png}
-\figcaption{Reflection (2nd iteration)}
+\imageC[0.95]{figure/nelder_mead_steps_10.png}
+\figcaption{Reflection (2nd iteration) with $\rho = 0.4$: $f(\vb_2) \leq f(\vb_r) < f(\vb_3)$}
 }{
-\imageC[0.95]{figure/nelder_mead_steps_7.png}
-\figcaption{Case 3: contraction with $\gamma = 1/2$}
+\imageC[0.95]{figure/nelder_mead_steps_11.png}
+\figcaption{Case 3a: outside contraction with $\gamma = 1/2$}
 }{
-\imageC[0.95]{figure/nelder_mead_steps_8.png}
-\figcaption{Case 3: acceptance of $\vb_c$}
+\imageC[0.95]{figure/nelder_mead_steps_12.png}
+\figcaption{Case 3a: acceptance of $\vb_{oc}$}
 }
 \end{framev}
 
@@ -127,14 +128,37 @@ Note: default value for contraction coefficient: $\gamma = 1/2$
 \begin{itemize}
 \item Case 3 (continued):
 \begin{itemize}
-\item If $f(\vb_c) \ge f(\vb_{d + 1})$: shrink entire simplex towards $\vb_1$ (Shrinking)
-$$\vb_{i} = \vb_1 + \sigma (\vb_{i} - \vb_{1}) \quad \forall i$$
+\item Case 3b: $f(\vb_r) \geq f(\vb_{d + 1})$ $\Rightarrow$ Inside contraction:
+$$\vb_{ic} = \bar{\vb} + \gamma (\vb_{d + 1} - \bar{\vb})$$
+If $f(\vb_{ic}) < f(\vb_{d + 1})$: accept $\vb_{ic}$ and discard $\vb_{d + 1}$
+\end{itemize}
+\end{itemize}
+\spacer
+\splitVThree{
+\imageC[0.95]{figure/nelder_mead_steps_6.png}
+\figcaption{Reflection (2nd iteration) with $\rho = 1$: $f(\vb_r) \geq f(\vb_3)$}
+}{
+\imageC[0.95]{figure/nelder_mead_steps_7.png}
+\figcaption{Case 3b: inside contraction with $\gamma = 1/2$}
+}{
+\imageC[0.95]{figure/nelder_mead_steps_8.png}
+\figcaption{Case 3b: acceptance of $\vb_{ic}$}
+}
+\end{framev}
+
+
+\begin{framev}{nelder-mead method}
+\begin{itemize}
+\item Case 3 (continued):
+\begin{itemize}
+\item If contraction point is not accepted, i.e., $f(\vb_{oc}) > f(\vb_r)$ in case 3a or $f(\vb_{ic}) \geq f(\vb_{d + 1})$ in case 3b: shrink entire simplex towards $\vb_1$ (Shrinking)
+$$\vb_{i} = \vb_1 + \sigma (\vb_{i} - \vb_{1}), \quad i = 2, \ldots, d + 1$$
 with $0 < \sigma < 1$.\\
 Note: default value for shrinking coefficient: $\sigma = 1/2$
 \end{itemize}
 \end{itemize}
-\imageC[0.38]{figure/nelder_mead_steps_9.png}
-\figcaption{Hypothetical visualization of case 3: shrinkage with $\sigma = 1/2$ (if $f(\vb_c) \ge f(\vb_3)$)}
+\imageC[0.3]{figure/nelder_mead_steps_9.png}
+\figcaption{Hypothetical visualization of case 3: shrinkage with $\sigma = 1/2$ (if $f(\vb_{ic}) \ge f(\vb_3)$)}
 \begin{enumerate}
 \item[4.] Repeat all steps until stopping criterion met
 \end{enumerate}
